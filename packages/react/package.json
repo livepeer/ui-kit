@@ -1,0 +1,64 @@
+{
+  "name": "@livepeer/react",
+  "description": "React components & hooks for Livepeer.",
+  "license": "MIT",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeer.js.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://livepeer.org",
+  "main": "dist/livepeer-react.cjs.js",
+  "module": "dist/livepeer-react.esm.js",
+  "types": "dist/livepeer-react.cjs.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/livepeer-react.esm.js",
+      "default": "./dist/livepeer-react.cjs.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "/dist"
+  ],
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "ethers": ">=5.5.1",
+    "react": ">=17.0.0"
+  },
+  "dependencies": {
+    "@tanstack/query-sync-storage-persister": "4.0.10",
+    "@tanstack/react-query": "4.0.10",
+    "@tanstack/react-query-persist-client": "4.0.10",
+    "livepeer": "^0.0.1",
+    "use-sync-external-store": "^1.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.3",
+    "@types/use-sync-external-store": "^0.0.3",
+    "ethers": "^5.6.5",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "keywords": [
+    "dapps",
+    "eth",
+    "ethereum",
+    "hooks",
+    "livepeer",
+    "react",
+    "streaming",
+    "video",
+    "wallet",
+    "web3"
+  ]
+}

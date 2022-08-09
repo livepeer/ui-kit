@@ -1,0 +1,64 @@
+{
+  "name": "livepeer",
+  "description": "Livepeer's vanilla JS library.",
+  "license": "MIT",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeer.js.git",
+    "directory": "packages/core"
+  },
+  "main": "dist/livepeer.cjs.js",
+  "module": "dist/livepeer.esm.js",
+  "types": "dist/livepeer.cjs.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/livepeer.esm.js",
+      "default": "./dist/livepeer.cjs.js"
+    },
+    "./dms": {
+      "module": "./dms/dist/livepeer-dms.esm.js",
+      "default": "./dms/dist/livepeer-dms.cjs.js"
+    },
+    "./providers/studio": {
+      "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
+      "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "/dms",
+    "/providers",
+    "/dist"
+  ],
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts",
+      "dms.ts",
+      "providers/studio.ts"
+    ]
+  },
+  "peerDependencies": {
+    "ethers": ">=5.6.9",
+    "wagmi": ">=0.6.1"
+  },
+  "peerDependenciesMeta": {},
+  "dependencies": {
+    "eventemitter3": "^4.0.7",
+    "zustand": "^4.0.0"
+  },
+  "devDependencies": {
+    "ethers": "^5.6.9",
+    "wagmi": "^0.6.1"
+  },
+  "keywords": [
+    "eth",
+    "ethereum",
+    "livepeer",
+    "streaming",
+    "video",
+    "wallet",
+    "web3"
+  ]
+}
