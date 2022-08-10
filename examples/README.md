@@ -17,7 +17,6 @@ Most examples should:
 - Support commonly-used, Ethereum-related networks (Mainnet, Optimism, Polygon, etc.)
 - Have only necessary dependencies
 - Use TypeScript
-- Be as practical as reasonable (balanced with the focus)
 
 The example name should be clear and concise, focusing on the use-case or main technology being demonstrated.
 

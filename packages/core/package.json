@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "ethers": "^5.6.9",
-    "wagmi": "^0.6.1"
+    "wagmi": "^0.6.2"
   },
   "keywords": [
     "eth",

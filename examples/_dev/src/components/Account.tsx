@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
-import { useIsMounted } from '../hooks';
 import { Balance } from './Balance';
 import { BlockNumber } from './BlockNumber';
 import { ReadContract } from './ReadContract';
@@ -14,7 +13,6 @@ import { WriteContract } from './WriteContract';
 import { WriteContractPrepared } from './WriteContractPrepared';
 
 export const Account = () => {
-  const isMounted = useIsMounted();
   const account = useAccount({
     onConnect: (data) => console.log('connected', data),
     onDisconnect: () => console.log('disconnected'),
@@ -40,9 +38,6 @@ export const Account = () => {
       <div>
         {account?.address && (
           <button onClick={() => disconnect.disconnect()}>Disconnect</button>
-        )}
-        {isMounted && account?.connector?.name && (
-          <span>Connected to {account.connector.name}</span>
         )}
       </div>
 
