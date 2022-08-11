@@ -3,14 +3,14 @@ title: 'useContract'
 description: 'React Hook for declaratively creating an ethers Contract instance.'
 ---
 
-import Callout from 'nextra-theme-docs/callout';
+import { Callout } from 'nextra-theme-docs';
 
 # useContract
 
 Hook for declaratively creating an ethers [Contract](https://docs.ethers.io/v5/api/contract/contract) instance.
 
 ```tsx
-import { useContract } from 'wagmi';
+import { useContract } from 'livepeer';
 ```
 
 <Callout>
@@ -25,7 +25,7 @@ import { useContract } from 'wagmi';
 The following examples use the [ENS Registry](https://etherscan.io/address/0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e#code) contract.
 
 ```tsx
-import { useContract } from 'wagmi';
+import { useContract } from 'livepeer';
 
 function App() {
   const contract = useContract({
@@ -48,7 +48,7 @@ ethers.Contract;
 Contract address or ENS name.
 
 ```tsx {5}
-import { useContract } from 'wagmi';
+import { useContract } from 'livepeer';
 
 function App() {
   const contract = useContract({
@@ -63,7 +63,7 @@ function App() {
 Contract ABI in JSON or JS object format. An [ethers Interface](https://docs.ethers.io/v5/api/utils/abi/interface) is also allowed.
 
 ```tsx {6}
-import { useContract } from 'wagmi';
+import { useContract } from 'livepeer';
 
 function App() {
   const contract = useContract({
@@ -78,7 +78,7 @@ function App() {
 An ethers [Provider](https://docs.ethers.io/v5/api/providers/provider/#Provider) or [Signer](https://docs.ethers.io/v5/api/signer/#Signer).
 
 ```tsx {8}
-import { useContract, useProvider } from 'wagmi';
+import { useContract, useProvider } from 'livepeer';
 
 function App() {
   const provider = useProvider();

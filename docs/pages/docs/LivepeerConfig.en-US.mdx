@@ -1,0 +1,54 @@
+---
+title: 'LivepeerConfig'
+description: 'The LivepeerConfig component manages configuration for all hooks using React Context.'
+---
+
+# LivepeerConfig
+
+The `LivepeerConfig` component manages configuration for all hooks using [React Context](https://reactjs.org/docs/context.html).
+
+```ts
+import { LivepeerConfig } from 'livepeer';
+```
+
+## Usage
+
+```tsx
+import { LivepeerConfig } from 'livepeer';
+
+function App() {
+  return (
+    <LivepeerConfig>
+      <YourRoutes />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Configuration
+
+### client
+
+A livepeer [`Client`](/docs/client) instance that consists of configuration options. Defaults to `createClient()`.
+
+```tsx {8-12,16}
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
+
+const { provider, webSocketProvider } = configureChains(defaultChains, [
+  publicProvider(),
+]);
+
+const client = createClient({
+  provider,
+  webSocketProvider,
+});
+
+function App() {
+  return (
+    <LivepeerConfig client={client}>
+      <YourRoutes />
+    </LivepeerConfig>
+  );
+}
+```

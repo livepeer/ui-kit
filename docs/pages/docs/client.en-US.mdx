@@ -1,21 +1,21 @@
 ---
 title: 'Client'
-description: 'The wagmi Client is a framework agnostic (Vanilla JS) client that manages wallet connection state and configuration, such as: auto-connection, connectors, and ethers providers.'
+description: 'The livepeer Client is a framework agnostic client that manages wallet connection state and configuration, such as: auto-connection, connectors, and ethers providers.'
 ---
 
 # Client
 
-The wagmi `Client` is a framework agnostic (Vanilla JS) client that manages wallet connection state and configuration, such as: auto-connection, connectors, and ethers providers.
+The livepeer `Client` is a framework agnostic client that manages wallet connection state and configuration, such as: auto-connection, connectors, and ethers providers.
 
 ```ts
-import { createClient } from 'wagmi';
+import { createClient } from 'livepeer';
 ```
 
 ## Usage
 
 ```ts
-import { createClient, configureChains, defaultChains } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
 
 const { provider, webSocketProvider } = configureChains(defaultChains, [
   publicProvider(),
@@ -34,8 +34,8 @@ const client = createClient({
 Enables reconnecting to last used connector on mount. Defaults to `false`.
 
 ```ts {9}
-import { createClient, configureChains, defaultChains } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
 
 const { provider } = configureChains(defaultChains, [publicProvider()]);
 
@@ -50,10 +50,10 @@ const client = createClient({
 Connectors used for linking accounts. Defaults to `[new InjectedConnector()]`.
 
 ```ts {9-17}
-import { createClient, configureChains, defaultChains } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { InjectedConnector } from 'wagmi/connectors/injected';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
+import { InjectedConnector } from 'livepeer/connectors/injected';
+import { WalletConnectConnector } from 'livepeer/connectors/walletConnect';
 
 const { chains, provider } = configureChains(defaultChains, [publicProvider()]);
 
@@ -76,8 +76,8 @@ const client = createClient({
 ethers [interface](https://docs.ethers.io/v5/api/providers) for connecting to the Ethereum network.
 
 ```ts {9}
-import { createClient, configureChains, defaultChains } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
 
 const { provider } = configureChains(defaultChains, [publicProvider()]);
 
@@ -91,8 +91,8 @@ const client = createClient({
 The default strategy to persist and cache data. Defaults to `window.localStorage`.
 
 ```ts {10}
-import { createClient, configureChains, defaultChains } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
 
 const { provider } = configureChains(defaultChains, [publicProvider()]);
 
@@ -107,8 +107,8 @@ const client = createClient({
 ethers WebSocket interface for connecting to the Ethereum network. If you provide a WebSocket provider, it will be used instead of polling in certain instances.
 
 ```ts {10}
-import { createClient, configureChains, defaultChains } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { createClient, configureChains, defaultChains } from 'livepeer';
+import { publicProvider } from 'livepeer/providers/public';
 
 const { provider, webSocketProvider } = configureChains(defaultChains, [
   publicProvider(),

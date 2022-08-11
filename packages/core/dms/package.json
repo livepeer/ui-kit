@@ -1,4 +1,0 @@
-{
-  "main": "dist/livepeer-dms.cjs.js",
-  "module": "dist/livepeer-dms.esm.js"
-}

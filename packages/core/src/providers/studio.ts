@@ -1,15 +1,15 @@
-import { dms } from '../constants';
-import { BaseDmsProvider, DmsProviderFn } from './base';
+import { lpms } from '../constants';
+import { BaseLPMSProvider, LPMSProviderFn } from './base';
 
-export type StudioDmsProviderConfig = {
+export type StudioLPMSProviderConfig = {
   apiKey?: string;
 };
 
-export class StudioDmsProvider extends BaseDmsProvider {
+export class StudioLPMSProvider extends BaseLPMSProvider {
   readonly _apiKey: string;
 
   constructor(apiKey: string) {
-    super(dms.studio);
+    super(lpms.studio);
 
     this._apiKey = apiKey;
   }
@@ -17,13 +17,11 @@ export class StudioDmsProvider extends BaseDmsProvider {
 
 export function studioProvider({
   apiKey,
-}: StudioDmsProviderConfig = {}): DmsProviderFn<StudioDmsProvider> {
+}: StudioLPMSProviderConfig = {}): LPMSProviderFn<StudioLPMSProvider> {
   return () => {
     if (!apiKey) return null;
     return {
-      provider: () => {
-        return new StudioDmsProvider(apiKey);
-      },
+      provider: new StudioLPMSProvider(apiKey),
     };
   };
 }

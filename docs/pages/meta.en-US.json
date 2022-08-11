@@ -8,8 +8,23 @@
     "title": "Docs",
     "type": "page"
   },
-  "examples": {
-    "title": "Examples",
-    "type": "page"
+  "livepeer_link": {
+    "title": "Livepeer ↗",
+    "href": "https://docs.livepeer.org",
+    "type": "page",
+    "newWindow": true
+  },
+  "404": {
+    "type": "page",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "500": {
+    "type": "page",
+    "theme": {
+      "timestamp": false,
+      "layout": "full"
+    }
   }
 }

@@ -1,3 +1,3 @@
-export { configureDms } from './configureDms';
+export { configureLPMS } from './configureLPMS';
 
 export { warn } from './warn';

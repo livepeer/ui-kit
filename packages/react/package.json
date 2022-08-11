@@ -36,7 +36,7 @@
     "@tanstack/query-sync-storage-persister": "4.0.10",
     "@tanstack/react-query": "4.0.10",
     "@tanstack/react-query-persist-client": "4.0.10",
-    "livepeer": "^0.0.1",
+    "livepeer": "^0.1.0",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {

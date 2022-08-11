@@ -1,13 +1,8 @@
 {
   "getting-started": "Getting Started",
-  "comparison": "Library Comparison",
-  "migration-guide": "Migration Guide",
   "client": "Client",
-  "WagmiConfig": "WagmiConfig",
+  "LivepeerConfig": "LivepeerConfig",
   "providers": "Providers",
-  "connectors": "Connectors",
   "hooks": "Hooks",
-  "prepare-hooks": "Prepare Hooks",
-  "constants": "Constants",
-  "deprecated-hooks": "Deprecated Hooks"
+  "constants": "Constants"
 }

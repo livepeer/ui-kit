@@ -1,19 +1,19 @@
-import { Dms, DmsProvider } from '../types';
+import { LPMSProvider, LPMediaServer } from '../types';
 
-export abstract class BaseDmsProvider implements DmsProvider {
-  /** DMS config */
-  readonly _dms: Dms;
+export abstract class BaseLPMSProvider implements LPMSProvider {
+  /** LPMS config */
+  readonly _lpms: LPMediaServer;
 
-  constructor(dms: Dms) {
-    this._dms = dms;
+  constructor(lpms: LPMediaServer) {
+    this._lpms = lpms;
   }
 
-  getDms(): Dms {
-    return this._dms;
+  getLPMediaServer(): LPMediaServer {
+    return this._lpms;
   }
 }
 
-export type DmsProviderFn<TProvider extends DmsProvider = BaseDmsProvider> =
+export type LPMSProviderFn<TProvider extends LPMSProvider = BaseLPMSProvider> =
   () => {
-    provider: () => TProvider;
+    provider: TProvider;
   } | null;

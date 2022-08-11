@@ -30,7 +30,7 @@ const client = createClient({
     new CoinbaseWalletConnector({
       chains,
       options: {
-        appName: 'wagmi',
+        appName: 'livepeer',
       },
     }),
     new WalletConnectConnector({

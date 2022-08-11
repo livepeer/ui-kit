@@ -1,0 +1,35 @@
+---
+title: 'Livepeer Media Server Providers'
+description: 'Chain and network information for use with hooks, connectors, and anywhere else you need in your app.'
+---
+
+# Livepeer Media Server Providers
+
+Chain and network information for use with hooks, connectors, and anywhere else you need in your app.
+
+## lpms
+
+Object containing lpms by name. Useful for creating lists of specific providers, like `defaultLpms`.
+
+```ts
+import { lpms } from 'livepeer';
+
+const defaultLpms = [lpms.studio];
+```
+
+You can also import individual lpms from the tree shakeable `livepeer/lpms` entrypoint:
+
+```ts
+import { studio } from 'livepeer/lpms';
+```
+
+## Default Lists
+
+livepeer has built-in LPMS groups for convenience:
+
+```ts
+import {
+  allLPMS,
+  defaultLPMS, // defaults to studio
+} from 'livepeer';
+```

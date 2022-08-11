@@ -1,45 +1,45 @@
 ---
 title: 'Gettings Started'
-description: 'Get started building with wagmi!'
+description: 'Get started building with livepeer!'
 ---
 
-import Callout from 'nextra-theme-docs/callout'
+import { Callout, Tabs, Tab} from 'nextra-theme-docs'
 
 # Getting Started
 
 ## Installation
 
-Install wagmi and its ethers peer dependency.
+Install `livepeer` and `@livepeer/react`, and the `wagmi` and `ethers` peer dependencies.
 
 {/* prettier-ignore-start */}
-<Nextra.Tabs items={['npm', 'pnpm', 'yarn']}>
-  <Nextra.Tab>
+<Tabs items={['npm', 'pnpm', 'yarn']}>
+  <Tab>
 ```bash
-npm i wagmi ethers
+npm i livepeer @livepeer/react wagmi ethers
 ```
-  </Nextra.Tab>
-  <Nextra.Tab>
+  </Tab>
+  <Tab>
 ```bash
-pnpm i wagmi ethers
+pnpm i livepeer @livepeer/react wagmi ethers
 ```
-  </Nextra.Tab>
-  <Nextra.Tab>
+  </Tab>
+  <Tab>
 ```bash
-yarn add wagmi ethers
+yarn add livepeer @livepeer/react wagmi ethers
 ```
-  </Nextra.Tab>
-</Nextra.Tabs>
+  </Tab>
+</Tabs>
 {/* prettier-ignore-end */}
 
 ## Quick Start
 
 ### 1. Configure chains
 
-First, configure your desired chains to be used by wagmi, and the providers you want to use.
+First, configure your desired chains to be used by livepeer, and the providers you want to use.
 
 ```tsx
-import { configureChains, chain } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
+import { configureChains, chain } from 'livepeer'
+import { publicProvider } from 'livepeer/providers/public'
 
 const { chains, provider, webSocketProvider } = configureChains(
   [chain.mainnet, chain.polygon],
@@ -51,18 +51,18 @@ Note: In a production app, it is not recommended to only pass `publicProvider` t
 
 [Read more about configuring chains](/docs/providers/configuring-chains)
 
-### 2. Create a wagmi client
+### 2. Create a livepeer client
 
-Next, create a wagmi `Client` instance using [`createClient`](/docs/client), and pass the result from `configureChains` to it.
+Next, create a livepeer `Client` instance using [`createClient`](/docs/client), and pass the result from `configureChains` to it.
 
 ```tsx {14-18}
 import {
-  WagmiConfig,
+  LivepeerConfig,
   createClient,
   configureChains,
   defaultChains,
-} from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
+} from 'livepeer'
+import { publicProvider } from 'livepeer/providers/public'
 
 const { chains, provider, webSocketProvider } = configureChains(
   [chain.mainnet, chain.polygon],
@@ -78,9 +78,9 @@ const client = createClient({
 
 [Read more about client configuration](/docs/client)
 
-### 3. Wrap app with `WagmiConfig`
+### 3. Wrap app with `LivepeerConfig`
 
-Finally, wrap your app with the [`WagmiConfig`](/docs/WagmiConfig) component, passing `client` to it.
+Finally, wrap your app with the [`LivepeerConfig`](/docs/LivepeerConfig) component, passing `client` to it.
 
 ```tsx {9-11}
 const client = createClient({
@@ -91,20 +91,20 @@ const client = createClient({
 
 function App() {
   return (
-    <WagmiConfig client={client}>
+    <LivepeerConfig client={client}>
       <YourRoutes />
-    </WagmiConfig>
+    </LivepeerConfig>
   )
 }
 ```
 
 ### 4. You're good to go!
 
-Use hooks! Every component inside the `WagmiConfig` is now set up to use the wagmi hooks.
+Use hooks! Every component inside the `LivepeerConfig` is now set up to use the livepeer hooks.
 
 ```tsx {5,6,7-9}
-import { useAccount, useConnect, useEnsName } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
+import { useAccount, useConnect, useEnsName } from 'livepeer'
+import { InjectedConnector } from 'livepeer/connectors/injected'
 
 function Profile() {
   const { address, isConnected } = useAccount()
@@ -118,4 +118,4 @@ function Profile() {
 }
 ```
 
-Want to learn more? Check out the [examples](/examples/connect-wallet) to learn how to use wagmi in real-world scenarios or continue on reading the documentation.
+Want to learn more? Check out the [examples](/examples/connect-wallet) to learn how to use livepeer in real-world scenarios or continue on reading the documentation.

@@ -14,5 +14,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "eslint.packageManager": "pnpm"
+  "eslint.packageManager": "pnpm",
+  "cSpell.words": ["LPMS"]
 }

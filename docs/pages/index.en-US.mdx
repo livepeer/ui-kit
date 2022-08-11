@@ -1,70 +1,73 @@
 ---
-title: 'wagmi: React Hooks for Ethereum'
+title: 'livepeer.js: Livepeer for JS'
+searchable: false
 ---
 
+import { Tabs, Tab } from 'nextra-theme-docs';
 import { Header } from '../components/docs'
 
 <Header />
 
-**wagmi** is a collection of React Hooks containing everything you need to start working with Ethereum. wagmi makes it easy to "Connect Wallet," display ENS and balance information, sign messages, interact with contracts, and much more — all with caching, request deduplication, and persistence.
+**livepeer** is a collection of React Hooks containing everything you need to start working with Ethereum. livepeer makes it easy to "Connect Wallet," display ENS and balance information, sign messages, interact with contracts, and much more — all with caching, request deduplication, and persistence.
 
 {/* prettier-ignore-start */}
+
 <div className="max-w-xs mx-auto mt-5 mb-8 text-center install">
-  <Nextra.Tabs items={['npm', 'pnpm', 'yarn']}>
-    <Nextra.Tab>
+  <Tabs items={['npm', 'pnpm', 'yarn']}>
+    <Tab>
 ```bash
-npm i wagmi ethers
+npm i livepeer @livepeer/react wagmi ethers
 ```
-    </Nextra.Tab>
-    <Nextra.Tab>
+    </Tab>
+    <Tab>
 ```bash
-pnpm i wagmi ethers
+pnpm i livepeer @livepeer/react wagmi ethers
 ```
-    </Nextra.Tab>
-    <Nextra.Tab>
+    </Tab>
+    <Tab>
 ```bash
-yarn add wagmi ethers
+yarn add livepeer @livepeer/react wagmi ethers
 ```
-    </Nextra.Tab>
-  </Nextra.Tabs>
+</Tab>
+  </Tabs>
 </div>
 {/* prettier-ignore-end */}
 
 <div className="mb-20 text-center">
-  [Get Started](/docs/getting-started) · [Examples](/examples/connect-wallet) ·
+  [Get Started](/docs/getting-started) ·
   [GitHub Repository](https://github.com/livepeer/livepeer.js)
 </div>
 
 ## Overview
 
 ```tsx
-import { WagmiConfig, createClient } from 'wagmi'
-import { getDefaultProvider } from 'ethers'
+import { LivepeerConfig, createClient } from 'livepeer';
+import { getDefaultProvider } from 'ethers';
 
 const client = createClient({
   autoConnect: true,
   provider: getDefaultProvider(),
-})
+});
 
 function App() {
   return (
-    <WagmiConfig client={client}>
+    <LivepeerConfig client={client}>
       <Profile />
-    </WagmiConfig>
-  )
+    </LivepeerConfig>
+  );
 }
 ```
 
 ```tsx
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
+import { useAccount, useConnect, useDisconnect } from 'livepeer';
+import { InjectedConnector } from 'livepeer/connectors/injected';
 
 function Profile() {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useAccount();
   const { connect } = useConnect({
     connector: new InjectedConnector(),
-  })
-  const { disconnect } = useDisconnect()
+  });
+  const { disconnect } = useDisconnect();
 
   if (isConnected)
     return (
@@ -72,20 +75,20 @@ function Profile() {
         Connected to {address}
         <button onClick={() => disconnect()}>Disconnect</button>
       </div>
-    )
-  return <button onClick={() => connect()}>Connect Wallet</button>
+    );
+  return <button onClick={() => connect()}>Connect Wallet</button>;
 }
 ```
 
-In this example, we create a wagmi `Client` and pass it to the `WagmiConfig` React Context. The client is set up to use the ethers Default Provider and automatically connect to previously connected wallets.
+In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the ethers Default Provider and automatically connect to previously connected wallets.
 
 Next, we use the `useConnect` hook to connect an injected wallet (e.g. MetaMask) to the app. Finally, we show the connected account's address with `useAccount` and allow them to disconnect with `useDisconnect`.
 
-We've only scratched the surface for what you can do with wagmi!
+We've only scratched the surface for what you can do with livepeer!
 
 ## Features
 
-wagmi supports all these features out-of-the-box:
+livepeer supports all these features out-of-the-box:
 
 - 20+ hooks for working with wallets, ENS, contracts, transactions, signing, etc.
 - Built-in wallet connectors for MetaMask, WalletConnect, Coinbase Wallet, and Injected
@@ -98,17 +101,7 @@ wagmi supports all these features out-of-the-box:
 
 ## Community
 
-Check out the following places for more wagmi-related content:
+Check out the following places for more livepeer-related content:
 
-- Follow [@awkweb](https://twitter.com/awkweb) and [@wagmi_sh](https://twitter.com/wagmi_sh) on Twitter for project updates
+- Follow [@livepeer](https://twitter.com/livepeer) on Twitter for project updates
 - Join the [discussions on GitHub](https://github.com/livepeer/livepeer.js/discussions)
-- Share [your project/organization](https://github.com/livepeer/livepeer.js/discussions/201) that uses wagmi
-- Browse the [awesome-wagmi](https://github.com/wagmi-dev/awesome-wagmi) list of awesome projects and resources
-
-## Support
-
-Help support future development and make wagmi a sustainable open-source project. Thank you 🙏
-
-- [GitHub Sponsors](https://github.com/sponsors/tmm?metadata_campaign=docs_support)
-- [Gitcoin Grant](https://gitcoin.co/grants/4493/wagmi-react-hooks-library-for-ethereum)
-- [wagmi-dev.eth](https://etherscan.io/enslookup-search?search=wagmi-dev.eth)

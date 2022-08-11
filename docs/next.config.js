@@ -1,8 +1,9 @@
 const withNextra = require('nextra')({
   theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.js',
-  unstable_contentDump: true,
-  unstable_flexsearch: true,
+  themeConfig: './theme.config.tsx',
+  unstable_flexsearch: {
+    codeblocks: true,
+  },
   unstable_staticImage: true,
 });
 
@@ -13,24 +14,6 @@ const config = {
     defaultLocale: 'en-US',
   },
   reactStrictMode: true,
-  redirects: () => {
-    return [
-      {
-        source: '/examples',
-        destination: '/examples/connect-wallet',
-        statusCode: 302,
-      },
-      {
-        source: '/guides/:path*',
-        destination: '/examples/:path*',
-        permanent: true,
-      },
-    ];
-  },
-  typescript: {
-    // Disable type checking since eslint handles this
-    ignoreBuildErrors: true,
-  },
 };
 
 if (process.env.NODE_ENV === 'development') {

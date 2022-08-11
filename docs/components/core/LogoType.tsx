@@ -2,7 +2,7 @@ type Props = {
   title?: string;
 };
 
-export function LogoType({ title = 'wagmi logo' }: Props) {
+export function LogoType({ title = 'livepeer logo' }: Props) {
   return (
     <svg
       viewBox="0 0 561 132"
