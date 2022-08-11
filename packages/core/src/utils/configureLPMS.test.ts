@@ -13,7 +13,7 @@ import {
 
 import { defaultLPMS } from '../constants';
 import { studioProvider } from '../providers/studio';
-import { LPMediaServer } from '../types';
+import { LPMS } from '../types';
 
 import { configureLPMS } from './configureLPMS';
 
@@ -24,9 +24,9 @@ function getHandlers({
   listener,
   baseUrl,
 }: {
-  lpms: LPMediaServer[];
+  lpms: LPMS[];
   listener: Mock;
-  baseUrl: (LPMS: LPMediaServer) => string;
+  baseUrl: (LPMS: LPMS) => string;
 }) {
   const handlers = lpms.map((lpms) => {
     const urlEndpoint = baseUrl(lpms);
@@ -71,8 +71,7 @@ describe('configureChains', () => {
           studioProvider({ apiKey: defaultStudioApiKey }),
         ]);
 
-        expect(providers.map((p) => p?.getLPMediaServer()))
-          .toMatchInlineSnapshot(`
+        expect(providers.map((p) => p?.getLPMS())).toMatchInlineSnapshot(`
           {
             name: 'Livepeer Studio',
             url: 'https://livepeer.studio',

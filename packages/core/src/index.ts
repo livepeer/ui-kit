@@ -1,6 +1,6 @@
 export { getContract, getDmsProvider } from './actions';
 export type { GetContractArgs, GetDmsProviderResult } from './actions';
-export { Client, createClient } from './client';
+export { Client, createLivepeerClient } from './client';
 export type { ClientConfig } from './client';
 export {
   allLPMS,
@@ -30,5 +30,5 @@ export type { LPMSName } from './constants';
 export { UserRejectedRequestError } from './errors';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
-export type { Address, LPMSProvider, LPMediaServer, Hash } from './types';
+export type { Address, LPMSProvider, LPMS, Hash } from './types';
 export { configureLPMS } from './utils';

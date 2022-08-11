@@ -1,3 +1,6 @@
+// import { LivepeerConfig } from '@livepeer/react';
+// import { configureLPMS, createLivepeerClient } from 'livepeer';
+// import { studioProvider } from 'livepeer/providers/studio';
 import * as React from 'react';
 
 import {
@@ -50,6 +53,12 @@ const client = createClient({
   provider,
   webSocketProvider,
 });
+
+// const { provider: livepeerProvider } = configureLPMS([studioProvider()]);
+
+// const livepeerClient = createLivepeerClient({
+//   provider: livepeerProvider,
+// });
 
 type Props = {
   children?: React.ReactNode;

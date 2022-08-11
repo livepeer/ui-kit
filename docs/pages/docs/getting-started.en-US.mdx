@@ -33,47 +33,33 @@ yarn add livepeer @livepeer/react wagmi ethers
 
 ## Quick Start
 
-### 1. Configure chains
+### 1. Configure providers
 
-First, configure your desired chains to be used by livepeer, and the providers you want to use.
+First, configure your desired providers to be used by livepeer.
 
 ```tsx
-import { configureChains, chain } from 'livepeer'
-import { publicProvider } from 'livepeer/providers/public'
+import { configureLPMS } from 'livepeer';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [publicProvider()],
-)
+const { provider } = configureLPMS(
+  [studioProvider()],
+);
 ```
 
-Note: In a production app, it is not recommended to only pass `publicProvider` to `configureChains` as you will probably face rate-limiting on the public provider endpoints. It is recommended to also pass an [`alchemyProvider`](/docs/providers/alchemy) or [`infuraProvider`](/docs/providers/infura) as well.
+Note: In a production app, it is recommended to configure an API key for the `studioProvider` as you will face rate-limiting.
 
-[Read more about configuring chains](/docs/providers/configuring-chains)
+[Read more about configuring providers](/docs/providers/configuring-providers)
 
 ### 2. Create a livepeer client
 
 Next, create a livepeer `Client` instance using [`createClient`](/docs/client), and pass the result from `configureChains` to it.
 
-```tsx {14-18}
-import {
-  LivepeerConfig,
-  createClient,
-  configureChains,
-  defaultChains,
-} from 'livepeer'
-import { publicProvider } from 'livepeer/providers/public'
+```tsx
+import { createLivepeerClient } from 'livepeer';
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [publicProvider()],
-)
-
-const client = createClient({
-  autoConnect: true,
-  provider,
-  webSocketProvider,
-})
+const client = createLivepeerClient({
+  provider
+});
 ```
 
 [Read more about client configuration](/docs/client)
@@ -82,17 +68,13 @@ const client = createClient({
 
 Finally, wrap your app with the [`LivepeerConfig`](/docs/LivepeerConfig) component, passing `client` to it.
 
-```tsx {9-11}
-const client = createClient({
-  autoConnect: true,
-  provider,
-  webSocketProvider,
-})
+```tsx
+import { LivepeerConfig } from 'livepeer';
 
 function App() {
   return (
     <LivepeerConfig client={client}>
-      <YourRoutes />
+      <SomeComponents />
     </LivepeerConfig>
   )
 }
@@ -102,7 +84,7 @@ function App() {
 
 Use hooks! Every component inside the `LivepeerConfig` is now set up to use the livepeer hooks.
 
-```tsx {5,6,7-9}
+```tsx
 import { useAccount, useConnect, useEnsName } from 'livepeer'
 import { InjectedConnector } from 'livepeer/connectors/injected'
 

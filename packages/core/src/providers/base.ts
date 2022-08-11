@@ -1,14 +1,14 @@
-import { LPMSProvider, LPMediaServer } from '../types';
+import { LPMS, LPMSProvider } from '../types';
 
 export abstract class BaseLPMSProvider implements LPMSProvider {
   /** LPMS config */
-  readonly _lpms: LPMediaServer;
+  readonly _lpms: LPMS;
 
-  constructor(lpms: LPMediaServer) {
+  constructor(lpms: LPMS) {
     this._lpms = lpms;
   }
 
-  getLPMediaServer(): LPMediaServer {
+  getLPMS(): LPMS {
     return this._lpms;
   }
 }
