@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { setupClient } from '../../../test';
-import { getDmsProvider } from './getDmsProvider';
+import { getLPMSProvider } from './getLPMSProvider';
 
 describe('getProvider', () => {
   it('default', async () => {
     setupClient();
-    expect(getDmsProvider()).toMatchInlineSnapshot(`"<Provider />"`);
+    expect(getLPMSProvider()).toMatchInlineSnapshot(`"<Provider />"`);
   });
 });

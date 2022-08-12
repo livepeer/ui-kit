@@ -22,10 +22,9 @@
 
 ## Features
 
-- 🚀 20+ hooks for working with wallets, ENS, contracts, transactions, signing, etc.
-- 💼 Built-in wallet connectors for MetaMask, WalletConnect, Coinbase Wallet, and Injected
+- 🚀 Hooks for working with LPMS (Livepeer Media Servers) and the Livepeer protocol
 - 👟 Caching, request deduplication, multicall, batching, and persistence
-- 🌀 Auto-refresh data on wallet, block, and network changes
+- 🌀 Auto-refresh data on network changes
 - 🦄 TypeScript ready
 - 🌳 Test suite running against forked Ethereum network
 
@@ -33,19 +32,15 @@
 
 ## Documentation
 
-For full documentation and examples, visit [livepeer.org](https://livepeer.org).
+For full documentation and examples, visit [js.livepeer.org](https://js.livepeer.org).
 
 ## Installation
 
 Install livepeer and its ethers peer dependency.
 
 ```bash
-npm install livepeer wagmi ethers
+npm install livepeer @livepeer/react wagmi ethers
 ```
-
-## Quick Start
-
-`TODO`
 
 ## Community
 

@@ -1,1 +1,1 @@
-export { useProvider } from './useProvider';
+export { useLPMSProvider } from './useLPMSProvider';

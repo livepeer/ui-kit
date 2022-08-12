@@ -1,1 +1,1 @@
-export { useProvider } from './providers';
+export { useLPMSProvider } from './providers';

@@ -5,10 +5,36 @@ description: 'All Livepeer ABIs available via import.'
 
 # Application Binary Interface (ABI)
 
-All Livepeer ABIs available via import.
+All Livepeer ABIs are available via import.
 
-## Controller
+## Protocol
 
-```ts
-import { ControllerABI } from 'livepeer';
+```tsx
+import {
+  BondingManagerABI,
+  ControllerABI,
+  LivepeerTokenABI,
+  LivepeerTokenFaucetABI,
+  MerkleSnapshotABI,
+  MinterABI,
+  PollABI,
+  PollCreatorABI,
+  RoundsManagerABI,
+  ServiceRegistryABI,
+  TicketBrokerABI,
+} from 'livepeer';
+```
+
+## Bridging
+
+```tsx
+import {
+  ArbRetryableTxABI,
+  InboxABI,
+  L1BondingManagerABI,
+  L1MigratorABI,
+  L2LPTGatewayABI,
+  L2MigratorABI,
+  NodeInterfaceABI,
+} from 'livepeer';
 ```

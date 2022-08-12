@@ -1,1 +1,15 @@
-export { getContract, type GetContractArgs } from './getContract';
+export {
+  getBondingManager,
+  getContractAddressFromController,
+  getController,
+  getL1Migrator,
+  getL2Migrator,
+  getLivepeerToken,
+  getLivepeerTokenFaucet,
+  getMerkleSnapshot,
+  getMinter,
+  getPollCreator,
+  getRoundsManager,
+  getServiceRegistry,
+  getTicketBroker,
+} from './getContract';

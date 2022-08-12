@@ -8,13 +8,13 @@ description: 'The LivepeerConfig component manages configuration for all hooks u
 The `LivepeerConfig` component manages configuration for all hooks using [React Context](https://reactjs.org/docs/context.html).
 
 ```ts
-import { LivepeerConfig } from 'livepeer';
+import { LivepeerConfig } from '@livepeer/react';
 ```
 
 ## Usage
 
 ```tsx
-import { LivepeerConfig } from 'livepeer';
+import { LivepeerConfig } from '@livepeer/react';
 
 function App() {
   return (
@@ -29,19 +29,14 @@ function App() {
 
 ### client
 
-A livepeer [`Client`](/docs/client) instance that consists of configuration options. Defaults to `createClient()`.
+A livepeer [`Client`](/docs/client) instance that consists of configuration options. Required to connect to a provider.
 
-```tsx {8-12,16}
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
+```tsx {4-6,10}
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { provider, webSocketProvider } = configureChains(defaultChains, [
-  publicProvider(),
-]);
-
-const client = createClient({
-  provider,
-  webSocketProvider,
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
 
 function App() {

@@ -4,7 +4,7 @@ searchable: false
 ---
 
 import { Tabs, Tab } from 'nextra-theme-docs';
-import { Header } from '../components/docs'
+import { Header } from '../components/docs';
 
 <Header />
 
@@ -13,7 +13,8 @@ import { Header } from '../components/docs'
   Livepeer Media Server (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM
   management.
 
-  Instantly build a decentralized app with the Livepeer protocol.
+Instantly build a decentralized video app with the Livepeer protocol.
+
 </div>
 
 {/* prettier-ignore-start */}
@@ -40,49 +41,36 @@ yarn add livepeer @livepeer/react wagmi ethers
 {/* prettier-ignore-end */}
 
 <div className="mb-20 text-center">
-  [Get Started](/docs/getting-started) ·
-  [GitHub Repository](https://github.com/livepeer/livepeer.js)
+  [Get Started](/docs/getting-started) · [GitHub
+  Repository](https://github.com/livepeer/livepeer.js)
 </div>
 
 ## Overview
 
 ```tsx
-import { LivepeerConfig, createClient } from 'livepeer';
-import { getDefaultProvider } from 'ethers';
+import { createReactClient, LivepeerConfig } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const client = createClient({
-  autoConnect: true,
-  provider: getDefaultProvider(),
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
 
 function App() {
   return (
     <LivepeerConfig client={client}>
-      <Profile />
+      <SomeComponents />
     </LivepeerConfig>
   );
 }
 ```
 
 ```tsx
-import { useAccount, useConnect, useDisconnect } from 'livepeer';
-import { InjectedConnector } from 'livepeer/connectors/injected';
+import { useLPMSProvider } from '@livepeer/react';
 
-function Profile() {
-  const { address, isConnected } = useAccount();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
-  const { disconnect } = useDisconnect();
+function LivepeerMediaServer() {
+  const lpmsProvider = useLPMSProvider();
 
-  if (isConnected)
-    return (
-      <div>
-        Connected to {address}
-        <button onClick={() => disconnect()}>Disconnect</button>
-      </div>
-    );
-  return <button onClick={() => connect()}>Connect Wallet</button>;
+  return <div>Using {lpmsProvider.getLPMS().name}</div>;
 }
 ```
 
@@ -94,12 +82,11 @@ We've only scratched the surface for what you can do with livepeer!
 
 ## Features
 
-livepeer supports all these features out-of-the-box:
+livepeer.js supports all these features out-of-the-box:
 
-- 20+ hooks for working with wallets, ENS, contracts, transactions, signing, etc.
-- Built-in wallet connectors for MetaMask, WalletConnect, Coinbase Wallet, and Injected
+- Hooks for working with Livepeer Media Servers and the Livepeer protocol
 - Caching, request deduplication, multicall, batching, and persistence
-- Auto-refresh data on wallet, block, and network changes
+- Auto-refresh data on network changes
 - TypeScript ready
 - Test suite running against forked Ethereum network
 

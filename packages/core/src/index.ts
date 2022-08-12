@@ -1,14 +1,35 @@
-export { getContract, getDmsProvider } from './actions';
-export type { GetContractArgs, GetDmsProviderResult } from './actions';
+export {
+  getBondingManager,
+  getContractAddressFromController,
+  getController,
+  getL1Migrator,
+  getL2Migrator,
+  getLivepeerToken,
+  getLivepeerTokenFaucet,
+  getLPMSProvider,
+  getMerkleSnapshot,
+  getMinter,
+  getPollCreator,
+  getRoundsManager,
+  getServiceRegistry,
+  getTicketBroker,
+  watchLPMSProvider,
+} from './actions';
+export type {
+  GetLPMSProviderResult,
+  WatchLPMSProviderCallback,
+} from './actions';
 export { Client, createClient } from './client';
 export type { ClientConfig } from './client';
 export {
+  allChainId,
   allLPMS,
+  arbitrumOneAddress,
+  arbitrumRinkebyAddress,
   ArbRetryableTxABI,
   BondingManagerABI,
   ControllerABI,
   defaultLPMS,
-  defaultStudioApiKey,
   InboxABI,
   L1BondingManagerABI,
   L1MigratorABI,
@@ -17,19 +38,80 @@ export {
   LivepeerTokenABI,
   LivepeerTokenFaucetABI,
   lpms,
+  mainnetAddress,
+  mainnetChainId,
   MerkleSnapshotABI,
   MinterABI,
   NodeInterfaceABI,
   PollABI,
   PollCreatorABI,
+  rinkebyAddress,
   RoundsManagerABI,
   ServiceRegistryABI,
   studio,
+  testnetChainId,
   TicketBrokerABI,
 } from './constants';
-export type { LPMSName } from './constants';
+export type {
+  L1Address,
+  L1LivepeerChain,
+  L1LivepeerChainId,
+  L2Address,
+  L2LivepeerChain,
+  L2LivepeerChainId,
+  LivepeerAddress,
+  LivepeerChain,
+  LivepeerChainId,
+  LPMSName,
+  MainnetLivepeerChain,
+  MainnetLivepeerChainId,
+  TestnetLivepeerChain,
+  TestnetLivepeerChainId,
+} from './constants';
 export { UserRejectedRequestError } from './errors';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
-export type { Address, Hash, LPMS, LPMSProvider } from './types';
-export { configureLPMS } from './utils';
+export {
+  ArbRetryableTxFactory,
+  BondingManagerFactory,
+  ControllerFactory,
+  InboxFactory,
+  L1BondingManagerFactory,
+  L1MigratorFactory,
+  L2LPTGatewayFactory,
+  L2MigratorFactory,
+  LivepeerTokenFactory,
+  LivepeerTokenFaucetFactory,
+  MerkleSnapshotFactory,
+  MinterFactory,
+  NodeInterfaceFactory,
+  PollCreatorFactory,
+  PollFactory,
+  RoundsManagerFactory,
+  ServiceRegistryFactory,
+  TicketBrokerFactory,
+} from './types';
+export type {
+  Address,
+  ArbRetryableTx,
+  BondingManager,
+  Controller,
+  Hash,
+  Inbox,
+  L1BondingManager,
+  L1Migrator,
+  L2LPTGateway,
+  L2Migrator,
+  LivepeerToken,
+  LivepeerTokenFaucet,
+  LPMS,
+  LPMSProvider,
+  MerkleSnapshot,
+  Minter,
+  NodeInterface,
+  Poll,
+  PollCreator,
+  RoundsManager,
+  ServiceRegistry,
+  TicketBroker,
+} from './types';

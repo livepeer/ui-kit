@@ -2,16 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import { Client, createClient, getClient } from './client';
 
-import { StudioDmsProvider, studioProvider } from './providers/studio';
+import { studioProvider } from './providers/studio';
 
 import { createStorage } from './storage';
 
-const provider = studioProvider() as unknown as () => StudioDmsProvider;
+const provider = studioProvider();
 
 describe('createClient', () => {
   it('returns client', () => {
     const client = createClient({
-      provider,
+      providers: [provider],
     });
     expect(client).toBeInstanceOf(Client);
   });
@@ -20,7 +20,7 @@ describe('createClient', () => {
     describe('provider', () => {
       it('default', () => {
         const client = createClient({
-          provider,
+          providers: [provider],
         });
         expect(client.provider).toBeDefined();
       });
@@ -29,7 +29,7 @@ describe('createClient', () => {
     describe('storage', () => {
       it('default', () => {
         const client = createClient({
-          provider,
+          providers: [provider],
         });
         expect(client.storage).toMatchInlineSnapshot(`
           {
@@ -42,7 +42,7 @@ describe('createClient', () => {
 
       it('custom', () => {
         const client = createClient({
-          provider,
+          providers: [provider],
           storage: createStorage({
             storage: window.localStorage,
           }),
@@ -66,7 +66,7 @@ describe('getClient', () => {
 
   it('returns created client', () => {
     const client = createClient({
-      provider,
+      providers: [provider],
     });
     expect(getClient()).toEqual(client);
   });

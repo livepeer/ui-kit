@@ -1,117 +1,41 @@
 ---
-title: 'Alchemy'
-description: 'Official livepeer Provider for Alchemy.'
+title: 'Studio'
+description: 'Official LPMS provider for Studio.'
 ---
 
 import { Callout } from 'nextra-theme-docs';
 
-# Alchemy
+# Studio
 
-The `alchemyProvider` configures the chains with Alchemy RPC URLs and also provides an [ethers.js `AlchemyProvider`](https://docs.ethers.io/v5/api/providers/api-providers/#AlchemyProvider).
+The `studioProvider` configures the client with [Livepeer Studio](https://livepeer.studio)
 
-```ts
-import { alchemyProvider } from 'livepeer/providers/alchemy';
+```tsx
+import { studioProvider } from 'livepeer/providers/studio';
 ```
 
 ## Usage
 
-```ts
-import { chain, configureChains } from 'livepeer';
-import { alchemyProvider } from 'livepeer/providers/alchemy';
+```tsx
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [alchemyProvider({ apiKey: 'yourAlchemyApiKey' })],
-);
-```
-
-## Return Value
-
-```ts
-{
-  chains: Chain[],
-  provider: AlchemyProvider,
-  webSocketProvider: AlchemyWebSocketProvider
-}
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+});
 ```
 
 ## Configuration
 
-### apiKey (optional)
+### apiKey
 
-Your Alchemy API key from the [Alchemy Dashboard](https://dashboard.alchemyapi.io/).
+Your [CORS protected](https://docs.livepeer.studio/guides/livestreaming/api-key#cors) Studio API key.
+If no Studio API key is provided, the provider will error.
 
-If no Alchemy API key is provided, it will use the public Alchemy API key. It is recommended to provide your own Alchemy API key to prevent being rate-limited.
+```ts {5}
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-```ts {6}
-import { chain, configureChains } from 'livepeer';
-import { alchemyProvider } from 'livepeer/providers/alchemy';
-
-const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [alchemyProvider({ apiKey: 'yourAlchemyApiKey' })],
-);
-```
-
-### priority (optional)
-
-The priority used for the provider. Lower-value priorities are favoured over higher-value priorities. If multiple providers share the same priority, they are chosen at random.
-
-```ts {10,12}
-import { chain, configureChains } from 'livepeer';
-import { alchemyProvider } from 'livepeer/providers/alchemy';
-import { publicProvider } from 'livepeer/providers/public';
-
-const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [
-    alchemyProvider({
-      apiKey: 'yourAlchemyApiKey',
-      priority: 0,
-    }),
-    publicProvider({ priority: 1 }),
-  ],
-);
-```
-
-### stallTimeout (optional)
-
-The timeout in milliseconds after which another provider will be attempted.
-
-```ts {10}
-import { chain, configureChains } from 'livepeer';
-import { alchemyProvider } from 'livepeer/providers/alchemy';
-import { publicProvider } from 'livepeer/providers/public';
-
-const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [
-    alchemyProvider({
-      apiKey: 'yourAlchemyApiKey',
-      stallTimeout: 1_000,
-    }),
-    publicProvider(),
-  ],
-);
-```
-
-### weight (optional)
-
-The weight a response from this provider provides. This can be used if a given provider is more trusted.
-
-```ts {10,12}
-import { chain, configureChains } from 'livepeer';
-import { alchemyProvider } from 'livepeer/providers/alchemy';
-import { publicProvider } from 'livepeer/providers/public';
-
-const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon],
-  [
-    alchemyProvider({
-      apiKey: 'yourAlchemyApiKey',
-      weight: 1,
-    }),
-    publicProvider({ weight: 2 }),
-  ],
-);
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+});
 ```

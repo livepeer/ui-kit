@@ -4,15 +4,21 @@ import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
 import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';
 
+import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
 const livepeerClient = createReactClient({
-  providers: [studioProvider()],
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
 });
 
 const { provider, webSocketProvider } = configureChains(
   [chain.arbitrum],
-  [publicProvider()],
+  [
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
+    publicProvider(),
+  ],
 );
 
 const wagmiClient = createClient({

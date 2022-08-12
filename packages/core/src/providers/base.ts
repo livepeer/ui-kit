@@ -1,6 +1,6 @@
 import { LPMS, LPMSProvider } from '../types';
 
-export abstract class BaseLPMSProvider implements LPMSProvider {
+export class BaseLPMSProvider implements LPMSProvider {
   /** LPMS config */
   readonly _lpms: LPMS;
 
@@ -14,4 +14,4 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
 }
 
 export type LPMSProviderFn<TProvider extends LPMSProvider = BaseLPMSProvider> =
-  { provider: TProvider };
+  () => TProvider;
