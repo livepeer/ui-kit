@@ -176,6 +176,16 @@ const config: DocsThemeConfig = {
           href="/favicon/safari-pinned-tab.svg"
           color="#000000"
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="true"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+          rel="stylesheet"
+        />
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta httpEquiv="Content-Language" content="en" />
         <meta name="description" content={description} />
@@ -218,6 +228,7 @@ const config: DocsThemeConfig = {
   ],
   gitTimestamp: 'Last updated on',
   unstable_faviconGlyph: '🟩',
+  font: false,
 };
 
 export default config;

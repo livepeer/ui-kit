@@ -1,5 +1,5 @@
 ---
-title: 'Gettings Started'
+title: 'Getting Started'
 description: 'Get started building with livepeer!'
 ---
 
@@ -9,9 +9,8 @@ import { Callout, Tabs, Tab} from 'nextra-theme-docs'
 
 ## Installation
 
-Install `livepeer` and `@livepeer/react`, and the `wagmi` and `ethers` peer dependencies.
+Install `livepeer` and `@livepeer/react`, and their `wagmi` and `ethers` peer dependencies.
 
-{/* prettier-ignore-start */}
 <Tabs items={['npm', 'pnpm', 'yarn']}>
   <Tab>
 ```bash
@@ -29,9 +28,13 @@ yarn add livepeer @livepeer/react wagmi ethers
 ```
   </Tab>
 </Tabs>
-{/* prettier-ignore-end */}
 
 ## Quick Start
+
+<Callout>
+  These steps are written for a React developer building on livepeer.js. For non-React apps, you can use the
+  vanilla JS library similarly to the steps shown for React.
+</Callout>
 
 ### 1. Configure providers
 

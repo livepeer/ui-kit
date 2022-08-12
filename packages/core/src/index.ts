@@ -1,14 +1,14 @@
 export { getContract, getDmsProvider } from './actions';
 export type { GetContractArgs, GetDmsProviderResult } from './actions';
-export { Client, createLivepeerClient } from './client';
+export { Client, createClient } from './client';
 export type { ClientConfig } from './client';
 export {
   allLPMS,
   ArbRetryableTxABI,
   BondingManagerABI,
   ControllerABI,
-  lpms,
   defaultLPMS,
+  defaultStudioApiKey,
   InboxABI,
   L1BondingManagerABI,
   L1MigratorABI,
@@ -16,6 +16,7 @@ export {
   L2MigratorABI,
   LivepeerTokenABI,
   LivepeerTokenFaucetABI,
+  lpms,
   MerkleSnapshotABI,
   MinterABI,
   NodeInterfaceABI,
@@ -30,5 +31,5 @@ export type { LPMSName } from './constants';
 export { UserRejectedRequestError } from './errors';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
-export type { Address, LPMSProvider, LPMS, Hash } from './types';
+export type { Address, Hash, LPMS, LPMSProvider } from './types';
 export { configureLPMS } from './utils';

@@ -7,18 +7,19 @@ import {
 import {
   ClientConfig,
   Client as CoreClient,
-  DmsProvider,
-  createClient as createCoreClient,
+  LPMSProvider,
+  createClient,
 } from 'livepeer';
 
 import { deserialize, serialize } from './utils';
 
-export type CreateClientConfig<TDmsProvider extends DmsProvider = DmsProvider> =
-  ClientConfig<TDmsProvider> & {
-    queryClient?: QueryClient;
-    persister?: Persister | null;
-  };
-export function createClient<TDmsProvider extends DmsProvider>({
+export type CreateReactClientConfig<
+  TLPMSProvider extends LPMSProvider = LPMSProvider,
+> = ClientConfig<TLPMSProvider> & {
+  queryClient?: QueryClient;
+  persister?: Persister | null;
+};
+export function createReactClient<TLPMSProvider extends LPMSProvider>({
   queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -41,8 +42,8 @@ export function createClient<TDmsProvider extends DmsProvider>({
       })
     : undefined,
   ...config
-}: CreateClientConfig<TDmsProvider>) {
-  const client = createCoreClient<TDmsProvider>(config);
+}: CreateReactClientConfig<TLPMSProvider>) {
+  const client = createClient<TLPMSProvider>(config);
   if (persister)
     persistQueryClient({
       queryClient,
@@ -54,5 +55,5 @@ export function createClient<TDmsProvider extends DmsProvider>({
   return Object.assign(client, { queryClient });
 }
 
-export type Client<TDmsProvider extends DmsProvider = DmsProvider> =
-  CoreClient<TDmsProvider> & { queryClient: QueryClient };
+export type Client<TLPMSProvider extends LPMSProvider = LPMSProvider> =
+  CoreClient<TLPMSProvider> & { queryClient: QueryClient };

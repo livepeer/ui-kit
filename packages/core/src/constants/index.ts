@@ -18,5 +18,11 @@ export {
   ServiceRegistryABI,
   TicketBrokerABI,
 } from './abis';
-export { allLPMS, defaultLPMS, lpms, studio } from './lpms';
+export {
+  allLPMS,
+  defaultLPMS,
+  defaultStudioApiKey,
+  lpms,
+  studio,
+} from './lpms';
 export type { LPMSName } from './lpms';

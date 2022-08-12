@@ -1,14 +1,16 @@
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { Mutate, StoreApi, default as create } from 'zustand/vanilla';
 
+import { LPMSProviderFn } from './providers/base';
+
 import { ClientStorage, createStorage, noopStorage } from './storage';
 import { LPMSProvider } from './types';
 
 export type ClientConfig<TLPMSProvider extends LPMSProvider = LPMSProvider> = {
   /** Enables reconnecting to last used provider on init */
   autoConnect?: boolean;
-  /** Interface for connecting to provider */
-  provider: (() => TLPMSProvider) | TLPMSProvider;
+  /** Interface(s) for connecting to provider(s) */
+  providers: LPMSProviderFn<TLPMSProvider>[];
   /**
    * Custom storage for data persistence
    * @default window.localStorage
@@ -18,7 +20,7 @@ export type ClientConfig<TLPMSProvider extends LPMSProvider = LPMSProvider> = {
 
 export type State<TLPMSProvider extends LPMSProvider = LPMSProvider> = {
   error?: Error;
-  provider: TLPMSProvider;
+  providers: TLPMSProvider[];
 };
 
 const storeKey = 'livepeer-store';
@@ -35,12 +37,15 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
   >;
 
   constructor({
-    provider,
+    providers,
     storage = createStorage({
       storage:
         typeof window !== 'undefined' ? window.localStorage : noopStorage,
     }),
   }: ClientConfig<TLPMSProvider>) {
+    if (providers.length === 0) {
+      throw new Error(`No providers in config`);
+    }
     // Create store
     this.store = create(
       subscribeWithSelector(
@@ -49,7 +54,7 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
           [['zustand/subscribeWithSelector', never]]
         >(
           () => ({
-            provider: typeof provider === 'function' ? provider() : provider,
+            providers: providers.map((provider) => provider.provider),
           }),
           {
             name: storeKey,
@@ -61,7 +66,7 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
     );
 
     this.config = {
-      provider,
+      providers,
       storage,
     };
     this.storage = storage;
@@ -71,7 +76,10 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
     return this.store.getState().error;
   }
   get provider() {
-    return this.store.getState().provider;
+    return this.store.getState().providers[0];
+  }
+  get providers() {
+    return this.store.getState().providers;
   }
   get subscribe() {
     return this.store.subscribe;
@@ -101,21 +109,19 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
   }
 }
 
-export let livepeerClient: Client<LPMSProvider>;
+export let client: Client<LPMSProvider>;
 
-export function createLivepeerClient<
-  TLPMSProvider extends LPMSProvider = LPMSProvider,
->(config: ClientConfig<TLPMSProvider>) {
+export function createClient<TLPMSProvider extends LPMSProvider = LPMSProvider>(
+  config: ClientConfig<TLPMSProvider>,
+) {
   const client_ = new Client<TLPMSProvider>(config);
-  livepeerClient = client_ as unknown as Client<LPMSProvider>;
+  client = client_ as unknown as Client<LPMSProvider>;
   return client_;
 }
 
-export function getLivepeerClient<
-  TLPMSProvider extends LPMSProvider = LPMSProvider,
->() {
-  if (!livepeerClient) {
+export function getClient<TLPMSProvider extends LPMSProvider = LPMSProvider>() {
+  if (!client) {
     throw new Error('No livepeer client found.');
   }
-  return livepeerClient as unknown as Client<TLPMSProvider>;
+  return client as unknown as Client<TLPMSProvider>;
 }

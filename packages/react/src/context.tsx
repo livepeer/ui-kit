@@ -1,23 +1,25 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { DmsProvider } from 'livepeer';
+import { AbiCoder } from 'ethers/lib/utils';
+
+import { LPMSProvider } from 'livepeer';
 import * as React from 'react';
 
 import { Client } from './client';
 
-export const Context = React.createContext<Client<DmsProvider> | undefined>(
+export const Context = React.createContext<Client<LPMSProvider> | undefined>(
   undefined,
 );
 
 export type LivepeerConfigProps<
-  TDmsProvider extends DmsProvider = DmsProvider,
+  TLPMSProvider extends LPMSProvider = LPMSProvider,
 > = {
   /** React-decorated Client instance */
-  client: Client<TDmsProvider>;
+  client: Client<TLPMSProvider>;
 };
-export function LivepeerConfig<TDmsProvider extends DmsProvider>({
+export function LivepeerConfig<TLPMSProvider extends LPMSProvider>({
   children,
   client,
-}: React.PropsWithChildren<LivepeerConfigProps<TDmsProvider>>) {
+}: React.PropsWithChildren<LivepeerConfigProps<TLPMSProvider>>) {
   return (
     <Context.Provider value={client as unknown as Client}>
       <QueryClientProvider client={client.queryClient}>
@@ -27,11 +29,11 @@ export function LivepeerConfig<TDmsProvider extends DmsProvider>({
   );
 }
 
-export function useClient<TDmsProvider extends DmsProvider>() {
-  const client = React.useContext(Context) as Client<TDmsProvider>;
-  if (!client)
-    throw new Error(
-      ['`useClient` must be used within `LivepeerConfig`.'].join('\n'),
-    );
+export function useClient<TLPMSProvider extends LPMSProvider>() {
+  const client = React.useContext(Context) as Client<TLPMSProvider>;
+  if (!client) AbiCoder;
+  throw new Error(
+    ['`useClient` must be used within `LivepeerConfig`.'].join('\n'),
+  );
   return client;
 }

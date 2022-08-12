@@ -1,5 +1,8 @@
 import { LPMS } from '../types';
 
+// TODO
+export const defaultStudioApiKey = '12345';
+
 export type LPMSName = 'studio';
 
 export const studio: LPMS = {

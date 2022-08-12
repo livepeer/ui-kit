@@ -24,6 +24,11 @@ body {
     ),
     fixed 0 0 / 20px 20px radial-gradient(#d1d1d1 1px, transparent 0),
     fixed 10px 10px / 20px 20px radial-gradient(#d1d1d1 1px, transparent 0);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+    Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --ifm-font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
 }
 
 .dark body {

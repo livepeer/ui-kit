@@ -1,8 +1,8 @@
-import { lpms } from '../constants';
+import { defaultStudioApiKey, lpms } from '../constants';
 import { BaseLPMSProvider, LPMSProviderFn } from './base';
 
 export type StudioLPMSProviderConfig = {
-  apiKey?: string;
+  apiKey?: string | null;
 };
 
 export class StudioLPMSProvider extends BaseLPMSProvider {
@@ -15,13 +15,11 @@ export class StudioLPMSProvider extends BaseLPMSProvider {
   }
 }
 
-export function studioProvider({
-  apiKey,
-}: StudioLPMSProviderConfig = {}): LPMSProviderFn<StudioLPMSProvider> {
-  return () => {
-    if (!apiKey) return null;
-    return {
-      provider: new StudioLPMSProvider(apiKey),
-    };
+export function studioProvider(
+  { apiKey }: StudioLPMSProviderConfig = { apiKey: defaultStudioApiKey },
+): LPMSProviderFn<StudioLPMSProvider> {
+  if (!apiKey) throw new Error(`No API key provided for studio`);
+  return {
+    provider: new StudioLPMSProvider(apiKey),
   };
 }

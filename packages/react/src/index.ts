@@ -1,5 +1,5 @@
-export { createClient } from './client';
-export type { CreateClientConfig } from './client';
+export { createReactClient } from './client';
+export type { CreateReactClientConfig } from './client';
 
 export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';

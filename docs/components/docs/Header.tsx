@@ -14,12 +14,12 @@ export function Header() {
 
   return (
     <header className="mb-10 flex flex-col items-center">
-      <div className="mt-8 w-auto h-12 md:h-14">
-        <h1>livepeer.js</h1>
+      <div className="mt-8 mb-2 w-auto h-12 md:h-14">
+        <h1 className="font-bold text-4xl md:!text-6xl">livepeer.js</h1>
         {/* <LogoType /> */}
       </div>
 
-      <p className="text-center font-medium text-lg mb-6 text-gray-500 md:!text-2xl">
+      <p className="text-center font-medium text-lg mb-6 text-gray-500 md:!text-xl">
         {title}
       </p>
 
