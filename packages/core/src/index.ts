@@ -1,4 +1,7 @@
 export {
+  createAsset,
+  createStream,
+  getAsset,
   getBondingManager,
   getContractAddressFromController,
   getController,
@@ -12,7 +15,12 @@ export {
   getPollCreator,
   getRoundsManager,
   getServiceRegistry,
+  getStream,
+  getStreamSession,
+  getStreamSessions,
   getTicketBroker,
+  updateAsset,
+  updateStream,
   watchLPMSProvider,
 } from './actions';
 export type {
@@ -30,6 +38,7 @@ export {
   BondingManagerABI,
   ControllerABI,
   defaultLPMS,
+  defaultTranscodingProfiles,
   InboxABI,
   L1BondingManagerABI,
   L1MigratorABI,
@@ -68,7 +77,7 @@ export type {
   TestnetLivepeerChain,
   TestnetLivepeerChainId,
 } from './constants';
-export { UserRejectedRequestError } from './errors';
+export { IncorrectChainIdError } from './errors';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
 export {
@@ -94,10 +103,18 @@ export {
 export type {
   Address,
   ArbRetryableTx,
+  Asset,
   BondingManager,
   Controller,
+  CreateAssetArgs,
+  CreateStreamArgs,
+  GetAssetArgs,
+  GetStreamArgs,
+  GetStreamSessionArgs,
+  GetStreamSessionsArgs,
   Hash,
   Inbox,
+  Ipfs,
   L1BondingManager,
   L1Migrator,
   L2LPTGateway,
@@ -113,5 +130,10 @@ export type {
   PollCreator,
   RoundsManager,
   ServiceRegistry,
+  Stream,
+  StreamSession,
   TicketBroker,
+  TranscodingProfile,
+  UpdateAssetArgs,
+  UpdateStreamArgs,
 } from './types';

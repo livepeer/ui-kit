@@ -1,3 +1,4 @@
+export { createAsset, getAsset, updateAsset } from './asset';
 export {
   getBondingManager,
   getContractAddressFromController,
@@ -15,7 +16,14 @@ export {
 } from './contracts';
 export {
   getLPMSProvider,
-  type GetLPMSProviderResult,
   watchLPMSProvider,
+  type GetLPMSProviderResult,
   type WatchLPMSProviderCallback,
 } from './providers';
+export {
+  createStream,
+  getStream,
+  getStreamSession,
+  getStreamSessions,
+  updateStream,
+} from './stream';

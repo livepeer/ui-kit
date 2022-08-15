@@ -42,5 +42,12 @@ export type {
   TestnetLivepeerChain,
   TestnetLivepeerChainId,
 } from './contracts';
-export { allLPMS, defaultLPMS, lpms, studio } from './lpms';
+export {
+  allLPMS,
+  defaultLPMS,
+  defaultStudioApiKey,
+  defaultTranscodingProfiles,
+  lpms,
+  studio,
+} from './lpms';
 export type { LPMSName } from './lpms';

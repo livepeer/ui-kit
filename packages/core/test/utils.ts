@@ -107,3 +107,7 @@ export const accounts = [
 export function getSigners() {
   return accounts.map((x) => new Wallet(x.privateKey));
 }
+
+export function getSigner() {
+  return new Wallet(accounts[0].privateKey);
+}

@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { MinterABI } from '../../constants';
-import { getContract } from './getContract';
+import { getSigner } from '../../../test/utils';
+
+import { allChainId } from '../../constants';
+import { getController } from './getContract';
 
 describe('getContract', () => {
   it('default', () => {
-    const result = getContract({
-      addressOrName: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
-      contractInterface: MinterABI,
-    });
+    const result = getController(allChainId.arbitrum, getSigner());
     expect(result).toBeDefined();
   });
 });

@@ -40,7 +40,13 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
     }),
   }: ClientConfig<TLPMSProvider>) {
     // Create store
-    this.store = create(
+    this.store = create<
+      State<TLPMSProvider>,
+      [
+        ['zustand/subscribeWithSelector', never],
+        ['zustand/persist', Partial<State<TLPMSProvider>>],
+      ]
+    >(
       subscribeWithSelector(
         persist(
           () => ({

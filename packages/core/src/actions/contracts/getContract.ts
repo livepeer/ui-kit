@@ -14,8 +14,10 @@ import {
   mainnetAddress,
   rinkebyAddress,
 } from '../../constants';
+import { IncorrectChainIdError } from '../../errors';
 
 import {
+  Address,
   BondingManagerFactory,
   ControllerFactory,
   L1MigratorFactory,
@@ -30,146 +32,188 @@ import {
   TicketBrokerFactory,
 } from '../../types';
 
+type SignerOrNil = Signer | null | undefined;
+
+type LivepeerChainIdOrNil = LivepeerChainId | undefined | null;
+type L1LivepeerChainIdOrNil = L1LivepeerChainId | null | undefined;
+type L2LivepeerChainIdOrNil = L2LivepeerChainId | null | undefined;
+type TestnetLivepeerChainIdOrNil = TestnetLivepeerChainId | null | undefined;
+
 const getL1ContractAddressForChain = <K extends keyof L1Address>(
-  chainId: L1LivepeerChainId,
+  chainId: L1LivepeerChainIdOrNil,
   contractKey: K,
-) =>
-  chainId === allChainId.mainnet
+) => {
+  if (chainId !== allChainId.mainnet && chainId !== allChainId.rinkeby) {
+    throw new IncorrectChainIdError();
+  }
+
+  return chainId === allChainId.mainnet
     ? mainnetAddress[contractKey]
     : rinkebyAddress[contractKey];
+};
 
 const getL2ContractAddressForChain = <K extends keyof L2Address>(
-  chainId: LivepeerChainId,
+  chainId: LivepeerChainIdOrNil,
   contractKey: K,
-) =>
-  chainId === allChainId.arbitrum
+) => {
+  if (
+    chainId !== allChainId.arbitrum &&
+    chainId !== allChainId.arbitrumRinkeby
+  ) {
+    throw new IncorrectChainIdError();
+  }
+
+  return chainId === allChainId.arbitrum
     ? arbitrumOneAddress[contractKey]
     : arbitrumRinkebyAddress[contractKey];
+};
 
-export const getController = (chainId: LivepeerChainId, signer: Signer) => {
-  return chainId === 1 || chainId === 4
+export const getController = (
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
+) => {
+  return chainId === allChainId.mainnet || chainId === allChainId.rinkeby
     ? ControllerFactory.connect(
         getL1ContractAddressForChain(chainId, 'Controller'),
-        signer,
+        signer as Signer,
       )
     : ControllerFactory.connect(
         getL2ContractAddressForChain(chainId, 'Controller'),
-        signer,
+        signer as Signer,
       );
 };
 
-export const getL1Migrator = (chainId: L1LivepeerChainId, signer: Signer) => {
+export const getL1Migrator = (
+  chainId: L1LivepeerChainIdOrNil,
+  signer: SignerOrNil,
+) => {
   return L1MigratorFactory.connect(
     getL1ContractAddressForChain(chainId, 'L1Migrator'),
-    signer,
+    signer as Signer,
   );
 };
 
-export const getL2Migrator = (chainId: L2LivepeerChainId, signer: Signer) => {
+export const getL2Migrator = (
+  chainId: L2LivepeerChainIdOrNil,
+  signer: SignerOrNil,
+) => {
   return L2MigratorFactory.connect(
     getL2ContractAddressForChain(chainId, 'L2Migrator'),
-    signer,
+    signer as Signer,
   );
 };
 
-export const getPollCreator = (chainId: L2LivepeerChainId, signer: Signer) => {
+export const getPollCreator = (
+  chainId: L2LivepeerChainIdOrNil,
+  signer: SignerOrNil,
+) => {
   return PollCreatorFactory.connect(
     getL2ContractAddressForChain(chainId, 'PollCreator'),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getContractAddressFromController = async (
-  chainId: LivepeerChainId,
+  chainId: LivepeerChainIdOrNil,
   name:
     | Exclude<keyof L1Address | keyof L2Address, 'chainId'>
     | 'LivepeerTokenFaucet',
-  signer: Signer,
-) => {
+  signer: SignerOrNil,
+): Promise<Address> => {
   const hash = keccak256(toUtf8Bytes(name));
   const controller = getController(chainId, signer);
   const address = await controller.getContract(hash);
 
-  return address;
+  return address as Address;
 };
 
 export const getLivepeerToken = async (
-  chainId: LivepeerChainId,
-  signer: Signer,
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
   return LivepeerTokenFactory.connect(
     await getContractAddressFromController(chainId, 'LivepeerToken', signer),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getLivepeerTokenFaucet = async (
-  chainId: TestnetLivepeerChainId,
-  signer: Signer,
+  chainId: TestnetLivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
+  if (
+    chainId !== allChainId.arbitrumRinkeby &&
+    chainId !== allChainId.rinkeby
+  ) {
+    throw new IncorrectChainIdError();
+  }
+
   return LivepeerTokenFaucetFactory.connect(
     await getContractAddressFromController(
       chainId,
       'LivepeerTokenFaucet',
       signer,
     ),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getBondingManager = async (
-  chainId: LivepeerChainId,
-  signer: Signer,
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
   return BondingManagerFactory.connect(
     await getContractAddressFromController(chainId, 'BondingManager', signer),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getRoundsManager = async (
-  chainId: LivepeerChainId,
-  signer: Signer,
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
   return RoundsManagerFactory.connect(
     await getContractAddressFromController(chainId, 'RoundsManager', signer),
-    signer,
+    signer as Signer,
   );
 };
 
-export const getMinter = async (chainId: LivepeerChainId, signer: Signer) => {
+export const getMinter = async (
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
+) => {
   return MinterFactory.connect(
     await getContractAddressFromController(chainId, 'Minter', signer),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getMerkleSnapshot = async (
-  chainId: LivepeerChainId,
-  signer: Signer,
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
   return MerkleSnapshotFactory.connect(
     await getContractAddressFromController(chainId, 'MerkleSnapshot', signer),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getServiceRegistry = async (
-  chainId: LivepeerChainId,
-  signer: Signer,
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
   return ServiceRegistryFactory.connect(
     await getContractAddressFromController(chainId, 'ServiceRegistry', signer),
-    signer,
+    signer as Signer,
   );
 };
 
 export const getTicketBroker = async (
-  chainId: LivepeerChainId,
-  signer: Signer,
+  chainId: LivepeerChainIdOrNil,
+  signer: SignerOrNil,
 ) => {
   return TicketBrokerFactory.connect(
     await getContractAddressFromController(chainId, 'TicketBroker', signer),
-    signer,
+    signer as Signer,
   );
 };

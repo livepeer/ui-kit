@@ -11,7 +11,7 @@ const provider = studioProvider();
 describe('createClient', () => {
   it('returns client', () => {
     const client = createClient({
-      providers: [provider],
+      provider,
     });
     expect(client).toBeInstanceOf(Client);
   });
@@ -20,7 +20,7 @@ describe('createClient', () => {
     describe('provider', () => {
       it('default', () => {
         const client = createClient({
-          providers: [provider],
+          provider,
         });
         expect(client.provider).toBeDefined();
       });
@@ -29,7 +29,7 @@ describe('createClient', () => {
     describe('storage', () => {
       it('default', () => {
         const client = createClient({
-          providers: [provider],
+          provider,
         });
         expect(client.storage).toMatchInlineSnapshot(`
           {
@@ -42,7 +42,7 @@ describe('createClient', () => {
 
       it('custom', () => {
         const client = createClient({
-          providers: [provider],
+          provider,
           storage: createStorage({
             storage: window.localStorage,
           }),
@@ -66,7 +66,7 @@ describe('getClient', () => {
 
   it('returns created client', () => {
     const client = createClient({
-      providers: [provider],
+      provider,
     });
     expect(getClient()).toEqual(client);
   });

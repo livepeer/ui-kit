@@ -13,20 +13,20 @@ import type {
   PopulatedTransaction,
   Signer,
   utils,
-} from 'ethers';
+} from "ethers";
 import type {
   FunctionFragment,
   Result,
   EventFragment,
-} from '@ethersproject/abi';
-import type { Listener, Provider } from '@ethersproject/providers';
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from '../common';
+} from "../common";
 
 export declare namespace MReserve {
   export type ReserveInfoStruct = {
@@ -58,7 +58,7 @@ export declare namespace MTicketBrokerCore {
     BigNumber,
     BigNumber,
     string,
-    string,
+    string
   ] & {
     recipient: string;
     sender: string;
@@ -84,250 +84,250 @@ export declare namespace MixinTicketBrokerCore {
 
 export interface TicketBrokerInterface extends utils.Interface {
   functions: {
-    'isUnlockInProgress(address)': FunctionFragment;
-    'unlockPeriod()': FunctionFragment;
-    'withdraw()': FunctionFragment;
-    'setUnlockPeriod(uint256)': FunctionFragment;
-    'claimedReserve(address,address)': FunctionFragment;
-    'fundDepositAndReserve(uint256,uint256)': FunctionFragment;
-    'targetContractId()': FunctionFragment;
-    'usedTickets(bytes32)': FunctionFragment;
-    'getReserveInfo(address)': FunctionFragment;
-    'fundDeposit()': FunctionFragment;
-    'fundReserve()': FunctionFragment;
-    'claimableReserve(address,address)': FunctionFragment;
-    'ticketValidityPeriod()': FunctionFragment;
-    'setController(address)': FunctionFragment;
-    'unlock()': FunctionFragment;
-    'getTicketHash((address,address,uint256,uint256,uint256,bytes32,bytes))': FunctionFragment;
-    'cancelUnlock()': FunctionFragment;
-    'setTicketValidityPeriod(uint256)': FunctionFragment;
-    'batchRedeemWinningTickets((address,address,uint256,uint256,uint256,bytes32,bytes)[],bytes[],uint256[])': FunctionFragment;
-    'getSenderInfo(address)': FunctionFragment;
-    'redeemWinningTicket((address,address,uint256,uint256,uint256,bytes32,bytes),bytes,uint256)': FunctionFragment;
-    'controller()': FunctionFragment;
+    "isUnlockInProgress(address)": FunctionFragment;
+    "unlockPeriod()": FunctionFragment;
+    "withdraw()": FunctionFragment;
+    "setUnlockPeriod(uint256)": FunctionFragment;
+    "claimedReserve(address,address)": FunctionFragment;
+    "fundDepositAndReserve(uint256,uint256)": FunctionFragment;
+    "targetContractId()": FunctionFragment;
+    "usedTickets(bytes32)": FunctionFragment;
+    "getReserveInfo(address)": FunctionFragment;
+    "fundDeposit()": FunctionFragment;
+    "fundReserve()": FunctionFragment;
+    "claimableReserve(address,address)": FunctionFragment;
+    "ticketValidityPeriod()": FunctionFragment;
+    "setController(address)": FunctionFragment;
+    "unlock()": FunctionFragment;
+    "getTicketHash((address,address,uint256,uint256,uint256,bytes32,bytes))": FunctionFragment;
+    "cancelUnlock()": FunctionFragment;
+    "setTicketValidityPeriod(uint256)": FunctionFragment;
+    "batchRedeemWinningTickets((address,address,uint256,uint256,uint256,bytes32,bytes)[],bytes[],uint256[])": FunctionFragment;
+    "getSenderInfo(address)": FunctionFragment;
+    "redeemWinningTicket((address,address,uint256,uint256,uint256,bytes32,bytes),bytes,uint256)": FunctionFragment;
+    "controller()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | 'isUnlockInProgress'
-      | 'unlockPeriod'
-      | 'withdraw'
-      | 'setUnlockPeriod'
-      | 'claimedReserve'
-      | 'fundDepositAndReserve'
-      | 'targetContractId'
-      | 'usedTickets'
-      | 'getReserveInfo'
-      | 'fundDeposit'
-      | 'fundReserve'
-      | 'claimableReserve'
-      | 'ticketValidityPeriod'
-      | 'setController'
-      | 'unlock'
-      | 'getTicketHash'
-      | 'cancelUnlock'
-      | 'setTicketValidityPeriod'
-      | 'batchRedeemWinningTickets'
-      | 'getSenderInfo'
-      | 'redeemWinningTicket'
-      | 'controller',
+      | "isUnlockInProgress"
+      | "unlockPeriod"
+      | "withdraw"
+      | "setUnlockPeriod"
+      | "claimedReserve"
+      | "fundDepositAndReserve"
+      | "targetContractId"
+      | "usedTickets"
+      | "getReserveInfo"
+      | "fundDeposit"
+      | "fundReserve"
+      | "claimableReserve"
+      | "ticketValidityPeriod"
+      | "setController"
+      | "unlock"
+      | "getTicketHash"
+      | "cancelUnlock"
+      | "setTicketValidityPeriod"
+      | "batchRedeemWinningTickets"
+      | "getSenderInfo"
+      | "redeemWinningTicket"
+      | "controller"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: 'isUnlockInProgress',
-    values: [PromiseOrValue<string>],
+    functionFragment: "isUnlockInProgress",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'unlockPeriod',
-    values?: undefined,
+    functionFragment: "unlockPeriod",
+    values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: 'withdraw', values?: undefined): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'setUnlockPeriod',
-    values: [PromiseOrValue<BigNumberish>],
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'claimedReserve',
-    values: [PromiseOrValue<string>, PromiseOrValue<string>],
+    functionFragment: "setUnlockPeriod",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'fundDepositAndReserve',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+    functionFragment: "claimedReserve",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'targetContractId',
-    values?: undefined,
+    functionFragment: "fundDepositAndReserve",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'usedTickets',
-    values: [PromiseOrValue<BytesLike>],
+    functionFragment: "targetContractId",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'getReserveInfo',
-    values: [PromiseOrValue<string>],
+    functionFragment: "usedTickets",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'fundDeposit',
-    values?: undefined,
+    functionFragment: "getReserveInfo",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'fundReserve',
-    values?: undefined,
+    functionFragment: "fundDeposit",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'claimableReserve',
-    values: [PromiseOrValue<string>, PromiseOrValue<string>],
+    functionFragment: "fundReserve",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'ticketValidityPeriod',
-    values?: undefined,
+    functionFragment: "claimableReserve",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'setController',
-    values: [PromiseOrValue<string>],
-  ): string;
-  encodeFunctionData(functionFragment: 'unlock', values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: 'getTicketHash',
-    values: [MTicketBrokerCore.TicketStruct],
+    functionFragment: "ticketValidityPeriod",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'cancelUnlock',
-    values?: undefined,
+    functionFragment: "setController",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(functionFragment: "unlock", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTicketHash",
+    values: [MTicketBrokerCore.TicketStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: 'setTicketValidityPeriod',
-    values: [PromiseOrValue<BigNumberish>],
+    functionFragment: "cancelUnlock",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'batchRedeemWinningTickets',
+    functionFragment: "setTicketValidityPeriod",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "batchRedeemWinningTickets",
     values: [
       MTicketBrokerCore.TicketStruct[],
       PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>[],
-    ],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'getSenderInfo',
-    values: [PromiseOrValue<string>],
+    functionFragment: "getSenderInfo",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: 'redeemWinningTicket',
+    functionFragment: "redeemWinningTicket",
     values: [
       MTicketBrokerCore.TicketStruct,
       PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>,
-    ],
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'controller',
-    values?: undefined,
+    functionFragment: "controller",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
-    functionFragment: 'isUnlockInProgress',
-    data: BytesLike,
+    functionFragment: "isUnlockInProgress",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'unlockPeriod',
-    data: BytesLike,
+    functionFragment: "unlockPeriod",
+    data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'setUnlockPeriod',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'claimedReserve',
-    data: BytesLike,
+    functionFragment: "setUnlockPeriod",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'fundDepositAndReserve',
-    data: BytesLike,
+    functionFragment: "claimedReserve",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'targetContractId',
-    data: BytesLike,
+    functionFragment: "fundDepositAndReserve",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'usedTickets',
-    data: BytesLike,
+    functionFragment: "targetContractId",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'getReserveInfo',
-    data: BytesLike,
+    functionFragment: "usedTickets",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'fundDeposit',
-    data: BytesLike,
+    functionFragment: "getReserveInfo",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'fundReserve',
-    data: BytesLike,
+    functionFragment: "fundDeposit",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'claimableReserve',
-    data: BytesLike,
+    functionFragment: "fundReserve",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'ticketValidityPeriod',
-    data: BytesLike,
+    functionFragment: "claimableReserve",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'setController',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: 'getTicketHash',
-    data: BytesLike,
+    functionFragment: "ticketValidityPeriod",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'cancelUnlock',
-    data: BytesLike,
+    functionFragment: "setController",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTicketHash",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'setTicketValidityPeriod',
-    data: BytesLike,
+    functionFragment: "cancelUnlock",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'batchRedeemWinningTickets',
-    data: BytesLike,
+    functionFragment: "setTicketValidityPeriod",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'getSenderInfo',
-    data: BytesLike,
+    functionFragment: "batchRedeemWinningTickets",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'redeemWinningTicket',
-    data: BytesLike,
+    functionFragment: "getSenderInfo",
+    data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'controller', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemWinningTicket",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "controller", data: BytesLike): Result;
 
   events: {
-    'DepositFunded(address,uint256)': EventFragment;
-    'WinningTicketRedeemed(address,address,uint256,uint256,uint256,uint256,bytes)': EventFragment;
-    'WinningTicketTransfer(address,address,uint256)': EventFragment;
-    'Unlock(address,uint256,uint256)': EventFragment;
-    'UnlockCancelled(address)': EventFragment;
-    'Withdrawal(address,uint256,uint256)': EventFragment;
-    'ReserveFunded(address,uint256)': EventFragment;
-    'ReserveClaimed(address,address,uint256)': EventFragment;
-    'SetController(address)': EventFragment;
-    'ParameterUpdate(string)': EventFragment;
+    "DepositFunded(address,uint256)": EventFragment;
+    "WinningTicketRedeemed(address,address,uint256,uint256,uint256,uint256,bytes)": EventFragment;
+    "WinningTicketTransfer(address,address,uint256)": EventFragment;
+    "Unlock(address,uint256,uint256)": EventFragment;
+    "UnlockCancelled(address)": EventFragment;
+    "Withdrawal(address,uint256,uint256)": EventFragment;
+    "ReserveFunded(address,uint256)": EventFragment;
+    "ReserveClaimed(address,address,uint256)": EventFragment;
+    "SetController(address)": EventFragment;
+    "ParameterUpdate(string)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: 'DepositFunded'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'WinningTicketRedeemed'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'WinningTicketTransfer'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'Unlock'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'UnlockCancelled'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'Withdrawal'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'ReserveFunded'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'ReserveClaimed'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'SetController'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'ParameterUpdate'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositFunded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WinningTicketRedeemed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WinningTicketTransfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unlock"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnlockCancelled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReserveFunded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReserveClaimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetController"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdate"): EventFragment;
 }
 
 export interface DepositFundedEventObject {
@@ -455,15 +455,15 @@ export interface TicketBroker extends BaseContract {
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TEvent>>;
 
   listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>,
+    eventFilter?: TypedEventFilter<TEvent>
   ): Array<TypedListener<TEvent>>;
   listeners(eventName?: string): Array<Listener>;
   removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>,
+    eventFilter: TypedEventFilter<TEvent>
   ): this;
   removeAllListeners(eventName?: string): this;
   off: OnEvent<this>;
@@ -474,42 +474,42 @@ export interface TicketBroker extends BaseContract {
   functions: {
     isUnlockInProgress(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     unlockPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setUnlockPeriod(
       _unlockPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     claimedReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     fundDepositAndReserve(
       _depositAmount: PromiseOrValue<BigNumberish>,
       _reserveAmount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     targetContractId(overrides?: CallOverrides): Promise<[string]>;
 
     usedTickets(
       arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     getReserveInfo(
       _reserveHolder: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<
       [MReserve.ReserveInfoStructOutput] & {
         info: MReserve.ReserveInfoStructOutput;
@@ -517,58 +517,58 @@ export interface TicketBroker extends BaseContract {
     >;
 
     fundDeposit(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     fundReserve(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     claimableReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     ticketValidityPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setController(
       _controller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unlock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getTicketHash(
       _ticket: MTicketBrokerCore.TicketStruct,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<[string]>;
 
     cancelUnlock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setTicketValidityPeriod(
       _ticketValidityPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     batchRedeemWinningTickets(
       _tickets: MTicketBrokerCore.TicketStruct[],
       _sigs: PromiseOrValue<BytesLike>[],
       _recipientRands: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getSenderInfo(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<
       [
         MixinTicketBrokerCore.SenderStructOutput,
-        MReserve.ReserveInfoStructOutput,
+        MReserve.ReserveInfoStructOutput
       ] & {
         sender: MixinTicketBrokerCore.SenderStructOutput;
         reserve: MReserve.ReserveInfoStructOutput;
@@ -579,7 +579,7 @@ export interface TicketBroker extends BaseContract {
       _ticket: MTicketBrokerCore.TicketStruct,
       _sig: PromiseOrValue<BytesLike>,
       _recipientRand: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     controller(overrides?: CallOverrides): Promise<[string]>;
@@ -587,97 +587,97 @@ export interface TicketBroker extends BaseContract {
 
   isUnlockInProgress(
     _sender: PromiseOrValue<string>,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<boolean>;
 
   unlockPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   withdraw(
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setUnlockPeriod(
     _unlockPeriod: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   claimedReserve(
     _reserveHolder: PromiseOrValue<string>,
     _claimant: PromiseOrValue<string>,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   fundDepositAndReserve(
     _depositAmount: PromiseOrValue<BigNumberish>,
     _reserveAmount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   targetContractId(overrides?: CallOverrides): Promise<string>;
 
   usedTickets(
     arg0: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<boolean>;
 
   getReserveInfo(
     _reserveHolder: PromiseOrValue<string>,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<MReserve.ReserveInfoStructOutput>;
 
   fundDeposit(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   fundReserve(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   claimableReserve(
     _reserveHolder: PromiseOrValue<string>,
     _claimant: PromiseOrValue<string>,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   ticketValidityPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   setController(
     _controller: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unlock(
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getTicketHash(
     _ticket: MTicketBrokerCore.TicketStruct,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<string>;
 
   cancelUnlock(
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setTicketValidityPeriod(
     _ticketValidityPeriod: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   batchRedeemWinningTickets(
     _tickets: MTicketBrokerCore.TicketStruct[],
     _sigs: PromiseOrValue<BytesLike>[],
     _recipientRands: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getSenderInfo(
     _sender: PromiseOrValue<string>,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<
     [
       MixinTicketBrokerCore.SenderStructOutput,
-      MReserve.ReserveInfoStructOutput,
+      MReserve.ReserveInfoStructOutput
     ] & {
       sender: MixinTicketBrokerCore.SenderStructOutput;
       reserve: MReserve.ReserveInfoStructOutput;
@@ -688,7 +688,7 @@ export interface TicketBroker extends BaseContract {
     _ticket: MTicketBrokerCore.TicketStruct,
     _sig: PromiseOrValue<BytesLike>,
     _recipientRand: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   controller(overrides?: CallOverrides): Promise<string>;
@@ -696,7 +696,7 @@ export interface TicketBroker extends BaseContract {
   callStatic: {
     isUnlockInProgress(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<boolean>;
 
     unlockPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -705,31 +705,31 @@ export interface TicketBroker extends BaseContract {
 
     setUnlockPeriod(
       _unlockPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     claimedReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     fundDepositAndReserve(
       _depositAmount: PromiseOrValue<BigNumberish>,
       _reserveAmount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     targetContractId(overrides?: CallOverrides): Promise<string>;
 
     usedTickets(
       arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<boolean>;
 
     getReserveInfo(
       _reserveHolder: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<MReserve.ReserveInfoStructOutput>;
 
     fundDeposit(overrides?: CallOverrides): Promise<void>;
@@ -739,44 +739,44 @@ export interface TicketBroker extends BaseContract {
     claimableReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     ticketValidityPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     setController(
       _controller: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     unlock(overrides?: CallOverrides): Promise<void>;
 
     getTicketHash(
       _ticket: MTicketBrokerCore.TicketStruct,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<string>;
 
     cancelUnlock(overrides?: CallOverrides): Promise<void>;
 
     setTicketValidityPeriod(
       _ticketValidityPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     batchRedeemWinningTickets(
       _tickets: MTicketBrokerCore.TicketStruct[],
       _sigs: PromiseOrValue<BytesLike>[],
       _recipientRands: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     getSenderInfo(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<
       [
         MixinTicketBrokerCore.SenderStructOutput,
-        MReserve.ReserveInfoStructOutput,
+        MReserve.ReserveInfoStructOutput
       ] & {
         sender: MixinTicketBrokerCore.SenderStructOutput;
         reserve: MReserve.ReserveInfoStructOutput;
@@ -787,30 +787,30 @@ export interface TicketBroker extends BaseContract {
       _ticket: MTicketBrokerCore.TicketStruct,
       _sig: PromiseOrValue<BytesLike>,
       _recipientRand: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     controller(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    'DepositFunded(address,uint256)'(
+    "DepositFunded(address,uint256)"(
       sender?: PromiseOrValue<string> | null,
-      amount?: null,
+      amount?: null
     ): DepositFundedEventFilter;
     DepositFunded(
       sender?: PromiseOrValue<string> | null,
-      amount?: null,
+      amount?: null
     ): DepositFundedEventFilter;
 
-    'WinningTicketRedeemed(address,address,uint256,uint256,uint256,uint256,bytes)'(
+    "WinningTicketRedeemed(address,address,uint256,uint256,uint256,uint256,bytes)"(
       sender?: PromiseOrValue<string> | null,
       recipient?: PromiseOrValue<string> | null,
       faceValue?: null,
       winProb?: null,
       senderNonce?: null,
       recipientRand?: null,
-      auxData?: null,
+      auxData?: null
     ): WinningTicketRedeemedEventFilter;
     WinningTicketRedeemed(
       sender?: PromiseOrValue<string> | null,
@@ -819,173 +819,173 @@ export interface TicketBroker extends BaseContract {
       winProb?: null,
       senderNonce?: null,
       recipientRand?: null,
-      auxData?: null,
+      auxData?: null
     ): WinningTicketRedeemedEventFilter;
 
-    'WinningTicketTransfer(address,address,uint256)'(
+    "WinningTicketTransfer(address,address,uint256)"(
       sender?: PromiseOrValue<string> | null,
       recipient?: PromiseOrValue<string> | null,
-      amount?: null,
+      amount?: null
     ): WinningTicketTransferEventFilter;
     WinningTicketTransfer(
       sender?: PromiseOrValue<string> | null,
       recipient?: PromiseOrValue<string> | null,
-      amount?: null,
+      amount?: null
     ): WinningTicketTransferEventFilter;
 
-    'Unlock(address,uint256,uint256)'(
+    "Unlock(address,uint256,uint256)"(
       sender?: PromiseOrValue<string> | null,
       startRound?: null,
-      endRound?: null,
+      endRound?: null
     ): UnlockEventFilter;
     Unlock(
       sender?: PromiseOrValue<string> | null,
       startRound?: null,
-      endRound?: null,
+      endRound?: null
     ): UnlockEventFilter;
 
-    'UnlockCancelled(address)'(
-      sender?: PromiseOrValue<string> | null,
+    "UnlockCancelled(address)"(
+      sender?: PromiseOrValue<string> | null
     ): UnlockCancelledEventFilter;
     UnlockCancelled(
-      sender?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): UnlockCancelledEventFilter;
 
-    'Withdrawal(address,uint256,uint256)'(
+    "Withdrawal(address,uint256,uint256)"(
       sender?: PromiseOrValue<string> | null,
       deposit?: null,
-      reserve?: null,
+      reserve?: null
     ): WithdrawalEventFilter;
     Withdrawal(
       sender?: PromiseOrValue<string> | null,
       deposit?: null,
-      reserve?: null,
+      reserve?: null
     ): WithdrawalEventFilter;
 
-    'ReserveFunded(address,uint256)'(
+    "ReserveFunded(address,uint256)"(
       reserveHolder?: PromiseOrValue<string> | null,
-      amount?: null,
+      amount?: null
     ): ReserveFundedEventFilter;
     ReserveFunded(
       reserveHolder?: PromiseOrValue<string> | null,
-      amount?: null,
+      amount?: null
     ): ReserveFundedEventFilter;
 
-    'ReserveClaimed(address,address,uint256)'(
+    "ReserveClaimed(address,address,uint256)"(
       reserveHolder?: PromiseOrValue<string> | null,
       claimant?: null,
-      amount?: null,
+      amount?: null
     ): ReserveClaimedEventFilter;
     ReserveClaimed(
       reserveHolder?: PromiseOrValue<string> | null,
       claimant?: null,
-      amount?: null,
+      amount?: null
     ): ReserveClaimedEventFilter;
 
-    'SetController(address)'(controller?: null): SetControllerEventFilter;
+    "SetController(address)"(controller?: null): SetControllerEventFilter;
     SetController(controller?: null): SetControllerEventFilter;
 
-    'ParameterUpdate(string)'(param?: null): ParameterUpdateEventFilter;
+    "ParameterUpdate(string)"(param?: null): ParameterUpdateEventFilter;
     ParameterUpdate(param?: null): ParameterUpdateEventFilter;
   };
 
   estimateGas: {
     isUnlockInProgress(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     unlockPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setUnlockPeriod(
       _unlockPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     claimedReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     fundDepositAndReserve(
       _depositAmount: PromiseOrValue<BigNumberish>,
       _reserveAmount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     targetContractId(overrides?: CallOverrides): Promise<BigNumber>;
 
     usedTickets(
       arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getReserveInfo(
       _reserveHolder: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     fundDeposit(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     fundReserve(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     claimableReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     ticketValidityPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     setController(
       _controller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unlock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getTicketHash(
       _ticket: MTicketBrokerCore.TicketStruct,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     cancelUnlock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setTicketValidityPeriod(
       _ticketValidityPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     batchRedeemWinningTickets(
       _tickets: MTicketBrokerCore.TicketStruct[],
       _sigs: PromiseOrValue<BytesLike>[],
       _recipientRands: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getSenderInfo(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeemWinningTicket(
       _ticket: MTicketBrokerCore.TicketStruct,
       _sig: PromiseOrValue<BytesLike>,
       _recipientRand: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     controller(overrides?: CallOverrides): Promise<BigNumber>;
@@ -994,102 +994,102 @@ export interface TicketBroker extends BaseContract {
   populateTransaction: {
     isUnlockInProgress(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     unlockPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setUnlockPeriod(
       _unlockPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     claimedReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     fundDepositAndReserve(
       _depositAmount: PromiseOrValue<BigNumberish>,
       _reserveAmount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     targetContractId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     usedTickets(
       arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getReserveInfo(
       _reserveHolder: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     fundDeposit(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     fundReserve(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     claimableReserve(
       _reserveHolder: PromiseOrValue<string>,
       _claimant: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     ticketValidityPeriod(
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setController(
       _controller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unlock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getTicketHash(
       _ticket: MTicketBrokerCore.TicketStruct,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     cancelUnlock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setTicketValidityPeriod(
       _ticketValidityPeriod: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     batchRedeemWinningTickets(
       _tickets: MTicketBrokerCore.TicketStruct[],
       _sigs: PromiseOrValue<BytesLike>[],
       _recipientRands: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getSenderInfo(
       _sender: PromiseOrValue<string>,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     redeemWinningTicket(
       _ticket: MTicketBrokerCore.TicketStruct,
       _sig: PromiseOrValue<BytesLike>,
       _recipientRand: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     controller(overrides?: CallOverrides): Promise<PopulatedTransaction>;

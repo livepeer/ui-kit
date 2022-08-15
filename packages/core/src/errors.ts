@@ -1,7 +1,7 @@
-export class UserRejectedRequestError extends Error {
-  name = 'UserRejectedRequestError';
+export class IncorrectChainIdError extends Error {
+  name = 'IncorrectChainIdError';
 
   constructor() {
-    super('User rejected request');
+    super('Incorrect chain ID provided');
   }
 }
