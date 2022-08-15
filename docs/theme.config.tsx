@@ -13,86 +13,6 @@ const EDIT_LINK_WITH_TRANSLATIONS = {
   'en-US': 'Question? Give us feedback →',
 } as const;
 
-// export default {
-//   docsRepositoryBase: `${github}/tree/main/docs/pages`,
-//   projectChatLink: 'https://discord.gg/livepeer', // Livepeer discord server,
-//   logo: () => {
-//     // eslint-disable-next-line react-hooks/rules-of-hooks
-//     const { locale } = useRouter();
-//     return (
-//       <>
-//         <span className="mr-2 font-extrabold">livepeer.js</span>
-//         <span className="text-gray-600 font-normal hidden md:inline">
-//           {TITLE_WITH_TRANSLATIONS[locale || 'en-US']}
-//         </span>
-//       </>
-//     );
-//   },
-//   github,
-//   head: (
-//     <>
-//       <meta name="msapplication-TileColor" content="#ffffff" />
-//       <meta name="theme-color" content="#ffffff" />
-//       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-//       <meta httpEquiv="Content-Language" content="en" />
-//       <meta name="description" content="Nextra: the Next.js site builder" />
-//       <meta name="og:description" content="Nextra: the Next.js site builder" />
-//       <meta name="twitter:card" content="summary_large_image" />
-//       <meta name="twitter:image" content="https://nextra.vercel.app/og.png" />
-//       <meta name="twitter:site:domain" content="nextra.vercel.app" />
-//       <meta name="twitter:url" content="https://nextra.vercel.app" />
-//       <meta name="og:title" content="Nextra: Next.js static site generator" />
-//       <meta name="og:image" content="https://nextra.vercel.app/og.png" />
-//       <meta name="apple-mobile-web-app-title" content="Nextra" />
-//       <link
-//         rel="apple-touch-icon"
-//         sizes="180x180"
-//         href="/apple-icon-180x180.png"
-//       />
-//       <link
-//         rel="icon"
-//         type="image/png"
-//         sizes="192x192"
-//         href="/android-icon-192x192.png"
-//       />
-//       <link
-//         rel="icon"
-//         type="image/png"
-//         sizes="32x32"
-//         href="/favicon-32x32.png"
-//       />
-//       <link
-//         rel="icon"
-//         type="image/png"
-//         sizes="96x96"
-//         href="/favicon-96x96.png"
-//       />
-//       <link
-//         rel="icon"
-//         type="image/png"
-//         sizes="16x16"
-//         href="/favicon-16x16.png"
-//       />
-//       <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-//     </>
-//   ),
-//   i18n: [{ locale: 'en-US', text: 'English' }],
-//   search: true,
-//   unstable_faviconGlyph: '✦',
-//   prevLinks: true,
-//   footer: true,
-//   footerEditLink: `Edit this page on GitHub`,
-//   footerText: `MIT ${new Date().getFullYear()} © Livepeer Inc.`,
-//   nextThemes: {
-//     defaultTheme: 'dark',
-//   },
-//   bannerKey: 'launch-1',
-//   banner: "We've just launched livepeer.js - check out our docs!",
-//   projectLink: github,
-//   titleSuffix: ' – livepeer.js',
-//   unstable_flexsearch: true,
-// };
-
 import { DocsThemeConfig, useConfig } from 'nextra-theme-docs';
 
 // const Logo = ({ height }: { height: number }) => (
@@ -109,8 +29,8 @@ const config: DocsThemeConfig = {
   docsRepositoryBase: `${github}/tree/main/docs/pages`,
   titleSuffix() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { locale } = useRouter();
-    return ` – livepeer.js (${locale})`;
+    // const { locale } = useRouter();
+    return ` – livepeer.js`;
   },
   projectChatLink: 'https://discord.gg/livepeer',
   search: true,
@@ -146,13 +66,9 @@ const config: DocsThemeConfig = {
     const config = useConfig();
     const description =
       config.meta.description ||
-      'SWR is a React Hooks library for data fetching. SWR first returns the data from cache (stale), then sends the fetch request (revalidate), and finally comes with the up-to-date data again.';
-    const image =
-      config.meta.image ||
-      'https://assets.vercel.com/image/upload/v1572282926/swr/twitter-card.jpg';
+      'livepeer.js is a library to make building with Livepeer easy. It provides a core vanilla JS library to easily connect to a Livepeer Media Server (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM management.';
     return (
       <>
-        {/* Favicons, meta */}
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -191,11 +107,11 @@ const config: DocsThemeConfig = {
         <meta name="description" content={description} />
         <meta name="og:description" content={description} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@vercel" />
-        <meta name="twitter:image" content={image} />
-        <meta name="og:title" content={`${config.title} – SWR`} />
-        <meta name="og:image" content={image} />
-        <meta name="apple-mobile-web-app-title" content="SWR" />
+        <meta name="twitter:site" content="@livepeer" />
+        {/* <meta name="twitter:image" content={image} /> */}
+        <meta name="og:title" content={`${config.title} – livepeer.js`} />
+        {/* <meta name="og:image" content={image} /> */}
+        <meta name="apple-mobile-web-app-title" content="livepeer.js" />
       </>
     );
   },

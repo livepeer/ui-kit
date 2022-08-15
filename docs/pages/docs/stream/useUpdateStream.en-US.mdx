@@ -1,0 +1,94 @@
+---
+title: 'useUpdateStream'
+description: 'React Hook for updating an stream.'
+---
+
+# useUpdateStream
+
+Hook for updating an existing [Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/lpms.ts).
+
+```tsx
+import { useUpdateStream } from '@livepeer/react';
+```
+
+## Usage
+
+The following example shows how an stream can be updated with the `mutate` function, but could also use the asynchronous `mutateAsync`
+function.
+
+```tsx
+import { useStream, useUpdateStream } from '@livepeer/react';
+import { useState } from 'react';
+
+const streamId = 'abcff74a-bb19-45af-8e63-b961efa1899e';
+
+function App() {
+  const { data: stream } = useStream({
+    streamId,
+    refetchInterval: 10000,
+  });
+  const { mutate: updateStream, status, error } = useUpdateStream();
+
+  return (
+    <div>
+      <button
+        disabled={status === 'loading' || stream.record}
+        onClick={() => {
+          updateStream({
+            streamId,
+            record: true,
+          });
+        }}
+      >
+        Enable Recording
+      </button>
+      {stream && (
+        <>
+          <div>Stream Name: {stream?.name}</div>
+          <div>Recording?: {String(Boolean(stream.record))}</div>
+        </>
+      )}
+      {error && <div>{error.message}</div>}
+    </div>
+  );
+}
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: Stream,
+  error?: Error,
+  isError: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isSuccess: boolean,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  mutate: (config: UpdateStreamArgs, options?: MutateOptions) => void,
+  mutateAsync: (config: UpdateStreamArgs, options?: MutateOptions) => Promise<Stream>,
+  variables?: UpdateStreamArgs
+}
+```
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type UpdateStreamArgs = {
+  /** The unique identifier for the stream */
+  streamId: string;
+  /** Boolean indicator to suspend the stream */
+  suspend?: boolean;
+  /** Boolean indicator to record the stream */
+  record?: boolean;
+};
+```
+
+The `suspend` and `record` boolean arguments set the stream to be suspended/unsuspended, or enable automatically recording the stream to an Asset.
+
+## Configuration
+
+The `useUpdateStream` hook has no arguments.

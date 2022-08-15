@@ -77,7 +77,7 @@ export type {
   TestnetLivepeerChain,
   TestnetLivepeerChainId,
 } from './constants';
-export { IncorrectChainIdError } from './errors';
+export { HttpError, IncorrectChainIdError } from './errors';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
 export {

@@ -1,17 +1,20 @@
-import { useMutation } from '@tanstack/react-query';
-import { LPMSProvider, UpdateAssetArgs, updateAsset } from 'livepeer';
+import { Asset, LPMSProvider, UpdateAssetArgs, updateAsset } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
+import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLPMSProvider } from '../providers';
 
-export function useUpdateAsset<TLPMSProvider extends LPMSProvider>() {
-  const lpmsProvider = useLPMSProvider<LPMSProvider>();
+export function useUpdateAsset<TLPMSProvider extends LPMSProvider>(
+  options?: Partial<UseInternalMutationOptions<Asset, Error, UpdateAssetArgs>>,
+) {
+  const lpmsProvider = useLPMSProvider<TLPMSProvider>();
 
-  return useMutation(
+  return useInternalMutation(
     async (args: UpdateAssetArgs) => updateAsset<TLPMSProvider>(args),
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'updateAsset', lpmsProvider }],
+      ...options,
     },
   );
 }

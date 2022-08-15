@@ -1,17 +1,22 @@
-import { useMutation } from '@tanstack/react-query';
-import { CreateStreamArgs, LPMSProvider, createStream } from 'livepeer';
+import { CreateStreamArgs, LPMSProvider, Stream, createStream } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
+import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLPMSProvider } from '../providers';
 
-export function useCreateStream<TLPMSProvider extends LPMSProvider>() {
-  const lpmsProvider = useLPMSProvider<LPMSProvider>();
+export function useCreateStream<TLPMSProvider extends LPMSProvider>(
+  options?: Partial<
+    UseInternalMutationOptions<Stream, Error, CreateStreamArgs>
+  >,
+) {
+  const lpmsProvider = useLPMSProvider<TLPMSProvider>();
 
-  return useMutation(
+  return useInternalMutation(
     async (args: CreateStreamArgs) => createStream<TLPMSProvider>(args),
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'createStream', lpmsProvider }],
+      ...options,
     },
   );
 }

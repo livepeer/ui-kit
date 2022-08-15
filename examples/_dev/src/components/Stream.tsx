@@ -1,24 +1,38 @@
-import { useCreateStream, useStream, useStreamSessions } from '@livepeer/react';
+import {
+  useCreateStream,
+  useStream,
+  useStreamSessions,
+  useUpdateStream,
+} from '@livepeer/react';
 
 const streamName = `New Stream`;
 
 export const Stream = () => {
-  const { mutateAsync, data: createdStream } = useCreateStream();
-  const { data: stream } = useStream(createdStream?.id);
+  const { mutate: createStream, data: createdStream } = useCreateStream();
+  const { data: stream } = useStream({
+    streamId: createdStream?.id,
+    refetchInterval: 10000,
+  });
   const { data: streamSessions } = useStreamSessions(createdStream?.id);
+  const { mutate: updateStream } = useUpdateStream();
 
   return (
     <div>
       <button
-        onClick={async () =>
-          mutateAsync({
+        onClick={() =>
+          createStream({
             name: streamName,
           })
         }
       >
         Create Stream
       </button>
-      {stream && <div>Stream Key: {stream.streamKey}</div>}
+      {stream && (
+        <>
+          <div>Stream Key: {stream.streamKey}</div>
+          <div>Recording?: {String(Boolean(stream.record))}</div>
+        </>
+      )}
       {streamSessions && (
         <>
           <div>Stream Sessions: ({streamSessions.length}) </div>
@@ -30,6 +44,20 @@ export const Stream = () => {
           )}
         </>
       )}
+      <div>
+        <button
+          onClick={() => {
+            if (stream?.id) {
+              updateStream({
+                streamId: stream?.id,
+                record: true,
+              });
+            }
+          }}
+        >
+          Record Stream
+        </button>
+      </div>
     </div>
   );
 };

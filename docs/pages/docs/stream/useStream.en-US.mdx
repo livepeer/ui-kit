@@ -1,0 +1,62 @@
+---
+title: 'useStream'
+description: 'React Hook for retrieving a stream.'
+---
+
+# useStream
+
+Hook for retrieving a [Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/lpms.ts)
+based on a unique identifier.
+
+```tsx
+import { useStream } from '@livepeer/react';
+```
+
+## Usage
+
+The following examples assume a stream was created via `useCreateStream` or directly via a provider's API/dashboard.
+
+```tsx
+import { useStream } from '@livepeer/react';
+
+function App() {
+  const { data: stream } = useStream(stream?.id);
+}
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useQuery), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: Stream,
+  error?: Error,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  isError: boolean,
+  isFetched: boolean,
+  isFetching: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isRefetching: boolean,
+  isSuccess: boolean,
+  refetch: (options: RefetchOptions) => Promise<UseQueryResult>,
+}
+```
+
+## Configuration
+
+### streamId
+
+Stream identifier. Can also be a string passed as the only parameter.
+
+```tsx {5}
+import { useStream } from '@livepeer/react';
+
+function App() {
+  const { data: stream } = useStream({
+    streamId,
+  });
+}
+```

@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { BaseContract, Signer } from 'ethers';
 import {
   L1LivepeerChainId,
@@ -26,6 +25,7 @@ import {
 import { useNetwork, useSigner } from 'wagmi';
 
 import { QueryClientContext } from '../../context';
+import { useInternalQuery } from '../../utils';
 
 function useContract<
   TContract extends BaseContract,
@@ -39,7 +39,7 @@ function useContract<
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
 
-  return useQuery({
+  return useInternalQuery({
     context: QueryClientContext,
     queryKey: [chain?.id, getContract],
     queryFn: async () => getContract(chain?.id as TChainId, signer),

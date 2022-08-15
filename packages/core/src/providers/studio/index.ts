@@ -46,21 +46,22 @@ export class StudioLPMSProvider extends BaseLPMSProvider {
     return this._mapToStream(studioStream);
   }
 
-  async updateStream(args: UpdateStreamArgs): Promise<void> {
-    return this._update(
-      `/stream/${typeof args === 'string' ? args : args.streamId}`,
-      {
-        json: {
-          ...(typeof args?.record !== 'undefined'
-            ? { record: Boolean(args.record) }
-            : {}),
-          ...(typeof args?.suspended !== 'undefined'
-            ? { suspended: Boolean(args.suspended) }
-            : {}),
-        },
-        headers: this._defaultHeaders,
+  async updateStream(args: UpdateStreamArgs): Promise<Stream> {
+    const streamId = typeof args === 'string' ? args : args.streamId;
+
+    await this._update(`/stream/${streamId}`, {
+      json: {
+        ...(typeof args?.record !== 'undefined'
+          ? { record: Boolean(args.record) }
+          : {}),
+        ...(typeof args?.suspend !== 'undefined'
+          ? { suspended: Boolean(args.suspend) }
+          : {}),
       },
-    );
+      headers: this._defaultHeaders,
+    });
+
+    return this.getStream(streamId);
   }
 
   async getStream(args: GetStreamArgs): Promise<Stream> {
@@ -180,22 +181,23 @@ export class StudioLPMSProvider extends BaseLPMSProvider {
     return this._mapToAsset(studioAsset);
   }
 
-  async updateAsset(args: UpdateAssetArgs): Promise<void> {
-    return this._update(
-      `/asset/${typeof args === 'string' ? args : args.assetId}`,
-      {
-        json: {
-          ...(typeof args?.name !== 'undefined'
-            ? { name: String(args.name) }
-            : {}),
-          ...(typeof args?.meta !== 'undefined' ? { meta: args.meta } : {}),
-          ...(typeof args?.storage !== 'undefined'
-            ? { storage: args.storage === 'ipfs' ? { ipfs: {} } : {} }
-            : {}),
-        },
-        headers: this._defaultHeaders,
+  async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
+    const assetId = typeof args === 'string' ? args : args.assetId;
+
+    await this._update(`/asset/${assetId}`, {
+      json: {
+        ...(typeof args?.name !== 'undefined'
+          ? { name: String(args.name) }
+          : {}),
+        ...(typeof args?.meta !== 'undefined' ? { meta: args.meta } : {}),
+        ...(typeof args?.storage !== 'undefined'
+          ? { storage: args.storage === 'ipfs' ? { ipfs: {} } : {} }
+          : {}),
       },
-    );
+      headers: this._defaultHeaders,
+    });
+
+    return this.getAsset(assetId);
   }
 
   _getPlaybackUrl(playbackId: string) {

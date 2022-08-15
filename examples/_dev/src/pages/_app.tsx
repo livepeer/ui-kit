@@ -14,7 +14,6 @@ const livepeerClient = createReactClient({
 const wagmiClient = createClient(
   getDefaultClient({
     appName: 'livepeer.js dev',
-
     infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
   }),
 );

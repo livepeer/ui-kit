@@ -1,5 +1,5 @@
-// import { LivepeerConfig } from '@livepeer/react';
-// import { studioProvider } from 'livepeer/providers/studio';
+import { LivepeerConfig, createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 import * as React from 'react';
 
 import {
@@ -14,10 +14,16 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { infuraProvider } from 'wagmi/providers/infura';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
 
 const { chains, provider, webSocketProvider } = configureChains(defaultChains, [
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
+  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
 ]);
 
 const client = createClient({
@@ -58,5 +64,9 @@ type Props = {
 };
 
 export function Providers({ children }: Props) {
-  return <WagmiConfig client={client}>{children}</WagmiConfig>;
+  return (
+    <WagmiConfig client={client}>
+      <LivepeerConfig client={livepeerClient}>{children}</LivepeerConfig>
+    </WagmiConfig>
+  );
 }

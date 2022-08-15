@@ -1,5 +1,7 @@
 import fetch from 'cross-fetch';
 
+import { HttpError } from '../errors';
+
 import {
   Asset,
   CreateAssetArgs,
@@ -51,6 +53,14 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
       ...options,
     });
 
+    if (!response.ok) {
+      throw new HttpError(
+        response.status,
+        'Provider failed to get object',
+        await response.json(),
+      );
+    }
+
     return response.json() as Promise<T>;
   }
 
@@ -67,6 +77,14 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
         ...options?.headers,
       },
     });
+
+    if (!response.ok) {
+      throw new HttpError(
+        response.status,
+        'Provider failed to create object',
+        await response.json(),
+      );
+    }
 
     return response.json() as Promise<T>;
   }
@@ -86,12 +104,16 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
     });
 
     if (!response.ok) {
-      throw new Error('Provider failed to update object');
+      throw new HttpError(
+        response.status,
+        'Provider failed to update object',
+        await response.json(),
+      );
     }
   }
 
   abstract createStream(args: CreateStreamArgs): Promise<Stream>;
-  abstract updateStream(args: UpdateStreamArgs): Promise<void>;
+  abstract updateStream(args: UpdateStreamArgs): Promise<Stream>;
   abstract getStream(args: GetStreamArgs): Promise<Stream>;
   abstract getStreamSession(args: GetStreamSessionArgs): Promise<StreamSession>;
   abstract getStreamSessions(
@@ -99,7 +121,7 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
   ): Promise<StreamSession[]>;
   abstract createAsset(args: CreateAssetArgs): Promise<Asset>;
   abstract getAsset(args: GetAssetArgs): Promise<Asset>;
-  abstract updateAsset(args: UpdateAssetArgs): Promise<void>;
+  abstract updateAsset(args: UpdateAssetArgs): Promise<Asset>;
 }
 
 export type LPMSProviderFn<TProvider extends LPMSProvider = BaseLPMSProvider> =

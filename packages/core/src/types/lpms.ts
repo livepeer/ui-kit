@@ -12,7 +12,7 @@ export interface LPMSProvider {
   /** Create a new stream */
   createStream(args: CreateStreamArgs): Promise<Stream>;
   /** Modify a stream */
-  updateStream(args: UpdateStreamArgs): Promise<void>;
+  updateStream(args: UpdateStreamArgs): Promise<Stream>;
   /** Get a stream by ID */
   getStream(args: GetStreamArgs): Promise<Stream>;
   /** Get a stream session by ID */
@@ -25,7 +25,7 @@ export interface LPMSProvider {
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
-  updateAsset(args: UpdateAssetArgs): Promise<void>;
+  updateAsset(args: UpdateAssetArgs): Promise<Asset>;
 }
 
 export type StreamIdOrString =
@@ -46,12 +46,15 @@ export type CreateStreamArgs = {
 };
 
 export type UpdateStreamArgs = {
+  /** The unique identifier for the stream */
   streamId: string;
-  suspended?: boolean;
+  /** Boolean indicator to suspend the stream */
+  suspend?: boolean;
+  /** Boolean indicator to record the stream */
   record?: boolean;
 } & (
   | {
-      suspended: boolean;
+      suspend: boolean;
     }
   | {
       record: boolean;
@@ -79,9 +82,13 @@ export type CreateAssetArgs = {
 };
 
 export type UpdateAssetArgs = {
+  /** The unique identifier for the asset */
   assetId: string;
+  /** The name of the asset */
   name?: string;
+  /** Enable asset storage to be replicated to IPFS */
   storage?: 'ipfs' | null;
+  /** Metadata associated with the asset */
   meta?: Record<string, string>;
 } & (
   | {
