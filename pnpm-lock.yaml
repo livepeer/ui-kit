@@ -164,6 +164,7 @@ importers:
 
   packages/core:
     specifiers:
+      '@ethersproject/abi': ^5.6.4
       cross-fetch: ^3.1.5
       ethers: ^5.6.9
       eventemitter3: ^4.0.7
@@ -175,6 +176,7 @@ importers:
       tus-js-client: 3.0.0
       zustand: 4.0.0
     devDependencies:
+      '@ethersproject/abi': 5.6.4
       ethers: 5.6.9
 
   packages/react:

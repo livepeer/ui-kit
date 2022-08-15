@@ -26,6 +26,7 @@ import { DocsThemeConfig, useConfig } from 'nextra-theme-docs';
 
 const config: DocsThemeConfig = {
   github,
+  projectLink: github,
   docsRepositoryBase: `${github}/tree/main/docs/pages`,
   titleSuffix() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
