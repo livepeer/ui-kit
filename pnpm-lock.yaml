@@ -79,7 +79,7 @@ importers:
   docs:
     specifiers:
       '@livepeer/design-system': ^1.0.3
-      '@livepeer/react': ^0.1.0
+      '@livepeer/react': ^0.2.0
       '@next/bundle-analyzer': ^12.2.5
       '@preconstruct/next': ^4.0.0
       '@reach/skip-nav': ^0.17.0
@@ -91,7 +91,7 @@ importers:
       eslint-config-next: ^12.2.5
       ethers: ^5.6.9
       hls.js: ^1.2.0
-      livepeer: ^0.1.0
+      livepeer: ^0.2.0
       next: ^12.2.5
       next-themes: ^0.2.0
       nextra: 2.0.0-beta.17
@@ -133,7 +133,7 @@ importers:
 
   examples/_dev:
     specifiers:
-      '@livepeer/react': ^0.1.0
+      '@livepeer/react': ^0.2.0
       '@preconstruct/next': ^4.0.0
       '@types/node': ^18.7.6
       '@types/react': ^18.0.17
@@ -142,7 +142,7 @@ importers:
       eslint: ^8.22.0
       eslint-config-next: ^12.2.5
       ethers: ^5.6.9
-      livepeer: ^0.1.0
+      livepeer: ^0.2.0
       next: ^12.2.5
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -194,7 +194,7 @@ importers:
       '@types/react-dom': ^18.0.6
       '@types/use-sync-external-store': ^0.0.3
       ethers: ^5.6.9
-      livepeer: ^0.1.0
+      livepeer: ^0.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
       use-sync-external-store: ^1.2.0
