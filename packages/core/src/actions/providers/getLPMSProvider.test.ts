@@ -6,6 +6,9 @@ import { getLPMSProvider } from './getLPMSProvider';
 describe('getProvider', () => {
   it('default', async () => {
     setupClient();
-    expect(getLPMSProvider()).toMatchInlineSnapshot(`"<Provider />"`);
+    expect(getLPMSProvider().getLPMS()).toMatchInlineSnapshot({
+      baseUrl: 'https://livepeer.studio/api',
+      name: 'Livepeer Studio',
+    });
   });
 });

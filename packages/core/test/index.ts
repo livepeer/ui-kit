@@ -1,9 +1,9 @@
 import { ClientConfig, createClient } from '../src';
+import { studioProvider } from '../src/providers/studio';
 
-type Config = Partial<ClientConfig>;
-
-export function setupClient(config: Config = {}) {
+export function setupClient(config?: Partial<ClientConfig>) {
   return createClient({
+    provider: studioProvider(),
     ...config,
   });
 }

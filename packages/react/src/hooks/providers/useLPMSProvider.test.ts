@@ -6,8 +6,9 @@ import { useLPMSProvider } from './useLPMSProvider';
 describe('useProvider', () => {
   it('mounts', () => {
     const { result } = renderHook(() => useLPMSProvider());
-    expect(result.current).toMatchInlineSnapshot(
-      `"<Provider network={31337} />"`,
-    );
+    expect(result.current.getLPMS()).toMatchInlineSnapshot({
+      baseUrl: 'https://livepeer.studio/api',
+      name: 'Livepeer Studio',
+    });
   });
 });

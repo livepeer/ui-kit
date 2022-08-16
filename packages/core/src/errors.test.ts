@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { UserRejectedRequestError } from './errors';
+import { IncorrectChainIdError } from './errors';
 
-describe('UserRejectedRequestError', () => {
+describe('IncorrectChainIdError', () => {
   it('creates', () => {
-    expect(new UserRejectedRequestError()).toBeInstanceOf(
-      UserRejectedRequestError,
-    );
+    expect(new IncorrectChainIdError()).toBeInstanceOf(IncorrectChainIdError);
   });
 });
