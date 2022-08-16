@@ -15,5 +15,5 @@
     "typescriptreact"
   ],
   "eslint.packageManager": "pnpm",
-  "cSpell.words": ["LPMS", "multistream"]
+  "cSpell.words": ["multistream"]
 }

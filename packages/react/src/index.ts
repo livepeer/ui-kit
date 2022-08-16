@@ -12,7 +12,7 @@ export {
   useL2Migrator,
   useLivepeerToken,
   useLivepeerTokenFaucet,
-  useLPMSProvider,
+  useLivepeerProvider,
   useMerkleSnapshot,
   useMinter,
   usePollCreator,

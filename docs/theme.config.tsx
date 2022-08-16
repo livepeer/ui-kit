@@ -67,7 +67,7 @@ const config: DocsThemeConfig = {
     const config = useConfig();
     const description =
       config.meta.description ||
-      'livepeer.js is a library to make building with Livepeer easy. It provides a core vanilla JS library to easily connect to a Livepeer Media Server (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM management.';
+      'livepeer.js is a library to make building with Livepeer easy. It provides a core vanilla JS library to easily connect to a Livepeer provider (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM management.';
     return (
       <>
         <link

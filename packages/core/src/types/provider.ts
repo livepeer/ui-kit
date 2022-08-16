@@ -1,13 +1,13 @@
-export type LPMS = {
-  /** Livepeer Media Server name */
+export type LivepeerProviderConfig = {
+  /** Provider name */
   name: string;
-  /** Base URL for the LPMS */
+  /** Base URL for the provider */
   baseUrl: string;
 };
 
-export interface LPMSProvider {
-  /** The LPMS configs for this provider */
-  getLPMS(): LPMS;
+export interface LivepeerProvider {
+  /** The config for this provider */
+  getConfig(): LivepeerProviderConfig;
 
   /** Create a new stream */
   createStream(args: CreateStreamArgs): Promise<Stream>;

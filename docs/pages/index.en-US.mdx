@@ -10,7 +10,7 @@ import { Header } from '@components/docs';
 
 <div className="text-center">
   **livepeer.js** is a library to make building with Livepeer easy. It provides a core vanilla JS library to easily connect to a
-  Livepeer Media Server (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM
+  Livepeer provider (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM
   management.
 
 Instantly build a decentralized video app with the Livepeer protocol.
@@ -65,27 +65,29 @@ function App() {
 ```
 
 ```tsx
-import { useLPMSProvider } from '@livepeer/react';
+import { useAsset } from '@livepeer/react';
 
-function LivepeerMediaServer() {
-  const lpmsProvider = useLPMSProvider();
+const assetId = 'a3880c39-b58a-4ae2-8e17-8f3e727ded0d';
 
-  return <div>Using {lpmsProvider.getLPMS().name}</div>;
+function Livepeer() {
+  const { data: asset } = useAsset(assetId);
+
+  return <div>Asset name: {asset?.name ?? 'N/A'}</div>;
 }
 ```
 
-In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the ethers Default Provider and automatically connect to previously connected wallets.
+In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Next, we use the `useConnect` hook to connect an injected wallet (e.g. MetaMask) to the app. Finally, we show the connected account's address with `useAccount` and allow them to disconnect with `useDisconnect`.
+Next, we use the `useAsset` hook to fetch the asset. Finally, we show the asset's name (and can do many other things with it)!
 
-We've only scratched the surface for what you can do with livepeer!
+We've only scratched the surface for what you can do with livepeer.js!
 
 ## Features
 
 livepeer.js supports all these features out-of-the-box:
 
-- Hooks for working with Livepeer Media Servers and the Livepeer protocol
-- Caching, request deduplication, multicall, batching, and persistence
+- Hooks for working with Livepeer providers and the Livepeer protocol
+- Caching, request deduplication, and persistence
 - Auto-refresh data on network changes
 - TypeScript ready
 - Test suite running against forked Ethereum network
@@ -98,3 +100,4 @@ Check out the following places for more livepeer-related content:
 
 - Follow [@livepeer](https://twitter.com/livepeer) on Twitter for project updates
 - Join the [discussions on GitHub](https://github.com/livepeer/livepeer.js/discussions)
+- Jump into our [Discord](https://discord.gg/livepeer)

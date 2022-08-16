@@ -10,8 +10,8 @@ import {
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
-  LPMS,
-  LPMSProvider,
+  LivepeerProvider,
+  LivepeerProviderConfig,
   Stream,
   StreamSession,
   UpdateAssetArgs,
@@ -22,20 +22,20 @@ export type FetchOptions<P = object> = RequestInit & {
   json?: P;
 };
 
-export abstract class BaseLPMSProvider implements LPMSProvider {
-  /** LPMS config */
-  readonly _lpms: LPMS;
+export abstract class BaseLivepeerProvider implements LivepeerProvider {
+  /** Provider base config */
+  readonly _config: LivepeerProviderConfig;
   /** Data fetching library */
   readonly _fetch: typeof fetch;
 
-  constructor(lpms: LPMS) {
+  constructor(config: LivepeerProviderConfig) {
     this._fetch = fetch;
 
-    this._lpms = lpms;
+    this._config = config;
   }
 
-  getLPMS(): LPMS {
-    return this._lpms;
+  getConfig(): LivepeerProviderConfig {
+    return this._config;
   }
 
   async _get<T>(
@@ -48,7 +48,7 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
       | `/asset/${string}`,
     options?: FetchOptions<never>,
   ): Promise<T> {
-    const response = await this._fetch(`${this._lpms.baseUrl}${url}`, {
+    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'GET',
       ...options,
     });
@@ -68,7 +68,7 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
     url: '/stream' | '/asset/request-upload',
     options?: FetchOptions<P>,
   ): Promise<T> {
-    const response = await this._fetch(`${this._lpms.baseUrl}${url}`, {
+    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'POST',
       ...options,
       ...(options?.json ? { body: JSON.stringify(options.json) } : {}),
@@ -93,7 +93,7 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
     url: `/stream/${string}` | `/asset/${string}`,
     options?: FetchOptions<P>,
   ): Promise<void> {
-    const response = await this._fetch(`${this._lpms.baseUrl}${url}`, {
+    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'PATCH',
       ...options,
       ...(options?.json ? { body: JSON.stringify(options.json) } : {}),
@@ -124,5 +124,6 @@ export abstract class BaseLPMSProvider implements LPMSProvider {
   abstract updateAsset(args: UpdateAssetArgs): Promise<Asset>;
 }
 
-export type LPMSProviderFn<TProvider extends LPMSProvider = BaseLPMSProvider> =
-  () => TProvider;
+export type LivepeerProviderFn<
+  TProvider extends LivepeerProvider = BaseLivepeerProvider,
+> = () => TProvider;

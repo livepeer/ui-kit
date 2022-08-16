@@ -1,4 +1,4 @@
-import { LPMS, TranscodingProfile } from '../types';
+import { LivepeerProviderConfig, TranscodingProfile } from '../types';
 
 export const defaultStudioApiKey = '182188f3-3ddf-4dc2-9889-79ecb17a26c9';
 
@@ -26,17 +26,9 @@ export const defaultTranscodingProfiles: Array<TranscodingProfile> = [
   },
 ];
 
-export type LPMSName = 'studio';
+export type LivepeerProviderName = 'studio';
 
-export const studio: LPMS = {
+export const studio: LivepeerProviderConfig = {
   name: 'Livepeer Studio',
   baseUrl: 'https://livepeer.studio/api',
 } as const;
-
-export const lpms: Record<LPMSName, LPMS> = {
-  studio,
-} as const;
-
-export const allLPMS = [studio] as const;
-
-export const defaultLPMS = [studio] as const;

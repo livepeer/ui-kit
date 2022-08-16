@@ -1,9 +1,9 @@
-import { useLPMSProvider, useRoundsManager } from '@livepeer/react';
+import { useLivepeerProvider, useRoundsManager } from '@livepeer/react';
 import { ConnectKitButton } from 'connectkit';
 import { useEffect, useState } from 'react';
 
 export const Connect = () => {
-  const lpmsProvider = useLPMSProvider();
+  const livepeerProvider = useLivepeerProvider();
   const { data: roundsManager } = useRoundsManager();
   const [currentRound, setCurrentRound] = useState<number | undefined>(
     undefined,
@@ -20,7 +20,7 @@ export const Connect = () => {
   return (
     <div>
       <ConnectKitButton />
-      <div>{lpmsProvider.getLPMS().name}</div>
+      <div>{livepeerProvider.getConfig().name}</div>
       <div>Current round: {currentRound}</div>
     </div>
   );

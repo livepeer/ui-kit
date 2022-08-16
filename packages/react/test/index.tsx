@@ -4,7 +4,10 @@ import {
   renderHook as defaultRenderHook,
   waitFor,
 } from '@testing-library/react';
-import { StudioLPMSProvider, studioProvider } from 'livepeer/providers/studio';
+import {
+  StudioLivepeerProvider,
+  studioProvider,
+} from 'livepeer/providers/studio';
 
 import * as React from 'react';
 
@@ -28,7 +31,7 @@ export const queryClient = new QueryClient({
   },
 });
 
-type Props = { client?: Client<StudioLPMSProvider> } & {
+type Props = { client?: Client<StudioLivepeerProvider> } & {
   children?:
     | React.ReactElement<any, string | React.JSXElementConstructor<any>>
     | React.ReactNode;
@@ -46,11 +49,11 @@ export function renderHook<TResult, TProps>(
     wrapper: wrapper_,
     ...options_
   }:
-    | RenderHookOptions<TProps & { client?: Client<StudioLPMSProvider> }>
+    | RenderHookOptions<TProps & { client?: Client<StudioLivepeerProvider> }>
     | undefined = {},
 ) {
   const options: RenderHookOptions<
-    TProps & { client?: Client<StudioLPMSProvider> }
+    TProps & { client?: Client<StudioLivepeerProvider> }
   > = {
     ...(wrapper_
       ? { wrapper: wrapper_ }

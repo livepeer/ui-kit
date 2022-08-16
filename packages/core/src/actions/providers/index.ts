@@ -1,5 +1,8 @@
-export { getLPMSProvider, type GetLPMSProviderResult } from './getLPMSProvider';
 export {
-  watchLPMSProvider,
-  type WatchLPMSProviderCallback,
-} from './watchLPMSProvider';
+  getLivepeerProvider,
+  type GetLivepeerProviderResult,
+} from './getLivepeerProvider';
+export {
+  watchLivepeerProvider,
+  type WatchLivepeerProviderCallback,
+} from './watchLivepeerProvider';

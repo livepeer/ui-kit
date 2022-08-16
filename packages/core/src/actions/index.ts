@@ -15,10 +15,10 @@ export {
   getTicketBroker,
 } from './contracts';
 export {
-  getLPMSProvider,
-  watchLPMSProvider,
-  type GetLPMSProviderResult,
-  type WatchLPMSProviderCallback,
+  getLivepeerProvider,
+  watchLivepeerProvider,
+  type GetLivepeerProviderResult,
+  type WatchLivepeerProviderCallback,
 } from './providers';
 export {
   createStream,
