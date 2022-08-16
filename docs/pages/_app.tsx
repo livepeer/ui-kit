@@ -4,9 +4,9 @@ import type { AppProps } from 'next/app';
 
 import * as React from 'react';
 
-import '../styles/globals.css';
-
 import { Providers } from '../components/core';
+
+import '../styles/globals.css';
 
 const themes: any = getThemes();
 const themeMap: any = {};
@@ -20,30 +20,28 @@ function App({ Component, pageProps }: AppProps) {
     (Component as any).getLayout || ((page: React.ReactElement) => page);
 
   return (
-    <>
-      <Providers>
-        <DesignSystemProvider>
-          <ThemeProvider
-            attribute="class"
-            disableTransitionOnChange
-            value={{
-              ...themeMap,
-              dark: 'dark',
-              light: 'light',
-            }}
+    <Providers>
+      <DesignSystemProvider>
+        <ThemeProvider
+          attribute="class"
+          disableTransitionOnChange
+          value={{
+            ...themeMap,
+            dark: 'dark',
+            light: 'light',
+          }}
+        >
+          {/* Add styling for livepeer-design-system components */}
+          <Box
+            className={
+              themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]
+            }
           >
-            {/* Add styling for livepeer-design-system components */}
-            <Box
-              className={
-                themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]
-              }
-            >
-              {getLayout(<Component {...pageProps} />)}
-            </Box>
-          </ThemeProvider>
-        </DesignSystemProvider>
-      </Providers>
-    </>
+            {getLayout(<Component {...pageProps} />)}
+          </Box>
+        </ThemeProvider>
+      </DesignSystemProvider>
+    </Providers>
   );
 }
 

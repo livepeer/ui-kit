@@ -1,6 +1,6 @@
 import { LivepeerConfig, createReactClient } from '@livepeer/react';
 import { studioProvider } from 'livepeer/providers/studio';
-import * as React from 'react';
+import { ReactNode } from 'react';
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -9,7 +9,7 @@ const livepeerClient = createReactClient({
 });
 
 type Props = {
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export function Providers({ children }: Props) {

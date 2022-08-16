@@ -5,6 +5,7 @@ const withNextra = require('nextra')({
     codeblocks: true,
   },
   unstable_staticImage: true,
+  unstable_contentDump: true,
 });
 
 /** @type {import('next').NextConfig} */
@@ -14,6 +15,10 @@ const config = {
     defaultLocale: 'en-US',
   },
   reactStrictMode: true,
+  typescript: {
+    // Disable type checking since eslint handles this
+    ignoreBuildErrors: true,
+  },
 };
 
 if (process.env.NODE_ENV === 'development') {
