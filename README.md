@@ -22,7 +22,7 @@
 
 ## Features
 
-- 🚀 Hooks for working with LPMS (Livepeer Media Servers) and the Livepeer protocol
+- 🚀 Hooks for working with Livepeer providers and the Livepeer protocol
 - 👟 Caching, request deduplication, multicall, batching, and persistence
 - 🌀 Auto-refresh data on network changes
 - 🦄 TypeScript ready
