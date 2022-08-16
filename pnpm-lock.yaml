@@ -90,6 +90,7 @@ importers:
       eslint: ^8.21.0
       eslint-config-next: ^12.2.4
       ethers: ^5.6.9
+      hls.js: ^1.2.0
       livepeer: ^0.1.0
       next: ^12.2.4
       next-themes: ^0.2.0
@@ -98,6 +99,7 @@ importers:
       postcss: ^8.4.16
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-dropzone: ^14.2.2
       tailwindcss: ^3.1.8
       typescript: ^4.7.4
       wagmi: ^0.6.2
@@ -106,6 +108,7 @@ importers:
       '@livepeer/react': link:../packages/react
       '@reach/skip-nav': 0.17.0_biqbaboplfbrettd7655fr4n2y
       ethers: 5.6.9
+      hls.js: 1.2.0
       livepeer: link:../packages/core
       next: 12.2.4_biqbaboplfbrettd7655fr4n2y
       next-themes: 0.2.0_vyccxgqxcnj5vudpssiumaxlme
@@ -113,6 +116,7 @@ importers:
       nextra-theme-docs: 2.0.0-beta.17_vyccxgqxcnj5vudpssiumaxlme
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-dropzone: 14.2.2_react@18.2.0
       wagmi: 0.6.2_um4cugg2i3ywhvigsmvsir7hgy
     devDependencies:
       '@next/bundle-analyzer': 12.2.4
@@ -4522,6 +4526,11 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
+  /attr-accept/2.2.2:
+    resolution: {integrity: sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==}
+    engines: {node: '>=4'}
+    dev: false
+
   /autoprefixer/10.4.8_postcss@8.4.16:
     resolution: {integrity: sha512-75Jr6Q/XpTqEf6D2ltS5uMewJIx5irCU1oBYJrWjFenq/m12WRRrz6g15L1EIoYvPLXTbEry7rDOwrcYNj77xw==}
     engines: {node: ^10 || ^12 || >=14}
@@ -6675,6 +6684,13 @@ packages:
       flat-cache: 3.0.4
     dev: true
 
+  /file-selector/0.6.0:
+    resolution: {integrity: sha512-QlZ5yJC0VxHxQQsQhXvBaC7VRJ2uaxTf+Tfpu4Z/OcVQJVpZO+DGU0rkoVW5ce2SccxugvpBJoMvUs59iILYdw==}
+    engines: {node: '>= 12'}
+    dependencies:
+      tslib: 2.4.0
+    dev: false
+
   /fill-range/7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
     engines: {node: '>=8'}
@@ -7124,6 +7140,10 @@ packages:
 
   /hey-listen/1.0.8:
     resolution: {integrity: sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==}
+    dev: false
+
+  /hls.js/1.2.0:
+    resolution: {integrity: sha512-QIEQIUpBRhcpBMq3NA+/qozG8lbNfVekuX7kCMUlhiVu4382xFWsnwcuBe/CA4Gp/wB/pf2aRBaGRFlxh/FN8g==}
     dev: false
 
   /hmac-drbg/1.0.1:
@@ -9610,6 +9630,18 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+
+  /react-dropzone/14.2.2_react@18.2.0:
+    resolution: {integrity: sha512-5oyGN/B5rNhop2ggUnxztXBQ6q6zii+OMEftPzsxAR2hhpVWz0nAV+3Ktxo2h5bZzdcCKrpd8bfWAVsveIBM+w==}
+    engines: {node: '>= 10.13'}
+    peerDependencies:
+      react: '>= 16.8 || 18.0.0'
+    dependencies:
+      attr-accept: 2.2.2
+      file-selector: 0.6.0
+      prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
 
   /react-error-boundary/3.1.4_react@18.2.0:
     resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}

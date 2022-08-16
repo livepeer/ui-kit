@@ -164,6 +164,10 @@ export type Stream = {
    */
   streamKey?: string;
   /**
+   * URL for HLS ingest
+   */
+  ingestUrl: string;
+  /**
    * Used to form playback URL
    */
   playbackId?: string;

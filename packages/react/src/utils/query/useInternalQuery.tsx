@@ -6,7 +6,7 @@ import { Status } from './types';
 
 export type UseInternalQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = HttpError | Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>;

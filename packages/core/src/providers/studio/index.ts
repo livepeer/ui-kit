@@ -210,6 +210,7 @@ export class StudioLPMSProvider extends BaseLPMSProvider {
     }
 
     return {
+      ingestUrl: `rtmp://rtmp.livepeer.com/live`,
       playbackUrl: this._getPlaybackUrl(studioStream?.playbackId),
 
       id: studioStream?.['id'],
@@ -285,7 +286,8 @@ export class StudioLPMSProvider extends BaseLPMSProvider {
 
     return {
       id: studioAsset.id,
-      playbackUrl: this._getPlaybackUrl(studioAsset?.playbackId),
+      playbackUrl: studioAsset?.playbackUrl,
+      // this._getPlaybackUrl(studioAsset?.playbackId),
 
       type: studioAsset?.['type'],
       playbackId: studioAsset?.['playbackId'],

@@ -41,7 +41,7 @@ const config: DocsThemeConfig = {
   nextThemes: {
     defaultTheme: 'dark',
   },
-  // bannerKey: 'livepeerjs-1',
+  // bannerKey: 'livepeerjs1',
   // banner: "We've just launched livepeer.js - check out our docs!",
   footerText: `MIT ${new Date().getFullYear()} © Livepeer Inc.`,
   logo() {
