@@ -1,21 +1,26 @@
-import { LPMSProvider, Stream, UpdateStreamArgs, updateStream } from 'livepeer';
+import {
+  LivepeerProvider,
+  Stream,
+  UpdateStreamArgs,
+  updateStream,
+} from 'livepeer';
 
 import { QueryClientContext } from '../../context';
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
-import { useLPMSProvider } from '../providers';
+import { useLivepeerProvider } from '../providers';
 
-export function useUpdateStream<TLPMSProvider extends LPMSProvider>(
+export function useUpdateStream<TLivepeerProvider extends LivepeerProvider>(
   options?: Partial<
     UseInternalMutationOptions<Stream, Error, UpdateStreamArgs>
   >,
 ) {
-  const lpmsProvider = useLPMSProvider<TLPMSProvider>();
+  const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
   return useInternalMutation(
-    async (args: UpdateStreamArgs) => updateStream<TLPMSProvider>(args),
+    async (args: UpdateStreamArgs) => updateStream<TLivepeerProvider>(args),
     {
       context: QueryClientContext,
-      mutationKey: [{ entity: 'updateStream', lpmsProvider }],
+      mutationKey: [{ entity: 'updateStream', livepeerProvider }],
       ...options,
     },
   );

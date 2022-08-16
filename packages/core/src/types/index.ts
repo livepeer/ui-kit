@@ -10,14 +10,14 @@ export type {
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
   Ipfs,
-  LPMS,
-  LPMSProvider,
+  LivepeerProvider,
+  LivepeerProviderConfig,
   Stream,
   StreamSession,
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
-} from './lpms';
+} from './provider';
 export {
   ArbRetryableTx__factory as ArbRetryableTxFactory,
   BondingManager__factory as BondingManagerFactory,

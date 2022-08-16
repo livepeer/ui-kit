@@ -1,10 +1,10 @@
-import { GetStreamArgs, LPMSProvider, Stream } from '../../types';
-import { getLPMSProvider } from '../providers';
+import { GetStreamArgs, LivepeerProvider, Stream } from '../../types';
+import { getLivepeerProvider } from '../providers';
 
-export function getStream<TLPMSProvider extends LPMSProvider = LPMSProvider>(
-  args: GetStreamArgs,
-): Promise<Stream> {
-  const provider = getLPMSProvider<TLPMSProvider>();
+export function getStream<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+>(args: GetStreamArgs): Promise<Stream> {
+  const provider = getLivepeerProvider<TLivepeerProvider>();
 
   return provider.getStream(args);
 }

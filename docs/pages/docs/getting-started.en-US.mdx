@@ -75,12 +75,12 @@ function App() {
 Use hooks! Every component inside the `LivepeerConfig` is now set up to use the livepeer hooks.
 
 ```tsx
-import { useLPMSProvider } from '@livepeer/react';
+import { useLivepeerProvider } from '@livepeer/react';
 
-function LivepeerMediaServer() {
-  const lpmsProvider = useLPMSProvider();
+function Livepeer() {
+  const livepeerProvider = useLivepeerProvider();
 
-  return <div>Using {lpmsProvider.getLPMS().name}</div>
+  return <div>Using {livepeerProvider.getConfig().name}</div>
 }
 ```
 

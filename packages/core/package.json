@@ -17,10 +17,6 @@
       "module": "./dist/livepeer.esm.js",
       "default": "./dist/livepeer.cjs.js"
     },
-    "./lpms": {
-      "module": "./lpms/dist/livepeer-lpms.esm.js",
-      "default": "./lpms/dist/livepeer-lpms.cjs.js"
-    },
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
       "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
@@ -28,14 +24,12 @@
   },
   "sideEffects": false,
   "files": [
-    "/lpms",
     "/providers",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
-      "lpms.ts",
       "providers/studio/index.ts"
     ]
   },

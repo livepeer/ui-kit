@@ -1,19 +1,24 @@
-import { Asset, CreateAssetArgs, LPMSProvider, createAsset } from 'livepeer';
+import {
+  Asset,
+  CreateAssetArgs,
+  LivepeerProvider,
+  createAsset,
+} from 'livepeer';
 
 import { QueryClientContext } from '../../context';
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
-import { useLPMSProvider } from '../providers';
+import { useLivepeerProvider } from '../providers';
 
-export function useCreateAsset<TLPMSProvider extends LPMSProvider>(
+export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
   options?: Partial<UseInternalMutationOptions<Asset, Error, CreateAssetArgs>>,
 ) {
-  const lpmsProvider = useLPMSProvider<TLPMSProvider>();
+  const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
   return useInternalMutation(
-    async (args: CreateAssetArgs) => createAsset<TLPMSProvider>(args),
+    async (args: CreateAssetArgs) => createAsset<TLivepeerProvider>(args),
     {
       context: QueryClientContext,
-      mutationKey: [{ entity: 'createAsset', lpmsProvider }],
+      mutationKey: [{ entity: 'createAsset', livepeerProvider }],
       ...options,
     },
   );

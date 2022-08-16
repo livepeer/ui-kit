@@ -1,6 +1,6 @@
 import * as tus from 'tus-js-client';
 
-import { defaultStudioApiKey, lpms } from '../../constants';
+import { defaultStudioApiKey, studio } from '../../constants';
 
 import {
   Asset,
@@ -16,19 +16,19 @@ import {
   UpdateStreamArgs,
 } from '../../types';
 
-import { BaseLPMSProvider, LPMSProviderFn } from '../base';
+import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import { StudioAsset, StudioStream, StudioStreamSession } from './types';
 
-export type StudioLPMSProviderConfig = {
+export type StudioLivepeerProviderConfig = {
   apiKey?: string | null;
 };
 
-export class StudioLPMSProvider extends BaseLPMSProvider {
+export class StudioLivepeerProvider extends BaseLivepeerProvider {
   readonly _apiKey: string;
   readonly _defaultHeaders: { Authorization: `Bearer ${string}` };
 
   constructor(apiKey: string) {
-    super(lpms.studio);
+    super(studio);
 
     this._apiKey = apiKey;
     this._defaultHeaders = { Authorization: `Bearer ${apiKey}` };
@@ -309,8 +309,8 @@ export class StudioLPMSProvider extends BaseLPMSProvider {
 }
 
 export function studioProvider(
-  { apiKey }: StudioLPMSProviderConfig = { apiKey: defaultStudioApiKey },
-): LPMSProviderFn<StudioLPMSProvider> {
+  { apiKey }: StudioLivepeerProviderConfig = { apiKey: defaultStudioApiKey },
+): LivepeerProviderFn<StudioLivepeerProvider> {
   if (!apiKey) throw new Error(`No API key provided for studio`);
-  return () => new StudioLPMSProvider(apiKey);
+  return () => new StudioLivepeerProvider(apiKey);
 }

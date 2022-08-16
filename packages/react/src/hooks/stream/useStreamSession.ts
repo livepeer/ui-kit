@@ -1,25 +1,25 @@
 import {
   GetStreamSessionArgs,
-  LPMSProvider,
+  LivepeerProvider,
   StreamSession,
   getStreamSession,
 } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
 import { UseInternalQueryOptions, useInternalQuery } from '../../utils';
-import { useLPMSProvider } from '../providers';
+import { useLivepeerProvider } from '../providers';
 
-export function useStreamSession<TLPMSProvider extends LPMSProvider>(
+export function useStreamSession<TLivepeerProvider extends LivepeerProvider>(
   args?: Partial<GetStreamSessionArgs> &
     Partial<UseInternalQueryOptions<StreamSession>>,
 ) {
-  const lpmsProvider = useLPMSProvider<TLPMSProvider>();
+  const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
   return useInternalQuery({
     context: QueryClientContext,
-    queryKey: [{ entity: 'getStreamSession', args, lpmsProvider }],
+    queryKey: [{ entity: 'getStreamSession', args, livepeerProvider }],
     queryFn: async () =>
-      getStreamSession<TLPMSProvider>(args as GetStreamSessionArgs),
+      getStreamSession<TLivepeerProvider>(args as GetStreamSessionArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamSessionId),
     ...(typeof args === 'object' ? args : {}),
   });

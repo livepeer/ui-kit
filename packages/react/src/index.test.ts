@@ -18,7 +18,7 @@ it('should expose correct exports', () => {
       "useL2Migrator",
       "useLivepeerToken",
       "useLivepeerTokenFaucet",
-      "useLPMSProvider",
+      "useLivepeerProvider",
       "useMerkleSnapshot",
       "useMinter",
       "usePollCreator",

@@ -2,11 +2,13 @@ import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { Mutate, StoreApi, default as create } from 'zustand/vanilla';
 
 import { ClientStorage, createStorage, noopStorage } from './storage';
-import { LPMSProvider } from './types';
+import { LivepeerProvider } from './types';
 
-export type ClientConfig<TLPMSProvider extends LPMSProvider = LPMSProvider> = {
+export type ClientConfig<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+> = {
   /** Interface(s) for connecting to provider(s) */
-  provider: () => TLPMSProvider;
+  provider: () => TLivepeerProvider;
   /**
    * Custom storage for data persistence
    * @default window.localStorage
@@ -14,21 +16,25 @@ export type ClientConfig<TLPMSProvider extends LPMSProvider = LPMSProvider> = {
   storage?: ClientStorage;
 };
 
-export type State<TLPMSProvider extends LPMSProvider = LPMSProvider> = {
+export type State<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+> = {
   error?: Error;
-  provider: TLPMSProvider;
+  provider: TLivepeerProvider;
 };
 
 const storeKey = 'livepeer-store';
 
-export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
-  config: Partial<ClientConfig<TLPMSProvider>>;
+export class Client<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+> {
+  config: Partial<ClientConfig<TLivepeerProvider>>;
   storage: ClientStorage;
   store: Mutate<
-    StoreApi<State<TLPMSProvider>>,
+    StoreApi<State<TLivepeerProvider>>,
     [
       ['zustand/subscribeWithSelector', never],
-      ['zustand/persist', Partial<State<TLPMSProvider>>],
+      ['zustand/persist', Partial<State<TLivepeerProvider>>],
     ]
   >;
 
@@ -38,13 +44,13 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
       storage:
         typeof window !== 'undefined' ? window.localStorage : noopStorage,
     }),
-  }: ClientConfig<TLPMSProvider>) {
+  }: ClientConfig<TLivepeerProvider>) {
     // Create store
     this.store = create<
-      State<TLPMSProvider>,
+      State<TLivepeerProvider>,
       [
         ['zustand/subscribeWithSelector', never],
-        ['zustand/persist', Partial<State<TLPMSProvider>>],
+        ['zustand/persist', Partial<State<TLivepeerProvider>>],
       ]
     >(
       subscribeWithSelector(
@@ -82,8 +88,8 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
 
   setState(
     updater:
-      | State<TLPMSProvider>
-      | ((state: State<TLPMSProvider>) => State<TLPMSProvider>),
+      | State<TLivepeerProvider>
+      | ((state: State<TLivepeerProvider>) => State<TLivepeerProvider>),
   ) {
     const newState =
       typeof updater === 'function' ? updater(this.store.getState()) : updater;
@@ -104,19 +110,21 @@ export class Client<TLPMSProvider extends LPMSProvider = LPMSProvider> {
   }
 }
 
-export let client: Client<LPMSProvider>;
+export let client: Client<LivepeerProvider>;
 
-export function createClient<TLPMSProvider extends LPMSProvider = LPMSProvider>(
-  config: ClientConfig<TLPMSProvider>,
-) {
-  const client_ = new Client<TLPMSProvider>(config);
-  client = client_ as unknown as Client<LPMSProvider>;
+export function createClient<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+>(config: ClientConfig<TLivepeerProvider>) {
+  const client_ = new Client<TLivepeerProvider>(config);
+  client = client_ as unknown as Client<LivepeerProvider>;
   return client_;
 }
 
-export function getClient<TLPMSProvider extends LPMSProvider = LPMSProvider>() {
+export function getClient<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+>() {
   if (!client) {
     throw new Error('No livepeer client found.');
   }
-  return client as unknown as Client<TLPMSProvider>;
+  return client as unknown as Client<TLivepeerProvider>;
 }

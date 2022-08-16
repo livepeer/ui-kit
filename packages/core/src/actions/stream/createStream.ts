@@ -1,14 +1,14 @@
 import { defaultTranscodingProfiles } from '../../constants';
-import { CreateStreamArgs, LPMSProvider, Stream } from '../../types';
-import { getLPMSProvider } from '../providers';
+import { CreateStreamArgs, LivepeerProvider, Stream } from '../../types';
+import { getLivepeerProvider } from '../providers';
 
 export function createStream<
-  TLPMSProvider extends LPMSProvider = LPMSProvider,
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
 >({
   name,
   profiles = defaultTranscodingProfiles,
 }: CreateStreamArgs): Promise<Stream> {
-  const provider = getLPMSProvider<TLPMSProvider>();
+  const provider = getLivepeerProvider<TLivepeerProvider>();
 
   return provider.createStream({ name, profiles });
 }

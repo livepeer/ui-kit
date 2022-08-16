@@ -1,18 +1,18 @@
-import { Asset, GetAssetArgs, LPMSProvider, getAsset } from 'livepeer';
+import { Asset, GetAssetArgs, LivepeerProvider, getAsset } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
 import { UseInternalQueryOptions, useInternalQuery } from '../../utils';
-import { useLPMSProvider } from '../providers';
+import { useLivepeerProvider } from '../providers';
 
-export function useAsset<TLPMSProvider extends LPMSProvider>(
+export function useAsset<TLivepeerProvider extends LivepeerProvider>(
   args?: Partial<GetAssetArgs> & Partial<UseInternalQueryOptions<Asset>>,
 ) {
-  const lpmsProvider = useLPMSProvider<LPMSProvider>();
+  const livepeerProvider = useLivepeerProvider<LivepeerProvider>();
 
   return useInternalQuery({
     context: QueryClientContext,
-    queryKey: [{ entity: 'getAsset', args, lpmsProvider }],
-    queryFn: async () => getAsset<TLPMSProvider>(args as GetAssetArgs),
+    queryKey: [{ entity: 'getAsset', args, livepeerProvider }],
+    queryFn: async () => getAsset<TLivepeerProvider>(args as GetAssetArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.assetId),
     ...(typeof args === 'object' ? args : {}),
   });

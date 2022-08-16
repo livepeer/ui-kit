@@ -1,11 +1,11 @@
-import { Asset, GetAssetArgs, LPMSProvider } from '../../types';
+import { Asset, GetAssetArgs, LivepeerProvider } from '../../types';
 
-import { getLPMSProvider } from '../providers';
+import { getLivepeerProvider } from '../providers';
 
-export function getAsset<TLPMSProvider extends LPMSProvider = LPMSProvider>(
-  args: GetAssetArgs,
-): Promise<Asset> {
-  const provider = getLPMSProvider<TLPMSProvider>();
+export function getAsset<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+>(args: GetAssetArgs): Promise<Asset> {
+  const provider = getLivepeerProvider<TLivepeerProvider>();
 
   return provider.getAsset(args);
 }

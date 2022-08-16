@@ -13,7 +13,7 @@ export {
   useServiceRegistry,
   useTicketBroker,
 } from './contracts';
-export { useLPMSProvider } from './providers';
+export { useLivepeerProvider } from './providers';
 export {
   useCreateStream,
   useStream,

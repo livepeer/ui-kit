@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The `livepeer` package contains vanilla JS data fetching and LPMS/protocol interactions for the livepeer ecosystem. For full documentation and examples, visit [js.livepeer.org](https://js.livepeer.org).
+The `livepeer` package contains vanilla JS data fetching and Livepeer provider/protocol interactions for the livepeer ecosystem. For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
 
 ## Installation
 
@@ -17,4 +17,5 @@ npm install livepeer ethers
 Check out the following places for more livepeer-related content:
 
 - Join the [discussions on GitHub](https://github.com/livepeer/livepeer.js/discussions)
-- Follow [@livepeer](https://twitter.com/livepeer) on Twitter for protocol updates
+- Follow [@livepeer](https://twitter.com/livepeer) on Twitter
+- Jump into our [Discord](https://discord.gg/livepeer)

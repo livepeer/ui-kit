@@ -5,7 +5,7 @@ description: 'The livepeer Client is a framework agnostic client that manages wa
 
 # Client
 
-The livepeer `Client` is a framework agnostic client that manages state and connection to a LPMS. The `createReactClient` function
+The livepeer `Client` is a framework agnostic client that manages state and connection to a Livepeer provider. The `createReactClient` function
 wraps the `Client` with a React-specific caching layer for faster queries.
 
 ```tsx
@@ -27,7 +27,7 @@ const client = createReactClient({
 
 ### provider
 
-LPMS interface for connecting to the livepeer network.
+Livepeer provider interface for connecting to the network.
 
 ```tsx {5}
 import { createReactClient } from '@livepeer/react';
