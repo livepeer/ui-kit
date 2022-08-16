@@ -53,7 +53,7 @@ export function VideoPlayer({
         });
       });
 
-      newHls.on(Events.ERROR, function (event, data) {
+      newHls.on(Events.ERROR, function (_event, data) {
         if (data.fatal) {
           switch (data.type) {
             case ErrorTypes.NETWORK_ERROR:
