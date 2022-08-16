@@ -8,6 +8,10 @@
     "title": "Docs",
     "type": "page"
   },
+  "examples": {
+    "title": "Examples",
+    "type": "page"
+  },
   "livepeer_link": {
     "title": "Livepeer ↗",
     "href": "https://docs.livepeer.org",

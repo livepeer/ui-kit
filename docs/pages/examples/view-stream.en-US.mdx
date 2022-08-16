@@ -1,0 +1,149 @@
+---
+title: 'Create and Watch Stream Example'
+description: 'Learn how to create a stream and watch live content with livepeer.js'
+---
+
+import { Stream } from '@components/examples';
+
+# Create and Watch a Stream
+
+Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/docs/hooks/useCreateStream)
+and [`useStream`](/docs/hooks/useStream) to create and watch a livestream.
+
+<Stream />
+
+## Step 1: Configuring Providers
+
+Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio):
+
+```tsx
+import { LivepeerConfig, createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
+import * as React from 'react';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+// Pass client to React Context Provider
+function App() {
+  return (
+    <LivepeerConfig client={livepeerClient}>
+      <CreateAndViewAsset />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Step 2: Stream Creation
+
+We then can create our stream, with the stream key provided once we create it (styling has been removed for simplicity):
+
+```tsx
+import { Box, Button, Flex, TextField } from '@livepeer/design-system';
+import { useCreateStream } from '@livepeer/react';
+
+import { useState } from 'react';
+
+export const Stream = () => {
+  const [streamName, setStreamName] = useState<string>('');
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status: createStatus,
+  } = useCreateStream();
+
+  return (
+    <Box>
+      <TextField
+        type="text"
+        placeholder="Stream name"
+        onChange={(e) => setStreamName(e.target.value)}
+      />
+
+      <Button
+        onClick={() => {
+          if (streamName) {
+            createStream({ name: streamName });
+          }
+        }}
+        disabled={
+          !streamName || createStatus === 'loading' || Boolean(createdStream)
+        }
+      >
+        Create Stream
+      </Button>
+    </Box>
+  );
+};
+```
+
+## Step 3: Stream Content
+
+Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active. Then, we stop
+polling and display the streaming content in an HLS player.
+
+```tsx
+import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
+import { useCreateStream, useStream } from '@livepeer/react';
+
+import { useState } from 'react';
+
+import { Spinner, VideoPlayer } from '../core';
+
+export const Stream = () => {
+  const [streamName, setStreamName] = useState<string>('');
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status: createStatus,
+  } = useCreateStream();
+  const { data: stream } = useStream({
+    streamId: createdStream?.id,
+    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
+  });
+
+  return (
+    <Box>
+      <TextField
+        type="text"
+        placeholder="Stream name"
+        onChange={(e) => setStreamName(e.target.value)}
+      />
+
+      <Button
+        onClick={() => {
+          if (streamName) {
+            createStream({ name: streamName });
+          }
+        }}
+        disabled={!streamName || createStatus === 'loading' || Boolean(stream)}
+      >
+        Create Stream
+      </Button>
+
+      {stream &&
+        stream.streamKey &&
+        (!stream?.playbackUrl || !stream.isActive ? (
+          <>
+            <Text>
+              Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
+              <code>{stream.streamKey}</code> in a stream client like OBS to see
+              content below.
+            </Text>
+
+            <Spinner />
+          </>
+        ) : (
+          <VideoPlayer src={stream?.playbackUrl} />
+        ))}
+    </Box>
+  );
+};
+```
+
+## Wrap Up
+
+That's it! Streaming, complete. You now have a solution for both static and dynamic video content for your app.

@@ -1,26 +1,22 @@
 import { LivepeerConfig, createReactClient } from '@livepeer/react';
+import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { studioProvider } from 'livepeer/providers/studio';
 import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
-import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';
-
-import { publicProvider } from 'wagmi/providers/public';
+import { WagmiConfig, createClient } from 'wagmi';
 
 const livepeerClient = createReactClient({
-  providers: [studioProvider()],
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
 });
 
-const { provider, webSocketProvider } = configureChains(
-  [chain.arbitrum],
-  [publicProvider()],
+const wagmiClient = createClient(
+  getDefaultClient({
+    appName: 'livepeer.js dev',
+    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+  }),
 );
-
-const wagmiClient = createClient({
-  autoConnect: true,
-  persister: null,
-  provider,
-  webSocketProvider,
-});
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
@@ -30,9 +26,11 @@ const App = ({ Component, pageProps }: AppProps) => {
       </NextHead>
 
       <WagmiConfig client={wagmiClient}>
-        <LivepeerConfig client={livepeerClient}>
-          <Component {...pageProps} />
-        </LivepeerConfig>
+        <ConnectKitProvider>
+          <LivepeerConfig client={livepeerClient}>
+            <Component {...pageProps} />
+          </LivepeerConfig>
+        </ConnectKitProvider>
       </WagmiConfig>
     </>
   );

@@ -3,6 +3,7 @@
   "client": "Client",
   "LivepeerConfig": "LivepeerConfig",
   "providers": "Providers",
-  "hooks": "Hooks",
+  "asset": "Asset",
+  "stream": "Stream",
   "constants": "Constants"
 }

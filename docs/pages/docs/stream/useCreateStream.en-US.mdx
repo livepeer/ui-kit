@@ -1,0 +1,90 @@
+---
+title: 'useCreateStream'
+description: 'React Hook for creating a new stream.'
+---
+
+# useCreateStream
+
+Hook for creating a new [Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/lpms.ts).
+
+```tsx
+import { useCreateStream } from '@livepeer/react';
+```
+
+## Usage
+
+The following example shows how a stream can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
+function.
+
+```tsx
+import { useCreateStream } from '@livepeer/react';
+
+const streamName = `New Stream`;
+
+function App() {
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status,
+  } = useCreateStream();
+
+  return (
+    <div>
+      <button
+        disabled={status === 'loading'}
+        onClick={() =>
+          createStream({
+            name: streamName,
+          })
+        }
+      >
+        Create Stream
+      </button>
+      {stream && <div>Stream Key: {stream.streamKey}</div>}
+    </div>
+  );
+}
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: Stream,
+  error?: Error,
+  isError: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isSuccess: boolean,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  mutate: (config: CreateStreamArgs, options?: MutateOptions) => void,
+  mutateAsync: (config: CreateStreamArgs, options?: MutateOptions) => Promise<Stream>,
+  variables?: CreateStreamArgs
+}
+```
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type CreateStreamArgs = {
+  name: string;
+  profiles?: TranscodingProfile[];
+};
+
+type TranscodingProfile = {
+  name: string;
+  bitrate: number;
+  fps: number;
+  width: number;
+  height: number;
+};
+```
+
+If `profiles` are not set, the `defaultTranscodingProfiles` are used (720p, 480p, and 360p).
+
+## Configuration
+
+The `useCreateStream` hook has no arguments.

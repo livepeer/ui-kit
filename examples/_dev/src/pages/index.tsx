@@ -1,11 +1,15 @@
 import * as React from 'react';
 
-import { Connect } from '../components';
+import { Asset, Connect, Stream } from '../components';
 
 const Page = () => {
   return (
     <>
       <Connect />
+      <hr />
+      <Stream />
+      <hr />
+      <Asset />
     </>
   );
 };

@@ -1,0 +1,93 @@
+---
+title: 'useCreateAsset'
+description: 'React Hook for creating a new asset.'
+---
+
+# useCreateAsset
+
+Hook for creating a new [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/lpms.ts).
+
+```tsx
+import { useCreateAsset } from '@livepeer/react';
+```
+
+## Usage
+
+The following example shows how an asset can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
+function.
+
+```tsx
+import { useAsset, useCreateAsset } from '@livepeer/react';
+import { useState } from 'react';
+
+function App() {
+  const [video, setVideo] = useState<File | undefined>();
+  const { mutate: createAsset, data: asset, status, error } = useCreateAsset();
+
+  return (
+    <div>
+      <input
+        type="file"
+        accept="video/*"
+        onChange={(e) => setVideo(e?.target?.files?.[0])}
+      />
+      <button
+        disabled={!video || status === 'loading'}
+        onClick={() => {
+          if (video) {
+            createAsset({
+              name: video.name,
+              file: video,
+            });
+          }
+        }}
+      >
+        Create Asset
+      </button>
+      {asset && (
+        <>
+          <div>Asset Name: {asset?.name}</div>
+          <div>Playback URL: {asset?.playbackUrl}</div>
+        </>
+      )}
+      {error && <div>{error.message}</div>}
+    </div>
+  );
+}
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: Asset,
+  error?: Error,
+  isError: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isSuccess: boolean,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  mutate: (config: CreateAssetArgs, options?: MutateOptions) => void,
+  mutateAsync: (config: CreateAssetArgs, options?: MutateOptions) => Promise<Asset>,
+  variables?: CreateAssetArgs
+}
+```
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type CreateAssetArgs = {
+  name: string;
+  file: File;
+};
+```
+
+The `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for resumable uploads and checks for existing uploads by default, before starting a
+new upload.
+
+## Configuration
+
+The `useCreateAsset` hook has no arguments.

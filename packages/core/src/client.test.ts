@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { Client, createClient, getClient } from './client';
 
-import { StudioDmsProvider, studioProvider } from './providers/studio';
+import { studioProvider } from './providers/studio';
 
 import { createStorage } from './storage';
 
-const provider = studioProvider() as unknown as () => StudioDmsProvider;
+const provider = studioProvider();
 
 describe('createClient', () => {
   it('returns client', () => {

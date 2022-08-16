@@ -1,0 +1,94 @@
+---
+title: 'useUpdateAsset'
+description: 'React Hook for updating an asset.'
+---
+
+# useUpdateAsset
+
+Hook for updating an existing [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/lpms.ts).
+
+```tsx
+import { useUpdateAsset } from '@livepeer/react';
+```
+
+## Usage
+
+The following example shows how an asset can be updated with the `mutate` function, but could also use the asynchronous `mutateAsync`
+function.
+
+```tsx
+import { useAsset, useUpdateAsset } from '@livepeer/react';
+import { useState } from 'react';
+
+const assetId = '7ce29561-91ae-42cf-b9c0-6e46dbc1cc2d';
+
+function App() {
+  const { data: asset } = useAsset({
+    assetId,
+    refetchInterval: 10000,
+  });
+  const { mutate: updateAsset, status, error } = useUpdateAsset();
+
+  return (
+    <div>
+      <button
+        disabled={status === 'loading'}
+        onClick={() => {
+          updateAsset({
+            assetId,
+            storage: 'ipfs',
+          });
+        }}
+      >
+        Upload to IPFS
+      </button>
+      {asset && (
+        <>
+          <div>Asset Name: {asset?.name}</div>
+          <div>IPFS CID: {asset?.storage?.ipfs?.cid ?? 'None'}</div>
+        </>
+      )}
+      {error && <div>{error.message}</div>}
+    </div>
+  );
+}
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: Asset,
+  error?: Error,
+  isError: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isSuccess: boolean,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  mutate: (config: UpdateAssetArgs, options?: MutateOptions) => void,
+  mutateAsync: (config: UpdateAssetArgs, options?: MutateOptions) => Promise<Asset>,
+  variables?: UpdateAssetArgs
+}
+```
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type UpdateAssetArgs = {
+  /** The unique identifier for the asset */
+  assetId: string;
+  /** The name of the asset */
+  name?: string;
+  /** Enable asset storage to be replicated to IPFS */
+  storage?: 'ipfs' | null;
+  /** Metadata associated with the asset */
+  meta?: Record<string, string>;
+};
+```
+
+## Configuration
+
+The `useUpdateAsset` hook has no arguments.

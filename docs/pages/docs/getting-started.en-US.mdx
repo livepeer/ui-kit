@@ -7,6 +7,11 @@ import { Callout, Tabs, Tab} from 'nextra-theme-docs'
 
 # Getting Started
 
+<Callout>
+  These docs are written for a React developer building on livepeer.js. For Node.js or alternative frameworks, you can use the
+  vanilla JS library.
+</Callout>
+
 ## Installation
 
 Install `livepeer` and `@livepeer/react`, and their `wagmi` and `ethers` peer dependencies.
@@ -31,48 +36,30 @@ yarn add livepeer @livepeer/react wagmi ethers
 
 ## Quick Start
 
-<Callout>
-  These steps are written for a React developer building on livepeer.js. For non-React apps, you can use the
-  vanilla JS library similarly to the steps shown for React.
-</Callout>
+### 1. Create a livepeer client
 
-### 1. Configure providers
-
-First, configure your desired providers to be used by livepeer.
+First, create a livepeer `Client` instance using [`createReactClient`](/docs/client), and pass a provider to it.
 
 ```tsx
-import { configureLPMS } from 'livepeer';
+import { createReactClient } from '@livepeer/react';
 import { studioProvider } from 'livepeer/providers/studio';
 
-const { provider } = configureLPMS(
-  [studioProvider()],
-);
-```
-
-Note: In a production app, it is recommended to configure an API key for the `studioProvider` as you will face rate-limiting.
-
-[Read more about configuring providers](/docs/providers/configuring-providers)
-
-### 2. Create a livepeer client
-
-Next, create a livepeer `Client` instance using [`createClient`](/docs/client), and pass the result from `configureChains` to it.
-
-```tsx
-import { createLivepeerClient } from 'livepeer';
-
-const client = createLivepeerClient({
-  provider
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' })
 });
 ```
 
+Note: If you choose to use Studio as your provider, you will need to configure an API key for the
+`studioProvider` which is [CORS protected](https://docs.livepeer.studio/guides/livestreaming/api-key#cors).
+
 [Read more about client configuration](/docs/client)
 
-### 3. Wrap app with `LivepeerConfig`
+### 2. Wrap app with `LivepeerConfig`
 
-Finally, wrap your app with the [`LivepeerConfig`](/docs/LivepeerConfig) component, passing `client` to it.
+Next, wrap your app with the [`LivepeerConfig`](/docs/LivepeerConfig) component, passing the `client` to it.
 
 ```tsx
-import { LivepeerConfig } from 'livepeer';
+import { LivepeerConfig } from '@livepeer/react';
 
 function App() {
   return (
@@ -83,24 +70,18 @@ function App() {
 }
 ```
 
-### 4. You're good to go!
+### 3. Enjoy!
 
 Use hooks! Every component inside the `LivepeerConfig` is now set up to use the livepeer hooks.
 
 ```tsx
-import { useAccount, useConnect, useEnsName } from 'livepeer'
-import { InjectedConnector } from 'livepeer/connectors/injected'
+import { useLPMSProvider } from '@livepeer/react';
 
-function Profile() {
-  const { address, isConnected } = useAccount()
-  const { data: ensName } = useEnsName({ address })
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  })
+function LivepeerMediaServer() {
+  const lpmsProvider = useLPMSProvider();
 
-  if (isConnected) return <div>Connected to {ensName ?? address}</div>
-  return <button onClick={() => connect()}>Connect Wallet</button>
+  return <div>Using {lpmsProvider.getLPMS().name}</div>
 }
 ```
 
-Want to learn more? Check out the [examples](/examples/connect-wallet) to learn how to use livepeer in real-world scenarios or continue on reading the documentation.
+Want to learn more? Continue reading the documentation for more details.

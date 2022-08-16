@@ -33,17 +33,18 @@ export function createReactClient<TLPMSProvider extends LPMSProvider>({
       },
     },
   }),
-  persister = typeof window !== 'undefined'
-    ? createSyncStoragePersister({
-        key: 'livepeer.cache',
-        storage: window.localStorage,
-        serialize,
-        deserialize,
-      })
-    : undefined,
   ...config
 }: CreateReactClientConfig<TLPMSProvider>) {
   const client = createClient<TLPMSProvider>(config);
+  const persister =
+    typeof window !== 'undefined'
+      ? createSyncStoragePersister({
+          key: 'livepeer.cache',
+          storage: config?.storage ?? window.localStorage,
+          serialize,
+          deserialize,
+        })
+      : undefined;
   if (persister)
     persistQueryClient({
       queryClient,

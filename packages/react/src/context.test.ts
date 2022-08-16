@@ -11,17 +11,12 @@ describe('useClient', () => {
       expect(result.current).toMatchInlineSnapshot(`
         Client {
           "config": {
-            "autoConnect": false,
-            "connectors": [
-              "<MockConnector>",
-            ],
             "provider": [Function],
             "storage": {
               "getItem": [Function],
               "removeItem": [Function],
               "setItem": [Function],
             },
-            "webSocketProvider": undefined,
           },
           "queryClient": QueryClient {
             "defaultOptions": {
@@ -64,6 +59,7 @@ describe('useClient', () => {
             "getState": [Function],
             "persist": {
               "clearStorage": [Function],
+              "getOptions": [Function],
               "hasHydrated": [Function],
               "onFinishHydration": [Function],
               "onHydrate": [Function],
@@ -87,9 +83,7 @@ describe('useClient', () => {
         renderHook(() => useClient(), { wrapper });
       } catch (error) {
         expect(error).toMatchInlineSnapshot(
-          `
-          [Error: \`useClient\` must be used within \`LivepeerConfig\`.
-        `,
+          '[Error: `useClient` must be used within `LivepeerConfig`.]',
         );
       }
     });

@@ -5,117 +5,72 @@ description: 'The livepeer Client is a framework agnostic client that manages wa
 
 # Client
 
-The livepeer `Client` is a framework agnostic client that manages wallet connection state and configuration, such as: auto-connection, connectors, and ethers providers.
+The livepeer `Client` is a framework agnostic client that manages state and connection to a LPMS. The `createReactClient` function
+wraps the `Client` with a React-specific caching layer for faster queries.
 
-```ts
-import { createClient } from 'livepeer';
+```tsx
+import { createReactClient } from '@livepeer/react';
 ```
 
 ## Usage
 
-```ts
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
+```tsx
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { provider, webSocketProvider } = configureChains(defaultChains, [
-  publicProvider(),
-]);
-
-const client = createClient({
-  provider,
-  webSocketProvider,
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
 ```
 
 ## Configuration
 
-### autoConnect (optional)
-
-Enables reconnecting to last used connector on mount. Defaults to `false`.
-
-```ts {9}
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
-
-const { provider } = configureChains(defaultChains, [publicProvider()]);
-
-const client = createClient({
-  autoConnect: true,
-  provider,
-});
-```
-
-### connectors (optional)
-
-Connectors used for linking accounts. Defaults to `[new InjectedConnector()]`.
-
-```ts {9-17}
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
-import { InjectedConnector } from 'livepeer/connectors/injected';
-import { WalletConnectConnector } from 'livepeer/connectors/walletConnect';
-
-const { chains, provider } = configureChains(defaultChains, [publicProvider()]);
-
-const client = createClient({
-  connectors: [
-    new InjectedConnector({ chains }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
-  ],
-  provider,
-});
-```
-
 ### provider
 
-ethers [interface](https://docs.ethers.io/v5/api/providers) for connecting to the Ethereum network.
+LPMS interface for connecting to the livepeer network.
 
-```ts {9}
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
+```tsx {5}
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { provider } = configureChains(defaultChains, [publicProvider()]);
-
-const client = createClient({
-  provider,
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
 ```
 
 ### storage (optional)
 
-The default strategy to persist and cache data. Defaults to `window.localStorage`.
+The default strategy to persist and cache data. Used for both state management and query caching.
+Defaults to `window.localStorage`.
 
-```ts {10}
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
+```ts {6}
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { provider } = configureChains(defaultChains, [publicProvider()]);
-
-const client = createClient({
-  provider,
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
   storage: createStorage({ storage: window.localStorage }),
 });
 ```
 
-### webSocketProvider (optional)
+### queryClient (optional)
 
-ethers WebSocket interface for connecting to the Ethereum network. If you provide a WebSocket provider, it will be used instead of polling in certain instances.
+The react-query [QueryClient](https://tanstack.com/query/v4/docs/reference/QueryClient) used to cache/deduplicate queries. Defaults
+to caching for 24 hours and no retries.
 
-```ts {10}
-import { createClient, configureChains, defaultChains } from 'livepeer';
-import { publicProvider } from 'livepeer/providers/public';
+```ts {6-13}
+import { createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
 
-const { provider, webSocketProvider } = configureChains(defaultChains, [
-  publicProvider(),
-]);
-
-const client = createClient({
-  provider,
-  webSocketProvider,
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+  queryClient: new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 1_000 * 60 * 60, // 1 hour
+        retry: 100,
+      },
+    },
+  }),
 });
 ```

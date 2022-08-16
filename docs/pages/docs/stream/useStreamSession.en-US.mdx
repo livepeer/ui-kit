@@ -1,0 +1,62 @@
+---
+title: 'useStreamSession'
+description: 'React Hook for retrieving a stream session.'
+---
+
+# useStreamSession
+
+Hook for retrieving a [Stream Session](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/lpms.ts)
+based on a unique identifier.
+
+```tsx
+import { useStreamSession } from '@livepeer/react';
+```
+
+## Usage
+
+The following examples assume a stream session was created via streaming to an existing Stream.
+
+```tsx
+import { useStreamSession } from '@livepeer/react';
+
+function App() {
+  const { data: streamSession } = useStreamSession(streamSession?.id);
+}
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useQuery), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: StreamSession,
+  error?: Error,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  isError: boolean,
+  isFetched: boolean,
+  isFetching: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isRefetching: boolean,
+  isSuccess: boolean,
+  refetch: (options: RefetchOptions) => Promise<UseQueryResult>,
+}
+```
+
+## Configuration
+
+### streamSessionId
+
+Stream session identifier. Can also be a string passed as the only parameter.
+
+```tsx {5}
+import { useStreamSession } from '@livepeer/react';
+
+function App() {
+  const { data: stream } = useStreamSession({
+    streamSessionId,
+  });
+}
+```

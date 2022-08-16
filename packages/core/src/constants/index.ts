@@ -19,9 +19,34 @@ export {
   TicketBrokerABI,
 } from './abis';
 export {
+  allChainId,
+  arbitrumOneAddress,
+  arbitrumRinkebyAddress,
+  mainnetAddress,
+  mainnetChainId,
+  rinkebyAddress,
+  testnetChainId,
+} from './contracts';
+export type {
+  L1Address,
+  L1LivepeerChain,
+  L1LivepeerChainId,
+  L2Address,
+  L2LivepeerChain,
+  L2LivepeerChainId,
+  LivepeerAddress,
+  LivepeerChain,
+  LivepeerChainId,
+  MainnetLivepeerChain,
+  MainnetLivepeerChainId,
+  TestnetLivepeerChain,
+  TestnetLivepeerChainId,
+} from './contracts';
+export {
   allLPMS,
   defaultLPMS,
   defaultStudioApiKey,
+  defaultTranscodingProfiles,
   lpms,
   studio,
 } from './lpms';

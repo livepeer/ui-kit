@@ -1,26 +1,27 @@
-import * as React from 'react';
-import { useAccount, useConnect } from 'wagmi';
+import { useLPMSProvider, useRoundsManager } from '@livepeer/react';
+import { ConnectKitButton } from 'connectkit';
+import { useEffect, useState } from 'react';
 
 export const Connect = () => {
-  const { connector, isReconnecting } = useAccount();
-  const { connect, connectors, isLoading, error, pendingConnector } =
-    useConnect();
+  const lpmsProvider = useLPMSProvider();
+  const { data: roundsManager } = useRoundsManager();
+  const [currentRound, setCurrentRound] = useState<number | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    (async () => {
+      const response = await roundsManager?.currentRound();
+
+      if (response) setCurrentRound(response.toNumber());
+    })();
+  }, [roundsManager]);
 
   return (
     <div>
-      <div>
-        {connectors.map((x) => (
-          <button
-            disabled={!x.ready || isReconnecting || connector?.id === x.id}
-            key={x.name}
-            onClick={() => connect({ connector: x })}
-          >
-            {isLoading && x.id === pendingConnector?.id && '…'}
-          </button>
-        ))}
-      </div>
-
-      <div>{error && error.message}</div>
+      <ConnectKitButton />
+      <div>{lpmsProvider.getLPMS().name}</div>
+      <div>Current round: {currentRound}</div>
     </div>
   );
 };
