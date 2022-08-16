@@ -10,8 +10,7 @@ import { UseInternalQueryOptions, useInternalQuery } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useStreamSession<TLivepeerProvider extends LivepeerProvider>(
-  args?: Partial<GetStreamSessionArgs> &
-    Partial<UseInternalQueryOptions<StreamSession>>,
+  args: GetStreamSessionArgs & Partial<UseInternalQueryOptions<StreamSession>>,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 

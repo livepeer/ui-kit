@@ -102,9 +102,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
-    const tusOptions: tus.UploadOptions = {
-      uploadSize: args.file.size,
-    };
+    const tusOptions: tus.UploadOptions = {};
 
     const existingUpload = new tus.Upload(args.file, {});
     const previousUploads = await existingUpload.findPreviousUploads();

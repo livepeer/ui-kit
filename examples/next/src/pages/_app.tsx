@@ -13,7 +13,7 @@ const livepeerClient = createReactClient({
 
 const wagmiClient = createClient(
   getDefaultClient({
-    appName: 'livepeer.js dev',
+    appName: 'livepeer.js nextjs example',
     infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
   }),
 );
@@ -22,7 +22,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <NextHead>
-        <title>dev example - livepeer.js</title>
+        <title>nextjs example - livepeer.js</title>
       </NextHead>
 
       <WagmiConfig client={wagmiClient}>

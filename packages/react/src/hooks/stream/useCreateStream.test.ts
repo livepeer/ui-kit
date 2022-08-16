@@ -1,20 +1,22 @@
 import { describe, expect, it } from 'vitest';
 
-import { act, getSampleVideo, renderHook } from '../../../test';
-import { useCreateAsset } from './useCreateAsset';
+import { act, renderHook } from '../../../test';
+import { useCreateStream } from './useCreateStream';
 
-const assetName = 'livepeer.js tests :: new asset';
+const streamName = 'livepeer.js tests :: new stream';
 
-describe('useCreateAsset', () => {
-  it('mounts', () => {
-    const { result } = renderHook(() => useCreateAsset());
-    expect(result.current).toMatchInlineSnapshot(`
+describe('useCreateStream', () => {
+  it('mounts', async () => {
+    const { result, waitFor } = renderHook(() => useCreateStream());
+
+    await waitFor(() => expect(result.current.isIdle).toBeTruthy());
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { internal, ...res } = result.current;
+    expect(res).toMatchInlineSnapshot(`
       {
         "data": undefined,
         "error": null,
-        "internal": {
-          "reset": [Function],
-        },
         "isError": false,
         "isIdle": true,
         "isLoading": false,
@@ -29,22 +31,17 @@ describe('useCreateAsset', () => {
 
   describe('create', () => {
     it('mutates', async () => {
-      const utils = renderHook(() => useCreateAsset());
+      const utils = renderHook(() => useCreateStream());
 
       const { result, waitFor } = utils;
 
       await waitFor(() => expect(result.current.mutate).toBeDefined());
 
       await act(async () => {
-        result.current.mutateAsync?.({
-          name: assetName,
-          file: getSampleVideo(),
-        });
+        result.current.mutate?.({ name: streamName });
       });
 
-      await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
-        timeout: 10_000,
-      });
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
       const { data, variables, ...res } = result.current;
       expect(data?.id).toBeDefined();

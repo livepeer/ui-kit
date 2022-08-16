@@ -1,3 +1,5 @@
+import { ReadStream } from 'fs';
+
 export type LivepeerProviderConfig = {
   /** Provider name */
   name: string;
@@ -78,7 +80,7 @@ export type CreateAssetProgressUpdate = {
 
 export type CreateAssetArgs = {
   name: string;
-  file: File;
+  file: File | ReadStream;
 };
 
 export type UpdateAssetArgs = {

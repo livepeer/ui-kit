@@ -26,7 +26,7 @@
 - 👟 Caching, request deduplication, multicall, batching, and persistence
 - 🌀 Auto-refresh data on network changes
 - 🦄 TypeScript ready
-- 🌳 Test suite running against forked Ethereum network
+- 🌳 Test suite across core and React components
 
 ...and a lot more.
 

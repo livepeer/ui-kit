@@ -1,5 +1,8 @@
 import { Wallet } from 'ethers/lib/ethers';
 
+import fs, { ReadStream } from 'fs';
+import path from 'path';
+
 // default accounts from Anvil
 export const accounts = [
   {
@@ -110,4 +113,10 @@ export function getSigners() {
 
 export function getSigner() {
   return new Wallet(accounts[0].privateKey);
+}
+
+export function getSampleVideo(): ReadStream {
+  const sampleFilePath = path.resolve(__dirname, './sample.mp4');
+
+  return fs.createReadStream(sampleFilePath);
 }

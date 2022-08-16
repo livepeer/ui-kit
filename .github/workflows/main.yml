@@ -168,6 +168,7 @@ jobs:
         run: pnpm test:coverage
         env:
           REACT_VERSION: ${{ matrix.react-version }}
+          STUDIO_API_KEY: ${{ secrets.STUDIO_API_KEY }}
       - name: Test React 17
         if: matrix.react-version == 17
         run: |
@@ -177,3 +178,4 @@ jobs:
           pnpm test:run react
         env:
           REACT_VERSION: ${{ matrix.react-version }}
+          STUDIO_API_KEY: ${{ secrets.STUDIO_API_KEY }}

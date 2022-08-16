@@ -16,17 +16,13 @@ import { useCreateStream } from '@livepeer/react';
 The following example shows how a stream can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
 function.
 
-```tsx
+```tsx {6, 13-15}
 import { useCreateStream } from '@livepeer/react';
 
 const streamName = `New Stream`;
 
 function App() {
-  const {
-    mutate: createStream,
-    data: createdStream,
-    status,
-  } = useCreateStream();
+  const { mutate: createStream, data: stream, status } = useCreateStream();
 
   return (
     <div>

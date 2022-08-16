@@ -1,6 +1,6 @@
 import { LivepeerProviderConfig, TranscodingProfile } from '../types';
 
-export const defaultStudioApiKey = '182188f3-3ddf-4dc2-9889-79ecb17a26c9';
+export const defaultStudioApiKey = '4991930c-f9ae-46a0-a2a8-488c466da778';
 
 export const defaultTranscodingProfiles: Array<TranscodingProfile> = [
   {

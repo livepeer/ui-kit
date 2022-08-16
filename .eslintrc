@@ -76,7 +76,8 @@
     "build",
     "dist",
     "node_modules",
-    "typechain"
+    "typechain",
+    "coverage"
   ],
   "settings": {
     "import/parsers": {

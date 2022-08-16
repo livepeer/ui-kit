@@ -166,17 +166,48 @@ importers:
       eslint-config-next: 12.2.5_4rv7y5c6xz3vfxwhbrcxxi73bq
       typescript: 4.7.4
 
+  examples/next:
+    specifiers:
+      '@livepeer/react': ^0.2.1
+      '@preconstruct/next': ^4.0.0
+      '@types/node': ^18.7.6
+      '@types/react': ^18.0.17
+      '@types/react-dom': ^18.0.6
+      eslint: ^8.22.0
+      eslint-config-next: ^12.2.5
+      ethers: ^5.6.9
+      livepeer: ^0.2.1
+      next: ^12.2.5
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      typescript: ^4.7.4
+      wagmi: ^0.6.3
+    dependencies:
+      '@livepeer/react': link:../../packages/react
+      ethers: 5.6.9
+      livepeer: link:../../packages/core
+      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      wagmi: 0.6.3_um4cugg2i3ywhvigsmvsir7hgy
+    devDependencies:
+      '@preconstruct/next': 4.0.0
+      '@types/node': 18.7.6
+      '@types/react': 18.0.17
+      '@types/react-dom': 18.0.6
+      eslint: 8.22.0
+      eslint-config-next: 12.2.5_4rv7y5c6xz3vfxwhbrcxxi73bq
+      typescript: 4.7.4
+
   packages/core:
     specifiers:
       '@ethersproject/abi': ^5.6.4
       cross-fetch: ^3.1.5
       ethers: ^5.6.9
-      eventemitter3: ^4.0.7
       tus-js-client: ^3.0.0
       zustand: ^4.0.0
     dependencies:
       cross-fetch: 3.1.5
-      eventemitter3: 4.0.7
       tus-js-client: 3.0.0
       zustand: 4.0.0
     devDependencies:
@@ -203,7 +234,6 @@ importers:
       '@tanstack/query-sync-storage-persister': 4.0.10
       '@tanstack/react-query': 4.1.3_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.0.10
-      livepeer: link:../core
       use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
@@ -212,6 +242,7 @@ importers:
       '@types/react-dom': 18.0.6
       '@types/use-sync-external-store': 0.0.3
       ethers: 5.6.9
+      livepeer: link:../core
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       wagmi: 0.6.3_um4cugg2i3ywhvigsmvsir7hgy
