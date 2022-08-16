@@ -1,5 +1,29 @@
 # @livepeer/react
 
+## 0.2.1
+
+### Patch Changes
+
+- [#3](https://github.com/livepeer/livepeer.js/pull/3) [`1c38dcd`](https://github.com/livepeer/livepeer.js/commit/1c38dcde2a7abce7a7785bcd6880ab6f71f0e0e4) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** removed the term "LPMS" from the library and replaced a "LPMS Provider" with a "Livepeer Provider".
+
+  See below for the API changes:
+
+  ```diff
+  - const lpmsProvider = useLPMSProvider<TLPMSProvider>();
+  + const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
+  ```
+
+  ```diff
+  - import { StudioLPMSProvider, studioProvider } from 'livepeer/providers/studio';
+  + import {
+  +   StudioLivepeerProvider,
+  +   studioProvider,
+  + } from 'livepeer/providers/studio';
+  ```
+
+- Updated dependencies [[`1c38dcd`](https://github.com/livepeer/livepeer.js/commit/1c38dcde2a7abce7a7785bcd6880ab6f71f0e0e4)]:
+  - livepeer@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

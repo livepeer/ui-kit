@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@livepeer/design-system": "^1.0.3",
-    "@livepeer/react": "^0.2.0",
+    "@livepeer/react": "^0.2.1",
     "@reach/skip-nav": "^0.17.0",
     "ethers": "^5.6.9",
     "hls.js": "^1.2.0",
-    "livepeer": "^0.2.0",
+    "livepeer": "^0.2.1",
     "next": "^12.2.5",
     "next-themes": "^0.2.0",
     "nextra": "2.0.0-beta.17",
