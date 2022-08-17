@@ -13,19 +13,28 @@ const EDIT_LINK_WITH_TRANSLATIONS = {
   'en-US': 'Question? Give us feedback →',
 } as const;
 
-import { DocsThemeConfig, useConfig } from 'nextra-theme-docs';
+import { DocsThemeConfig, useConfig, useTheme } from 'nextra-theme-docs';
 
-const Logo = ({ height }: { height: number }) => (
-  <svg width={height} height={height} viewBox="0 0 1024 1024" fill="none">
-    <circle cx="512" cy="512" r="512" fill="currentColor" />
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M292 662L292 762L392 762L392 662L292 662ZM292 462L292 562L392 562L392 462L292 462ZM692 462L692 562L792.001 562L792.001 462L692 462ZM292 362L292 262L392 262L392 362L292 362ZM492 461.999L492 361.999L592 361.999L592 461.999L492 461.999ZM492 561.999L492 661.999L592 661.999L592 561.999L492 561.999Z"
-      fill="#131418"
-    />
-  </svg>
-);
+const Logo = ({ height }: { height: number }) => {
+  const { theme } = useTheme();
+
+  return (
+    <svg width={height} height={height} viewBox="0 0 1024 1024" fill="none">
+      <circle
+        cx="512"
+        cy="512"
+        r="512"
+        fill={theme === 'light' ? '#131418' : 'white'}
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M292 662L292 762L392 762L392 662L292 662ZM292 462L292 562L392 562L392 462L292 462ZM692 462L692 562L792.001 562L792.001 462L692 462ZM292 362L292 262L392 262L392 362L292 362ZM492 461.999L492 361.999L592 361.999L592 461.999L492 461.999ZM492 561.999L492 661.999L592 661.999L592 561.999L492 561.999Z"
+        fill={theme === 'light' ? 'white' : '#131418'}
+      />
+    </svg>
+  );
+};
 
 const config: DocsThemeConfig = {
   github,
@@ -48,7 +57,7 @@ const config: DocsThemeConfig = {
   banner() {
     return (
       <div className="flex justify-center items-center gap-2">
-        We've just launched - check out our docs! <Logo height={15} />
+        We've just launched - check out our docs! 📗
       </div>
     );
   },
@@ -76,28 +85,31 @@ const config: DocsThemeConfig = {
   head() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const config = useConfig();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { theme } = useTheme();
     const description =
       config.meta.description ||
       'livepeer.js makes building with Livepeer effortless.';
     const image = config.meta.image || '/og.png';
+    const folder = theme === 'light' ? '/light' : '/dark';
     return (
       <>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/apple-touch-icon.png"
+          href={`${folder}/apple-touch-icon.png`}
         />
         <link
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href="/favicon-32x32.png"
+          href={`${folder}/favicon-32x32.png`}
         />
         <link
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href="/favicon-16x16.png"
+          href={`${folder}/favicon-16x16.png`}
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -111,8 +123,8 @@ const config: DocsThemeConfig = {
         />
         <meta name="theme-color" content="#ffffff" />
         <meta name="msapplication-TileColor" content="#00a300" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00a660" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="mask-icon" href={`/safari-pinned-tab.svg`} color="#00a660" />
+        <link rel="manifest" href={`${folder}/site.webmanifest`} />
         <meta httpEquiv="Content-Language" content="en" />
         <meta name="description" content={description} />
         <meta name="og:description" content={description} />

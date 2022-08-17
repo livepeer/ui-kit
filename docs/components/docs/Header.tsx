@@ -13,11 +13,11 @@ export function Header() {
 
   return (
     <header className="mb-10 flex flex-col items-center">
-      <div className="flex content-center mt-8 mb-2 w-auto h-20 md:h-24">
+      <div className="flex content-center mt-8 mb-2 w-auto h-24 md:h-36">
         <LogoType />
       </div>
 
-      <h1 className="text-center font-bold text-3xl mb-8 md:!text-5xl">
+      <h1 className="text-center font-bold text-3xl mb-8 md:!text-4xl">
         {title}
       </h1>
 

@@ -1,13 +1,13 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./.github/content/logo-dark.svg">
-    <img alt="livepeer logo" src="./.github/content/logo-light.svg" width="auto" height="60">
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/public/logos/logo-dark.svg">
+    <img alt="livepeer logo" src="./docs/public/logos/logo-light.svg" width="auto" height="150">
   </picture>
 </p>
 
-<p align="center">
-  Livepeer for JS
-<p>
+<h3 align="center">
+  livepeer.js
+<h3>
 
 <div align="center">
   <a href="https://www.npmjs.com/package/livepeer">
