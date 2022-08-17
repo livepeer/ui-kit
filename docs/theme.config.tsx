@@ -123,7 +123,6 @@ const config: DocsThemeConfig = {
         />
         <meta name="theme-color" content="#ffffff" />
         <meta name="msapplication-TileColor" content="#00a300" />
-        <link rel="mask-icon" href={`/safari-pinned-tab.svg`} color="#00a660" />
         <link rel="manifest" href={`${folder}/site.webmanifest`} />
         <meta httpEquiv="Content-Language" content="en" />
         <meta name="description" content={description} />
@@ -153,20 +152,13 @@ const config: DocsThemeConfig = {
       <>
         {
           EDIT_LINK_WITH_TRANSLATIONS[
-            (locale as keyof typeof TITLE_WITH_TRANSLATIONS) ?? 'en-US'
+            (locale as keyof typeof EDIT_LINK_WITH_TRANSLATIONS) ?? 'en-US'
           ]
         }
       </>
     );
   },
-  i18n: [
-    { locale: 'en-US', text: 'English' },
-    { locale: 'es-ES', text: 'Español' },
-    { locale: 'zh-CN', text: '简体中文' },
-    { locale: 'ja', text: '日本語' },
-    { locale: 'ko', text: '한국어' },
-    { locale: 'ru', text: 'Русский' },
-  ],
+  i18n: [{ locale: 'en-US', text: 'English' }],
   gitTimestamp: 'Last updated on',
   font: false,
 };
