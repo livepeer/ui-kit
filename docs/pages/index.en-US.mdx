@@ -18,7 +18,6 @@ Instantly build a decentralized video app with the Livepeer protocol.
 </div>
 
 {/* prettier-ignore-start */}
-
 <div className="max-w-md mx-auto mt-5 mb-8 text-center install">
   <Tabs items={['npm', 'pnpm', 'yarn']}>
     <Tab>
@@ -78,13 +77,21 @@ const assetId = 'a3880c39-b58a-4ae2-8e17-8f3e727ded0d';
 function Livepeer() {
   const { data: asset } = useAsset(assetId);
 
-  return <div>Asset name: {asset?.name ?? 'N/A'}</div>;
+  return asset?.playbackUrl ? (
+    <VideoPlayer
+      src={asset.playbackUrl}
+      autoPlay
+      loop
+    />
+  ) : (
+    <LoadingSpinner />
+  );
 }
 ```
 
 In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Next, we use the `useAsset` hook to fetch the asset. Finally, we show the asset's name (and can do many other things with it)!
+Then, we use the `useAsset` hook to fetch the asset and play it using its `playbackUrl`!
 
 We've only scratched the surface for what you can do with livepeer.js!
 
