@@ -3,8 +3,8 @@ title: 'livepeer.js'
 searchable: false
 ---
 
-import { Tabs, Tab } from 'nextra-theme-docs';
-import { Header } from '@components/docs';
+import { Bleed, Tabs, Tab } from 'nextra-theme-docs';
+import { Header, DemoVideo } from '@components/docs';
 
 <Header />
 
@@ -40,7 +40,13 @@ yarn add livepeer @livepeer/react wagmi ethers
 </div>
 {/* prettier-ignore-end */}
 
-<div className="mb-20 text-center">
+<Bleed >
+  <div className="mx-4">
+    <DemoVideo />
+  </div>
+</Bleed>
+
+<div className="mt-6 mb-20 text-center">
   [Get Started](/docs/getting-started) · [GitHub
   Repository](https://github.com/livepeer/livepeer.js)
 </div>

@@ -5,7 +5,7 @@ import { UseInternalQueryOptions, useInternalQuery } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useAsset<TLivepeerProvider extends LivepeerProvider>(
-  args: GetAssetArgs & Partial<UseInternalQueryOptions<Asset>>,
+  args: Partial<GetAssetArgs> & Partial<UseInternalQueryOptions<Asset>>,
 ) {
   const livepeerProvider = useLivepeerProvider<LivepeerProvider>();
 
