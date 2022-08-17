@@ -2,7 +2,7 @@ import { useAsset } from '@livepeer/react';
 
 import { VideoPlayer } from '../core';
 
-const assetId = '170c7298-cb5f-4508-9bc0-c29a6810dd1b';
+const assetId = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6';
 
 export function DemoVideo() {
   const { data: asset } = useAsset(assetId);

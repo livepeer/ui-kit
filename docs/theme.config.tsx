@@ -79,7 +79,7 @@ const config: DocsThemeConfig = {
     const description =
       config.meta.description ||
       'livepeer.js makes building with Livepeer effortless.';
-    const image = config.meta.image || 'https://livepeerjs.org/og.png';
+    const image = config.meta.image || '/og.png';
     return (
       <>
         <link
@@ -121,7 +121,7 @@ const config: DocsThemeConfig = {
         <meta name="twitter:image" content={image} />
         <meta
           name="og:title"
-          content={`${config?.title ?? 'Getting Started'} – livepeer.js`}
+          content={`${config?.title || 'Build with Livepeer'} – livepeer.js`}
         />
         <meta name="og:image" content={image} />
         <meta name="apple-mobile-web-app-title" content="livepeer.js" />
