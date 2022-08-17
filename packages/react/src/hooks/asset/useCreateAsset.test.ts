@@ -43,7 +43,7 @@ describe('useCreateAsset', () => {
       });
 
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
-        timeout: 10_000,
+        timeout: 15_000,
       });
 
       const { data, variables, ...res } = result.current;
