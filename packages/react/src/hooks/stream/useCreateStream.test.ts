@@ -35,15 +35,15 @@ describe('useCreateStream', () => {
 
       const { result, waitFor } = utils;
 
-      await waitFor(() => expect(result.current.mutate).toBeDefined(), {
-        timeout: 10_000,
-      });
+      await waitFor(() => expect(result.current.mutate).toBeDefined());
 
       await act(async () => {
         result.current.mutate?.({ name: streamName });
       });
 
-      await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
+        timeout: 10_000,
+      });
 
       const { data, variables, ...res } = result.current;
       expect(data?.id).toBeDefined();
