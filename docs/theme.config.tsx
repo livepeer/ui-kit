@@ -15,14 +15,17 @@ const EDIT_LINK_WITH_TRANSLATIONS = {
 
 import { DocsThemeConfig, useConfig } from 'nextra-theme-docs';
 
-// const Logo = ({ height }: { height: number }) => (
-//   <svg height={height} viewBox="0 0 291 69" fill="none">
-//     <path
-//       d="M0 36.53c.07 17.6 14.4 32.01 32.01 32.01a32.05 32.05 0 0032.01-32V32a13.2 13.2 0 0123.4-8.31h20.7A32.07 32.07 0 0077.2 0a32.05 32.05 0 00-32 32.01v4.52A13.2 13.2 0 0132 49.71a13.2 13.2 0 01-13.18-13.18 3.77 3.77 0 00-3.77-3.77H3.76A3.77 3.77 0 000 36.53zM122.49 68.54a32.14 32.14 0 01-30.89-23.7h20.67a13.16 13.16 0 0023.4-8.3V32A32.05 32.05 0 01167.68 0c17.43 0 31.64 14 32 31.33l.1 5.2a13.2 13.2 0 0023.4 8.31h20.7a32.07 32.07 0 01-30.91 23.7c-17.61 0-31.94-14.42-32.01-32l-.1-4.7v-.2a13.2 13.2 0 00-13.18-12.81 13.2 13.2 0 00-13.18 13.18v4.52a32.05 32.05 0 01-32.01 32.01zM247.94 23.7a13.16 13.16 0 0123.4 8.31 3.77 3.77 0 003.77 3.77h11.3a3.77 3.77 0 003.76-3.77A32.05 32.05 0 00258.16 0a32.07 32.07 0 00-30.92 23.7h20.7z"
-//       fill="currentColor"
-//     />
-//   </svg>
-// );
+const Logo = ({ height }: { height: number }) => (
+  <svg width={height} height={height} viewBox="0 0 1024 1024" fill="none">
+    <circle cx="512" cy="512" r="512" fill="currentColor" />
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M292 662L292 762L392 762L392 662L292 662ZM292 462L292 562L392 562L392 462L292 462ZM692 462L692 562L792.001 562L792.001 462L692 462ZM292 362L292 262L392 262L392 362L292 362ZM492 461.999L492 361.999L592 361.999L592 461.999L492 461.999ZM492 561.999L492 661.999L592 661.999L592 561.999L492 561.999Z"
+      fill="#131418"
+    />
+  </svg>
+);
 
 const config: DocsThemeConfig = {
   github,
@@ -41,23 +44,31 @@ const config: DocsThemeConfig = {
   nextThemes: {
     defaultTheme: 'dark',
   },
-  // bannerKey: 'livepeerjs1',
-  // banner: "We've just launched livepeer.js - check out our docs!",
+  bannerKey: 'livepeerjs-launch',
+  banner() {
+    return (
+      <div className="flex justify-center items-center gap-2">
+        We've just launched - check out our docs! <Logo height={15} />
+      </div>
+    );
+  },
   footerText: `MIT ${new Date().getFullYear()} © Livepeer Inc.`,
   logo() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { locale } = useRouter();
     return (
       <>
-        <span className="mr-2 font-extrabold hidden md:inline select-none">
-          livepeer.js
-        </span>
-        <span className="text-gray-600 font-medium hidden md:inline">
-          {
+        <Logo height={25} />
+        <span
+          className="ml-2 font-extrabold hidden md:inline select-none"
+          title={
+            'livepeer.js: ' +
             TITLE_WITH_TRANSLATIONS[
               (locale as keyof typeof TITLE_WITH_TRANSLATIONS) ?? 'en-US'
             ]
           }
+        >
+          livepeer.js
         </span>
       </>
     );
@@ -67,31 +78,26 @@ const config: DocsThemeConfig = {
     const config = useConfig();
     const description =
       config.meta.description ||
-      'livepeer.js is a library to make building with Livepeer easy. It provides a core vanilla JS library to easily connect to a Livepeer provider (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM management.';
+      'livepeer.js makes building with Livepeer effortless.';
+    const image = config.meta.image || 'https://livepeerjs.org/og.png';
     return (
       <>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/favicon/apple-touch-icon.png"
+          href="/apple-touch-icon.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href="/favicon/favicon-32x32.png"
+          href="/favicon-32x32.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href="/favicon/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/favicon/site.webmanifest" />
-        <link
-          rel="mask-icon"
-          href="/favicon/safari-pinned-tab.svg"
-          color="#000000"
+          href="/favicon-16x16.png"
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -103,22 +109,28 @@ const config: DocsThemeConfig = {
           href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
           rel="stylesheet"
         />
-        <meta name="msapplication-TileColor" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="msapplication-TileColor" content="#00a300" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00a660" />
+        <link rel="manifest" href="/site.webmanifest" />
         <meta httpEquiv="Content-Language" content="en" />
         <meta name="description" content={description} />
         <meta name="og:description" content={description} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@livepeer" />
-        {/* <meta name="twitter:image" content={image} /> */}
-        <meta name="og:title" content={`${config.title} – livepeer.js`} />
-        {/* <meta name="og:image" content={image} /> */}
+        <meta name="twitter:image" content={image} />
+        <meta
+          name="og:title"
+          content={`${config?.title ?? 'Getting Started'} – livepeer.js`}
+        />
+        <meta name="og:image" content={image} />
         <meta name="apple-mobile-web-app-title" content="livepeer.js" />
       </>
     );
   },
   sidebarSubtitle: ({ title }) => (
     <div className="flex items-center gap-2">
-      {/* <Logo height={6} /> */}
+      <Logo height={10} />
       {title}
     </div>
   ),
@@ -144,7 +156,6 @@ const config: DocsThemeConfig = {
     { locale: 'ru', text: 'Русский' },
   ],
   gitTimestamp: 'Last updated on',
-  unstable_faviconGlyph: '🟩',
   font: false,
 };
 
