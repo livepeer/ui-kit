@@ -1,5 +1,27 @@
 # @livepeer/react
 
+## 0.2.2
+
+### Patch Changes
+
+- [#5](https://github.com/livepeer/livepeer.js/pull/5) [`97c56f6`](https://github.com/livepeer/livepeer.js/commit/97c56f64b18f62c6b417e35ac27834747b7a0c20) Thanks [@0xcadams](https://github.com/0xcadams)! - Updated the default studio API key to use a new, tracked (and rate-limited) version.
+
+  ```diff
+  -export const defaultStudioApiKey = '182188f3-3ddf-4dc2-9889-79ecb17a26c9';
+  +export const defaultStudioApiKey = '4991930c-f9ae-46a0-a2a8-488c466da778';
+  ```
+
+  Updated the types on `CreateAssetArgs` to include `ReadStream` for node.js environments.
+
+  ```diff
+  export type CreateAssetArgs = {
+    name: string;
+
+  - file: File;
+  + file: File | ReadStream;
+    };
+  ```
+
 ## 0.2.1
 
 ### Patch Changes
