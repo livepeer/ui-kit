@@ -22,7 +22,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <NextHead>
-        <title>livepeer.js</title>
+        <title>dev example - livepeer.js</title>
       </NextHead>
 
       <WagmiConfig client={wagmiClient}>

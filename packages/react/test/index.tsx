@@ -37,7 +37,13 @@ type Props = { client?: Client<StudioLivepeerProvider> } & {
     | React.ReactNode;
 };
 export function wrapper({
-  client = createReactClient({ provider: studioProvider(), queryClient }),
+  client = createReactClient({
+    provider: studioProvider({
+      apiKey:
+        process.env.STUDIO_API_KEY ?? 'a2f68bb3-02df-4ef8-9142-adef671988ca',
+    }),
+    queryClient,
+  }),
   ...rest
 }: Props = {}) {
   return <LivepeerConfig client={client} {...rest} />;
@@ -74,4 +80,4 @@ export function renderHook<TResult, TProps>(
 
 export { act, cleanup } from '@testing-library/react';
 
-export { getSigners } from '../../core/test';
+export { getSampleVideo, getSigners } from '../../core/test';

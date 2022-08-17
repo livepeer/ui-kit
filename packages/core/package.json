@@ -8,6 +8,7 @@
     "url": "https://github.com/livepeer/livepeer.js.git",
     "directory": "packages/core"
   },
+  "homepage": "https://livepeerjs.org",
   "main": "dist/livepeer.cjs.js",
   "module": "dist/livepeer.esm.js",
   "types": "dist/livepeer.cjs.d.ts",
@@ -39,7 +40,6 @@
   "peerDependenciesMeta": {},
   "dependencies": {
     "cross-fetch": "^3.1.5",
-    "eventemitter3": "^4.0.7",
     "tus-js-client": "^3.0.0",
     "zustand": "^4.0.0"
   },
@@ -53,7 +53,6 @@
     "livepeer",
     "streaming",
     "video",
-    "wallet",
     "web3"
   ]
 }

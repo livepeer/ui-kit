@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router';
-// import { Callout } from 'nextra-theme-docs';
 
-// import { LogoType } from '../core';
+import { LogoType } from '../core';
 
 const TITLE_WITH_TRANSLATIONS: Record<string, string> = {
-  'en-US': 'Livepeer for JS',
+  'en-US': 'livepeer.js',
 };
 
 export function Header() {
@@ -14,14 +13,13 @@ export function Header() {
 
   return (
     <header className="mb-10 flex flex-col items-center">
-      <div className="mt-8 mb-2 w-auto h-12 md:h-14">
-        <h1 className="font-bold text-4xl md:!text-6xl">livepeer.js</h1>
-        {/* <LogoType /> */}
+      <div className="flex content-center mt-8 mb-2 w-auto h-20 md:h-24">
+        <LogoType />
       </div>
 
-      <p className="text-center font-medium text-lg mb-6 text-gray-500 md:!text-xl">
+      <h1 className="text-center font-bold text-3xl mb-8 md:!text-5xl">
         {title}
-      </p>
+      </h1>
 
       <div className="flex flex-wrap gap-2 justify-center max-w-[28rem] min-h-[3rem]">
         <a

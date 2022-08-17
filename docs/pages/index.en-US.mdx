@@ -1,15 +1,15 @@
 ---
-title: 'livepeer.js: Livepeer for JS'
+title: 'Build with Livepeer'
 searchable: false
 ---
 
-import { Tabs, Tab } from 'nextra-theme-docs';
-import { Header } from '@components/docs';
+import { Bleed, Tabs, Tab } from 'nextra-theme-docs';
+import { Header, DemoVideo } from '@components/docs';
 
 <Header />
 
 <div className="text-center">
-  **livepeer.js** is a library to make building with Livepeer easy. It provides a core vanilla JS library to easily connect to a
+  **livepeer.js** makes building with Livepeer effortless. It provides a core vanilla JS library to easily connect to a
   Livepeer provider (e.g. Livepeer Studio), as well as React-specific hooks with a similar API to provide memoization and DOM
   management.
 
@@ -18,7 +18,6 @@ Instantly build a decentralized video app with the Livepeer protocol.
 </div>
 
 {/* prettier-ignore-start */}
-
 <div className="max-w-md mx-auto mt-5 mb-8 text-center install">
   <Tabs items={['npm', 'pnpm', 'yarn']}>
     <Tab>
@@ -40,7 +39,13 @@ yarn add livepeer @livepeer/react wagmi ethers
 </div>
 {/* prettier-ignore-end */}
 
-<div className="mb-20 text-center">
+<Bleed >
+  <div className="mx-4">
+    <DemoVideo />
+  </div>
+</Bleed>
+
+<div className="mt-6 mb-20 text-center">
   [Get Started](/docs/getting-started) · [GitHub
   Repository](https://github.com/livepeer/livepeer.js)
 </div>
@@ -58,7 +63,7 @@ const client = createReactClient({
 function App() {
   return (
     <LivepeerConfig client={client}>
-      <SomeComponents />
+      <Livepeer />
     </LivepeerConfig>
   );
 }
@@ -72,13 +77,21 @@ const assetId = 'a3880c39-b58a-4ae2-8e17-8f3e727ded0d';
 function Livepeer() {
   const { data: asset } = useAsset(assetId);
 
-  return <div>Asset name: {asset?.name ?? 'N/A'}</div>;
+  return asset?.playbackUrl ? (
+    <VideoPlayer
+      src={asset.playbackUrl}
+      autoPlay
+      loop
+    />
+  ) : (
+    <LoadingSpinner />
+  );
 }
 ```
 
 In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Next, we use the `useAsset` hook to fetch the asset. Finally, we show the asset's name (and can do many other things with it)!
+Then, we use the `useAsset` hook to fetch the asset and use its `playbackUrl` with a video player! Waterfalls!
 
 We've only scratched the surface for what you can do with livepeer.js!
 
@@ -90,7 +103,7 @@ livepeer.js supports all these features out-of-the-box:
 - Caching, request deduplication, and persistence
 - Auto-refresh data on network changes
 - TypeScript ready
-- Test suite running against forked Ethereum network
+- Test suite across core and React components
 
 ...and a lot more.
 
