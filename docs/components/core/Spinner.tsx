@@ -4,7 +4,15 @@ const rotate = keyframes({
   '100%': { transform: 'rotate(360deg)' },
 });
 
-export const Spinner = ({ css = {}, speed = '1s' }) => (
+export const Spinner = ({
+  css = {},
+  size = 26,
+  speed = '1s',
+}: {
+  css?: object;
+  size?: number;
+  speed?: string;
+}) => (
   <Box
     css={{
       color: '$gray4',
@@ -12,10 +20,10 @@ export const Spinner = ({ css = {}, speed = '1s' }) => (
       borderColor: '$blue7',
       borderRadius: '50%',
       borderTopColor: 'inherit',
-      width: 26,
-      height: 26,
-      maxWidth: 26,
-      maxHeight: 26,
+      width: size,
+      height: size,
+      maxWidth: size,
+      maxHeight: size,
       animation: `${rotate} ${speed} linear`,
       animationIterationCount: 'infinite',
       ...css,

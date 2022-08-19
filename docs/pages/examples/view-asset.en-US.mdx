@@ -49,7 +49,7 @@ import { useCreateAsset } from '@livepeer/react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-export const Asset = () => {
+export const CreateAndViewAsset = () => {
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
@@ -113,14 +113,18 @@ import { useDropzone } from 'react-dropzone';
 
 import { Spinner, VideoPlayer } from '../core';
 
-export const Asset = () => {
+export const CreateAndViewAsset = () => {
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
     data: createdAsset,
     status: createStatus,
   } = useCreateAsset();
-  const { data: asset, error } = useAsset({
+  const {
+    data: asset,
+    error,
+    status: assetStatus,
+  } = useAsset({
     assetId: createdAsset?.id,
     refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
   });
@@ -138,6 +142,16 @@ export const Asset = () => {
     maxFiles: 1,
     onDrop,
   });
+
+  // we check here for either creating the asset, or polling for the asset
+  // until the video is in the ready phase and can be consumed
+  const isLoading = useMemo(
+    () =>
+      createStatus === 'loading' ||
+      assetStatus === 'loading' ||
+      (asset && asset?.status?.phase !== 'ready'),
+    [createStatus, asset, assetStatus],
+  );
 
   return (
     <Box>
@@ -158,17 +172,13 @@ export const Asset = () => {
             createAsset({ name: video.name, file: video });
           }
         }}
-        disabled={!video || createStatus === 'loading' || Boolean(asset)}
+        disabled={!video || isLoading || Boolean(asset)}
       >
+        {isLoading && <Spinner />}
         Upload
       </Button>
 
-      {asset &&
-        (!asset?.playbackUrl ? (
-          <Spinner />
-        ) : (
-          <VideoPlayer src={asset?.playbackUrl} />
-        ))}
+      {asset && asset?.playbackUrl && <VideoPlayer src={asset?.playbackUrl} />}
     </Box>
   );
 };

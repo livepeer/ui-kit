@@ -91,4 +91,17 @@ The `suspend` and `record` boolean arguments set the stream to be suspended/unsu
 
 ## Configuration
 
-The `useUpdateStream` hook has no arguments.
+### UseMutationOptions
+
+The `useUpdateStream` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+
+```tsx {5}
+import { useUpdateStream } from '@livepeer/react';
+
+function App() {
+  const { mutate: updateStream } = useUpdateStream({
+    retry: 5,
+  });
+}
+```

@@ -14,7 +14,8 @@ import { useStream } from '@livepeer/react';
 
 ## Usage
 
-The following examples assume a stream was created via `useCreateStream` or directly via a provider's API/dashboard.
+The following examples assume a stream was created via `useCreateStream` or directly via a provider's API/dashboard. If a falsy
+stream ID is provided, the query will be skipped.
 
 ```tsx
 import { useStream } from '@livepeer/react';
@@ -57,6 +58,22 @@ import { useStream } from '@livepeer/react';
 function App() {
   const { data: stream } = useStream({
     streamId,
+  });
+}
+```
+
+### UseQueryOptions
+
+The `useStream` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
+`refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
+
+```tsx {6}
+import { useStream } from '@livepeer/react';
+
+function App() {
+  const { data: stream } = useStream({
+    streamId,
+    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
   });
 }
 ```

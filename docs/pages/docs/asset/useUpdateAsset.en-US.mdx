@@ -91,4 +91,17 @@ type UpdateAssetArgs = {
 
 ## Configuration
 
-The `useUpdateAsset` hook has no arguments.
+### UseMutationOptions
+
+The `useUpdateAsset` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+
+```tsx {5}
+import { useUpdateAsset } from '@livepeer/react';
+
+function App() {
+  const { mutate: updateAsset } = useUpdateAsset({
+    retry: 5,
+  });
+}
+```

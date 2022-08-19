@@ -82,8 +82,8 @@ export const Stream = () => {
 
 ## Step 3: Stream Content
 
-Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active. Then, we stop
-polling and display the streaming content in an HLS player.
+Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active (see `refetchInterval` for
+how we do that). Then, we stop polling and display the streaming content in an HLS player.
 
 ```tsx
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
@@ -100,10 +100,15 @@ export const Stream = () => {
     data: createdStream,
     status: createStatus,
   } = useCreateStream();
-  const { data: stream } = useStream({
+  const { data: stream, status: streamStatus } = useStream({
     streamId: createdStream?.id,
     refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
   });
+
+  const isLoading = useMemo(
+    () => createStatus === 'loading' || streamStatus === 'loading',
+    [createStatus, streamStatus],
+  );
 
   return (
     <Box>
@@ -119,26 +124,23 @@ export const Stream = () => {
             createStream({ name: streamName });
           }
         }}
-        disabled={!streamName || createStatus === 'loading' || Boolean(stream)}
+        disabled={!streamName || isLoading || Boolean(stream)}
       >
+        {isLoading && <Spinner />}
         Create Stream
       </Button>
 
       {stream &&
         stream.streamKey &&
-        (!stream?.playbackUrl || !stream.isActive ? (
-          <>
-            <Text>
-              Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
-              <code>{stream.streamKey}</code> in a stream client like OBS to see
-              content below.
-            </Text>
+        (!stream?.playbackUrl || !stream.isActive) && (
+          <Text>
+            Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
+            <code>{stream.streamKey}</code> in a stream client like OBS to see
+            content below.
+          </Text>
+        )}
 
-            <Spinner />
-          </>
-        ) : (
-          <VideoPlayer src={stream?.playbackUrl} />
-        ))}
+      {stream && <VideoPlayer src={stream?.playbackUrl} />}
     </Box>
   );
 };

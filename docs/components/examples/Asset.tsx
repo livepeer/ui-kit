@@ -25,7 +25,11 @@ export const Asset = () => {
     data: createdAsset,
     status: createStatus,
   } = useCreateAsset();
-  const { data: asset, error } = useAsset({
+  const {
+    data: asset,
+    error,
+    status: assetStatus,
+  } = useAsset({
     assetId: createdAsset?.id,
     refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
   });
@@ -57,6 +61,14 @@ export const Asset = () => {
       ...(isDragActive ? activeStyle : {}),
     }),
     [isDragActive, isDragReject, isDragAccept],
+  );
+
+  const isLoading = useMemo(
+    () =>
+      createStatus === 'loading' ||
+      assetStatus === 'loading' ||
+      (asset && asset?.status?.phase !== 'ready'),
+    [createStatus, asset, assetStatus],
   );
 
   return (
@@ -133,23 +145,19 @@ export const Asset = () => {
             }
           }}
           size="2"
-          disabled={!video || createStatus === 'loading' || Boolean(asset)}
+          disabled={!video || isLoading || Boolean(asset)}
           variant="primary"
         >
+          {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
           Upload
         </Button>
       </Flex>
 
-      {asset &&
-        (!asset?.playbackUrl ? (
-          <Flex css={{ my: '$3', justifyContent: 'center' }}>
-            <Spinner />
-          </Flex>
-        ) : (
-          <Box css={{ mt: '$2' }}>
-            <VideoPlayer src={asset?.playbackUrl} />
-          </Box>
-        ))}
+      {asset && asset?.playbackUrl && (
+        <Box css={{ mt: '$2' }}>
+          <VideoPlayer src={asset?.playbackUrl} />
+        </Box>
+      )}
     </Box>
   );
 };
