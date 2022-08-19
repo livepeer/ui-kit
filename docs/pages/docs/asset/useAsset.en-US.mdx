@@ -14,7 +14,8 @@ import { useAsset } from '@livepeer/react';
 
 ## Usage
 
-The following examples assume an Asset was created via `useCreateAsset` or directly via a provider's API/dashboard.
+The following examples assume an Asset was created via `useCreateAsset` or directly via a provider's API/dashboard. If a falsy
+asset ID is provided, the query will be skipped.
 
 ```tsx
 import { useAsset } from '@livepeer/react';
@@ -57,6 +58,22 @@ import { useAsset } from '@livepeer/react';
 function App() {
   const { data: asset } = useAsset({
     assetId,
+  });
+}
+```
+
+### UseQueryOptions
+
+The `useAsset` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
+`refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
+
+```tsx {6}
+import { useAsset } from '@livepeer/react';
+
+function App() {
+  const { data: asset } = useAsset({
+    assetId,
+    refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
   });
 }
 ```

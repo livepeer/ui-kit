@@ -14,7 +14,8 @@ import { useStreamSessions } from '@livepeer/react';
 
 ## Usage
 
-The following examples assume a Stream was created via via `useCreateStream` or directly via a provider's API/dashboard.
+The following examples assume a Stream was created via via `useCreateStream` or directly via a provider's API/dashboard. If a falsy
+stream ID is provided, the query will be skipped.
 
 ```tsx
 import { useStreamSessions } from '@livepeer/react';
@@ -57,6 +58,23 @@ import { useStreamSessions } from '@livepeer/react';
 function App() {
   const { data: streamSessions } = useStreamSessions({
     streamId,
+  });
+}
+```
+
+### UseQueryOptions
+
+The `useStreamSessions` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
+`refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
+
+```tsx {6-7}
+import { useStreamSessions } from '@livepeer/react';
+
+function App() {
+  const { data: streamSessions } = useStreamSessions({
+    streamId,
+    refetchInterval: (streamSessions) =>
+      (streamSessions?.length ?? 0) === 0 ? 5000 : false,
   });
 }
 ```

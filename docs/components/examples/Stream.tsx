@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { useCreateStream, useStream } from '@livepeer/react';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Spinner, VideoPlayer } from '../core';
 
@@ -12,10 +12,15 @@ export const Stream = () => {
     data: createdStream,
     status: createStatus,
   } = useCreateStream();
-  const { data: stream } = useStream({
+  const { data: stream, status: streamStatus } = useStream({
     streamId: createdStream?.id,
     refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
   });
+
+  const isLoading = useMemo(
+    () => createStatus === 'loading' || streamStatus === 'loading',
+    [createStatus, streamStatus],
+  );
 
   return (
     <Box css={{ my: '$6' }}>
@@ -42,33 +47,29 @@ export const Stream = () => {
             }
           }}
           size="2"
-          disabled={
-            !streamName || createStatus === 'loading' || Boolean(stream)
-          }
+          disabled={!streamName || isLoading || Boolean(stream)}
           variant="primary"
         >
+          {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
           Create Stream
         </Button>
       </Flex>
 
       {stream &&
         stream.streamKey &&
-        (!stream?.playbackUrl || !stream.isActive ? (
-          <>
-            <Text size="3" variant="gray" css={{ mt: '$1', mb: '$4' }}>
-              Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
-              <code>{stream.streamKey}</code> in a stream client like OBS to see
-              content below.
-            </Text>
-            <Flex css={{ my: '$3', justifyContent: 'center' }}>
-              <Spinner />
-            </Flex>
-          </>
-        ) : (
-          <Box css={{ mt: '$2' }}>
-            <VideoPlayer src={stream?.playbackUrl} />
-          </Box>
-        ))}
+        (!stream?.playbackUrl || !stream.isActive) && (
+          <Text size="3" variant="gray" css={{ mt: '$3', mb: '$4' }}>
+            Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
+            <code>{stream.streamKey}</code> in a stream client like OBS to see
+            content below.
+          </Text>
+        )}
+
+      {stream && (
+        <Box css={{ mt: '$2' }}>
+          <VideoPlayer src={stream?.playbackUrl} />
+        </Box>
+      )}
     </Box>
   );
 };

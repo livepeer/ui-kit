@@ -90,4 +90,17 @@ new upload.
 
 ## Configuration
 
-The `useCreateAsset` hook has no arguments.
+### UseMutationOptions
+
+The `useCreateAsset` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+
+```tsx {5}
+import { useCreateAsset } from '@livepeer/react';
+
+function App() {
+  const { mutate: createAsset } = useCreateAsset({
+    retry: 5,
+  });
+}
+```

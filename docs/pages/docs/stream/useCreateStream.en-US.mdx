@@ -83,4 +83,17 @@ If `profiles` are not set, the `defaultTranscodingProfiles` are used (720p, 480p
 
 ## Configuration
 
-The `useCreateStream` hook has no arguments.
+### UseMutationOptions
+
+The `useCreateStream` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+
+```tsx {5}
+import { useCreateStream } from '@livepeer/react';
+
+function App() {
+  const { mutate: createStream } = useCreateStream({
+    retry: 5,
+  });
+}
+```
