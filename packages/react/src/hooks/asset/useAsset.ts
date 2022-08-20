@@ -1,7 +1,17 @@
-import { Asset, GetAssetArgs, LivepeerProvider, getAsset } from 'livepeer';
+import {
+  Asset,
+  GetAssetArgs,
+  LivepeerProvider,
+  getAsset,
+  pick,
+} from 'livepeer';
 
 import { QueryClientContext } from '../../context';
-import { UseInternalQueryOptions, useInternalQuery } from '../../utils';
+import {
+  UseInternalQueryOptions,
+  useInternalQuery,
+  useInternalQueryKeys,
+} from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useAsset<TLivepeerProvider extends LivepeerProvider>(
@@ -14,6 +24,6 @@ export function useAsset<TLivepeerProvider extends LivepeerProvider>(
     queryKey: [{ entity: 'getAsset', args, livepeerProvider }],
     queryFn: async () => getAsset<TLivepeerProvider>(args as GetAssetArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.assetId),
-    ...(typeof args === 'object' ? args : {}),
+    ...(typeof args === 'object' ? pick(args, useInternalQueryKeys) : {}),
   });
 }

@@ -3,10 +3,15 @@ import {
   LivepeerProvider,
   StreamSession,
   getStreamSession,
+  pick,
 } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
-import { UseInternalQueryOptions, useInternalQuery } from '../../utils';
+import {
+  UseInternalQueryOptions,
+  useInternalQuery,
+  useInternalQueryKeys,
+} from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useStreamSession<TLivepeerProvider extends LivepeerProvider>(
@@ -21,6 +26,6 @@ export function useStreamSession<TLivepeerProvider extends LivepeerProvider>(
     queryFn: async () =>
       getStreamSession<TLivepeerProvider>(args as GetStreamSessionArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamSessionId),
-    ...(typeof args === 'object' ? args : {}),
+    ...(typeof args === 'object' ? pick(args, useInternalQueryKeys) : {}),
   });
 }
