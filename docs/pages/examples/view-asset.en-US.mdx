@@ -106,12 +106,12 @@ has a `playbackUrl`. Then, we stop polling and show the video in a simple HLS pl
 
 ```tsx
 import { Box, Button, Flex, Text } from '@livepeer/design-system';
-import { useAsset, useCreateAsset } from '@livepeer/react';
+import { useAsset, useCreateAsset, VideoPlayer } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { Spinner, VideoPlayer } from '../core';
+import { Spinner } from '../core';
 
 export const CreateAndViewAsset = () => {
   const [video, setVideo] = useState<File | undefined>();

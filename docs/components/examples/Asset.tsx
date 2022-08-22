@@ -1,10 +1,10 @@
 import { Box, Button, Flex, Text } from '@livepeer/design-system';
-import { useAsset, useCreateAsset } from '@livepeer/react';
+import { VideoPlayer, useAsset, useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { Spinner, VideoPlayer } from '../core';
+import { Spinner } from '../core';
 
 const activeStyle = {
   borderColor: 'white',

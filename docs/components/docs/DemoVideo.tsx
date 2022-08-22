@@ -1,6 +1,4 @@
-import { useAsset } from '@livepeer/react';
-
-import { VideoPlayer } from '../core';
+import { VideoPlayer, useAsset } from '@livepeer/react';
 
 const assetId = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6';
 

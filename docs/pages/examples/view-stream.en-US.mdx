@@ -87,11 +87,11 @@ how we do that). Then, we stop polling and display the streaming content in an H
 
 ```tsx
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
-import { useCreateStream, useStream } from '@livepeer/react';
+import { useCreateStream, useStream, VideoPlayer } from '@livepeer/react';
 
 import { useState } from 'react';
 
-import { Spinner, VideoPlayer } from '../core';
+import { Spinner } from '../core';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
