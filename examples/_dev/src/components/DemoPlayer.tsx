@@ -1,18 +1,16 @@
 import { VideoPlayer, useAsset } from '@livepeer/react';
+import { useEffect, useState } from 'react';
 
-const assetId = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6';
+const assetId = '01c94ad7-35f1-4a55-9802-57c2fa39b964';
 
 export const DemoPlayer = () => {
   const { data: asset } = useAsset(assetId);
+  const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
 
-  return asset?.playbackUrl ? (
-    <VideoPlayer
-      autoPlay
-      loop
-      muted
-      src={asset.playbackUrl}
-      className="h-30 w-full"
-    />
+  useEffect(() => setPlaybackUrl(asset?.playbackUrl), [asset]);
+
+  return playbackUrl ? (
+    <VideoPlayer autoPlay loop muted src={playbackUrl} width="640" />
   ) : (
     <>Loading...</>
   );

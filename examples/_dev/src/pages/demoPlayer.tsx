@@ -1,7 +1,12 @@
 import { DemoPlayer } from '../components';
 
 const Page = () => {
-  return <DemoPlayer />;
+  return (
+    <>
+      <h1>Demo Video Player</h1>
+      <DemoPlayer />
+    </>
+  );
 };
 
 export default Page;

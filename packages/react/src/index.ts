@@ -2,6 +2,7 @@ export { createReactClient } from './client';
 export type { CreateReactClientConfig } from './client';
 export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';
+export { VideoPlayer } from './components';
 export {
   useAsset,
   useBondingManager,
