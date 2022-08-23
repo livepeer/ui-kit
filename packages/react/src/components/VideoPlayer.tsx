@@ -1,6 +1,11 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 import { RefObject, VideoHTMLAttributes, createRef, useEffect } from 'react';
 
+import {
+  createMetricsReportingUrl,
+  reportVideoMetrics,
+} from '../utils/videoMetrics';
+
 export interface VideoPlayerProps
   extends VideoHTMLAttributes<HTMLVideoElement> {
   hlsConfig?: HlsConfig;
@@ -46,6 +51,11 @@ export function VideoPlayer({
               );
           }
         });
+
+        const metricReportingUrl = createMetricsReportingUrl(src);
+        if (metricReportingUrl) {
+          reportVideoMetrics(playerRef.current, metricReportingUrl);
+        }
       });
 
       newHls.on(Events.ERROR, function (_event, data) {
