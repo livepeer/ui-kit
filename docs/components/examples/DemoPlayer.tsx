@@ -3,8 +3,8 @@ import { Asset } from 'livepeer';
 import { AssetIdOrString } from 'livepeer/src/types/provider';
 import { useState } from 'react';
 
-const assetId: AssetIdOrString = '01c94ad7-35f1-4a55-9802-57c2fa39b964'; // clock
-// const assetId: AssetIdOrString = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6'; // waterfall
+// const assetId: AssetIdOrString = '01c94ad7-35f1-4a55-9802-57c2fa39b964'; // clock
+const assetId: AssetIdOrString = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6'; // waterfall
 
 // TODO: do not merge in production
 export const DemoPlayer = () => {
