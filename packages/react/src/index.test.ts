@@ -9,6 +9,7 @@ it('should expose correct exports', () => {
       "Context",
       "LivepeerConfig",
       "useClient",
+      "VideoPlayer",
       "useAsset",
       "useBondingManager",
       "useController",
