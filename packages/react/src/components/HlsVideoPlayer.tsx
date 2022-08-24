@@ -1,10 +1,7 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 import { RefObject, VideoHTMLAttributes, createRef, useEffect } from 'react';
 
-import {
-  createMetricsReportingUrl,
-  reportVideoMetrics,
-} from '../utils/videoMetrics';
+import { reportVideoMetrics } from '../utils/videoMetrics';
 
 export interface GenericHlsVideoPlayerProps
   extends VideoHTMLAttributes<HTMLVideoElement> {
@@ -58,10 +55,15 @@ export function HlsVideoPlayer({
           }
         });
 
-        const metricReportingUrl = createMetricsReportingUrl(src);
-        if (metricReportingUrl) {
-          reportVideoMetrics(playerRef.current, metricReportingUrl);
-        }
+        // TODO: re-enable after testing and before merging
+        // const metricReportingUrl = createMetricsReportingUrl(src);
+        // if (metricReportingUrl) {
+        //   reportVideoMetrics(playerRef.current, metricReportingUrl);
+        // }
+        reportVideoMetrics(
+          playerRef.current,
+          'wss://sao-canary-catalyst-0.livepeer.fun',
+        );
       });
 
       newHls.on(Events.ERROR, function (_event, data) {
