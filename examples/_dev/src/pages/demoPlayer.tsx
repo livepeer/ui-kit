@@ -1,10 +1,12 @@
-import { DemoPlayer } from '../components';
+import { AssetDemoPlayer } from '../components';
 
 const Page = () => {
   return (
     <>
       <h1>Demo Video Player</h1>
-      <DemoPlayer />
+
+      <h2>VOD Asset playback</h2>
+      <AssetDemoPlayer />
     </>
   );
 };
