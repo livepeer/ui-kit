@@ -22,6 +22,7 @@ export {
   updateAsset,
   updateStream,
   watchLivepeerProvider,
+  getPlaybackInfo,
 } from './actions';
 export type {
   GetLivepeerProviderResult,
@@ -110,6 +111,7 @@ export type {
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
+  GetPlaybackInfoArgs,
   Hash,
   Inbox,
   Ipfs,
@@ -134,4 +136,5 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  PlaybackInfo,
 } from './types';

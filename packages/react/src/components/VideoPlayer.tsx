@@ -1,34 +1,39 @@
-import { Asset, AssetIdOrString } from 'livepeer/src/types/provider';
+import { PlaybackInfo } from 'livepeer/src/types/provider';
 import React, { useEffect, useState } from 'react';
 
-import { useAsset } from '../hooks';
+import { usePlaybackInfo } from '../hooks/playback/usePlaybackInfo';
 import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
 
 export interface VideoPlayerProps extends GenericHlsVideoPlayerProps {
-  assetId: AssetIdOrString;
-  receivedAsset?: (asset: Asset) => void;
+  playbackId: string;
+  receivedPlaybackInfo?: (playbackInfo: PlaybackInfo) => void;
   receivedError?: (error: Error) => void;
 }
 
 export function VideoPlayer({
+  playbackId,
+  receivedPlaybackInfo,
+  receivedError,
   hlsConfig,
   playerRef = React.createRef<HTMLVideoElement>(),
-  assetId,
-  receivedAsset,
-  receivedError,
   autoPlay = true,
   controls = true,
   width = '100%',
   ...props
 }: VideoPlayerProps) {
-  const { data: asset, error } = useAsset(assetId);
+  const { data: playbackInfo, error } = usePlaybackInfo(playbackId);
   const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!asset) return;
-    setPlaybackUrl(asset.playbackUrl);
-    receivedAsset && receivedAsset(asset);
-  }, [asset]);
+    if (!playbackInfo) return;
+    const url = playbackInfo?.meta.source[0]?.url;
+    if (url) {
+      setPlaybackUrl(url);
+    }
+    if (playbackInfo) {
+      receivedPlaybackInfo && receivedPlaybackInfo(playbackInfo);
+    }
+  }, [playbackInfo]);
 
   useEffect(() => {
     if (!error) return;

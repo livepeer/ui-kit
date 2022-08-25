@@ -1,10 +1,10 @@
 import { VideoPlayer } from '@livepeer/react';
-import { Asset } from 'livepeer';
-import { AssetIdOrString } from 'livepeer/src/types/provider';
+import { PlaybackInfo } from 'livepeer';
 import { useState } from 'react';
 
-// const assetId: AssetIdOrString = '01c94ad7-35f1-4a55-9802-57c2fa39b964'; // clock
-const assetId: AssetIdOrString = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6'; // waterfall
+// const assetId = '01c94ad7-35f1-4a55-9802-57c2fa39b964'; // clock
+// const assetId = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6'; // waterfall
+const playbackId = '01c93u43vbi48ojf'; // clock
 
 // TODO: do not merge in production
 export const DemoVideo = () => {
@@ -13,14 +13,15 @@ export const DemoVideo = () => {
     undefined,
   );
 
-  const handleAsset = (asset: Asset) => setPlaybackUrl(asset.playbackUrl);
+  const handlePlaybackInfo = (playbackInfo: PlaybackInfo) =>
+    setPlaybackUrl(playbackInfo.meta.source[0]?.url);
   const handleError = (error: Error) => setErrorMessage(error.message);
 
   return (
     <>
       <VideoPlayer
-        assetId={assetId}
-        receivedAsset={handleAsset}
+        playbackId={playbackId}
+        receivedPlaybackInfo={handlePlaybackInfo}
         receivedError={handleError}
         width="640"
         loop
@@ -28,7 +29,7 @@ export const DemoVideo = () => {
       />
 
       <p>
-        AssetId: {assetId}
+        PlaybackId: {playbackId}
         <br />
         {errorMessage && (
           <>
