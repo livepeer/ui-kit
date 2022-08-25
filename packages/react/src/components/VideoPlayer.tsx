@@ -1,5 +1,5 @@
 import { Asset, AssetIdOrString } from 'livepeer/src/types/provider';
-import React, { createRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useAsset } from '../hooks';
 import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
@@ -12,7 +12,7 @@ export interface VideoPlayerProps extends GenericHlsVideoPlayerProps {
 
 export function VideoPlayer({
   hlsConfig,
-  playerRef = createRef<HTMLVideoElement>(),
+  playerRef = React.createRef<HTMLVideoElement>(),
   assetId,
   receivedAsset,
   receivedError,

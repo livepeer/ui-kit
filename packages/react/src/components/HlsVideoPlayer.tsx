@@ -1,10 +1,5 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
-import React, {
-  RefObject,
-  VideoHTMLAttributes,
-  createRef,
-  useEffect,
-} from 'react';
+import React, { RefObject, VideoHTMLAttributes, useEffect } from 'react';
 
 import { reportVideoMetrics } from '../utils/videoMetrics';
 
@@ -23,7 +18,7 @@ export interface HlsVideoPlayerProps extends GenericHlsVideoPlayerProps {
 
 export function HlsVideoPlayer({
   hlsConfig,
-  playerRef = createRef<HTMLVideoElement>(),
+  playerRef = React.createRef<HTMLVideoElement>(),
   src,
   autoPlay = true,
   controls = true,
