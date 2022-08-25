@@ -1,13 +1,10 @@
+import { TranscodingProfile } from '../../types';
+
 /**
  * LMPS ffmpeg profile
  */
-export type StudioFfmpegProfile = {
-  width: number;
-  name: string;
-  height: number;
-  bitrate: number;
+export type StudioFfmpegProfile = TranscodingProfile & {
   fps: number;
-  fpsDen?: number;
   gop?: string;
   profile?: 'H264Baseline' | 'H264Main' | 'H264High' | 'H264ConstrainedHigh';
   encoder?: 'h264' | 'hevc' | 'vp8' | 'vp9';
@@ -139,10 +136,10 @@ export type StudioStream = {
   id?: string;
   kind?: string;
   name: string;
-  userId?: string;
   lastSeen?: number;
   sourceSegments?: number;
   transcodedSegments?: number;
+  playbackUrl: string;
   /**
    * Duration of all the source segments, sec
    */
@@ -193,7 +190,11 @@ export type StudioStream = {
   /**
    * Used to form RTMP ingest URL
    */
-  streamKey?: string;
+  streamKey: string;
+  /**
+   * URL for HLS ingest
+   */
+  ingestUrl: string;
   /**
    * Used to form playback URL
    */
@@ -219,81 +220,13 @@ export type StudioStream = {
    * ID of object store where to which this stream was recorded
    */
   recordObjectStoreId?: string;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
      * References to targets where this stream will be simultaneously streamed to
      */
-    targets?: {
-      /**
-       * Name of transcoding profile that should be sent. Use "source" for pushing source stream data
-       */
-      profile: string;
-      /**
-       * If true, the stream audio will be muted and only silent video will be pushed to the target.
-       */
-      videoOnly?: boolean;
-      /**
-       * ID of multistream target object where to push this stream
-       */
-      id?: string;
-      /**
-       * Inline multistream target object. Will automatically create the target resource to be used by the created stream.
-       */
-      spec?: {
-        name?: string;
-        /**
-         * Livepeer-compatible multistream target URL (RTMP(S) or SRT)
-         */
-        url: string;
-      };
-    }[];
+    targets?: MultistreamTarget[];
   };
-  wowza?: {
-    transcoderAppConfig: {
-      [k: string]: unknown;
-    };
-    transcoderTemplateAppConfig: {
-      [k: string]: unknown;
-    };
-    streamNameGroups: unknown[];
-    sourceInfo: {
-      width: number;
-      height: number;
-      fps: number;
-    };
-  };
-  renditions?: {
-    [k: string]: string;
-  };
-  /**
-   * Custom configuration for audio/video detection algorithms to be run on the stream. If no config is provided and a webhook is subscribed to the stream.detection event, a default config will be used.
-   */
-  detection?: {
-    sceneClassification: [
-      {
-        name: 'soccer' | 'adult';
-      },
-      ...{
-        name: 'soccer' | 'adult';
-      }[],
-    ];
-  };
-  /**
-   * Region in which this session object was created
-   */
-  region?: string;
-  /**
-   * Hostname of the broadcaster that transcodes that stream
-   */
-  broadcasterHost?: string;
-  /**
-   * Hostname of the Mist server that processes that stream
-   */
-  mistHost?: string;
-  /**
-   * If currently suspended
-   */
-  suspended?: boolean;
 };
 
 export type StudioDeactivateManyPayload = {
@@ -356,34 +289,41 @@ export type StudioStreamPatchPayload = {
    * If currently suspended
    */
   suspended?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
      * References to targets where this stream will be simultaneously streamed to
      */
-    targets?: {
-      /**
-       * Name of transcoding profile that should be sent. Use "source" for pushing source stream data
-       */
-      profile: string;
-      /**
-       * If true, the stream audio will be muted and only silent video will be pushed to the target.
-       */
-      videoOnly?: boolean;
-      /**
-       * ID of multistream target object where to push this stream
-       */
-      id?: string;
-      /**
-       * Inline multistream target object. Will automatically create the target resource to be used by the created stream.
-       */
-      spec?: {
-        name?: string;
-        /**
-         * Livepeer-compatible multistream target URL (RTMP(S) or SRT)
-         */
-        url: string;
-      };
-    }[];
+    targets?: MultistreamTarget[];
+  };
+};
+
+export type MultistreamTarget = {
+  /**
+   * Name of transcoding profile that should be sent. Use "source" for pushing
+   * source stream data
+   */
+  profile: string;
+  /**
+   * If true, the stream audio will be muted and only silent video will be
+   * pushed to the target.
+   */
+  videoOnly?: boolean;
+  /**
+   * ID of multistream target object where to push this stream
+   */
+  id?: string;
+  /**
+   * Inline multistream target object. Will automatically create the target
+   * resource to be used by the created stream.
+   */
+  spec?: {
+    /** Name for the multistream target */
+    name?: string;
+    /**
+     * Livepeer-compatible multistream target URL (RTMP(s) or SRT)
+     */
+    url: string;
   };
 };
 
@@ -512,7 +452,8 @@ export type StudioStreamSession = {
   /**
    * Used to form playback URL
    */
-  playbackId?: string;
+  playbackId: string;
+  streamKey: string;
   profiles?: StudioFfmpegProfile[];
   lastSessionId?: string;
 };
@@ -1021,7 +962,7 @@ export type StudioAsset = {
   /**
    * Type of the asset.
    */
-  type?: 'video' | 'audio';
+  type?: 'video';
   /**
    * Used to form playback URL and storage folder
    */

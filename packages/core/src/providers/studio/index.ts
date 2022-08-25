@@ -189,13 +189,21 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           : {}),
         ...(typeof args?.meta !== 'undefined' ? { meta: args.meta } : {}),
         ...(typeof args?.storage !== 'undefined'
-          ? { storage: args.storage === 'ipfs' ? { ipfs: {} } : {} }
+          ? {
+              storage: {
+                ...(args.storage.ipfs ? { ipfs: {} } : {}),
+              },
+            }
           : {}),
       },
       headers: this._defaultHeaders,
     });
 
     return this.getAsset(assetId);
+  }
+
+  _getRtmpIngestUrl(streamKey: string) {
+    return `rtmp://rtmp.livepeer.com/live/${streamKey}`;
   }
 
   _getPlaybackUrl(playbackId: string) {
@@ -208,11 +216,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     }
 
     return {
-      ingestUrl: `rtmp://rtmp.livepeer.com/live`,
-      playbackUrl: this._getPlaybackUrl(studioStream?.playbackId),
+      rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
+      playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
 
       id: studioStream?.['id'],
-      kind: studioStream?.['kind'],
       name: studioStream?.['name'],
       lastSeen: studioStream?.['lastSeen'],
       sourceSegments: studioStream?.['sourceSegments'],
@@ -223,22 +230,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       transcodedBytes: studioStream?.['transcodedBytes'],
       ingestRate: studioStream?.['ingestRate'],
       outgoingRate: studioStream?.['outgoingRate'],
-      deleted: studioStream?.['deleted'],
       isActive: studioStream?.['isActive'],
-      createdByTokenName: studioStream?.['createdByTokenName'],
-      createdByTokenId: studioStream?.['createdByTokenId'],
       createdAt: studioStream?.['createdAt'],
       parentId: studioStream?.['parentId'],
-      partialSession: studioStream?.['partialSession'],
-      previousSessions: studioStream?.['previousSessions'],
       streamKey: studioStream?.['streamKey'],
       playbackId: studioStream?.['playbackId'],
       profiles: studioStream?.['profiles'],
-      objectStoreId: studioStream?.['objectStoreId'],
-      presets: studioStream?.['presets'],
       record: studioStream?.['record'],
-      recordObjectStoreId: studioStream?.['recordObjectStoreId'],
-      multistream: studioStream?.['multistream'],
     };
   }
 
@@ -248,10 +246,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     }
 
     return {
-      playbackUrl: this._getPlaybackUrl(studioStreamSession?.playbackId),
+      rtmpIngestUrl: this._getRtmpIngestUrl(studioStreamSession.streamKey),
+      playbackUrl: this._getPlaybackUrl(studioStreamSession.playbackId),
 
       id: studioStreamSession.id,
-      kind: studioStreamSession?.['kind'],
       name: studioStreamSession?.['name'],
       lastSeen: studioStreamSession?.['lastSeen'],
       sourceSegments: studioStreamSession?.['sourceSegments'],
@@ -263,17 +261,14 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       transcodedBytes: studioStreamSession?.['transcodedBytes'],
       ingestRate: studioStreamSession?.['ingestRate'],
       outgoingRate: studioStreamSession?.['outgoingRate'],
-      deleted: studioStreamSession?.['deleted'],
       createdAt: studioStreamSession?.['createdAt'],
       parentId: studioStreamSession?.['parentId'],
       record: studioStreamSession?.['record'],
       recordingStatus: studioStreamSession?.['recordingStatus'],
       recordingUrl: studioStreamSession?.['recordingUrl'],
       mp4Url: studioStreamSession?.['mp4Url'],
-      recordObjectStoreId: studioStreamSession?.['recordObjectStoreId'],
       playbackId: studioStreamSession?.['playbackId'],
       profiles: studioStreamSession?.['profiles'],
-      lastSessionId: studioStreamSession?.['lastSessionId'],
     };
   }
 
@@ -285,14 +280,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return {
       id: studioAsset.id,
       playbackUrl: studioAsset?.playbackUrl,
-      // this._getPlaybackUrl(studioAsset?.playbackId),
 
       type: studioAsset?.['type'],
       playbackId: studioAsset?.['playbackId'],
-      playbackRecordingId: studioAsset?.['playbackRecordingId'],
       downloadUrl: studioAsset?.['downloadUrl'],
-      deleted: studioAsset?.['deleted'],
-      objectStoreId: studioAsset?.['objectStoreId'],
       storage: studioAsset?.['storage'],
       status: studioAsset?.['status'],
       name: studioAsset?.['name'],
@@ -301,7 +292,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       size: studioAsset?.['size'],
       hash: studioAsset?.['hash'],
       videoSpec: studioAsset?.['videoSpec'],
-      sourceAssetId: studioAsset?.['sourceAssetId'],
     };
   }
 }
