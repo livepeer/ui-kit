@@ -1,4 +1,4 @@
-import * as React from 'react';
+import Link from 'next/link';
 
 import { Asset, Connect, Stream } from '../components';
 
@@ -10,6 +10,10 @@ const Page = () => {
       <Stream />
       <hr />
       <Asset />
+      <hr />
+      <Link href="/demoPlayer">
+        <a>Demo Video Player</a>
+      </Link>
     </>
   );
 };
