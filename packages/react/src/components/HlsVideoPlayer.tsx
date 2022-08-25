@@ -1,7 +1,10 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 import React, { RefObject, VideoHTMLAttributes, useEffect } from 'react';
 
-import { reportVideoMetrics } from '../utils/videoMetrics';
+import {
+  createMetricsReportingUrl,
+  reportVideoMetrics,
+} from '../utils/videoMetrics';
 
 export interface GenericHlsVideoPlayerProps
   extends VideoHTMLAttributes<HTMLVideoElement> {
@@ -55,15 +58,10 @@ export function HlsVideoPlayer({
           }
         });
 
-        // TODO: re-enable after testing and before merging
-        // const metricReportingUrl = createMetricsReportingUrl(src);
-        // if (metricReportingUrl) {
-        //   reportVideoMetrics(playerRef.current, metricReportingUrl);
-        // }
-        reportVideoMetrics(
-          playerRef.current,
-          'wss://patchy.ddvtech.com/mist/json_bunny.js',
-        );
+        const metricReportingUrl = createMetricsReportingUrl(src);
+        if (metricReportingUrl) {
+          reportVideoMetrics(playerRef.current, metricReportingUrl);
+        }
       });
 
       newHls.on(Events.ERROR, function (_event, data) {
