@@ -1,4 +1,10 @@
-import { Stream, StreamSession, TranscodingProfile } from '../../types';
+import {
+  CreateStreamArgs,
+  Stream,
+  StreamSession,
+  TranscodingProfile,
+  UpdateStreamArgs,
+} from '../../types';
 
 /**
  * Studio ffmpeg profile for transcoding.
@@ -11,7 +17,6 @@ export type StudioFfmpegProfile = TranscodingProfile & {
 };
 
 export interface StudioStream extends Stream {
-  //Omit<Stream, 'rtmpIngestUrl' | 'playbackUrl'> {
   profiles: StudioFfmpegProfile[];
   /**
    * Name of the token used to create this object.
@@ -77,15 +82,8 @@ export type StudioAssetPatchPayload = {
   };
 };
 
-export type StudioStreamPatchPayload = {
-  /**
-   * Should this stream be recorded? Uses default settings. For more customization, create and configure an object store.
-   */
-  record?: boolean;
-  /**
-   * If currently suspended
-   */
-  suspended?: boolean;
+export interface StudioCreateStreamArgs extends CreateStreamArgs {
+  profiles?: StudioFfmpegProfile[];
   /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
@@ -93,7 +91,18 @@ export type StudioStreamPatchPayload = {
      */
     targets?: MultistreamTarget[];
   };
-};
+}
+
+export type StudioUpdateStreamArgs =
+  | UpdateStreamArgs & {
+      /** Configuration for multistreaming (AKA restream, simulcast) */
+      multistream?: {
+        /**
+         * References to targets where this stream will be simultaneously streamed to
+         */
+        targets?: MultistreamTarget[];
+      };
+    };
 
 export type MultistreamTarget = {
   /**

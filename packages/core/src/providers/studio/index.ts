@@ -5,17 +5,21 @@ import { defaultStudioApiKey, studio } from '../../constants';
 import {
   Asset,
   CreateAssetArgs,
-  CreateStreamArgs,
   GetAssetArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
   UpdateAssetArgs,
-  UpdateStreamArgs,
 } from '../../types';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
-import { StudioAsset, StudioStream, StudioStreamSession } from './types';
+import {
+  StudioAsset,
+  StudioCreateStreamArgs,
+  StudioStream,
+  StudioStreamSession,
+  StudioUpdateStreamArgs,
+} from './types';
 
 export type StudioLivepeerProviderConfig = {
   apiKey?: string | null;
@@ -36,18 +40,18 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     this._defaultHeaders = { Authorization: `Bearer ${apiKey}` };
   }
 
-  async createStream(args: CreateStreamArgs): Promise<StudioStream> {
-    const studioStream = await this._create<RawStudioStream, CreateStreamArgs>(
-      '/stream',
-      {
-        json: args,
-        headers: this._defaultHeaders,
-      },
-    );
+  async createStream(args: StudioCreateStreamArgs): Promise<StudioStream> {
+    const studioStream = await this._create<
+      RawStudioStream,
+      StudioCreateStreamArgs
+    >('/stream', {
+      json: args,
+      headers: this._defaultHeaders,
+    });
     return this._mapToStream(studioStream);
   }
 
-  async updateStream(args: UpdateStreamArgs): Promise<StudioStream> {
+  async updateStream(args: StudioUpdateStreamArgs): Promise<StudioStream> {
     const streamId = typeof args === 'string' ? args : args.streamId;
 
     await this._update(`/stream/${streamId}`, {
