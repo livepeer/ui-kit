@@ -117,25 +117,25 @@ export type Stream = {
   id: string;
   /** The name of the stream */
   name: string;
+  /** The transcoding profiles to use for the stream for ABR playback */
+  profiles: TranscodingProfile[];
   /** Should this stream be recorded? */
   record?: boolean;
-  /** The transcoding profiles to use for the stream for ABR playback */
-  profiles?: TranscodingProfile[];
 
   // Stream information
 
-  /** Unix timestamp (in milliseconds) at which the stream object was created */
-  createdAt?: number;
-  /** ID of the parent stream object. Only present for sessions. */
-  parentId?: string;
-  /** ID used to create the playback URLs */
-  playbackId?: string;
-  /** URL for HLS playback */
-  playbackUrl: string;
   /** Secret used to create the RTMP and SRT ingest URLs */
-  streamKey?: string;
+  streamKey: string;
   /** URL for RTMP ingest */
   rtmpIngestUrl: string;
+  /** ID used to create the playback URLs */
+  playbackId: string;
+  /** URL for HLS playback */
+  playbackUrl: string;
+  /** ID of the parent stream object. Only present for sessions. */
+  parentId?: string;
+  /** Unix timestamp (in milliseconds) at which the stream object was created */
+  createdAt: number;
 
   // Stream current state
 
@@ -179,7 +179,12 @@ export type TranscodingProfile = {
   fpsDen?: number;
 };
 
-export type StreamSession = Stream & {
+type StreamBase = Omit<
+  Stream,
+  'playbackId' | 'playbackUrl' | 'streamKey' | 'rtmpIngestUrl'
+>;
+
+export type StreamSession = StreamBase & {
   /** Status of the recording process of this stream session */
   recordingStatus?: 'waiting' | 'ready';
   /** URL for accessing the recording of this stream session */

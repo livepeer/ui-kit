@@ -1,7 +1,7 @@
-import { TranscodingProfile } from '../../types';
+import { Stream, StreamSession, TranscodingProfile } from '../../types';
 
 /**
- * LMPS ffmpeg profile
+ * Studio ffmpeg profile for transcoding.
  */
 export type StudioFfmpegProfile = TranscodingProfile & {
   fps: number;
@@ -10,216 +10,13 @@ export type StudioFfmpegProfile = TranscodingProfile & {
   encoder?: 'h264' | 'hevc' | 'vp8' | 'vp9';
 };
 
-// export type StudioWebhook = {
-//   id?: string;
-//   kind?: string;
-//   name: string;
-//   userId?: string;
-//   /**
-//    * Timestamp (in milliseconds) at which stream object was created
-//    */
-//   createdAt?: number;
-//   /**
-//    * @deprecated Non-persisted field. To be used on creation API only.
-//    */
-//   event?:
-//     | 'stream.started'
-//     | 'stream.detection'
-//     | 'stream.idle'
-//     | 'recording.ready'
-//     | 'recording.started'
-//     | 'recording.waiting'
-//     | 'multistream.connected'
-//     | 'multistream.error'
-//     | 'multistream.disconnected'
-//     | 'playback.user.new'
-//     | 'asset.created'
-//     | 'asset.status'
-//     | 'task.created'
-//     | 'task.status'
-//     | 'task.finished';
-//   events?: (
-//     | 'stream.started'
-//     | 'stream.detection'
-//     | 'stream.idle'
-//     | 'recording.ready'
-//     | 'recording.started'
-//     | 'recording.waiting'
-//     | 'multistream.connected'
-//     | 'multistream.error'
-//     | 'multistream.disconnected'
-//     | 'playback.user.new'
-//     | 'asset.created'
-//     | 'asset.status'
-//     | 'task.created'
-//     | 'task.status'
-//     | 'task.finished'
-//   )[];
-//   url: string;
-//   deleted?: boolean;
-//   /**
-//    * shared secret used to sign the webhook payload
-//    */
-//   sharedSecret?: string;
-//   /**
-//    * streamId of the stream on which the webhook is applied
-//    */
-//   streamId?: string;
-//   /**
-//    * status of webhook
-//    */
-//   status?: {
-//     /**
-//      * failure timestamp and error message with status code
-//      */
-//     lastFailure?: {
-//       /**
-//        * Timestamp (in milliseconds) at which the webhook last failed
-//        */
-//       timestamp?: number;
-//       /**
-//        * Webhook failure error message
-//        */
-//       error?: string;
-//       /**
-//        * Webhook failure response
-//        */
-//       response?: string;
-//       /**
-//        * Webhook failure status code
-//        */
-//       statusCode?: number;
-//       [k: string]: unknown;
-//     };
-//     /**
-//      * Timestamp (in milliseconds) at which the webhook last was triggered
-//      */
-//     lastTriggeredAt?: number;
-//     [k: string]: unknown;
-//   };
-// };
-
-// export type StudioWebhookResponse = {
-//   id?: string;
-//   kind?: string;
-//   webhookId: string;
-//   eventId?: string;
-//   /**
-//    * Timestamp (in milliseconds) at which webhook response object was created
-//    */
-//   createdAt?: number;
-//   duration?: number;
-//   statusCode: number;
-//   response?: {
-//     body?: string;
-//     headers?: {
-//       [k: string]: string[];
-//     };
-//     redirected?: boolean;
-//     status?: number;
-//     statusText?: string;
-//   };
-// };
-
-// export type StudioDetectionWebhookPayload = {
-//   manifestID: string;
-//   seqNo: number;
-//   sceneClassification: {
-//     name: string;
-//     probability: number;
-//     [k: string]: unknown;
-//   }[];
-//   [k: string]: unknown;
-// };
-
-export type StudioStream = {
-  id?: string;
-  kind?: string;
-  name: string;
-  lastSeen?: number;
-  sourceSegments?: number;
-  transcodedSegments?: number;
-  playbackUrl: string;
+export interface StudioStream extends Stream {
+  //Omit<Stream, 'rtmpIngestUrl' | 'playbackUrl'> {
+  profiles: StudioFfmpegProfile[];
   /**
-   * Duration of all the source segments, sec
-   */
-  sourceSegmentsDuration?: number;
-  /**
-   * Duration of all the transcoded segments, sec
-   */
-  transcodedSegmentsDuration?: number;
-  sourceBytes?: number;
-  transcodedBytes?: number;
-  /**
-   * Rate at which sourceBytes increases (bytes/second)
-   */
-  ingestRate?: number;
-  /**
-   * Rate at which transcodedBytes increases (bytes/second)
-   */
-  outgoingRate?: number;
-  /**
-   * Set to true when stream deleted
-   */
-  deleted?: boolean;
-  /**
-   * If currently active
-   */
-  isActive?: boolean;
-  /**
-   * Name of the token used to create this object
+   * Name of the token used to create this object.
    */
   createdByTokenName?: string;
-  createdByTokenId?: string;
-  /**
-   * Timestamp (in milliseconds) at which stream object was created
-   */
-  createdAt?: number;
-  /**
-   * Points to parent stream object
-   */
-  parentId?: string;
-  /**
-   * Indicates that this is not final object of `user's` session
-   */
-  partialSession?: boolean;
-  /**
-   * Ids of the previous sessions which are part of `user's` session
-   */
-  previousSessions?: string[];
-  /**
-   * Used to form RTMP ingest URL
-   */
-  streamKey: string;
-  /**
-   * URL for HLS ingest
-   */
-  ingestUrl: string;
-  /**
-   * Used to form playback URL
-   */
-  playbackId?: string;
-  profiles?: StudioFfmpegProfile[];
-  objectStoreId?: string;
-  presets?: (
-    | 'P720p60fps16x9'
-    | 'P720p30fps16x9'
-    | 'P720p30fps4x3'
-    | 'P576p30fps16x9'
-    | 'P360p30fps16x9'
-    | 'P360p30fps4x3'
-    | 'P240p30fps16x9'
-    | 'P240p30fps4x3'
-    | 'P144p30fps16x9'
-  )[];
-  /**
-   * Should this stream be recorded? Uses default settings. For more customization, create and configure an object store.
-   */
-  record?: boolean;
-  /**
-   * ID of object store where to which this stream was recorded
-   */
-  recordObjectStoreId?: string;
   /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
@@ -227,7 +24,7 @@ export type StudioStream = {
      */
     targets?: MultistreamTarget[];
   };
-};
+}
 
 export type StudioDeactivateManyPayload = {
   ids?: [string, ...string[]];
@@ -327,14 +124,6 @@ export type MultistreamTarget = {
   };
 };
 
-export type StudioSuspendUserPayload = {
-  suspended: boolean;
-  /**
-   * Name of template to send to the users regarding the suspension.
-   */
-  emailTemplate?: 'copyright';
-};
-
 export type StudioMultistreamTargetPatchPayload = {
   id?: string;
   name?: string;
@@ -353,110 +142,20 @@ export type StudioMultistreamTargetPatchPayload = {
   createdAt?: number;
 };
 
-// export type StudioWebhookPatchPayload = {
-//   name?: string;
-//   url?: string;
-//   events?: (
-//     | 'stream.started'
-//     | 'stream.detection'
-//     | 'stream.idle'
-//     | 'recording.ready'
-//     | 'recording.started'
-//     | 'recording.waiting'
-//     | 'multistream.connected'
-//     | 'multistream.error'
-//     | 'multistream.disconnected'
-//     | 'playback.user.new'
-//     | 'asset.created'
-//     | 'asset.status'
-//     | 'task.created'
-//     | 'task.status'
-//     | 'task.finished'
-//   )[];
-//   /**
-//    * shared secret used to sign the webhook payload
-//    */
-//   sharedSecret?: string;
-//   /**
-//    * streamId of the stream on which the webhook is applied
-//    */
-//   streamId?: string;
-// };
-
-// export type StudioWebhookStatusPayload = {
-//   /**
-//    * Error message if the webhook failed to process the event
-//    */
-//   errorMessage?: string;
-//   response?: StudioWebhookResponse;
-// };
-
-export type StudioStreamSession = {
-  id?: string;
-  kind?: string;
-  name: string;
-  userId?: string;
-  lastSeen?: number;
-  sourceSegments?: number;
-  transcodedSegments?: number;
+export interface StudioStreamSession extends StreamSession {
+  profiles: StudioFfmpegProfile[];
   /**
-   * Duration of all the source segments, sec
+   * Name of the token used to create this object.
    */
-  sourceSegmentsDuration?: number;
-  /**
-   * Duration of all the transcoded segments, sec
-   */
-  transcodedSegmentsDuration?: number;
-  sourceBytes?: number;
-  transcodedBytes?: number;
-  /**
-   * Rate at which sourceBytes increases (bytes/second)
-   */
-  ingestRate?: number;
-  /**
-   * Rate at which transcodedBytes increases (bytes/second)
-   */
-  outgoingRate?: number;
-  /**
-   * Set to true when stream deleted
-   */
-  deleted?: boolean;
-  /**
-   * Timestamp (in milliseconds) at which stream object was created
-   */
-  createdAt?: number;
-  /**
-   * Points to parent stream object
-   */
-  parentId?: string;
-  /**
-   * Should this stream be recorded? Uses default settings. For more customization, create and configure an object store.
-   */
-  record?: boolean;
-  /**
-   * Status of the recording process of this stream session.
-   */
-  recordingStatus?: 'waiting' | 'ready';
-  /**
-   * URL for accessing the recording of this stream session.
-   */
-  recordingUrl?: string;
-  /**
-   * URL for the stream session recording packaged in an mp4.
-   */
-  mp4Url?: string;
-  /**
-   * ID of object store where to which this stream was recorded
-   */
-  recordObjectStoreId?: string;
-  /**
-   * Used to form playback URL
-   */
-  playbackId: string;
-  streamKey: string;
-  profiles?: StudioFfmpegProfile[];
-  lastSessionId?: string;
-};
+  createdByTokenName?: string;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * References to targets where this stream will be simultaneously streamed to
+     */
+    targets?: MultistreamTarget[];
+  };
+}
 
 export type StudioError = {
   errors: [string, ...string[]];

@@ -10,8 +10,6 @@ import {
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
-  Stream,
-  StreamSession,
   UpdateAssetArgs,
   UpdateStreamArgs,
 } from '../../types';
@@ -22,6 +20,10 @@ import { StudioAsset, StudioStream, StudioStreamSession } from './types';
 export type StudioLivepeerProviderConfig = {
   apiKey?: string | null;
 };
+
+/** The API does not currently return these fields, so we have to generate them
+ * through the _mapToStream function. */
+type RawStudioStream = Omit<StudioStream, 'rtmpIngestUrl' | 'playbackUrl'>;
 
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
   readonly _apiKey: string;
@@ -34,19 +36,18 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     this._defaultHeaders = { Authorization: `Bearer ${apiKey}` };
   }
 
-  async createStream(args: CreateStreamArgs): Promise<Stream> {
-    const studioStream = await this._create<StudioStream, CreateStreamArgs>(
+  async createStream(args: CreateStreamArgs): Promise<StudioStream> {
+    const studioStream = await this._create<RawStudioStream, CreateStreamArgs>(
       '/stream',
       {
         json: args,
         headers: this._defaultHeaders,
       },
     );
-
     return this._mapToStream(studioStream);
   }
 
-  async updateStream(args: UpdateStreamArgs): Promise<Stream> {
+  async updateStream(args: UpdateStreamArgs): Promise<StudioStream> {
     const streamId = typeof args === 'string' ? args : args.streamId;
 
     await this._update(`/stream/${streamId}`, {
@@ -64,41 +65,38 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this.getStream(streamId);
   }
 
-  async getStream(args: GetStreamArgs): Promise<Stream> {
-    const studioStream = await this._get<StudioStream>(
+  async getStream(args: GetStreamArgs): Promise<StudioStream> {
+    const rawStream = await this._get<RawStudioStream>(
       `/stream/${typeof args === 'string' ? args : args.streamId}`,
       {
         headers: this._defaultHeaders,
       },
     );
-
-    return this._mapToStream(studioStream);
+    return this._mapToStream(rawStream);
   }
 
-  async getStreamSession(args: GetStreamSessionArgs): Promise<StreamSession> {
-    const studioStreamSession = await this._get<StudioStreamSession>(
+  async getStreamSession(
+    args: GetStreamSessionArgs,
+  ): Promise<StudioStreamSession> {
+    const session = await this._get<StudioStreamSession>(
       `/session/${typeof args === 'string' ? args : args.streamSessionId}`,
       {
         headers: this._defaultHeaders,
       },
     );
-
-    return this._mapToStreamSession(studioStreamSession);
+    return session;
   }
 
   async getStreamSessions(
     args: GetStreamSessionsArgs,
-  ): Promise<StreamSession[]> {
-    const studioStreamSessions = await this._get<StudioStreamSession[]>(
+  ): Promise<StudioStreamSession[]> {
+    const sessions = await this._get<StudioStreamSession[]>(
       `/stream/${typeof args === 'string' ? args : args.streamId}/sessions`,
       {
         headers: this._defaultHeaders,
       },
     );
-
-    return studioStreamSessions.map((studioStreamSession) =>
-      this._mapToStreamSession(studioStreamSession),
-    );
+    return sessions;
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
@@ -210,65 +208,11 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return `https://livepeercdn.com/hls/${playbackId}/index.m3u8`;
   }
 
-  _mapToStream(studioStream: StudioStream): Stream {
-    if (!studioStream?.id || !studioStream?.playbackId) {
-      throw new Error('Stream did not have valid ID or playback ID');
-    }
-
+  _mapToStream(studioStream: RawStudioStream): StudioStream {
     return {
+      ...studioStream,
       rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
       playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
-
-      id: studioStream?.['id'],
-      name: studioStream?.['name'],
-      lastSeen: studioStream?.['lastSeen'],
-      sourceSegments: studioStream?.['sourceSegments'],
-      transcodedSegments: studioStream?.['transcodedSegments'],
-      sourceSegmentsDuration: studioStream?.['sourceSegmentsDuration'],
-      transcodedSegmentsDuration: studioStream?.['transcodedSegmentsDuration'],
-      sourceBytes: studioStream?.['sourceBytes'],
-      transcodedBytes: studioStream?.['transcodedBytes'],
-      ingestRate: studioStream?.['ingestRate'],
-      outgoingRate: studioStream?.['outgoingRate'],
-      isActive: studioStream?.['isActive'],
-      createdAt: studioStream?.['createdAt'],
-      parentId: studioStream?.['parentId'],
-      streamKey: studioStream?.['streamKey'],
-      playbackId: studioStream?.['playbackId'],
-      profiles: studioStream?.['profiles'],
-      record: studioStream?.['record'],
-    };
-  }
-
-  _mapToStreamSession(studioStreamSession: StudioStreamSession): StreamSession {
-    if (!studioStreamSession?.id || !studioStreamSession?.playbackId) {
-      throw new Error('Stream session did not have valid ID or playback ID');
-    }
-
-    return {
-      rtmpIngestUrl: this._getRtmpIngestUrl(studioStreamSession.streamKey),
-      playbackUrl: this._getPlaybackUrl(studioStreamSession.playbackId),
-
-      id: studioStreamSession.id,
-      name: studioStreamSession?.['name'],
-      lastSeen: studioStreamSession?.['lastSeen'],
-      sourceSegments: studioStreamSession?.['sourceSegments'],
-      transcodedSegments: studioStreamSession?.['transcodedSegments'],
-      sourceSegmentsDuration: studioStreamSession?.['sourceSegmentsDuration'],
-      transcodedSegmentsDuration:
-        studioStreamSession?.['transcodedSegmentsDuration'],
-      sourceBytes: studioStreamSession?.['sourceBytes'],
-      transcodedBytes: studioStreamSession?.['transcodedBytes'],
-      ingestRate: studioStreamSession?.['ingestRate'],
-      outgoingRate: studioStreamSession?.['outgoingRate'],
-      createdAt: studioStreamSession?.['createdAt'],
-      parentId: studioStreamSession?.['parentId'],
-      record: studioStreamSession?.['record'],
-      recordingStatus: studioStreamSession?.['recordingStatus'],
-      recordingUrl: studioStreamSession?.['recordingUrl'],
-      mp4Url: studioStreamSession?.['mp4Url'],
-      playbackId: studioStreamSession?.['playbackId'],
-      profiles: studioStreamSession?.['profiles'],
     };
   }
 
