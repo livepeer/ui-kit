@@ -1,4 +1,5 @@
 import {
+  Asset,
   CreateStreamArgs,
   Stream,
   StreamSession,
@@ -133,24 +134,6 @@ export type MultistreamTarget = {
   };
 };
 
-export type StudioMultistreamTargetPatchPayload = {
-  id?: string;
-  name?: string;
-  /**
-   * Livepeer-compatible multistream target URL (RTMP(S) or SRT)
-   */
-  url?: string;
-  /**
-   * If true then this multistream target will not be used for pushing even if it is configured in a stream object.
-   */
-  disabled?: boolean;
-  userId?: string;
-  /**
-   * Timestamp (in milliseconds) at which multistream target object was created
-   */
-  createdAt?: number;
-};
-
 export interface StudioStreamSession extends StreamSession {
   profiles: StudioFfmpegProfile[];
   /**
@@ -168,85 +151,7 @@ export interface StudioStreamSession extends StreamSession {
 
 export type StudioError = {
   errors: [string, ...string[]];
-  [k: string]: unknown;
 };
-
-export type StudioObjectStore = {
-  /**
-   * Livepeer-compatible object store URL
-   */
-  url: string;
-  /**
-   * Public URL at which data in this object storage can be accessed
-   */
-  publicUrl?: string;
-  /**
-   * If true then these object store will not be used for recording even if it is configured in the API command line.
-   */
-  disabled?: boolean;
-  id?: string;
-  userId?: string;
-  name?: string;
-  /**
-   * Timestamp (in milliseconds) at which object store object was created
-   */
-  createdAt?: number;
-};
-
-export type StudioMultistreamTarget = {
-  id?: string;
-  name?: string;
-  /**
-   * Livepeer-compatible multistream target URL (RTMP(S) or SRT)
-   */
-  url: string;
-  /**
-   * If true then this multistream target will not be used for pushing even if it is configured in a stream object.
-   */
-  disabled?: boolean;
-  userId?: string;
-  /**
-   * Timestamp (in milliseconds) at which multistream target object was created
-   */
-  createdAt?: number;
-};
-
-export type StudioNewAssetPayload = {
-  /**
-   * Object store ID where the asset is stored
-   */
-  objectStoreId?: string;
-  /**
-   * Name of the asset. This is not necessarily the filename, can be a custom name or title
-   */
-  name: string;
-  /**
-   * User input metadata associated with the asset
-   */
-  meta?: {
-    [k: string]: string;
-  };
-  /**
-   * URL where the asset contents can be retrieved. Only valid for the import task endpoint.
-   */
-  url?: string;
-};
-
-// export type StudioTranscodeAssetPayload = {
-//   /**
-//    * ID of the asset to transcode
-//    */
-//   assetId?: string;
-//   /**
-//    * Object store ID where the asset is stored
-//    */
-//   objectStoreId?: string;
-//   /**
-//    * Name of the asset. This is not necessarily the filename, can be a custom name or title
-//    */
-//   name: string;
-//   profile: StudioFfmpegProfile;
-// };
 
 // export type StudioTask = {
 //   /**
@@ -665,42 +570,9 @@ export type StudioNewAssetPayload = {
 //   };
 // };
 
-export type StudioAsset = {
-  id?: string;
-  /**
-   * Type of the asset.
-   */
-  type?: 'video';
-  /**
-   * Used to form playback URL and storage folder
-   */
-  playbackId?: string;
-  /**
-   * Used to form recording URL for HLS playback
-   */
-  playbackRecordingId?: string;
-  /**
-   * URL for HLS playback
-   */
-  playbackUrl?: string;
-  /**
-   * URL to manually download the asset if desired
-   */
-  downloadUrl?: string;
-  /**
-   * owner of the asset
-   */
-  userId?: string;
-  /**
-   * Set to true when the asset is deleted
-   */
-  deleted?: boolean;
-  /**
-   * Object store ID where the asset is stored
-   */
-  objectStoreId?: string;
+export interface StudioAsset extends Asset {
   storage?: {
-    ipfs?: {
+    ipfs?: NonNullable<Asset['storage']>['ipfs'] & {
       spec?: {
         /**
          * Name of the NFT metadata template to export. 'player' will embed the Livepeer Player on the NFT while 'file' will reference only the immutable MP4 files.
@@ -713,29 +585,22 @@ export type StudioAsset = {
           [k: string]: unknown;
         };
       };
-      nftMetadata?: StudioIpfsFileInfo;
-      /**
-       * CID of the file on IPFS
-       */
-      cid?: string;
-      /**
-       * URL with IPFS scheme for the file
-       */
-      url?: string;
-      /**
-       * URL to access file via HTTP through an IPFS gateway
-       */
-      gatewayUrl?: string;
+      nftMetadata?: {
+        /**
+         * CID of the file on IPFS
+         */
+        cid?: string;
+        /**
+         * URL with IPFS scheme for the file
+         */
+        url?: string;
+        /**
+         * URL to access file via HTTP through an IPFS gateway
+         */
+        gatewayUrl?: string;
+      };
     };
-    status?: {
-      /**
-       * Phase of the asset storage
-       */
-      phase: 'waiting' | 'ready' | 'failed' | 'reverted';
-      /**
-       * Error message if the last storage changed failed.
-       */
-      errorMessage?: string;
+    status?: NonNullable<Asset['storage']>['status'] & {
       tasks: {
         /**
          * ID of any currently running task that is exporting this asset to IPFS.
@@ -752,143 +617,7 @@ export type StudioAsset = {
       };
     };
   };
-  /**
-   * Status of the asset
-   */
-  status?: {
-    /**
-     * Phase of the asset
-     */
-    phase: 'waiting' | 'ready' | 'failed';
-    /**
-     * Timestamp (in milliseconds) at which the asset was last updated
-     */
-    updatedAt: number;
-    /**
-     * Error message if the asset creation failed.
-     */
-    errorMessage?: string;
-  };
-  /**
-   * Name of the asset. This is not necessarily the filename, can be a custom name or title
-   */
-  name: string;
-  /**
-   * User input metadata associated with the asset
-   */
-  meta?: {
-    [k: string]: string;
-  };
-  /**
-   * Timestamp (in milliseconds) at which asset was created
-   */
-  createdAt?: number;
-  /**
-   * Size of the asset in bytes
-   */
-  size?: number;
-  /**
-   * Hash of the asset
-   */
-  hash?: {
-    /**
-     * Hash of the asset
-     */
-    hash?: string;
-    /**
-     * Hash algorithm used to compute the hash
-     */
-    algorithm?: string;
-  }[];
-  /**
-   * Video metadata
-   */
-  videoSpec?: {
-    /**
-     * Format of the asset
-     */
-    format?: string;
-    /**
-     * Duration of the asset in seconds (float)
-     */
-    duration?: number;
-    /**
-     * Bitrate of the video in bits per second
-     */
-    bitrate?: number;
-    /**
-     * List of tracks associated with the asset when the format contemplates them (e.g. mp4)
-     */
-    tracks?: {
-      /**
-       * type of track
-       */
-      type: 'video' | 'audio';
-      /**
-       * Codec of the track
-       */
-      codec: string;
-      /**
-       * Start time of the track in seconds
-       */
-      startTime?: number;
-      /**
-       * Duration of the track in seconds
-       */
-      duration?: number;
-      /**
-       * Bitrate of the track in bits per second
-       */
-      bitrate?: number;
-      /**
-       * Width of the track - only for video tracks
-       */
-      width?: number;
-      /**
-       * Height of the track - only for video tracks
-       */
-      height?: number;
-      /**
-       * Pixel format of the track - only for video tracks
-       */
-      pixelFormat?: string;
-      /**
-       * Frame rate of the track - only for video tracks
-       */
-      fps?: number;
-      /**
-       * Amount of audio channels in the track
-       */
-      channels?: number;
-      /**
-       * Sample rate of the track in samples per second - only for audio tracks
-       */
-      sampleRate?: number;
-      /**
-       * Bit depth of the track - only for audio tracks
-       */
-      bitDepth?: number;
-    }[];
-  };
-  /**
-   * ID of the source asset (root) - If missing, this is a root asset
-   */
-  sourceAssetId?: string;
-};
-export type StudioIpfsFileInfo = {
-  /**
-   * CID of the file on IPFS
-   */
-  cid: string;
-  /**
-   * URL with IPFS scheme for the file
-   */
-  url?: string;
-  /**
-   * URL to access file via HTTP through an IPFS gateway
-   */
-  gatewayUrl?: string;
-};
+}
 
 /**
  * Parameters for the export task

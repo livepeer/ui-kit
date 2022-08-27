@@ -3,7 +3,6 @@ import * as tus from 'tus-js-client';
 import { defaultStudioApiKey, studio } from '../../constants';
 
 import {
-  Asset,
   CreateAssetArgs,
   GetAssetArgs,
   GetStreamArgs,
@@ -103,7 +102,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return sessions;
   }
 
-  async createAsset(args: CreateAssetArgs): Promise<Asset> {
+  async createAsset(args: CreateAssetArgs): Promise<StudioAsset> {
     const tusOptions: tus.UploadOptions = {};
 
     const existingUpload = new tus.Upload(args.file, {});
@@ -133,10 +132,11 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     } else {
       const requestUploadEndpoint = await this._create<
         { tusEndpoint: string; asset: { id: string } },
-        { name: string }
+        Omit<CreateAssetArgs, 'file'>
       >('/asset/request-upload', {
         json: {
           name: args.name,
+          meta: args.meta,
         },
         headers: this._defaultHeaders,
       });
@@ -170,33 +170,23 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this.getAsset(assetId);
   }
 
-  async getAsset(args: GetAssetArgs): Promise<Asset> {
-    const studioAsset = await this._get<StudioAsset>(
+  async getAsset(args: GetAssetArgs): Promise<StudioAsset> {
+    const asset = await this._get<StudioAsset>(
       `/asset/${typeof args === 'string' ? args : args.assetId}`,
       {
         headers: this._defaultHeaders,
       },
     );
-
-    return this._mapToAsset(studioAsset);
+    return asset;
   }
 
-  async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
-    const assetId = typeof args === 'string' ? args : args.assetId;
-
+  async updateAsset(args: UpdateAssetArgs): Promise<StudioAsset> {
+    const { assetId, name, meta, storage } = args;
     await this._update(`/asset/${assetId}`, {
       json: {
-        ...(typeof args?.name !== 'undefined'
-          ? { name: String(args.name) }
-          : {}),
-        ...(typeof args?.meta !== 'undefined' ? { meta: args.meta } : {}),
-        ...(typeof args?.storage !== 'undefined'
-          ? {
-              storage: {
-                ...(args.storage.ipfs ? { ipfs: {} } : {}),
-              },
-            }
-          : {}),
+        name: typeof name !== 'undefined' ? String(name) : undefined,
+        meta,
+        storage,
       },
       headers: this._defaultHeaders,
     });
@@ -217,29 +207,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       ...studioStream,
       rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
       playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
-    };
-  }
-
-  _mapToAsset(studioAsset: StudioAsset): Asset {
-    if (!studioAsset?.id || !studioAsset?.playbackId) {
-      throw new Error('Asset did not have valid ID or playback ID');
-    }
-
-    return {
-      id: studioAsset.id,
-      playbackUrl: studioAsset?.playbackUrl,
-
-      type: studioAsset?.['type'],
-      playbackId: studioAsset?.['playbackId'],
-      downloadUrl: studioAsset?.['downloadUrl'],
-      storage: studioAsset?.['storage'],
-      status: studioAsset?.['status'],
-      name: studioAsset?.['name'],
-      meta: studioAsset?.['meta'],
-      createdAt: studioAsset?.['createdAt'],
-      size: studioAsset?.['size'],
-      hash: studioAsset?.['hash'],
-      videoSpec: studioAsset?.['videoSpec'],
     };
   }
 }

@@ -83,6 +83,8 @@ export type AssetIdOrString =
 export type CreateAssetArgs = {
   /** Name for the new asset */
   name: string;
+  /** Metadata associated with the asset */
+  meta?: Record<string, string>;
   /** Content to be uploaded */
   file: File | ReadStream;
 };
