@@ -1,5 +1,6 @@
 import {
   Asset,
+  CreateAssetArgs,
   CreateStreamArgs,
   Stream,
   StreamSession,
@@ -199,6 +200,18 @@ export type StudioTask = {
     errorMessage?: string;
   };
 };
+
+export interface StudioCreateAssetArgs extends CreateAssetArgs {
+  /**
+   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   */
+  onUploadProgress?: (progress: number) => void;
+  /**
+   * Whether to wait until the asset is ready before returning. Can optionally
+   * provide a function receive progress info about the processing task.
+   */
+  waitReady?: boolean | Pick<WaitTaskArgs, 'onProgress'>;
+}
 
 export interface StudioAsset extends Asset {
   storage?: {

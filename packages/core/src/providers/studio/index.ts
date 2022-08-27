@@ -15,6 +15,7 @@ import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   GetTaskArgs,
   StudioAsset,
+  StudioCreateAssetArgs,
   StudioCreateStreamArgs,
   StudioStream,
   StudioStreamSession,
@@ -105,71 +106,60 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return sessions;
   }
 
-  async createAsset(args: CreateAssetArgs): Promise<StudioAsset> {
-    const tusOptions: tus.UploadOptions = {};
+  async createAsset(args: StudioCreateAssetArgs): Promise<StudioAsset> {
+    const uploadReq = await this._create<
+      { tusEndpoint: string; asset: { id: string }; task: { id: string } },
+      Omit<CreateAssetArgs, 'file'>
+    >('/asset/request-upload', {
+      json: {
+        name: args.name,
+        meta: args.meta,
+      },
+      headers: this._defaultHeaders,
+    });
+    const {
+      tusEndpoint,
+      asset: { id: assetId },
+      task: { id: taskId },
+    } = uploadReq;
 
-    const existingUpload = new tus.Upload(args.file, {});
-    const previousUploads = await existingUpload.findPreviousUploads();
-
-    let assetId: string | undefined;
-
-    if (previousUploads.length > 0 && previousUploads[0]) {
-      const previousUpload = previousUploads[0];
-
-      assetId = previousUpload.metadata.id;
-
-      await new Promise<void>((resolve, reject) => {
-        const upload = new tus.Upload(args.file, {
-          ...tusOptions,
-          onError(error) {
-            reject(error);
-          },
-          onSuccess() {
-            return resolve();
-          },
-        });
-
-        upload.resumeFromPreviousUpload(previousUpload);
-        upload.start();
-      });
-    } else {
-      const requestUploadEndpoint = await this._create<
-        { tusEndpoint: string; asset: { id: string } },
-        Omit<CreateAssetArgs, 'file'>
-      >('/asset/request-upload', {
-        json: {
-          name: args.name,
-          meta: args.meta,
+    await new Promise<void>((resolve, reject) => {
+      const upload = new tus.Upload(args.file, {
+        endpoint: tusEndpoint,
+        metadata: {
+          id: assetId,
         },
-        headers: this._defaultHeaders,
+        uploadSize: args.uploadSize,
+
+        onError(error) {
+          reject(error);
+        },
+        onProgress(bytesSent, bytesTotal) {
+          if (args.onUploadProgress) {
+            args.onUploadProgress(bytesSent / bytesTotal);
+          }
+        },
+        onSuccess() {
+          return resolve();
+        },
       });
+      upload
+        .findPreviousUploads()
+        .then((previousUploads) => {
+          if (previousUploads?.length > 0 && previousUploads[0]) {
+            upload.resumeFromPreviousUpload(previousUploads[0]);
+          }
+          upload.start();
+        })
+        .catch(reject);
+    });
 
-      assetId = requestUploadEndpoint.asset.id;
-
-      await new Promise<void>((resolve, reject) => {
-        const upload = new tus.Upload(args.file, {
-          metadata: {
-            id: requestUploadEndpoint.asset.id,
-          },
-          ...tusOptions,
-          endpoint: requestUploadEndpoint.tusEndpoint,
-
-          onError(error) {
-            reject(error);
-          },
-          onSuccess() {
-            return resolve();
-          },
-        });
-
-        upload.start();
+    if (args.waitReady) {
+      await this.waitTask({
+        taskId,
+        ...(typeof args.waitReady === 'object' ? args.waitReady : null),
       });
     }
-
-    if (!assetId) {
-      throw new Error('Could not find asset ID');
-    }
-
     return this.getAsset(assetId);
   }
 

@@ -87,6 +87,8 @@ export type CreateAssetArgs = {
   meta?: Record<string, string>;
   /** Content to be uploaded */
   file: File | ReadStream;
+  /** Size of the upload file. Must provide this if the file is a ReadStream */
+  uploadSize?: number;
 };
 
 export type UpdateAssetArgs = {
