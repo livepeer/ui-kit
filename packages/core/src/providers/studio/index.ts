@@ -20,6 +20,7 @@ import {
   StudioStreamSession,
   StudioTask,
   StudioUpdateStreamArgs,
+  WaitTaskArgs,
 } from './types';
 
 export type StudioLivepeerProviderConfig = {
@@ -204,6 +205,33 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         headers: this._defaultHeaders,
       },
     );
+    return task;
+  }
+
+  /** Waits until a specified task is completed and returns it. */
+  async waitTask(args: WaitTaskArgs) {
+    let task = await this.getTask(args);
+    let lastProgress = 0;
+    while (
+      task.status?.phase !== 'completed' &&
+      task.status?.phase !== 'failed'
+    ) {
+      const progress = task.status?.progress;
+      if (progress && progress !== lastProgress) {
+        if (args.onProgress) {
+          args.onProgress(task);
+        }
+        lastProgress = progress;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      task = await this.getTask(args);
+    }
+
+    if (task.status.phase === 'failed') {
+      throw new Error(
+        `${task.type} task failed. error: ${task.status.errorMessage}`,
+      );
+    }
     return task;
   }
 

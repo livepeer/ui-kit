@@ -162,6 +162,10 @@ export type TaskIdOrString =
 
 export type GetTaskArgs = TaskIdOrString;
 
+export type WaitTaskArgs = TaskIdOrString & {
+  onProgress?: (task: StudioTask) => void;
+};
+
 export type StudioTask = {
   /** Task ID */
   id: string;
