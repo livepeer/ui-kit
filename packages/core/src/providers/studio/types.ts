@@ -165,6 +165,12 @@ export type TaskIdOrString =
 export type GetTaskArgs = TaskIdOrString;
 
 export type WaitTaskArgs = TaskIdOrString & {
+  /** The maximum amount of time in ms to wait for the task to complete */
+  timeout?: number;
+  /**
+   * Callback to receive the task with intermediate updates. Check the task
+   * status.progress field for the completion ratio.
+   */
   onProgress?: (task: StudioTask) => void;
 };
 
@@ -211,7 +217,7 @@ export interface StudioCreateAssetArgs extends CreateAssetArgs {
    * Whether to wait until the asset is ready before returning. Can provide
    * onProgress function to get intermediate updates about the process.
    */
-  waitReady?: boolean | Pick<WaitTaskArgs, 'onProgress'>;
+  waitReady?: boolean | Omit<WaitTaskArgs, 'taskId'>;
 }
 
 export type StudioUpdateAssetArgs = UpdateAssetArgs & {
@@ -219,7 +225,7 @@ export type StudioUpdateAssetArgs = UpdateAssetArgs & {
    * Whether to wait until the asset storage is ready before returning. Can
    * provide onProgress function to get intermediate updates about the process.
    */
-  waitStorageReady?: boolean | Pick<WaitTaskArgs, 'onProgress'>;
+  waitStorageReady?: boolean | Omit<WaitTaskArgs, 'taskId'>;
 };
 
 export interface StudioAsset extends Asset {

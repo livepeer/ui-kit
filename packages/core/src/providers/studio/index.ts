@@ -215,12 +215,16 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   /** Waits until a specified task is completed and returns it. */
   async waitTask(args: WaitTaskArgs) {
+    const start = Date.now();
     let task = await this.getTask(args);
     let lastProgress = 0;
     while (
       task.status?.phase !== 'completed' &&
       task.status?.phase !== 'failed'
     ) {
+      if (args.timeout && Date.now() - start > args.timeout) {
+        throw new Error('Timed out waiting for task completion');
+      }
       const progress = task.status?.progress;
       if (progress && progress !== lastProgress) {
         if (args.onProgress) {
