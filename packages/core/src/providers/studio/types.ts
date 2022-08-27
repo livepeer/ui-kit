@@ -5,6 +5,7 @@ import {
   Stream,
   StreamSession,
   TranscodingProfile,
+  UpdateAssetArgs,
   UpdateStreamArgs,
 } from '../../types';
 
@@ -207,11 +208,19 @@ export interface StudioCreateAssetArgs extends CreateAssetArgs {
    */
   onUploadProgress?: (progress: number) => void;
   /**
-   * Whether to wait until the asset is ready before returning. Can optionally
-   * provide a function receive progress info about the processing task.
+   * Whether to wait until the asset is ready before returning. Can provide
+   * onProgress function to get intermediate updates about the process.
    */
   waitReady?: boolean | Pick<WaitTaskArgs, 'onProgress'>;
 }
+
+export type StudioUpdateAssetArgs = UpdateAssetArgs & {
+  /**
+   * Whether to wait until the asset storage is ready before returning. Can
+   * provide onProgress function to get intermediate updates about the process.
+   */
+  waitStorageReady?: boolean | Pick<WaitTaskArgs, 'onProgress'>;
+};
 
 export interface StudioAsset extends Asset {
   storage?: {

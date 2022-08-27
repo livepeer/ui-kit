@@ -20,6 +20,7 @@ import {
   StudioStream,
   StudioStreamSession,
   StudioTask,
+  StudioUpdateAssetArgs,
   StudioUpdateStreamArgs,
   WaitTaskArgs,
 } from './types';
@@ -173,9 +174,12 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return asset;
   }
 
-  async updateAsset(args: UpdateAssetArgs): Promise<StudioAsset> {
+  async updateAsset(args: StudioUpdateAssetArgs): Promise<StudioAsset> {
     const { assetId, name, meta, storage } = args;
-    await this._update(`/asset/${assetId}`, {
+    const asset = await this._update<
+      Omit<UpdateAssetArgs, 'assetId'>,
+      StudioAsset
+    >(`/asset/${assetId}`, {
       json: {
         name: typeof name !== 'undefined' ? String(name) : undefined,
         meta,
@@ -184,6 +188,17 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       headers: this._defaultHeaders,
     });
 
+    const taskId = asset.storage?.status?.tasks.pending;
+    if (!args.waitStorageReady || !taskId) {
+      return asset;
+    }
+
+    await this.waitTask({
+      taskId,
+      ...(typeof args.waitStorageReady === 'object'
+        ? args.waitStorageReady
+        : null),
+    });
     return this.getAsset(assetId);
   }
 

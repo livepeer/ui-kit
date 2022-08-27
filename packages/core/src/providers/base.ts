@@ -80,10 +80,10 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     return response.json() as Promise<T>;
   }
 
-  async _update<P>(
+  async _update<P, T = any>(
     url: `/${string}`,
     options?: FetchOptions<P>,
-  ): Promise<void> {
+  ): Promise<T> {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'PATCH',
       ...options,
@@ -101,6 +101,8 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
         await response.json(),
       );
     }
+
+    return response.json() as Promise<T>;
   }
 
   abstract createStream(args: CreateStreamArgs): Promise<Stream>;
