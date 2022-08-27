@@ -217,9 +217,9 @@ export type Asset = {
       gatewayUrl?: string;
     };
     status?: {
-      /** Phase of the asset storage */
+      /** High-level descriptor of where the storage is in its lifecycle */
       phase: 'waiting' | 'ready' | 'failed' | 'reverted';
-      /**  Error message if the last storage update encountered an error. */
+      /**  Error message if the last storage update encountered an error */
       errorMessage?: string;
     };
   };
@@ -244,7 +244,7 @@ export type Asset = {
     /** Value of the hash */
     hash?: string;
   }[];
-  /** Detailed information about the asset. */
+  /** Detailed information about the video in the asset */
   videoSpec?: {
     /** Format of the asset, also refered to as container (e.g. MP4) */
     format?: string;
@@ -282,7 +282,7 @@ export type Asset = {
   };
   /** Status of the asset */
   status?: {
-    /** Status phase */
+    /** High-level descriptor of where the asset is in its lifecycle. */
     phase: 'waiting' | 'ready' | 'failed';
     /** Timestamp (in milliseconds) at which the asset was last updated */
     updatedAt: number;

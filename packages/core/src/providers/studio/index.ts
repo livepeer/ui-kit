@@ -13,10 +13,12 @@ import {
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
+  GetTaskArgs,
   StudioAsset,
   StudioCreateStreamArgs,
   StudioStream,
   StudioStreamSession,
+  StudioTask,
   StudioUpdateStreamArgs,
 } from './types';
 
@@ -192,6 +194,17 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     });
 
     return this.getAsset(assetId);
+  }
+
+  /** Gets a task by its ID */
+  async getTask(args: GetTaskArgs): Promise<StudioTask> {
+    const task = await this._get<StudioTask>(
+      `/task/${typeof args === 'string' ? args : args.taskId}`,
+      {
+        headers: this._defaultHeaders,
+      },
+    );
+    return task;
   }
 
   _getRtmpIngestUrl(streamKey: string) {
