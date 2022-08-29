@@ -2,6 +2,8 @@ import {
   Asset,
   CreateAssetArgs,
   CreateStreamArgs,
+  GetAssetArgs,
+  GetStreamArgs,
   Stream,
   StreamSession,
   TranscodingProfile,
@@ -106,6 +108,8 @@ export type StudioUpdateStreamArgs =
         targets?: MultistreamTarget[];
       };
     };
+
+export type StudioDeleteStreamArgs = GetStreamArgs;
 
 export type MultistreamTarget = {
   /**
@@ -227,6 +231,8 @@ export type StudioUpdateAssetArgs = UpdateAssetArgs & {
    */
   waitStorageReady?: boolean | Omit<WaitTaskArgs, 'taskId'>;
 };
+
+export type StudioDeleteAssetArgs = GetAssetArgs;
 
 export interface StudioAsset extends Asset {
   storage?: {
