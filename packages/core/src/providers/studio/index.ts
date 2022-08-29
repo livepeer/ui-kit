@@ -198,7 +198,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     });
 
     const taskId = asset.storage?.status?.tasks.pending;
-    if (!args.waitStorageReady || !taskId) {
+    if (!storage || !args.waitStorageReady || !taskId) {
       return asset;
     }
 
