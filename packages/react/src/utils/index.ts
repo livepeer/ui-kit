@@ -1,11 +1,11 @@
 export { deserialize } from './deserialize';
 export {
   useInternalMutation,
-  useInternalMutationKeys,
   useInternalQuery,
-  useInternalQueryKeys,
+  usePickMutationKeys,
+  usePickQueryKeys,
   type Status,
-  type UseInternalMutationOptions,
-  type UseInternalQueryOptions,
+  type UsePickMutationOptions,
+  type UsePickQueryOptions,
 } from './query';
 export { serialize } from './serialize';

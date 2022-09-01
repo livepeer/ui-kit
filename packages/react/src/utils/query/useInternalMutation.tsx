@@ -6,28 +6,27 @@ import {
 } from '@tanstack/react-query';
 import { HttpError } from 'livepeer';
 
-export const useInternalMutationKeys: ReadonlyArray<keyof UseMutationOptions> =
-  [
-    'cacheTime',
-    'networkMode',
-    'onError',
-    'onMutate',
-    'onSettled',
-    'onSuccess',
-    'retry',
-    'retryDelay',
-    'useErrorBoundary',
-    'meta',
-  ] as const;
+export const usePickMutationKeys = [
+  'cacheTime',
+  'networkMode',
+  'onError',
+  'onMutate',
+  'onSettled',
+  'onSuccess',
+  'retry',
+  'retryDelay',
+  'useErrorBoundary',
+  'meta',
+] as const;
 
-export type UseInternalMutationOptions<
+export type UsePickMutationOptions<
   TData = unknown,
   TError = HttpError | Error,
   TVariables = void,
   TContext = unknown,
 > = Pick<
   UseMutationOptions<TData, TError, TVariables, TContext>,
-  typeof useInternalMutationKeys[number]
+  typeof usePickMutationKeys[number]
 >;
 
 export function useInternalMutation<
@@ -38,7 +37,7 @@ export function useInternalMutation<
 >(
   mutationFn: MutationFunction<TData, TVariables>,
   options?: Omit<
-    UseInternalMutationOptions<TData, TError, TVariables, TContext>,
+    UseMutationOptions<TData, TError, TVariables, TContext>,
     'mutationFn'
   >,
 ): Omit<

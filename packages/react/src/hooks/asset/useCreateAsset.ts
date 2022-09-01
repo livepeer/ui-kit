@@ -8,14 +8,14 @@ import {
 
 import { QueryClientContext } from '../../context';
 import {
-  UseInternalMutationOptions,
+  UsePickMutationOptions,
   useInternalMutation,
-  useInternalMutationKeys,
+  usePickMutationKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
-  options?: Partial<UseInternalMutationOptions<Asset, Error, CreateAssetArgs>>,
+  options?: Partial<UsePickMutationOptions<Asset, Error, CreateAssetArgs>>,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
@@ -25,7 +25,7 @@ export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
       context: QueryClientContext,
       mutationKey: [{ entity: 'createAsset', livepeerProvider }],
       ...(typeof options === 'object'
-        ? pick(options, useInternalMutationKeys)
+        ? pick(options, usePickMutationKeys)
         : {}),
     },
   );

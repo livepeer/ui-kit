@@ -1,11 +1,11 @@
 export type { Status } from './types';
 export {
   useInternalMutation,
-  useInternalMutationKeys,
-  type UseInternalMutationOptions,
+  usePickMutationKeys,
+  type UsePickMutationOptions,
 } from './useInternalMutation';
 export {
   useInternalQuery,
-  useInternalQueryKeys,
-  type UseInternalQueryOptions,
+  usePickQueryKeys,
+  type UsePickQueryOptions,
 } from './useInternalQuery';

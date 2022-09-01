@@ -5,25 +5,41 @@ import {
   getStream,
   pick,
 } from 'livepeer';
+import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';
 import {
-  UseInternalQueryOptions,
+  UsePickQueryOptions,
   useInternalQuery,
-  useInternalQueryKeys,
+  usePickQueryKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
-export function useStream<TLivepeerProvider extends LivepeerProvider>(
-  args: Partial<GetStreamArgs> & Partial<UseInternalQueryOptions<Stream>>,
-) {
+export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
+  args: GetStreamArgs,
+  livepeerProvider: TLivepeerProvider,
+) => [{ entity: 'getStream', args, livepeerProvider }] as const;
+
+export type UseStreamArgs<TData> = Partial<GetStreamArgs> &
+  Partial<UsePickQueryOptions<Stream, TData, ReturnType<typeof queryKey>>>;
+
+export function useStream<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = Stream,
+>(args: UseStreamArgs<TData>) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  return useInternalQuery({
+  const getStreamArgs: GetStreamArgs = useMemo(
+    () =>
+      typeof args === 'string' ? args : { streamId: args?.streamId ?? '' },
+    [args],
+  );
+
+  return useInternalQuery<Stream, TData, ReturnType<typeof queryKey>>({
     context: QueryClientContext,
-    queryKey: [{ entity: 'getStream', args, livepeerProvider }],
-    queryFn: async () => getStream<TLivepeerProvider>(args as GetStreamArgs),
+    queryKey: queryKey(getStreamArgs, livepeerProvider),
+    queryFn: async () => getStream<TLivepeerProvider>(getStreamArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamId),
-    ...(typeof args === 'object' ? pick(args, useInternalQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
   });
 }

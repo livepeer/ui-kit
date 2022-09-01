@@ -4,7 +4,9 @@ import { useMemo } from 'react';
 
 import { Status } from './types';
 
-export const useInternalQueryKeys: ReadonlyArray<keyof UseQueryOptions> = [
+export type InternalQueryError = HttpError | Error;
+
+export const usePickQueryKeys: ReadonlyArray<keyof UseQueryOptions> = [
   'cacheTime',
   'enabled',
   'networkMode',
@@ -33,22 +35,22 @@ export const useInternalQueryKeys: ReadonlyArray<keyof UseQueryOptions> = [
   'useErrorBoundary',
 ] as const;
 
-export type UseInternalQueryOptions<
+export type UsePickQueryOptions<
   TQueryFnData = unknown,
-  TError = HttpError | Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Pick<
-  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  typeof useInternalQueryKeys[number]
+  UseQueryOptions<TQueryFnData, InternalQueryError, TData, TQueryKey>,
+  typeof usePickQueryKeys[number]
 >;
 
 export function useInternalQuery<
   TQueryFnData = unknown,
-  TError = HttpError | Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>) {
+>(
+  options: UseQueryOptions<TQueryFnData, InternalQueryError, TData, TQueryKey>,
+) {
   const {
     data,
     dataUpdatedAt,
@@ -71,7 +73,7 @@ export function useInternalQuery<
     remove,
     status: internalStatus,
     fetchStatus,
-  } = useQuery<TQueryFnData, TError, TData, TQueryKey>(options);
+  } = useQuery<TQueryFnData, HttpError | Error, TData, TQueryKey>(options);
 
   const status: Status = useMemo(
     () =>

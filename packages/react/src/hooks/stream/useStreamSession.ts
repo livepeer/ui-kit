@@ -5,27 +5,46 @@ import {
   getStreamSession,
   pick,
 } from 'livepeer';
+import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';
 import {
-  UseInternalQueryOptions,
+  UsePickQueryOptions,
   useInternalQuery,
-  useInternalQueryKeys,
+  usePickQueryKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
-export function useStreamSession<TLivepeerProvider extends LivepeerProvider>(
-  args: Partial<GetStreamSessionArgs> &
-    Partial<UseInternalQueryOptions<StreamSession>>,
-) {
+export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
+  args: GetStreamSessionArgs,
+  livepeerProvider: TLivepeerProvider,
+) => [{ entity: 'getStreamSession', args, livepeerProvider }] as const;
+
+export type UseStreamSessionArgs<TData> = Partial<GetStreamSessionArgs> &
+  Partial<
+    UsePickQueryOptions<StreamSession, TData, ReturnType<typeof queryKey>>
+  >;
+
+export function useStreamSession<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = StreamSession,
+>(args: UseStreamSessionArgs<TData>) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
+
+  const getStreamSessionArgs: GetStreamSessionArgs = useMemo(
+    () =>
+      typeof args === 'string'
+        ? args
+        : { streamSessionId: args?.streamSessionId ?? '' },
+    [args],
+  );
 
   return useInternalQuery({
     context: QueryClientContext,
-    queryKey: [{ entity: 'getStreamSession', args, livepeerProvider }],
+    queryKey: queryKey(getStreamSessionArgs, livepeerProvider),
     queryFn: async () =>
-      getStreamSession<TLivepeerProvider>(args as GetStreamSessionArgs),
+      getStreamSession<TLivepeerProvider>(getStreamSessionArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamSessionId),
-    ...(typeof args === 'object' ? pick(args, useInternalQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
   });
 }
