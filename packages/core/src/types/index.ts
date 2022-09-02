@@ -17,6 +17,8 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  GetPlaybackInfoArgs,
+  PlaybackInfo,
 } from './provider';
 export {
   ArbRetryableTx__factory as ArbRetryableTxFactory,

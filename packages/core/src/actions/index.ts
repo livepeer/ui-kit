@@ -27,3 +27,4 @@ export {
   getStreamSessions,
   updateStream,
 } from './stream';
+export { getPlaybackInfo } from './playback';

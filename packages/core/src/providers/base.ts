@@ -7,11 +7,13 @@ import {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
   LivepeerProvider,
   LivepeerProviderConfig,
+  PlaybackInfo,
   Stream,
   StreamSession,
   UpdateAssetArgs,
@@ -45,7 +47,8 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
       | `/session/${string}`
       | `/stream/${string}/sessions`
       | '/asset'
-      | `/asset/${string}`,
+      | `/asset/${string}`
+      | `/playback/${string}`,
     options?: FetchOptions<never>,
   ): Promise<T> {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
@@ -122,6 +125,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
   abstract createAsset(args: CreateAssetArgs): Promise<Asset>;
   abstract getAsset(args: GetAssetArgs): Promise<Asset>;
   abstract updateAsset(args: UpdateAssetArgs): Promise<Asset>;
+  abstract getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
 }
 
 export type LivepeerProviderFn<
