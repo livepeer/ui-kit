@@ -83,6 +83,7 @@ it('should expose correct exports', () => {
       "TicketBrokerFactory",
       "createNewHls",
       "isHlsSupported",
+      "pick",
     ]
   `);
 });
