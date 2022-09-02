@@ -1,5 +1,5 @@
 {
-  "view-asset": "Create & Watch a VOD",
-  "view-stream": "Create & Watch a Stream",
-  "video-player": "Video Player Example"
+  "video-player": "Video Player",
+  "view-asset": "Create & Watch an Asset",
+  "view-stream": "Create & Watch a Stream"
 }

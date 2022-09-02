@@ -13,11 +13,12 @@ it('should expose correct exports', () => {
       "getController",
       "getL1Migrator",
       "getL2Migrator",
+      "getLivepeerProvider",
       "getLivepeerToken",
       "getLivepeerTokenFaucet",
-      "getLivepeerProvider",
       "getMerkleSnapshot",
       "getMinter",
+      "getPlaybackInfo",
       "getPollCreator",
       "getRoundsManager",
       "getServiceRegistry",
@@ -28,7 +29,6 @@ it('should expose correct exports', () => {
       "updateAsset",
       "updateStream",
       "watchLivepeerProvider",
-      "getPlaybackInfo",
       "Client",
       "createClient",
       "allChainId",
@@ -81,6 +81,8 @@ it('should expose correct exports', () => {
       "RoundsManagerFactory",
       "ServiceRegistryFactory",
       "TicketBrokerFactory",
+      "createNewHls",
+      "isHlsSupported",
     ]
   `);
 });

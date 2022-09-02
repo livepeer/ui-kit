@@ -4,7 +4,7 @@ searchable: false
 ---
 
 import { Bleed, Tabs, Tab } from 'nextra-theme-docs';
-import { Header, DemoVideo } from '@components/docs';
+import { Header, HeaderVideo } from '@components/docs';
 
 <Header />
 
@@ -39,9 +39,9 @@ yarn add livepeer @livepeer/react wagmi ethers
 </div>
 {/* prettier-ignore-end */}
 
-<Bleed >
+<Bleed>
   <div className="mx-4">
-    <DemoVideo />
+    <HeaderVideo />
   </div>
 </Bleed>
 
@@ -70,28 +70,25 @@ function App() {
 ```
 
 ```tsx
-import { useAsset } from '@livepeer/react';
+import { VideoPlayer } from '@livepeer/react';
 
-const assetId = 'a3880c39-b58a-4ae2-8e17-8f3e727ded0d';
+const playbackId = 'a4e8o6mykgkvtxav';
 
 function Livepeer() {
-  const { data: asset } = useAsset(assetId);
-
-  return asset?.playbackUrl ? (
+  return (
     <VideoPlayer
-      src={asset.playbackUrl}
-      autoPlay
+      autoplay
       loop
+      muted
+      playbackId={playbackId}
     />
-  ) : (
-    <LoadingSpinner />
   );
 }
 ```
 
 In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Then, we use the `useAsset` hook to fetch the asset and use its `playbackUrl` with a video player! Waterfalls!
+Then, we use the [`VideoPlayer`](/docs/VideoPlayer) to play a video from a playback ID! Waterfalls!
 
 We've only scratched the surface for what you can do with livepeer.js!
 

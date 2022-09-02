@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
-import { useCreateStream, useStream } from '@livepeer/react';
+import { VideoPlayer, useCreateStream, useStream } from '@livepeer/react';
 
 import { useMemo, useState } from 'react';
 
-import { Spinner, VideoPlayer } from '../core';
+import { Spinner } from '../core';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
@@ -65,9 +65,9 @@ export const Stream = () => {
           </Text>
         )}
 
-      {stream && (
+      {stream?.playbackId && (
         <Box css={{ mt: '$2' }}>
-          <VideoPlayer src={stream?.playbackUrl} />
+          <VideoPlayer playbackId={stream?.playbackId} />
         </Box>
       )}
     </Box>

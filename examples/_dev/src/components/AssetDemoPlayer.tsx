@@ -2,8 +2,6 @@ import { VideoPlayer } from '@livepeer/react';
 import { PlaybackInfo } from 'livepeer';
 import { useState } from 'react';
 
-// const assetId = '01c94ad7-35f1-4a55-9802-57c2fa39b964'; // clock
-// const assetId = 'a4e87108-d3b5-4e6b-bb9c-7ca321119cb6'; // waterfall
 const playbackId = '01c93u43vbi48ojf'; // clock
 
 export const AssetDemoPlayer = () => {
@@ -20,8 +18,8 @@ export const AssetDemoPlayer = () => {
     <>
       <VideoPlayer
         playbackId={playbackId}
-        receivedPlaybackInfo={handlePlaybackInfo}
-        receivedError={handleError}
+        onPlaybackInfoUpdated={handlePlaybackInfo}
+        onPlaybackInfoError={handleError}
         width="640"
         loop
         muted

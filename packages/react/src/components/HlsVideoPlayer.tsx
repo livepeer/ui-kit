@@ -1,24 +1,23 @@
 import { HlsVideoConfig, createNewHls, isHlsSupported } from 'livepeer';
-import { RefObject, VideoHTMLAttributes, useEffect } from 'react';
+import { RefObject, VideoHTMLAttributes, createRef, useEffect } from 'react';
 
-export interface GenericHlsVideoPlayerProps
-  extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 'autoPlay'> {
-  playerRef: RefObject<HTMLVideoElement>;
-  hlsConfig?: HlsVideoConfig;
-  autoplay?: boolean;
-  controls?: boolean;
-  width?: string | number;
-}
+export type GenericHlsVideoPlayerProps =
+  VideoHTMLAttributes<HTMLVideoElement> & {
+    playerRef?: RefObject<HTMLVideoElement>;
+    hlsConfig?: HlsVideoConfig;
+    controls?: boolean;
+    width?: string | number;
+  };
 
-export interface HlsVideoPlayerProps extends GenericHlsVideoPlayerProps {
+export type HlsVideoPlayerProps = GenericHlsVideoPlayerProps & {
   src: string;
-}
+};
 
 export function HlsVideoPlayer({
   hlsConfig,
-  playerRef,
+  playerRef = createRef<HTMLVideoElement>(),
   src,
-  autoplay = true,
+  autoPlay = true,
   controls = true,
   width = '100%',
   ...props
@@ -30,17 +29,15 @@ export function HlsVideoPlayer({
       isHlsSupported()
     ) {
       const { destroy } = createNewHls(src, playerRef.current, {
-        autoplay,
+        autoplay: autoPlay,
         ...hlsConfig,
       });
-
-      console.log(JSON.stringify(playerRef.current.src));
 
       return () => {
         destroy();
       };
     }
-  }, [autoplay, hlsConfig, playerRef, src]);
+  }, [autoPlay, hlsConfig, playerRef, src]);
 
   // if Media Source is supported, use HLS.js to play video
   if (typeof window !== 'undefined' && isHlsSupported())
@@ -53,7 +50,7 @@ export function HlsVideoPlayer({
     <video
       ref={playerRef}
       src={src}
-      autoPlay={autoplay}
+      autoPlay={autoPlay}
       controls={controls}
       width={width}
       {...props}

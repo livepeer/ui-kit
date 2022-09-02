@@ -206,8 +206,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo> {
+    const playbackId = typeof args === 'string' ? args : args.playbackId;
+
     const studioPlaybackInfo = await this._get<StudioPlaybackInfo>(
-      `/playback/${args}`,
+      `/playback/${playbackId}`,
       {
         headers: this._defaultHeaders,
       },

@@ -530,7 +530,11 @@ export type TranscodingProfile = {
   height: number;
 };
 
-export type GetPlaybackInfoArgs = string;
+export type GetPlaybackInfoArgs =
+  | string
+  | {
+      playbackId: string;
+    };
 
 // TODO: create a description of the fields
 // Type copied from https://github.com/livepeer/player/blob/be5eebb47efdaa997ee4dcce818dc72cbf7ff627/src/index.ts#L27

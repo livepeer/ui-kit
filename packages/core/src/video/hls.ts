@@ -1,8 +1,11 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
+import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
+
 export const isHlsSupported = () => Hls.isSupported();
 
-export type HlsVideoConfig = HlsConfig & { autoplay?: boolean };
+export type VideoConfig = { autoplay?: boolean };
+export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
 
 export const createNewHls = (
   source: string,
@@ -36,14 +39,10 @@ export const createNewHls = (
     });
 
     // TODO: re-enable after testing and before merging
-    // const metricReportingUrl = createMetricsReportingUrl(src);
-    // if (metricReportingUrl) {
-    //   reportVideoMetrics(playerRef.current, metricReportingUrl);
-    // }
-    // reportVideoMetrics(
-    //   playerRef.current,
-    //   'wss://patchy.ddvtech.com/mist/json_bunny.js',
-    // );
+    const metricReportingUrl = createMetricsReportingUrl(source);
+    if (metricReportingUrl) {
+      reportVideoMetrics(element, metricReportingUrl);
+    }
   });
 
   hls.on(Events.ERROR, function (_event, data) {

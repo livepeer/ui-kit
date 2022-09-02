@@ -27,7 +27,7 @@ type Metrics = {
 
 type PlaybackRecord = {
   clockTime: number;
-  videoTime: number;
+  mediaTime: number;
   score: number;
 };
 
@@ -36,10 +36,10 @@ class PlaybackMonitor {
   values: PlaybackRecord[] = [];
   score: number | null = null;
   averagingSteps = 20;
-  video: HTMLVideoElement;
+  element: HTMLMediaElement;
 
-  constructor(video: HTMLVideoElement) {
-    this.video = video;
+  constructor(element: HTMLMediaElement) {
+    this.element = element;
   }
 
   init() {
@@ -69,7 +69,7 @@ class PlaybackMonitor {
   calculateScore() {
     if (this.active) {
       // save the current testing value and time
-      // If the video plays, this should keep a constant value. If the video is stalled, it will go up with 1sec/sec. If the video is playing faster, it will go down.
+      // If the media plays, this should keep a constant value. If the media is stalled, it will go up with 1sec/sec. If the media is playing faster, it will go down.
       // current clock time - current playback time
       const latestPlaybackRecord =
         this.values.length > 0
@@ -78,7 +78,7 @@ class PlaybackMonitor {
 
       const currentValue = {
         clockTime: new Date().getTime() * 1e-3,
-        videoTime: this.video.currentTime,
+        mediaTime: this.element.currentTime,
         score: latestPlaybackRecord
           ? this.valueToScore(latestPlaybackRecord)
           : 0,
@@ -114,12 +114,12 @@ class PlaybackMonitor {
 
   valueToScore(a: PlaybackRecord, b?: PlaybackRecord) {
     // calculate the moving average
-    // if this returns > 1, the video played faster than the clock
-    // if this returns < 0, the video time went backwards
-    const rate = this?.video?.playbackRate ? this.video.playbackRate : 1;
+    // if this returns > 1, the media played faster than the clock
+    // if this returns < 0, the media time went backwards
+    const rate = this?.element?.playbackRate ? this.element.playbackRate : 1;
 
     return (
-      (b?.videoTime ?? this.video.currentTime - a.videoTime) /
+      (b?.mediaTime ?? this.element.currentTime - a.mediaTime) /
       (b?.clockTime ?? new Date().getTime() * 1e-3 - a.clockTime) /
       rate
     );
@@ -129,7 +129,7 @@ class PlaybackMonitor {
 class MetricsStatus {
   retryCount = 0;
   connected = false;
-  video: HTMLVideoElement;
+  element: HTMLVideoElement | HTMLMediaElement;
 
   currentMetrics: Metrics;
   previousMetrics: Metrics | null = null;
@@ -141,8 +141,8 @@ class MetricsStatus {
   timeUnpaused = 0;
   unpausedSince = 0;
 
-  constructor(video: HTMLVideoElement) {
-    this.video = video;
+  constructor(element: HTMLVideoElement | HTMLMediaElement) {
+    this.element = element;
     this.currentMetrics = {
       firstPlayback: 0,
       nWaiting: 0,
@@ -161,28 +161,28 @@ class MetricsStatus {
       playbackScore: null,
     };
 
-    video.addEventListener('waiting', () => {
+    element.addEventListener('waiting', () => {
       this.timeWaiting = this._getTimeWaiting(); // in case we get waiting several times in a row
       this.waitingSince = new Date().getTime();
     });
-    video.addEventListener('stalled', () => {
+    element.addEventListener('stalled', () => {
       this.timeStalled = this._getTimeStalled(); // in case we get stalled several times in a row
       this.stalledSince = new Date().getTime();
     });
 
     for (const event of ['playing', 'pause'] as const) {
-      video.addEventListener(event, () => {
+      element.addEventListener(event, () => {
         this.timeWaiting = this._getTimeWaiting();
         this.timeStalled = this._getTimeStalled();
         this.waitingSince = 0;
         this.stalledSince = 0;
       });
     }
-    video.addEventListener('playing', () => {
+    element.addEventListener('playing', () => {
       this.timeUnpaused = this._getTimeUnpaused(); // in case we get playing several times in a row
       this.unpausedSince = new Date().getTime();
     });
-    video.addEventListener('pause', () => {
+    element.addEventListener('pause', () => {
       this.timeUnpaused = this._getTimeUnpaused();
       this.unpausedSince = 0;
     });
@@ -218,8 +218,8 @@ class MetricsStatus {
     this.currentMetrics.nWaiting++;
   }
 
-  setFirstPlayback(value: number) {
-    this.currentMetrics.firstPlayback = value;
+  setFirstPlayback() {
+    this.currentMetrics.firstPlayback = new Date().getTime() - bootMs;
   }
   setPlaybackScore(playbackScore: number) {
     this.currentMetrics.playbackScore = playbackScore;
@@ -231,10 +231,14 @@ class MetricsStatus {
   getMetrics() {
     const currentMetrics: Metrics = {
       ...this.currentMetrics,
-      playerHeight: this.video ? this.video.clientHeight : null,
-      playerWidth: this.video ? this.video.clientWidth : null,
-      videoWidth: this.video ? this.video.videoHeight : null,
-      videoHeight: this.video ? this.video.videoHeight : null,
+      playerHeight: this.element ? this.element.clientHeight : null,
+      playerWidth: this.element ? this.element.clientWidth : null,
+      videoWidth: (this.element as HTMLVideoElement)?.videoWidth
+        ? (this.element as HTMLVideoElement)?.videoWidth
+        : null,
+      videoHeight: (this.element as HTMLVideoElement)?.videoHeight
+        ? (this.element as HTMLVideoElement)?.videoHeight
+        : null,
 
       timeWaiting: this._getTimeWaiting(),
       timeStalled: this._getTimeStalled(),
@@ -252,42 +256,35 @@ class MetricsStatus {
 }
 
 const bootMs = new Date().getTime(); // used for firstPlayback value
-const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-video-metrics-initialized';
-
-function send(webSocket: WebSocket, metrics: Partial<Metrics>) {
-  if (webSocket.readyState !== webSocket.OPEN) {
-    return;
-  }
-  webSocket.send(JSON.stringify(metrics));
-}
+const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
 /**
  * Gather playback metrics from a generic html5 video (or audio) element and
  * report those back to an arbitrary websocket.
- * @param video                 Element to capture playback metrics from
+ * @param element                 Element to capture playback metrics from
  * @param reportingWebsocketUrl url to the websocket to report to
  */
 export function reportVideoMetrics(
-  video: HTMLVideoElement,
+  element: HTMLMediaElement | HTMLVideoElement,
   reportingWebsocketUrl: string,
 ) {
   // do not attach twice (to the same websocket)
-  if (video.getAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE) === 'true') {
+  if (element.getAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE) === 'true') {
     return;
   }
 
-  video.setAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE, 'true');
+  element.setAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE, 'true');
 
   if (!window.WebSocket) {
-    console.log('Browser does not support websockets.');
+    console.log('Browser does not support WebSocket');
     return;
   }
-  if (!('play' in video) || !('currentTime' in video)) {
-    console.log('Element provided is not a video element');
+  if (!('play' in element) || !('currentTime' in element)) {
+    console.log('Element provided is not a media element');
     return;
   }
 
-  const metricsStatus = new MetricsStatus(video);
+  const metricsStatus = new MetricsStatus(element);
 
   try {
     const createNewWebSocket = (numRetries = 0) => {
@@ -302,6 +299,7 @@ export function reportVideoMetrics(
         if (timeOut) {
           clearTimeout(timeOut);
           timeOut = null;
+          enabled = false;
         }
 
         // auto-reconnect with exponential backoff
@@ -316,26 +314,27 @@ export function reportVideoMetrics(
     const ws = createNewWebSocket();
 
     let timeOut: NodeJS.Timeout | null = null;
+    let enabled = true;
 
     /////////////////////
     //  basics         //
     /////////////////////
 
     const firstPlay = () => {
-      metricsStatus.setFirstPlayback(new Date().getTime() - bootMs);
-      video.removeEventListener('playing', firstPlay);
+      metricsStatus.setFirstPlayback();
+      element.removeEventListener('playing', firstPlay);
     };
-    video.addEventListener('playing', firstPlay);
+    element.addEventListener('playing', firstPlay);
 
-    video.addEventListener('waiting', () => {
+    element.addEventListener('waiting', () => {
       metricsStatus.incrementWaiting();
     });
-    video.addEventListener('stalled', () => {
+    element.addEventListener('stalled', () => {
       metricsStatus.incrementStalled();
     });
-    video.addEventListener('error', () => {
+    element.addEventListener('error', () => {
       metricsStatus.addError(
-        video?.error?.message ? video.error.message : 'unknown',
+        element?.error?.message ? element.error.message : 'unknown',
       );
     });
 
@@ -343,11 +342,11 @@ export function reportVideoMetrics(
     //  playbackScore  //
     /////////////////////
 
-    const monitor = new PlaybackMonitor(video);
+    const monitor = new PlaybackMonitor(element);
 
     // enable
     for (const eventName of ['loadstart', 'play', 'playing'] as const) {
-      video.addEventListener(eventName, function () {
+      element.addEventListener(eventName, function () {
         monitor.init();
       });
     }
@@ -360,7 +359,7 @@ export function reportVideoMetrics(
       'emptied',
       'ended',
     ] as const) {
-      video.addEventListener(eventName, function () {
+      element.addEventListener(eventName, function () {
         monitor.destroy();
       });
     }
@@ -372,13 +371,13 @@ export function reportVideoMetrics(
       /*"canplay","playing",*/
       'ratechange',
     ] as const) {
-      video.addEventListener(eventName, function () {
+      element.addEventListener(eventName, function () {
         monitor.reset();
       });
     }
 
     const report = () => {
-      if (timeOut === null) {
+      if (!enabled) {
         return;
       }
 
@@ -412,4 +411,11 @@ export function reportVideoMetrics(
   }
 
   return true;
+}
+
+function send(webSocket: WebSocket, metrics: Partial<Metrics>) {
+  if (webSocket.readyState !== webSocket.OPEN) {
+    return;
+  }
+  webSocket.send(JSON.stringify(metrics));
 }

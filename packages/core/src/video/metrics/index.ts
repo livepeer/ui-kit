@@ -1,2 +1,2 @@
+export { reportVideoMetrics } from './metrics';
 export { createMetricsReportingUrl } from './utils';
-export { reportVideoMetrics } from './reporting';

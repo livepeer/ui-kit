@@ -2,6 +2,7 @@
   "getting-started": "Getting Started",
   "client": "Client",
   "LivepeerConfig": "LivepeerConfig",
+  "VideoPlayer": "VideoPlayer",
   "providers": "Providers",
   "asset": "Asset",
   "stream": "Stream",

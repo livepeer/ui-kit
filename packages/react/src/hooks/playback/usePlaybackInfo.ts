@@ -20,6 +20,7 @@ export function usePlaybackInfo<TLivepeerProvider extends LivepeerProvider>(
     queryKey: [{ entity: 'getPlaybackInfo', args, livepeerProvider }],
     queryFn: async () =>
       getPlaybackInfo<TLivepeerProvider>(args as GetPlaybackInfoArgs),
-    enabled: Boolean(args),
+    enabled: Boolean(typeof args === 'string' ? args : args?.playbackId),
+    ...(typeof args === 'object' ? args : {}),
   });
 }

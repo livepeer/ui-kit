@@ -10,6 +10,6 @@ function videoNameFromPlaybackUrl(url: string): string | undefined {
 export function createMetricsReportingUrl(src: string): string | undefined {
   const videoName = videoNameFromPlaybackUrl(src);
   return videoName
-    ? `${METRICS_REPORTING_BASE_URL}/json_${videoName}.js`
+    ? `${METRICS_REPORTING_BASE_URL}/json_video+${videoName}.js`
     : undefined;
 }
