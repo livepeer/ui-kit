@@ -140,3 +140,4 @@ export type {
 } from './types';
 export { createNewHls, isHlsSupported } from './video';
 export type { HlsVideoConfig } from './video';
+export { pick } from './utils';
