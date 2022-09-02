@@ -135,3 +135,4 @@ export type {
   UpdateAssetArgs,
   UpdateStreamArgs,
 } from './types';
+export { pick } from './utils';
