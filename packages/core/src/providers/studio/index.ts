@@ -325,15 +325,15 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   _mapToPlaybackInfo(studioPlaybackInfo: StudioPlaybackInfo): PlaybackInfo {
     return {
-      type: studioPlaybackInfo['type'],
+      type: studioPlaybackInfo?.['type'],
       meta: {
-        live: studioPlaybackInfo['meta']['live']
+        live: studioPlaybackInfo?.['meta']?.['live']
           ? Boolean(studioPlaybackInfo?.['meta']['live'])
           : undefined,
-        source: studioPlaybackInfo['meta']['source'].map((source) => ({
-          hrn: source['hrn'],
-          type: source['type'],
-          url: source['url'],
+        source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
+          hrn: source?.['hrn'],
+          type: source?.['type'],
+          url: source?.['url'],
         })),
       },
     };

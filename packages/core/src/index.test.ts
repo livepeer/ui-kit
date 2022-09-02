@@ -28,6 +28,7 @@ it('should expose correct exports', () => {
       "updateAsset",
       "updateStream",
       "watchLivepeerProvider",
+      "getPlaybackInfo",
       "Client",
       "createClient",
       "allChainId",

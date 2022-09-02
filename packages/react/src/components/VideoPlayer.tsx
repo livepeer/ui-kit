@@ -1,54 +1,60 @@
 import { PlaybackInfo } from 'livepeer/src/types/provider';
-import React, { useEffect, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 
 import { usePlaybackInfo } from '../hooks/playback/usePlaybackInfo';
 import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
 
 export interface VideoPlayerProps extends GenericHlsVideoPlayerProps {
   playbackId: string;
-  receivedPlaybackInfo?: (playbackInfo: PlaybackInfo) => void;
-  receivedError?: (error: Error) => void;
+  autoplay: boolean;
+  onPlaybackInfoUpdated?: (playbackInfo: PlaybackInfo) => void;
+  onPlaybackInfoError?: (error: Error) => void;
 }
 
 export function VideoPlayer({
   playbackId,
-  receivedPlaybackInfo,
-  receivedError,
+  onPlaybackInfoUpdated,
+  onPlaybackInfoError,
   hlsConfig,
-  playerRef = React.createRef<HTMLVideoElement>(),
-  autoPlay = true,
+  playerRef = createRef<HTMLVideoElement>(),
+  autoplay = true,
   controls = true,
   width = '100%',
   ...props
 }: VideoPlayerProps) {
-  const { data: playbackInfo, error } = usePlaybackInfo(playbackId);
+  const { data: playbackInfo, error: playbackInfoError } =
+    usePlaybackInfo(playbackId);
   const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!playbackInfo) return;
-    const url = playbackInfo?.meta.source[0]?.url;
-    if (url) {
-      setPlaybackUrl(url);
-    }
     if (playbackInfo) {
-      receivedPlaybackInfo && receivedPlaybackInfo(playbackInfo);
+      const url = playbackInfo?.meta?.source?.[0]?.url;
+      if (url) {
+        setPlaybackUrl(url);
+      }
+
+      onPlaybackInfoUpdated?.(playbackInfo);
     }
-  }, [playbackInfo]);
+  }, [playbackInfo, onPlaybackInfoUpdated]);
 
   useEffect(() => {
-    if (!error) return;
-    console.error(error);
-    receivedError && receivedError(error);
-  }, [error]);
+    if (playbackInfoError) {
+      console.error(playbackInfoError);
 
-  if (!playbackUrl) return <></>;
+      onPlaybackInfoError?.(playbackInfoError);
+    }
+  }, [playbackInfoError, onPlaybackInfoError]);
+
+  if (!playbackUrl) {
+    return <></>;
+  }
 
   return (
     <HlsVideoPlayer
       hlsConfig={hlsConfig}
       playerRef={playerRef}
       src={playbackUrl}
-      autoPlay={autoPlay}
+      autoplay={autoplay}
       controls={controls}
       width={width}
       {...props}

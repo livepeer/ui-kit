@@ -7,11 +7,12 @@ export {
   getController,
   getL1Migrator,
   getL2Migrator,
+  getLivepeerProvider,
   getLivepeerToken,
   getLivepeerTokenFaucet,
-  getLivepeerProvider,
   getMerkleSnapshot,
   getMinter,
+  getPlaybackInfo,
   getPollCreator,
   getRoundsManager,
   getServiceRegistry,
@@ -22,7 +23,6 @@ export {
   updateAsset,
   updateStream,
   watchLivepeerProvider,
-  getPlaybackInfo,
 } from './actions';
 export type {
   GetLivepeerProviderResult,
@@ -108,10 +108,10 @@ export type {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
-  GetPlaybackInfoArgs,
   Hash,
   Inbox,
   Ipfs,
@@ -126,6 +126,7 @@ export type {
   MerkleSnapshot,
   Minter,
   NodeInterface,
+  PlaybackInfo,
   Poll,
   PollCreator,
   RoundsManager,
@@ -136,5 +137,6 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
-  PlaybackInfo,
 } from './types';
+export { createNewHls, isHlsSupported } from './video';
+export type { HlsVideoConfig } from './video';
