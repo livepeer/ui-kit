@@ -1,7 +1,8 @@
-import { PlaybackInfo } from 'livepeer/src/types/provider';
-import { Fragment, createRef, useEffect, useMemo, useState } from 'react';
+import { PlaybackInfo } from 'livepeer';
+import { createRef, useEffect, useMemo, useState } from 'react';
 
-import { usePlaybackInfo } from '../hooks/playback/usePlaybackInfo';
+import { usePlaybackInfo } from '../hooks';
+
 import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
 
 export type VideoPlayerProps = Omit<GenericHlsVideoPlayerProps, 'src'> & {
@@ -79,7 +80,5 @@ export function VideoPlayer({
       {...props}
       src={srcOrPlaybackUrl}
     />
-  ) : (
-    Fragment
-  );
+  ) : null;
 }
