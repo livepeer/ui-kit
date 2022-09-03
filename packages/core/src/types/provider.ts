@@ -29,7 +29,7 @@ export interface LivepeerProvider {
   /** Modify an asset */
   updateAsset(args: UpdateAssetArgs): Promise<Asset>;
 
-  /** Playback info **/
+  /** Get playback info for a playback ID */
   getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
 }
 

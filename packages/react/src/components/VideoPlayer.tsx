@@ -1,5 +1,5 @@
 import { PlaybackInfo } from 'livepeer';
-import { createRef, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 
 import { usePlaybackInfo } from '../hooks';
 
@@ -32,7 +32,7 @@ export function VideoPlayer({
   onPlaybackInfoUpdated,
   onPlaybackInfoError,
   hlsConfig,
-  playerRef = createRef<HTMLVideoElement>(),
+  playerRef = React.createRef<HTMLVideoElement>(),
   autoPlay = true,
   controls = true,
   width = '100%',
@@ -44,9 +44,11 @@ export function VideoPlayer({
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
     enabled: src ? false : undefined,
   });
-  const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
+  const [playbackUrl, setPlaybackUrl] = React.useState<string | undefined>(
+    undefined,
+  );
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (playbackInfo) {
       const url = playbackInfo?.meta?.source?.[0]?.url;
       if (url) {
@@ -57,7 +59,7 @@ export function VideoPlayer({
     }
   }, [playbackInfo, onPlaybackInfoUpdated]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (playbackInfoError) {
       console.error(playbackInfoError);
 
@@ -65,7 +67,7 @@ export function VideoPlayer({
     }
   }, [playbackInfoError, onPlaybackInfoError]);
 
-  const srcOrPlaybackUrl = useMemo(
+  const srcOrPlaybackUrl = React.useMemo(
     () => playbackUrl || src,
     [playbackUrl, src],
   );

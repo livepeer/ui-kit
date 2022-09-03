@@ -1,9 +1,9 @@
 import { HlsVideoConfig, createNewHls, isHlsSupported } from 'livepeer';
-import { RefObject, VideoHTMLAttributes, createRef, useEffect } from 'react';
+import * as React from 'react';
 
 export type GenericHlsVideoPlayerProps =
-  VideoHTMLAttributes<HTMLVideoElement> & {
-    playerRef?: RefObject<HTMLVideoElement>;
+  React.VideoHTMLAttributes<HTMLVideoElement> & {
+    playerRef?: React.RefObject<HTMLVideoElement>;
     hlsConfig?: HlsVideoConfig;
     controls?: boolean;
     width?: string | number;
@@ -15,14 +15,14 @@ export type HlsVideoPlayerProps = GenericHlsVideoPlayerProps & {
 
 export function HlsVideoPlayer({
   hlsConfig,
-  playerRef = createRef<HTMLVideoElement>(),
+  playerRef = React.createRef<HTMLVideoElement>(),
   src,
   autoPlay = true,
   controls = true,
   width = '100%',
   ...props
 }: HlsVideoPlayerProps) {
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       playerRef.current &&
       typeof window !== 'undefined' &&
