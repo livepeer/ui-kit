@@ -272,17 +272,3 @@ export interface StudioAsset extends Asset {
     };
   };
 }
-
-export type StudioListArgs = {
-  /** Maximum number of entries to return per page */
-  limit?: number;
-  /** Cursor from the previous page to get the next one */
-  cursor?: string;
-};
-
-export type StudioListPage<T> = {
-  /** Array of entries */
-  entries: T[];
-  /** Cursor to get the next page */
-  cursor: string;
-};

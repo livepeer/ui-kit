@@ -1,7 +1,6 @@
 import * as tus from 'tus-js-client';
 
 import { defaultStudioApiKey, studio } from '../../constants';
-import { HttpError } from '../../errors';
 
 import {
   CreateAssetArgs,
@@ -12,18 +11,12 @@ import {
   UpdateAssetArgs,
 } from '../../types';
 
-import {
-  BaseLivepeerProvider,
-  FetchOptions,
-  LivepeerProviderFn,
-} from '../base';
+import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   GetTaskArgs,
   StudioAsset,
   StudioCreateAssetArgs,
   StudioCreateStreamArgs,
-  StudioListArgs,
-  StudioListPage,
   StudioStream,
   StudioStreamSession,
   StudioTask,
@@ -209,34 +202,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this.getAsset(assetId);
   }
 
-  // Studio-only APIs belows
-
-  /** List all streams in the account. Cannot be called with a CORS key. */
-  async listStreams(
-    args: StudioListArgs,
-  ): Promise<StudioListPage<StudioStream>> {
-    const { limit = 10, cursor = '' } = args;
-    const streams = await this._list<StudioStream>(
-      `/stream?limit=${limit}&cursor=${cursor}`,
-      {
-        headers: this._defaultHeaders,
-      },
-    );
-    return streams;
-  }
-
-  /** List all assets in the account. Cannot be called with a CORS key. */
-  async listAssets(args: StudioListArgs): Promise<StudioListPage<StudioAsset>> {
-    const { limit = 10, cursor = '' } = args;
-    const assets = await this._list<StudioAsset>(
-      `/asset?limit=${limit}&cursor=${cursor}`,
-      {
-        headers: this._defaultHeaders,
-      },
-    );
-    return assets;
-  }
-
   /** Gets a task by its ID */
   async getTask(args: GetTaskArgs): Promise<StudioTask> {
     const task = await this._get<StudioTask>(
@@ -293,43 +258,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
       playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
     };
-  }
-
-  private async _list<T>(
-    url: `/${string}`,
-    options?: FetchOptions<never>,
-  ): Promise<StudioListPage<T>> {
-    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
-      method: 'GET',
-      ...options,
-    });
-
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        'Provider failed to get object',
-        await response.json(),
-      );
-    }
-
-    return {
-      entries: await response.json(),
-      cursor: this._getNextCursor(response.headers.get('link')),
-    };
-  }
-
-  private static linkRegex = /<([^>]+)>;\s*rel="next"/;
-
-  private _getNextCursor(link: string | null): string {
-    if (!link) {
-      return '';
-    }
-    const match = link.match(StudioLivepeerProvider.linkRegex);
-    if (!match || !match[1]) {
-      return '';
-    }
-    const url = new URL(match[1]);
-    return url.searchParams.get('cursor') ?? '';
   }
 }
 
