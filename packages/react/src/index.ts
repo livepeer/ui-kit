@@ -1,5 +1,6 @@
 export { createReactClient } from './client';
 export type { CreateReactClientConfig } from './client';
+export { VideoPlayer } from './components';
 export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';
 export {
@@ -10,9 +11,9 @@ export {
   useCreateStream,
   useL1Migrator,
   useL2Migrator,
+  useLivepeerProvider,
   useLivepeerToken,
   useLivepeerTokenFaucet,
-  useLivepeerProvider,
   useMerkleSnapshot,
   useMinter,
   usePollCreator,

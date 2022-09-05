@@ -7,9 +7,11 @@ import {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
+  PlaybackInfo,
   Stream,
   StreamSession,
   UpdateAssetArgs,
@@ -20,6 +22,7 @@ import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   StudioAsset,
   StudioCreateStreamArgs,
+  StudioPlaybackInfo,
   StudioStream,
   StudioStreamSession,
 } from './types';
@@ -190,6 +193,19 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return `rtmp://rtmp.livepeer.com/live/${streamKey}`;
   }
 
+  async getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo> {
+    const playbackId = typeof args === 'string' ? args : args.playbackId;
+
+    const studioPlaybackInfo = await this._get<StudioPlaybackInfo>(
+      `/playback/${playbackId}`,
+      {
+        headers: this._defaultHeaders,
+      },
+    );
+
+    return this._mapToPlaybackInfo(studioPlaybackInfo);
+  }
+
   _getPlaybackUrl(playbackId: string) {
     return `https://livepeercdn.com/hls/${playbackId}/index.m3u8`;
   }
@@ -217,6 +233,22 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       return { ...t, spec: { name } };
     });
     return { targets: await Promise.all(fetchTargets) };
+  }
+
+  _mapToPlaybackInfo(studioPlaybackInfo: StudioPlaybackInfo): PlaybackInfo {
+    return {
+      type: studioPlaybackInfo?.['type'],
+      meta: {
+        live: studioPlaybackInfo?.['meta']?.['live']
+          ? Boolean(studioPlaybackInfo?.['meta']['live'])
+          : undefined,
+        source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
+          hrn: source?.['hrn'],
+          type: source?.['type'],
+          url: source?.['url'],
+        })),
+      },
+    };
   }
 }
 

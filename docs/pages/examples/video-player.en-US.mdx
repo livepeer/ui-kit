@@ -1,0 +1,57 @@
+---
+title: 'Video Player'
+description: 'Learn how to use the livepeer.js video player'
+---
+
+import { DemoVideoPlayer } from '@components/examples';
+
+# Video Player
+
+The example below shows our drop-in video player for easily viewing video content! The example below uses the
+[`VideoPlayer`](/docs/VideoPlayer) to view a video asset.
+
+<DemoVideoPlayer />
+
+## Step 1: Configuring Providers
+
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio):
+
+```tsx
+import { LivepeerConfig, createReactClient } from '@livepeer/react';
+import { studioProvider } from 'livepeer/providers/studio';
+import * as React from 'react';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+// Pass client to React Context Provider
+function App() {
+  return (
+    <LivepeerConfig client={livepeerClient}>
+      <CreateAndViewAsset />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Step 2: Play Video
+
+Now that our providers are set up, we use the [`VideoPlayer`](/docs/VideoPlayer) with a `playbackId`, which we created
+previously when uploading a video asset.
+
+```tsx
+import { VideoPlayer } from '@livepeer/react';
+
+const playbackId = 'a4e8o6mykgkvtxav';
+
+export const DemoVideoPlayer = () => {
+  return <VideoPlayer playbackId={playbackId} loop muted />;
+};
+```
+
+## Wrap Up
+
+That's it! You just used the video player component to easily integrate video into your app.

@@ -1,2 +1,2 @@
-export { DemoVideo } from './DemoVideo';
+export { HeaderVideo } from './HeaderVideo';
 export { Header } from './Header';

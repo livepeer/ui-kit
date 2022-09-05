@@ -28,6 +28,9 @@ export interface LivepeerProvider {
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
   updateAsset(args: UpdateAssetArgs): Promise<Asset>;
+
+  /** Get playback info for a playback ID */
+  getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
 }
 
 export type StreamIdOrString =
@@ -374,5 +377,25 @@ export type Asset = {
     updatedAt: number;
     /** Error message if the asset creation failed */
     errorMessage?: string;
+  };
+};
+
+export type GetPlaybackInfoArgs =
+  | string
+  | {
+      playbackId: string;
+    };
+
+// TODO: create a description of the fields
+// Type copied from https://github.com/livepeer/player/blob/be5eebb47efdaa997ee4dcce818dc72cbf7ff627/src/index.ts#L27
+export type PlaybackInfo = {
+  type: string;
+  meta: {
+    live?: boolean;
+    source: {
+      hrn: string;
+      type: string;
+      url: string;
+    }[];
   };
 };

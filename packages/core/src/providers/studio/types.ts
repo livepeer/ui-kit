@@ -128,3 +128,17 @@ export interface StudioAsset extends Asset {
     };
   };
 }
+
+// TODO: create a description of the fields
+// Type copied from https://github.com/livepeer/player/blob/be5eebb47efdaa997ee4dcce818dc72cbf7ff627/src/index.ts#L27
+export type StudioPlaybackInfo = {
+  type: string;
+  meta: {
+    live?: 0 | 1;
+    source: {
+      hrn: string;
+      type: string;
+      url: string;
+    }[];
+  };
+};

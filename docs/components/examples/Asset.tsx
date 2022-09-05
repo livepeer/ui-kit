@@ -1,10 +1,10 @@
 import { Box, Button, Flex, Text } from '@livepeer/design-system';
-import { useAsset, useCreateAsset } from '@livepeer/react';
+import { VideoPlayer, useAsset, useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { Spinner, VideoPlayer } from '../core';
+import { Spinner } from '../core';
 
 const activeStyle = {
   borderColor: 'white',
@@ -31,7 +31,7 @@ export const Asset = () => {
     status: assetStatus,
   } = useAsset({
     assetId: createdAsset?.id,
-    refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
+    refetchInterval: (asset) => (!asset?.playbackId ? 5000 : false),
   });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -153,9 +153,9 @@ export const Asset = () => {
         </Button>
       </Flex>
 
-      {asset && asset?.playbackUrl && (
+      {asset?.playbackId && (
         <Box css={{ mt: '$2' }}>
-          <VideoPlayer src={asset?.playbackUrl} />
+          <VideoPlayer playbackId={asset?.playbackId} />
         </Box>
       )}
     </Box>

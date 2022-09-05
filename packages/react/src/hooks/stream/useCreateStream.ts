@@ -3,16 +3,19 @@ import {
   LivepeerProvider,
   Stream,
   createStream,
+  pick,
 } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
-import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
+import {
+  UsePickMutationOptions,
+  useInternalMutation,
+  usePickMutationKeys,
+} from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useCreateStream<TLivepeerProvider extends LivepeerProvider>(
-  options?: Partial<
-    UseInternalMutationOptions<Stream, Error, CreateStreamArgs>
-  >,
+  options?: Partial<UsePickMutationOptions<Stream, Error, CreateStreamArgs>>,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
@@ -21,7 +24,9 @@ export function useCreateStream<TLivepeerProvider extends LivepeerProvider>(
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'createStream', livepeerProvider }],
-      ...options,
+      ...(typeof options === 'object'
+        ? pick(options, usePickMutationKeys)
+        : {}),
     },
   );
 }

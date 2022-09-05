@@ -2,15 +2,20 @@ import {
   Asset,
   LivepeerProvider,
   UpdateAssetArgs,
+  pick,
   updateAsset,
 } from 'livepeer';
 
 import { QueryClientContext } from '../../context';
-import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
+import {
+  UsePickMutationOptions,
+  useInternalMutation,
+  usePickMutationKeys,
+} from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useUpdateAsset<TLivepeerProvider extends LivepeerProvider>(
-  options?: Partial<UseInternalMutationOptions<Asset, Error, UpdateAssetArgs>>,
+  options?: Partial<UsePickMutationOptions<Asset, Error, UpdateAssetArgs>>,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
@@ -19,7 +24,9 @@ export function useUpdateAsset<TLivepeerProvider extends LivepeerProvider>(
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'updateAsset', livepeerProvider }],
-      ...options,
+      ...(typeof options === 'object'
+        ? pick(options, usePickMutationKeys)
+        : {}),
     },
   );
 }

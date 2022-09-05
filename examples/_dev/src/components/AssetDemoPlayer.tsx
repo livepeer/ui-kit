@@ -1,0 +1,46 @@
+import { VideoPlayer } from '@livepeer/react';
+import { PlaybackInfo } from 'livepeer';
+import { useState } from 'react';
+
+const playbackId = '01c93u43vbi48ojf'; // clock
+
+export const AssetDemoPlayer = () => {
+  const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  );
+
+  const handlePlaybackInfo = (playbackInfo: PlaybackInfo) =>
+    setPlaybackUrl(playbackInfo.meta.source[0]?.url);
+  const handleError = (error: Error) => setErrorMessage(error.message);
+
+  return (
+    <>
+      <VideoPlayer
+        playbackId={playbackId}
+        onPlaybackInfoUpdated={handlePlaybackInfo}
+        onPlaybackInfoError={handleError}
+        width="640"
+        loop
+        muted
+      />
+
+      <p>
+        PlaybackId: {playbackId}
+        <br />
+        {errorMessage && (
+          <>
+            Error: {errorMessage}
+            <br />
+          </>
+        )}
+        {playbackUrl && (
+          <>
+            Playback url: {playbackUrl}
+            <br />
+          </>
+        )}
+      </p>
+    </>
+  );
+};

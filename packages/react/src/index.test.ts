@@ -6,6 +6,7 @@ it('should expose correct exports', () => {
   expect(Object.keys(Exports)).toMatchInlineSnapshot(`
     [
       "createReactClient",
+      "VideoPlayer",
       "Context",
       "LivepeerConfig",
       "useClient",
@@ -16,9 +17,9 @@ it('should expose correct exports', () => {
       "useCreateStream",
       "useL1Migrator",
       "useL2Migrator",
+      "useLivepeerProvider",
       "useLivepeerToken",
       "useLivepeerTokenFaucet",
-      "useLivepeerProvider",
       "useMerkleSnapshot",
       "useMinter",
       "usePollCreator",
