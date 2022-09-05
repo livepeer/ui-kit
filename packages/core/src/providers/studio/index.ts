@@ -3,12 +3,15 @@ import * as tus from 'tus-js-client';
 import { defaultStudioApiKey, studio } from '../../constants';
 
 import {
+  Asset,
   CreateAssetArgs,
+  CreateStreamArgs,
   GetAssetArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
-  MultistreamTargetRef,
+  Stream,
+  StreamSession,
   UpdateAssetArgs,
   UpdateStreamArgs,
 } from '../../types';
@@ -25,19 +28,6 @@ export type StudioLivepeerProviderConfig = {
   apiKey?: string | null;
 };
 
-type RawStudioMultistreamTargetRef = Omit<MultistreamTargetRef, 'spec'>;
-
-/** The API does not currently return these fields, so we have to generate them
- * through the _mapToStream function. */
-type RawStudioStream = Omit<
-  StudioStream,
-  'rtmpIngestUrl' | 'playbackUrl' | 'multistream'
-> & {
-  multistream?: {
-    targets: RawStudioMultistreamTargetRef[];
-  };
-};
-
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
   readonly _apiKey: string;
   readonly _defaultHeaders: { Authorization: `Bearer ${string}` };
@@ -49,9 +39,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     this._defaultHeaders = { Authorization: `Bearer ${apiKey}` };
   }
 
-  async createStream(args: StudioCreateStreamArgs): Promise<StudioStream> {
+  async createStream(args: CreateStreamArgs): Promise<Stream> {
     const studioStream = await this._create<
-      RawStudioStream,
+      StudioStream,
       StudioCreateStreamArgs
     >('/stream', {
       json: args,
@@ -60,7 +50,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this._mapToStream(studioStream);
   }
 
-  async updateStream(args: UpdateStreamArgs): Promise<StudioStream> {
+  async updateStream(args: UpdateStreamArgs): Promise<Stream> {
     const streamId = typeof args === 'string' ? args : args.streamId;
 
     await this._update(`/stream/${streamId}`, {
@@ -89,8 +79,8 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this.getStream(streamId);
   }
 
-  async getStream(args: GetStreamArgs): Promise<StudioStream> {
-    const rawStream = await this._get<RawStudioStream>(
+  async getStream(args: GetStreamArgs): Promise<Stream> {
+    const rawStream = await this._get<StudioStream>(
       `/stream/${typeof args === 'string' ? args : args.streamId}`,
       {
         headers: this._defaultHeaders,
@@ -99,9 +89,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this._mapToStream(rawStream);
   }
 
-  async getStreamSession(
-    args: GetStreamSessionArgs,
-  ): Promise<StudioStreamSession> {
+  async getStreamSession(args: GetStreamSessionArgs): Promise<StreamSession> {
     const session = await this._get<StudioStreamSession>(
       `/session/${typeof args === 'string' ? args : args.streamSessionId}`,
       {
@@ -113,7 +101,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async getStreamSessions(
     args: GetStreamSessionsArgs,
-  ): Promise<StudioStreamSession[]> {
+  ): Promise<StreamSession[]> {
     const sessions = await this._get<StudioStreamSession[]>(
       `/stream/${typeof args === 'string' ? args : args.streamId}/sessions`,
       {
@@ -123,7 +111,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return sessions;
   }
 
-  async createAsset(args: CreateAssetArgs): Promise<StudioAsset> {
+  async createAsset(args: CreateAssetArgs): Promise<Asset> {
     const uploadReq = await this._create<
       { tusEndpoint: string; asset: { id: string } },
       Omit<CreateAssetArgs, 'file'>
@@ -172,7 +160,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this.getAsset(assetId);
   }
 
-  async getAsset(args: GetAssetArgs): Promise<StudioAsset> {
+  async getAsset(args: GetAssetArgs): Promise<Asset> {
     const asset = await this._get<StudioAsset>(
       `/asset/${typeof args === 'string' ? args : args.assetId}`,
       {
@@ -182,7 +170,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return asset;
   }
 
-  async updateAsset(args: UpdateAssetArgs): Promise<StudioAsset> {
+  async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
     const { assetId, name, meta, storage } = args;
     const asset = await this._update<
       Omit<UpdateAssetArgs, 'assetId'>,
@@ -206,7 +194,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return `https://livepeercdn.com/hls/${playbackId}/index.m3u8`;
   }
 
-  async _mapToStream(studioStream: RawStudioStream): Promise<StudioStream> {
+  async _mapToStream(studioStream: StudioStream): Promise<Stream> {
     return {
       ...studioStream,
       multistream: await this._mapToMultistream(studioStream.multistream),
@@ -216,8 +204,8 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   private async _mapToMultistream(
-    studioMultistream: RawStudioStream['multistream'],
-  ): Promise<StudioStream['multistream'] | undefined> {
+    studioMultistream: StudioStream['multistream'],
+  ): Promise<Stream['multistream'] | undefined> {
     if (!studioMultistream?.targets) {
       return undefined;
     }

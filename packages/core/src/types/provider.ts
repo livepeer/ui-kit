@@ -259,7 +259,7 @@ export type TranscodingProfile = {
 
 type StreamBase = Omit<
   Stream,
-  'playbackId' | 'playbackUrl' | 'streamKey' | 'rtmpIngestUrl'
+  'playbackId' | 'playbackUrl' | 'streamKey' | 'rtmpIngestUrl' | 'multistream'
 >;
 
 export type StreamSession = StreamBase & {

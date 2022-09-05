@@ -1,6 +1,7 @@
 import {
   Asset,
   CreateStreamArgs,
+  MultistreamTargetRef,
   Stream,
   StreamSession,
   TranscodingProfile,
@@ -18,12 +19,16 @@ export type StudioFfmpegProfile = TranscodingProfile & {
   profile?: 'H264Baseline' | 'H264Main' | 'H264High' | 'H264ConstrainedHigh';
 };
 
-export interface StudioStream extends Stream {
+export interface StudioStream
+  extends Omit<Stream, 'rtmpIngestUrl' | 'playbackUrl' | 'multistream'> {
   profiles: StudioFfmpegProfile[];
   /**
    * Name of the token used to create this object.
    */
   createdByTokenName?: string;
+  multistream?: {
+    targets: Omit<MultistreamTargetRef, 'spec'>[];
+  };
 }
 
 export type StudioDeactivateManyPayload = {
