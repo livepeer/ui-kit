@@ -1,11 +1,9 @@
 import {
   Asset,
-  CreateAssetArgs,
   CreateStreamArgs,
   Stream,
   StreamSession,
   TranscodingProfile,
-  UpdateAssetArgs,
   UpdateStreamArgs,
 } from '../../types';
 
@@ -155,81 +153,9 @@ export type StudioError = {
   errors: [string, ...string[]];
 };
 
-export type TaskIdOrString =
-  | string
-  | {
-      /** The unique identifier for the task */
-      taskId: string;
-    };
-
-export type GetTaskArgs = TaskIdOrString;
-
-export type WaitTaskArgs = TaskIdOrString & {
-  /** The maximum amount of time in ms to wait for the task to complete */
-  timeout?: number;
-  /**
-   * Callback to receive the task with intermediate updates. Check the task
-   * status.progress field for the completion ratio.
-   */
-  onProgress?: (task: StudioTask) => void;
-};
-
-export type StudioTask = {
-  /** Task ID */
-  id: string;
-  /** Type of the task */
-  type: 'import' | 'export' | 'transcode';
-  /** Timestamp (in milliseconds) at which task was created */
-  createdAt: number;
-  /** ID of the input asset */
-  inputAssetId?: string;
-  /** ID of the output asset */
-  outputAssetId?: string;
-  /** Parameters of the task */
-  params: Record<NonNullable<StudioTask['type']>, any>;
-  /** Output of the task */
-  output: Record<NonNullable<StudioTask['type']>, any>;
-  /** Status of the task */
-  status: {
-    /** High-level descriptor of where the task is in its lifecycle. */
-    phase:
-      | 'pending'
-      | 'waiting'
-      | 'running'
-      | 'failed'
-      | 'completed'
-      | 'cancelled';
-    /** Timestamp (in milliseconds) at which task was last updated */
-    updatedAt: number;
-    /** Current progress of the task in a 0-1 completion ratio */
-    progress?: number;
-    /** Error message if the task failed */
-    errorMessage?: string;
-  };
-};
-
-export interface StudioCreateAssetArgs extends CreateAssetArgs {
-  /**
-   * Callback to receive progress (0-1 completion ratio) updates of the upload.
-   */
-  onUploadProgress?: (progress: number) => void;
-  /**
-   * Whether to wait until the asset is ready before returning. Can provide
-   * onProgress function to get intermediate updates about the process.
-   */
-  waitReady?: boolean | Omit<WaitTaskArgs, 'taskId'>;
-}
-
-export type StudioUpdateAssetArgs = UpdateAssetArgs & {
-  /**
-   * Whether to wait until the asset storage is ready before returning. Can
-   * provide onProgress function to get intermediate updates about the process.
-   */
-  waitStorageReady?: boolean | Omit<WaitTaskArgs, 'taskId'>;
-};
-
 export interface StudioAsset extends Asset {
   storage?: {
+    status: NonNullable<Asset['storage']>['status'];
     ipfs?: NonNullable<Asset['storage']>['ipfs'] & {
       spec?: {
         /**
@@ -253,21 +179,6 @@ export interface StudioAsset extends Asset {
         url?: string;
         /** URL to access file via HTTP through an IPFS gateway */
         gatewayUrl?: string;
-      };
-    };
-    status?: NonNullable<Asset['storage']>['status'] & {
-      tasks: {
-        /**
-         * ID of any currently running task that is exporting this asset to IPFS
-         */
-        pending?: string;
-        /**
-         * ID of the last task to run successfully, that created the currently
-         * saved data
-         */
-        last?: string;
-        /**  ID of the last task to fail execution */
-        failed?: string;
       };
     };
   };

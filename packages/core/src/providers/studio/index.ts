@@ -13,16 +13,11 @@ import {
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
-  GetTaskArgs,
   StudioAsset,
-  StudioCreateAssetArgs,
   StudioCreateStreamArgs,
   StudioStream,
   StudioStreamSession,
-  StudioTask,
-  StudioUpdateAssetArgs,
   StudioUpdateStreamArgs,
-  WaitTaskArgs,
 } from './types';
 
 export type StudioLivepeerProviderConfig = {
@@ -107,9 +102,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return sessions;
   }
 
-  async createAsset(args: StudioCreateAssetArgs): Promise<StudioAsset> {
+  async createAsset(args: CreateAssetArgs): Promise<StudioAsset> {
     const uploadReq = await this._create<
-      { tusEndpoint: string; asset: { id: string }; task: { id: string } },
+      { tusEndpoint: string; asset: { id: string } },
       Omit<CreateAssetArgs, 'file'>
     >('/asset/request-upload', {
       json: {
@@ -121,7 +116,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     const {
       tusEndpoint,
       asset: { id: assetId },
-      task: { id: taskId },
     } = uploadReq;
 
     await new Promise<void>((resolve, reject) => {
@@ -154,13 +148,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         })
         .catch(reject);
     });
-
-    if (args.waitReady) {
-      await this.waitTask({
-        taskId,
-        ...(typeof args.waitReady === 'object' ? args.waitReady : null),
-      });
-    }
     return this.getAsset(assetId);
   }
 
@@ -174,7 +161,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return asset;
   }
 
-  async updateAsset(args: StudioUpdateAssetArgs): Promise<StudioAsset> {
+  async updateAsset(args: UpdateAssetArgs): Promise<StudioAsset> {
     const { assetId, name, meta, storage } = args;
     const asset = await this._update<
       Omit<UpdateAssetArgs, 'assetId'>,
@@ -187,61 +174,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       },
       headers: this._defaultHeaders,
     });
-
-    const taskId = asset.storage?.status?.tasks.pending;
-    if (!storage || !args.waitStorageReady || !taskId) {
-      return asset;
-    }
-
-    await this.waitTask({
-      taskId,
-      ...(typeof args.waitStorageReady === 'object'
-        ? args.waitStorageReady
-        : null),
-    });
-    return this.getAsset(assetId);
-  }
-
-  /** Gets a task by its ID */
-  async getTask(args: GetTaskArgs): Promise<StudioTask> {
-    const task = await this._get<StudioTask>(
-      `/task/${typeof args === 'string' ? args : args.taskId}`,
-      {
-        headers: this._defaultHeaders,
-      },
-    );
-    return task;
-  }
-
-  /** Waits until a specified task is completed and returns it. */
-  async waitTask(args: WaitTaskArgs) {
-    const start = Date.now();
-    let task = await this.getTask(args);
-    let lastProgress = 0;
-    while (
-      task.status?.phase !== 'completed' &&
-      task.status?.phase !== 'failed'
-    ) {
-      if (args.timeout && Date.now() - start > args.timeout) {
-        throw new Error('Timed out waiting for task completion');
-      }
-      const progress = task.status?.progress;
-      if (progress && progress !== lastProgress) {
-        if (args.onProgress) {
-          args.onProgress(task);
-        }
-        lastProgress = progress;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-      task = await this.getTask(args);
-    }
-
-    if (task.status.phase === 'failed') {
-      throw new Error(
-        `${task.type} task failed. error: ${task.status.errorMessage}`,
-      );
-    }
-    return task;
+    return asset;
   }
 
   _getRtmpIngestUrl(streamKey: string) {

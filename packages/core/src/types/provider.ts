@@ -89,6 +89,10 @@ export type CreateAssetArgs = {
   file: File | ReadStream;
   /** Size of the upload file. Must provide this if the file is a ReadStream */
   uploadSize?: number;
+  /**
+   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   */
+  onUploadProgress?: (progress: number) => void;
 };
 
 export type UpdateAssetArgs = {
