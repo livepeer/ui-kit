@@ -294,7 +294,12 @@ export type Asset = {
     };
     status?: {
       /** High-level descriptor of where the storage is in its lifecycle */
-      phase: 'waiting' | 'ready' | 'failed' | 'reverted';
+      phase: 'waiting' | 'processing' | 'ready' | 'failed' | 'reverted';
+      /**
+       * Current progress of updating the storage in a 0-1 completion ratio.
+       * Only present in the 'processing' phase.
+       */
+      progress?: number;
       /**  Error message if the last storage update encountered an error */
       errorMessage?: string;
     };
@@ -359,7 +364,12 @@ export type Asset = {
   /** Status of the asset */
   status?: {
     /** High-level descriptor of where the asset is in its lifecycle. */
-    phase: 'waiting' | 'ready' | 'failed';
+    phase: 'waiting' | 'processing' | 'ready' | 'failed';
+    /**
+     * Current progress of the asset creation in a 0-1 completion ratio. Only
+     * present in the 'processing' phase.
+     */
+    progress?: number;
     /** Timestamp (in milliseconds) at which the asset was last updated */
     updatedAt: number;
     /** Error message if the asset creation failed */
