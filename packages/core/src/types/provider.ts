@@ -51,6 +51,13 @@ export type CreateStreamArgs = {
   profiles?: TranscodingProfile[];
   /** Whether to create recordings of the livestream sessions */
   record: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * Targets where this stream should be simultaneously streamed to
+     */
+    targets: MultistreamTargetSpec[];
+  };
 };
 
 export type UpdateStreamArgs = {
@@ -60,6 +67,15 @@ export type UpdateStreamArgs = {
   suspend?: boolean;
   /** Whether to create recordings of the livestream sessions */
   record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * Targets where this stream should be simultaneously streamed to. When
+     * updating existing config, targets are deduped using the name and profile
+     * fields.
+     */
+    targets: (MultistreamTargetSpec | MultistreamTargetRef)[];
+  };
 } & (
   | {
       suspend: boolean;
@@ -67,7 +83,44 @@ export type UpdateStreamArgs = {
   | {
       record: boolean;
     }
+  | {
+      multistream: { targets: MultistreamTargetSpec[] };
+    }
 );
+
+export type MultistreamTargetSpec = {
+  /**
+   * Name of transcoding profile that should be sent. Use "source" for pushing
+   * source stream data
+   */
+  profile: string;
+  /**
+   * If true, the stream audio will be muted and only silent video will be
+   * pushed to the target.
+   */
+  videoOnly?: boolean;
+  /**
+   * Inline spec for the multistream target object. Underlying target resource
+   * will be automatically created.
+   */
+  spec: {
+    /** Name for the multistream target. Defaults to the URL hostname */
+    name?: string;
+    /** Livepeer-compatible multistream target URL (RTMP(s) or SRT) */
+    url: string;
+  };
+};
+
+export type MultistreamTargetRef = Omit<MultistreamTargetSpec, 'spec'> & {
+  /**
+   * Spec of an existing multistream target object. URL is omitted as it
+   * contains private information like the stream key.
+   */
+  readonly spec: {
+    /** Name of the multistream target */
+    readonly name: string;
+  };
+};
 
 export type GetStreamArgs = StreamIdOrString;
 export type GetStreamSessionsArgs = StreamIdOrString;
@@ -129,6 +182,13 @@ export type Stream = {
   profiles: TranscodingProfile[];
   /** Should this stream be recorded? */
   record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * References to targets where this stream will be simultaneously streamed to
+     */
+    targets: MultistreamTargetRef[];
+  };
 
   // Stream information
 

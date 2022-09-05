@@ -4,17 +4,18 @@ import {
   Stream,
   StreamSession,
   TranscodingProfile,
-  UpdateStreamArgs,
 } from '../../types';
 
 /**
  * Studio ffmpeg profile for transcoding.
  */
 export type StudioFfmpegProfile = TranscodingProfile & {
-  fps: number;
+  /** Size of the GOP (group of pictures) to generate in output */
   gop?: string;
-  profile?: 'H264Baseline' | 'H264Main' | 'H264High' | 'H264ConstrainedHigh';
+  /** Codec for output porifle. Defaults to h264 */
   encoder?: 'h264' | 'hevc' | 'vp8' | 'vp9';
+  /** Encoding H.264 profile to use */
+  profile?: 'H264Baseline' | 'H264Main' | 'H264High' | 'H264ConstrainedHigh';
 };
 
 export interface StudioStream extends Stream {
@@ -23,13 +24,6 @@ export interface StudioStream extends Stream {
    * Name of the token used to create this object.
    */
   createdByTokenName?: string;
-  /** Configuration for multistreaming (AKA restream, simulcast) */
-  multistream?: {
-    /**
-     * References to targets where this stream will be simultaneously streamed to
-     */
-    targets?: MultistreamTarget[];
-  };
 }
 
 export type StudioDeactivateManyPayload = {
@@ -85,54 +79,7 @@ export type StudioAssetPatchPayload = {
 
 export interface StudioCreateStreamArgs extends CreateStreamArgs {
   profiles?: StudioFfmpegProfile[];
-  /** Configuration for multistreaming (AKA restream, simulcast) */
-  multistream?: {
-    /**
-     * References to targets where this stream will be simultaneously streamed to
-     */
-    targets?: MultistreamTarget[];
-  };
 }
-
-export type StudioUpdateStreamArgs =
-  | UpdateStreamArgs & {
-      /** Configuration for multistreaming (AKA restream, simulcast) */
-      multistream?: {
-        /**
-         * References to targets where this stream will be simultaneously streamed to
-         */
-        targets?: MultistreamTarget[];
-      };
-    };
-
-export type MultistreamTarget = {
-  /**
-   * Name of transcoding profile that should be sent. Use "source" for pushing
-   * source stream data
-   */
-  profile: string;
-  /**
-   * If true, the stream audio will be muted and only silent video will be
-   * pushed to the target.
-   */
-  videoOnly?: boolean;
-  /**
-   * ID of multistream target object where to push this stream
-   */
-  id?: string;
-  /**
-   * Inline multistream target object. Will automatically create the target
-   * resource to be used by the created stream.
-   */
-  spec?: {
-    /** Name for the multistream target */
-    name?: string;
-    /**
-     * Livepeer-compatible multistream target URL (RTMP(s) or SRT)
-     */
-    url: string;
-  };
-};
 
 export interface StudioStreamSession extends StreamSession {
   profiles: StudioFfmpegProfile[];
@@ -140,13 +87,6 @@ export interface StudioStreamSession extends StreamSession {
    * Name of the token used to create this object.
    */
   createdByTokenName?: string;
-  /** Configuration for multistreaming (AKA restream, simulcast) */
-  multistream?: {
-    /**
-     * References to targets where this stream will be simultaneously streamed to
-     */
-    targets?: MultistreamTarget[];
-  };
 }
 
 export type StudioError = {
