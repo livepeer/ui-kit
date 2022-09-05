@@ -8,10 +8,10 @@ import {
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
+  MultistreamTargetRef,
   UpdateAssetArgs,
   UpdateStreamArgs,
 } from '../../types';
-import { MultistreamTargetRef } from '../../types/provider';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
