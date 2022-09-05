@@ -22,8 +22,6 @@ import {
   StudioAsset,
   StudioCreateAssetArgs,
   StudioCreateStreamArgs,
-  StudioDeleteAssetArgs,
-  StudioDeleteStreamArgs,
   StudioListArgs,
   StudioListPage,
   StudioStream,
@@ -211,7 +209,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return this.getAsset(assetId);
   }
 
-  // Studio-only APIs below
+  // Studio-only APIs belows
 
   /** List all streams in the account. Cannot be called with a CORS key. */
   async listStreams(
@@ -227,16 +225,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return streams;
   }
 
-  /** Deletes a stream object. Cannot be called with a CORS key. */
-  deleteStream(args: StudioDeleteStreamArgs): Promise<void> {
-    return this._delete(
-      `/stream/${typeof args === 'string' ? args : args.streamId}`,
-      {
-        headers: this._defaultHeaders,
-      },
-    );
-  }
-
   /** List all assets in the account. Cannot be called with a CORS key. */
   async listAssets(args: StudioListArgs): Promise<StudioListPage<StudioAsset>> {
     const { limit = 10, cursor = '' } = args;
@@ -247,16 +235,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       },
     );
     return assets;
-  }
-
-  /** Deletes an asset object. Cannot be called with a CORS key. */
-  deleteAsset(args: StudioDeleteAssetArgs): Promise<void> {
-    return this._delete(
-      `/asset/${typeof args === 'string' ? args : args.assetId}`,
-      {
-        headers: this._defaultHeaders,
-      },
-    );
   }
 
   /** Gets a task by its ID */
@@ -315,24 +293,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
       playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
     };
-  }
-
-  private async _delete(
-    url: `/${string}`,
-    options?: FetchOptions<never>,
-  ): Promise<void> {
-    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
-      method: 'DELETE',
-      ...options,
-    });
-
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        'Provider failed to get object',
-        await response.json(),
-      );
-    }
   }
 
   private async _list<T>(
