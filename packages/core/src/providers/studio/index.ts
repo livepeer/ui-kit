@@ -80,35 +80,35 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async getStream(args: GetStreamArgs): Promise<Stream> {
-    const rawStream = await this._get<StudioStream>(
+    const studioStream = await this._get<StudioStream>(
       `/stream/${typeof args === 'string' ? args : args.streamId}`,
       {
         headers: this._defaultHeaders,
       },
     );
-    return this._mapToStream(rawStream);
+    return this._mapToStream(studioStream);
   }
 
   async getStreamSession(args: GetStreamSessionArgs): Promise<StreamSession> {
-    const session = await this._get<StudioStreamSession>(
+    const studioStreamSession = await this._get<StudioStreamSession>(
       `/session/${typeof args === 'string' ? args : args.streamSessionId}`,
       {
         headers: this._defaultHeaders,
       },
     );
-    return session;
+    return studioStreamSession;
   }
 
   async getStreamSessions(
     args: GetStreamSessionsArgs,
   ): Promise<StreamSession[]> {
-    const sessions = await this._get<StudioStreamSession[]>(
+    const studioStreamSessions = await this._get<StudioStreamSession[]>(
       `/stream/${typeof args === 'string' ? args : args.streamId}/sessions`,
       {
         headers: this._defaultHeaders,
       },
     );
-    return sessions;
+    return studioStreamSessions;
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
@@ -161,13 +161,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async getAsset(args: GetAssetArgs): Promise<Asset> {
-    const asset = await this._get<StudioAsset>(
+    const studioAsset = await this._get<StudioAsset>(
       `/asset/${typeof args === 'string' ? args : args.assetId}`,
       {
         headers: this._defaultHeaders,
       },
     );
-    return asset;
+    return studioAsset;
   }
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
