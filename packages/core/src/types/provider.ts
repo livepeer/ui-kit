@@ -70,9 +70,7 @@ export type UpdateStreamArgs = {
   /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
-     * Targets where this stream should be simultaneously streamed to. When
-     * updating existing config, targets are deduped using the name and profile
-     * fields.
+     * Targets where this stream should be simultaneously streamed to.
      */
     targets: (MultistreamTargetSpec | MultistreamTargetRef)[];
   };
@@ -84,7 +82,9 @@ export type UpdateStreamArgs = {
       record: boolean;
     }
   | {
-      multistream: { targets: MultistreamTargetSpec[] };
+      multistream: {
+        targets: (MultistreamTargetSpec | MultistreamTargetRef)[];
+      };
     }
 );
 
@@ -100,25 +100,35 @@ export type MultistreamTargetSpec = {
    */
   videoOnly?: boolean;
   /**
+   * Unique ID of this multistream target. Used to dedup targets on update.
+   */
+  id?: string;
+  /**
    * Inline spec for the multistream target object. Underlying target resource
    * will be automatically created.
    */
-  spec: {
+  spec?: {
     /** Name for the multistream target. Defaults to the URL hostname */
     name?: string;
     /** Livepeer-compatible multistream target URL (RTMP(s) or SRT) */
     url: string;
   };
-};
+} & (
+  | { id: string }
+  | {
+      spec: { name?: string; url: string };
+    }
+);
 
 export type MultistreamTargetRef = Omit<MultistreamTargetSpec, 'spec'> & {
+  id: string;
   /**
    * Spec of an existing multistream target object. URL is omitted as it
    * contains private information like the stream key.
    */
-  readonly spec: {
+  spec: {
     /** Name of the multistream target */
-    readonly name: string;
+    name: string;
   };
 };
 
