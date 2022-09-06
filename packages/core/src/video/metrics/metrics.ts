@@ -1,4 +1,4 @@
-type Metrics = {
+export type Metrics = {
   firstPlayback: number;
 
   nWaiting: number;
@@ -25,13 +25,13 @@ type Metrics = {
   sourceUrl: string;
 };
 
-type PlaybackRecord = {
+export type PlaybackRecord = {
   clockTime: number;
   mediaTime: number;
   score: number;
 };
 
-class PlaybackMonitor {
+export class PlaybackMonitor {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
@@ -126,7 +126,7 @@ class PlaybackMonitor {
   }
 }
 
-class MetricsStatus {
+export class MetricsStatus {
   retryCount = 0;
   connected = false;
   element: HTMLVideoElement | HTMLMediaElement;
@@ -258,6 +258,16 @@ class MetricsStatus {
 const bootMs = new Date().getTime(); // used for firstPlayback value
 const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
+type VideoMetrics = {
+  metrics: MetricsStatus | null;
+  websocket: WebSocket | null;
+};
+
+const defaultResponse: VideoMetrics = {
+  metrics: null,
+  websocket: null,
+};
+
 /**
  * Gather playback metrics from a generic html5 video (or audio) element and
  * report those back to an arbitrary websocket.
@@ -267,21 +277,21 @@ const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 export function reportVideoMetrics(
   element: HTMLMediaElement | HTMLVideoElement,
   reportingWebsocketUrl: string,
-) {
+): VideoMetrics {
   // do not attach twice (to the same websocket)
   if (element.getAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE) === 'true') {
-    return;
+    return defaultResponse;
   }
 
   element.setAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE, 'true');
 
   if (!window.WebSocket) {
     console.log('Browser does not support WebSocket');
-    return;
+    return defaultResponse;
   }
   if (!('play' in element) || !('currentTime' in element)) {
     console.log('Element provided is not a media element');
-    return;
+    return defaultResponse;
   }
 
   const metricsStatus = new MetricsStatus(element);
@@ -406,11 +416,13 @@ export function reportVideoMetrics(
         report();
       }, 1e3);
     };
+
+    return { metrics: metricsStatus, websocket: ws };
   } catch (e) {
-    return false;
+    console.log(e);
   }
 
-  return true;
+  return defaultResponse;
 }
 
 function send(webSocket: WebSocket, metrics: Partial<Metrics>) {

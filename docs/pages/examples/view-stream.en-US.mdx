@@ -146,7 +146,7 @@ export const Stream = () => {
         </Text>
       )}
 
-      {stream?.playbackId && <VideoPlayer src={stream?.playbackId} />}
+      {stream?.playbackId && <VideoPlayer playbackId={stream?.playbackId} />}
     </Box>
   );
 };

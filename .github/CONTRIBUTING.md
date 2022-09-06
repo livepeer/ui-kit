@@ -105,13 +105,13 @@ Once the Next.js dev server is running, you can make changes to any of the packa
 
 ## Running the test suite
 
-livepeer.js uses [Anvil](https://github.com/foundry-rs/foundry/tree/master/anvil) to execute tests against a local Ethereum node. First, install Anvil via [Foundry](https://book.getfoundry.sh/getting-started/installation). Next, add the following to your environment (recommended to use [`direnv`](https://github.com/direnv/direnv)):
+livepeer.js uses a real backend to execute tests. Add the following to your environment (recommended to use [`direnv`](https://github.com/direnv/direnv)):
 
 ```bash
-ANVIL_FORK_URL=https://eth-mainnet.alchemyapi.io/v2/<apiKey>
+NEXT_PUBLIC_STUDIO_API_KEY=<apiKey>
 ```
 
-`ANVIL_FORK_URL` can be for any RPC service provider (e.g. Alchemy or Infura). Now you are ready to run the tests! In one terminal session, spin up Anvil using `pnpm anvil`. Next, in a different terminal session, you have the following options for running tests:
+`NEXT_PUBLIC_STUDIO_API_KEY` is the API key for Studio. Now you are ready to run the tests! You have the following options for running tests:
 
 - `pnpm test` — runs tests in watch mode
 - `pnpm test:run` — performs single run without watch mode

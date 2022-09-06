@@ -1,7 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
 import {
+  Queries,
   RenderHookOptions,
+  RenderOptions,
+  render as defaultRender,
   renderHook as defaultRenderHook,
+  queries,
   waitFor,
 } from '@testing-library/react';
 import {
@@ -17,7 +21,7 @@ import { Client, createReactClient } from '../src/client';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Prevent Jest from garbage collecting cache
+      // Prevent vitest from garbage collecting cache
       cacheTime: Infinity,
       // Turn off retries to prevent timeouts
       retry: false,
@@ -39,8 +43,7 @@ type Props = { client?: Client<StudioLivepeerProvider> } & {
 export function wrapper({
   client = createReactClient({
     provider: studioProvider({
-      apiKey:
-        process.env.STUDIO_API_KEY ?? 'a2f68bb3-02df-4ef8-9142-adef671988ca',
+      apiKey: process.env.STUDIO_API_KEY,
     }),
     queryClient,
   }),
@@ -78,6 +81,14 @@ export function renderHook<TResult, TProps>(
   };
 }
 
-export { act, cleanup } from '@testing-library/react';
+export const render = <
+  Q extends Queries = typeof queries,
+  Container extends Element | DocumentFragment = HTMLElement,
+  BaseElement extends Element | DocumentFragment = Container,
+>(
+  ui: React.ReactElement,
+  options?: RenderOptions<Q, Container, BaseElement>,
+) => defaultRender(ui, { wrapper, ...options });
 
+export { act, cleanup, fireEvent, screen } from '@testing-library/react';
 export { getSampleVideo, getSigners } from '../../core/test';

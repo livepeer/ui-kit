@@ -81,9 +81,13 @@ it('should expose correct exports', () => {
       "RoundsManagerFactory",
       "ServiceRegistryFactory",
       "TicketBrokerFactory",
+      "pick",
+      "createMetricsReportingUrl",
       "createNewHls",
       "isHlsSupported",
-      "pick",
+      "MetricsStatus",
+      "PlaybackMonitor",
+      "reportVideoMetrics",
     ]
   `);
 });

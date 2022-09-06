@@ -64,6 +64,6 @@ describe('useCreateAsset', () => {
           "status": "success",
         }
       `);
-    });
+    }, 20_000);
   });
 });

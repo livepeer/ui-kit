@@ -6,9 +6,9 @@ import { usePlaybackInfo } from '../hooks';
 import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
 
 export type VideoPlayerProps = Omit<GenericHlsVideoPlayerProps, 'src'> & {
-  /** The source of the video (required if playbackId is not provided) */
+  /** The source of the video (required if `playbackId` is not provided) */
   src?: string;
-  /** The playback ID for the video (required if src is not provided) */
+  /** The playback ID for the video (required if `src` is not provided) */
   playbackId?: string;
 
   /** The refetch interval for the playback info hook (used to query until there is a valid playback URL) */
