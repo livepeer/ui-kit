@@ -159,7 +159,13 @@ export type CreateAssetArgs = {
    * Callback to receive progress (0-1 completion ratio) updates of the upload.
    */
   onUploadProgress?: (progress: number) => void;
-};
+} & (
+  | { file: File }
+  | {
+      file: ReadStream;
+      uploadSize: number;
+    }
+);
 
 export type UpdateAssetArgs = {
   /** The unique identifier for the asset */
