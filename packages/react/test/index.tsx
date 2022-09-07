@@ -4,10 +4,11 @@ import {
   RenderHookOptions,
   RenderOptions,
   render as defaultRender,
-  renderHook as defaultRenderHook,
   queries,
   waitFor,
 } from '@testing-library/react';
+// import from @testing-library/react-hooks for React 17
+import { renderHook as defaultRenderHook } from '@testing-library/react-hooks';
 import {
   StudioLivepeerProvider,
   studioProvider,

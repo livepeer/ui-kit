@@ -79,7 +79,7 @@ export class PlaybackMonitor<
           : undefined;
 
       const currentValue = {
-        clockTime: new Date().getTime() * 1e-3,
+        clockTime: Date.now() * 1e-3,
         mediaTime: this.element.currentTime,
         score: latestPlaybackRecord
           ? this.valueToScore(latestPlaybackRecord)
@@ -122,7 +122,7 @@ export class PlaybackMonitor<
 
     return (
       (b?.mediaTime ?? this.element.currentTime - a.mediaTime) /
-      (b?.clockTime ?? new Date().getTime() * 1e-3 - a.clockTime) /
+      (b?.clockTime ?? Date.now() * 1e-3 - a.clockTime) /
       rate
     );
   }
@@ -167,11 +167,11 @@ export class MetricsStatus<
 
     element.addEventListener('waiting', () => {
       this.timeWaiting = this._getTimeWaiting(); // in case we get waiting several times in a row
-      this.waitingSince = new Date().getTime();
+      this.waitingSince = Date.now();
     });
     element.addEventListener('stalled', () => {
       this.timeStalled = this._getTimeStalled(); // in case we get stalled several times in a row
-      this.stalledSince = new Date().getTime();
+      this.stalledSince = Date.now();
     });
 
     for (const event of ['playing', 'pause'] as const) {
@@ -184,7 +184,7 @@ export class MetricsStatus<
     }
     element.addEventListener('playing', () => {
       this.timeUnpaused = this._getTimeUnpaused(); // in case we get playing several times in a row
-      this.unpausedSince = new Date().getTime();
+      this.unpausedSince = Date.now();
     });
     element.addEventListener('pause', () => {
       this.timeUnpaused = this._getTimeUnpaused();
@@ -195,19 +195,19 @@ export class MetricsStatus<
   _getTimeWaiting(): number {
     return (
       this.timeWaiting +
-      (this.waitingSince ? new Date().getTime() - this.waitingSince : 0)
+      (this.waitingSince ? Date.now() - this.waitingSince : 0)
     );
   }
   _getTimeStalled(): number {
     return (
       this.timeStalled +
-      (this.stalledSince ? new Date().getTime() - this.stalledSince : 0)
+      (this.stalledSince ? Date.now() - this.stalledSince : 0)
     );
   }
   _getTimeUnpaused(): number {
     return (
       this.timeUnpaused +
-      (this.unpausedSince ? new Date().getTime() - this.unpausedSince : 0)
+      (this.unpausedSince ? Date.now() - this.unpausedSince : 0)
     );
   }
 
@@ -223,7 +223,7 @@ export class MetricsStatus<
   }
 
   setFirstPlayback() {
-    this.currentMetrics.firstPlayback = new Date().getTime() - bootMs;
+    this.currentMetrics.firstPlayback = Date.now() - bootMs;
   }
   setPlaybackScore(playbackScore: number) {
     this.currentMetrics.playbackScore = playbackScore;
@@ -259,7 +259,7 @@ export class MetricsStatus<
   }
 }
 
-const bootMs = new Date().getTime(); // used for firstPlayback value
+const bootMs = Date.now(); // used for firstPlayback value
 const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
 type VideoMetrics<TElement extends HTMLMediaElement | HTMLVideoElement> = {

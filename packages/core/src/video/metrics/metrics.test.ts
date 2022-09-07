@@ -4,8 +4,6 @@ import { MockedVideoElement } from '../../../test';
 
 import { reportVideoMetrics } from './metrics';
 
-const tenMsWait = async () => await new Promise((r) => setTimeout(r, 10));
-
 describe('reportVideoMetrics', () => {
   it('registers listeners', () => {
     const element = new MockedVideoElement();
@@ -59,11 +57,27 @@ describe('reportVideoMetrics', () => {
 
       websocket?.onopen?.(new Event('open'));
 
-      await tenMsWait();
-
       const metricsSnapshot = metrics?.getMetrics();
 
-      expect(metricsSnapshot?.current?.firstPlayback).eq(0);
+      expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
+        {
+          "firstPlayback": 0,
+          "nError": 0,
+          "nStalled": 0,
+          "nWaiting": 0,
+          "pageUrl": "",
+          "playbackScore": null,
+          "player": "generic",
+          "playerHeight": 0,
+          "playerWidth": 0,
+          "sourceUrl": "",
+          "timeStalled": 0,
+          "timeUnpaused": 0,
+          "timeWaiting": 0,
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
 
     it('should update time unpaused and first playback', async () => {
@@ -78,12 +92,27 @@ describe('reportVideoMetrics', () => {
 
       element.dispatchEvent(new Event('playing'));
 
-      await tenMsWait();
-
       const metricsSnapshot = metrics?.getMetrics();
 
-      expect(metricsSnapshot?.current?.firstPlayback).greaterThan(0);
-      expect(metricsSnapshot?.current?.timeUnpaused).greaterThan(0);
+      expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
+        {
+          "firstPlayback": 42000,
+          "nError": 0,
+          "nStalled": 0,
+          "nWaiting": 0,
+          "pageUrl": "",
+          "playbackScore": null,
+          "player": "generic",
+          "playerHeight": 0,
+          "playerWidth": 0,
+          "sourceUrl": "",
+          "timeStalled": 0,
+          "timeUnpaused": 2000,
+          "timeWaiting": 0,
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
 
     it('should update time waiting and waiting count', async () => {
@@ -96,14 +125,27 @@ describe('reportVideoMetrics', () => {
 
       element.dispatchEvent(new Event('waiting'));
 
-      await tenMsWait();
-
       const metricsSnapshot = metrics?.getMetrics();
 
-      expect(metricsSnapshot?.current?.timeWaiting).greaterThan(0);
-      expect(metricsSnapshot?.current?.nWaiting).eq(1);
-      expect(metricsSnapshot?.current?.timeUnpaused).eq(0);
-      expect(metricsSnapshot?.current?.firstPlayback).eq(0);
+      expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
+        {
+          "firstPlayback": 0,
+          "nError": 0,
+          "nStalled": 0,
+          "nWaiting": 1,
+          "pageUrl": "",
+          "playbackScore": null,
+          "player": "generic",
+          "playerHeight": 0,
+          "playerWidth": 0,
+          "sourceUrl": "",
+          "timeStalled": 0,
+          "timeUnpaused": 0,
+          "timeWaiting": 1000,
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
 
     it('should update time stalled and stalled count', async () => {
@@ -120,14 +162,27 @@ describe('reportVideoMetrics', () => {
 
       element.dispatchEvent(new Event('stalled'));
 
-      await tenMsWait();
-
       const metricsSnapshot = metrics?.getMetrics();
 
-      expect(metricsSnapshot?.current?.timeStalled).greaterThan(0);
-      expect(metricsSnapshot?.current?.nStalled).eq(1);
-      expect(metricsSnapshot?.current?.timeUnpaused).eq(0);
-      expect(metricsSnapshot?.current?.firstPlayback).eq(0);
+      expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
+        {
+          "firstPlayback": 0,
+          "nError": 0,
+          "nStalled": 1,
+          "nWaiting": 0,
+          "pageUrl": "",
+          "playbackScore": null,
+          "player": "generic",
+          "playerHeight": 0,
+          "playerWidth": 0,
+          "sourceUrl": "",
+          "timeStalled": 1000,
+          "timeUnpaused": 0,
+          "timeWaiting": 0,
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
   });
 });
