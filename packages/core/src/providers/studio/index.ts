@@ -343,7 +343,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 }
 
 export function studioProvider(
-  config: StudioLivepeerProviderConfig,
+  config?: StudioLivepeerProviderConfig,
 ): LivepeerProviderFn<StudioLivepeerProvider> {
   return () =>
     new StudioLivepeerProvider(config?.apiKey ?? defaultStudioApiKey);

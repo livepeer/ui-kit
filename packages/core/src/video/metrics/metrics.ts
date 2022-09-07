@@ -31,14 +31,16 @@ export type PlaybackRecord = {
   score: number;
 };
 
-export class PlaybackMonitor {
+export class PlaybackMonitor<
+  TElement extends HTMLMediaElement | HTMLVideoElement,
+> {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
   averagingSteps = 20;
-  element: HTMLMediaElement;
+  element: TElement;
 
-  constructor(element: HTMLMediaElement) {
+  constructor(element: TElement) {
     this.element = element;
   }
 
@@ -126,10 +128,12 @@ export class PlaybackMonitor {
   }
 }
 
-export class MetricsStatus {
+export class MetricsStatus<
+  TElement extends HTMLMediaElement | HTMLVideoElement,
+> {
   retryCount = 0;
   connected = false;
-  element: HTMLVideoElement | HTMLMediaElement;
+  element: TElement;
 
   currentMetrics: Metrics;
   previousMetrics: Metrics | null = null;
@@ -141,7 +145,7 @@ export class MetricsStatus {
   timeUnpaused = 0;
   unpausedSince = 0;
 
-  constructor(element: HTMLVideoElement | HTMLMediaElement) {
+  constructor(element: TElement) {
     this.element = element;
     this.currentMetrics = {
       firstPlayback: 0,
@@ -258,26 +262,25 @@ export class MetricsStatus {
 const bootMs = new Date().getTime(); // used for firstPlayback value
 const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
-type VideoMetrics = {
-  metrics: MetricsStatus | null;
+type VideoMetrics<TElement extends HTMLMediaElement | HTMLVideoElement> = {
+  metrics: MetricsStatus<TElement> | null;
   websocket: WebSocket | null;
 };
 
-const defaultResponse: VideoMetrics = {
-  metrics: null,
-  websocket: null,
-};
-
 /**
- * Gather playback metrics from a generic html5 video (or audio) element and
- * report those back to an arbitrary websocket.
+ * Gather playback metrics from a generic HTML5 video (or audio) element and
+ * report those back to a websocket.
  * @param element                 Element to capture playback metrics from
- * @param reportingWebsocketUrl url to the websocket to report to
+ * @param reportingWebsocketUrl   URL to the websocket to report to
  */
-export function reportVideoMetrics(
-  element: HTMLMediaElement | HTMLVideoElement,
-  reportingWebsocketUrl: string,
-): VideoMetrics {
+export function reportVideoMetrics<
+  TElement extends HTMLMediaElement | HTMLVideoElement,
+>(element: TElement, reportingWebsocketUrl: string): VideoMetrics<TElement> {
+  const defaultResponse: VideoMetrics<TElement> = {
+    metrics: null,
+    websocket: null,
+  };
+
   // do not attach twice (to the same websocket)
   if (element.getAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE) === 'true') {
     return defaultResponse;

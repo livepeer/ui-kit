@@ -1,57 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
+import { MockedVideoElement } from '../../../test';
 
 import { reportVideoMetrics } from './metrics';
 
-const WebSocketMock = vi.fn(() => ({
-  onopen: vi.fn(),
-  onclose: vi.fn(),
-  send: vi.fn(),
-}));
-
-vi.stubGlobal('WebSocket', WebSocketMock);
-
-class CustomVideoElement {
-  clientHeight = 343;
-  clientWidth = 232;
-  events: { [key: string]: (() => void)[] } = {};
-
-  addEventListener = vi.fn((event: string, callback: () => void) => {
-    console.log(event);
-    console.log(this.events);
-
-    this.events[event] = [...(this.events[event] ?? []), callback];
-  });
-  dispatchEvent = vi.fn((e: Event) => {
-    if (this.events[e.type])
-      for (const callback of this.events[e.type]) {
-        callback?.();
-      }
-  });
-
-  async play() {
-    return;
-  }
-  currentTime() {
-    return Date.now();
-  }
-  getAttribute() {
-    return 'false';
-  }
-  setAttribute() {
-    return true;
-  }
-}
-
-const element = new CustomVideoElement();
+const tenMsWait = async () => await new Promise((r) => setTimeout(r, 10));
 
 describe('reportVideoMetrics', () => {
-  it('listens', () => {
-    const setAttributeSpy = vi
-      .spyOn(element, 'setAttribute')
-      .mockImplementation(() => true);
-    const eventListenerSpy = vi
-      .spyOn(element, 'addEventListener')
-      .mockImplementation(() => true);
+  it('registers listeners', () => {
+    const element = new MockedVideoElement();
 
     const { metrics } = reportVideoMetrics(
       element,
@@ -59,160 +16,118 @@ describe('reportVideoMetrics', () => {
     );
 
     expect(metrics).toBeTruthy;
-    expect(setAttributeSpy).toHaveBeenCalledOnce();
-    expect(eventListenerSpy.mock.calls).toMatchInlineSnapshot(
+    expect(element.setAttribute).toHaveBeenCalledOnce();
+    expect(
+      element.addEventListener.mock.calls.map((e) => e?.[0]),
+    ).toMatchInlineSnapshot(
       `
       [
-        [
-          "waiting",
-          [Function],
-        ],
-        [
-          "stalled",
-          [Function],
-        ],
-        [
-          "playing",
-          [Function],
-        ],
-        [
-          "pause",
-          [Function],
-        ],
-        [
-          "playing",
-          [Function],
-        ],
-        [
-          "pause",
-          [Function],
-        ],
-        [
-          "playing",
-          [Function],
-        ],
-        [
-          "waiting",
-          [Function],
-        ],
-        [
-          "stalled",
-          [Function],
-        ],
-        [
-          "error",
-          [Function],
-        ],
-        [
-          "loadstart",
-          [Function],
-        ],
-        [
-          "play",
-          [Function],
-        ],
-        [
-          "playing",
-          [Function],
-        ],
-        [
-          "loadeddata",
-          [Function],
-        ],
-        [
-          "pause",
-          [Function],
-        ],
-        [
-          "abort",
-          [Function],
-        ],
-        [
-          "emptied",
-          [Function],
-        ],
-        [
-          "ended",
-          [Function],
-        ],
-        [
-          "seeking",
-          [Function],
-        ],
-        [
-          "seeked",
-          [Function],
-        ],
-        [
-          "ratechange",
-          [Function],
-        ],
+        "waiting",
+        "stalled",
+        "playing",
+        "pause",
+        "playing",
+        "pause",
+        "playing",
+        "waiting",
+        "stalled",
+        "error",
+        "loadstart",
+        "play",
+        "playing",
+        "loadeddata",
+        "pause",
+        "abort",
+        "emptied",
+        "ended",
+        "seeking",
+        "seeked",
+        "ratechange",
       ]
     `,
     );
   });
 
-  it('listens', async () => {
-    const { metrics, websocket } = reportVideoMetrics(
-      element,
-      'wss://livepeer.fun/json+1234.js',
-    );
+  describe('reports', () => {
+    it('should initialize to base state', async () => {
+      const element = new MockedVideoElement();
 
-    websocket?.onopen?.(new Event('open'));
+      const { metrics, websocket } = reportVideoMetrics(
+        element,
+        'wss://livepeer.fun/json+1234.js',
+      );
 
-    element.addEventListener('playing', () => {
-      console.log('trieiieie');
+      websocket?.onopen?.(new Event('open'));
+
+      await tenMsWait();
+
+      const metricsSnapshot = metrics?.getMetrics();
+
+      expect(metricsSnapshot?.current?.firstPlayback).eq(0);
     });
 
-    expect(element.dispatchEvent.mock.calls).toMatchInlineSnapshot('[]');
+    it('should update time unpaused and first playback', async () => {
+      const element = new MockedVideoElement();
 
-    element.dispatchEvent(new Event('playing'));
+      const { metrics, websocket } = reportVideoMetrics(
+        element,
+        'wss://livepeer.fun/json+1234.js',
+      );
 
-    await new Promise((r) => setTimeout(r, 2000));
+      websocket?.onopen?.(new Event('open'));
 
-    element.dispatchEvent(new Event('pause'));
+      element.dispatchEvent(new Event('playing'));
 
-    await new Promise((r) => setTimeout(r, 2000));
+      await tenMsWait();
 
-    expect(metrics?.getMetrics()).toMatchInlineSnapshot(
-      `
-      {
-        "current": {
-          "firstPlayback": 0,
-          "nError": 0,
-          "nStalled": 0,
-          "nWaiting": 0,
-          "pageUrl": "",
-          "playbackScore": null,
-          "player": "generic",
-          "playerHeight": 343,
-          "playerWidth": 232,
-          "sourceUrl": "",
-          "timeStalled": 0,
-          "timeUnpaused": 0,
-          "timeWaiting": 0,
-          "videoHeight": null,
-          "videoWidth": null,
-        },
-        "previous": {
-          "firstPlayback": 0,
-          "nError": 0,
-          "nStalled": 0,
-          "nWaiting": 0,
-          "pageUrl": "",
-          "playbackScore": null,
-          "player": "generic",
-          "playerHeight": 343,
-          "playerWidth": 232,
-          "sourceUrl": "",
-          "timeStalled": 0,
-          "timeUnpaused": 0,
-          "timeWaiting": 0,
-          "videoHeight": null,
-          "videoWidth": null,
-        },
-      }
-    `,
-    );
+      const metricsSnapshot = metrics?.getMetrics();
+
+      expect(metricsSnapshot?.current?.firstPlayback).greaterThan(0);
+      expect(metricsSnapshot?.current?.timeUnpaused).greaterThan(0);
+    });
+
+    it('should update time waiting and waiting count', async () => {
+      const element = new MockedVideoElement();
+
+      const { metrics } = reportVideoMetrics(
+        element,
+        'wss://livepeer.fun/json+1234.js',
+      );
+
+      element.dispatchEvent(new Event('waiting'));
+
+      await tenMsWait();
+
+      const metricsSnapshot = metrics?.getMetrics();
+
+      expect(metricsSnapshot?.current?.timeWaiting).greaterThan(0);
+      expect(metricsSnapshot?.current?.nWaiting).eq(1);
+      expect(metricsSnapshot?.current?.timeUnpaused).eq(0);
+      expect(metricsSnapshot?.current?.firstPlayback).eq(0);
+    });
+
+    it('should update time stalled and stalled count', async () => {
+      const element = new MockedVideoElement();
+
+      const { metrics, websocket } = reportVideoMetrics(
+        element,
+        'wss://livepeer.fun/json+1234.js',
+      );
+
+      websocket?.onopen?.(new Event('open'));
+
+      expect(element.dispatchEvent.mock.calls).toMatchInlineSnapshot('[]');
+
+      element.dispatchEvent(new Event('stalled'));
+
+      await tenMsWait();
+
+      const metricsSnapshot = metrics?.getMetrics();
+
+      expect(metricsSnapshot?.current?.timeStalled).greaterThan(0);
+      expect(metricsSnapshot?.current?.nStalled).eq(1);
+      expect(metricsSnapshot?.current?.timeUnpaused).eq(0);
+      expect(metricsSnapshot?.current?.firstPlayback).eq(0);
+    });
   });
 });

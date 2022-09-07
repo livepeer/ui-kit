@@ -18,6 +18,9 @@ import * as React from 'react';
 import { LivepeerConfig } from '../src';
 import { Client, createReactClient } from '../src/client';
 
+// set up React globally for tests
+global.React = React;
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -6,7 +6,7 @@ import { studioProvider } from './providers/studio';
 
 import { createStorage } from './storage';
 
-const provider = studioProvider({});
+const provider = studioProvider();
 
 describe('createClient', () => {
   it('returns client', () => {
