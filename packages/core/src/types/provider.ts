@@ -53,7 +53,7 @@ export type CreateStreamArgs = {
   /** Transcoding profiles to use for the stream for ABR playback */
   profiles?: TranscodingProfile[];
   /** Whether to create recordings of the livestream sessions */
-  record: boolean;
+  record?: boolean;
   /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
