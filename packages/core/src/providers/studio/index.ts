@@ -253,8 +253,8 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 }
 
 export function studioProvider(
-  { apiKey }: StudioLivepeerProviderConfig = { apiKey: defaultStudioApiKey },
+  config?: StudioLivepeerProviderConfig,
 ): LivepeerProviderFn<StudioLivepeerProvider> {
-  if (!apiKey) throw new Error(`No API key provided for studio`);
-  return () => new StudioLivepeerProvider(apiKey);
+  return () =>
+    new StudioLivepeerProvider(config?.apiKey ?? defaultStudioApiKey);
 }

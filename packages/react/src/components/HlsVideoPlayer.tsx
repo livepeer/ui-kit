@@ -42,12 +42,21 @@ export function HlsVideoPlayer({
   // if Media Source is supported, use HLS.js to play video
   if (typeof window !== 'undefined' && isHlsSupported())
     return (
-      <video ref={playerRef} controls={controls} width={width} {...props} />
+      <video
+        aria-label="video-player"
+        role="video"
+        ref={playerRef}
+        controls={controls}
+        width={width}
+        {...props}
+      />
     );
 
   // fallback to using a regular video player if HLS is supported by default in the user's browser
   return (
     <video
+      aria-label="video-player"
+      role="video"
       ref={playerRef}
       src={src}
       autoPlay={autoPlay}

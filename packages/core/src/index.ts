@@ -138,6 +138,13 @@ export type {
   UpdateAssetArgs,
   UpdateStreamArgs,
 } from './types';
-export { createNewHls, isHlsSupported } from './video';
-export type { HlsVideoConfig } from './video';
 export { pick } from './utils';
+export {
+  createMetricsReportingUrl,
+  createNewHls,
+  isHlsSupported,
+  MetricsStatus,
+  PlaybackMonitor,
+  reportVideoMetrics,
+} from './video';
+export type { HlsVideoConfig, Metrics, PlaybackRecord } from './video';
