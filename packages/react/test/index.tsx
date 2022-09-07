@@ -4,6 +4,7 @@ import {
   RenderHookOptions,
   RenderOptions,
   render as defaultRender,
+  renderHook as defaultRenderHookCore,
   queries,
   waitFor,
 } from '@testing-library/react';
@@ -78,7 +79,11 @@ export function renderHook<TResult, TProps>(
 
   queryClient.clear();
 
-  const utils = defaultRenderHook<TResult, TProps>(hook, options);
+  // typecast for old React 17 version to new React 18
+  const utils = (defaultRenderHook as typeof defaultRenderHookCore)<
+    TResult,
+    TProps
+  >(hook, options);
   return {
     ...utils,
     waitFor: (utils as { waitFor?: typeof waitFor })?.waitFor ?? waitFor,
