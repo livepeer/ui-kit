@@ -15,7 +15,13 @@ and [`useStream`](/docs/hooks/useStream) to create and watch a livestream.
 
 ## Step 1: Configuring Providers
 
-Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio):
+<Callout>
+  This example assumes you have chosen a component library with typical
+  components like `Button`, `TextField`, `Spinner`, etc. The `VideoPlayer` is
+  the only visual component provided.
+</Callout>
+
+Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio#apikey):
 
 ```tsx
 import { LivepeerConfig, createReactClient } from '@livepeer/react';
@@ -43,7 +49,6 @@ function App() {
 We then can create our stream, with the stream key returned once we create it (styling has been removed for simplicity):
 
 ```tsx
-import { Box, Button, Flex, TextField } from '@livepeer/design-system';
 import { useCreateStream } from '@livepeer/react';
 
 import { useState } from 'react';
@@ -57,7 +62,7 @@ export const Stream = () => {
   } = useCreateStream();
 
   return (
-    <Box>
+    <>
       <TextField
         type="text"
         placeholder="Stream name"
@@ -76,7 +81,7 @@ export const Stream = () => {
       >
         Create Stream
       </Button>
-    </Box>
+    </>
   );
 };
 ```
@@ -94,12 +99,9 @@ how we do that). Then, we stop polling and display the streaming content using t
 </Callout>
 
 ```tsx
-import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { VideoPlayer, useCreateStream, useStream } from '@livepeer/react';
 
 import { useState } from 'react';
-
-import { Spinner } from '../core';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
@@ -119,7 +121,7 @@ export const Stream = () => {
   );
 
   return (
-    <Box>
+    <>
       <TextField
         type="text"
         placeholder="Stream name"
@@ -147,11 +149,11 @@ export const Stream = () => {
       )}
 
       {stream?.playbackId && <VideoPlayer playbackId={stream?.playbackId} />}
-    </Box>
+    </>
   );
 };
 ```
 
 ## Wrap Up
 
-That's it! Streaming, complete. You now have a solution for both static and dynamic video content for your app.
+That's it! Streaming, complete. You now have a solution for both static and dynamic video content for an app.
