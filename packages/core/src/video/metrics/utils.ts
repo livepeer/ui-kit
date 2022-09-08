@@ -1,5 +1,5 @@
 // Temporarily hardcoded catalyst node, in production we need to point to .studio
-const METRICS_REPORTING_BASE_URL = 'wss://playback.livepeer.fun';
+const METRICS_REPORTING_BASE_URL = 'wss://nyc-canary-catalyst-0.livepeer.fun';
 
 const PLAYLIST_NAME = 'index.m3u8';
 const ASSET_URL_PART_VALUE = 'hls';

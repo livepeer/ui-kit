@@ -12,7 +12,7 @@ describe('createMetricsReportingUrl', () => {
       const reportingUrl = createMetricsReportingUrl(sourceUrl);
       // Then
       expect(reportingUrl).toEqual(
-        'wss://playback.livepeer.fun/json_video+172159gos7h0pq17.js',
+        'wss://nyc-canary-catalyst-0.livepeer.fun/json_video+172159gos7h0pq17.js',
       );
     });
 
@@ -40,7 +40,7 @@ describe('createMetricsReportingUrl', () => {
       const reportingUrl = createMetricsReportingUrl(sourceUrl);
       // Then
       expect(reportingUrl).toEqual(
-        'wss://playback.livepeer.fun/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js',
+        'wss://nyc-canary-catalyst-0.livepeer.fun/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js',
       );
     });
 
