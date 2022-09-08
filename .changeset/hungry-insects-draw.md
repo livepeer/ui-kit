@@ -5,7 +5,6 @@
 **Chore:** updated `zustand` and `ethers` to latest versions.
 
 ```diff
---- packages/core/package.json
      "cross-fetch": "^3.1.5",
      "hls.js": "^1.2.1",
      "tus-js-client": "^3.0.0",

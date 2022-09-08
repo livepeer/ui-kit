@@ -5,7 +5,6 @@
 **Chore:** updated `react-query`, `ethers`, and `wagmi` to latest versions.
 
 ```diff
---- packages/react/package.json
    "dependencies": {
 -    "@tanstack/query-sync-storage-persister": "4.0.10",
 -    "@tanstack/react-query": "4.1.3",
