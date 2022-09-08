@@ -172,7 +172,7 @@ export type UpdateAssetArgs = {
   assetId: string;
   /** The name of the asset */
   name?: string;
-  /** What additional storages to replicate the asset to */
+  /** What storages to use for the asset */
   storage?: {
     ipfs?: boolean;
   };

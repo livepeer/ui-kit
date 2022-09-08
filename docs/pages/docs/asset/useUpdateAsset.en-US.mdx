@@ -36,7 +36,7 @@ function App() {
         onClick={() => {
           updateAsset({
             assetId,
-            storage: 'ipfs',
+            storage: { ipfs: true },
           });
         }}
       >
@@ -82,8 +82,10 @@ type UpdateAssetArgs = {
   assetId: string;
   /** The name of the asset */
   name?: string;
-  /** Enable asset storage to be replicated to IPFS */
-  storage?: 'ipfs' | null;
+  /** What storages to use for the asset */
+  storage?: {
+    ipfs?: boolean;
+  };
   /** Metadata associated with the asset */
   meta?: Record<string, string>;
 };

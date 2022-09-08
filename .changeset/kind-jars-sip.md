@@ -8,6 +8,10 @@
 Types are now all documented and extensive for the current version of the Studio
 API which is the base for the LivepeerProvider interface.
 
+Storage API has also changed slightly, to allow storing an asset in multiple
+different storages in the future. Right now it still only supports IPFS, but the
+interface is now compatible with adding more storages in the future.
+
 **Feature:** Multistream
 
 The LivepeerProvider now supports the multistream feature. To use it simply add
