@@ -26,19 +26,13 @@ export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
-    {},
-  );
-  const mutation = useInternalMutation(
-    async (args: CreateAssetArgs) => {
-      let asset: Asset | null = null;
-      asset = await createAsset<TLivepeerProvider>({
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const internalQuery = useInternalMutation(
+    async (args: CreateAssetArgs) =>
+      createAsset<TLivepeerProvider>({
         ...args,
-        onUploadProgress: (p) =>
-          setUploadProgress((s) => (!asset ? s : { ...s, [asset.id]: p })),
-      });
-      return asset;
-    },
+        onUploadProgress: setUploadProgress,
+      }),
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'createAsset', livepeerProvider }],
@@ -48,7 +42,10 @@ export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
     },
   );
   return {
-    ...mutation,
-    uploadProgress,
+    ...internalQuery,
+    data: internalQuery?.data && {
+      asset: internalQuery.data,
+      uploadProgress,
+    },
   };
 }
