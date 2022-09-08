@@ -1,4 +1,4 @@
-export const pick = <T, K extends keyof T>(
+export const pick = <T extends object, K extends keyof T>(
   obj: T,
   keys: ReadonlyArray<K>,
 ): Pick<T, K> => {
