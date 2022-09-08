@@ -68,6 +68,10 @@ The variables for the mutate function(s) are defined as:
 type CreateStreamArgs = {
   name: string;
   profiles?: TranscodingProfile[];
+  record?: boolean;
+  multistream?: {
+    targets: MultistreamTargetSpec[];
+  };
 };
 
 type TranscodingProfile = {
@@ -76,6 +80,15 @@ type TranscodingProfile = {
   fps: number;
   width: number;
   height: number;
+};
+
+type MultistreamTargetSpec = {
+  profile: string;
+  videoOnly?: boolean;
+  spec: {
+    name?: string;
+    url: string;
+  };
 };
 ```
 

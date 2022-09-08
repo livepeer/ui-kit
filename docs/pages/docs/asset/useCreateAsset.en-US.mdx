@@ -22,7 +22,12 @@ import { useState } from 'react';
 
 function App() {
   const [video, setVideo] = useState<File | undefined>();
-  const { mutate: createAsset, data: asset, status, error } = useCreateAsset();
+  const {
+    mutate: createAsset,
+    data: { asset, uploadProgress },
+    status,
+    error,
+  } = useCreateAsset();
 
   return (
     <div>
@@ -48,6 +53,8 @@ function App() {
         <>
           <div>Asset Name: {asset?.name}</div>
           <div>Playback URL: {asset?.playbackUrl}</div>
+          <div>Upload Progress: {100 * uploadProgress}%</div>
+          <div>Processing Progress: {100 * asset?.status.progress}%</div>
         </>
       )}
       {error && <div>{error.message}</div>}
@@ -63,7 +70,10 @@ aggregated for simplicity.
 
 ```tsx
 {
-  data?: Asset,
+  data?: {
+    asset: Asset,
+    uploadProgress: number
+  },
   error?: Error,
   isError: boolean,
   isIdle: boolean,
