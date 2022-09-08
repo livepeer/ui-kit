@@ -38,7 +38,6 @@ export const createNewHls = (
       }
     });
 
-    // TODO: re-enable after testing and before merging
     const metricReportingUrl = createMetricsReportingUrl(source);
     if (metricReportingUrl) {
       reportVideoMetrics(element, metricReportingUrl);
