@@ -1,5 +1,5 @@
-// Temporarily hardcoded catalyst node
-const METRICS_REPORTING_BASE_URL = 'wss://sao-canary-catalyst-0.livepeer.fun';
+// Temporarily hardcoded catalyst node, in production we need to point to .studio
+const METRICS_REPORTING_BASE_URL = 'wss://playback.livepeer.fun';
 
 function videoNameFromPlaybackUrl(url: string): string | undefined {
   const filename: string[] = url.split('/');
