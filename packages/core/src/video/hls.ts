@@ -2,6 +2,8 @@ import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
 import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
 
+const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
+
 export const isHlsSupported = () => Hls.isSupported();
 
 export type VideoConfig = { autoplay?: boolean };
@@ -14,6 +16,17 @@ export const createNewHls = (
 ): {
   destroy: () => void;
 } => {
+  // do not attach twice
+  if (element.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE) === 'true') {
+    return {
+      destroy: () => {
+        return;
+      },
+    };
+  }
+
+  element.setAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE, 'true');
+
   const hls = new Hls({
     // enableWorker: false,
     ...config,

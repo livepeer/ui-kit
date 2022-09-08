@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { fireEvent, render, screen } from '../../test';
+import { fireEvent, render, screen } from '../../../test';
 import { VideoPlayer } from './VideoPlayer';
 
 const src =

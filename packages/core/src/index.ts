@@ -145,6 +145,13 @@ export {
   isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
+  registerEventListeners,
   reportVideoMetrics,
 } from './video';
-export type { HlsVideoConfig, Metrics, PlaybackRecord } from './video';
+export type {
+  HlsVideoConfig,
+  Metrics,
+  PlaybackRecord,
+  MediaControllerState,
+  MediaControllerStore,
+} from './video';

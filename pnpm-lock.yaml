@@ -216,6 +216,7 @@ importers:
 
   packages/react:
     specifiers:
+      '@stitches/react': ^1.2.8
       '@tanstack/query-sync-storage-persister': 4.2.3
       '@tanstack/react-query': 4.2.3
       '@tanstack/react-query-persist-client': 4.2.1
@@ -230,11 +231,14 @@ importers:
       react-dom: ^18.2.0
       use-sync-external-store: ^1.2.0
       wagmi: ^0.6.4
+      zustand: ^4.1.1
     dependencies:
+      '@stitches/react': 1.2.8_react@18.2.0
       '@tanstack/query-sync-storage-persister': 4.2.3
       '@tanstack/react-query': 4.2.3_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.2.1
       use-sync-external-store: 1.2.0_react@18.2.0
+      zustand: 4.1.1_react@18.2.0
     devDependencies:
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 8.0.1_63dfw6rfgd64rl77ptfma4cvt4

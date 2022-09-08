@@ -31,9 +31,7 @@ export type PlaybackRecord = {
   score: number;
 };
 
-export class PlaybackMonitor<
-  TElement extends HTMLMediaElement | HTMLVideoElement,
-> {
+export class PlaybackMonitor<TElement extends HTMLMediaElement> {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
@@ -262,7 +260,7 @@ export class MetricsStatus<
 const bootMs = Date.now(); // used for firstPlayback value
 const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
-type VideoMetrics<TElement extends HTMLMediaElement | HTMLVideoElement> = {
+type VideoMetrics<TElement extends HTMLMediaElement> = {
   metrics: MetricsStatus<TElement> | null;
   websocket: WebSocket | null;
 };
@@ -273,9 +271,10 @@ type VideoMetrics<TElement extends HTMLMediaElement | HTMLVideoElement> = {
  * @param element                 Element to capture playback metrics from
  * @param reportingWebsocketUrl   URL to the websocket to report to
  */
-export function reportVideoMetrics<
-  TElement extends HTMLMediaElement | HTMLVideoElement,
->(element: TElement, reportingWebsocketUrl: string): VideoMetrics<TElement> {
+export function reportVideoMetrics<TElement extends HTMLMediaElement>(
+  element: TElement,
+  reportingWebsocketUrl: string,
+): VideoMetrics<TElement> {
   const defaultResponse: VideoMetrics<TElement> = {
     metrics: null,
     websocket: null,
