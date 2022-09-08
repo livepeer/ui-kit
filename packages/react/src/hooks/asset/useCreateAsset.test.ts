@@ -38,7 +38,7 @@ describe('useCreateAsset', () => {
       await act(async () => {
         result.current.mutateAsync?.({
           name: assetName,
-          file: getSampleVideo(),
+          ...getSampleVideo(),
         });
       });
 
@@ -47,7 +47,7 @@ describe('useCreateAsset', () => {
       });
 
       const { data, variables, ...res } = result.current;
-      expect(data?.id).toBeDefined();
+      expect(data?.asset?.id).toBeDefined();
       expect(variables).toBeDefined();
       expect(res).toMatchInlineSnapshot(`
         {
