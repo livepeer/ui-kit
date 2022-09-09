@@ -2,7 +2,7 @@ import { VideoPlayer } from '@livepeer/react';
 import { PlaybackInfo } from 'livepeer';
 import { useState } from 'react';
 
-const playbackId = '01c93u43vbi48ojf'; // clock
+const playbackId = 'a4e8o6mykgkvtxav';
 
 export const AssetDemoPlayer = () => {
   const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);

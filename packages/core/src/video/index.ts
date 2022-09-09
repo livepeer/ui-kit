@@ -1,4 +1,4 @@
-export { registerEventListeners } from './controls';
+export { createControllerStore } from './controls';
 export type { MediaControllerState, MediaControllerStore } from './controls';
 export { createNewHls, isHlsSupported } from './hls';
 export type { HlsVideoConfig } from './hls';

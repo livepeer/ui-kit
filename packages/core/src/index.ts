@@ -145,7 +145,7 @@ export {
   isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
-  registerEventListeners,
+  createControllerStore,
   reportVideoMetrics,
 } from './video';
 export type {
