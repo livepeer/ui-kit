@@ -22,6 +22,7 @@ describe('useCreateAsset', () => {
         "mutate": [Function],
         "mutateAsync": [Function],
         "status": "idle",
+        "uploadProgress": undefined,
         "variables": undefined,
       }
     `);
@@ -47,7 +48,7 @@ describe('useCreateAsset', () => {
       });
 
       const { data, variables, ...res } = result.current;
-      expect(data?.asset?.id).toBeDefined();
+      expect(data?.id).toBeDefined();
       expect(variables).toBeDefined();
       expect(res).toMatchInlineSnapshot(`
         {
@@ -62,6 +63,7 @@ describe('useCreateAsset', () => {
           "mutate": [Function],
           "mutateAsync": [Function],
           "status": "success",
+          "uploadProgress": undefined,
         }
       `);
     }, 20_000);
