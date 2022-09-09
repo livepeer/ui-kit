@@ -1,6 +1,6 @@
 ---
-'livepeer': patch
-'@livepeer/react': patch
+'livepeer': minor
+'@livepeer/react': minor
 ---
 
 **Fix:** Improve LivepeerProvider types
