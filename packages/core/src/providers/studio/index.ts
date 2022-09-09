@@ -21,6 +21,7 @@ import {
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   StudioAsset,
+  StudioCreateStreamArgs,
   StudioPlaybackInfo,
   StudioStream,
   StudioStreamSession,
@@ -42,14 +43,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async createStream(args: CreateStreamArgs): Promise<Stream> {
-    const studioStream = await this._create<StudioStream, CreateStreamArgs>(
-      '/stream',
-      {
-        json: args,
-        headers: this._defaultHeaders,
-      },
-    );
-
+    const studioStream = await this._create<
+      StudioStream,
+      StudioCreateStreamArgs
+    >('/stream', {
+      json: args,
+      headers: this._defaultHeaders,
+    });
     return this._mapToStream(studioStream);
   }
 
@@ -63,6 +63,17 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           : {}),
         ...(typeof args?.suspend !== 'undefined'
           ? { suspended: Boolean(args.suspend) }
+          : {}),
+        ...(typeof args?.multistream?.targets !== 'undefined'
+          ? {
+              multistream: {
+                targets: args.multistream.targets.map((t) =>
+                  typeof t.id === 'undefined' || 'url' in (t.spec ?? {})
+                    ? { ...t, id: undefined }
+                    : { ...t, spec: undefined },
+                ),
+              },
+            }
           : {}),
       },
       headers: this._defaultHeaders,
@@ -78,7 +89,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         headers: this._defaultHeaders,
       },
     );
-
     return this._mapToStream(studioStream);
   }
 
@@ -89,8 +99,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         headers: this._defaultHeaders,
       },
     );
-
-    return this._mapToStreamSession(studioStreamSession);
+    return studioStreamSession;
   }
 
   async getStreamSessions(
@@ -102,76 +111,55 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         headers: this._defaultHeaders,
       },
     );
-
-    return studioStreamSessions.map((studioStreamSession) =>
-      this._mapToStreamSession(studioStreamSession),
-    );
+    return studioStreamSessions;
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
-    const tusOptions: tus.UploadOptions = {};
+    const uploadReq = await this._create<
+      { tusEndpoint: string; asset: { id: string } },
+      Omit<CreateAssetArgs, 'file'>
+    >('/asset/request-upload', {
+      json: {
+        name: args.name,
+        meta: args.meta,
+      },
+      headers: this._defaultHeaders,
+    });
+    const {
+      tusEndpoint,
+      asset: { id: assetId },
+    } = uploadReq;
 
-    const existingUpload = new tus.Upload(args.file, {});
-    const previousUploads = await existingUpload.findPreviousUploads();
-
-    let assetId: string | undefined;
-
-    if (previousUploads.length > 0 && previousUploads[0]) {
-      const previousUpload = previousUploads[0];
-
-      assetId = previousUpload.metadata.id;
-
-      await new Promise<void>((resolve, reject) => {
-        const upload = new tus.Upload(args.file, {
-          ...tusOptions,
-          onError(error) {
-            reject(error);
-          },
-          onSuccess() {
-            return resolve();
-          },
-        });
-
-        upload.resumeFromPreviousUpload(previousUpload);
-        upload.start();
-      });
-    } else {
-      const requestUploadEndpoint = await this._create<
-        { tusEndpoint: string; asset: { id: string } },
-        { name: string }
-      >('/asset/request-upload', {
-        json: {
-          name: args.name,
+    await new Promise<void>((resolve, reject) => {
+      const upload = new tus.Upload(args.file, {
+        endpoint: tusEndpoint,
+        metadata: {
+          id: assetId,
         },
-        headers: this._defaultHeaders,
+        uploadSize: args.uploadSize,
+
+        onError(error) {
+          reject(error);
+        },
+        onProgress(bytesSent, bytesTotal) {
+          args?.onUploadProgress?.(bytesSent / bytesTotal);
+        },
+        onSuccess() {
+          args?.onUploadProgress?.(1);
+          return resolve();
+        },
       });
 
-      assetId = requestUploadEndpoint.asset.id;
-
-      await new Promise<void>((resolve, reject) => {
-        const upload = new tus.Upload(args.file, {
-          metadata: {
-            id: requestUploadEndpoint.asset.id,
-          },
-          ...tusOptions,
-          endpoint: requestUploadEndpoint.tusEndpoint,
-
-          onError(error) {
-            reject(error);
-          },
-          onSuccess() {
-            return resolve();
-          },
-        });
-
-        upload.start();
-      });
-    }
-
-    if (!assetId) {
-      throw new Error('Could not find asset ID');
-    }
-
+      upload
+        .findPreviousUploads()
+        .then((previousUploads) => {
+          if (previousUploads?.length > 0 && previousUploads[0]) {
+            upload.resumeFromPreviousUpload(previousUploads[0]);
+          }
+          upload.start();
+        })
+        .catch(reject);
+    });
     return this.getAsset(assetId);
   }
 
@@ -182,27 +170,27 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         headers: this._defaultHeaders,
       },
     );
-
-    return this._mapToAsset(studioAsset);
+    return studioAsset;
   }
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
-    const assetId = typeof args === 'string' ? args : args.assetId;
-
-    await this._update(`/asset/${assetId}`, {
+    const { assetId, name, meta, storage } = args;
+    const asset = await this._update<
+      Omit<UpdateAssetArgs, 'assetId'>,
+      StudioAsset
+    >(`/asset/${assetId}`, {
       json: {
-        ...(typeof args?.name !== 'undefined'
-          ? { name: String(args.name) }
-          : {}),
-        ...(typeof args?.meta !== 'undefined' ? { meta: args.meta } : {}),
-        ...(typeof args?.storage !== 'undefined'
-          ? { storage: args.storage === 'ipfs' ? { ipfs: {} } : {} }
-          : {}),
+        name: typeof name !== 'undefined' ? String(name) : undefined,
+        meta,
+        storage,
       },
       headers: this._defaultHeaders,
     });
+    return asset;
+  }
 
-    return this.getAsset(assetId);
+  _getRtmpIngestUrl(streamKey: string) {
+    return `rtmp://rtmp.livepeer.com/live/${streamKey}`;
   }
 
   async getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo> {
@@ -222,107 +210,29 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return `https://livepeercdn.com/hls/${playbackId}/index.m3u8`;
   }
 
-  _mapToStream(studioStream: StudioStream): Stream {
-    if (!studioStream?.id || !studioStream?.playbackId) {
-      throw new Error('Stream did not have valid ID or playback ID');
-    }
-
+  async _mapToStream(studioStream: StudioStream): Promise<Stream> {
     return {
-      ingestUrl: `rtmp://rtmp.livepeer.com/live`,
-      playbackUrl: this._getPlaybackUrl(studioStream?.playbackId),
-
-      id: studioStream?.['id'],
-      kind: studioStream?.['kind'],
-      name: studioStream?.['name'],
-      lastSeen: studioStream?.['lastSeen'],
-      sourceSegments: studioStream?.['sourceSegments'],
-      transcodedSegments: studioStream?.['transcodedSegments'],
-      sourceSegmentsDuration: studioStream?.['sourceSegmentsDuration'],
-      transcodedSegmentsDuration: studioStream?.['transcodedSegmentsDuration'],
-      sourceBytes: studioStream?.['sourceBytes'],
-      transcodedBytes: studioStream?.['transcodedBytes'],
-      ingestRate: studioStream?.['ingestRate'],
-      outgoingRate: studioStream?.['outgoingRate'],
-      deleted: studioStream?.['deleted'],
-      isActive: studioStream?.['isActive'],
-      createdByTokenName: studioStream?.['createdByTokenName'],
-      createdByTokenId: studioStream?.['createdByTokenId'],
-      createdAt: studioStream?.['createdAt'],
-      parentId: studioStream?.['parentId'],
-      partialSession: studioStream?.['partialSession'],
-      previousSessions: studioStream?.['previousSessions'],
-      streamKey: studioStream?.['streamKey'],
-      playbackId: studioStream?.['playbackId'],
-      profiles: studioStream?.['profiles'],
-      objectStoreId: studioStream?.['objectStoreId'],
-      presets: studioStream?.['presets'],
-      record: studioStream?.['record'],
-      recordObjectStoreId: studioStream?.['recordObjectStoreId'],
-      multistream: studioStream?.['multistream'],
+      ...studioStream,
+      multistream: await this._mapToMultistream(studioStream.multistream),
+      rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
+      playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
     };
   }
 
-  _mapToStreamSession(studioStreamSession: StudioStreamSession): StreamSession {
-    if (!studioStreamSession?.id || !studioStreamSession?.playbackId) {
-      throw new Error('Stream session did not have valid ID or playback ID');
+  private async _mapToMultistream(
+    studioMultistream: StudioStream['multistream'],
+  ): Promise<Stream['multistream'] | undefined> {
+    if (!studioMultistream?.targets) {
+      return undefined;
     }
-
-    return {
-      playbackUrl: this._getPlaybackUrl(studioStreamSession?.playbackId),
-
-      id: studioStreamSession.id,
-      kind: studioStreamSession?.['kind'],
-      name: studioStreamSession?.['name'],
-      lastSeen: studioStreamSession?.['lastSeen'],
-      sourceSegments: studioStreamSession?.['sourceSegments'],
-      transcodedSegments: studioStreamSession?.['transcodedSegments'],
-      sourceSegmentsDuration: studioStreamSession?.['sourceSegmentsDuration'],
-      transcodedSegmentsDuration:
-        studioStreamSession?.['transcodedSegmentsDuration'],
-      sourceBytes: studioStreamSession?.['sourceBytes'],
-      transcodedBytes: studioStreamSession?.['transcodedBytes'],
-      ingestRate: studioStreamSession?.['ingestRate'],
-      outgoingRate: studioStreamSession?.['outgoingRate'],
-      deleted: studioStreamSession?.['deleted'],
-      createdAt: studioStreamSession?.['createdAt'],
-      parentId: studioStreamSession?.['parentId'],
-      record: studioStreamSession?.['record'],
-      recordingStatus: studioStreamSession?.['recordingStatus'],
-      recordingUrl: studioStreamSession?.['recordingUrl'],
-      mp4Url: studioStreamSession?.['mp4Url'],
-      recordObjectStoreId: studioStreamSession?.['recordObjectStoreId'],
-      playbackId: studioStreamSession?.['playbackId'],
-      profiles: studioStreamSession?.['profiles'],
-      lastSessionId: studioStreamSession?.['lastSessionId'],
-    };
-  }
-
-  _mapToAsset(studioAsset: StudioAsset): Asset {
-    if (!studioAsset?.id || !studioAsset?.playbackId) {
-      throw new Error('Asset did not have valid ID or playback ID');
-    }
-
-    return {
-      id: studioAsset.id,
-      playbackUrl: studioAsset?.playbackUrl,
-      // this._getPlaybackUrl(studioAsset?.playbackId),
-
-      type: studioAsset?.['type'],
-      playbackId: studioAsset?.['playbackId'],
-      playbackRecordingId: studioAsset?.['playbackRecordingId'],
-      downloadUrl: studioAsset?.['downloadUrl'],
-      deleted: studioAsset?.['deleted'],
-      objectStoreId: studioAsset?.['objectStoreId'],
-      storage: studioAsset?.['storage'],
-      status: studioAsset?.['status'],
-      name: studioAsset?.['name'],
-      meta: studioAsset?.['meta'],
-      createdAt: studioAsset?.['createdAt'],
-      size: studioAsset?.['size'],
-      hash: studioAsset?.['hash'],
-      videoSpec: studioAsset?.['videoSpec'],
-      sourceAssetId: studioAsset?.['sourceAssetId'],
-    };
+    const fetchTargets = studioMultistream.targets.map(async (t) => {
+      const { name } = await this._get<{ name: string }>(
+        `/multistream/target/${t.id}`,
+        { headers: this._defaultHeaders },
+      );
+      return { ...t, spec: { name } };
+    });
+    return { targets: await Promise.all(fetchTargets) };
   }
 
   _mapToPlaybackInfo(studioPlaybackInfo: StudioPlaybackInfo): PlaybackInfo {

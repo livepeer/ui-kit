@@ -5,6 +5,7 @@ import {
   createAsset,
   pick,
 } from 'livepeer';
+import { useState } from 'react';
 
 import { QueryClientContext } from '../../context';
 import {
@@ -15,12 +16,27 @@ import {
 import { useLivepeerProvider } from '../providers';
 
 export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
-  options?: Partial<UsePickMutationOptions<Asset, Error, CreateAssetArgs>>,
+  options?: Partial<
+    UsePickMutationOptions<
+      Asset,
+      Error,
+      Omit<CreateAssetArgs, 'onUploadProgress'>
+    >
+  >,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  return useInternalMutation(
-    async (args: CreateAssetArgs) => createAsset<TLivepeerProvider>(args),
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>(
+    undefined,
+  );
+
+  const internalQuery = useInternalMutation(
+    async (args: CreateAssetArgs) =>
+      createAsset<TLivepeerProvider>({
+        ...args,
+        onUploadProgress: (progress) =>
+          setUploadProgress(progress === 1 ? undefined : progress),
+      }),
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'createAsset', livepeerProvider }],
@@ -29,4 +45,9 @@ export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
         : {}),
     },
   );
+
+  return {
+    ...internalQuery,
+    uploadProgress,
+  } as const;
 }

@@ -140,13 +140,14 @@ export const Stream = () => {
         Create Stream
       </Button>
 
-      {stream && stream.streamKey && (!stream?.playbackId || !stream.isActive) && (
-        <Text>
-          Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
-          <code>{stream.streamKey}</code> in a stream client like OBS to see
-          content below.
-        </Text>
-      )}
+      {stream &&
+        stream.rtmpIngestUrl &&
+        (!stream?.playbackId || !stream.isActive) && (
+          <Text>
+            Use the ingest URL <code>{stream.rtmpIngestUrl}</code> in a stream
+            client like OBS to see content below.
+          </Text>
+        )}
 
       {stream?.playbackId && <VideoPlayer playbackId={stream?.playbackId} />}
     </>

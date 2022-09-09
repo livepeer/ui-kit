@@ -40,17 +40,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     return this._config;
   }
 
-  async _get<T>(
-    url:
-      | '/stream'
-      | `/stream/${string}`
-      | `/session/${string}`
-      | `/stream/${string}/sessions`
-      | '/asset'
-      | `/asset/${string}`
-      | `/playback/${string}`,
-    options?: FetchOptions<never>,
-  ): Promise<T> {
+  async _get<T>(url: `/${string}`, options?: FetchOptions<never>): Promise<T> {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'GET',
       ...options,
@@ -68,7 +58,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
   }
 
   async _create<T, P>(
-    url: '/stream' | '/asset/request-upload',
+    url: `/${string}`,
     options?: FetchOptions<P>,
   ): Promise<T> {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
@@ -92,10 +82,10 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     return response.json() as Promise<T>;
   }
 
-  async _update<P>(
-    url: `/stream/${string}` | `/asset/${string}`,
+  async _update<P, T = any>(
+    url: `/${string}`,
     options?: FetchOptions<P>,
-  ): Promise<void> {
+  ): Promise<T> {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'PATCH',
       ...options,
@@ -113,6 +103,8 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
         await response.json(),
       );
     }
+
+    return response.json() as Promise<T>;
   }
 
   abstract createStream(args: CreateStreamArgs): Promise<Stream>;

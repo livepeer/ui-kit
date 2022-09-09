@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@livepeer/design-system';
+import { Badge, Box, Button, Flex, Text } from '@livepeer/design-system';
 import { VideoPlayer, useAsset, useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
@@ -24,6 +24,7 @@ export const Asset = () => {
     mutate: createAsset,
     data: createdAsset,
     status: createStatus,
+    uploadProgress,
   } = useCreateAsset();
   const {
     data: asset,
@@ -69,6 +70,16 @@ export const Asset = () => {
       assetStatus === 'loading' ||
       (asset && asset?.status?.phase !== 'ready'),
     [createStatus, asset, assetStatus],
+  );
+
+  const progressFormatted = useMemo(
+    () =>
+      uploadProgress
+        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
+        : asset?.status?.progress
+        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
+        : null,
+    [uploadProgress, asset?.status?.progress],
   );
 
   return (
@@ -127,15 +138,20 @@ export const Asset = () => {
         )}
       </Box>
 
-      <Text
-        size="3"
-        variant="gray"
-        css={{ mt: '$1', fontSize: '$2', mb: '$4' }}
-      >
-        {!video ? 'Select a video file to upload' : video.name}
-      </Text>
+      <Flex css={{ gap: '$2', ai: 'center', mt: '$1', mb: '$4' }}>
+        {video ? (
+          <Badge size="2" variant="gray">
+            {video.name}
+          </Badge>
+        ) : (
+          <Text size="2" variant="gray">
+            Select a video file to upload.
+          </Text>
+        )}
+        {progressFormatted && <Text size="2">{progressFormatted}</Text>}
+      </Flex>
 
-      <Flex css={{ jc: 'flex-end', gap: '$3', mt: '$4' }}>
+      <Flex css={{ jc: 'flex-end', mt: '$4', ai: 'center' }}>
         <Button
           type="submit"
           css={{ display: 'flex', ai: 'center' }}

@@ -38,7 +38,9 @@ export const Asset = () => {
           if (asset?.id) {
             updateAsset({
               assetId: asset.id,
-              storage: 'ipfs',
+              storage: {
+                ipfs: true,
+              },
             });
           }
         }}

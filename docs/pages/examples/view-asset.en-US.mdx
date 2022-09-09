@@ -62,6 +62,7 @@ export const CreateAndViewAsset = () => {
     data: createdAsset,
     status: createStatus,
     error: createError,
+    uploadProgress,
   } = useCreateAsset();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -78,6 +79,16 @@ export const CreateAndViewAsset = () => {
     onDrop,
   });
 
+  const progressFormatted = useMemo(
+    () =>
+      uploadProgress
+        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
+        : asset?.status?.progress
+        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
+        : null,
+    [uploadProgress, asset?.status?.progress],
+  );
+
   return (
     <>
       <Box {...getRootProps()}>
@@ -89,7 +100,12 @@ export const CreateAndViewAsset = () => {
 
       {createError?.message && <Text>{createError.message}</Text>}
 
-      <Text>{!video ? 'Select a video file to upload' : video.name}</Text>
+      {video ? (
+        <Badge>{video.name}</Badge>
+      ) : (
+        <Text>Select a video file to upload.</Text>
+      )}
+      {progressFormatted && <Text>{progressFormatted}</Text>}
 
       <Button
         onClick={() => {
@@ -124,6 +140,7 @@ export const CreateAndViewAsset = () => {
     data: createdAsset,
     status: createStatus,
     error: createError,
+    uploadProgress,
   } = useCreateAsset();
   const { data: asset, status: assetStatus } = useAsset({
     assetId: createdAsset?.id,
@@ -154,6 +171,16 @@ export const CreateAndViewAsset = () => {
     [createStatus, asset, assetStatus],
   );
 
+  const progressFormatted = useMemo(
+    () =>
+      uploadProgress
+        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
+        : asset?.status?.progress
+        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
+        : null,
+    [uploadProgress, asset?.status?.progress],
+  );
+
   return (
     <>
       <Box {...getRootProps()}>
@@ -165,7 +192,12 @@ export const CreateAndViewAsset = () => {
 
       {createError?.message && <Text>{createError.message}</Text>}
 
-      <Text>{!video ? 'Select a video file to upload' : video.name}</Text>
+      {video ? (
+        <Badge>{video.name}</Badge>
+      ) : (
+        <Text>Select a video file to upload.</Text>
+      )}
+      {progressFormatted && <Text>{progressFormatted}</Text>}
 
       <Button
         onClick={() => {

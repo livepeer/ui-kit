@@ -1,5 +1,97 @@
 # livepeer
 
+## 0.4.0
+
+### Minor Changes
+
+- [#27](https://github.com/livepeer/livepeer.js/pull/27) [`6635d96`](https://github.com/livepeer/livepeer.js/commit/6635d964912654a4056bace416bc315ef5f18e2d) Thanks [@victorges](https://github.com/victorges)! - **Fix:** Improve LivepeerProvider types
+
+  Types are now all documented and extensive for the current version of the Studio
+  API which is the base for the LivepeerProvider interface.
+
+  Storage API has also changed slightly, to allow storing an asset in multiple
+  different storages in the future. Right now it still only supports IPFS, but the
+  interface is now compatible with adding more storages in the future.
+
+  **Feature:** Multistream
+
+  The LivepeerProvider now supports the multistream feature. To use it simply add
+  a `multistream` field with the desired configuration when creating or updating a
+  `Stream` object.
+
+  ```typescript
+  const { mutate: createStream } = useCreateStream();
+  createStream({
+    name,
+    multistream: {
+      targets: [
+        {
+          url: 'rtmp://ingest.example.com/rtmp/myStreamKey',
+        },
+      ],
+    },
+  });
+  ```
+
+  **Feature:** Upload progress
+
+  Track and show upload progress when creating assets through the `uploadProgress` field in the `useCreateAsset` hook.
+
+  ```typescript
+  function App() {
+    const createAsset = useCreateAsset();
+    return (
+      <Button onClick={() => createAsset.mutate({ name, file })}>Create</Button>
+      <Text>Upload progress: {100 * createAsset?.uploadProgress ?? 0}%</Text>
+    );
+  }
+  ```
+
+## 0.3.0
+
+### Minor Changes
+
+- [#26](https://github.com/livepeer/livepeer.js/pull/26) [`94fd2c8`](https://github.com/livepeer/livepeer.js/commit/94fd2c8c7b2d8d0b37f4ee074ecd23be8296bd35) Thanks [@clacladev](https://github.com/clacladev)! - **Feature:** added hls.js as a dependency and the creation of an HLS instance to manage a video element and provide HLS and LLHLS support.
+
+  See below for the API changes:
+
+  ```diff
+  + export { createNewHls, isHlsSupported } from './video';
+  + export type { HlsVideoConfig } from './video';
+  ```
+
+  The `createNewHls` can be used to instantiate a new `Hls` class which connects
+  to the provided `HTMLMediaElement` to stream HLS video.
+
+  ```typescript
+  if (mediaElement && typeof window !== 'undefined' && isHlsSupported()) {
+    const { destroy } = createNewHls(src, mediaElement, hlsConfig);
+  }
+  ```
+
+  The `createNewHls` function also instantiates reporting to the provider to provide viewership/general metrics.
+
+  This allows a user to build their own custom video player using different frameworks other than React, with easy integration with metrics and HLS out of the box.
+
+### Patch Changes
+
+- [#34](https://github.com/livepeer/livepeer.js/pull/34) [`d3aa654`](https://github.com/livepeer/livepeer.js/commit/d3aa654e8f7cd486ebedf481fec398a268fd4597) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** updated `zustand` and `ethers` to latest versions.
+
+  ```diff
+       "cross-fetch": "^3.1.5",
+       "hls.js": "^1.2.1",
+       "tus-js-client": "^3.0.0",
+  -    "zustand": "^4.0.0"
+  +    "zustand": "^4.1.1"
+     },
+     "devDependencies": {
+  -    "@ethersproject/abi": "^5.6.4",
+  -    "ethers": "^5.6.9"
+  +    "@ethersproject/abi": "^5.7.0",
+  +    "ethers": "^5.7.0"
+     },
+  ```
+
 ## 0.2.2
 
 ### Patch Changes

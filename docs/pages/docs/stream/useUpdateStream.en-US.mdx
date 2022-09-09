@@ -80,14 +80,30 @@ The variables for the mutate function(s) are defined as:
 type UpdateStreamArgs = {
   /** The unique identifier for the stream */
   streamId: string;
-  /** Boolean indicator to suspend the stream */
+  /** Whether to immediately block ingest and playback of the stream */
   suspend?: boolean;
-  /** Boolean indicator to record the stream */
+  /** Whether to create recordings of the livestream sessions as assets */
   record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /** Targets where this stream should be simultaneously streamed to. */
+    targets: (MultistreamTarget | MultistreamTargetRef)[];
+  };
+};
+
+type MultistreamTarget = {
+  profile: string;
+  videoOnly?: boolean;
+  spec: {
+    name?: string;
+    url: string;
+  };
 };
 ```
 
-The `suspend` and `record` boolean arguments set the stream to be suspended/unsuspended, or enable automatically recording the stream to an Asset.
+The multistream targets can be either a full `MultistreamTarget` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
+from the existing `Stream` object, in case multistream has already been configured for the given stream. It contains a vanity ID instead of the full
+`Spec` since the ingest URL contains user secrets like the stream key.
 
 ## Configuration
 

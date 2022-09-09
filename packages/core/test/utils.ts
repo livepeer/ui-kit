@@ -115,8 +115,10 @@ export function getSigner() {
   return new Wallet(accounts[0].privateKey);
 }
 
-export function getSampleVideo(): ReadStream {
+export function getSampleVideo(): { file: ReadStream; uploadSize: number } {
   const sampleFilePath = path.resolve(__dirname, './sample.mp4');
 
-  return fs.createReadStream(sampleFilePath);
+  const { size } = fs.statSync(sampleFilePath);
+  const file = fs.createReadStream(sampleFilePath);
+  return { file, uploadSize: size };
 }
