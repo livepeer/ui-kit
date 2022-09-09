@@ -13,7 +13,7 @@ import {
 export type StudioFfmpegProfile = TranscodingProfile & {
   /** Size of the GOP (group of pictures) to generate in output */
   gop?: string;
-  /** Codec for output porifle. Defaults to h264 */
+  /** Codec for output profile. Defaults to h264 */
   encoder?: 'h264' | 'hevc' | 'vp8' | 'vp9';
   /** Encoding H.264 profile to use */
   profile?: 'H264Baseline' | 'H264Main' | 'H264High' | 'H264ConstrainedHigh';

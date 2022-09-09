@@ -34,15 +34,14 @@ createStream({
 
 **Feature:** Upload progress
 
-Track and show upload progress when creating assets through the `uploadProgress`
-field in the `useCreateAsset` hook data.
+Track and show upload progress when creating assets through the `uploadProgress` field in the `useCreateAsset` hook.
 
 ```typescript
 function App() {
   const createAsset = useCreateAsset();
-  createAsset.mutate({ name, file });
   return (
-    <Text>Upload progress: {100 * createAsset.data?.uploadProgress}%</Text>
+    <Button onClick={() => createAsset.mutate({ name, file })}>Create</Button>
+    <Text>Upload progress: {100 * createAsset?.uploadProgress ?? 0}%</Text>
   );
 }
 ```

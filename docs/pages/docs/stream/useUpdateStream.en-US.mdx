@@ -87,11 +87,11 @@ type UpdateStreamArgs = {
   /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /** Targets where this stream should be simultaneously streamed to. */
-    targets: (MultistreamTargetSpec | MultistreamTargetRef)[];
+    targets: (MultistreamTarget | MultistreamTargetRef)[];
   };
 };
 
-type MultistreamTargetSpec = {
+type MultistreamTarget = {
   profile: string;
   videoOnly?: boolean;
   spec: {
@@ -101,7 +101,7 @@ type MultistreamTargetSpec = {
 };
 ```
 
-The multistream targets can be either a full `MultistreamTargetSpec` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
+The multistream targets can be either a full `MultistreamTarget` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
 from the existing `Stream` object, in case multistream has already been configured for the given stream. It contains a vanity ID instead of the full
 `Spec` since the ingest URL contains user secrets like the stream key.
 

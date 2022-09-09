@@ -142,14 +142,14 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           reject(error);
         },
         onProgress(bytesSent, bytesTotal) {
-          if (args.onUploadProgress) {
-            args.onUploadProgress(bytesSent / bytesTotal);
-          }
+          args?.onUploadProgress?.(bytesSent / bytesTotal);
         },
         onSuccess() {
+          args?.onUploadProgress?.(1);
           return resolve();
         },
       });
+
       upload
         .findPreviousUploads()
         .then((previousUploads) => {

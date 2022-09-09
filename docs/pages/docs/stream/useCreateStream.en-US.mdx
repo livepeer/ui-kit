@@ -70,7 +70,7 @@ type CreateStreamArgs = {
   profiles?: TranscodingProfile[];
   record?: boolean;
   multistream?: {
-    targets: MultistreamTargetSpec[];
+    targets: MultistreamTarget[];
   };
 };
 
@@ -82,7 +82,7 @@ type TranscodingProfile = {
   height: number;
 };
 
-type MultistreamTargetSpec = {
+type MultistreamTarget = {
   profile: string;
   videoOnly?: boolean;
   spec: {

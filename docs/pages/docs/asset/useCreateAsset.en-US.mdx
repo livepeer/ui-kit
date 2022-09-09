@@ -16,7 +16,7 @@ import { useCreateAsset } from '@livepeer/react';
 The following example shows how an asset can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
 function.
 
-```tsx {6, 19-22}
+```tsx {7, 25-28}
 import { useAsset, useCreateAsset } from '@livepeer/react';
 import { useState } from 'react';
 
@@ -24,7 +24,8 @@ function App() {
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
-    data: { asset, uploadProgress },
+    data: asset,
+    uploadProgress,
     status,
     error,
   } = useCreateAsset();
@@ -53,8 +54,8 @@ function App() {
         <>
           <div>Asset Name: {asset?.name}</div>
           <div>Playback URL: {asset?.playbackUrl}</div>
-          <div>Upload Progress: {100 * uploadProgress}%</div>
-          <div>Processing Progress: {100 * asset?.status.progress}%</div>
+          {uploadProgress && <div>Upload Progress: {Math.floor(uploadProgress * 100)}}%</div>}
+          {asset?.status?.progress && <div>Processing Progress: {Math.floor(asset.status.progress * 100)}}%</div>}
         </>
       )}
       {error && <div>{error.message}</div>}
@@ -66,14 +67,13 @@ function App() {
 ## Return Value
 
 The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
-aggregated for simplicity.
+aggregated for simplicity. The `uploadProgress` is a number from 0-1 which represents the current upload progress of the asset from
+[tus](https://github.com/tus/tus-js-client) - the value is undefined unless an upload is in progress.
 
 ```tsx
 {
-  data?: {
-    asset: Asset,
-    uploadProgress: number
-  },
+  data?: Asset,
+  uploadProgress?: number,
   error?: Error,
   isError: boolean,
   isIdle: boolean,

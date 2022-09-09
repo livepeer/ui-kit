@@ -59,7 +59,7 @@ export type CreateStreamArgs = {
     /**
      * Targets where this stream should be simultaneously streamed to
      */
-    targets: MultistreamTargetSpec[];
+    targets: MultistreamTarget[];
   };
 };
 
@@ -75,7 +75,7 @@ export type UpdateStreamArgs = {
     /**
      * Targets where this stream should be simultaneously streamed to.
      */
-    targets: (MultistreamTargetSpec | MultistreamTargetRef)[];
+    targets: (MultistreamTarget | MultistreamTargetRef)[];
   };
 } & (
   | {
@@ -86,12 +86,12 @@ export type UpdateStreamArgs = {
     }
   | {
       multistream: {
-        targets: (MultistreamTargetSpec | MultistreamTargetRef)[];
+        targets: (MultistreamTarget | MultistreamTargetRef)[];
       };
     }
 );
 
-export type MultistreamTargetSpec = {
+export type MultistreamTarget = {
   /**
    * Name of transcoding profile that should be sent. Use "source" for pushing
    * source stream data
@@ -123,7 +123,7 @@ export type MultistreamTargetSpec = {
     }
 );
 
-export type MultistreamTargetRef = Omit<MultistreamTargetSpec, 'spec'> & {
+export type MultistreamTargetRef = Omit<MultistreamTarget, 'spec'> & {
   id: string;
   /**
    * Spec of an existing multistream target object. URL is omitted as it
@@ -336,7 +336,7 @@ export type Asset = {
   }[];
   /** Detailed information about the video in the asset */
   videoSpec?: {
-    /** Format of the asset, also refered to as container (e.g. MP4) */
+    /** Format of the asset, also referred to as container (e.g. MP4) */
     format?: string;
     /** Duration of the asset in seconds (floating point) */
     duration?: number;
