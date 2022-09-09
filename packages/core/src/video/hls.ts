@@ -38,10 +38,14 @@ export const createNewHls = (
       }
     });
 
-    // TODO: re-enable after testing and before merging
     const metricReportingUrl = createMetricsReportingUrl(source);
     if (metricReportingUrl) {
       reportVideoMetrics(element, metricReportingUrl);
+    } else {
+      console.log(
+        'Not able to report player metrics given the source url',
+        source,
+      );
     }
   });
 
