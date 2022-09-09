@@ -36,27 +36,47 @@ export interface LivepeerProvider {
 export type StreamIdOrString =
   | string
   | {
+      /** The unique identifier for the stream */
       streamId: string;
     };
 
 export type StreamSessionIdOrString =
   | string
   | {
+      /** The unique identifier for the session */
       streamSessionId: string;
     };
 
 export type CreateStreamArgs = {
+  /** Name for the new stream */
   name: string;
+  /** Transcoding profiles to use for the stream for ABR playback */
   profiles?: TranscodingProfile[];
+  /** Whether to create recordings of the livestream sessions */
+  record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * Targets where this stream should be simultaneously streamed to
+     */
+    targets: MultistreamTarget[];
+  };
 };
 
 export type UpdateStreamArgs = {
   /** The unique identifier for the stream */
   streamId: string;
-  /** Boolean indicator to suspend the stream */
+  /** Whether to immediately block ingest and playback of the stream */
   suspend?: boolean;
-  /** Boolean indicator to record the stream */
+  /** Whether to create recordings of the livestream sessions */
   record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * Targets where this stream should be simultaneously streamed to.
+     */
+    targets: (MultistreamTarget | MultistreamTargetRef)[];
+  };
 } & (
   | {
       suspend: boolean;
@@ -64,7 +84,56 @@ export type UpdateStreamArgs = {
   | {
       record: boolean;
     }
+  | {
+      multistream: {
+        targets: (MultistreamTarget | MultistreamTargetRef)[];
+      };
+    }
 );
+
+export type MultistreamTarget = {
+  /**
+   * Name of transcoding profile that should be sent. Use "source" for pushing
+   * source stream data
+   */
+  profile: string;
+  /**
+   * If true, the stream audio will be muted and only silent video will be
+   * pushed to the target.
+   */
+  videoOnly?: boolean;
+  /**
+   * Unique ID of this multistream target. Used to dedup targets on update.
+   */
+  id?: string;
+  /**
+   * Inline spec for the multistream target object. Underlying target resource
+   * will be automatically created.
+   */
+  spec?: {
+    /** Name for the multistream target. Defaults to the URL hostname */
+    name?: string;
+    /** Livepeer-compatible multistream target URL (RTMP(s) or SRT) */
+    url: string;
+  };
+} & (
+  | { id: string }
+  | {
+      spec: { name?: string; url: string };
+    }
+);
+
+export type MultistreamTargetRef = Omit<MultistreamTarget, 'spec'> & {
+  id: string;
+  /**
+   * Spec of an existing multistream target object. URL is omitted as it
+   * contains private information like the stream key.
+   */
+  spec: {
+    /** Name of the multistream target */
+    name: string;
+  };
+};
 
 export type GetStreamArgs = StreamIdOrString;
 export type GetStreamSessionsArgs = StreamIdOrString;
@@ -73,26 +142,40 @@ export type GetStreamSessionArgs = StreamSessionIdOrString;
 export type AssetIdOrString =
   | string
   | {
+      /** The unique identifier for the asset */
       assetId: string;
     };
 
-export type CreateAssetProgressUpdate = {
-  progress: number;
-  complete: boolean;
-};
-
 export type CreateAssetArgs = {
+  /** Name for the new asset */
   name: string;
+  /** Metadata associated with the asset */
+  meta?: Record<string, string>;
+  /** Content to be uploaded */
   file: File | ReadStream;
-};
+  /** Size of the upload file. Must provide this if the file is a ReadStream */
+  uploadSize?: number;
+  /**
+   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   */
+  onUploadProgress?: (progress: number) => void;
+} & (
+  | { file: File }
+  | {
+      file: ReadStream;
+      uploadSize: number;
+    }
+);
 
 export type UpdateAssetArgs = {
   /** The unique identifier for the asset */
   assetId: string;
   /** The name of the asset */
   name?: string;
-  /** Enable asset storage to be replicated to IPFS */
-  storage?: 'ipfs' | null;
+  /** What storages to use for the asset */
+  storage?: {
+    ipfs?: boolean;
+  };
   /** Metadata associated with the asset */
   meta?: Record<string, string>;
 } & (
@@ -100,7 +183,7 @@ export type UpdateAssetArgs = {
       name: string;
     }
   | {
-      storage: 'ipfs' | null;
+      storage?: { ipfs?: boolean };
     }
   | {
       meta: Record<string, string>;
@@ -110,424 +193,197 @@ export type UpdateAssetArgs = {
 export type GetAssetArgs = AssetIdOrString;
 
 export type Stream = {
+  /** The unique identifier for the stream */
   id: string;
-  kind?: string;
+  /** The name of the stream */
   name: string;
-  lastSeen?: number;
-  sourceSegments?: number;
-  transcodedSegments?: number;
-  playbackUrl: string;
-  /**
-   * Duration of all the source segments, sec
-   */
-  sourceSegmentsDuration?: number;
-  /**
-   * Duration of all the transcoded segments, sec
-   */
-  transcodedSegmentsDuration?: number;
-  sourceBytes?: number;
-  transcodedBytes?: number;
-  /**
-   * Rate at which sourceBytes increases (bytes/second)
-   */
-  ingestRate?: number;
-  /**
-   * Rate at which transcodedBytes increases (bytes/second)
-   */
-  outgoingRate?: number;
-  /**
-   * Set to true when stream deleted
-   */
-  deleted?: boolean;
-  /**
-   * If currently active
-   */
-  isActive?: boolean;
-  /**
-   * Name of the token used to create this object
-   */
-  createdByTokenName?: string;
-  createdByTokenId?: string;
-  /**
-   * Timestamp (in milliseconds) at which stream object was created
-   */
-  createdAt?: number;
-  /**
-   * Points to parent stream object
-   */
-  parentId?: string;
-  /**
-   * Indicates that this is not final object of `user's` session
-   */
-  partialSession?: boolean;
-  /**
-   * Ids of the previous sessions which are part of `user's` session
-   */
-  previousSessions?: string[];
-  /**
-   * Used to form RTMP ingest URL
-   */
-  streamKey?: string;
-  /**
-   * URL for HLS ingest
-   */
-  ingestUrl: string;
-  /**
-   * Used to form playback URL
-   */
-  playbackId?: string;
-  profiles?: TranscodingProfile[];
-  objectStoreId?: string;
-  presets?: (
-    | 'P720p60fps16x9'
-    | 'P720p30fps16x9'
-    | 'P720p30fps4x3'
-    | 'P576p30fps16x9'
-    | 'P360p30fps16x9'
-    | 'P360p30fps4x3'
-    | 'P240p30fps16x9'
-    | 'P240p30fps4x3'
-    | 'P144p30fps16x9'
-  )[];
-  /**
-   * Should this stream be recorded? Uses default settings. For more customization, create and configure an object store.
-   */
+  /** The transcoding profiles to use for the stream for ABR playback */
+  profiles: TranscodingProfile[];
+  /** Should this stream be recorded? */
   record?: boolean;
-  /**
-   * ID of object store where to which this stream was recorded
-   */
-  recordObjectStoreId?: string;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
   multistream?: {
     /**
      * References to targets where this stream will be simultaneously streamed to
      */
-    targets?: MultistreamTarget[];
+    targets: MultistreamTargetRef[];
   };
-};
 
-export type MultistreamTarget = {
-  /**
-   * Name of transcoding profile that should be sent. Use "source" for pushing source stream data
-   */
-  profile: string;
-  /**
-   * If true, the stream audio will be muted and only silent video will be pushed to the target.
-   */
-  videoOnly?: boolean;
-  /**
-   * ID of multistream target object where to push this stream
-   */
-  id?: string;
-  /**
-   * Inline multistream target object. Will automatically create the target resource to be used by the created stream.
-   */
-  spec?: {
-    name?: string;
-    /**
-     * Livepeer-compatible multistream target URL (RTMP(s) or SRT)
-     */
-    url: string;
-  };
-};
+  // Stream information
 
-export type StreamSession = {
-  id: string;
-  kind?: string;
-  name: string;
-  lastSeen?: number;
-  sourceSegments?: number;
-  transcodedSegments?: number;
+  /** Secret used to create the RTMP and SRT ingest URLs */
+  streamKey: string;
+  /** URL for RTMP ingest */
+  rtmpIngestUrl: string;
+  /** ID used to create the playback URLs */
+  playbackId: string;
+  /** URL for HLS playback */
   playbackUrl: string;
-  /**
-   * Duration of all the source segments, sec
-   */
-  sourceSegmentsDuration?: number;
-  /**
-   * Duration of all the transcoded segments, sec
-   */
-  transcodedSegmentsDuration?: number;
-  sourceBytes?: number;
-  transcodedBytes?: number;
-  /**
-   * Rate at which sourceBytes increases (bytes/second)
-   */
-  ingestRate?: number;
-  /**
-   * Rate at which transcodedBytes increases (bytes/second)
-   */
-  outgoingRate?: number;
-  /**
-   * Set to true when stream deleted
-   */
-  deleted?: boolean;
-  /**
-   * Timestamp (in milliseconds) at which stream object was created
-   */
-  createdAt?: number;
-  /**
-   * Points to parent stream object
-   */
+  /** ID of the parent stream object. Only present for sessions. */
   parentId?: string;
-  /**
-   * Should this stream be recorded? Uses default settings. For more customization, create and configure an object store.
-   */
-  record?: boolean;
-  /**
-   * Status of the recording process of this stream session.
-   */
-  recordingStatus?: 'waiting' | 'ready';
-  /**
-   * URL for accessing the recording of this stream session.
-   */
-  recordingUrl?: string;
-  /**
-   * URL for the stream session recording packaged in an mp4.
-   */
-  mp4Url?: string;
-  /**
-   * ID of object store where to which this stream was recorded
-   */
-  recordObjectStoreId?: string;
-  /**
-   * Used to form playback URL
-   */
-  playbackId?: string;
-  profiles?: TranscodingProfile[];
-  lastSessionId?: string;
-};
+  /** Unix timestamp (in milliseconds) at which the stream object was created */
+  createdAt: number;
 
-export type Asset = {
-  id: string;
-  /**
-   * Type of the asset.
-   */
-  type?: 'video' | 'audio';
-  /**
-   * Used to form playback URL and storage folder
-   */
-  playbackId?: string;
-  /**
-   * Used to form recording URL for HLS playback
-   */
-  playbackRecordingId?: string;
-  /**
-   * URL for HLS playback
-   */
-  playbackUrl?: string;
-  /**
-   * URL to manually download the asset if desired
-   */
-  downloadUrl?: string;
-  /**
-   * owner of the asset
-   */
-  userId?: string;
-  /**
-   * Set to true when the asset is deleted
-   */
-  deleted?: boolean;
-  /**
-   * Object store ID where the asset is stored
-   */
-  objectStoreId?: string;
-  storage?: {
-    ipfs?: {
-      spec?: {
-        /**
-         * Name of the NFT metadata template to export. 'player' will embed the Livepeer Player on the NFT while 'file' will reference only the immutable MP4 files.
-         */
-        nftMetadataTemplate?: 'player' | 'file';
-        /**
-         * Additional data to add to the NFT metadata exported to IPFS. Will be deep merged with the default metadata exported.
-         */
-        nftMetadata?: {
-          [k: string]: unknown;
-        };
-      };
-      nftMetadata?: Ipfs;
-      /**
-       * CID of the file on IPFS
-       */
-      cid?: string;
-      /**
-       * URL with IPFS scheme for the file
-       */
-      url?: string;
-      /**
-       * URL to access file via HTTP through an IPFS gateway
-       */
-      gatewayUrl?: string;
-    };
-    status?: {
-      /**
-       * Phase of the asset storage
-       */
-      phase: 'waiting' | 'ready' | 'failed' | 'reverted';
-      /**
-       * Error message if the last storage changed failed.
-       */
-      errorMessage?: string;
-      tasks: {
-        /**
-         * ID of any currently running task that is exporting this asset to IPFS.
-         */
-        pending?: string;
-        /**
-         * ID of the last task to run successfully, that created the currently saved data.
-         */
-        last?: string;
-        /**
-         * ID of the last task to fail execution.
-         */
-        failed?: string;
-      };
-    };
-  };
-  /**
-   * Status of the asset
-   */
-  status?: {
-    /**
-     * Phase of the asset
-     */
-    phase: 'waiting' | 'ready' | 'failed';
-    /**
-     * Timestamp (in milliseconds) at which the asset was last updated
-     */
-    updatedAt: number;
-    /**
-     * Error message if the asset creation failed.
-     */
-    errorMessage?: string;
-  };
-  /**
-   * Name of the asset. This is not necessarily the filename, can be a custom name or title
-   */
-  name: string;
-  /**
-   * User input metadata associated with the asset
-   */
-  meta?: {
-    [k: string]: string;
-  };
-  /**
-   * Timestamp (in milliseconds) at which asset was created
-   */
-  createdAt?: number;
-  /**
-   * Size of the asset in bytes
-   */
-  size?: number;
-  /**
-   * Hash of the asset
-   */
-  hash?: {
-    /**
-     * Hash of the asset
-     */
-    hash?: string;
-    /**
-     * Hash algorithm used to compute the hash
-     */
-    algorithm?: string;
-  }[];
-  /**
-   * Video metadata
-   */
-  videoSpec?: {
-    /**
-     * Format of the asset
-     */
-    format?: string;
-    /**
-     * Duration of the asset in seconds (float)
-     */
-    duration?: number;
-    /**
-     * Bitrate of the video in bits per second
-     */
-    bitrate?: number;
-    /**
-     * List of tracks associated with the asset when the format contemplates them (e.g. mp4)
-     */
-    tracks?: {
-      /**
-       * type of track
-       */
-      type: 'video' | 'audio';
-      /**
-       * Codec of the track
-       */
-      codec: string;
-      /**
-       * Start time of the track in seconds
-       */
-      startTime?: number;
-      /**
-       * Duration of the track in seconds
-       */
-      duration?: number;
-      /**
-       * Bitrate of the track in bits per second
-       */
-      bitrate?: number;
-      /**
-       * Width of the track - only for video tracks
-       */
-      width?: number;
-      /**
-       * Height of the track - only for video tracks
-       */
-      height?: number;
-      /**
-       * Pixel format of the track - only for video tracks
-       */
-      pixelFormat?: string;
-      /**
-       * Frame rate of the track - only for video tracks
-       */
-      fps?: number;
-      /**
-       * Amount of audio channels in the track
-       */
-      channels?: number;
-      /**
-       * Sample rate of the track in samples per second - only for audio tracks
-       */
-      sampleRate?: number;
-      /**
-       * Bit depth of the track - only for audio tracks
-       */
-      bitDepth?: number;
-    }[];
-  };
-  /**
-   * ID of the source asset (root) - If missing, this is a root asset
-   */
-  sourceAssetId?: string;
-};
+  // Stream current state
 
-export type Ipfs = {
-  /**
-   * CID of the file on IPFS
-   */
-  cid: string;
-  /**
-   * URL with IPFS scheme for the file
-   */
-  url?: string;
-  /**
-   * URL to access file via HTTP through an IPFS gateway
-   */
-  gatewayUrl?: string;
+  /** Last time this stream was streamed to. Unix milliseconds timestamp. */
+  lastSeen?: number;
+  /** If the stream is currently active */
+  isActive?: boolean;
+  /** Rate at which sourceBytes is increasing in bytes per second */
+  ingestRate?: number;
+  /** Rate at which transcodedBytes is increasing in bytes second */
+  outgoingRate?: number;
+
+  // Stream metrics
+
+  /** Number of source segments ever streamed */
+  sourceSegments?: number;
+  /** Duration of all the source segments in seconds */
+  sourceSegmentsDuration?: number;
+  /** Total amount of source bytes streamed */
+  sourceBytes?: number;
+  /** Number of transcoded segments ever created for this stream */
+  transcodedSegments?: number;
+  /** Duration of all the transcoded segments, sec */
+  transcodedSegmentsDuration?: number;
+  /** Total amount of transcoded bytes created */
+  transcodedBytes?: number;
 };
 
 export type TranscodingProfile = {
+  /** The name of the profile */
   name: string;
-  bitrate: number;
-  fps: number;
+  /** Output width in pixels */
   width: number;
+  /** Output height in pixels */
   height: number;
+  /** Output bitrate in pixels in bits per second (bps) */
+  bitrate: number;
+  /** Output FPS of the video. Set to 0 to keep input FPS */
+  fps: number;
+  /** Denominator to divide the FPS by. Used for specifying exact FPS ratios */
+  fpsDen?: number;
+};
+
+type StreamBase = Omit<
+  Stream,
+  'playbackId' | 'playbackUrl' | 'streamKey' | 'rtmpIngestUrl' | 'multistream'
+>;
+
+export type StreamSession = StreamBase & {
+  /** Status of the recording process of this stream session */
+  recordingStatus?: 'waiting' | 'ready';
+  /** URL for accessing the recording of this stream session */
+  recordingUrl?: string;
+  /** URL for the stream session recording packaged in an mp4 */
+  mp4Url?: string;
+};
+
+export type Asset = {
+  /** The unique identifier for the asset */
+  id: string;
+  /**
+   * Name of the asset. This is not necessarily the filename, can be a custom
+   * name or title
+   */
+  name: string;
+  /** User-managed metadata associated with the asset */
+  meta?: {
+    [k: string]: string;
+  };
+  storage?: {
+    ipfs?: {
+      /** CID of the file on IPFS */
+      cid?: string;
+      /** URL with IPFS scheme for the file */
+      url?: string;
+      /** URL to access file via HTTP through an IPFS gateway */
+      gatewayUrl?: string;
+    };
+    status?: {
+      /** High-level descriptor of where the storage is in its lifecycle */
+      phase: 'waiting' | 'processing' | 'ready' | 'failed' | 'reverted';
+      /**
+       * Current progress of updating the storage in a 0-1 completion ratio.
+       * Only present in the 'processing' phase.
+       */
+      progress?: number;
+      /**  Error message if the last storage update encountered an error */
+      errorMessage?: string;
+    };
+  };
+
+  /** Type of the asset. */
+  type?: 'video';
+  /** Used to form playback URL and storage folder */
+  playbackId?: string;
+  /** URL for HLS playback */
+  playbackUrl?: string;
+  /** URL to download the raw MP4 file of the asset */
+  downloadUrl?: string;
+
+  /** Timestamp (in milliseconds) at which asset was created */
+  createdAt?: number;
+  /** Size of the asset in bytes */
+  size?: number;
+  /** List of content hashes calculated for the asset */
+  hash?: {
+    /** Hash algorithm used to compute the hash */
+    algorithm?: string;
+    /** Value of the hash */
+    hash?: string;
+  }[];
+  /** Detailed information about the video in the asset */
+  videoSpec?: {
+    /** Format of the asset, also referred to as container (e.g. MP4) */
+    format?: string;
+    /** Duration of the asset in seconds (floating point) */
+    duration?: number;
+    /** Bitrate of the video in bits per second */
+    bitrate?: number;
+    /** List of tracks associated with the asset when the format allows */
+    tracks?: {
+      /** type of track */
+      type: 'video' | 'audio';
+      /** Codec of the track */
+      codec: string;
+      /** Start time of the track in seconds */
+      startTime?: number;
+      /** Duration of the track in seconds */
+      duration?: number;
+      /** Bitrate of the track in bits per second */
+      bitrate?: number;
+      /** Width of the track - only for video tracks */
+      width?: number;
+      /** Height of the track - only for video tracks */
+      height?: number;
+      /** Pixel format of the track - only for video tracks */
+      pixelFormat?: string;
+      /** Frame rate of the track - only for video tracks */
+      fps?: number;
+      /** Amount of audio channels in the track */
+      channels?: number;
+      /** Sample rate of the track in hertz - only for audio tracks */
+      sampleRate?: number;
+      /** Bit depth of the track - only for audio tracks */
+      bitDepth?: number;
+    }[];
+  };
+  /** Status of the asset */
+  status?: {
+    /** High-level descriptor of where the asset is in its lifecycle. */
+    phase: 'waiting' | 'processing' | 'ready' | 'failed';
+    /**
+     * Current progress of the asset creation in a 0-1 completion ratio. Only
+     * present in the 'processing' phase.
+     */
+    progress?: number;
+    /** Timestamp (in milliseconds) at which the asset was last updated */
+    updatedAt: number;
+    /** Error message if the asset creation failed */
+    errorMessage?: string;
+  };
 };
 
 export type GetPlaybackInfoArgs =

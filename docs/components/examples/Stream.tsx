@@ -56,12 +56,11 @@ export const Stream = () => {
       </Flex>
 
       {stream &&
-        stream.streamKey &&
+        stream.rtmpIngestUrl &&
         (!stream?.playbackUrl || !stream.isActive) && (
           <Text size="3" variant="gray" css={{ mt: '$3', mb: '$4' }}>
-            Use the ingest URL <code>{stream.ingestUrl}</code> and stream key{' '}
-            <code>{stream.streamKey}</code> in a stream client like OBS to see
-            content below.
+            Use the ingest URL <code>{stream.rtmpIngestUrl}</code> in a stream
+            client like OBS to see content below.
           </Text>
         )}
 

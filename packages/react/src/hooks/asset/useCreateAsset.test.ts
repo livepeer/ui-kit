@@ -22,6 +22,7 @@ describe('useCreateAsset', () => {
         "mutate": [Function],
         "mutateAsync": [Function],
         "status": "idle",
+        "uploadProgress": undefined,
         "variables": undefined,
       }
     `);
@@ -38,7 +39,7 @@ describe('useCreateAsset', () => {
       await act(async () => {
         result.current.mutateAsync?.({
           name: assetName,
-          file: getSampleVideo(),
+          ...getSampleVideo(),
         });
       });
 
@@ -62,6 +63,7 @@ describe('useCreateAsset', () => {
           "mutate": [Function],
           "mutateAsync": [Function],
           "status": "success",
+          "uploadProgress": undefined,
         }
       `);
     }, 20_000);
