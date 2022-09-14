@@ -1,6 +1,6 @@
 export { createReactClient } from './client';
 export type { CreateReactClientConfig } from './client';
-export { PlayButton, VideoPlayer } from './components';
+export { PlayButton, useMediaController, VideoPlayer } from './components';
 export type { PlayButtonProps, VideoPlayerProps } from './components';
 export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';

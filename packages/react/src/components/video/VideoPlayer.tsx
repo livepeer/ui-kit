@@ -1,19 +1,22 @@
-import { styled } from '@stitches/react';
-import { PlaybackInfo } from 'livepeer';
+import { ControlsOptions, PlaybackInfo } from 'livepeer';
 import * as React from 'react';
 
 import { usePlaybackInfo } from '../../hooks';
 import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
-import { VideoControllerContext, useControllerStore } from './context';
-import { PlayButton, Progress, SeekBackwardButton } from './controls';
-
-const Container = styled('div', {
-  position: 'relative',
-});
+import { MediaControllerProvider } from './context';
+import {
+  BottomContainer,
+  Container,
+  FullscreenButton,
+  PlayButton,
+  Progress,
+  Volume,
+} from './controls';
+import { PropsOf } from './controls/system';
 
 export type VideoPlayerProps = Omit<
   GenericHlsVideoPlayerProps,
-  'src' | 'controls'
+  'src' | 'controls' | 'muted'
 > & {
   /** The source of the video (required if `playbackId` is not provided) */
   src?: string;
@@ -26,6 +29,11 @@ export type VideoPlayerProps = Omit<
   onPlaybackInfoUpdated?: (playbackInfo: PlaybackInfo) => void;
   /** Callback for when the playback info request fails */
   onPlaybackInfoError?: (error: Error) => void;
+
+  /** Configuration for the event listeners */
+  controlsConfig?: ControlsOptions;
+  /** CSS for the container element */
+  containerCss?: PropsOf<typeof Container>['css'];
 } & (
     | {
         src: string;
@@ -45,12 +53,12 @@ export function VideoPlayer({
   width = '100%',
   refetchPlaybackInfoInterval = 5000,
   children,
+  controlsConfig,
+  containerCss,
   ...props
 }: VideoPlayerProps) {
   const [videoElement, setVideoElement] =
     React.useState<HTMLVideoElement | null>(null);
-
-  const mediaController = useControllerStore(videoElement);
 
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
     playbackId,
@@ -85,15 +93,18 @@ export function VideoPlayer({
     [playbackUrl, src],
   );
 
-  const playerRef = React.useCallback((element: HTMLVideoElement) => {
-    if (element) {
-      setVideoElement(element);
-    }
-  }, []);
+  const playerRef = React.useCallback(
+    (element: HTMLVideoElement) => {
+      if (element && !videoElement) {
+        setVideoElement(element);
+      }
+    },
+    [videoElement],
+  );
 
   return srcOrPlaybackUrl ? (
-    <VideoControllerContext.Provider value={mediaController}>
-      <Container>
+    <MediaControllerProvider element={videoElement} options={controlsConfig}>
+      <Container css={containerCss}>
         <HlsVideoPlayer
           hlsConfig={hlsConfig}
           ref={playerRef}
@@ -103,17 +114,22 @@ export function VideoPlayer({
           {...props}
           src={srcOrPlaybackUrl}
         />
+
         {React.isValidElement(children) ? (
           children
         ) : (
-          <>
-            <PlayButton />
-            <SeekBackwardButton />
-            <Progress />
-          </>
+          <BottomContainer
+            topControls={<Progress />}
+            leftControls={
+              <>
+                <PlayButton />
+                <Volume />
+              </>
+            }
+            rightControls={<FullscreenButton />}
+          />
         )}
       </Container>
-      {mediaController.progress}
-    </VideoControllerContext.Provider>
+    </MediaControllerProvider>
   ) : null;
 }

@@ -141,18 +141,21 @@ export type {
 } from './types';
 export { pick } from './utils';
 export {
+  addEventListeners,
+  createControllerStore,
   createMetricsReportingUrl,
   createNewHls,
   isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
-  createControllerStore,
+  playerCss,
   reportVideoMetrics,
 } from './video';
 export type {
+  ControlsOptions,
   HlsVideoConfig,
-  Metrics,
-  PlaybackRecord,
   MediaControllerState,
   MediaControllerStore,
+  Metrics,
+  PlaybackRecord,
 } from './video';

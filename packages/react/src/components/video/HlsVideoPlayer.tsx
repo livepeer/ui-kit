@@ -1,7 +1,12 @@
-import { HlsVideoConfig, createNewHls, isHlsSupported } from 'livepeer';
+import {
+  HlsVideoConfig,
+  MediaControllerState,
+  createNewHls,
+  isHlsSupported,
+} from 'livepeer';
 import * as React from 'react';
 
-import { VideoControllerContext } from './context';
+import { useMediaController } from './context';
 
 export type GenericHlsVideoPlayerProps =
   React.VideoHTMLAttributes<HTMLVideoElement> & {
@@ -9,6 +14,12 @@ export type GenericHlsVideoPlayerProps =
     controls?: boolean;
     width?: string | number;
   };
+
+const mediaControllerSelector = ({
+  _element,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  element: _element,
+});
 
 export type HlsVideoPlayerProps = GenericHlsVideoPlayerProps & {
   src: string;
@@ -29,15 +40,11 @@ export const HlsVideoPlayer = React.forwardRef<
     },
     ref,
   ) => {
-    const mediaController = React.useContext(VideoControllerContext);
+    const { element } = useMediaController(mediaControllerSelector);
 
     React.useEffect(() => {
-      if (
-        mediaController?.element &&
-        typeof window !== 'undefined' &&
-        isHlsSupported()
-      ) {
-        const { destroy } = createNewHls(src, mediaController.element, {
+      if (element && typeof window !== 'undefined' && isHlsSupported()) {
+        const { destroy } = createNewHls(src, element, {
           autoplay: autoPlay,
           ...hlsConfig,
         });
@@ -46,23 +53,25 @@ export const HlsVideoPlayer = React.forwardRef<
           destroy();
         };
       }
-    }, [autoPlay, hlsConfig, src, mediaController?.element]);
+    }, [autoPlay, hlsConfig, src, element]);
+
+    const isMediaSourceSupported = React.useMemo(
+      () => typeof window !== 'undefined' && isHlsSupported(),
+      [],
+    );
 
     // if Media Source is supported, use HLS.js to play video
-    if (typeof window !== 'undefined' && isHlsSupported())
-      return (
-        <video
-          aria-label="video-player"
-          role="video"
-          controls={controls}
-          width={width}
-          ref={ref}
-          {...props}
-        />
-      );
-
     // fallback to using a regular video player if HLS is supported by default in the user's browser
-    return (
+    return isMediaSourceSupported ? (
+      <video
+        aria-label="video-player"
+        role="video"
+        controls={controls}
+        width={width}
+        ref={ref}
+        {...props}
+      />
+    ) : (
       <video
         aria-label="video-player"
         role="video"

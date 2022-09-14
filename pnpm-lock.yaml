@@ -200,12 +200,14 @@ importers:
   packages/core:
     specifiers:
       '@ethersproject/abi': ^5.7.0
+      '@stitches/core': ^1.2.8
       cross-fetch: ^3.1.5
       ethers: ^5.7.0
       hls.js: ^1.2.1
       tus-js-client: ^3.0.0
       zustand: ^4.1.1
     dependencies:
+      '@stitches/core': 1.2.8
       cross-fetch: 3.1.5
       hls.js: 1.2.1
       tus-js-client: 3.0.0
@@ -3746,6 +3748,10 @@ packages:
       - encoding
       - react-native
       - utf-8-validate
+
+  /@stitches/core/1.2.8:
+    resolution: {integrity: sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==}
+    dev: false
 
   /@stitches/react/1.2.8_react@18.2.0:
     resolution: {integrity: sha512-9g9dWI4gsSVe8bNLlb+lMkBYsnIKCZTmvqvDG+Avnn69XfmHZKiaMrx7cgTaddq7aTPPmXiTsbFcUy0xgI4+wA==}

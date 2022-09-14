@@ -1,6 +1,6 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
-import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
+// import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
 
 const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
 
@@ -9,9 +9,9 @@ export const isHlsSupported = () => Hls.isSupported();
 export type VideoConfig = { autoplay?: boolean };
 export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
 
-export const createNewHls = (
+export const createNewHls = <TElement extends HTMLMediaElement>(
   source: string,
-  element: HTMLMediaElement,
+  element: TElement,
   config?: HlsVideoConfig,
 ): {
   destroy: () => void;
@@ -51,15 +51,15 @@ export const createNewHls = (
       }
     });
 
-    const metricReportingUrl = createMetricsReportingUrl(source);
-    if (metricReportingUrl) {
-      reportVideoMetrics(element, metricReportingUrl);
-    } else {
-      console.log(
-        'Not able to report player metrics given the source url',
-        source,
-      );
-    }
+    // const metricReportingUrl = createMetricsReportingUrl(source);
+    // if (metricReportingUrl) {
+    //   reportVideoMetrics(element, metricReportingUrl);
+    // } else {
+    //   console.log(
+    //     'Not able to report player metrics given the source url',
+    //     source,
+    //   );
+    // }
   });
 
   hls.on(Events.ERROR, function (_event, data) {

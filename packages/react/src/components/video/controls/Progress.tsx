@@ -1,91 +1,202 @@
 import { styled } from '@stitches/react';
+import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
-import { VideoControllerContext } from '../context';
+import { useMediaController } from '../context';
 
-import { PropsOf } from './system';
+import { PropsOf, useMemoizedIcon } from './system';
 
-// const DefaultSeekBackwardIcon = ({ size }: { size: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 15 15" fill="none">
-//     <path
-//       fillRule="evenodd"
-//       clipRule="evenodd"
-//       d="M6.85355 3.14645C7.04882 3.34171 7.04882 3.65829 6.85355 3.85355L3.70711 7H12.5C12.7761 7 13 7.22386 13 7.5C13 7.77614 12.7761 8 12.5 8H3.70711L6.85355 11.1464C7.04882 11.3417 7.04882 11.6583 6.85355 11.8536C6.65829 12.0488 6.34171 12.0488 6.14645 11.8536L2.14645 7.85355C1.95118 7.65829 1.95118 7.34171 2.14645 7.14645L6.14645 3.14645C6.34171 2.95118 6.65829 2.95118 6.85355 3.14645Z"
-//       fill="currentColor"
-//     />
-//   </svg>
-// );
-
-const Track = styled('div', {
-  position: 'absolute',
-  bottom: 60,
-  right: 60,
-  width: '100%',
+const Range = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
   minWidth: 40,
+  minHeight: 15,
+
+  cursor: 'pointer',
+  borderRadius: 0,
+
+  height: '100%',
+  width: '100%',
+});
+
+const sharedTrack = styled('div', {
+  position: 'relative',
+  backgroundColor: 'white',
+});
+
+const PastTrack = styled('div', {
+  ...sharedTrack,
+  borderTopLeftRadius: 2,
+  borderBottomLeftRadius: 2,
+});
+
+const FutureTrack = styled('div', {
+  ...sharedTrack,
+  borderTopRightRadius: 2,
+  borderBottomRightRadius: 2,
+});
+
+const DefaultThumb = styled('div', {
+  width: 10,
   height: 10,
-  cursor: 'pointer',
 
-  backgroundColor: '#fafafa',
+  // transform: 'translate(-5px, 0px)',
+
+  borderRadius: '100%',
+  backgroundColor: 'white',
+  boxShadow: '1px 1px 1px transparent',
 });
 
-const Thumb = styled('div', {
-  position: 'absolute',
-  bottom: 60,
-  height: 20,
-  width: 20,
-
-  borderRadius: 4,
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  outline: 'inherit',
-  backgroundColor: 'black',
-  '&:hover': {
-    backgroundColor: '#808080',
-  },
-});
-
-export type ProgressProps = Omit<PropsOf<'button'>, 'children'> & {
+export type ProgressProps = Omit<
+  PropsOf<'input'>,
+  'children' | 'onChange' | 'color'
+> & {
   /**
-   * The icon to be used for the button.
+   * The icon to be used for the progress thumb.
    * @type React.ReactElement
    */
-  icon?: React.ReactElement;
+  thumbIcon?: React.ReactElement;
+
+  /**
+   * The color of the range background.
+   * @type string
+   */
+  rangeBackgroundColor?: string;
+
+  /**
+   * The callback when the user seeks with the progress component.
+   */
+  onSeek?: (progress: number) => void;
 };
 
-export const Progress = React.forwardRef<HTMLButtonElement, ProgressProps>(
-  (props, ref) => {
-    const mediaController = React.useContext(VideoControllerContext);
+const mediaControllerSelector = ({
+  duration,
+  progress,
+  requestSeek,
+  onPlay,
+  onPause,
+  playing,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  duration,
+  progress,
+  requestSeek,
+  onPlay,
+  onPause,
+  playing,
+});
 
-    const { ...rest } = props;
+export const Progress = (props: ProgressProps) => {
+  const ref = React.useRef<HTMLDivElement | null>(null);
 
-    // const onClickComposed = async (
-    //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    // ) => {
-    //   await onClick?.(e);
-    //   await mediaController?.onSeekBackward(5);
-    // };
+  const { duration, progress, requestSeek, onPlay, onPause, playing } =
+    useMediaController(mediaControllerSelector);
 
-    return (
-      <Track
-        ref={ref}
-        // onClick={onClickComposed}
-        {...rest}
-      >
-        <Thumb
-          aria-label="seek"
-          // ref={ref}
-          // onClick={onClickComposed}
-          css={{
-            left: `${
-              ((mediaController?.progress ?? 0) /
-                (mediaController?.duration ?? 0)) *
-              100
-            }%`,
-          }}
-          {...rest}
-        />
-      </Track>
-    );
-  },
-);
+  const [isActive, setIsActive] = React.useState(false);
+
+  const [isDragging, setIsDragging] = React.useState<
+    'playing' | 'paused' | 'none'
+  >('none');
+
+  const [min, max, value] = React.useMemo(
+    () => [0, duration, progress] as const,
+    [duration, progress],
+  );
+
+  const onSeekUpdate = React.useCallback(
+    async (eventX: number) => {
+      const bounding = ref.current?.getBoundingClientRect();
+
+      if (bounding) {
+        const newSeek =
+          ((eventX - bounding.left) / bounding.width) * (max - min);
+
+        await props?.onSeek?.(newSeek);
+        requestSeek(newSeek);
+      }
+    },
+    [min, max, requestSeek, props],
+  );
+
+  React.useEffect(() => {
+    if (isDragging !== 'none') {
+      const onMouseMove = async (e: MouseEvent) => {
+        await onSeekUpdate(e.clientX);
+      };
+
+      const onMouseUp = async (e: MouseEvent) => {
+        setIsDragging('none');
+
+        await onSeekUpdate(e.clientX);
+        if (isDragging === 'playing') {
+          await onPlay();
+        }
+      };
+
+      document?.addEventListener('mousemove', onMouseMove);
+      document?.addEventListener('mouseup', onMouseUp);
+
+      return () => {
+        document?.removeEventListener('mousemove', onMouseMove);
+        document?.removeEventListener('mouseup', onMouseUp);
+      };
+    }
+  }, [isDragging, onSeekUpdate, onPlay]);
+
+  const _handle = useMemoizedIcon(props?.thumbIcon, <DefaultThumb />);
+
+  const pastCss = React.useMemo(
+    () => ({
+      flex: value / (max - min),
+      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
+      opacity: 0.8,
+      height: isActive ? 5 : 3,
+    }),
+    [value, max, min, props?.rangeBackgroundColor, isActive],
+  );
+  const futureCss = React.useMemo(
+    () => ({
+      flex: 1 - value / (max - min),
+      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
+      opacity: 0.2,
+      height: isActive ? 5 : 3,
+    }),
+    [value, max, min, props?.rangeBackgroundColor, isActive],
+  );
+
+  const onPointerDown = React.useCallback(
+    async (e: React.MouseEvent) => {
+      setIsDragging(playing ? 'playing' : 'paused');
+
+      await onSeekUpdate(e.clientX);
+      onPause();
+    },
+    [onSeekUpdate, playing, onPause],
+  );
+
+  const onMouseEnter = React.useCallback(async () => {
+    setIsActive(true);
+  }, [setIsActive]);
+
+  const onMouseLeave = React.useCallback(async () => {
+    setIsActive(false);
+  }, [setIsActive]);
+
+  return (
+    <Range
+      ref={ref}
+      onPointerDown={onPointerDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={value}
+      aria-orientation="horizontal"
+    >
+      <PastTrack css={pastCss} />
+
+      {isActive && _handle}
+
+      <FutureTrack css={futureCss} />
+    </Range>
+  );
+};

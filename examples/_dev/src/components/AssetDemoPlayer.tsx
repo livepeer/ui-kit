@@ -2,7 +2,7 @@ import { VideoPlayer } from '@livepeer/react';
 import { PlaybackInfo } from 'livepeer';
 import { useState } from 'react';
 
-const playbackId = 'a4e8o6mykgkvtxav';
+const playbackId = '6d7el73r1y12chxr';
 
 export const AssetDemoPlayer = () => {
   const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
@@ -20,9 +20,9 @@ export const AssetDemoPlayer = () => {
         playbackId={playbackId}
         onPlaybackInfoUpdated={handlePlaybackInfo}
         onPlaybackInfoError={handleError}
-        width="640"
+        width={1100}
         loop
-        muted
+        containerCss={{ maxWidth: '100%' }}
       />
 
       <p>
