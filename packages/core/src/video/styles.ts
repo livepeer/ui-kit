@@ -7,6 +7,8 @@ export const playerCss = {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'black',
+    fontFamily:
+      'ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;',
 
     'video::-webkit-media-controls-enclosure': {
       display: 'none !important',

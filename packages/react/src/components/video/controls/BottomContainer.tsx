@@ -50,12 +50,10 @@ const StyledLowerContainer = styled('div', {
   justifyContent: 'space-between',
 });
 
-const StyledRightContainer = styled('div', {
-  // justifySelf: 'flex-end',
-});
+const StyledRightContainer = styled(StyledLowerContainer, { width: 'auto' });
 
-const StyledLeftContainer = styled('div', {
-  // justifySelf: 'flex-start',
+const StyledLeftContainer = styled(StyledLowerContainer, {
+  width: 'auto',
 });
 
 const mediaControllerSelector = ({

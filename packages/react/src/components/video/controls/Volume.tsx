@@ -3,7 +3,7 @@ import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
 import { useMediaController } from '../context';
-
+import { Slider } from './Slider';
 import { PropsOf, useConditionalIcon } from './system';
 
 const DefaultMutedIcon = ({ size }: { size: number }) => (
@@ -25,6 +25,12 @@ const DefaultUnmutedIcon = ({ size }: { size: number }) => (
   </svg>
 );
 
+const Container = styled('div', {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
 const StyledButton = styled('button', {
   borderRadius: 4,
   background: 'none',
@@ -32,6 +38,8 @@ const StyledButton = styled('button', {
   cursor: 'pointer',
   outline: 'inherit',
   color: 'white',
+  padding: 0,
+  paddingTop: 3,
   '&:hover': {
     color: '#909090',
   },
@@ -70,14 +78,22 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
       mediaControllerSelector,
     );
 
+    const [previousVolume, setPreviousVolume] = React.useState(volume);
+
     const { unmutedIcon, mutedIcon, onClick, ...rest } = props;
 
-    const onClickComposed = async (
-      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ) => {
-      await onClick?.(e);
-      await requestVolume(volume ? 0 : 1);
-    };
+    const onClickComposed = React.useCallback(
+      async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        if (volume !== 0) {
+          setPreviousVolume(volume);
+          await requestVolume(0);
+        } else {
+          await requestVolume(previousVolume);
+        }
+        await onClick?.(e);
+      },
+      [onClick, requestVolume, setPreviousVolume, previousVolume, volume],
+    );
 
     const _children = useConditionalIcon(
       Boolean(volume),
@@ -88,16 +104,42 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
     );
 
     return (
-      <StyledButton
-        aria-label={volume ? 'mute' : 'unmute'}
-        ref={ref}
-        onClick={onClickComposed}
-        {...rest}
-      >
-        {_children}
-      </StyledButton>
+      <Container>
+        <StyledButton
+          aria-label={volume ? 'mute' : 'unmute'}
+          ref={ref}
+          onClick={onClickComposed}
+          {...rest}
+        >
+          {_children}
+        </StyledButton>
+        <VolumeProgress />
+      </Container>
     );
   },
 );
 
 Volume.displayName = 'Volume';
+
+const mediaControllerSelectorProgress = ({
+  volume,
+  requestVolume,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  volume,
+  requestVolume,
+});
+
+const VolumeProgress = () => {
+  const { volume, requestVolume } = useMediaController(
+    mediaControllerSelectorProgress,
+  );
+
+  const onChange = React.useCallback(
+    async (value: number) => {
+      requestVolume(value);
+    },
+    [requestVolume],
+  );
+
+  return <Slider value={volume} onChange={onChange} />;
+};

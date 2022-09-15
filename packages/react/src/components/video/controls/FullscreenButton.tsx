@@ -73,6 +73,7 @@ const StyledButton = styled('button', {
   outline: 'inherit',
   color: 'white',
   padding: 0,
+  paddingTop: 3,
   '&:hover': {
     color: '#909090',
   },

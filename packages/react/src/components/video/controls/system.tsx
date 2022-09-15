@@ -1,3 +1,4 @@
+import { CSS } from '@stitches/react';
 import * as React from 'react';
 
 /**
@@ -10,6 +11,7 @@ export type As<Props = any> = React.ElementType<Props>;
  */
 export type PropsOf<T extends As> = React.ComponentPropsWithoutRef<T> & {
   as?: As;
+  css?: CSS;
 };
 
 export const useConditionalIcon = (
@@ -27,7 +29,10 @@ export const useConditionalIcon = (
     [conditional, truthyIcon, truthyDefaultIcon, falsyIcon, falsyDefaultIcon],
   );
 
-  return React.isValidElement(element) ? React.cloneElement(element) : null;
+  return React.useMemo(
+    () => (React.isValidElement(element) ? React.cloneElement(element) : null),
+    [element],
+  );
 };
 
 export const useMemoizedIcon = (

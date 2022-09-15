@@ -39,7 +39,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Events.MEDIA_ATTACHED, () => {
     hls.loadSource(source);
 
-    hls.on(Events.MANIFEST_PARSED, () => {
+    hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
       if (config?.autoplay) {
         try {
           element?.play();

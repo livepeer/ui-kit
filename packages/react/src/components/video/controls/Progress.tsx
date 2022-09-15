@@ -1,51 +1,10 @@
-import { styled } from '@stitches/react';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
 import { useMediaController } from '../context';
+import { Slider } from './Slider';
 
-import { PropsOf, useMemoizedIcon } from './system';
-
-const Range = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  minWidth: 40,
-  minHeight: 15,
-
-  cursor: 'pointer',
-  borderRadius: 0,
-
-  height: '100%',
-  width: '100%',
-});
-
-const sharedTrack = styled('div', {
-  position: 'relative',
-  backgroundColor: 'white',
-});
-
-const PastTrack = styled('div', {
-  ...sharedTrack,
-  borderTopLeftRadius: 2,
-  borderBottomLeftRadius: 2,
-});
-
-const FutureTrack = styled('div', {
-  ...sharedTrack,
-  borderTopRightRadius: 2,
-  borderBottomRightRadius: 2,
-});
-
-const DefaultThumb = styled('div', {
-  width: 10,
-  height: 10,
-
-  // transform: 'translate(-5px, 0px)',
-
-  borderRadius: '100%',
-  backgroundColor: 'white',
-  boxShadow: '1px 1px 1px transparent',
-});
+import { PropsOf } from './system';
 
 export type ProgressProps = Omit<
   PropsOf<'input'>,
@@ -76,6 +35,7 @@ const mediaControllerSelector = ({
   onPlay,
   onPause,
   playing,
+  buffered,
 }: MediaControllerState<HTMLMediaElement>) => ({
   duration,
   progress,
@@ -83,120 +43,66 @@ const mediaControllerSelector = ({
   onPlay,
   onPause,
   playing,
+  buffered,
 });
 
 export const Progress = (props: ProgressProps) => {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-
-  const { duration, progress, requestSeek, onPlay, onPause, playing } =
-    useMediaController(mediaControllerSelector);
-
-  const [isActive, setIsActive] = React.useState(false);
+  const {
+    duration,
+    progress,
+    requestSeek,
+    onPlay,
+    onPause,
+    playing,
+    buffered,
+  } = useMediaController(mediaControllerSelector);
 
   const [isDragging, setIsDragging] = React.useState<
     'playing' | 'paused' | 'none'
   >('none');
 
-  const [min, max, value] = React.useMemo(
+  const [min, max] = React.useMemo(
     () => [0, duration, progress] as const,
     [duration, progress],
   );
+  const value = React.useMemo(
+    () => progress / (max - min),
+    [min, max, progress],
+  );
+  const secondaryValue = React.useMemo(
+    () => buffered / (max - min),
+    [min, max, buffered],
+  );
 
-  const onSeekUpdate = React.useCallback(
-    async (eventX: number) => {
-      const bounding = ref.current?.getBoundingClientRect();
+  const onChange = React.useCallback(
+    async (value: number) => {
+      if (isDragging === 'none') {
+        setIsDragging(playing ? 'playing' : 'paused');
 
-      if (bounding) {
-        const newSeek =
-          ((eventX - bounding.left) / bounding.width) * (max - min);
-
-        await props?.onSeek?.(newSeek);
-        requestSeek(newSeek);
+        onPause();
       }
+
+      const newSeek = value * (max - min);
+
+      await props?.onSeek?.(newSeek);
+      requestSeek(newSeek);
     },
-    [min, max, requestSeek, props],
+    [max, min, requestSeek, isDragging, props, playing, onPause],
   );
 
-  React.useEffect(() => {
-    if (isDragging !== 'none') {
-      const onMouseMove = async (e: MouseEvent) => {
-        await onSeekUpdate(e.clientX);
-      };
-
-      const onMouseUp = async (e: MouseEvent) => {
-        setIsDragging('none');
-
-        await onSeekUpdate(e.clientX);
-        if (isDragging === 'playing') {
-          await onPlay();
-        }
-      };
-
-      document?.addEventListener('mousemove', onMouseMove);
-      document?.addEventListener('mouseup', onMouseUp);
-
-      return () => {
-        document?.removeEventListener('mousemove', onMouseMove);
-        document?.removeEventListener('mouseup', onMouseUp);
-      };
+  const onDone = React.useCallback(async () => {
+    if (isDragging === 'playing') {
+      onPlay();
     }
-  }, [isDragging, onSeekUpdate, onPlay]);
-
-  const _handle = useMemoizedIcon(props?.thumbIcon, <DefaultThumb />);
-
-  const pastCss = React.useMemo(
-    () => ({
-      flex: value / (max - min),
-      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
-      opacity: 0.8,
-      height: isActive ? 5 : 3,
-    }),
-    [value, max, min, props?.rangeBackgroundColor, isActive],
-  );
-  const futureCss = React.useMemo(
-    () => ({
-      flex: 1 - value / (max - min),
-      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
-      opacity: 0.2,
-      height: isActive ? 5 : 3,
-    }),
-    [value, max, min, props?.rangeBackgroundColor, isActive],
-  );
-
-  const onPointerDown = React.useCallback(
-    async (e: React.MouseEvent) => {
-      setIsDragging(playing ? 'playing' : 'paused');
-
-      await onSeekUpdate(e.clientX);
-      onPause();
-    },
-    [onSeekUpdate, playing, onPause],
-  );
-
-  const onMouseEnter = React.useCallback(async () => {
-    setIsActive(true);
-  }, [setIsActive]);
-
-  const onMouseLeave = React.useCallback(async () => {
-    setIsActive(false);
-  }, [setIsActive]);
+    setIsDragging('none');
+  }, [isDragging, onPlay]);
 
   return (
-    <Range
-      ref={ref}
-      onPointerDown={onPointerDown}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      aria-valuemin={min}
-      aria-valuemax={max}
-      aria-valuenow={value}
-      aria-orientation="horizontal"
-    >
-      <PastTrack css={pastCss} />
-
-      {isActive && _handle}
-
-      <FutureTrack css={futureCss} />
-    </Range>
+    <Slider
+      value={value}
+      secondaryValue={secondaryValue}
+      onChange={onChange}
+      onDone={onDone}
+    />
   );
 };

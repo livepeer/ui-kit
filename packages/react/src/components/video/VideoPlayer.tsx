@@ -10,6 +10,7 @@ import {
   FullscreenButton,
   PlayButton,
   Progress,
+  TimeDisplay,
   Volume,
 } from './controls';
 import { PropsOf } from './controls/system';
@@ -124,6 +125,7 @@ export function VideoPlayer({
               <>
                 <PlayButton />
                 <Volume />
+                <TimeDisplay />
               </>
             }
             rightControls={<FullscreenButton />}

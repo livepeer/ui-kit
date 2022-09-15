@@ -9,7 +9,7 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   /** The last time that the media was interacted with */
   _lastInteraction: number;
 
-  /** Current volume of the video */
+  /** Current volume of the media */
   volume: number;
 
   /** If the element is current playing or paused */
@@ -19,12 +19,15 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
 
-  /** Current progress of the video */
+  /** Current progress of the media */
   progress: number;
-  /** Current total duration of the video */
+  /** Current total duration of the media */
   duration: number;
 
-  /** Internal value when a user requests an update to the progress of the video */
+  /** Current buffered end time for the media */
+  buffered: number;
+
+  /** Internal value when a user requests an update to the progress of the media */
   _requestedRangeToSeekTo: number;
 
   /** Internal HTMLMediaElement (or extended class) used for toggling media events */
@@ -39,6 +42,8 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
 
   onProgress: (time: number) => void;
   onDurationChange: (duration: number) => void;
+
+  _updateBuffered: (buffered: number) => void;
 
   requestSeek: (time: number) => void;
 
@@ -96,6 +101,8 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         progress: element?.currentTime ?? 0,
         duration: element?.duration ?? 0,
 
+        buffered: 0,
+
         volume: element?.volume ?? DEFAULT_VOLUME_LEVEL,
 
         _lastInteraction: Date.now(),
@@ -120,6 +127,8 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
 
         onDurationChange: (duration) => set(() => ({ duration })),
 
+        _updateBuffered: (buffered) => set(() => ({ buffered })),
+
         _requestSeekDiff: (difference) =>
           set(() => ({
             _requestedRangeToSeekTo: getBoundedSeek(
@@ -143,6 +152,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
       {
         name: 'livepeer-player',
         version: 1,
+        // since these values are persisted across media elements, only persist volume
         partialize: ({ volume }) => ({ volume }),
       },
     ),
@@ -161,7 +171,7 @@ const delay = (ms: number) => {
 };
 
 export type ControlsOptions = {
-  /** If hotkeys should be enabled on the video element (arrows to seek, etc) */
+  /** If hotkeys should be enabled on the media element (arrows to seek, etc) */
   hotkeys?: boolean;
   /** Auto-hide controls after a set amount of time (in milliseconds). Set to 0 for no hiding. */
   autohide?: number;
@@ -171,6 +181,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   store: MediaControllerStore<TElement>,
   { hotkeys = true, autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
 ) => {
+  const element = store?.getState()?._element;
+
   const onPlay = () => store.getState().onPlay();
   const onPause = () => store.getState().onPause();
 
@@ -181,6 +193,9 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     store.getState().onProgress(element?.currentTime ?? 0);
 
   const onKeyUp = (e: KeyboardEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     const code = e.code as KeyTrigger;
 
     store.getState()._updateLastInteraction();
@@ -205,7 +220,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   };
   const onMouseLeave = () => {
     if (autohide) {
-      // store.getState().setHidden(true);
+      store.getState().setHidden(true);
     }
   };
   const onMouseMove = async () => {
@@ -221,7 +236,29 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     }
   };
 
-  const element = store?.getState()?._element;
+  const onProgress = () => {
+    if (element && (element?.duration ?? 0) > 0) {
+      const currentTime = element.currentTime;
+
+      const buffered = [...Array(element.buffered.length)].reduce(
+        (prev, _curr, i) => {
+          const start = element.buffered.start(element.buffered.length - 1 - i);
+          const end = element.buffered.end(element.buffered.length - 1 - i);
+
+          // if the TimeRange covers the current time, then use this value
+          if (start <= currentTime && end >= currentTime) {
+            return end;
+          }
+
+          return prev;
+        },
+        // default to end of media
+        store?.getState?.()?.duration ?? 0,
+      );
+
+      store.getState()._updateBuffered(buffered);
+    }
+  };
 
   if (element) {
     element.addEventListener('play', onPlay);
@@ -229,6 +266,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     element.addEventListener('durationchange', onDurationChange);
     element.addEventListener('timeupdate', onTimeUpdate);
     element.addEventListener('volumechange', onVolumeChange);
+    element.addEventListener('progress', onProgress);
 
     const parentElementOrElement = element?.parentElement ?? element;
 
@@ -275,6 +313,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       element?.removeEventListener?.('pause', onPause);
       element?.removeEventListener?.('durationchange', onDurationChange);
       element?.removeEventListener?.('timeupdate', onTimeUpdate);
+      element?.removeEventListener?.('progress', onProgress);
 
       const parentElementOrElement = element?.parentElement ?? element;
 

@@ -1,4 +1,5 @@
 import { styled } from '@stitches/react';
+import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
 import { useMediaController } from '../context';
@@ -39,6 +40,7 @@ const StyledButton = styled('button', {
   outline: 'inherit',
   color: 'white',
   padding: 0,
+  paddingTop: 3,
   '&:hover': {
     color: '#909090',
   },
@@ -63,11 +65,17 @@ export type PlayButtonProps = Omit<PropsOf<'button'>, 'children'> & {
     | Record<string, never>
   );
 
+const mediaControllerSelector = ({
+  togglePlay,
+  playing,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  togglePlay,
+  playing,
+});
+
 export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
   (props, ref) => {
-    const { togglePlay, playing } = useMediaController(
-      ({ togglePlay, playing }) => ({ togglePlay, playing }),
-    );
+    const { togglePlay, playing } = useMediaController(mediaControllerSelector);
 
     const { playIcon, pauseIcon, onClick, ...rest } = props;
 

@@ -22,7 +22,7 @@ export const AssetDemoPlayer = () => {
         onPlaybackInfoError={handleError}
         width={1100}
         loop
-        containerCss={{ maxWidth: '100%' }}
+        containerCss={{ fontFamily: 'Arial' }}
       />
 
       <p>
