@@ -6,6 +6,8 @@ it('should expose correct exports', () => {
   expect(Object.keys(Exports)).toMatchInlineSnapshot(`
     [
       "createReactClient",
+      "PlayButton",
+      "useMediaController",
       "VideoPlayer",
       "Context",
       "LivepeerConfig",

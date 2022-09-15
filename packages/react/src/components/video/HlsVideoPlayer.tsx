@@ -17,8 +17,10 @@ export type GenericHlsVideoPlayerProps =
 
 const mediaControllerSelector = ({
   _element,
+  requestVolume,
 }: MediaControllerState<HTMLMediaElement>) => ({
   element: _element,
+  requestVolume,
 });
 
 export type HlsVideoPlayerProps = GenericHlsVideoPlayerProps & {
@@ -40,7 +42,15 @@ export const HlsVideoPlayer = React.forwardRef<
     },
     ref,
   ) => {
-    const { element } = useMediaController(mediaControllerSelector);
+    const { element, requestVolume } = useMediaController(
+      mediaControllerSelector,
+    );
+
+    React.useEffect(() => {
+      if (props.muted) {
+        requestVolume(0);
+      }
+    }, [props.muted, requestVolume]);
 
     React.useEffect(() => {
       if (element && typeof window !== 'undefined' && isHlsSupported()) {

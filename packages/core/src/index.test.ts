@@ -82,11 +82,14 @@ it('should expose correct exports', () => {
       "ServiceRegistryFactory",
       "TicketBrokerFactory",
       "pick",
+      "addEventListeners",
+      "createControllerStore",
       "createMetricsReportingUrl",
       "createNewHls",
       "isHlsSupported",
       "MetricsStatus",
       "PlaybackMonitor",
+      "playerCss",
       "reportVideoMetrics",
     ]
   `);

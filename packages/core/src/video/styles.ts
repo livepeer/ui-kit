@@ -2,6 +2,7 @@ import { css } from '@stitches/core';
 
 export const playerCss = {
   videoPlayerContainer: css('div', {
+    width: '100%',
     position: 'relative',
     display: 'inline-flex',
     alignItems: 'center',

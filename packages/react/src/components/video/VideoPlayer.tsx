@@ -17,7 +17,7 @@ import { PropsOf } from './controls/system';
 
 export type VideoPlayerProps = Omit<
   GenericHlsVideoPlayerProps,
-  'src' | 'controls' | 'muted'
+  'src' | 'controls'
 > & {
   /** The source of the video (required if `playbackId` is not provided) */
   src?: string;

@@ -200,7 +200,7 @@ export const Slider = (props: SliderProps) => {
 
       {isActiveOrDragging && _handle}
 
-      {props.secondaryValue && <SecondaryTrack css={secondaryCss} />}
+      {(props.secondaryValue ?? 0) > 0 && <SecondaryTrack css={secondaryCss} />}
 
       <FutureTrack css={futureCss} />
     </Range>
