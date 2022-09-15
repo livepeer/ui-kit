@@ -11,6 +11,7 @@ export function HeaderVideo() {
       muted
       playbackId={playbackId}
       className="h-30 w-full"
+      containerCss={{ fontFamily: 'inherit' }}
     />
   );
 }

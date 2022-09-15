@@ -24,15 +24,15 @@ const sharedTrack = styled('div', {
 
 const PastTrack = styled(sharedTrack, {
   height: 30,
-  borderTopLeftRadius: 3,
-  borderBottomLeftRadius: 3,
+  borderTopLeftRadius: 2,
+  borderBottomLeftRadius: 2,
 });
 
 const SecondaryTrack = styled(sharedTrack, {});
 
 const FutureTrack = styled(sharedTrack, {
-  borderTopRightRadius: 3,
-  borderBottomRightRadius: 3,
+  borderTopRightRadius: 2,
+  borderBottomRightRadius: 2,
 });
 
 const DefaultThumb = styled('div', {
@@ -133,10 +133,19 @@ export const Slider = (props: SliderProps) => {
 
   const [value, secondaryValue] = React.useMemo(
     () => [
-      props.value,
-      props.secondaryValue ? props.secondaryValue - props.value : 0,
+      !isNaN(props.value) ? props.value : 0,
+      props.secondaryValue &&
+      !isNaN(props.value) &&
+      !isNaN(props.secondaryValue)
+        ? props.secondaryValue - props.value
+        : 0,
     ],
     [props.value, props.secondaryValue],
+  );
+
+  const futureValue = React.useMemo(
+    () => 1 - (value + secondaryValue),
+    [value, secondaryValue],
   );
 
   const pastCss = React.useMemo(
@@ -154,18 +163,36 @@ export const Slider = (props: SliderProps) => {
       backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
       opacity: 0.45,
       height: isActiveOrDragging ? 5 : 3,
+      ...(value === 0 && !isActiveOrDragging
+        ? {
+            borderTopLeftRadius: 2,
+            borderBottomLeftRadius: 2,
+          }
+        : {}),
+      ...(futureValue === 0
+        ? {
+            borderTopRightRadius: 2,
+            borderBottomRightRadius: 2,
+          }
+        : {}),
     }),
-    [secondaryValue, props?.rangeBackgroundColor, isActiveOrDragging],
+    [
+      value,
+      futureValue,
+      secondaryValue,
+      props?.rangeBackgroundColor,
+      isActiveOrDragging,
+    ],
   );
 
   const futureCss = React.useMemo(
     () => ({
-      flex: 1 - (value + secondaryValue),
+      flex: futureValue,
       backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
       opacity: 0.2,
       height: isActiveOrDragging ? 5 : 3,
     }),
-    [value, secondaryValue, props?.rangeBackgroundColor, isActiveOrDragging],
+    [futureValue, props?.rangeBackgroundColor, isActiveOrDragging],
   );
 
   const onPointerDown = React.useCallback(
@@ -193,16 +220,16 @@ export const Slider = (props: SliderProps) => {
       onMouseLeave={onMouseLeave}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={Math.round(props.value * 100)}
+      aria-valuenow={Math.round(value * 100)}
       aria-orientation="horizontal"
     >
-      <PastTrack css={pastCss} />
+      {value > 0.001 && <PastTrack css={pastCss} />}
 
       {isActiveOrDragging && _handle}
 
-      {(props.secondaryValue ?? 0) > 0 && <SecondaryTrack css={secondaryCss} />}
+      {(secondaryValue ?? 0) > 0 && <SecondaryTrack css={secondaryCss} />}
 
-      <FutureTrack css={futureCss} />
+      {(futureValue ?? 0) > 0 && <FutureTrack css={futureCss} />}
     </Range>
   );
 };
