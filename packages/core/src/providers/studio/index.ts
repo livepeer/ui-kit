@@ -139,7 +139,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         uploadSize: args.uploadSize,
         // Chunk size is required if input is a stream (and S3 min is 5MB), but
         // not recommended if it is a file.
-        chunkSize: args.file instanceof File ? undefined : 5 * 1024 * 1024,
+        ...(args.file instanceof File ? null : { chunkSize: 5 * 1024 * 1024 }),
 
         onError(error) {
           reject(error);
