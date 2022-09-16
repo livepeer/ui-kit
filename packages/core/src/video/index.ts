@@ -1,9 +1,9 @@
 export { createNewHls, isHlsSupported } from './hls';
 export type { HlsVideoConfig } from './hls';
 export {
-  createMetricsReportingUrl,
+  getMetricsReportingUrl,
   MetricsStatus,
   PlaybackMonitor,
   reportVideoMetrics,
 } from './metrics';
-export type { Metrics, PlaybackRecord } from './metrics';
+export type { PlaybackRecord, RawMetrics } from './metrics';

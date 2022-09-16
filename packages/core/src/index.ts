@@ -11,6 +11,7 @@ export {
   getLivepeerToken,
   getLivepeerTokenFaucet,
   getMerkleSnapshot,
+  getMetrics,
   getMinter,
   getPlaybackInfo,
   getPollCreator,
@@ -108,6 +109,7 @@ export type {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
@@ -123,6 +125,7 @@ export type {
   LivepeerToken,
   LivepeerTokenFaucet,
   MerkleSnapshot,
+  Metrics,
   Minter,
   MultistreamTarget,
   MultistreamTargetRef,
@@ -141,11 +144,11 @@ export type {
 } from './types';
 export { pick } from './utils';
 export {
-  createMetricsReportingUrl,
   createNewHls,
+  getMetricsReportingUrl,
   isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
   reportVideoMetrics,
 } from './video';
-export type { HlsVideoConfig, Metrics, PlaybackRecord } from './video';
+export type { HlsVideoConfig, PlaybackRecord, RawMetrics } from './video';

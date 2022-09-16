@@ -15,6 +15,7 @@ export {
   useLivepeerToken,
   useLivepeerTokenFaucet,
   useMerkleSnapshot,
+  useMetrics,
   useMinter,
   usePollCreator,
   useRoundsManager,

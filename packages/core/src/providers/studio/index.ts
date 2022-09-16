@@ -7,10 +7,12 @@ import {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
+  Metrics,
   PlaybackInfo,
   Stream,
   StreamSession,
@@ -22,6 +24,7 @@ import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   StudioAsset,
   StudioCreateStreamArgs,
+  StudioMetrics,
   StudioPlaybackInfo,
   StudioStream,
   StudioStreamSession,
@@ -210,6 +213,19 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return `https://livepeercdn.com/hls/${playbackId}/index.m3u8`;
   }
 
+  async getMetrics(args: GetMetricsArgs): Promise<Metrics> {
+    const playbackId = typeof args === 'string' ? args : args.playbackId;
+
+    const studioMetrics = await this._get<StudioMetrics>(
+      `/data/views/${playbackId}/total`,
+      {
+        headers: this._defaultHeaders,
+      },
+    );
+
+    return this._mapToMetrics(studioMetrics);
+  }
+
   async _mapToStream(studioStream: StudioStream): Promise<Stream> {
     return {
       ...studioStream,
@@ -248,6 +264,12 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           url: source?.['url'],
         })),
       },
+    };
+  }
+
+  _mapToMetrics(studioMetrics: StudioMetrics): Metrics {
+    return {
+      ...studioMetrics,
     };
   }
 }

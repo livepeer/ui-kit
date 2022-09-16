@@ -1,6 +1,7 @@
 import {
   Asset,
   CreateStreamArgs,
+  Metrics,
   MultistreamTargetRef,
   Stream,
   StreamSession,
@@ -142,3 +143,5 @@ export type StudioPlaybackInfo = {
     }[];
   };
 };
+
+export type StudioMetrics = Metrics;

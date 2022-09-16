@@ -1,4 +1,4 @@
-export type Metrics = {
+export type RawMetrics = {
   firstPlayback: number;
 
   nWaiting: number;
@@ -135,8 +135,8 @@ export class MetricsStatus<
   connected = false;
   element: TElement;
 
-  currentMetrics: Metrics;
-  previousMetrics: Metrics | null = null;
+  currentMetrics: RawMetrics;
+  previousMetrics: RawMetrics | null = null;
 
   timeWaiting = 0;
   waitingSince = 0;
@@ -233,7 +233,7 @@ export class MetricsStatus<
   }
 
   getMetrics() {
-    const currentMetrics: Metrics = {
+    const currentMetrics: RawMetrics = {
       ...this.currentMetrics,
       playerHeight: this.element ? this.element.clientHeight : null,
       playerWidth: this.element ? this.element.clientWidth : null,
@@ -403,8 +403,8 @@ export function reportVideoMetrics<
       const metrics = metricsStatus.getMetrics();
 
       // only send a report if stats have changed, and only send those changes
-      const d: Partial<Metrics> = {};
-      let key: keyof Metrics;
+      const d: Partial<RawMetrics> = {};
+      let key: keyof RawMetrics;
       for (key in metrics.current) {
         const val = metrics.current[key];
         if (val !== metrics?.previous?.[key]) {
@@ -428,7 +428,7 @@ export function reportVideoMetrics<
   return defaultResponse;
 }
 
-function send(webSocket: WebSocket, metrics: Partial<Metrics>) {
+function send(webSocket: WebSocket, metrics: Partial<RawMetrics>) {
   if (webSocket.readyState !== webSocket.OPEN) {
     return;
   }

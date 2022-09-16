@@ -1,5 +1,4 @@
-// Temporarily hardcoded catalyst node, in production we need to point to .studio
-const METRICS_REPORTING_BASE_URL = 'wss://playback.livepeer.fun';
+import fetch from 'cross-fetch';
 
 const PLAYLIST_NAME = 'index.m3u8';
 const ASSET_URL_PART_VALUE = 'hls';
@@ -8,22 +7,68 @@ const RECORDING_URL_PART_VALUE = 'recordings';
 // Example url the playback id needs to be found in
 // https://livepeercdn.com/hls/<playback-id>/index.m3u8
 // https://livepeercdn.com/recordings/<playback-id>/index.m3u8
-function playbackIdFromPlaybackUrl(url: string): string | undefined {
-  const parts = url.split('/');
-  const playlistPartIndex = parts.indexOf(PLAYLIST_NAME);
-  const assetPartIndex = parts.indexOf(ASSET_URL_PART_VALUE);
-  const recordingPartIndex = parts.indexOf(RECORDING_URL_PART_VALUE);
+export const getMetricsReportingUrl = async (
+  src: string,
+): Promise<string | null> => {
+  try {
+    const parsedUrl = new URL(src);
 
-  // Check if the url is valid
-  return (assetPartIndex !== -1 || recordingPartIndex !== -1) &&
-    playlistPartIndex !== -1
-    ? parts[playlistPartIndex - 1]
-    : undefined;
-}
+    const parts = parsedUrl.pathname.split('/');
+    const playlistPartIndex = parts.indexOf(PLAYLIST_NAME);
 
-export function createMetricsReportingUrl(src: string): string | undefined {
-  const videoName = playbackIdFromPlaybackUrl(src);
-  return videoName
-    ? `${METRICS_REPORTING_BASE_URL}/json_video+${videoName}.js`
-    : undefined;
-}
+    const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
+    const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
+
+    // Check if the url is valid
+    const playbackId =
+      (includesAssetUrl || includesRecording) && playlistPartIndex !== -1
+        ? parts?.[playlistPartIndex - 1] ?? null
+        : null;
+
+    const splitHost = parsedUrl.host.split('.');
+    const tld = (splitHost?.[splitHost?.length - 1] ?? null) as
+      | 'com'
+      | 'studio'
+      | 'fun'
+      | 'monster'
+      | null;
+
+    // map to known TLDs, with .com => .studio
+    const tldMapped =
+      tld === 'com'
+        ? 'studio'
+        : tld === 'studio'
+        ? 'studio'
+        : tld === 'fun'
+        ? 'fun'
+        : tld === 'monster'
+        ? 'monster'
+        : null;
+
+    // if not a known TLD, then do not return a URL
+    if (playbackId && tldMapped) {
+      const defaultResponse = `wss://playback.livepeer.${tldMapped}/json_video+${playbackId}.js`;
+
+      try {
+        const response = await fetch(
+          `https://playback.livepeer.${tldMapped}/json_video+${playbackId}.js`,
+        );
+
+        // parse the url which we're redirected to
+        const redirectedUrl = response?.url?.replace('https:', 'wss:');
+
+        return redirectedUrl ?? defaultResponse;
+      } catch (error) {
+        console.log(
+          `Could not fetch metrics reporting URL, defaulting to ${defaultResponse}`,
+        );
+      }
+
+      return defaultResponse;
+    }
+  } catch (error) {
+    return null;
+  }
+
+  return null;
+};

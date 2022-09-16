@@ -21,6 +21,7 @@ it('should expose correct exports', () => {
       "useLivepeerToken",
       "useLivepeerTokenFaucet",
       "useMerkleSnapshot",
+      "useMetrics",
       "useMinter",
       "usePollCreator",
       "useRoundsManager",

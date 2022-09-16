@@ -96,7 +96,7 @@ describe('reportVideoMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "firstPlayback": 42000,
+          "firstPlayback": 32000,
           "nError": 0,
           "nStalled": 0,
           "nWaiting": 0,
