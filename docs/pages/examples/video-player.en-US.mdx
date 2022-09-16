@@ -8,7 +8,8 @@ import { DemoVideoPlayer } from '@components/examples';
 # Video Player
 
 The example below shows our drop-in video player for easily viewing video content! The example below uses the
-[`VideoPlayer`](/docs/VideoPlayer) to view a video asset.
+[`VideoPlayer`](/docs/VideoPlayer) to view a video asset and [`useMetrics`](/docs/playback/useMetrics) to fetch
+viewership data.
 
 <DemoVideoPlayer />
 
@@ -42,16 +43,27 @@ function App() {
 Now that our providers are set up, we use the [`VideoPlayer`](/docs/VideoPlayer) with a `playbackId`, which we created
 previously when uploading a video asset.
 
+We also show the total view count from [`useMetrics`](/docs/playback/useMetrics)!
+
 ```tsx
-import { VideoPlayer } from '@livepeer/react';
+import { VideoPlayer, useMetrics } from '@livepeer/react';
+import * as React from 'react';
 
 const playbackId = 'a4e8o6mykgkvtxav';
 
 export const DemoVideoPlayer = () => {
-  return <VideoPlayer playbackId={playbackId} loop muted />;
+  const { data: metrics } = useMetrics({ playbackId });
+
+  return (
+    <>
+      <VideoPlayer playbackId={playbackId} loop muted />
+
+      {metrics?.[0] && <Badge>Views: {metrics?.[0]?.startViews ?? 0}</Badge>}
+    </>
+  );
 };
 ```
 
 ## Wrap Up
 
-That's it! You just used the video player component to easily integrate Livepeer video!
+That's it! You just used the video player component to easily integrate Livepeer video, with viewership metrics!

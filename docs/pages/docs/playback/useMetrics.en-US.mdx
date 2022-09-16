@@ -13,8 +13,8 @@ import { useMetrics } from '@livepeer/react';
 
 ## Usage
 
-The following examples assume a playback ID has been created for a Asset or Stream, and the `VideoPlayer` is being
-used with its built-in metrics reporting.
+The following examples assume a playback ID has been created for an Asset or Stream, and the [`VideoPlayer`](/docs/VideoPlayer)
+is used for playback (with its built-in metrics reporting).
 
 ```tsx
 import { useMetrics } from '@livepeer/react';
@@ -33,7 +33,7 @@ aggregated for simplicity.
 
 ```tsx
 {
-  data?: Asset,
+  data?: Metrics,
   error?: Error,
   status: 'idle' | 'loading' | 'success' | 'error',
   isError: boolean,
@@ -49,16 +49,16 @@ aggregated for simplicity.
 
 ## Configuration
 
-### assetId
+### playbackId
 
-Video asset identifier. Can also be a string passed as the only parameter.
+Playback identifier. Can also be a string passed as the only parameter.
 
 ```tsx {5}
 import { useMetrics } from '@livepeer/react';
 
 function App() {
-  const { data: asset } = useMetrics({
-    assetId,
+  const { data: metrics } = useMetrics({
+    playbackId,
   });
 }
 ```
@@ -72,9 +72,9 @@ The `useMetrics` hook also supports any [React Query](https://tanstack.com/query
 import { useMetrics } from '@livepeer/react';
 
 function App() {
-  const { data: asset } = useMetrics({
-    assetId,
-    refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
+  const { data: metrics } = useMetrics({
+    playbackId,
+    refetchInterval: 30000,
   });
 }
 ```
