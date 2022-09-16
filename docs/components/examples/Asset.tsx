@@ -37,7 +37,8 @@ export const Asset = () => {
     status: assetStatus,
   } = useAsset({
     assetId: createdAsset?.id,
-    refetchInterval: (asset) => (!asset?.playbackId ? 5000 : false),
+    refetchInterval: (asset) =>
+      asset?.status?.phase !== 'ready' ? 5000 : false,
   });
   const { data: metrics } = useAssetMetrics({
     assetId: createdAsset?.id,
