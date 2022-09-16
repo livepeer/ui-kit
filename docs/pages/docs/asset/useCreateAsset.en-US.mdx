@@ -13,6 +13,15 @@ import { useCreateAsset } from '@livepeer/react';
 
 ## Usage
 
+import { Callout } from 'nextra-theme-docs';
+
+<Callout>
+  The asset ID should only be passed to users who are allowed to modify the
+  asset. **Ensure viewers are only provided with the `playbackId`,** which is a
+  limited identifier that provides only the ability to stream media using the
+  [`VideoPlayer`](docs/VideoPlayer).
+</Callout>
+
 The following example shows how an asset can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
 function.
 

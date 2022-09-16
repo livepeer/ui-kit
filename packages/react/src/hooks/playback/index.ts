@@ -1,2 +1,2 @@
-export { useMetrics } from './useMetrics';
+export { useAssetMetrics } from './useAssetMetrics';
 export { usePlaybackInfo } from './usePlaybackInfo';

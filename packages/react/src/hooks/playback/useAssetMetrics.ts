@@ -20,26 +20,24 @@ export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
   livepeerProvider: TLivepeerProvider,
 ) => [{ entity: 'getMetrics', args, livepeerProvider }] as const;
 
-export type UseMetricsArgs<TData> = Partial<GetMetricsArgs> &
+export type UseAssetMetricsArgs<TData> = Partial<GetMetricsArgs> &
   Partial<UsePickQueryOptions<Metrics, TData, ReturnType<typeof queryKey>>>;
 
-export function useMetrics<
+export function useAssetMetrics<
   TLivepeerProvider extends LivepeerProvider,
   TData = Metrics,
->(args: UseMetricsArgs<TData>) {
+>(args: UseAssetMetricsArgs<TData>) {
   const livepeerProvider = useLivepeerProvider<LivepeerProvider>();
 
-  const getMetricsArgs: GetMetricsArgs = useMemo(
-    () =>
-      typeof args === 'string' ? args : { playbackId: args?.playbackId ?? '' },
-    [args],
-  );
+  const getMetricsArgs: GetMetricsArgs = useMemo(() => {
+    return { assetId: args?.assetId ?? '' };
+  }, [args]);
 
   return useInternalQuery({
     context: QueryClientContext,
     queryKey: queryKey(getMetricsArgs, livepeerProvider),
     queryFn: async () => getMetrics<TLivepeerProvider>(args as GetMetricsArgs),
-    enabled: Boolean(typeof args === 'string' ? args : args?.playbackId),
+    enabled: Boolean(args?.assetId),
     ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
   });
 }

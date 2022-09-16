@@ -1,4 +1,4 @@
-import { VideoPlayer, useMetrics } from '@livepeer/react';
+import { VideoPlayer } from '@livepeer/react';
 import { PlaybackInfo } from 'livepeer';
 import { useState } from 'react';
 
@@ -13,10 +13,6 @@ export const AssetDemoPlayer = () => {
   const handlePlaybackInfo = (playbackInfo: PlaybackInfo) =>
     setPlaybackUrl(playbackInfo.meta.source[0]?.url);
   const handleError = (error: Error) => setErrorMessage(error.message);
-
-  const { data: metrics } = useMetrics({
-    playbackId,
-  });
 
   return (
     <>
@@ -41,12 +37,6 @@ export const AssetDemoPlayer = () => {
         {playbackUrl && (
           <>
             Playback url: {playbackUrl}
-            <br />
-          </>
-        )}
-        {metrics && (
-          <>
-            Playback url: {JSON.stringify(metrics)}
             <br />
           </>
         )}

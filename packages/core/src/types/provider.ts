@@ -408,13 +408,11 @@ export type PlaybackInfo = {
   };
 };
 
-export type GetMetricsArgs =
-  | string
-  | {
-      playbackId: string;
+export type GetMetricsArgs = {
+  assetId: string;
 
-      // by: "day" |
-    };
+  // by: "day" |
+};
 
 export type Metric = {
   /** Playback ID associated with the metrics */
