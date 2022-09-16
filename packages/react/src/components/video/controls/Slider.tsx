@@ -111,6 +111,13 @@ export const Slider = (props: SliderProps) => {
         await onUpdate(e.clientX);
       };
 
+      const onTouchMove = async (e: TouchEvent) => {
+        const clientX = e.touches?.item?.(0)?.clientX;
+        if (clientX) {
+          await onUpdate(clientX);
+        }
+      };
+
       const onMouseUp = async (e: MouseEvent) => {
         setIsDragging(false);
 
@@ -118,13 +125,28 @@ export const Slider = (props: SliderProps) => {
         await props?.onDone?.();
       };
 
+      const onTouchEnd = async (e: TouchEvent) => {
+        setIsDragging(false);
+        const clientX = e.touches?.item?.(0)?.clientX;
+        if (clientX) {
+          await onUpdate(clientX);
+        }
+
+        await props?.onDone?.();
+      };
+
       document?.addEventListener('mousemove', onMouseMove);
       document?.addEventListener('mouseup', onMouseUp);
+
+      document?.addEventListener('touchmove', onTouchMove);
+      document?.addEventListener('touchend', onTouchEnd);
       // TODO handle mouse out
 
       return () => {
         document?.removeEventListener('mousemove', onMouseMove);
         document?.removeEventListener('mouseup', onMouseUp);
+        document?.removeEventListener('touchmove', onTouchMove);
+        document?.removeEventListener('touchend', onTouchEnd);
       };
     }
   }, [isDragging, onUpdate, props]);

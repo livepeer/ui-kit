@@ -79,6 +79,8 @@ export const HlsVideoPlayer = React.forwardRef<
         controls={controls}
         width={width}
         ref={ref}
+        webkit-playsinline
+        playsInline
         {...props}
       />
     ) : (
@@ -90,6 +92,8 @@ export const HlsVideoPlayer = React.forwardRef<
         controls={controls}
         width={width}
         ref={ref}
+        webkit-playsinline
+        playsInline
         {...props}
       />
     );

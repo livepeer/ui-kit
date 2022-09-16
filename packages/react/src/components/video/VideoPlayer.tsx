@@ -105,13 +105,12 @@ export function VideoPlayer({
 
   return srcOrPlaybackUrl ? (
     <MediaControllerProvider element={videoElement} options={controlsConfig}>
-      <Container css={containerCss}>
+      <Container css={{ width, ...containerCss }}>
         <HlsVideoPlayer
           hlsConfig={hlsConfig}
           ref={playerRef}
           autoPlay={autoPlay}
           controls={false}
-          width={width}
           {...props}
           src={srcOrPlaybackUrl}
         />
