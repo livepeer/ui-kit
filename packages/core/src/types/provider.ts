@@ -31,7 +31,7 @@ export interface LivepeerProvider {
 
   /** Get playback info for a playback ID */
   getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
-  /** Get metrics for a playback ID */
+  /** Get metrics for an asset ID */
   getMetrics(args: GetMetricsArgs): Promise<Metrics>;
 }
 

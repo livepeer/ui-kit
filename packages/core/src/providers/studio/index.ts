@@ -214,10 +214,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async getMetrics(args: GetMetricsArgs): Promise<Metrics> {
-    const playbackId = typeof args === 'string' ? args : args.playbackId;
+    const assetId = typeof args === 'string' ? args : args.assetId;
 
     const studioMetrics = await this._get<StudioMetrics>(
-      `/data/views/${playbackId}/total`,
+      `/data/views/${assetId}/total`,
       {
         headers: this._defaultHeaders,
       },
