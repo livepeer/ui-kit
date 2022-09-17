@@ -1,10 +1,9 @@
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
+import { PropsOf } from '../../system';
 import { useMediaController } from '../context';
-import { Slider } from './Slider';
-
-import { PropsOf } from './system';
+import { BaseSlider } from './BaseSlider';
 
 export type ProgressProps = Omit<
   PropsOf<'input'>,
@@ -97,8 +96,14 @@ export const Progress = (props: ProgressProps) => {
     setIsDragging('none');
   }, [isDragging, onPlay]);
 
+  const durationMinutes = React.useMemo(
+    () => (duration / 60).toFixed(1),
+    [duration],
+  );
+
   return (
-    <Slider
+    <BaseSlider
+      ariaName={`progress of ${durationMinutes} minutes`}
       value={value}
       secondaryValue={secondaryValue}
       onChange={onChange}

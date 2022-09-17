@@ -8,26 +8,6 @@ import create from 'zustand';
 
 import { MediaControllerContext } from './MediaControllerContext';
 
-const useMediaControllerStore = <TElement extends HTMLMediaElement>(
-  element: TElement | null,
-  options?: ControlsOptions,
-) => {
-  const useStore = React.useMemo(
-    () => create(createControllerStore<TElement>(element)),
-    [element],
-  );
-
-  React.useEffect(() => {
-    const { destroy } = addEventListeners(useStore, options);
-
-    return () => {
-      destroy?.();
-    };
-  }, [useStore, options]);
-
-  return useStore;
-};
-
 export type MediaControllerProviderProps<TElement extends HTMLMediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
@@ -46,4 +26,24 @@ export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
       {children}
     </MediaControllerContext.Provider>
   );
+};
+
+const useMediaControllerStore = <TElement extends HTMLMediaElement>(
+  element: TElement | null,
+  options?: ControlsOptions,
+) => {
+  const useStore = React.useMemo(
+    () => create(createControllerStore<TElement>(element)),
+    [element],
+  );
+
+  React.useEffect(() => {
+    const { destroy } = addEventListeners(useStore, options);
+
+    return () => {
+      destroy?.();
+    };
+  }, [useStore, options]);
+
+  return useStore;
 };

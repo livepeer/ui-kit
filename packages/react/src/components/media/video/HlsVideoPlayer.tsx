@@ -6,7 +6,7 @@ import {
 } from 'livepeer';
 import * as React from 'react';
 
-import { useMediaController } from './context';
+import { useMediaController } from '../context';
 
 export type GenericHlsVideoPlayerProps =
   React.VideoHTMLAttributes<HTMLVideoElement> & {

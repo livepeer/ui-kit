@@ -6,5 +6,6 @@ export {
 } from './FullscreenButton';
 export { PlayButton, type PlayButtonProps } from './PlayButton';
 export { Progress, type ProgressProps } from './Progress';
+export { BaseSlider, type BaseSliderProps } from './BaseSlider';
 export { TimeDisplay, type TimeDisplayProps } from './TimeDisplay';
 export { Volume, type VolumeProps } from './Volume';

@@ -2,7 +2,7 @@ import { styled } from '@stitches/react';
 
 import * as React from 'react';
 
-import { PropsOf, useMemoizedIcon } from './system';
+import { PropsOf, useMemoizedIcon } from '../../system';
 
 const Range = styled('div', {
   display: 'flex',
@@ -43,10 +43,16 @@ const DefaultThumb = styled('div', {
   backgroundColor: 'white',
 });
 
-export type SliderProps = Omit<
+export type BaseSliderProps = Omit<
   PropsOf<'div'>,
   'children' | 'onChange' | 'color'
 > & {
+  /**
+   * The name of the slider (volume, time range, etc)
+   * @type string
+   */
+  ariaName: string;
+
   /**
    * The icon or element to be used for the slider thumb.
    * @type React.ReactElement
@@ -80,7 +86,7 @@ export type SliderProps = Omit<
   onDone?: () => void;
 };
 
-export const Slider = (props: SliderProps) => {
+export const BaseSlider = (props: BaseSliderProps) => {
   const ref = React.useRef<HTMLDivElement | null>(null);
 
   const [isActive, setIsActive] = React.useState(false);
@@ -233,6 +239,11 @@ export const Slider = (props: SliderProps) => {
     setIsActive(false);
   }, [setIsActive]);
 
+  const valueText = React.useMemo(
+    () => Math.round(value * 100).toFixed(0),
+    [value],
+  );
+
   return (
     <Range
       {...props}
@@ -240,10 +251,13 @@ export const Slider = (props: SliderProps) => {
       onPointerDown={onPointerDown}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      role="slider"
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={Math.round(value * 100)}
+      aria-valuenow={valueText}
+      aria-valuetext={`${valueText}% ${props.ariaName}`}
       aria-orientation="horizontal"
+      css={{ touchAction: 'none' }}
     >
       {value > 0.001 && <PastTrack css={pastCss} />}
 

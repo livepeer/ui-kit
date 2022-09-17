@@ -2,7 +2,7 @@ import { styled } from '@stitches/react';
 import { playerCss } from 'livepeer';
 import * as React from 'react';
 
-import { PropsOf } from './system';
+import { PropsOf } from '../../system';
 
 const StyledContainer = styled('div', playerCss.videoPlayerContainer);
 

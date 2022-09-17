@@ -2,9 +2,9 @@ import { styled } from '@stitches/react';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
+import { PropsOf, useConditionalIcon } from '../../system';
 import { useMediaController } from '../context';
-import { Slider } from './Slider';
-import { PropsOf, useConditionalIcon } from './system';
+import { BaseSlider } from './BaseSlider';
 
 const DefaultMutedIcon = ({ size }: { size: number }) => (
   <svg width={size} height={size} viewBox="0 0 36 36">
@@ -47,10 +47,10 @@ const StyledButton = styled('button', {
 
 const mediaControllerSelector = ({
   volume,
-  requestVolume,
+  requestToggleMute,
 }: MediaControllerState<HTMLMediaElement>) => ({
   volume,
-  requestVolume,
+  requestToggleMute,
 });
 
 export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
@@ -74,25 +74,18 @@ export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
 
 export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
   (props, ref) => {
-    const { volume, requestVolume } = useMediaController(
+    const { volume, requestToggleMute } = useMediaController(
       mediaControllerSelector,
     );
-
-    const [previousVolume, setPreviousVolume] = React.useState(volume);
 
     const { unmutedIcon, mutedIcon, onClick, ...rest } = props;
 
     const onClickComposed = React.useCallback(
       async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (volume !== 0) {
-          setPreviousVolume(volume);
-          await requestVolume(0);
-        } else {
-          await requestVolume(previousVolume);
-        }
+        requestToggleMute();
         await onClick?.(e);
       },
-      [onClick, requestVolume, setPreviousVolume, previousVolume, volume],
+      [onClick, requestToggleMute],
     );
 
     const _children = useConditionalIcon(
@@ -103,10 +96,16 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
       <DefaultMutedIcon size={42} />,
     );
 
+    const title = React.useMemo(
+      () => (volume ? 'Unmute (m)' : 'Mute (m)'),
+      [volume],
+    );
+
     return (
       <Container>
         <StyledButton
-          aria-label={volume ? 'mute' : 'unmute'}
+          title={title}
+          aria-label={title}
           ref={ref}
           onClick={onClickComposed}
           {...rest}
@@ -141,5 +140,5 @@ const VolumeProgress = () => {
     [requestVolume],
   );
 
-  return <Slider value={volume} onChange={onChange} />;
+  return <BaseSlider ariaName="volume" value={volume} onChange={onChange} />;
 };

@@ -11,6 +11,8 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
 
   /** Current volume of the media */
   volume: number;
+  /** Previous volume of the media */
+  previousVolume: number;
 
   /** If the element is current playing or paused */
   playing: boolean;
@@ -55,6 +57,7 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   requestToggleFullscreen: () => void;
 
   requestVolume: (volume: number) => void;
+  requestToggleMute: () => void;
 };
 
 export type MediaControllerStore<TElement extends HTMLMediaElement> = StoreApi<
@@ -63,6 +66,8 @@ export type MediaControllerStore<TElement extends HTMLMediaElement> = StoreApi<
 
 export const allKeyTriggers = [
   'KeyF',
+  'KeyK',
+  'KeyM',
   'Space',
   'ArrowRight',
   'ArrowLeft',
@@ -104,6 +109,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         buffered: 0,
 
         volume: element?.volume ?? DEFAULT_VOLUME_LEVEL,
+        previousVolume: DEFAULT_VOLUME_LEVEL,
 
         _lastInteraction: Date.now(),
 
@@ -148,12 +154,21 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
 
         requestVolume: (volume) =>
           set(() => ({ volume: getBoundedVolume(volume) })),
+
+        requestToggleMute: () =>
+          set(({ volume, previousVolume }) => ({
+            volume: volume ? 0 : previousVolume,
+            previousVolume: volume ? volume : 0,
+          })),
       }),
       {
         name: 'livepeer-player',
         version: 1,
         // since these values are persisted across media elements, only persist volume
-        partialize: ({ volume }) => ({ volume }),
+        partialize: ({ volume, previousVolume }) => ({
+          volume,
+          previousVolume,
+        }),
       },
     ),
   );
@@ -201,7 +216,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     store.getState()._updateLastInteraction();
 
     if (allKeyTriggers.includes(code)) {
-      if (code === 'Space') {
+      if (code === 'Space' || code === 'KeyK') {
         store.getState().togglePlay();
       } else if (code === 'KeyF') {
         store.getState().requestToggleFullscreen();
@@ -209,6 +224,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
         store.getState().requestSeekForward();
       } else if (code === 'ArrowLeft') {
         store.getState().requestSeekBack();
+      } else if (code === 'KeyM') {
+        store.getState().requestToggleMute();
       }
     }
   };

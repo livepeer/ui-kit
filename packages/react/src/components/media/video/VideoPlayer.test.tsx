@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { fireEvent, render, screen } from '../../../test';
+import { fireEvent, render, screen } from '../../../../test';
 import { VideoPlayer } from './VideoPlayer';
 
 const src =
@@ -19,15 +19,16 @@ describe('VideoPlayer', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="c-gEBiRk"
+          class="c-gtwvom c-gtwvom-ikWNLQK-css"
           tabindex="0"
         >
           <video
             aria-label="video-player"
             data-controller-initialized="true"
+            playsinline=""
             role="video"
             src="https://livepeercdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8"
-            width="30"
+            width="100%"
           />
           <div
             class="c-zLwcn"
@@ -45,16 +46,16 @@ describe('VideoPlayer', () => {
                 aria-orientation="horizontal"
                 aria-valuemax="100"
                 aria-valuemin="0"
-                aria-valuenow="NaN"
-                class="c-fIGUYZ"
+                aria-valuenow="0"
+                aria-valuetext="0% progress of NaN minutes"
+                arianame="progress of NaN minutes"
+                class="c-fIGUYZ c-fIGUYZ-iegzYgW-css"
+                role="slider"
                 secondaryvalue="NaN"
                 value="NaN"
               >
                 <div
-                  class="c-byenwU c-eywRub c-byenwU-ieLaWzt-css"
-                />
-                <div
-                  class="c-byenwU c-eAcrKl c-byenwU-idhWGUv-css"
+                  class="c-byenwU c-jSqGjx c-byenwU-idAyByx-css"
                 />
               </div>
             </div>
@@ -65,8 +66,9 @@ describe('VideoPlayer', () => {
                 class="c-cSwjHS c-lbNOYO"
               >
                 <button
-                  aria-label="play"
+                  aria-label="Play (k)"
                   class="c-hddTKm"
+                  title="Play (k)"
                 >
                   <svg
                     fill="none"
@@ -85,8 +87,9 @@ describe('VideoPlayer', () => {
                   class="c-iIOWzi"
                 >
                   <button
-                    aria-label="mute"
+                    aria-label="Unmute (m)"
                     class="c-hddTKm"
+                    title="Unmute (m)"
                   >
                     <svg
                       height="42"
@@ -104,14 +107,14 @@ describe('VideoPlayer', () => {
                     aria-valuemax="100"
                     aria-valuemin="0"
                     aria-valuenow="100"
-                    class="c-fIGUYZ"
+                    aria-valuetext="100% volume"
+                    arianame="volume"
+                    class="c-fIGUYZ c-fIGUYZ-iegzYgW-css"
+                    role="slider"
                     value="1"
                   >
                     <div
-                      class="c-byenwU c-eywRub c-byenwU-ieGpUkf-css"
-                    />
-                    <div
-                      class="c-byenwU c-eAcrKl c-byenwU-ielZvhQ-css"
+                      class="c-byenwU c-fHwhLT c-byenwU-ieGpUkf-css"
                     />
                   </div>
                 </div>
@@ -126,8 +129,9 @@ describe('VideoPlayer', () => {
                 class="c-cSwjHS c-lbNOYO"
               >
                 <button
-                  aria-label="enter fullscreen"
+                  aria-label="Full screen (f)"
                   class="c-hddTKm"
+                  title="Full screen (f)"
                 >
                   <svg
                     fill="none"

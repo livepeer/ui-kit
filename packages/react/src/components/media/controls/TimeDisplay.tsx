@@ -2,9 +2,8 @@ import { styled } from '@stitches/react';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
+import { PropsOf } from '../../system';
 import { useMediaController } from '../context';
-
-import { PropsOf } from './system';
 
 const StyledTimeDisplay = styled('span', {
   color: 'white',

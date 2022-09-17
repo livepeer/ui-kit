@@ -2,9 +2,8 @@ import { styled } from '@stitches/react';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
+import { PropsOf, useConditionalIcon } from '../../system';
 import { useMediaController } from '../context';
-
-import { PropsOf, useConditionalIcon } from './system';
 
 const DefaultEnterFullscreenIcon = ({ size }: { size: number }) => (
   <svg
@@ -132,9 +131,15 @@ export const FullscreenButton = React.forwardRef<
     <DefaultEnterFullscreenIcon size={42} />,
   );
 
+  const title = React.useMemo(
+    () => (fullscreen ? 'Exit full screen (f)' : 'Full screen (f)'),
+    [fullscreen],
+  );
+
   return (
     <StyledButton
-      aria-label={`${fullscreen ? 'exit' : 'enter'} fullscreen`}
+      title={title}
+      aria-label={title}
       ref={ref}
       onClick={onClickComposed}
       {...rest}

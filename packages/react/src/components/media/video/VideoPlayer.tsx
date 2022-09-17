@@ -1,9 +1,10 @@
 import { ControlsOptions, PlaybackInfo } from 'livepeer';
 import * as React from 'react';
 
-import { usePlaybackInfo } from '../../hooks';
-import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
-import { MediaControllerProvider } from './context';
+import { usePlaybackInfo } from '../../../hooks';
+import { PropsOf } from '../../system';
+import { MediaControllerProvider } from '../context';
+
 import {
   BottomContainer,
   Container,
@@ -12,8 +13,8 @@ import {
   Progress,
   TimeDisplay,
   Volume,
-} from './controls';
-import { PropsOf } from './controls/system';
+} from '../controls';
+import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
 
 export type VideoPlayerProps = Omit<
   GenericHlsVideoPlayerProps,

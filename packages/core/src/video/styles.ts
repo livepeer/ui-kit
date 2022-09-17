@@ -11,6 +11,10 @@ export const playerCss = {
       'ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;',
     maxWidth: '100%',
 
+    svg: {
+      pointerEvents: 'none',
+    },
+
     'video::-webkit-media-controls-enclosure': {
       display: 'none !important',
     },

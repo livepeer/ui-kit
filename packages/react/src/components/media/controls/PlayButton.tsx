@@ -2,9 +2,8 @@ import { styled } from '@stitches/react';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
+import { PropsOf, useConditionalIcon } from '../../system';
 import { useMediaController } from '../context';
-
-import { PropsOf, useConditionalIcon } from './system';
 
 const DefaultPlayIcon = ({ size }: { size: number }) => (
   <svg
@@ -94,9 +93,15 @@ export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
       <DefaultPlayIcon size={42} />,
     );
 
+    const title = React.useMemo(
+      () => (playing ? 'Pause (k)' : 'Play (k)'),
+      [playing],
+    );
+
     return (
       <StyledButton
-        aria-label={playing ? 'pause' : 'play'}
+        title={title}
+        aria-label={title}
         ref={ref}
         onClick={onClickComposed}
         {...rest}
