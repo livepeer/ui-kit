@@ -46,11 +46,13 @@ const StyledButton = styled('button', {
 });
 
 const mediaControllerSelector = ({
-  volume,
+  isVolumeChangeSupported,
   requestToggleMute,
+  muted,
 }: MediaControllerState<HTMLMediaElement>) => ({
-  volume,
+  isVolumeChangeSupported,
   requestToggleMute,
+  muted,
 });
 
 export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
@@ -74,9 +76,8 @@ export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
 
 export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
   (props, ref) => {
-    const { volume, requestToggleMute } = useMediaController(
-      mediaControllerSelector,
-    );
+    const { requestToggleMute, muted, isVolumeChangeSupported } =
+      useMediaController(mediaControllerSelector);
 
     const { unmutedIcon, mutedIcon, onClick, ...rest } = props;
 
@@ -89,7 +90,7 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
     );
 
     const _children = useConditionalIcon(
-      Boolean(volume),
+      !muted,
       unmutedIcon,
       <DefaultUnmutedIcon size={42} />,
       mutedIcon,
@@ -97,8 +98,8 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
     );
 
     const title = React.useMemo(
-      () => (volume ? 'Unmute (m)' : 'Mute (m)'),
-      [volume],
+      () => (muted ? 'Unmute (m)' : 'Mute (m)'),
+      [muted],
     );
 
     return (
@@ -112,7 +113,8 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
         >
           {_children}
         </StyledButton>
-        <VolumeProgress />
+
+        {isVolumeChangeSupported && <VolumeProgress />}
       </Container>
     );
   },
@@ -123,13 +125,15 @@ Volume.displayName = 'Volume';
 const mediaControllerSelectorProgress = ({
   volume,
   requestVolume,
+  muted,
 }: MediaControllerState<HTMLMediaElement>) => ({
   volume,
   requestVolume,
+  muted,
 });
 
 const VolumeProgress = () => {
-  const { volume, requestVolume } = useMediaController(
+  const { volume, requestVolume, muted } = useMediaController(
     mediaControllerSelectorProgress,
   );
 
@@ -140,5 +144,11 @@ const VolumeProgress = () => {
     [requestVolume],
   );
 
-  return <BaseSlider ariaName="volume" value={volume} onChange={onChange} />;
+  return (
+    <BaseSlider
+      ariaName="volume"
+      value={muted ? 0 : volume}
+      onChange={onChange}
+    />
+  );
 };

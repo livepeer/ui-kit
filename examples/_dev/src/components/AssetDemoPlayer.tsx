@@ -22,6 +22,7 @@ export const AssetDemoPlayer = () => {
         onPlaybackInfoError={handleError}
         width={1100}
         loop
+        // muted
         containerCss={{ fontFamily: 'Arial' }}
       />
 

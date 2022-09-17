@@ -60,14 +60,16 @@ export const Progress = (props: ProgressProps) => {
     'playing' | 'paused' | 'none'
   >('none');
 
-  const [min, max] = React.useMemo(
-    () => [0, duration, progress] as const,
+  const [min, max, current] = React.useMemo(
+    () =>
+      [
+        0,
+        duration && !isNaN(duration) ? duration : 0,
+        progress && !isNaN(progress) ? progress : 0,
+      ] as const,
     [duration, progress],
   );
-  const value = React.useMemo(
-    () => progress / (max - min),
-    [min, max, progress],
-  );
+  const value = React.useMemo(() => current / (max - min), [min, max, current]);
   const secondaryValue = React.useMemo(
     () => buffered / (max - min),
     [min, max, buffered],

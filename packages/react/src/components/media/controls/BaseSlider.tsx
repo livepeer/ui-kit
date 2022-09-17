@@ -239,14 +239,10 @@ export const BaseSlider = (props: BaseSliderProps) => {
     setIsActive(false);
   }, [setIsActive]);
 
-  const valueText = React.useMemo(
-    () => Math.round(value * 100).toFixed(0),
-    [value],
-  );
+  const valueRounded = React.useMemo(() => Math.round(value * 100), [value]);
 
   return (
     <Range
-      {...props}
       ref={ref}
       onPointerDown={onPointerDown}
       onMouseEnter={onMouseEnter}
@@ -254,8 +250,8 @@ export const BaseSlider = (props: BaseSliderProps) => {
       role="slider"
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={valueText}
-      aria-valuetext={`${valueText}% ${props.ariaName}`}
+      aria-valuenow={valueRounded}
+      aria-valuetext={`${valueRounded}% ${props.ariaName}`}
       aria-orientation="horizontal"
       css={{ touchAction: 'none' }}
     >
