@@ -144,7 +144,8 @@ export const CreateAndViewAsset = () => {
   } = useCreateAsset();
   const { data: asset, status: assetStatus } = useAsset({
     assetId: createdAsset?.id,
-    refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
+    refetchInterval: (asset) =>
+      asset?.status?.phase !== 'ready' ? 5000 : false,
   });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {

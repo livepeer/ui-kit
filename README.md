@@ -23,7 +23,7 @@
 ## Features
 
 - 🚀 Hooks for working with Livepeer providers and the Livepeer protocol
-- 👟 Caching, request deduplication, multicall, batching, and persistence
+- 👟 Response caching, request deduplication, and persistence
 - 🌀 Auto-refresh data on network changes
 - 🦄 TypeScript ready
 - 🌳 Test suite across core and React components
