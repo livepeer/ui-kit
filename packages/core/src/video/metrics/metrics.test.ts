@@ -50,12 +50,10 @@ describe('reportVideoMetrics', () => {
     it('should initialize to base state', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics, websocket } = reportVideoMetrics(
+      const { metrics } = reportVideoMetrics(
         element,
         'wss://livepeer.fun/json+1234.js',
       );
-
-      websocket?.onopen?.(new Event('open'));
 
       const metricsSnapshot = metrics?.getMetrics();
 
@@ -83,12 +81,10 @@ describe('reportVideoMetrics', () => {
     it('should update time unpaused and first playback', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics, websocket } = reportVideoMetrics(
+      const { metrics } = reportVideoMetrics(
         element,
         'wss://livepeer.fun/json+1234.js',
       );
-
-      websocket?.onopen?.(new Event('open'));
 
       element.dispatchEvent(new Event('playing'));
 
@@ -151,12 +147,10 @@ describe('reportVideoMetrics', () => {
     it('should update time stalled and stalled count', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics, websocket } = reportVideoMetrics(
+      const { metrics } = reportVideoMetrics(
         element,
         'wss://livepeer.fun/json+1234.js',
       );
-
-      websocket?.onopen?.(new Event('open'));
 
       expect(element.dispatchEvent.mock.calls).toMatchInlineSnapshot('[]');
 

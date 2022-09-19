@@ -1,12 +1,10 @@
 import { vi } from 'vitest';
 
-export const MockedWebSocket = vi.fn(() => ({
-  onopen: vi.fn(),
-  onclose: vi.fn(),
-  send: vi.fn(),
-}));
+import WebSocket from 'ws';
 
-vi.stubGlobal('WebSocket', MockedWebSocket);
+vi.stubGlobal('WebSocket', WebSocket);
+
+export const MockedWebSocket = WebSocket;
 
 export class MockedVideoElement extends HTMLVideoElement {
   listeners: { [key: string]: EventListenerOrEventListenerObject[] } = {};

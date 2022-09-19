@@ -265,6 +265,7 @@ const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 type VideoMetrics<TElement extends HTMLMediaElement | HTMLVideoElement> = {
   metrics: MetricsStatus<TElement> | null;
   websocket: WebSocket | null;
+  report: (() => void) | null;
 };
 
 /**
@@ -279,6 +280,7 @@ export function reportVideoMetrics<
   const defaultResponse: VideoMetrics<TElement> = {
     metrics: null,
     websocket: null,
+    report: null,
   };
 
   // do not attach twice (to the same websocket)
@@ -420,7 +422,7 @@ export function reportVideoMetrics<
       }, 1e3);
     };
 
-    return { metrics: metricsStatus, websocket: ws };
+    return { metrics: metricsStatus, websocket: ws, report };
   } catch (e) {
     console.log(e);
   }
@@ -429,6 +431,7 @@ export function reportVideoMetrics<
 }
 
 function send(webSocket: WebSocket, metrics: Partial<RawMetrics>) {
+  console.log({ webSocket: webSocket.readyState });
   if (webSocket.readyState !== webSocket.OPEN) {
     return;
   }
