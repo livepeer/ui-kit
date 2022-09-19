@@ -431,7 +431,6 @@ export function reportVideoMetrics<
 }
 
 function send(webSocket: WebSocket, metrics: Partial<RawMetrics>) {
-  console.log({ webSocket: webSocket.readyState });
   if (webSocket.readyState !== webSocket.OPEN) {
     return;
   }

@@ -10,5 +10,9 @@ export function setupClient(config?: Partial<ClientConfig>) {
   });
 }
 
-export { MockedVideoElement, MockedWebSocket } from './mocks';
+export {
+  MockedVideoElement,
+  MockedWebSocket,
+  waitForWebsocketOpen,
+} from './mocks';
 export { getSampleVideo, getSigners } from './utils';

@@ -1,24 +1,39 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-import { MockedVideoElement } from '../../../test';
+import {
+  MockedVideoElement,
+  setupClient,
+  waitForWebsocketOpen,
+} from '../../../test';
+import { getMetrics } from '../../actions';
+import { Metrics } from '../../types';
 
 import { reportVideoMetrics } from './metrics';
+import { getMetricsReportingUrl } from './utils';
+
+const assetId = 'ec4cb9ca-cebe-4b41-a263-1ba4aa7cb695';
+const playbackUrl =
+  'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
 
 describe('reportVideoMetrics', () => {
-  it('registers listeners', () => {
-    const element = new MockedVideoElement();
+  beforeAll(() => {
+    setupClient();
+  });
 
-    const { metrics } = reportVideoMetrics(
-      element,
-      'wss://livepeer.fun/json+1234.js',
-    );
+  describe('event listeners', () => {
+    it('registers listeners', async () => {
+      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
 
-    expect(metrics).toBeTruthy;
-    expect(element.setAttribute).toHaveBeenCalledOnce();
-    expect(
-      element.addEventListener.mock.calls.map((e) => e?.[0]),
-    ).toMatchInlineSnapshot(
-      `
+      const element = new MockedVideoElement();
+
+      const { metrics } = reportVideoMetrics(element, reportingUrl ?? '');
+
+      expect(metrics).toBeTruthy;
+      expect(element.setAttribute).toHaveBeenCalledOnce();
+      expect(
+        element.addEventListener.mock.calls.map((e) => e?.[0]),
+      ).toMatchInlineSnapshot(
+        `
       [
         "waiting",
         "stalled",
@@ -43,17 +58,15 @@ describe('reportVideoMetrics', () => {
         "ratechange",
       ]
     `,
-    );
-  });
+      );
+    });
 
-  describe('reports', () => {
     it('should initialize to base state', async () => {
+      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
+
       const element = new MockedVideoElement();
 
-      const { metrics } = reportVideoMetrics(
-        element,
-        'wss://livepeer.fun/json+1234.js',
-      );
+      const { metrics } = reportVideoMetrics(element, reportingUrl ?? '');
 
       const metricsSnapshot = metrics?.getMetrics();
 
@@ -79,12 +92,16 @@ describe('reportVideoMetrics', () => {
     });
 
     it('should update time unpaused and first playback', async () => {
+      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
+
       const element = new MockedVideoElement();
 
-      const { metrics } = reportVideoMetrics(
+      const { metrics, websocket } = reportVideoMetrics(
         element,
-        'wss://livepeer.fun/json+1234.js',
+        reportingUrl ?? '',
       );
+
+      await waitForWebsocketOpen(websocket);
 
       element.dispatchEvent(new Event('playing'));
 
@@ -92,7 +109,7 @@ describe('reportVideoMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "firstPlayback": 32000,
+          "firstPlayback": 35000,
           "nError": 0,
           "nStalled": 0,
           "nWaiting": 0,
@@ -112,12 +129,11 @@ describe('reportVideoMetrics', () => {
     });
 
     it('should update time waiting and waiting count', async () => {
+      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
+
       const element = new MockedVideoElement();
 
-      const { metrics } = reportVideoMetrics(
-        element,
-        'wss://livepeer.fun/json+1234.js',
-      );
+      const { metrics } = reportVideoMetrics(element, reportingUrl ?? '');
 
       element.dispatchEvent(new Event('waiting'));
 
@@ -145,12 +161,11 @@ describe('reportVideoMetrics', () => {
     });
 
     it('should update time stalled and stalled count', async () => {
+      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
+
       const element = new MockedVideoElement();
 
-      const { metrics } = reportVideoMetrics(
-        element,
-        'wss://livepeer.fun/json+1234.js',
-      );
+      const { metrics } = reportVideoMetrics(element, reportingUrl ?? '');
 
       expect(element.dispatchEvent.mock.calls).toMatchInlineSnapshot('[]');
 
@@ -178,5 +193,37 @@ describe('reportVideoMetrics', () => {
         }
       `);
     });
+  });
+
+  describe('websocket reporting', () => {
+    it('should update play count in total views', async () => {
+      const assetMetricsInitial = await getMetrics({ assetId });
+
+      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
+
+      const element = new MockedVideoElement();
+
+      const { websocket, report } = reportVideoMetrics(
+        element,
+        reportingUrl ?? '',
+      );
+
+      await waitForWebsocketOpen(websocket);
+
+      element.dispatchEvent(new Event('playing'));
+
+      report?.();
+
+      let assetMetrics: Metrics | null = null;
+
+      const expectedViewCount =
+        Number(assetMetricsInitial?.[0]?.startViews ?? 0) + 1;
+
+      while (Number(assetMetrics?.[0]?.startViews) !== expectedViewCount) {
+        assetMetrics = await getMetrics({ assetId });
+
+        await new Promise((resolve) => setTimeout(resolve, 2_000));
+      }
+    }, 600_000);
   });
 });
