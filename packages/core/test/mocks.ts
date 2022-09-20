@@ -1,18 +1,16 @@
 import { vi } from 'vitest';
 
-import { default as NodeWebSocket } from 'ws';
+export const MockedWebSocket = vi.fn(() => ({
+  onopen: vi.fn(),
+  onclose: vi.fn(),
+  send: vi.fn(),
+}));
 
-vi.stubGlobal('WebSocket', NodeWebSocket);
+vi.stubGlobal('WebSocket', MockedWebSocket);
 
-export const MockedWebSocket = NodeWebSocket;
-
-export const waitForWebsocketOpen = async (websocket: WebSocket | null) =>
-  new Promise<void>((resolve, reject) => {
-    websocket
-      ? websocket.addEventListener('open', () => {
-          resolve();
-        })
-      : reject();
+export const waitForWebsocketOpen = async (_websocket: WebSocket | null) =>
+  new Promise<void>((resolve, _reject) => {
+    resolve();
   });
 
 export class MockedVideoElement extends HTMLVideoElement {

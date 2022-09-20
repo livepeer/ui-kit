@@ -46,9 +46,7 @@
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
-    "@types/ws": "^8.5.3",
-    "ethers": "^5.7.0",
-    "ws": "^8.8.1"
+    "ethers": "^5.7.0"
   },
   "keywords": [
     "eth",

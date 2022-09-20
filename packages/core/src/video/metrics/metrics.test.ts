@@ -5,13 +5,11 @@ import {
   setupClient,
   waitForWebsocketOpen,
 } from '../../../test';
-import { getAssetMetrics } from '../../actions';
-import { Metrics } from '../../types';
 
 import { reportVideoMetrics } from './metrics';
 import { getMetricsReportingUrl } from './utils';
 
-const assetId = 'ec4cb9ca-cebe-4b41-a263-1ba4aa7cb695';
+// const assetId = 'ec4cb9ca-cebe-4b41-a263-1ba4aa7cb695';
 const playbackUrl =
   'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
 
@@ -109,7 +107,7 @@ describe('reportVideoMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "firstPlayback": 35000,
+          "firstPlayback": 36000,
           "nError": 0,
           "nStalled": 0,
           "nWaiting": 0,
@@ -193,37 +191,5 @@ describe('reportVideoMetrics', () => {
         }
       `);
     });
-  });
-
-  describe('websocket reporting', () => {
-    it('should update play count in total views', async () => {
-      const assetMetricsInitial = await getAssetMetrics({ assetId });
-
-      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
-
-      const element = new MockedVideoElement();
-
-      const { websocket, report } = reportVideoMetrics(
-        element,
-        reportingUrl ?? '',
-      );
-
-      await waitForWebsocketOpen(websocket);
-
-      element.dispatchEvent(new Event('playing'));
-
-      report?.();
-
-      let assetMetrics: Metrics | null = null;
-
-      const expectedViewCount =
-        Number(assetMetricsInitial?.[0]?.startViews ?? 0) + 1;
-
-      while (Number(assetMetrics?.[0]?.startViews) !== expectedViewCount) {
-        assetMetrics = await getAssetMetrics({ assetId });
-
-        await new Promise((resolve) => setTimeout(resolve, 2_000));
-      }
-    }, 600_000);
   });
 });
