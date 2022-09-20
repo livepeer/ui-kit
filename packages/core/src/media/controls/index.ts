@@ -1,6 +1,15 @@
 import { persist } from 'zustand/middleware';
 import create, { StoreApi } from 'zustand/vanilla';
 
+import { VIDEO_HLS_INITIALIZED_ATTRIBUTE } from '../hls';
+
+import {
+  addFullscreenEventListener,
+  enterFullscreen,
+  exitFullscreen,
+  isCurrentlyFullscreen,
+} from './fullscreen';
+
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE = 'data-controller-initialized';
 
 export type MediaControllerState<TElement extends HTMLMediaElement> = {
@@ -94,28 +103,11 @@ const getBoundedSeek = (seek: number, duration: number | undefined) =>
 const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 
-// if volume change is unsupported, the element will always return 1
-// similar to https://github.com/videojs/video.js/pull/7514/files
+// volume change is unsupported on iOS devices
 const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
   element: TElement,
 ) => {
-  return new Promise<boolean>((resolve) => {
-    const prevVolume = element?.volume ?? DEFAULT_VOLUME_LEVEL;
-
-    const newVolume = prevVolume - 0.01;
-
-    // set new value and test
-    element.volume = newVolume;
-
-    window.setTimeout(() => {
-      const isSupported = element.volume !== 1;
-
-      // reset to old value
-      element.volume = prevVolume;
-
-      resolve(isSupported);
-    });
-  });
+  return !isIOSBrowser(element);
 };
 
 export const createControllerStore = <TElement extends HTMLMediaElement>(
@@ -131,7 +123,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
 
         hidden: false,
 
-        playing: false,
+        playing: !element?.paused,
         fullscreen: false,
 
         progress: getFilteredNaN(element?.currentTime),
@@ -140,7 +132,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         buffered: 0,
 
         volume: element?.volume ?? DEFAULT_VOLUME_LEVEL,
-        muted: element?.muted ?? element?.defaultMuted ?? false,
+        muted: element?.muted ?? element?.defaultMuted ?? true,
         isVolumeChangeSupported: false,
 
         _lastInteraction: Date.now(),
@@ -205,19 +197,18 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         name: 'livepeer-player',
         version: 1,
         // since these values are persisted across media elements, only persist volume
-        partialize: ({ volume, muted }) => ({
+        partialize: ({ volume }) => ({
           volume,
-          muted,
         }),
       },
     ),
   );
 
+  const initializedState = store.getState();
+
   // restore the persisted values from store
-  if (element) {
-    const initializedState = store.getState();
+  if (element && !element.muted && !element.defaultMuted) {
     element.volume = initializedState.volume;
-    element.muted = initializedState.muted;
   }
 
   return store;
@@ -320,11 +311,16 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   };
 
   if (element) {
+    const isVolumeChangeSupported = getIsVolumeChangeSupported(element);
+
+    store.getState().setIsVolumeChangeSupported(isVolumeChangeSupported);
+
+    element.addEventListener('volumechange', onVolumeChange);
+
     element.addEventListener('play', onPlay);
     element.addEventListener('pause', onPause);
     element.addEventListener('durationchange', onDurationChange);
     element.addEventListener('timeupdate', onTimeUpdate);
-    element.addEventListener('volumechange', onVolumeChange);
     element.addEventListener('progress', onProgress);
 
     const parentElementOrElement = element?.parentElement ?? element;
@@ -338,21 +334,11 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       parentElementOrElement.addEventListener('mousemove', onMouseMove);
     }
 
-    getIsVolumeChangeSupported(element)
-      .then((isVolumeChangeSupported) =>
-        store.getState().setIsVolumeChangeSupported(isVolumeChangeSupported),
-      )
-      .catch((e) => console.error(e));
-
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
   }
 
   const onFullScreenChange = (e: Event) => {
-    const isFullscreenElementPresent = Boolean(
-      document.fullscreenElement ||
-        document['webkitCurrentFullScreenElement' as 'fullscreenElement'] ||
-        document['webkitFullscreenElement' as 'fullscreenElement'],
-    );
+    const isFullscreenElementPresent = isCurrentlyFullscreen(element);
 
     const eventTargetIncludesElement = Boolean(
       (e?.target as Element)?.contains?.(element),
@@ -368,11 +354,13 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     autohide,
   });
 
-  document?.addEventListener('fullscreenchange', onFullScreenChange);
+  // add fullscreen listener
+  const removeFullscreenListener =
+    addFullscreenEventListener(onFullScreenChange);
 
   return {
     destroy: () => {
-      document?.removeEventListener?.('fullscreenchange', onFullScreenChange);
+      removeFullscreenListener?.();
 
       element?.removeEventListener?.('play', onPlay);
       element?.removeEventListener?.('pause', onPause);
@@ -449,37 +437,19 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
         current._requestedFullscreenLastTime !==
         prev._requestedFullscreenLastTime
       ) {
-        const isFullscreenElementPresent = Boolean(
-          document.fullscreenElement ||
-            document['webkitCurrentFullScreenElement' as 'fullscreenElement'] ||
-            document['webkitFullscreenElement' as 'fullscreenElement'],
-        );
+        const isFullscreen = isCurrentlyFullscreen(element);
 
-        // try all browser variations (modern, old safari, old firefox, old IE)
-        if (!isFullscreenElementPresent) {
-          const fullscreenFunc =
-            element?.parentElement?.requestFullscreen ??
-            element?.parentElement?.[
-              'webkitRequestFullscreen' as 'requestFullscreen'
-            ] ??
-            element?.parentElement?.[
-              'mozRequestFullScreen' as 'requestFullscreen'
-            ] ??
-            element?.parentElement?.[
-              'msRequestFullscreen' as 'requestFullscreen'
-            ];
-          // retain the element "this" in the call
-          fullscreenFunc?.call?.(element?.parentElement);
-        } else if (isFullscreenElementPresent) {
-          const exitFullscreenFunc =
-            document?.exitFullscreen ??
-            document?.['webkitExitFullscreen' as 'exitFullscreen'] ??
-            document?.['mozExitFullScreen' as 'exitFullscreen'] ??
-            document?.['msExitFullscreen' as 'exitFullscreen'];
-          // retain the element "this" in the call
-          exitFullscreenFunc?.call?.(document);
+        if (!isFullscreen) {
+          await enterFullscreen(element);
+        } else {
+          await exitFullscreen(element);
         }
       }
     }
   });
+};
+
+const isIOSBrowser = (element: HTMLMediaElement | null) => {
+  // ios does not use hls.js
+  return !element?.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
 };

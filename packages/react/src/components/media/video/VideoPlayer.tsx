@@ -1,13 +1,14 @@
-import { ControlsOptions, PlaybackInfo } from 'livepeer';
+import { createTheme } from '@stitches/react';
+import { ControlsOptions, PlaybackInfo, ThemeConfig } from 'livepeer';
 import * as React from 'react';
 
 import { usePlaybackInfo } from '../../../hooks';
-import { PropsOf } from '../../system';
 import { MediaControllerProvider } from '../context';
 
 import {
   BottomContainer,
   Container,
+  ContainerProps,
   FullscreenButton,
   PlayButton,
   Progress,
@@ -35,7 +36,9 @@ export type VideoPlayerProps = Omit<
   /** Configuration for the event listeners */
   controlsConfig?: ControlsOptions;
   /** CSS for the container element */
-  containerCss?: PropsOf<typeof Container>['css'];
+  containerCss?: ContainerProps['css'];
+  /** Theme configuration for the player */
+  theme?: ThemeConfig;
 } & (
     | {
         src: string;
@@ -104,15 +107,21 @@ export function VideoPlayer({
     [videoElement],
   );
 
+  const theme = React.useMemo(
+    () => (props.theme ? createTheme(props.theme) : undefined),
+    [props?.theme],
+  );
+
   return srcOrPlaybackUrl ? (
     <MediaControllerProvider element={videoElement} options={controlsConfig}>
-      <Container css={{ width, ...containerCss }}>
+      <Container className={theme} css={{ width, ...containerCss }}>
         <HlsVideoPlayer
           hlsConfig={hlsConfig}
           ref={playerRef}
           autoPlay={autoPlay}
           controls={false}
           {...props}
+          muted={autoPlay ? true : props.muted}
           src={srcOrPlaybackUrl}
         />
 

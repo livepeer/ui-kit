@@ -2,7 +2,7 @@ import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
 // import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
 
-const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
+export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
 
 export const isHlsSupported = () => Hls.isSupported();
 
@@ -40,9 +40,10 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.loadSource(source);
 
     hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
-      if (config?.autoplay) {
+      if (config?.autoplay && element) {
         try {
-          element?.play();
+          element.muted = true;
+          // element.play();
         } catch (e) {
           console.log(
             'Unable to autoplay prior to user interaction with the dom.',

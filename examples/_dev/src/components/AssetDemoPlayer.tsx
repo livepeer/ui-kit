@@ -24,6 +24,24 @@ export const AssetDemoPlayer = () => {
         loop
         // muted
         containerCss={{ fontFamily: 'Arial' }}
+        theme={{
+          colors: {
+            accent: '#4efffe',
+            background: 'black',
+            // icon: '#4efffe',
+          },
+          radii: {
+            slider: '3px',
+          },
+          space: {
+            // controlsMarginX: '20px',
+            // controlsMarginY: '10px',
+          },
+          sizes: {
+            // trackActive: '8px',
+            // trackInactive: '5px',
+          },
+        }}
       />
 
       <p>

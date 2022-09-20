@@ -1,5 +1,4 @@
-import { styled } from '@stitches/react';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, styling } from 'livepeer';
 import * as React from 'react';
 
 import { PropsOf, useConditionalIcon } from '../../system';
@@ -64,20 +63,6 @@ const DefaultExitFullscreenIcon = ({ size }: { size: number }) => (
   </svg>
 );
 
-const StyledButton = styled('button', {
-  borderRadius: 4,
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  outline: 'inherit',
-  color: 'white',
-  padding: 0,
-  paddingTop: 3,
-  '&:hover': {
-    color: '#909090',
-  },
-});
-
 const mediaControllerSelector = ({
   fullscreen,
   requestToggleFullscreen,
@@ -137,7 +122,8 @@ export const FullscreenButton = React.forwardRef<
   );
 
   return (
-    <StyledButton
+    <button
+      className={styling.iconButton()}
       title={title}
       aria-label={title}
       ref={ref}
@@ -145,7 +131,7 @@ export const FullscreenButton = React.forwardRef<
       {...rest}
     >
       {_children}
-    </StyledButton>
+    </button>
   );
 });
 

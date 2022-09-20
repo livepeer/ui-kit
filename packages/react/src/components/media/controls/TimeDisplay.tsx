@@ -1,14 +1,8 @@
-import { styled } from '@stitches/react';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, styling } from 'livepeer';
 import * as React from 'react';
 
 import { PropsOf } from '../../system';
 import { useMediaController } from '../context';
-
-const StyledTimeDisplay = styled('span', {
-  color: 'white',
-  marginLeft: 8,
-});
 
 export type TimeDisplayProps = Omit<PropsOf<'span'>, 'children'>;
 
@@ -46,9 +40,14 @@ export const TimeDisplay = React.forwardRef<HTMLSpanElement, TimeDisplayProps>(
     );
 
     return (
-      <StyledTimeDisplay aria-label={'playback time'} ref={ref} {...props}>
+      <span
+        className={styling.time()}
+        aria-label={'Playback time'}
+        ref={ref}
+        {...props}
+      >
         {`${formattedProgress} / ${formattedDuration}`}
-      </StyledTimeDisplay>
+      </span>
     );
   },
 );

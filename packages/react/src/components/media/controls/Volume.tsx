@@ -1,5 +1,4 @@
-import { styled } from '@stitches/react';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, styling } from 'livepeer';
 import * as React from 'react';
 
 import { PropsOf, useConditionalIcon } from '../../system';
@@ -24,26 +23,6 @@ const DefaultUnmutedIcon = ({ size }: { size: number }) => (
     ></path>
   </svg>
 );
-
-const Container = styled('div', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const StyledButton = styled('button', {
-  borderRadius: 4,
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  outline: 'inherit',
-  color: 'white',
-  padding: 0,
-  paddingTop: 3,
-  '&:hover': {
-    color: '#909090',
-  },
-});
 
 const mediaControllerSelector = ({
   isVolumeChangeSupported,
@@ -103,8 +82,9 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
     );
 
     return (
-      <Container>
-        <StyledButton
+      <div className={styling.volume.container()}>
+        <button
+          className={styling.iconButton()}
           title={title}
           aria-label={title}
           ref={ref}
@@ -112,10 +92,10 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
           {...rest}
         >
           {_children}
-        </StyledButton>
+        </button>
 
         {isVolumeChangeSupported && <VolumeProgress />}
-      </Container>
+      </div>
     );
   },
 );

@@ -1,5 +1,4 @@
-import { styled } from '@stitches/react';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, styling } from 'livepeer';
 import * as React from 'react';
 
 import { PropsOf, useConditionalIcon } from '../../system';
@@ -30,20 +29,6 @@ const DefaultPauseIcon = ({ size }: { size: number }) => (
     />
   </svg>
 );
-
-const StyledButton = styled('button', {
-  borderRadius: 4,
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  outline: 'inherit',
-  color: 'white',
-  padding: 0,
-  paddingTop: 3,
-  '&:hover': {
-    color: '#909090',
-  },
-});
 
 export type PlayButtonProps = Omit<PropsOf<'button'>, 'children'> & {
   /**
@@ -99,7 +84,8 @@ export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
     );
 
     return (
-      <StyledButton
+      <button
+        className={styling.iconButton()}
         title={title}
         aria-label={title}
         ref={ref}
@@ -107,7 +93,7 @@ export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
         {...rest}
       >
         {_children}
-      </StyledButton>
+      </button>
     );
   },
 );

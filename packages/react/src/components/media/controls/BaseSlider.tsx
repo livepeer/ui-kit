@@ -1,47 +1,8 @@
-import { styled } from '@stitches/react';
+import { styling } from 'livepeer';
 
 import * as React from 'react';
 
 import { PropsOf, useMemoizedIcon } from '../../system';
-
-const Range = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  minWidth: 80,
-  minHeight: 15,
-
-  cursor: 'pointer',
-  borderRadius: 0,
-
-  height: '100%',
-  width: '100%',
-});
-
-const sharedTrack = styled('div', {
-  position: 'relative',
-  backgroundColor: 'white',
-});
-
-const PastTrack = styled(sharedTrack, {
-  height: 30,
-  borderTopLeftRadius: 2,
-  borderBottomLeftRadius: 2,
-});
-
-const SecondaryTrack = styled(sharedTrack, {});
-
-const FutureTrack = styled(sharedTrack, {
-  borderTopRightRadius: 2,
-  borderBottomRightRadius: 2,
-});
-
-const DefaultThumb = styled('div', {
-  width: 10,
-  height: 10,
-
-  borderRadius: '100%',
-  backgroundColor: 'white',
-});
 
 export type BaseSliderProps = Omit<
   PropsOf<'div'>,
@@ -157,9 +118,12 @@ export const BaseSlider = (props: BaseSliderProps) => {
     }
   }, [isDragging, onUpdate, props]);
 
-  const _handle = useMemoizedIcon(props?.thumbIcon, <DefaultThumb />);
+  const _handle = useMemoizedIcon(
+    props?.thumbIcon,
+    <div className={styling.slider.thumb()} />,
+  );
 
-  const [value, secondaryValue] = React.useMemo(
+  const [value, middleValue] = React.useMemo(
     () => [
       !isNaN(props.value) ? props.value : 0,
       props.secondaryValue &&
@@ -171,56 +135,9 @@ export const BaseSlider = (props: BaseSliderProps) => {
     [props.value, props.secondaryValue],
   );
 
-  const futureValue = React.useMemo(
-    () => 1 - (value + secondaryValue),
-    [value, secondaryValue],
-  );
-
-  const pastCss = React.useMemo(
-    () => ({
-      flex: value,
-      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
-      opacity: 0.8,
-      height: isActiveOrDragging ? 5 : 3,
-    }),
-    [value, props?.rangeBackgroundColor, isActiveOrDragging],
-  );
-  const secondaryCss = React.useMemo(
-    () => ({
-      flex: secondaryValue,
-      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
-      opacity: 0.45,
-      height: isActiveOrDragging ? 5 : 3,
-      ...(value === 0 && !isActiveOrDragging
-        ? {
-            borderTopLeftRadius: 2,
-            borderBottomLeftRadius: 2,
-          }
-        : {}),
-      ...(futureValue === 0
-        ? {
-            borderTopRightRadius: 2,
-            borderBottomRightRadius: 2,
-          }
-        : {}),
-    }),
-    [
-      value,
-      futureValue,
-      secondaryValue,
-      props?.rangeBackgroundColor,
-      isActiveOrDragging,
-    ],
-  );
-
-  const futureCss = React.useMemo(
-    () => ({
-      flex: futureValue,
-      backgroundColor: props?.rangeBackgroundColor ?? '#00A55F',
-      opacity: 0.2,
-      height: isActiveOrDragging ? 5 : 3,
-    }),
-    [futureValue, props?.rangeBackgroundColor, isActiveOrDragging],
+  const rightValue = React.useMemo(
+    () => 1 - (value + middleValue),
+    [value, middleValue],
   );
 
   const onPointerDown = React.useCallback(
@@ -242,7 +159,7 @@ export const BaseSlider = (props: BaseSliderProps) => {
   const valueRounded = React.useMemo(() => Math.round(value * 100), [value]);
 
   return (
-    <Range
+    <div
       ref={ref}
       onPointerDown={onPointerDown}
       onMouseEnter={onMouseEnter}
@@ -253,15 +170,48 @@ export const BaseSlider = (props: BaseSliderProps) => {
       aria-valuenow={valueRounded}
       aria-valuetext={`${valueRounded}% ${props.ariaName}`}
       aria-orientation="horizontal"
-      css={{ touchAction: 'none' }}
+      className={styling.slider.container()}
     >
-      {value > 0.001 && <PastTrack css={pastCss} />}
+      {value > 0.001 && (
+        <div
+          className={styling.slider.track.left({
+            size: isActiveOrDragging ? 'active' : 'default',
+            rounded: value === 1 && !isActiveOrDragging ? 'full' : 'left',
+            css: { flex: value },
+          })}
+        />
+      )}
 
       {isActiveOrDragging && _handle}
 
-      {(secondaryValue ?? 0) > 0 && <SecondaryTrack css={secondaryCss} />}
+      {(middleValue ?? 0) > 0 && (
+        <div
+          className={styling.slider.track.middle({
+            size: isActiveOrDragging ? 'active' : 'default',
+            rounded:
+              middleValue === 1
+                ? !isActiveOrDragging
+                  ? 'full'
+                  : 'right'
+                : value <= 0.001
+                ? 'left'
+                : rightValue === 0
+                ? 'right'
+                : 'none',
+            css: { flex: middleValue },
+          })}
+        />
+      )}
 
-      {(futureValue ?? 0) > 0 && <FutureTrack css={futureCss} />}
-    </Range>
+      {(rightValue ?? 0) > 0 && (
+        <div
+          className={styling.slider.track.right({
+            size: isActiveOrDragging ? 'active' : 'default',
+            rounded: value <= 0.001 && !isActiveOrDragging ? 'full' : 'right',
+            css: { flex: rightValue },
+          })}
+        />
+      )}
+    </div>
   );
 };

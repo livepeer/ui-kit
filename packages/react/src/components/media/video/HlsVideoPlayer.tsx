@@ -17,10 +17,8 @@ export type GenericHlsVideoPlayerProps =
 
 const mediaControllerSelector = ({
   _element,
-  requestVolume,
 }: MediaControllerState<HTMLMediaElement>) => ({
   element: _element,
-  requestVolume,
 });
 
 export type HlsVideoPlayerProps = GenericHlsVideoPlayerProps & {
@@ -42,18 +40,18 @@ export const HlsVideoPlayer = React.forwardRef<
     },
     ref,
   ) => {
-    const { element, requestVolume } = useMediaController(
-      mediaControllerSelector,
+    const { element } = useMediaController(mediaControllerSelector);
+
+    const [isMediaSourceSupported, canPlayAppleMpeg] = React.useMemo(
+      () => [
+        typeof window !== 'undefined' && isHlsSupported(),
+        element ? element.canPlayType('application/vnd.apple.mpegurl') : null,
+      ],
+      [element],
     );
 
     React.useEffect(() => {
-      if (props.muted) {
-        requestVolume(0);
-      }
-    }, [props.muted, requestVolume]);
-
-    React.useEffect(() => {
-      if (element && typeof window !== 'undefined' && isHlsSupported()) {
+      if (element && isMediaSourceSupported && !canPlayAppleMpeg) {
         const { destroy } = createNewHls(src, element, {
           autoplay: autoPlay,
           ...hlsConfig,
@@ -63,28 +61,21 @@ export const HlsVideoPlayer = React.forwardRef<
           destroy();
         };
       }
-    }, [autoPlay, hlsConfig, src, element]);
+    }, [
+      autoPlay,
+      hlsConfig,
+      src,
+      element,
+      isMediaSourceSupported,
+      canPlayAppleMpeg,
+    ]);
 
-    const isMediaSourceSupported = React.useMemo(
-      () => typeof window !== 'undefined' && isHlsSupported(),
-      [],
-    );
-
+    // if HLS is supported by default in the user's browser, use video player
     // if Media Source is supported, use HLS.js to play video
-    // fallback to using a regular video player if HLS is supported by default in the user's browser
-    return isMediaSourceSupported ? (
+    // fallback to using a regular video player
+    return canPlayAppleMpeg === 'probably' || canPlayAppleMpeg === 'maybe' ? (
       <video
-        aria-label="video-player"
-        role="video"
-        controls={controls}
-        width={width}
-        ref={ref}
-        webkit-playsinline
-        playsInline
         {...props}
-      />
-    ) : (
-      <video
         aria-label="video-player"
         role="video"
         src={src}
@@ -92,9 +83,34 @@ export const HlsVideoPlayer = React.forwardRef<
         controls={controls}
         width={width}
         ref={ref}
-        webkit-playsinline
+        webkit-playsinline="true"
         playsInline
+      />
+    ) : isMediaSourceSupported ? (
+      <video
         {...props}
+        aria-label="video-player"
+        role="video"
+        controls={controls}
+        width={width}
+        ref={ref}
+        webkit-playsinline="true"
+        playsInline
+        autoPlay={autoPlay}
+      />
+    ) : (
+      // TODO handle this case better
+      <video
+        {...props}
+        aria-label="video-player"
+        role="video"
+        src={src}
+        autoPlay={autoPlay}
+        controls={controls}
+        width={width}
+        ref={ref}
+        webkit-playsinline="true"
+        playsInline
       />
     );
   },

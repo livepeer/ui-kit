@@ -260,7 +260,7 @@ export class MetricsStatus<
 const bootMs = Date.now(); // used for firstPlayback value
 const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
-type VideoMetrics<TElement extends HTMLMediaElement> = {
+type MediaMetrics<TElement extends HTMLMediaElement> = {
   metrics: MetricsStatus<TElement> | null;
   websocket: WebSocket | null;
 };
@@ -271,11 +271,11 @@ type VideoMetrics<TElement extends HTMLMediaElement> = {
  * @param element                 Element to capture playback metrics from
  * @param reportingWebsocketUrl   URL to the websocket to report to
  */
-export function reportVideoMetrics<TElement extends HTMLMediaElement>(
+export function reportMediaMetrics<TElement extends HTMLMediaElement>(
   element: TElement,
   reportingWebsocketUrl: string,
-): VideoMetrics<TElement> {
-  const defaultResponse: VideoMetrics<TElement> = {
+): MediaMetrics<TElement> {
+  const defaultResponse: MediaMetrics<TElement> = {
     metrics: null,
     websocket: null,
   };

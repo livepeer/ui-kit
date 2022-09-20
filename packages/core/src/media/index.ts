@@ -10,7 +10,8 @@ export {
   createMetricsReportingUrl,
   MetricsStatus,
   PlaybackMonitor,
-  reportVideoMetrics,
+  reportMediaMetrics,
 } from './metrics';
 export type { Metrics, PlaybackRecord } from './metrics';
-export { playerCss } from './styles';
+export { styling } from './styling';
+export type { ThemeConfig } from './styling';

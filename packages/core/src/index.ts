@@ -77,6 +77,26 @@ export type {
   TestnetLivepeerChainId,
 } from './constants';
 export { HttpError, IncorrectChainIdError } from './errors';
+export {
+  addEventListeners,
+  createControllerStore,
+  createMetricsReportingUrl,
+  createNewHls,
+  isHlsSupported,
+  MetricsStatus,
+  PlaybackMonitor,
+  reportMediaMetrics,
+  styling,
+} from './media';
+export type {
+  ControlsOptions,
+  HlsVideoConfig,
+  MediaControllerState,
+  MediaControllerStore,
+  Metrics,
+  PlaybackRecord,
+  ThemeConfig,
+} from './media';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
 export {
@@ -140,22 +160,3 @@ export type {
   UpdateStreamArgs,
 } from './types';
 export { pick } from './utils';
-export {
-  addEventListeners,
-  createControllerStore,
-  createMetricsReportingUrl,
-  createNewHls,
-  isHlsSupported,
-  MetricsStatus,
-  PlaybackMonitor,
-  playerCss,
-  reportVideoMetrics,
-} from './video';
-export type {
-  ControlsOptions,
-  HlsVideoConfig,
-  MediaControllerState,
-  MediaControllerStore,
-  Metrics,
-  PlaybackRecord,
-} from './video';
