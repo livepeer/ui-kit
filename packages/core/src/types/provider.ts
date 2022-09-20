@@ -32,7 +32,7 @@ export interface LivepeerProvider {
   /** Get playback info for a playback ID */
   getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
   /** Get metrics for an asset ID */
-  getMetrics(args: GetMetricsArgs): Promise<Metrics>;
+  getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics>;
 }
 
 export type StreamIdOrString =
@@ -408,10 +408,8 @@ export type PlaybackInfo = {
   };
 };
 
-export type GetMetricsArgs = {
+export type GetAssetMetricsArgs = {
   assetId: string;
-
-  // by: "day" |
 };
 
 export type Metric = {

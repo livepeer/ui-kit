@@ -1,2 +1,2 @@
-export { getMetrics } from './getMetrics';
+export { getAssetMetrics } from './getAssetMetrics';
 export { getPlaybackInfo } from './getPlaybackInfo';

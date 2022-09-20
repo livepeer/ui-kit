@@ -5,7 +5,7 @@ import {
   setupClient,
   waitForWebsocketOpen,
 } from '../../../test';
-import { getMetrics } from '../../actions';
+import { getAssetMetrics } from '../../actions';
 import { Metrics } from '../../types';
 
 import { reportVideoMetrics } from './metrics';
@@ -197,7 +197,7 @@ describe('reportVideoMetrics', () => {
 
   describe('websocket reporting', () => {
     it('should update play count in total views', async () => {
-      const assetMetricsInitial = await getMetrics({ assetId });
+      const assetMetricsInitial = await getAssetMetrics({ assetId });
 
       const reportingUrl = await getMetricsReportingUrl(playbackUrl);
 
@@ -220,7 +220,7 @@ describe('reportVideoMetrics', () => {
         Number(assetMetricsInitial?.[0]?.startViews ?? 0) + 1;
 
       while (Number(assetMetrics?.[0]?.startViews) !== expectedViewCount) {
-        assetMetrics = await getMetrics({ assetId });
+        assetMetrics = await getAssetMetrics({ assetId });
 
         await new Promise((resolve) => setTimeout(resolve, 2_000));
       }

@@ -6,7 +6,7 @@ export type {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
-  GetMetricsArgs,
+  GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,

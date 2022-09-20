@@ -14,7 +14,7 @@ export {
   getServiceRegistry,
   getTicketBroker,
 } from './contracts';
-export { getMetrics, getPlaybackInfo } from './playback';
+export { getAssetMetrics, getPlaybackInfo } from './playback';
 export {
   getLivepeerProvider,
   watchLivepeerProvider,

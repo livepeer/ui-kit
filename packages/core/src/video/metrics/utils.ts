@@ -1,5 +1,6 @@
 import fetch from 'cross-fetch';
 
+const LP_DOMAINS = ['livepeer', 'livepeercdn', 'lp-playback'];
 const PLAYLIST_NAME = 'index.m3u8';
 const ASSET_URL_PART_VALUE = 'hls';
 const RECORDING_URL_PART_VALUE = 'recordings';
@@ -26,6 +27,9 @@ export const getMetricsReportingUrl = async (
         : null;
 
     const splitHost = parsedUrl.host.split('.');
+    const includesDomain = LP_DOMAINS.includes(
+      splitHost?.[splitHost.length - 2] ?? '',
+    );
     const tld = (splitHost?.[splitHost?.length - 1] ?? null) as
       | 'com'
       | 'studio'
@@ -46,7 +50,7 @@ export const getMetricsReportingUrl = async (
         : null;
 
     // if not a known TLD, then do not return a URL
-    if (playbackId && tldMapped) {
+    if (playbackId && includesDomain && tldMapped) {
       const defaultResponse = `wss://playback.livepeer.${tldMapped}/json_video+${playbackId}.js`;
 
       try {

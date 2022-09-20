@@ -7,7 +7,7 @@ import {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
-  GetMetricsArgs,
+  GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
@@ -216,7 +216,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return `https://livepeercdn.com/hls/${playbackId}/index.m3u8`;
   }
 
-  async getMetrics(args: GetMetricsArgs): Promise<Metrics> {
+  async getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics> {
     const assetId = typeof args === 'string' ? args : args.assetId;
 
     const studioMetrics = await this._get<StudioMetrics>(

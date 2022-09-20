@@ -1,17 +1,17 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { setupClient } from '../../../test';
-import { getMetrics } from './getMetrics';
+import { getAssetMetrics } from './getAssetMetrics';
 
 const assetId = '373d4737-6e23-4b39-b37c-bcd4e72735e2';
 
-describe('getMetrics', () => {
+describe('getAssetMetrics', () => {
   beforeAll(() => {
     setupClient();
   });
 
-  it('gets metrics', async () => {
-    const assetMetrics = await getMetrics({ assetId });
+  it('gets asset metrics', async () => {
+    const assetMetrics = await getAssetMetrics({ assetId });
 
     expect(assetMetrics).toMatchInlineSnapshot(`
       {
