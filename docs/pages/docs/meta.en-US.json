@@ -6,5 +6,6 @@
   "providers": "Providers",
   "asset": "Asset",
   "stream": "Stream",
+  "playback": "Playback",
   "constants": "Constants"
 }

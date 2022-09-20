@@ -11,6 +11,7 @@ it('should expose correct exports', () => {
       "LivepeerConfig",
       "useClient",
       "useAsset",
+      "useAssetMetrics",
       "useBondingManager",
       "useController",
       "useCreateAsset",

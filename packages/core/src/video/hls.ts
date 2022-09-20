@@ -1,6 +1,6 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
-import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
+import { getMetricsReportingUrl, reportVideoMetrics } from './metrics';
 
 export const isHlsSupported = () => Hls.isSupported();
 
@@ -23,7 +23,7 @@ export const createNewHls = (
     hls.attachMedia(element);
   }
 
-  hls.on(Events.MEDIA_ATTACHED, () => {
+  hls.on(Events.MEDIA_ATTACHED, async () => {
     hls.loadSource(source);
 
     hls.on(Events.MANIFEST_PARSED, () => {
@@ -38,7 +38,7 @@ export const createNewHls = (
       }
     });
 
-    const metricReportingUrl = createMetricsReportingUrl(source);
+    const metricReportingUrl = await getMetricsReportingUrl(source);
     if (metricReportingUrl) {
       reportVideoMetrics(element, metricReportingUrl);
     } else {

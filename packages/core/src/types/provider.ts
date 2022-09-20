@@ -31,6 +31,8 @@ export interface LivepeerProvider {
 
   /** Get playback info for a playback ID */
   getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
+  /** Get metrics for an asset ID */
+  getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics>;
 }
 
 export type StreamIdOrString =
@@ -405,3 +407,18 @@ export type PlaybackInfo = {
     }[];
   };
 };
+
+export type GetAssetMetricsArgs = {
+  assetId: string;
+};
+
+export type ViewsMetric = {
+  /** Playback ID associated with the metrics */
+  id: string;
+  /** The number of views associated with this playback ID */
+  startViews: string;
+};
+
+export type ViewsMetrics = { type: 'ViewsMetrics'; metrics: ViewsMetric[] };
+
+export type Metrics = ViewsMetrics;

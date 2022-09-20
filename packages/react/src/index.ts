@@ -5,6 +5,7 @@ export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';
 export {
   useAsset,
+  useAssetMetrics,
   useBondingManager,
   useController,
   useCreateAsset,

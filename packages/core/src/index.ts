@@ -2,6 +2,7 @@ export {
   createAsset,
   createStream,
   getAsset,
+  getAssetMetrics,
   getBondingManager,
   getContractAddressFromController,
   getController,
@@ -108,6 +109,7 @@ export type {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
@@ -123,6 +125,7 @@ export type {
   LivepeerToken,
   LivepeerTokenFaucet,
   MerkleSnapshot,
+  Metrics,
   Minter,
   MultistreamTarget,
   MultistreamTargetRef,
@@ -138,14 +141,15 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  ViewsMetrics,
 } from './types';
 export { pick } from './utils';
 export {
-  createMetricsReportingUrl,
   createNewHls,
+  getMetricsReportingUrl,
   isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
   reportVideoMetrics,
 } from './video';
-export type { HlsVideoConfig, Metrics, PlaybackRecord } from './video';
+export type { HlsVideoConfig, PlaybackRecord, RawMetrics } from './video';

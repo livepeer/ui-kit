@@ -6,12 +6,14 @@ export type {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
   LivepeerProvider,
   LivepeerProviderConfig,
+  Metrics,
   MultistreamTarget,
   MultistreamTargetRef,
   PlaybackInfo,
@@ -20,6 +22,7 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  ViewsMetrics,
 } from './provider';
 export {
   ArbRetryableTx__factory as ArbRetryableTxFactory,

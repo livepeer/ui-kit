@@ -5,6 +5,7 @@ import {
   Stream,
   StreamSession,
   TranscodingProfile,
+  ViewsMetrics,
 } from '../../types';
 
 /**
@@ -142,3 +143,5 @@ export type StudioPlaybackInfo = {
     }[];
   };
 };
+
+export type StudioViewsMetrics = ViewsMetrics['metrics'];
