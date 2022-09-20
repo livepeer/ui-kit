@@ -51,8 +51,6 @@ export const getMetricsReportingUrl = async (
 
     // if not a known TLD, then do not return a URL
     if (playbackId && includesDomain && tldMapped) {
-      const defaultResponse = `wss://playback.livepeer.${tldMapped}/json_video+${playbackId}.js`;
-
       try {
         const response = await fetch(
           `https://playback.livepeer.${tldMapped}/json_video+${playbackId}.js`,
@@ -61,14 +59,10 @@ export const getMetricsReportingUrl = async (
         // parse the url which we're redirected to
         const redirectedUrl = response?.url?.replace('https:', 'wss:');
 
-        return redirectedUrl ?? defaultResponse;
+        return redirectedUrl ?? null;
       } catch (error) {
-        console.log(
-          `Could not fetch metrics reporting URL, defaulting to ${defaultResponse}`,
-        );
+        console.log(`Could not fetch metrics reporting URL.`);
       }
-
-      return defaultResponse;
     }
   } catch (error) {
     return null;

@@ -21,9 +21,7 @@ describe('getMetricsReportingUrl', () => {
 
       const reportingUrl = await getMetricsReportingUrl(sourceUrl);
 
-      expect(reportingUrl).toMatchInlineSnapshot(
-        '"wss://playback.livepeer.fun/json_video+172159gos7h0pq17.js"',
-      );
+      expect(reportingUrl).toMatchInlineSnapshot('null');
     });
 
     it('given invalid urls then it should not return a reporting urls', async () => {
