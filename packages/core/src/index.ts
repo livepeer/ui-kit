@@ -125,6 +125,7 @@ export type {
   LivepeerToken,
   LivepeerTokenFaucet,
   MerkleSnapshot,
+  Metrics,
   Minter,
   MultistreamTarget,
   MultistreamTargetRef,

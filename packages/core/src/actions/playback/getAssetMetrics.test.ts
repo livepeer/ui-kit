@@ -15,10 +15,13 @@ describe('getAssetMetrics', () => {
 
     expect(assetMetrics).toMatchInlineSnapshot(`
       {
-        "0": {
-          "id": "373d7a8kibjpsi0d",
-          "startViews": 25,
-        },
+        "metrics": [
+          {
+            "id": "373d7a8kibjpsi0d",
+            "startViews": 25,
+          },
+        ],
+        "type": "ViewsMetrics",
       }
     `);
   });
