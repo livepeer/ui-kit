@@ -1,5 +1,29 @@
 # @livepeer/react
 
+## 1.0.0
+
+### Minor Changes
+
+- [#44](https://github.com/livepeer/livepeer.js/pull/44) [`648ddf5`](https://github.com/livepeer/livepeer.js/commit/648ddf528e9bc9250458e0c5f5140aa3f41878f0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Asset Metrics (`useAssetMetrics`)
+
+  `useAssetMetrics` hook has been added for fetching asset metrics. This hook will update
+  when viewership metrics have been reported to the correct reporting URL (this is handled in
+  `@livepeer/react`'s `VideoPlayer`).
+
+  ```typescript
+  const { data: metrics } = useAssetMetrics({
+    assetId: createdAsset?.id,
+    refetchInterval: (metrics) => (!metrics ? 30000 : false),
+  });
+
+  const viewCount = metrics?.metrics?.[0]?.startViews ?? 0;
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`648ddf5`](https://github.com/livepeer/livepeer.js/commit/648ddf528e9bc9250458e0c5f5140aa3f41878f0), [`416951d`](https://github.com/livepeer/livepeer.js/commit/416951d03c42e7bba1bbfa535a91e5f277130e5f)]:
+  - livepeer@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
