@@ -14,5 +14,5 @@ const { data: metrics } = useAssetMetrics({
   refetchInterval: (metrics) => (!metrics ? 30000 : false),
 });
 
-const viewCount = metrics?.[0]?.startViews ?? 0;
+const viewCount = metrics?.metrics?.[0]?.startViews ?? 0;
 ```

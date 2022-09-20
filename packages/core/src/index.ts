@@ -125,7 +125,6 @@ export type {
   LivepeerToken,
   LivepeerTokenFaucet,
   MerkleSnapshot,
-  Metrics,
   Minter,
   MultistreamTarget,
   MultistreamTargetRef,
@@ -141,6 +140,7 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  ViewsMetrics,
 } from './types';
 export { pick } from './utils';
 export {

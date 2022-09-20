@@ -11,5 +11,5 @@ when metrics have been reported to the correct reporting URL (this is handled in
 ```typescript
 const metrics = getAssetMetrics({ assetId });
 
-const viewCount = metrics?.[0]?.startViews ?? 0;
+const viewCount = metrics?.metrics?.[0]?.startViews ?? 0;
 ```

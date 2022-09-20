@@ -18,16 +18,17 @@ import {
   StreamSession,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  ViewsMetrics,
 } from '../../types';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   StudioAsset,
   StudioCreateStreamArgs,
-  StudioMetrics,
   StudioPlaybackInfo,
   StudioStream,
   StudioStreamSession,
+  StudioViewsMetrics,
 } from './types';
 
 export type StudioLivepeerProviderConfig = {
@@ -219,14 +220,14 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   async getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics> {
     const assetId = typeof args === 'string' ? args : args.assetId;
 
-    const studioMetrics = await this._get<StudioMetrics>(
+    const studioViewsMetrics = await this._get<StudioViewsMetrics>(
       `/data/views/${assetId}/total`,
       {
         headers: this._defaultHeaders,
       },
     );
 
-    return this._mapToMetrics(studioMetrics);
+    return this._mapToViewsMetrics(studioViewsMetrics);
   }
 
   async _mapToStream(studioStream: StudioStream): Promise<Stream> {
@@ -270,9 +271,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     };
   }
 
-  _mapToMetrics(studioMetrics: StudioMetrics): Metrics {
+  _mapToViewsMetrics(studioMetrics: StudioViewsMetrics): ViewsMetrics {
     return {
-      ...studioMetrics,
+      type: 'ViewsMetrics',
+      metrics: studioMetrics,
     };
   }
 }

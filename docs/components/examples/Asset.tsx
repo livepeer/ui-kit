@@ -42,7 +42,7 @@ export const Asset = () => {
   });
   const { data: metrics } = useAssetMetrics({
     assetId: createdAsset?.id,
-    refetchInterval: (metrics) => (!metrics ? 30000 : false),
+    refetchInterval: 30000,
   });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -184,9 +184,9 @@ export const Asset = () => {
           <VideoPlayer playbackId={asset?.playbackId} />
         </Box>
       )}
-      {metrics?.[0] && (
+      {metrics?.metrics?.[0] && (
         <Badge size="2" variant="gray">
-          Views: {metrics?.[0]?.startViews}
+          Views: {metrics?.metrics?.[0]?.startViews}
         </Badge>
       )}
     </Box>

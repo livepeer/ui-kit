@@ -412,11 +412,13 @@ export type GetAssetMetricsArgs = {
   assetId: string;
 };
 
-export type Metric = {
+export type ViewsMetric = {
   /** Playback ID associated with the metrics */
   id: string;
   /** The number of views associated with this playback ID */
   startViews: string;
 };
 
-export type Metrics = Metric[];
+export type ViewsMetrics = { type: 'ViewsMetrics'; metrics: ViewsMetric[] };
+
+export type Metrics = ViewsMetrics;

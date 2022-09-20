@@ -1,11 +1,11 @@
 import {
   Asset,
   CreateStreamArgs,
-  Metrics,
   MultistreamTargetRef,
   Stream,
   StreamSession,
   TranscodingProfile,
+  ViewsMetrics,
 } from '../../types';
 
 /**
@@ -144,4 +144,4 @@ export type StudioPlaybackInfo = {
   };
 };
 
-export type StudioMetrics = Metrics;
+export type StudioViewsMetrics = ViewsMetrics['metrics'];

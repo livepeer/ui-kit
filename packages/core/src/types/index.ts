@@ -22,6 +22,7 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  ViewsMetrics,
 } from './provider';
 export {
   ArbRetryableTx__factory as ArbRetryableTxFactory,
