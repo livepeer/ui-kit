@@ -1,5 +1,25 @@
 # livepeer
 
+## 0.5.0
+
+### Minor Changes
+
+- [#44](https://github.com/livepeer/livepeer.js/pull/44) [`648ddf5`](https://github.com/livepeer/livepeer.js/commit/648ddf528e9bc9250458e0c5f5140aa3f41878f0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Asset Metrics
+
+  There is now support for asset metrics, with start views count being returned
+  when metrics have been reported to the correct reporting URL (this is handled in
+  `@livepeer/react`'s `VideoPlayer`).
+
+  ```typescript
+  const metrics = getAssetMetrics({ assetId });
+
+  const viewCount = metrics?.metrics?.[0]?.startViews ?? 0;
+  ```
+
+### Patch Changes
+
+- [`416951d`](https://github.com/livepeer/livepeer.js/commit/416951d03c42e7bba1bbfa535a91e5f277130e5f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** @victorges added default chunk size of 5mb to tus upload, if the input is a stream.
+
 ## 0.4.0
 
 ### Minor Changes
