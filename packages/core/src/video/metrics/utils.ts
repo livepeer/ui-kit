@@ -61,7 +61,7 @@ export const getMetricsReportingUrl = async (
 
         return redirectedUrl ?? null;
       } catch (error) {
-        console.log(`Could not fetch metrics reporting URL.`);
+        console.log(`Could not fetch metrics reporting URL.`, error);
       }
     }
   } catch (error) {
