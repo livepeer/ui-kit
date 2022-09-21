@@ -8,13 +8,13 @@ import { DemoVideoPlayer } from '@components/examples';
 # Video Player
 
 The example below shows our drop-in video player for easily viewing video content! The example below uses the
-[`VideoPlayer`](/docs/VideoPlayer) to view a video asset.
+[`VideoPlayer`](/react/VideoPlayer) to view a video asset.
 
 <DemoVideoPlayer />
 
 ## Step 1: Configuring Providers
 
-First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio#apikey):
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
 ```tsx
 import {
@@ -42,7 +42,7 @@ function App() {
 
 ## Step 2: Play Video
 
-Now that our providers are set up, we use the [`VideoPlayer`](/docs/VideoPlayer) with a `playbackId`, which we created
+Now that our providers are set up, we use the [`VideoPlayer`](/react/VideoPlayer) with a `playbackId`, which we created
 previously when uploading a video asset.
 
 ```tsx

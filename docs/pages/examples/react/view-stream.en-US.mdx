@@ -8,8 +8,8 @@ import { Stream } from '@components/examples';
 
 # Create and Watch a Stream
 
-Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/docs/hooks/useCreateStream)
-and [`useStream`](/docs/hooks/useStream) to create and watch a livestream.
+Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/react/hooks/useCreateStream)
+and [`useStream`](/react/hooks/useStream) to create and watch a livestream.
 
 <Stream />
 
@@ -21,7 +21,7 @@ and [`useStream`](/docs/hooks/useStream) to create and watch a livestream.
   the only visual component provided.
 </Callout>
 
-Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio#apikey):
+Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
 ```tsx
 import {
@@ -92,7 +92,7 @@ export const Stream = () => {
 ## Step 3: Stream Content
 
 Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active (see `refetchInterval` for
-how we do that). Then, we stop polling and display the streaming content using the [`VideoPlayer`](/docs/VideoPlayer).
+how we do that). Then, we stop polling and display the streaming content using the [`VideoPlayer`](/react/VideoPlayer).
 
 <Callout>
   In a production application, the viewer **should not have access** to the
