@@ -33,6 +33,7 @@ const gradient = css(sharedContainer, {
   left: 0,
   right: 0,
   height: 233,
+  marginBottom: -1,
   maxWidth: '100%',
   maxHeight: '100%',
   overflow: 'hidden',

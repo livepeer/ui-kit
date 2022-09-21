@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Flex, Text } from '@livepeer/design-system';
 import {
-  VideoPlayer,
+  Player,
   useAsset,
   useAssetMetrics,
   useCreateAsset,
@@ -181,7 +181,7 @@ export const Asset = () => {
 
       {asset?.playbackId && (
         <Box css={{ mt: '$2' }}>
-          <VideoPlayer playbackId={asset?.playbackId} />
+          <Player playbackId={asset?.playbackId} />
         </Box>
       )}
       {metrics?.metrics?.[0] && (

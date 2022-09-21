@@ -107,7 +107,7 @@ export {
   Progress,
   TimeDisplay,
   useMediaController,
-  VideoPlayer,
+  Player,
   Volume,
 } from './components';
 export type {
@@ -116,7 +116,7 @@ export type {
   PlayButtonProps,
   ProgressProps,
   TimeDisplayProps,
-  VideoPlayerProps,
+  PlayerProps,
   VolumeProps,
 } from './components';
 export { Context, LivepeerConfig, useClient } from './context';

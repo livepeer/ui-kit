@@ -15,12 +15,9 @@ import {
   TimeDisplay,
   Volume,
 } from '../controls';
-import { GenericHlsVideoPlayerProps, HlsVideoPlayer } from './HlsVideoPlayer';
+import { GenericHlsPlayerProps, HlsPlayer } from './HlsPlayer';
 
-export type VideoPlayerProps = Omit<
-  GenericHlsVideoPlayerProps,
-  'src' | 'controls'
-> & {
+export type PlayerProps = Omit<GenericHlsPlayerProps, 'src' | 'controls'> & {
   /** The source of the video (required if `playbackId` is not provided) */
   src?: string;
   /** The playback ID for the video (required if `src` is not provided) */
@@ -48,7 +45,7 @@ export type VideoPlayerProps = Omit<
       }
   );
 
-export function VideoPlayer({
+export function Player({
   src,
   playbackId,
   onPlaybackInfoUpdated,
@@ -61,7 +58,7 @@ export function VideoPlayer({
   controlsConfig,
   containerCss,
   ...props
-}: VideoPlayerProps) {
+}: PlayerProps) {
   const [videoElement, setVideoElement] =
     React.useState<HTMLVideoElement | null>(null);
 
@@ -115,7 +112,7 @@ export function VideoPlayer({
   return srcOrPlaybackUrl ? (
     <MediaControllerProvider element={videoElement} options={controlsConfig}>
       <Container className={theme} css={{ width, ...containerCss }}>
-        <HlsVideoPlayer
+        <HlsPlayer
           hlsConfig={hlsConfig}
           ref={playerRef}
           autoPlay={autoPlay}

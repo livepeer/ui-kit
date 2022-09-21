@@ -8,7 +8,7 @@ import * as React from 'react';
 
 import { useMediaController } from '../context';
 
-export type GenericHlsVideoPlayerProps =
+export type GenericHlsPlayerProps =
   React.VideoHTMLAttributes<HTMLVideoElement> & {
     hlsConfig?: HlsVideoConfig;
     controls?: boolean;
@@ -21,14 +21,11 @@ const mediaControllerSelector = ({
   element: _element,
 });
 
-export type HlsVideoPlayerProps = GenericHlsVideoPlayerProps & {
+export type HlsPlayerProps = GenericHlsPlayerProps & {
   src: string;
 };
 
-export const HlsVideoPlayer = React.forwardRef<
-  HTMLVideoElement,
-  HlsVideoPlayerProps
->(
+export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
   (
     {
       hlsConfig,
@@ -116,4 +113,4 @@ export const HlsVideoPlayer = React.forwardRef<
   },
 );
 
-HlsVideoPlayer.displayName = 'HlsVideoPlayer';
+HlsPlayer.displayName = 'HlsPlayer';

@@ -1,4 +1,4 @@
-import { PlaybackInfo, VideoPlayer } from '@livepeer/react';
+import { PlaybackInfo, Player } from '@livepeer/react';
 import { useState } from 'react';
 
 const playbackId = '6d7el73r1y12chxr';
@@ -15,7 +15,7 @@ export const AssetDemoPlayer = () => {
 
   return (
     <>
-      <VideoPlayer
+      <Player
         playbackId={playbackId}
         onPlaybackInfoUpdated={handlePlaybackInfo}
         onPlaybackInfoError={handleError}

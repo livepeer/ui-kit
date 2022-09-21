@@ -131,7 +131,7 @@ Lastly, when the video is uploaded, we use `refetchInterval` to poll the API unt
 has a `playbackId`. Then, we stop polling and show the video using the [`VideoPlayer`](/docs/VideoPlayer).
 
 ```tsx
-import { VideoPlayer, useAsset, useCreateAsset } from '@livepeer/react';
+import { Player, useAsset, useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -219,7 +219,7 @@ export const CreateAndViewAsset = () => {
         Upload
       </Button>
 
-      {asset?.playbackId && <VideoPlayer playbackId={asset?.playbackId} />}
+      {asset?.playbackId && <Player playbackId={asset?.playbackId} />}
       {metrics?.metrics?.[0] && (
         <Badge>Views: {metrics?.metrics?.[0]?.startViews}</Badge>
       )}

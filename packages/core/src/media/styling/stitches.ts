@@ -25,11 +25,10 @@ const theme = {
     controlsMarginX: '10px',
     controlsMarginY: '5px',
     iconPaddingTop: '3px',
-    sliderNegativeMarginX: '-1px',
     timeMarginX: '8px',
   },
   radii: {
-    slider: '100%',
+    slider: '3px',
   },
 };
 

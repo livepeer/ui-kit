@@ -16,5 +16,5 @@ export type {
   TimeDisplayProps,
   VolumeProps,
 } from './controls';
-export { VideoPlayer } from './video';
-export type { VideoPlayerProps } from './video';
+export { Player } from './video';
+export type { PlayerProps } from './video';

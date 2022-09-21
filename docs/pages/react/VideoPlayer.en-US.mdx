@@ -1,25 +1,25 @@
 ---
 title: 'VideoPlayer'
-description: 'The VideoPlayer component manages configuration for all hooks using React Context.'
+description: 'The Player component manages configuration for all hooks using React Context.'
 ---
 
-# VideoPlayer
+# Player
 
 The `VideoPlayer` component provides an easy way to display video in an application.
 
 ```ts
-import { VideoPlayer } from '@livepeer/react';
+import { Player } from '@livepeer/react';
 ```
 
 ## Usage
 
 ```tsx
-import { VideoPlayer } from '@livepeer/react';
+import { Player } from '@livepeer/react';
 
 const playbackId = 'abcde6mykgkvtxav';
 
 function App() {
-  return <VideoPlayer playbackId={playbackId} />;
+  return <Player playbackId={playbackId} />;
 }
 ```
 
@@ -33,11 +33,11 @@ required. If a playback ID is provided, livepeer.js will automatically poll the 
 playback URL corresponding to the playback ID.
 
 ```tsx {6}
-import { VideoPlayer } from '@livepeer/react';
+import { Player } from '@livepeer/react';
 
 const playbackId = 'abcde6mykgkvtxav';
 
 function App() {
-  return <VideoPlayer playbackId={playbackId} />;
+  return <Player playbackId={playbackId} />;
 }
 ```

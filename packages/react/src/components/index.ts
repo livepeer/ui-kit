@@ -5,7 +5,7 @@ export {
   Progress,
   TimeDisplay,
   useMediaController,
-  VideoPlayer,
+  Player,
   Volume,
 } from './media';
 export type {
@@ -14,6 +14,6 @@ export type {
   PlayButtonProps,
   ProgressProps,
   TimeDisplayProps,
-  VideoPlayerProps,
+  PlayerProps,
   VolumeProps,
 } from './media';

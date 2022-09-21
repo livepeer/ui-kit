@@ -22,8 +22,6 @@ const sharedTrack = css('div', {
       },
       active: {
         height: '$trackActive',
-        marginLeft: '$sliderNegativeMarginX',
-        marginRight: '$sliderNegativeMarginX',
       },
     },
     rounded: {
