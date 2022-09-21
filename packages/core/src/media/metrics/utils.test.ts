@@ -15,15 +15,6 @@ describe('getMetricsReportingUrl', () => {
       );
     });
 
-    it('the fallback tld should be retained by the reporting url', async () => {
-      const sourceUrl =
-        'https://livepeercdn.fun/hls/172159gos7h0pq17/index.m3u8';
-
-      const reportingUrl = await getMetricsReportingUrl(sourceUrl);
-
-      expect(reportingUrl).toMatchInlineSnapshot('null');
-    });
-
     it('given invalid urls then it should not return a reporting urls', async () => {
       const sourceUrls = [
         'https://livepeercdn.com/dash/172159gos7h0pq17/index.m3u8',

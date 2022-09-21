@@ -1,6 +1,9 @@
-import { LivepeerConfig, createReactClient } from '@livepeer/react';
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 import { ConnectKitProvider, getDefaultClient } from 'connectkit';
-import { studioProvider } from 'livepeer/providers/studio';
 import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
 import { WagmiConfig, createClient } from 'wagmi';

@@ -82,6 +82,7 @@ importers:
       "@next/bundle-analyzer": ^12.2.5
       "@preconstruct/next": ^4.0.0
       "@reach/skip-nav": ^0.17.0
+      "@types/formidable": ^2.0.5
       "@types/node": ^18.7.16
       "@types/react": ^18.0.18
       "@types/react-dom": ^18.0.6
@@ -89,6 +90,7 @@ importers:
       eslint: ^8.23.0
       eslint-config-next: ^12.2.5
       ethers: ^5.7.0
+      formidable: ^2.0.1
       hls.js: ^1.2.1
       livepeer: ^0.5.0
       next: ^12.2.5
@@ -107,6 +109,7 @@ importers:
       "@livepeer/react": link:../packages/react
       "@reach/skip-nav": 0.17.0_biqbaboplfbrettd7655fr4n2y
       ethers: 5.7.0
+      formidable: 2.0.1
       hls.js: 1.2.1
       livepeer: link:../packages/core
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
@@ -120,6 +123,7 @@ importers:
     devDependencies:
       "@next/bundle-analyzer": 12.2.5
       "@preconstruct/next": 4.0.0
+      "@types/formidable": 2.0.5
       "@types/node": 18.7.16
       "@types/react": 18.0.18
       "@types/react-dom": 18.0.6
@@ -141,7 +145,6 @@ importers:
       eslint: ^8.23.0
       eslint-config-next: ^12.2.5
       ethers: ^5.7.0
-      livepeer: ^0.5.0
       next: ^12.2.5
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -151,7 +154,6 @@ importers:
       "@livepeer/react": link:../../packages/react
       connectkit: 0.0.2_oz2eph3ccrz6rhn7bqqh6ri2pa
       ethers: 5.7.0
-      livepeer: link:../../packages/core
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -175,7 +177,6 @@ importers:
       eslint: ^8.23.0
       eslint-config-next: ^12.2.5
       ethers: ^5.7.0
-      livepeer: ^0.5.0
       next: ^12.2.5
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -184,7 +185,6 @@ importers:
     dependencies:
       "@livepeer/react": link:../../packages/react
       ethers: 5.7.0
-      livepeer: link:../../packages/core
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -4900,7 +4900,7 @@ packages:
         integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==,
       }
     dependencies:
-      "@types/node": 12.20.55
+      "@types/node": 18.7.16
 
   /@types/debug/4.1.7:
     resolution:
@@ -4949,6 +4949,15 @@ packages:
       {
         integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==,
       }
+
+  /@types/formidable/2.0.5:
+    resolution:
+      {
+        integrity: sha512-uvMcdn/KK3maPOaVUAc3HEYbCEhjaGFwww4EsX6IJfWIJ1tzHtDHczuImH3GKdusPnAAmzB07St90uabZeCKPA==,
+      }
+    dependencies:
+      "@types/node": 18.7.16
+    dev: true
 
   /@types/hast/2.3.4:
     resolution:
@@ -5137,7 +5146,7 @@ packages:
         integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==,
       }
     dependencies:
-      "@types/node": 12.20.55
+      "@types/node": 18.7.16
 
   /@typescript-eslint/eslint-plugin/5.36.2_iurrlxgqcgk5svigzxakafpeuu:
     resolution:
@@ -6003,6 +6012,13 @@ packages:
       }
     engines: { node: ">=0.10.0" }
     dev: true
+
+  /asap/2.0.6:
+    resolution:
+      {
+        integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==,
+      }
+    dev: false
 
   /assertion-error/1.1.0:
     resolution:
@@ -7487,6 +7503,16 @@ packages:
       defined: 1.0.0
       minimist: 1.2.6
     dev: true
+
+  /dezalgo/1.0.3:
+    resolution:
+      {
+        integrity: sha512-K7i4zNfT2kgQz3GylDw40ot9GAE47sFZ9EXHFSPP6zONLgH6kWXE0KWJchkbQJLBkRazq4APwZ4OwiFFlT95OQ==,
+      }
+    dependencies:
+      asap: 2.0.6
+      wrappy: 1.0.2
+    dev: false
 
   /didyoumean/1.2.2:
     resolution:
@@ -9260,6 +9286,18 @@ packages:
       mime-types: 2.1.35
     dev: true
 
+  /formidable/2.0.1:
+    resolution:
+      {
+        integrity: sha512-rjTMNbp2BpfQShhFbR3Ruk3qk2y9jKpvMW78nJgx8QKtxjDVrwbZG+wvDOmVbifHyOUOQJXxqEy6r0faRrPzTQ==,
+      }
+    dependencies:
+      dezalgo: 1.0.3
+      hexoid: 1.0.0
+      once: 1.4.0
+      qs: 6.9.3
+    dev: false
+
   /fraction.js/4.2.0:
     resolution:
       {
@@ -9754,6 +9792,14 @@ packages:
       {
         integrity: sha512-Pkw+xBHuV6xFeJprJe2BBEoDV+AvQySaz3pPDRUs5PNZEMQjpXJJueqrpcHIXxnWTcAGi/UOCgVShlkY6kLoqg==,
       }
+    dev: false
+
+  /hexoid/1.0.0:
+    resolution:
+      {
+        integrity: sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==,
+      }
+    engines: { node: ">=8" }
     dev: false
 
   /hey-listen/1.0.8:
@@ -12393,7 +12439,6 @@ packages:
       }
     dependencies:
       wrappy: 1.0.2
-    dev: true
 
   /onetime/5.1.2:
     resolution:
@@ -13133,6 +13178,14 @@ packages:
     engines: { node: ">=0.6" }
     dependencies:
       side-channel: 1.0.4
+
+  /qs/6.9.3:
+    resolution:
+      {
+        integrity: sha512-EbZYNarm6138UKKq46tdx08Yo/q9ZhFoAXAI1meAFd2GtbRDhbZY2WQSICskT0c5q99aFzLG1D4nvTk9tqfXIw==,
+      }
+    engines: { node: ">=0.6" }
+    dev: false
 
   /query-string/6.13.5:
     resolution:
@@ -15850,7 +15903,6 @@ packages:
       {
         integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==,
       }
-    dev: true
 
   /ws/7.4.6:
     resolution:

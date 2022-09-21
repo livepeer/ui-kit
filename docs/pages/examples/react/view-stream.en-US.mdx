@@ -24,8 +24,11 @@ and [`useStream`](/docs/hooks/useStream) to create and watch a livestream.
 Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio#apikey):
 
 ```tsx
-import { LivepeerConfig, createReactClient } from '@livepeer/react';
-import { studioProvider } from 'livepeer/providers/studio';
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 import * as React from 'react';
 
 const livepeerClient = createReactClient({

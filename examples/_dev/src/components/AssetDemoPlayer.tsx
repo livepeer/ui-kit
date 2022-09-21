@@ -1,5 +1,4 @@
-import { VideoPlayer } from '@livepeer/react';
-import { PlaybackInfo } from 'livepeer';
+import { PlaybackInfo, VideoPlayer } from '@livepeer/react';
 import { useState } from 'react';
 
 const playbackId = '6d7el73r1y12chxr';
