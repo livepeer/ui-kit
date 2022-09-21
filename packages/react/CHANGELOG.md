@@ -1,5 +1,120 @@
 # @livepeer/react
 
+## 0.6.0
+
+### Minor Changes
+
+- [#47](https://github.com/livepeer/livepeer.js/pull/47) [`461eb4e`](https://github.com/livepeer/livepeer.js/commit/461eb4ebc8c4368aa1cc0b5f6c5f5f0b6bf4187e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Refactor**: modified exports in `@livepeer/react` to re-export from `livepeer` and `livepeer/providers/studio` for a better devex. This makes the `livepeer` dependency unnecessary for React projects.
+
+  ```diff
+  +export {
+  +  allChainId,
+  +  arbitrumOneAddress,
+  +  arbitrumRinkebyAddress,
+  +  ArbRetryableTxABI,
+  +  BondingManagerABI,
+  +  Client,
+  +  ControllerABI,
+  +  createStorage,
+  +  defaultStudioApiKey,
+  +  defaultTranscodingProfiles,
+  +  InboxABI,
+  +  L1BondingManagerABI,
+  +  L1MigratorABI,
+  +  L2LPTGatewayABI,
+  +  L2MigratorABI,
+  +  LivepeerTokenABI,
+  +  LivepeerTokenFaucetABI,
+  +  mainnetAddress,
+  +  mainnetChainId,
+  +  MerkleSnapshotABI,
+  +  MinterABI,
+  +  NodeInterfaceABI,
+  +  noopStorage,
+  +  PollABI,
+  +  PollCreatorABI,
+  +  rinkebyAddress,
+  +  RoundsManagerABI,
+  +  ServiceRegistryABI,
+  +  studio,
+  +  testnetChainId,
+  +  TicketBrokerABI,
+  +} from 'livepeer';
+  +export type {
+  +  Address,
+  +  ArbRetryableTx,
+  +  Asset,
+  +  BondingManager,
+  +  ClientConfig,
+  +  Controller,
+  +  CreateAssetArgs,
+  +  CreateStreamArgs,
+  +  GetAssetArgs,
+  +  GetLivepeerProviderResult,
+  +  GetPlaybackInfoArgs,
+  +  GetStreamArgs,
+  +  GetStreamSessionArgs,
+  +  GetStreamSessionsArgs,
+  +  Hash,
+  +  HlsVideoConfig,
+  +  HttpError,
+  +  Inbox,
+  +  IncorrectChainIdError,
+  +  L1Address,
+  +  L1BondingManager,
+  +  L1LivepeerChain,
+  +  L1LivepeerChainId,
+  +  L1Migrator,
+  +  L2Address,
+  +  L2LivepeerChain,
+  +  L2LivepeerChainId,
+  +  L2LPTGateway,
+  +  L2Migrator,
+  +  LivepeerAddress,
+  +  LivepeerChain,
+  +  LivepeerChainId,
+  +  LivepeerProvider,
+  +  LivepeerProviderConfig,
+  +  LivepeerProviderName,
+  +  LivepeerToken,
+  +  LivepeerTokenFaucet,
+  +  MainnetLivepeerChain,
+  +  MainnetLivepeerChainId,
+  +  MerkleSnapshot,
+  +  Metrics,
+  +  Minter,
+  +  MultistreamTarget,
+  +  MultistreamTargetRef,
+  +  NodeInterface,
+  +  PlaybackInfo,
+  +  PlaybackRecord,
+  +  Poll,
+  +  PollCreator,
+  +  RoundsManager,
+  +  ServiceRegistry,
+  +  Storage,
+  +  Stream,
+  +  StreamSession,
+  +  TestnetLivepeerChain,
+  +  TestnetLivepeerChainId,
+  +  TicketBroker,
+  +  TranscodingProfile,
+  +  UpdateAssetArgs,
+  +  UpdateStreamArgs,
+  +  WatchLivepeerProviderCallback,
+  +} from 'livepeer';
+  +export {
+  +  studioProvider,
+  +  type StudioLivepeerProviderConfig,
+  +} from 'livepeer/providers/studio';
+   export { createReactClient } from './client';
+   export type {
+     CreateReactClientConfig,
+  +  ReactClient,
+   } from './client';
+   export { VideoPlayer } from './components';
+  ```
+
 ## 0.5.0
 
 ### Minor Changes
