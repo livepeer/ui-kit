@@ -146,7 +146,6 @@ importers:
       eslint: ^8.23.0
       eslint-config-next: ^12.2.5
       ethers: ^5.7.0
-      livepeer: ^0.5.0
       next: ^12.2.5
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -156,7 +155,6 @@ importers:
       '@livepeer/react': link:../../packages/react
       connectkit: 0.0.2_oz2eph3ccrz6rhn7bqqh6ri2pa
       ethers: 5.7.0
-      livepeer: link:../../packages/core
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -180,7 +178,6 @@ importers:
       eslint: ^8.23.0
       eslint-config-next: ^12.2.5
       ethers: ^5.7.0
-      livepeer: ^0.5.0
       next: ^12.2.5
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -189,7 +186,6 @@ importers:
     dependencies:
       '@livepeer/react': link:../../packages/react
       ethers: 5.7.0
-      livepeer: link:../../packages/core
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0

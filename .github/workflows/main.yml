@@ -114,6 +114,8 @@ jobs:
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Build
         run: pnpm build
+      - name: Build Examples
+        run: pnpm build:examples
 
   test:
     name: Test
