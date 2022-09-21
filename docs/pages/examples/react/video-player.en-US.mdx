@@ -17,8 +17,11 @@ The example below shows our drop-in video player for easily viewing video conten
 First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio#apikey):
 
 ```tsx
-import { LivepeerConfig, createReactClient } from '@livepeer/react';
-import { studioProvider } from 'livepeer/providers/studio';
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 import * as React from 'react';
 
 const livepeerClient = createReactClient({

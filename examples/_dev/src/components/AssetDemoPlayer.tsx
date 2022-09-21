@@ -1,5 +1,4 @@
-import { VideoPlayer } from '@livepeer/react';
-import { PlaybackInfo } from 'livepeer';
+import { PlaybackInfo, VideoPlayer } from '@livepeer/react';
 import { useState } from 'react';
 
 const playbackId = 'ca5df1nsuezgxu8q'; // clock
