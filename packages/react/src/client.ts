@@ -13,6 +13,12 @@ import {
 
 import { deserialize, serialize } from './utils';
 
+export type ReactClient<
+  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
+> = CoreClient<TLivepeerProvider> & {
+  queryClient: QueryClient;
+};
+
 export type CreateReactClientConfig<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
 > = ClientConfig<TLivepeerProvider> & {
@@ -34,7 +40,7 @@ export function createReactClient<TLivepeerProvider extends LivepeerProvider>({
     },
   }),
   ...config
-}: CreateReactClientConfig<TLivepeerProvider>) {
+}: CreateReactClientConfig<TLivepeerProvider>): ReactClient<TLivepeerProvider> {
   const client = createClient<TLivepeerProvider>(config);
   const persister =
     typeof window !== 'undefined'

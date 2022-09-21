@@ -8,8 +8,8 @@ import { Asset } from '@components/examples';
 
 # Create and Watch an Asset
 
-Creating and viewing assets is easy with livepeer.js! The example below uses [`useCreateAsset`](/docs/hooks/useCreateAsset)
-and [`useAsset`](/docs/hooks/useAsset) to create and view a video asset.
+Creating and viewing assets is easy with livepeer.js! The example below uses [`useCreateAsset`](/react/hooks/useCreateAsset)
+and [`useAsset`](/react/hooks/useAsset) to create and view a video asset.
 
 <Asset />
 
@@ -21,11 +21,14 @@ and [`useAsset`](/docs/hooks/useAsset) to create and view a video asset.
   the only visual component provided.
 </Callout>
 
-First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/docs/providers/studio#apikey):
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
 ```tsx
-import { LivepeerConfig, createReactClient } from '@livepeer/react';
-import { studioProvider } from 'livepeer/providers/studio';
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 import * as React from 'react';
 
 const livepeerClient = createReactClient({
@@ -125,7 +128,7 @@ export const CreateAndViewAsset = () => {
 ## Step 3: Stream Transcoded Video
 
 Lastly, when the video is uploaded, we use `refetchInterval` to poll the API until the asset has been processed and
-has a `playbackId`. Then, we stop polling and show the video using the [`VideoPlayer`](/docs/VideoPlayer).
+has a `playbackId`. Then, we stop polling and show the video using the [`VideoPlayer`](/react/VideoPlayer).
 
 ```tsx
 import { VideoPlayer, useAsset, useCreateAsset } from '@livepeer/react';

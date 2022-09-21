@@ -4,8 +4,8 @@
     "type": "page",
     "hidden": true
   },
-  "docs": {
-    "title": "Docs",
+  "react": {
+    "title": "React",
     "type": "page"
   },
   "examples": {

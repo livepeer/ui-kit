@@ -1,6 +1,6 @@
 {
   "useAsset": "useAsset",
-  "useAssetMetrics": "useAssetMetrics",
   "useCreateAsset": "useCreateAsset",
+  "useAssetMetrics": "useAssetMetrics",
   "useUpdateAsset": "useUpdateAsset"
 }

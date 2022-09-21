@@ -13,6 +13,7 @@
     "@livepeer/react": "^0.5.0",
     "@reach/skip-nav": "^0.17.0",
     "ethers": "^5.7.0",
+    "formidable": "^2.0.1",
     "hls.js": "^1.2.1",
     "livepeer": "^0.5.0",
     "next": "^12.2.5",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^12.2.5",
     "@preconstruct/next": "^4.0.0",
+    "@types/formidable": "^2.0.5",
     "@types/node": "^18.7.16",
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",

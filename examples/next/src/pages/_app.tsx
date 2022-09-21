@@ -1,6 +1,8 @@
-import { LivepeerConfig, createReactClient } from '@livepeer/react';
-
-import { studioProvider } from 'livepeer/providers/studio';
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
 import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';

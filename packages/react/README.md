@@ -6,10 +6,10 @@ The `@livepeer/react` package contains React-specific hooks/components for the l
 
 ## Installation
 
-Install livepeer and its peer dependencies.
+Install `@livepeer/react` and its peer dependencies.
 
 ```bash
-npm install livepeer @livepeer/react wagmi ethers
+npm install @livepeer/react wagmi ethers
 ```
 
 ## Community

@@ -14,7 +14,9 @@ export const Stream = () => {
     streamId: createdStream?.id,
     refetchInterval: 10000,
   });
-  const { data: streamSessions } = useStreamSessions(createdStream?.id);
+  const { data: streamSessions } = useStreamSessions({
+    streamId: createdStream?.id,
+  });
   const { mutate: updateStream } = useUpdateStream();
 
   return (
@@ -45,8 +47,8 @@ export const Stream = () => {
           <div>Stream Sessions: ({streamSessions.length}) </div>
           {streamSessions.length > 0 && (
             <div>
-              Playback URLs:{' '}
-              {streamSessions.map((session) => session.playbackUrl).join(', ')}
+              Active:{' '}
+              {streamSessions.map((session) => session.isActive).join(', ')}
             </div>
           )}
         </>

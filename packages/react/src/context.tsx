@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LivepeerProvider } from 'livepeer';
 import * as React from 'react';
 
-import { Client } from './client';
+import { Client, ReactClient } from './client';
 
 export const Context = React.createContext<
   Client<LivepeerProvider> | undefined
@@ -18,8 +18,9 @@ export type LivepeerConfigProps<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
 > = {
   /** React-decorated Client instance */
-  client: Client<TLivepeerProvider>;
+  client: ReactClient<TLivepeerProvider>;
 };
+
 export function LivepeerConfig<TLivepeerProvider extends LivepeerProvider>({
   children,
   client,

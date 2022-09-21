@@ -10,14 +10,13 @@ import { Callout } from 'nextra-theme-docs';
 The `studioProvider` configures the client with [Livepeer Studio](https://livepeer.studio)
 
 ```tsx
-import { studioProvider } from 'livepeer/providers/studio';
+import { studioProvider } from '@livepeer/react';
 ```
 
 ## Usage
 
 ```tsx
-import { createReactClient } from '@livepeer/react';
-import { studioProvider } from 'livepeer/providers/studio';
+import { createReactClient, studioProvider } from '@livepeer/react';
 
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
@@ -32,8 +31,7 @@ A [CORS protected](https://docs.livepeer.studio/quickstart) Studio API key. If n
 will use a default key which is rate-limited.
 
 ```ts {5}
-import { createReactClient } from '@livepeer/react';
-import { studioProvider } from 'livepeer/providers/studio';
+import { createReactClient, studioProvider } from '@livepeer/react';
 
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),

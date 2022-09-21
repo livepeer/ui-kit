@@ -1,5 +1,8 @@
-import { LivepeerConfig, createReactClient } from '@livepeer/react';
-import { studioProvider } from 'livepeer/providers/studio';
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 import { ReactNode } from 'react';
 
 const livepeerClient = createReactClient({
