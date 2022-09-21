@@ -34,14 +34,6 @@
 
 For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
 
-## Installation
-
-Install livepeer and its ethers peer dependency.
-
-```bash
-npm install livepeer @livepeer/react wagmi ethers
-```
-
 ## Community
 
 Check out the following places for more livepeer-related content:

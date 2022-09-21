@@ -13,7 +13,6 @@
 +  BondingManagerABI,
 +  Client,
 +  ControllerABI,
-+  createClient,
 +  createStorage,
 +  defaultStudioApiKey,
 +  defaultTranscodingProfiles,
@@ -107,6 +106,9 @@
 +  type StudioLivepeerProviderConfig,
 +} from 'livepeer/providers/studio';
  export { createReactClient } from './client';
- export type { CreateReactClientConfig } from './client';
+ export type {
+   CreateReactClientConfig,
++  ReactClient,
+ } from './client';
  export { VideoPlayer } from './components';
 ```

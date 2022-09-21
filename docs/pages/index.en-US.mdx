@@ -3,7 +3,7 @@ title: 'Build with Livepeer'
 searchable: false
 ---
 
-import { Bleed, Tabs, Tab } from 'nextra-theme-docs';
+import { Bleed, Tabs, Tab, Callout } from 'nextra-theme-docs';
 import { Header, HeaderVideo } from '@components/docs';
 
 <Header />
@@ -17,7 +17,6 @@ import { Header, HeaderVideo } from '@components/docs';
 
 </div>
 
-{/* prettier-ignore-start */}
 <div className="max-w-md mx-auto mt-5 mb-8 text-center install">
   <Tabs items={['npm', 'pnpm', 'yarn']}>
     <Tab>
@@ -37,7 +36,6 @@ yarn add @livepeer/react wagmi ethers
 </Tab>
   </Tabs>
 </div>
-{/* prettier-ignore-end */}
 
 <Bleed>
   <div className="mx-4">
@@ -51,6 +49,9 @@ yarn add @livepeer/react wagmi ethers
 </div>
 
 ## Overview
+
+We can easily use `@livepeer/react` to build a decentralized video app in minutes. First,
+we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context.
 
 ```tsx
 import {
@@ -78,14 +79,7 @@ import { VideoPlayer } from '@livepeer/react';
 const playbackId = 'a4e8o6mykgkvtxav';
 
 function Livepeer() {
-  return (
-    <VideoPlayer
-      autoplay
-      loop
-      muted
-      playbackId={playbackId}
-    />
-  );
+  return <VideoPlayer autoplay loop muted playbackId={playbackId} />;
 }
 ```
 
