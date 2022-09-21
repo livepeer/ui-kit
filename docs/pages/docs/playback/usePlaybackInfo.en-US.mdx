@@ -1,0 +1,80 @@
+---
+title: 'usePlaybackInfo'
+description: 'React Hook for retrieving playback details for a playback ID.'
+---
+
+# usePlaybackInfo
+
+Hook for retrieving playback information related to a playback ID. Used internally in the [`VideoPlayer`](/docs/VideoPlayer)
+to fetch the playback URL for a playback ID.
+
+```tsx
+import { usePlaybackInfo } from '@livepeer/react';
+```
+
+## Usage
+
+The following examples assume a playback ID has been created for an Asset or Stream.
+
+```tsx
+import { usePlaybackInfo } from '@livepeer/react';
+
+function App() {
+  const { data: playbackInfo } = usePlaybackInfo(playbackId);
+}
+```
+
+If a falsy playback ID is provided, the query will be skipped.
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useQuery), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: PlaybackInfo,
+  error?: Error,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  isError: boolean,
+  isFetched: boolean,
+  isFetching: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isRefetching: boolean,
+  isSuccess: boolean,
+  refetch: (options: RefetchOptions) => Promise<UseQueryResult>,
+}
+```
+
+## Configuration
+
+### playbackId
+
+Playback identifier. Can also be a string passed as the only parameter.
+
+```tsx {5}
+import { usePlaybackInfo } from '@livepeer/react';
+
+function App() {
+  const { data: playbackInfo } = usePlaybackInfo({
+    playbackId,
+  });
+}
+```
+
+### UseQueryOptions
+
+The `usePlaybackInfo` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
+`refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
+
+```tsx {6}
+import { usePlaybackInfo } from '@livepeer/react';
+
+function App() {
+  const { data: playbackInfo } = usePlaybackInfo({
+    playbackId,
+    refetchInterval: 30000,
+  });
+}
+```

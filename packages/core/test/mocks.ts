@@ -8,6 +8,11 @@ export const MockedWebSocket = vi.fn(() => ({
 
 vi.stubGlobal('WebSocket', MockedWebSocket);
 
+export const waitForWebsocketOpen = async (_websocket: WebSocket | null) =>
+  new Promise<void>((resolve, _reject) => {
+    resolve();
+  });
+
 export class MockedVideoElement extends HTMLVideoElement {
   listeners: { [key: string]: EventListenerOrEventListenerObject[] } = {};
 

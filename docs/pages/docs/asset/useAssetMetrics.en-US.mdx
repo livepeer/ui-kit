@@ -1,0 +1,88 @@
+---
+title: 'useAssetMetrics'
+description: 'React Hook for retrieving metrics for an asset.'
+---
+
+import { Callout } from 'nextra-theme-docs';
+
+# useAssetMetrics
+
+Hook for retrieving metrics for an Asset.
+
+```tsx
+import { useAssetMetrics } from '@livepeer/react';
+```
+
+<Callout>
+  Metrics are currently only available if a user has the ID associated with an
+  Asset. This should only be the user(s) with write access to the asset -
+  viewers are not able to use this hook.
+</Callout>
+
+## Usage
+
+The following examples assume an ID has been created for an Asset, and the [`VideoPlayer`](/docs/VideoPlayer)
+is used for playback (with its built-in metrics reporting).
+
+```tsx
+import { useAssetMetrics } from '@livepeer/react';
+
+function App() {
+  const { data: metrics } = useAssetMetrics({ assetId });
+}
+```
+
+If a falsy Asset ID is provided, the query will be skipped.
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useQuery), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: ViewsMetrics,
+  error?: Error,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  isError: boolean,
+  isFetched: boolean,
+  isFetching: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isRefetching: boolean,
+  isSuccess: boolean,
+  refetch: (options: RefetchOptions) => Promise<UseQueryResult>,
+}
+```
+
+## Configuration
+
+### assetId
+
+Asset identifier.
+
+```tsx {5}
+import { useAssetMetrics } from '@livepeer/react';
+
+function App() {
+  const { data: metrics } = useAssetMetrics({
+    assetId,
+  });
+}
+```
+
+### UseQueryOptions
+
+The `useAssetMetrics` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
+`refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
+
+```tsx {6}
+import { useAssetMetrics } from '@livepeer/react';
+
+function App() {
+  const { data: metrics } = useAssetMetrics({
+    assetId,
+    refetchInterval: 30000,
+  });
+}
+```

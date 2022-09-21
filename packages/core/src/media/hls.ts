@@ -1,6 +1,6 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
-// import { createMetricsReportingUrl, reportVideoMetrics } from './metrics';
+import { getMetricsReportingUrl, reportMediaMetrics } from './metrics';
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
 
@@ -36,7 +36,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.attachMedia(element);
   }
 
-  hls.on(Events.MEDIA_ATTACHED, () => {
+  hls.on(Events.MEDIA_ATTACHED, async () => {
     hls.loadSource(source);
 
     hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
@@ -52,15 +52,15 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
       }
     });
 
-    // const metricReportingUrl = createMetricsReportingUrl(source);
-    // if (metricReportingUrl) {
-    //   reportVideoMetrics(element, metricReportingUrl);
-    // } else {
-    //   console.log(
-    //     'Not able to report player metrics given the source url',
-    //     source,
-    //   );
-    // }
+    const metricReportingUrl = await getMetricsReportingUrl(source);
+    if (metricReportingUrl) {
+      reportMediaMetrics(element, metricReportingUrl);
+    } else {
+      console.log(
+        'Not able to report player metrics given the source url',
+        source,
+      );
+    }
   });
 
   hls.on(Events.ERROR, function (_event, data) {

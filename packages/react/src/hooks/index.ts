@@ -13,7 +13,7 @@ export {
   useServiceRegistry,
   useTicketBroker,
 } from './contracts';
-export { usePlaybackInfo } from './playback';
+export { useAssetMetrics, usePlaybackInfo } from './playback';
 export { useLivepeerProvider } from './providers';
 export {
   useCreateStream,

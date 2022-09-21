@@ -7,11 +7,11 @@ export type {
 export { createNewHls, isHlsSupported } from './hls';
 export type { HlsVideoConfig } from './hls';
 export {
-  createMetricsReportingUrl,
+  getMetricsReportingUrl,
   MetricsStatus,
   PlaybackMonitor,
   reportMediaMetrics,
 } from './metrics';
-export type { Metrics, PlaybackRecord } from './metrics';
+export type { PlaybackRecord, RawMetrics } from './metrics';
 export { styling } from './styling';
 export type { ThemeConfig } from './styling';

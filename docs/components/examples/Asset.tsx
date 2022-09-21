@@ -1,5 +1,10 @@
 import { Badge, Box, Button, Flex, Text } from '@livepeer/design-system';
-import { VideoPlayer, useAsset, useCreateAsset } from '@livepeer/react';
+import {
+  VideoPlayer,
+  useAsset,
+  useAssetMetrics,
+  useCreateAsset,
+} from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -34,6 +39,10 @@ export const Asset = () => {
     assetId: createdAsset?.id,
     refetchInterval: (asset) =>
       asset?.status?.phase !== 'ready' ? 5000 : false,
+  });
+  const { data: metrics } = useAssetMetrics({
+    assetId: createdAsset?.id,
+    refetchInterval: 30000,
   });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -174,6 +183,11 @@ export const Asset = () => {
         <Box css={{ mt: '$2' }}>
           <VideoPlayer playbackId={asset?.playbackId} />
         </Box>
+      )}
+      {metrics?.metrics?.[0] && (
+        <Badge size="2" variant="gray">
+          Views: {metrics?.metrics?.[0]?.startViews}
+        </Badge>
       )}
     </Box>
   );

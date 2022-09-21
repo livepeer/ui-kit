@@ -1,4 +1,4 @@
-export type Metrics = {
+export type RawMetrics = {
   firstPlayback: number;
 
   nWaiting: number;
@@ -133,8 +133,8 @@ export class MetricsStatus<
   connected = false;
   element: TElement;
 
-  currentMetrics: Metrics;
-  previousMetrics: Metrics | null = null;
+  currentMetrics: RawMetrics;
+  previousMetrics: RawMetrics | null = null;
 
   timeWaiting = 0;
   waitingSince = 0;
@@ -231,7 +231,7 @@ export class MetricsStatus<
   }
 
   getMetrics() {
-    const currentMetrics: Metrics = {
+    const currentMetrics: RawMetrics = {
       ...this.currentMetrics,
       playerHeight: this.element ? this.element.clientHeight : null,
       playerWidth: this.element ? this.element.clientWidth : null,
@@ -263,6 +263,7 @@ const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 type MediaMetrics<TElement extends HTMLMediaElement> = {
   metrics: MetricsStatus<TElement> | null;
   websocket: WebSocket | null;
+  report: (() => void) | null;
 };
 
 /**
@@ -278,6 +279,7 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
   const defaultResponse: MediaMetrics<TElement> = {
     metrics: null,
     websocket: null,
+    report: null,
   };
 
   // do not attach twice (to the same websocket)
@@ -402,8 +404,8 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
       const metrics = metricsStatus.getMetrics();
 
       // only send a report if stats have changed, and only send those changes
-      const d: Partial<Metrics> = {};
-      let key: keyof Metrics;
+      const d: Partial<RawMetrics> = {};
+      let key: keyof RawMetrics;
       for (key in metrics.current) {
         const val = metrics.current[key];
         if (val !== metrics?.previous?.[key]) {
@@ -419,7 +421,7 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
       }, 1e3);
     };
 
-    return { metrics: metricsStatus, websocket: ws };
+    return { metrics: metricsStatus, websocket: ws, report };
   } catch (e) {
     console.log(e);
   }
@@ -427,7 +429,7 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
   return defaultResponse;
 }
 
-function send(webSocket: WebSocket, metrics: Partial<Metrics>) {
+function send(webSocket: WebSocket, metrics: Partial<RawMetrics>) {
   if (webSocket.readyState !== webSocket.OPEN) {
     return;
   }

@@ -2,6 +2,7 @@ export {
   createAsset,
   createStream,
   getAsset,
+  getAssetMetrics,
   getBondingManager,
   getContractAddressFromController,
   getController,
@@ -80,8 +81,8 @@ export { HttpError, IncorrectChainIdError } from './errors';
 export {
   addEventListeners,
   createControllerStore,
-  createMetricsReportingUrl,
   createNewHls,
+  getMetricsReportingUrl,
   isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
@@ -93,8 +94,8 @@ export type {
   HlsVideoConfig,
   MediaControllerState,
   MediaControllerStore,
-  Metrics,
   PlaybackRecord,
+  RawMetrics,
   ThemeConfig,
 } from './media';
 export { createStorage, noopStorage } from './storage';
@@ -128,6 +129,7 @@ export type {
   CreateAssetArgs,
   CreateStreamArgs,
   GetAssetArgs,
+  GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
   GetStreamArgs,
   GetStreamSessionArgs,
@@ -143,6 +145,7 @@ export type {
   LivepeerToken,
   LivepeerTokenFaucet,
   MerkleSnapshot,
+  Metrics,
   Minter,
   MultistreamTarget,
   MultistreamTargetRef,
@@ -158,5 +161,6 @@ export type {
   TranscodingProfile,
   UpdateAssetArgs,
   UpdateStreamArgs,
+  ViewsMetrics,
 } from './types';
 export { pick } from './utils';
