@@ -39,7 +39,7 @@ yarn add @livepeer/react wagmi ethers
 
 ### 1. Create a livepeer client
 
-First, create a livepeer `Client` instance using [`createReactClient`](/docs/client), and pass a provider to it.
+First, create a livepeer `Client` instance using [`createReactClient`](/react/client), and pass a provider to it.
 
 ```tsx
 import { createReactClient, studioProvider } from '@livepeer/react';
@@ -50,13 +50,13 @@ const client = createReactClient({
 ```
 
 Note: If you choose to use Studio as a provider, you will need to configure an API key for the
-`studioProvider` which is [CORS-protected API key](/docs/providers/studio#apikey).
+`studioProvider` which is [CORS-protected API key](/react/providers/studio#apikey).
 
-[Read more about client configuration](/docs/client)
+[Read more about client configuration](/react/client)
 
 ### 2. Wrap app with `LivepeerConfig`
 
-Next, wrap the app with the [`LivepeerConfig`](/docs/LivepeerConfig) component, passing the `client` to it. This
+Next, wrap the app with the [`LivepeerConfig`](/react/LivepeerConfig) component, passing the `client` to it. This
 is typically included in `_app.js` for Next.js or `App.js` with Create React App, so that the `LivepeerConfig` React Context
 is available across every component.
 

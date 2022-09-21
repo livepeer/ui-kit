@@ -2,18 +2,18 @@ export {
   FullscreenButton,
   MediaControllerProvider,
   PlayButton,
+  Player,
   Progress,
   TimeDisplay,
   useMediaController,
-  Player,
   Volume,
 } from './media';
 export type {
   FullscreenButtonProps,
   MediaControllerProviderProps,
   PlayButtonProps,
+  PlayerProps,
   ProgressProps,
   TimeDisplayProps,
-  PlayerProps,
   VolumeProps,
 } from './media';

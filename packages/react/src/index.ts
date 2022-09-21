@@ -104,19 +104,19 @@ export {
   FullscreenButton,
   MediaControllerProvider,
   PlayButton,
+  Player,
   Progress,
   TimeDisplay,
   useMediaController,
-  Player,
   Volume,
 } from './components';
 export type {
   FullscreenButtonProps,
   MediaControllerProviderProps,
   PlayButtonProps,
+  PlayerProps,
   ProgressProps,
   TimeDisplayProps,
-  PlayerProps,
   VolumeProps,
 } from './components';
 export { Context, LivepeerConfig, useClient } from './context';
