@@ -7,13 +7,18 @@ const mediaControllerSelector = ({
   hidden,
   togglePlay,
   buffered,
+  hasPlayed,
 }: MediaControllerState<HTMLMediaElement>) => ({
   hidden,
   togglePlay,
   buffered,
+  hasPlayed,
 });
 
 export type ControlsContainerProps = {
+  showLoadingSpinner?: boolean;
+  poster?: React.ReactNode;
+
   top?: React.ReactNode;
   middle?: React.ReactNode;
   left?: React.ReactNode;
@@ -24,9 +29,9 @@ export const ControlsContainer = React.forwardRef<
   HTMLDivElement,
   ControlsContainerProps
 >((props, ref) => {
-  const { top, middle, left, right } = props;
+  const { top, middle, left, right, poster, showLoadingSpinner } = props;
 
-  const { hidden, togglePlay, buffered } = useMediaController(
+  const { hidden, togglePlay, buffered, hasPlayed } = useMediaController(
     mediaControllerSelector,
   );
 
@@ -36,12 +41,24 @@ export const ControlsContainer = React.forwardRef<
 
   return (
     <>
-      <div
-        className={styling.controlsContainer.background()}
-        onClick={onClickBackground}
-      >
-        {isLoading && <div className={styling.controlsContainer.loading()} />}
-      </div>
+      {poster && (
+        <div
+          className={styling.controlsContainer.background({
+            display: hasPlayed ? 'hidden' : 'shown',
+          })}
+          onMouseUp={onClickBackground}
+        >
+          {poster}
+        </div>
+      )}
+      {showLoadingSpinner && (
+        <div
+          className={styling.controlsContainer.background()}
+          onMouseUp={onClickBackground}
+        >
+          {isLoading && <div className={styling.controlsContainer.loading()} />}
+        </div>
+      )}
 
       {!isLoading && (
         <>
@@ -49,7 +66,7 @@ export const ControlsContainer = React.forwardRef<
             className={styling.controlsContainer.gradient({
               display: hidden ? 'hidden' : 'shown',
             })}
-            onClick={onClickBackground}
+            onMouseUp={onClickBackground}
           />
           <div
             className={styling.controlsContainer.top.container({

@@ -32,7 +32,7 @@ const mediaControllerSelector = ({
 export type HlsPlayerProps = GenericHlsPlayerProps;
 
 export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
-  ({ hlsConfig, src, autoPlay = true, ...props }, ref) => {
+  ({ hlsConfig, src, autoPlay, ...props }, ref) => {
     const { element, fullscreen, setLive, onDurationChange } =
       useMediaController(mediaControllerSelector);
 

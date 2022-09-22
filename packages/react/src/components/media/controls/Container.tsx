@@ -24,12 +24,12 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
     return (
       <span className={className}>
         <div
+          {...rest}
           className={styling.container({
             size: fullscreen ? 'fullscreen' : 'default',
           })}
           ref={ref}
           tabIndex={0}
-          {...rest}
         >
           {children}
         </div>

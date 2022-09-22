@@ -23,6 +23,9 @@ export const container = css('div', {
     pointerEvents: 'none',
   },
 
+  // for iOS rendering custom controls
+  zIndex: 2147483647,
+
   variants: {
     size: {
       fullscreen: {

@@ -16,6 +16,7 @@ export const {
       containerBorderStyle: 'hidden',
     },
     borderWidths: {
+      containerBorderWidth: 0,
       loadingWidth: '3px',
     },
     colors: {
@@ -45,7 +46,6 @@ export const {
       containerShadowHover: '$containerShadow',
     },
     sizes: {
-      containerBorderWidth: 0,
       containerWidth: '100%',
       containerHeight: '100%',
       liveIndicatorSize: '5px',

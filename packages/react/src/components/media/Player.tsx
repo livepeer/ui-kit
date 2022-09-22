@@ -10,22 +10,44 @@ import {
   ControlsContainer,
   FullscreenButton,
   PlayButton,
+  Poster,
   Progress,
   TimeDisplay,
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
 
-export type PlayerProps = Omit<
-  GenericHlsPlayerProps,
-  'src' | 'controls' | 'width' | 'autoPlay' | 'muted'
+export type PlayerProps = Partial<
+  Pick<GenericHlsPlayerProps, 'hlsConfig' | 'loop'>
 > & {
   /** The source of the media (required if `playbackId` is not provided) */
   src?: string;
   /** The playback ID for the media (required if `src` is not provided) */
   playbackId?: string;
+
   /** The title of the media */
   title?: string;
+  /** Shows/hides the title at the top of the video */
+  showTitle?: boolean;
+
+  /** Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
+   * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility. */
+  poster?: string | React.ReactNode;
+  /** Shows/hides the loading spinner */
+  showLoadingSpinner?: boolean;
+
+  /** Configuration for the event listeners */
+  controls?: ControlsOptions;
+  /** Play media automatically when the content loads (if this is specified, you must also specify muted, since this is required in browsers) */
+  autoPlay?: boolean;
+  /** Mute media by default */
+  muted?: boolean;
+
+  /** Theme configuration for the player */
+  theme?: ThemeConfig;
+
+  /** Custom controls passed in to override the default controls */
+  children?: React.ReactNode;
 
   /** The refetch interval for the playback info hook (used to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
@@ -33,16 +55,6 @@ export type PlayerProps = Omit<
   onPlaybackInfoUpdated?: (playbackInfo: PlaybackInfo) => void;
   /** Callback for when the playback info request fails */
   onPlaybackInfoError?: (error: Error) => void;
-
-  /** Configuration for the event listeners */
-  controls?: ControlsOptions;
-  /** Theme configuration for the player */
-  theme?: ThemeConfig;
-
-  /** Play media automatically when the content loads (if this is specified, you must also specify muted, since this is required in browsers) */
-  autoPlay?: boolean;
-  /** Mute media by default */
-  muted?: boolean;
 } & (
     | {
         src: string;
@@ -63,7 +75,7 @@ export type PlayerProps = Omit<
   );
 
 export function Player({
-  autoPlay = true,
+  autoPlay,
   children,
   controls,
   hlsConfig,
@@ -75,7 +87,10 @@ export function Player({
   src,
   theme,
   title,
-  ...props
+  poster,
+  loop,
+  showLoadingSpinner = true,
+  showTitle = true,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -133,7 +148,8 @@ export function Player({
           autoPlay={autoPlay}
           muted={autoPlay ? true : muted}
           src={srcOrPlaybackUrl}
-          {...props}
+          poster={typeof poster === 'string' ? poster : undefined}
+          loop={loop}
         />
 
         {React.isValidElement(children) ? (
@@ -141,7 +157,9 @@ export function Player({
         ) : (
           <>
             <ControlsContainer
-              top={<>{title && <Title content={title} />}</>}
+              showLoadingSpinner={showLoadingSpinner}
+              poster={poster && <Poster content={poster} title={title} />}
+              top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}
               left={
                 <>

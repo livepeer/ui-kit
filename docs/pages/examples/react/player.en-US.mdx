@@ -18,7 +18,8 @@ the player.
 ## Step 1: Configuring Providers
 
 First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey),
-as well as a theme to use for the livepeer.js React components across the app.
+as well as a theme to use for the livepeer.js React components across the app (we use `next-themes` for theming across the docs,
+but this is not a necessary dependency).
 
 ```tsx
 import {
@@ -29,42 +30,43 @@ import {
 } from '@livepeer/react';
 import * as React from 'react';
 
+// We use next-themes in our documentation for light/dark theming!
+import { useTheme } from 'next-themes';
+
 const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
   }),
 });
 
-const livepeerTheme: ThemeConfig = {
-  borderStyles: {
-    containerBorderStyle: 'solid',
-  },
-  borderWidths: {
-    loadingWidth: '1px',
-  },
+const livepeerLightTheme: ThemeConfig = {
   colors: {
     accent: 'rgb(0, 145, 255)',
-    containerBorderColor: 'rgba(0, 145, 255, 0.3)',
+    containerBorderColor: 'rgba(0, 145, 255, 0.9)',
   },
   fonts: {
     display: 'Inter',
   },
-  fontWeights: {
-    titleFontWeight: 800,
+};
+
+const livepeerDarkTheme: ThemeConfig = {
+  colors: {
+    ...livepeerLightTheme.colors,
+    containerBorderColor: 'rgba(0, 145, 255, 0.5)',
   },
-  sizes: {
-    containerBorderWidth: '1px',
-    loading: '80px',
-    trackActive: '6px',
-    trackInactive: '3px',
-  },
-  radii: {
-    containerBorderRadius: '10px',
-    slider: '4px',
+  fonts: {
+    ...livepeerLightTheme.fonts,
   },
 };
 
 function App() {
+  const { theme } = useTheme();
+
+  const livepeerTheme = useMemo(
+    () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
+    [theme],
+  );
+
   return (
     <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
       <CreateAndViewAsset />
@@ -93,7 +95,7 @@ export const DemoPlayer = () => {
       muted
       controls={{
         hotkeys: true,
-        autohide: 1000,
+        autohide: 3000,
       }}
       theme={{
         radii: { containerBorderRadius: '30px' },

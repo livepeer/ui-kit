@@ -56,6 +56,7 @@ we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context.
 ```tsx
 import {
   LivepeerConfig,
+  ThemeConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
@@ -64,9 +65,19 @@ const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
 
+const livepeerTheme: ThemeConfig = {
+  colors: {
+    accent: 'rgb(0, 145, 255)',
+    containerBorderColor: 'rgba(0, 145, 255, 0.9)',
+  },
+  fonts: {
+    display: 'Inter',
+  },
+};
+
 function App() {
   return (
-    <LivepeerConfig client={client}>
+    <LivepeerConfig client={client} theme={livepeerTheme}>
       <Livepeer />
     </LivepeerConfig>
   );

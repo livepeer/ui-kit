@@ -27,6 +27,8 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
 
   /** If the element is current playing or paused */
   playing: boolean;
+  /** If the element has been played yet */
+  hasPlayed: boolean;
   /** If the element is fullscreen */
   fullscreen: boolean;
   /** The last time that fullscreen was changed */
@@ -129,6 +131,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         hidden: false,
         live: false,
 
+        hasPlayed: false,
         playing: !element?.paused,
         fullscreen: false,
 
@@ -151,7 +154,12 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         _updateLastInteraction: () =>
           set(() => ({ _lastInteraction: Date.now() })),
 
-        onPlay: () => set(() => ({ playing: true })),
+        onPlay: () =>
+          set(() => ({
+            playing: true,
+            _lastInteraction: Date.now(),
+            hasPlayed: true,
+          })),
         onPause: () => set(() => ({ playing: false, hidden: false })),
         togglePlay: () => set(({ playing }) => ({ playing: !playing })),
         onProgress: (time) => set(() => ({ progress: getFilteredNaN(time) })),
@@ -229,7 +237,7 @@ const delay = (ms: number) => {
 export type ControlsOptions = {
   /** If hotkeys should be enabled on the media element (arrows to seek, etc) */
   hotkeys?: boolean;
-  /** Auto-hide controls after a set amount of time (in milliseconds). Set to 0 for no hiding. */
+  /** Auto-hide controls after a set amount of time (in milliseconds). Defaults to 3000. Set to 0 for no hiding. */
   autohide?: number;
 };
 
@@ -272,9 +280,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   };
 
   const onMouseEnter = () => {
-    if (autohide) {
-      store.getState().setHidden(false);
-    }
+    store.getState()._updateLastInteraction();
   };
   const onMouseLeave = () => {
     if (autohide) {
@@ -282,6 +288,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     }
   };
   const onMouseMove = async () => {
+    store.getState()._updateLastInteraction();
+  };
+
+  const onTouchUpdate = async () => {
     store.getState()._updateLastInteraction();
   };
 
@@ -340,6 +350,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       parentElementOrElement.addEventListener('mouseenter', onMouseEnter);
       parentElementOrElement.addEventListener('mouseleave', onMouseLeave);
       parentElementOrElement.addEventListener('mousemove', onMouseMove);
+
+      parentElementOrElement.addEventListener('touchstart', onTouchUpdate);
+      parentElementOrElement.addEventListener('touchend', onTouchUpdate);
+      parentElementOrElement.addEventListener('touchmove', onTouchUpdate);
     }
 
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
@@ -383,6 +397,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       parentElementOrElement?.removeEventListener?.('mouseenter', onMouseEnter);
       parentElementOrElement?.removeEventListener?.('mouseleave', onMouseLeave);
       parentElementOrElement?.removeEventListener?.('mousemove', onMouseMove);
+
+      parentElementOrElement?.addEventListener?.('touchstart', onTouchUpdate);
+      parentElementOrElement?.addEventListener?.('touchend', onTouchUpdate);
+      parentElementOrElement?.addEventListener?.('touchmove', onTouchUpdate);
 
       removeEffectsFromStore?.();
 

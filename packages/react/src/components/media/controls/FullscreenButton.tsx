@@ -123,12 +123,12 @@ export const FullscreenButton = React.forwardRef<
 
   return (
     <button
+      {...rest}
       className={styling.iconButton()}
       title={title}
       aria-label={title}
       ref={ref}
       onClick={onClickComposed}
-      {...rest}
     >
       {_children}
     </button>

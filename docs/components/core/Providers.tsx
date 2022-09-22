@@ -4,8 +4,9 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { useTheme } from 'next-themes';
 
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -17,16 +18,17 @@ type Props = {
   children?: ReactNode;
 };
 
-const livepeerTheme: ThemeConfig = {
+const livepeerLightTheme: ThemeConfig = {
   borderStyles: {
     containerBorderStyle: 'solid',
   },
   borderWidths: {
-    loadingWidth: '1px',
+    containerBorderWidth: '3px',
+    loadingWidth: '2px',
   },
   colors: {
     accent: 'rgb(0, 145, 255)',
-    containerBorderColor: 'rgba(0, 145, 255, 0.3)',
+    containerBorderColor: 'rgba(0, 145, 255, 0.9)',
   },
   fonts: {
     display: 'Inter',
@@ -35,7 +37,6 @@ const livepeerTheme: ThemeConfig = {
     titleFontWeight: 800,
   },
   sizes: {
-    containerBorderWidth: '1px',
     loading: '80px',
     trackActive: '6px',
     trackInactive: '3px',
@@ -46,7 +47,39 @@ const livepeerTheme: ThemeConfig = {
   },
 };
 
+const livepeerDarkTheme: ThemeConfig = {
+  borderStyles: {
+    ...livepeerLightTheme.borderStyles,
+  },
+  borderWidths: {
+    ...livepeerLightTheme.borderWidths,
+  },
+  colors: {
+    ...livepeerLightTheme.colors,
+    containerBorderColor: 'rgba(0, 145, 255, 0.5)',
+  },
+  fonts: {
+    ...livepeerLightTheme.fonts,
+  },
+  fontWeights: {
+    ...livepeerLightTheme.fontWeights,
+  },
+  sizes: {
+    ...livepeerLightTheme.sizes,
+  },
+  radii: {
+    ...livepeerLightTheme.radii,
+  },
+};
+
 export function Providers({ children }: Props) {
+  const { theme } = useTheme();
+
+  const livepeerTheme = useMemo(
+    () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
+    [theme],
+  );
+
   return (
     <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
       {children}

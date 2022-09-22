@@ -85,12 +85,12 @@ export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
 
     return (
       <button
+        {...rest}
         className={styling.iconButton()}
         title={title}
         aria-label={title}
         ref={ref}
         onClick={onClickComposed}
-        {...rest}
       >
         {_children}
       </button>

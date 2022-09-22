@@ -3,27 +3,35 @@ import { keyframes } from '@stitches/core';
 import { loading } from './loading';
 import { css } from './stitches';
 
-export const hidden = keyframes({
+const hidden = keyframes({
   '0%': { opacity: 1 },
   '100%': { opacity: 0 },
+});
+
+const shown = keyframes({
+  '0%': { opacity: 0 },
+  '100%': { opacity: 1 },
 });
 
 const sharedContainer = css('div', {
   variants: {
     display: {
-      shown: {},
+      shown: {
+        opacity: 1,
+        animation: `${shown} 0.2s`,
+      },
       hidden: {
         opacity: 0,
-        animation: `${hidden} 0.1s`,
+        animation: `${hidden} 0.2s`,
       },
     },
   },
   defaultVariants: {
-    display: 'hidden',
+    display: 'shown',
   },
 });
 
-const background = css('div', {
+const background = css(sharedContainer, {
   position: 'absolute',
   display: 'inline-flex',
   alignItems: 'center',

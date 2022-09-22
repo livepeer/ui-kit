@@ -1,6 +1,16 @@
 import { css } from './stitches';
 
-export const video = css('video', {
+const poster = css('img', {
+  maxWidth: '100%',
+  width: '$containerWidth',
+  height: '$containerHeight',
+  pointerEvents: 'none',
+  userSelect: 'none',
+  objectFit: 'cover',
+  objectPosition: 'center',
+});
+
+const video = css('video', {
   variants: {
     size: {
       fullscreen: {
@@ -24,5 +34,6 @@ export const video = css('video', {
 });
 
 export const media = {
+  poster,
   video,
 };
