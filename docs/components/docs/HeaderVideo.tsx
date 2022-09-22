@@ -10,8 +10,12 @@ export function HeaderVideo() {
       loop
       muted
       playbackId={playbackId}
-      className="h-30 w-full"
-      containerCss={{ fontFamily: 'inherit' }}
+      theme={{
+        fonts: {
+          display: 'Inter',
+        },
+        sizes: { containerWidth: '100%' },
+      }}
     />
   );
 }

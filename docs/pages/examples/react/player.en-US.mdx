@@ -1,0 +1,84 @@
+---
+title: 'Player'
+description: 'Learn how to use the livepeer.js media player'
+---
+
+import { DemoPlayer } from '@components/examples';
+
+# Player
+
+The example below shows our drop-in player for easily viewing media content! The example below uses the
+[`Player`](/react/Player) to view a video asset, with some custom styles to demonstrate what's possible with
+the player.
+
+<br />
+
+<DemoPlayer />
+
+## Step 1: Configuring Providers
+
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
+
+```tsx
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+import * as React from 'react';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+// Pass client to React Context Provider
+function App() {
+  return (
+    <LivepeerConfig client={livepeerClient}>
+      <CreateAndViewAsset />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Step 2: Play Video
+
+Now that our providers are set up, we use the [`Player`](/react/Player) with a `playbackId`, which we created
+previously when uploading a video asset. We also provide some custom styling to match the flow of our app!
+
+```tsx
+import { Player } from '@livepeer/react';
+import * as React from 'react';
+
+const playbackId = 'a4e8o6mykgkvtxav';
+
+export const DemoPlayer = () => {
+  return (
+    <Player
+      playbackId={playbackId}
+      loop
+      autoPlay
+      muted
+      theme={{
+        fonts: {
+          display: 'Inter',
+        },
+        radii: { containerBorderRadius: '30px' },
+        sizes: { containerWidth: '100%' },
+        space: {
+          controlsTopMarginX: '20px',
+          controlsTopMarginY: '15px',
+          controlsBottomMarginX: '15px',
+          controlsBottomMarginY: '10px',
+        },
+      }}
+    />
+  );
+};
+```
+
+## Wrap Up
+
+That's it! You just used the video player component to easily integrate Livepeer video!

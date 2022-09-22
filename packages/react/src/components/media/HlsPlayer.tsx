@@ -3,13 +3,15 @@ import {
   MediaControllerState,
   createNewHls,
   isHlsSupported,
+  styling,
 } from 'livepeer';
 import * as React from 'react';
 
-import { useMediaController } from '../context';
+import { useMediaController } from './context';
 
 export type GenericHlsPlayerProps =
   React.VideoHTMLAttributes<HTMLVideoElement> & {
+    src: string;
     hlsConfig?: HlsVideoConfig;
     controls?: boolean;
     width?: string | number;
@@ -17,27 +19,22 @@ export type GenericHlsPlayerProps =
 
 const mediaControllerSelector = ({
   _element,
+  fullscreen,
+  setLive,
+  onDurationChange,
 }: MediaControllerState<HTMLMediaElement>) => ({
   element: _element,
+  fullscreen,
+  setLive,
+  onDurationChange,
 });
 
-export type HlsPlayerProps = GenericHlsPlayerProps & {
-  src: string;
-};
+export type HlsPlayerProps = GenericHlsPlayerProps;
 
 export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
-  (
-    {
-      hlsConfig,
-      src,
-      autoPlay = true,
-      controls = true,
-      width = '100%',
-      ...props
-    },
-    ref,
-  ) => {
-    const { element } = useMediaController(mediaControllerSelector);
+  ({ hlsConfig, src, autoPlay = true, ...props }, ref) => {
+    const { element, fullscreen, setLive, onDurationChange } =
+      useMediaController(mediaControllerSelector);
 
     const [isMediaSourceSupported, canPlayAppleMpeg] = React.useMemo(
       () => [
@@ -49,10 +46,16 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
 
     React.useEffect(() => {
       if (element && isMediaSourceSupported && !canPlayAppleMpeg) {
-        const { destroy } = createNewHls(src, element, {
-          autoplay: autoPlay,
-          ...hlsConfig,
-        });
+        const { destroy } = createNewHls(
+          src,
+          element,
+          setLive,
+          onDurationChange,
+          {
+            autoplay: autoPlay,
+            ...hlsConfig,
+          },
+        );
 
         return () => {
           destroy();
@@ -65,31 +68,24 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       element,
       isMediaSourceSupported,
       canPlayAppleMpeg,
+      setLive,
+      onDurationChange,
     ]);
 
-    // if HLS is supported by default in the user's browser, use video player
-    // if Media Source is supported, use HLS.js to play video
+    // if Media Source is supported and if HLS is not supported by default in the user's browser, use HLS.js
     // fallback to using a regular video player
-    return canPlayAppleMpeg === 'probably' || canPlayAppleMpeg === 'maybe' ? (
+    return canPlayAppleMpeg !== 'probably' &&
+      canPlayAppleMpeg !== 'maybe' &&
+      isMediaSourceSupported ? (
       <video
         {...props}
+        className={styling.media.video({
+          size: fullscreen ? 'fullscreen' : 'default',
+        })}
         aria-label="video-player"
         role="video"
-        src={src}
-        autoPlay={autoPlay}
-        controls={controls}
-        width={width}
-        ref={ref}
-        webkit-playsinline="true"
-        playsInline
-      />
-    ) : isMediaSourceSupported ? (
-      <video
-        {...props}
-        aria-label="video-player"
-        role="video"
-        controls={controls}
-        width={width}
+        width="100%"
+        height="100%"
         ref={ref}
         webkit-playsinline="true"
         playsInline
@@ -99,12 +95,15 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       // TODO handle this case better
       <video
         {...props}
+        className={styling.media.video({
+          size: fullscreen ? 'fullscreen' : 'default',
+        })}
         aria-label="video-player"
         role="video"
         src={src}
         autoPlay={autoPlay}
-        controls={controls}
-        width={width}
+        width="100%"
+        height="100%"
         ref={ref}
         webkit-playsinline="true"
         playsInline

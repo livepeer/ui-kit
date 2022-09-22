@@ -1,9 +1,12 @@
-import { PlaybackInfo, Player } from '@livepeer/react';
+import { PlaybackInfo, Player, useStream } from '@livepeer/react';
 import { useState } from 'react';
 
-const playbackId = '6d7el73r1y12chxr';
+// const playbackId = '6d7el73r1y12chxr';
+const streamId = '2c61917e-4f05-449a-ab7d-1b3c85f78993';
 
 export const AssetDemoPlayer = () => {
+  const { data: stream } = useStream({ streamId });
+
   const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
@@ -15,36 +18,34 @@ export const AssetDemoPlayer = () => {
 
   return (
     <>
-      <Player
-        playbackId={playbackId}
-        onPlaybackInfoUpdated={handlePlaybackInfo}
-        onPlaybackInfoError={handleError}
-        width={1100}
-        loop
-        // muted
-        containerCss={{ fontFamily: 'Arial' }}
-        theme={{
-          colors: {
-            accent: '#4efffe',
-            background: 'black',
-            // icon: '#4efffe',
-          },
-          radii: {
-            slider: '3px',
-          },
-          space: {
-            // controlsMarginX: '20px',
-            // controlsMarginY: '10px',
-          },
-          sizes: {
-            // trackActive: '8px',
-            // trackInactive: '5px',
-          },
-        }}
-      />
+      {stream?.playbackId && (
+        <Player
+          playbackId={stream.playbackId}
+          onPlaybackInfoUpdated={handlePlaybackInfo}
+          onPlaybackInfoError={handleError}
+          loop
+          autoPlay
+          muted
+          theme={{
+            fonts: {
+              display: 'Inter',
+            },
+            radii: { containerBorderRadius: '30px' },
+            sizes: { containerWidth: '100%' },
+            space: {
+              controlsTopMarginX: '20px',
+              controlsTopMarginY: '15px',
+              controlsBottomMarginX: '15px',
+              controlsBottomMarginY: '10px',
+            },
+          }}
+        />
+      )}
 
       <p>
-        PlaybackId: {playbackId}
+        Playback Id: {stream?.playbackId ?? ''}
+        <br />
+        Stream Key: {stream?.streamKey ?? ''}
         <br />
         {errorMessage && (
           <>

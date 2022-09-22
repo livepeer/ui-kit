@@ -1,4 +1,7 @@
-export { BottomContainer, type BottomContainerProps } from './BottomContainer';
+export {
+  ControlsContainer,
+  type ControlsContainerProps,
+} from './ControlsContainer';
 export { Container, type ContainerProps } from './Container';
 export {
   FullscreenButton,

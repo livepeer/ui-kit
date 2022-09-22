@@ -4,8 +4,10 @@ export {
   PlayButton,
   Player,
   Progress,
+  ThemeProvider,
   TimeDisplay,
   useMediaController,
+  useTheme,
   Volume,
 } from './media';
 export type {
@@ -14,6 +16,7 @@ export type {
   PlayButtonProps,
   PlayerProps,
   ProgressProps,
+  ThemeProviderProps,
   TimeDisplayProps,
   VolumeProps,
 } from './media';

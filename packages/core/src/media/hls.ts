@@ -12,6 +12,8 @@ export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
 export const createNewHls = <TElement extends HTMLMediaElement>(
   source: string,
   element: TElement,
+  setLive: (v: boolean) => void,
+  setDuration: (v: number) => void,
   config?: HlsVideoConfig,
 ): {
   destroy: () => void;
@@ -20,7 +22,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   if (element.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE) === 'true') {
     return {
       destroy: () => {
-        return;
+        //
       },
     };
   }
@@ -32,9 +34,21 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     ...config,
   });
 
+  const onDestroy = () => {
+    hls?.destroy?.();
+    element?.removeAttribute?.(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
+  };
+
   if (element) {
     hls.attachMedia(element);
   }
+
+  hls.on(Events.LEVEL_LOADED, async (_e, data) => {
+    const { live, totalduration: duration } = data.details;
+
+    setLive(Boolean(live));
+    setDuration(duration ?? 0);
+  });
 
   hls.on(Events.MEDIA_ATTACHED, async () => {
     hls.loadSource(source);
@@ -67,21 +81,19 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     if (data.fatal) {
       switch (data.type) {
         case ErrorTypes.NETWORK_ERROR:
-          hls.startLoad();
+          hls?.startLoad();
           break;
         case ErrorTypes.MEDIA_ERROR:
-          hls.recoverMediaError();
+          hls?.recoverMediaError();
           break;
         default:
-          hls.destroy();
+          onDestroy();
           break;
       }
     }
   });
 
   return {
-    destroy: () => {
-      hls?.destroy();
-    },
+    destroy: onDestroy,
   };
 };

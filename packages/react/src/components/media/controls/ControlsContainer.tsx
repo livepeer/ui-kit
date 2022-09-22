@@ -1,8 +1,6 @@
 import { MediaControllerState, styling } from 'livepeer';
 import * as React from 'react';
 
-import { PropsOf } from '../../system';
-
 import { useMediaController } from '../context';
 
 const mediaControllerSelector = ({
@@ -15,17 +13,18 @@ const mediaControllerSelector = ({
   buffered,
 });
 
-export type BottomContainerProps = PropsOf<'div'> & {
-  topControls: React.ReactNode;
-  leftControls: React.ReactNode;
-  rightControls: React.ReactNode;
+export type ControlsContainerProps = {
+  top?: React.ReactNode;
+  middle?: React.ReactNode;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
 };
 
-export const BottomContainer = React.forwardRef<
+export const ControlsContainer = React.forwardRef<
   HTMLDivElement,
-  BottomContainerProps
+  ControlsContainerProps
 >((props, ref) => {
-  const { topControls, leftControls, rightControls, ...rest } = props;
+  const { top, middle, left, right } = props;
 
   const { hidden, togglePlay, buffered } = useMediaController(
     mediaControllerSelector,
@@ -41,37 +40,41 @@ export const BottomContainer = React.forwardRef<
         className={styling.controlsContainer.background()}
         onClick={onClickBackground}
       >
-        {isLoading && (
-          <div className={styling.controlsContainer.loading()}>
-            <div />
-          </div>
-        )}
+        {isLoading && <div className={styling.controlsContainer.loading()} />}
       </div>
 
       {!isLoading && (
         <>
           <div
             className={styling.controlsContainer.gradient({
-              visibility: hidden ? 'hidden' : 'shown',
+              display: hidden ? 'hidden' : 'shown',
             })}
             onClick={onClickBackground}
           />
           <div
+            className={styling.controlsContainer.top.container({
+              display: hidden ? 'hidden' : 'shown',
+            })}
+          >
+            {top}
+          </div>
+          <div
             className={styling.controlsContainer.bottom.container({
-              visibility: hidden ? 'hidden' : 'shown',
+              display: hidden ? 'hidden' : 'shown',
             })}
             ref={ref}
-            {...rest}
           >
-            <div className={styling.controlsContainer.bottom.upper.container()}>
-              {topControls}
+            <div
+              className={styling.controlsContainer.bottom.middle.container()}
+            >
+              {middle}
             </div>
             <div className={styling.controlsContainer.bottom.lower.container()}>
               <div className={styling.controlsContainer.bottom.lower.left()}>
-                {leftControls}
+                {left}
               </div>
               <div className={styling.controlsContainer.bottom.lower.right()}>
-                {rightControls}
+                {right}
               </div>
             </div>
           </div>
@@ -81,4 +84,4 @@ export const BottomContainer = React.forwardRef<
   );
 });
 
-BottomContainer.displayName = 'BottomContainer';
+ControlsContainer.displayName = 'ControlsContainer';

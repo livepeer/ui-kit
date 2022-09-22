@@ -1,43 +1,62 @@
 import { createStitches } from '@stitches/core';
 
-const theme = {
-  borderWidths: {
-    loadingWidth: '3px',
+export const {
+  css,
+  createTheme: createPlayerTheme,
+  theme: defaultTheme,
+} = createStitches({
+  theme: {
+    borderStyles: {
+      containerBorderStyle: 'hidden',
+    },
+    borderWidths: {
+      loadingWidth: '3px',
+    },
+    colors: {
+      accent: '#00a55f',
+      background: '#000000',
+      containerBorderColor: 'transparent',
+      icon: 'rgba(255,255,255,1)',
+      iconHover: 'rgba(255,255,255,0.8)',
+      liveIndicator: '#e5484d',
+    },
+    fonts: {
+      display: 'ui-sans-serif',
+    },
+    fontSizes: {
+      titleFontSize: '1.3em',
+    },
+    fontWeights: {
+      titleFontWeight: 400,
+    },
+    shadows: {
+      containerShadow: 'rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px',
+      containerShadowHover: '$containerShadow',
+    },
+    sizes: {
+      containerBorderWidth: 0,
+      containerWidth: '100%',
+      containerHeight: '100%',
+      liveIndicatorSize: '5px',
+      loading: '64px',
+      thumb: '12px',
+      trackActive: '5px',
+      trackContainerHeight: '15px',
+      trackInactive: '3px',
+    },
+    space: {
+      controlsBottomMarginX: '10px',
+      controlsBottomMarginY: '5px',
+      controlsTopMarginX: '15px',
+      controlsTopMarginY: '10px',
+      iconPaddingTop: '3px',
+      timeMarginX: '8px',
+    },
+    radii: {
+      containerBorderRadius: '5px',
+      slider: '3px',
+    },
   },
-  colors: {
-    accent: '#00a55f',
-    background: '#000000',
-    icon: 'rgba(255,255,255,1)',
-    iconHover: 'rgba(255,255,255,0.8)',
-  },
-  fonts: {
-    display:
-      'ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;',
-  },
-  sizes: {
-    loading: '64px',
-    thumb: '12px',
-    trackActive: '5px',
-    trackContainerHeight: '15px',
-    trackInactive: '3px',
-  },
-  space: {
-    controlsMarginX: '10px',
-    controlsMarginY: '5px',
-    iconPaddingTop: '3px',
-    timeMarginX: '8px',
-  },
-  radii: {
-    slider: '3px',
-  },
-};
-
-export const { css } = createStitches({
-  theme,
 });
 
-type RecursivePartial<T> = {
-  [P in keyof T]?: RecursivePartial<T[P]>;
-};
-
-export type ThemeConfig = RecursivePartial<typeof theme>;
+export type ThemeConfig = Parameters<typeof createPlayerTheme>[0];

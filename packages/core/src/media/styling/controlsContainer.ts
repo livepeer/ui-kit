@@ -1,17 +1,25 @@
+import { keyframes } from '@stitches/core';
+
 import { loading } from './loading';
 import { css } from './stitches';
 
+export const hidden = keyframes({
+  '0%': { opacity: 1 },
+  '100%': { opacity: 0 },
+});
+
 const sharedContainer = css('div', {
   variants: {
-    visibility: {
-      hidden: {
-        display: 'none',
-      },
+    display: {
       shown: {},
+      hidden: {
+        opacity: 0,
+        animation: `${hidden} 0.1s`,
+      },
     },
   },
   defaultVariants: {
-    visibility: 'shown',
+    display: 'hidden',
   },
 });
 
@@ -41,34 +49,51 @@ const gradient = css(sharedContainer, {
     'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADpCAYAAADlAl1mAAAAAXNSR0IArs4c6QAAAexJREFUOE9V0ftrzXEcx/H3x+43l9lmGGaz65ld2YUZG2YYKUlJUpKSpNZSkpSkJClJSVKSkj9Sj8/3nJ12fnie5/v9en/en+/3nIjik6rfNOU6YwfJqNGp0ctWGylSLavTqzNe72S9YYgGaYOysYJodKxJ2uSeZseaC4uUWpQt0lbWWlhEtFnVZv1O5RbSLkHGbifKiBR7XJnR7kS7dG+BSNlSh7TDvZ02d5rL6DLXxfYZriCiW69bbz+rIKUDyoyDW+hxB0RPpJQOCTIOb8cRZUavB+r1QCyOVpD6WJ97s/Wb67f5GINsMaA3YG6QDbIh7zZUWEQaNjesHHHRiB7EqLlRx0qsZKQkHdMb0zturopx5bhgwqoJJaRJNmnBlGBKj8W0YNq+GTbjFzrBqjipzJh1bNYxFnNsjs1bMF9YpFhgC3qnCkQkiNMMYlGwqDzDyoiIJc+35O85a66MFHFOmbHsjmVnM1Y884rgvLKClC4oIS5ux6pg1ZZLgow1v9pa2SIus4wrBVKkbFedhVhn67Zku2bBdcENr3CT3ZLe9oJ32F12T3DfCz7QewiP9B7b8kT5VPmMbVi6yZ7DCwtemnvFXrvoDXtr7p3gPXxQfhR8suqz8gv7Kv3mZb5Lf+j91PvFfsMf+Av//gMAXDGpZ05jKQAAAABJRU5ErkJggg==")',
 });
 
-const container = css(sharedContainer, {
+const topContainer = css(sharedContainer, {
+  top: 0,
+
+  marginTop: '$controlsTopMarginY',
+  marginBottom: '$controlsTopMarginY',
+  marginLeft: '$controlsTopMarginX',
+  marginRight: '$controlsTopMarginX',
+
   display: 'inline-flex',
-  flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   position: 'absolute',
-  bottom: 0,
+
   left: 0,
   right: 0,
-
-  marginTop: '$controlsMarginY',
-  marginBottom: '$controlsMarginY',
-  marginLeft: '$controlsMarginX',
-  marginRight: '$controlsMarginX',
 });
 
-const upperContainer = css('div', {
+const bottomContainer = css(sharedContainer, {
+  justifyContent: 'center',
+  bottom: 0,
+
+  marginTop: '$controlsBottomMarginY',
+  marginBottom: '$controlsBottomMarginY',
+  marginLeft: '$controlsBottomMarginX',
+  marginRight: '$controlsBottomMarginX',
+
+  display: 'inline-flex',
+  alignItems: 'center',
+
+  position: 'absolute',
+  flexDirection: 'column',
+  left: 0,
+  right: 0,
+});
+
+const spaceBetweenContainer = css('div', {
   width: '100%',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'space-between',
 });
 
-const lowerContainer = css(upperContainer, {});
+const right = css(spaceBetweenContainer, { width: 'auto' });
 
-const right = css(lowerContainer, { width: 'auto' });
-
-const left = css(lowerContainer, {
+const left = css(spaceBetweenContainer, {
   width: 'auto',
 });
 
@@ -77,13 +102,16 @@ export const controlsContainer = {
   gradient,
   loading,
 
+  top: {
+    container: topContainer,
+  },
   bottom: {
-    container,
-    upper: {
-      container: upperContainer,
+    container: bottomContainer,
+    middle: {
+      container: spaceBetweenContainer,
     },
     lower: {
-      container: lowerContainer,
+      container: spaceBetweenContainer,
       left,
       right,
     },

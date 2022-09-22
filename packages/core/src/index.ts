@@ -82,6 +82,8 @@ export {
   addEventListeners,
   createControllerStore,
   createNewHls,
+  createPlayerTheme,
+  defaultTheme,
   getMetricsReportingUrl,
   isHlsSupported,
   MetricsStatus,

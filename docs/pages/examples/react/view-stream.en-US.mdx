@@ -17,8 +17,8 @@ and [`useStream`](/react/hooks/useStream) to create and watch a livestream.
 
 <Callout>
   This example assumes you have chosen a component library with typical
-  components like `Button`, `TextField`, `Spinner`, etc. The `VideoPlayer` is
-  the only visual component provided.
+  components like `Button`, `TextField`, `Spinner`, etc. The
+  [`Player`](/react/Player) is the only visual component provided.
 </Callout>
 
 Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
@@ -92,7 +92,7 @@ export const Stream = () => {
 ## Step 3: Stream Content
 
 Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active (see `refetchInterval` for
-how we do that). Then, we stop polling and display the streaming content using the [`VideoPlayer`](/react/VideoPlayer).
+how we do that). Then, we stop polling and display the streaming content using the [`Player`](/react/Player).
 
 <Callout>
   In a production application, the viewer **should not have access** to the

@@ -13,5 +13,5 @@ export {
   reportMediaMetrics,
 } from './metrics';
 export type { PlaybackRecord, RawMetrics } from './metrics';
-export { styling } from './styling';
+export { createPlayerTheme, defaultTheme, styling } from './styling';
 export type { ThemeConfig } from './styling';

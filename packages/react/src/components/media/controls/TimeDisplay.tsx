@@ -9,9 +9,11 @@ export type TimeDisplayProps = Omit<PropsOf<'span'>, 'children'>;
 const mediaControllerSelector = ({
   duration,
   progress,
+  live,
 }: MediaControllerState<HTMLMediaElement>) => ({
   duration,
   progress,
+  live,
 });
 
 const getFormattedMinutesAndSeconds = (valueInSeconds: number | null) => {
@@ -27,7 +29,9 @@ const getFormattedMinutesAndSeconds = (valueInSeconds: number | null) => {
 
 export const TimeDisplay = React.forwardRef<HTMLSpanElement, TimeDisplayProps>(
   (props, ref) => {
-    const { duration, progress } = useMediaController(mediaControllerSelector);
+    const { duration, progress, live } = useMediaController(
+      mediaControllerSelector,
+    );
 
     const formattedProgress = React.useMemo(
       () => getFormattedMinutesAndSeconds(progress ?? 0),
@@ -40,14 +44,29 @@ export const TimeDisplay = React.forwardRef<HTMLSpanElement, TimeDisplayProps>(
     );
 
     return (
-      <span
-        className={styling.time()}
-        aria-label={'Playback time'}
-        ref={ref}
-        {...props}
-      >
-        {`${formattedProgress} / ${formattedDuration}`}
-      </span>
+      <>
+        <span
+          className={styling.time.text()}
+          aria-label={'Playback time'}
+          ref={ref}
+          {...props}
+        >
+          {`${formattedProgress} / ${formattedDuration}`}
+        </span>
+        {live && (
+          <div className={styling.time.container()}>
+            <div className={styling.time.liveIndicator()} />
+            <span
+              className={styling.time.text()}
+              aria-label={'Live streaming media'}
+              ref={ref}
+              {...props}
+            >
+              LIVE
+            </span>
+          </div>
+        )}
+      </>
     );
   },
 );

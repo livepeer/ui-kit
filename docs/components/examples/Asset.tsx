@@ -181,11 +181,11 @@ export const Asset = () => {
 
       {asset?.playbackId && (
         <Box css={{ mt: '$2' }}>
-          <Player playbackId={asset?.playbackId} />
+          <Player title={asset?.name} playbackId={asset?.playbackId} />
         </Box>
       )}
       {metrics?.metrics?.[0] && (
-        <Badge size="2" variant="gray">
+        <Badge css={{ mt: '$2' }} size="2" variant="gray">
           Views: {metrics?.metrics?.[0]?.startViews}
         </Badge>
       )}

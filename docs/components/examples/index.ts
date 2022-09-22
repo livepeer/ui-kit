@@ -1,3 +1,3 @@
 export { Asset } from './Asset';
-export { DemoVideoPlayer } from './DemoVideoPlayer';
+export { DemoPlayer } from './DemoPlayer';
 export { Stream } from './Stream';

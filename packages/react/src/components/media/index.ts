@@ -1,5 +1,13 @@
-export { MediaControllerProvider, useMediaController } from './context';
-export type { MediaControllerProviderProps } from './context';
+export {
+  MediaControllerProvider,
+  ThemeProvider,
+  useMediaController,
+  useTheme,
+} from './context';
+export type {
+  MediaControllerProviderProps,
+  ThemeProviderProps,
+} from './context';
 export {
   BaseSlider,
   FullscreenButton,
@@ -16,5 +24,5 @@ export type {
   TimeDisplayProps,
   VolumeProps,
 } from './controls';
-export { Player } from './video';
-export type { PlayerProps } from './video';
+export { Player } from './Player';
+export type { PlayerProps } from './Player';

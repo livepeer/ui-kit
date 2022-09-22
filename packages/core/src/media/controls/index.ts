@@ -32,6 +32,9 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
 
+  /** If the content is live media */
+  live: boolean;
+
   /** Current progress of the media */
   progress: number;
   /** Current total duration of the media */
@@ -63,6 +66,8 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   requestSeekBack: (difference?: number) => void;
   requestSeekForward: (difference?: number) => void;
   _requestSeekDiff: (difference: number) => void;
+
+  setLive: (fullscreen: boolean) => void;
 
   setFullscreen: (fullscreen: boolean) => void;
   requestToggleFullscreen: () => void;
@@ -122,6 +127,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         _element: element,
 
         hidden: false,
+        live: false,
 
         playing: !element?.paused,
         fullscreen: false,
@@ -176,6 +182,8 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
           set(() => ({
             _requestedFullscreenLastTime: Date.now(),
           })),
+
+        setLive: (live: boolean) => set(() => ({ live })),
 
         requestVolume: (newVolume) =>
           set(({ volume }) => ({

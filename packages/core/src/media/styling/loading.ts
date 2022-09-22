@@ -2,7 +2,7 @@ import { keyframes } from '@stitches/core';
 
 import { css } from './stitches';
 
-const rotate = keyframes({
+export const rotate = keyframes({
   '0%': { transform: 'rotate(0deg)' },
   '100%': { transform: 'rotate(360deg)' },
 });
@@ -16,7 +16,7 @@ export const loading = css('div', {
   maxWidth: '100%',
   maxHeight: '100%',
 
-  'div::after': {
+  '&:after': {
     content: ' ',
     display: 'block',
     width: '$loading',

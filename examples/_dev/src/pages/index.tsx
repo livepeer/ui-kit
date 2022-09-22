@@ -12,7 +12,7 @@ const Page = () => {
       <Asset />
       <hr />
       <Link href="/player">
-        <a>Demo Video Player</a>
+        <a>Demo Player</a>
       </Link>
     </>
   );

@@ -1,4 +1,16 @@
+import { keyframes } from '@stitches/core';
+
 import { css } from './stitches';
+
+export const expand = keyframes({
+  '0%': { height: '$trackInactive' },
+  '100%': { height: '$trackActive' },
+});
+
+export const contract = keyframes({
+  '0%': { height: '$trackActive' },
+  '100%': { height: '$trackInactive' },
+});
 
 const container = css('div', {
   minHeight: '$trackContainerHeight',
@@ -19,9 +31,11 @@ const sharedTrack = css('div', {
     size: {
       default: {
         height: '$trackInactive',
+        animation: `${contract} 0.1s`,
       },
       active: {
         height: '$trackActive',
+        animation: `${expand} 0.1s`,
       },
     },
     rounded: {

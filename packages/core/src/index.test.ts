@@ -65,6 +65,8 @@ it('should expose correct exports', () => {
       "addEventListeners",
       "createControllerStore",
       "createNewHls",
+      "createPlayerTheme",
+      "defaultTheme",
       "getMetricsReportingUrl",
       "isHlsSupported",
       "MetricsStatus",
