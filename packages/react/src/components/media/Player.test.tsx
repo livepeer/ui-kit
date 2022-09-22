@@ -16,16 +16,14 @@ describe('Player', () => {
     // TODO update this test
     expect(container).toMatchInlineSnapshot(`
       <div>
-        <div
-          style="display: block;"
-        >
+        <span>
           <div
-            class="c-hQKyni c-hQKyni-qWFEN-size-default"
+            class="c-hQKyni c-hQKyni-hxnaIc-size-default"
             tabindex="0"
           >
             <video
               aria-label="video-player"
-              class="c-PJLV c-PJLV-hXGYIh-size-default"
+              class="c-PJLV c-PJLV-iXcqjl-size-default"
               data-controller-initialized="true"
               height="100%"
               playsinline=""
@@ -42,7 +40,7 @@ describe('Player', () => {
               />
             </div>
           </div>
-        </div>
+        </span>
       </div>
     `);
   });

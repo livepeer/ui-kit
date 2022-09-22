@@ -39,6 +39,9 @@ export const container = css('div', {
         borderColor: '$containerBorderColor',
         borderRadius: '$containerBorderRadius',
         borderWidth: '$containerBorderWidth',
+
+        maxWidth: '100%',
+        width: '$containerWidth',
       },
     },
   },

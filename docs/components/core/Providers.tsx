@@ -1,9 +1,10 @@
 import {
   LivepeerConfig,
+  ThemeConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
-import { ThemeConfig } from 'livepeer';
+
 import { ReactNode } from 'react';
 
 const livepeerClient = createReactClient({
@@ -29,9 +30,6 @@ const livepeerTheme: ThemeConfig = {
   },
   fonts: {
     display: 'Inter',
-  },
-  fontSizes: {
-    titleFontSize: '1.0em',
   },
   fontWeights: {
     titleFontWeight: 800,

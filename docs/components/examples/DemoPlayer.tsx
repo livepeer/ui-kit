@@ -8,7 +8,6 @@ export const DemoPlayer = () => {
     <Player
       title="Agent 327: Operation Barbershop"
       playbackId={playbackId}
-      loop
       autoPlay
       muted
       controls={{
@@ -16,11 +15,8 @@ export const DemoPlayer = () => {
         autohide: 1000,
       }}
       theme={{
-        fonts: {
-          display: 'Inter',
-        },
         radii: { containerBorderRadius: '30px' },
-        sizes: { containerWidth: '100%' },
+        sizes: { containerWidth: '600px' },
         space: {
           controlsTopMarginX: '20px',
           controlsTopMarginY: '15px',

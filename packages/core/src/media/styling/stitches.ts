@@ -4,7 +4,13 @@ export const {
   css,
   createTheme: createPlayerTheme,
   theme: defaultTheme,
+  getCssText,
 } = createStitches({
+  media: {
+    sm: '(min-width: 640px)',
+    md: '(min-width: 768px)',
+    lg: '(min-width: 1024px)',
+  },
   theme: {
     borderStyles: {
       containerBorderStyle: 'hidden',
@@ -24,7 +30,12 @@ export const {
       display: 'ui-sans-serif',
     },
     fontSizes: {
-      titleFontSize: '1.3em',
+      titleFontSize: '1.2rem',
+      titleFontSizeMd: '1.1rem',
+      titleFontSizeSm: '0.8rem',
+      timeFontSize: '1.0rem',
+      timeFontSizeMd: '0.95rem',
+      timeFontSizeSm: '0.85rem',
     },
     fontWeights: {
       titleFontWeight: 400,

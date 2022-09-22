@@ -84,6 +84,7 @@ export {
   createNewHls,
   createPlayerTheme,
   defaultTheme,
+  getCssText,
   getMetricsReportingUrl,
   isHlsSupported,
   MetricsStatus,
@@ -165,4 +166,4 @@ export type {
   UpdateStreamArgs,
   ViewsMetrics,
 } from './types';
-export { pick } from './utils';
+export { deepMerge, pick } from './utils';

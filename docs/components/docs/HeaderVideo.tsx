@@ -10,12 +10,7 @@ export function HeaderVideo() {
       loop
       muted
       playbackId={playbackId}
-      theme={{
-        fonts: {
-          display: 'Inter',
-        },
-        sizes: { containerWidth: '100%' },
-      }}
+      theme={{ sizes: { containerWidth: '100%' } }}
     />
   );
 }

@@ -1,5 +1,5 @@
 import { getCssText } from '@livepeer/react';
-import { SkipNavLink } from '@reach/skip-nav';
+
 import {
   Head,
   Html,
@@ -20,7 +20,6 @@ class Document extends NextDocument {
           />
         </Head>
         <body>
-          <SkipNavLink />
           <Main />
           <NextScript />
         </body>

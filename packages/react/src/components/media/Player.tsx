@@ -1,9 +1,4 @@
-import {
-  ControlsOptions,
-  PlaybackInfo,
-  ThemeConfig,
-  createPlayerTheme,
-} from 'livepeer';
+import { ControlsOptions, PlaybackInfo, ThemeConfig } from 'livepeer';
 import * as React from 'react';
 
 import { usePlaybackInfo } from '../../hooks';
@@ -127,21 +122,11 @@ export function Player({
     [mediaElement],
   );
 
-  const contextTheme = useTheme();
-
-  const containerTheme = React.useMemo(
-    () =>
-      theme
-        ? createPlayerTheme(theme)
-        : contextTheme
-        ? createPlayerTheme(contextTheme)
-        : undefined,
-    [theme, contextTheme],
-  );
+  const contextTheme = useTheme(theme);
 
   return srcOrPlaybackUrl ? (
     <MediaControllerProvider element={mediaElement} options={controls}>
-      <Container className={containerTheme}>
+      <Container className={contextTheme}>
         <HlsPlayer
           hlsConfig={hlsConfig}
           ref={playerRef}

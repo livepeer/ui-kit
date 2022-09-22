@@ -17,11 +17,13 @@ the player.
 
 ## Step 1: Configuring Providers
 
-First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey),
+as well as a theme to use for the livepeer.js React components across the app.
 
 ```tsx
 import {
   LivepeerConfig,
+  ThemeConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
@@ -33,10 +35,38 @@ const livepeerClient = createReactClient({
   }),
 });
 
-// Pass client to React Context Provider
+const livepeerTheme: ThemeConfig = {
+  borderStyles: {
+    containerBorderStyle: 'solid',
+  },
+  borderWidths: {
+    loadingWidth: '1px',
+  },
+  colors: {
+    accent: 'rgb(0, 145, 255)',
+    containerBorderColor: 'rgba(0, 145, 255, 0.3)',
+  },
+  fonts: {
+    display: 'Inter',
+  },
+  fontWeights: {
+    titleFontWeight: 800,
+  },
+  sizes: {
+    containerBorderWidth: '1px',
+    loading: '80px',
+    trackActive: '6px',
+    trackInactive: '3px',
+  },
+  radii: {
+    containerBorderRadius: '10px',
+    slider: '4px',
+  },
+};
+
 function App() {
   return (
-    <LivepeerConfig client={livepeerClient}>
+    <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
       <CreateAndViewAsset />
     </LivepeerConfig>
   );
@@ -46,7 +76,7 @@ function App() {
 ## Step 2: Play Video
 
 Now that our providers are set up, we use the [`Player`](/react/Player) with a `playbackId`, which we created
-previously when uploading a video asset. We also provide some custom styling to match the flow of our app!
+previously when uploading a video asset. We override some of the custom styling to match the flow of our app!
 
 ```tsx
 import { Player } from '@livepeer/react';
@@ -57,16 +87,17 @@ const playbackId = 'a4e8o6mykgkvtxav';
 export const DemoPlayer = () => {
   return (
     <Player
+      title="Agent 327: Operation Barbershop"
       playbackId={playbackId}
-      loop
       autoPlay
       muted
+      controls={{
+        hotkeys: true,
+        autohide: 1000,
+      }}
       theme={{
-        fonts: {
-          display: 'Inter',
-        },
         radii: { containerBorderRadius: '30px' },
-        sizes: { containerWidth: '100%' },
+        sizes: { containerWidth: '600px' },
         space: {
           controlsTopMarginX: '20px',
           controlsTopMarginY: '15px',

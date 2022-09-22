@@ -67,6 +67,7 @@ it('should expose correct exports', () => {
       "createNewHls",
       "createPlayerTheme",
       "defaultTheme",
+      "getCssText",
       "getMetricsReportingUrl",
       "isHlsSupported",
       "MetricsStatus",
@@ -93,6 +94,7 @@ it('should expose correct exports', () => {
       "RoundsManagerFactory",
       "ServiceRegistryFactory",
       "TicketBrokerFactory",
+      "deepMerge",
       "pick",
     ]
   `);

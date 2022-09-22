@@ -12,6 +12,7 @@ export const video = css('video', {
         },
       },
       default: {
+        maxWidth: '100%',
         width: '$containerWidth',
         height: '$containerHeight',
       },

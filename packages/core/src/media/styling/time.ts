@@ -17,6 +17,16 @@ export const liveIndicator = css('div', {
 export const timeText = css(text, {
   marginLeft: '$timeMarginX',
   marginRight: '$timeMarginX',
+
+  '@initial': {
+    fontSize: '$timeFontSizeSm',
+  },
+  '@md': {
+    fontSize: '$timeFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$timeFontSize',
+  },
 });
 
 export const time = {

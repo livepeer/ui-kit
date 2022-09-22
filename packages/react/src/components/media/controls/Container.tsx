@@ -22,12 +22,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     return (
-      <div
-        className={className}
-        style={{
-          display: 'block',
-        }}
-      >
+      <span className={className}>
         <div
           className={styling.container({
             size: fullscreen ? 'fullscreen' : 'default',
@@ -38,7 +33,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         >
           {children}
         </div>
-      </div>
+      </span>
     );
   },
 );

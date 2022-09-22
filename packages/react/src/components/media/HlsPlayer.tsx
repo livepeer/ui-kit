@@ -79,9 +79,6 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       isMediaSourceSupported ? (
       <video
         {...props}
-        className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : 'default',
-        })}
         aria-label="video-player"
         role="video"
         width="100%"
@@ -90,14 +87,14 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
         webkit-playsinline="true"
         playsInline
         autoPlay={autoPlay}
+        className={styling.media.video({
+          size: fullscreen ? 'fullscreen' : 'default',
+        })}
       />
     ) : (
       // TODO handle this case better
       <video
         {...props}
-        className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : 'default',
-        })}
         aria-label="video-player"
         role="video"
         src={src}
@@ -107,6 +104,9 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
         ref={ref}
         webkit-playsinline="true"
         playsInline
+        className={styling.media.video({
+          size: fullscreen ? 'fullscreen' : 'default',
+        })}
       />
     );
   },
