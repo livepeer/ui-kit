@@ -17,18 +17,6 @@ export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
  */
 export const isHlsSupported = () => (IS_CLIENT ? Hls.isSupported() : true);
 
-/**
- * Checks if the native HTML5 video player can play HLS.
- */
-export const canPlayHLSNatively = (): boolean => {
-  if (IS_CLIENT) {
-    const video = document.createElement('video');
-    return video.canPlayType('application/vnd.apple.mpegurl').length > 0;
-  }
-
-  return false;
-};
-
 export const createNewHls = <TElement extends HTMLMediaElement>(
   source: HlsSrc,
   element: TElement,

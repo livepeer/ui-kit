@@ -106,17 +106,12 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       <VideoPlayer
         {...props}
         ref={ref}
-        src={
-          Array.isArray(src)
-            ? src.map((s) => ({
-                ...s,
-                type: 'video',
-              }))
-            : {
-                ...src,
-                type: 'video',
-              }
-        }
+        src={[
+          {
+            ...src,
+            type: 'video',
+          },
+        ]}
       />
     );
   },

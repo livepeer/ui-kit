@@ -19,7 +19,7 @@ type HlsExtension = 'm3u8';
 
 type OptionalQueryParams = `?${string}` | '';
 
-export type BaseSrc = {
+type BaseSrc = {
   type: 'audio' | 'video' | 'hls';
   src: string;
   mime: MimeType | null;
@@ -36,6 +36,7 @@ export interface HlsSrc extends BaseSrc {
   type: 'hls';
   src: `${string}${HlsExtension}${OptionalQueryParams}`;
 }
+export type Src = AudioSrc | HlsSrc | VideoSrc;
 
 const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;

@@ -1,7 +1,6 @@
-import { MediaControllerState, styling } from 'livepeer';
+import { AspectRatio, MediaControllerState, styling } from 'livepeer';
 import * as React from 'react';
 
-import { PropsOf } from '../../system';
 import { useMediaController } from '../context';
 
 const mediaControllerSelector = ({
@@ -10,22 +9,23 @@ const mediaControllerSelector = ({
   fullscreen,
 });
 
-export type ContainerProps = PropsOf<'div'> & {
+export type ContainerProps = {
+  aspectRatio: AspectRatio;
   children: React.ReactNode;
   className?: string;
 };
 
 export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   (props, ref) => {
-    const { children, className, ...rest } = props;
+    const { children, className, aspectRatio } = props;
 
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     return (
-      <span className={className}>
+      <div className={className}>
         <div
-          {...rest}
           className={styling.container({
+            aspectRatio,
             size: fullscreen ? 'fullscreen' : 'default',
           })}
           ref={ref}
@@ -33,7 +33,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         >
           {children}
         </div>
-      </span>
+      </div>
     );
   },
 );

@@ -45,12 +45,16 @@ export const ControlsContainer = React.forwardRef<
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
     useMediaController(mediaControllerSelector);
 
-  const onClickBackground = React.useCallback(() => togglePlay(), [togglePlay]);
-
   const isLoaded = React.useMemo(
     () => canPlay || buffered !== 0,
     [canPlay, buffered],
   );
+
+  const onClickBackground = React.useCallback(() => {
+    if (isLoaded) {
+      togglePlay();
+    }
+  }, [togglePlay, isLoaded]);
 
   return (
     <>

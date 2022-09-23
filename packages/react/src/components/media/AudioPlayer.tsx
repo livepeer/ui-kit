@@ -13,7 +13,7 @@ export type AudioPlayerProps = Omit<
   HlsPlayerProps,
   'hlsConfig' | 'src' | 'poster'
 > & {
-  src: AudioSrc | AudioSrc[];
+  src: AudioSrc[];
 };
 
 const mediaControllerSelector = ({
@@ -27,8 +27,7 @@ export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     const filteredSources = React.useMemo(() => {
-      const sources = Array.isArray(src) ? src : [src];
-      return sources.filter((s) => s?.mime && canPlayMediaNatively(s.mime));
+      return src.filter((s) => s?.mime && canPlayMediaNatively(s.mime));
     }, [src]);
 
     return (

@@ -95,6 +95,7 @@ export {
   styling,
 } from './media';
 export type {
+  AspectRatio,
   AudioSrc,
   ControlsOptions,
   HlsSrc,
@@ -103,6 +104,7 @@ export type {
   MediaControllerStore,
   PlaybackRecord,
   RawMetrics,
+  Src,
   ThemeConfig,
   VideoSrc,
 } from './media';

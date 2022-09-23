@@ -73,7 +73,6 @@ export const Stream = () => {
               fonts: {
                 display: 'Inter',
               },
-              sizes: { containerWidth: '100%' },
             }}
           />
         </Box>

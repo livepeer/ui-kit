@@ -46,8 +46,6 @@ export const {
       containerShadowHover: '$containerShadow',
     },
     sizes: {
-      containerWidth: '100%',
-      containerHeight: '100%',
       liveIndicatorSize: '5px',
       loading: '64px',
       thumb: '12px',

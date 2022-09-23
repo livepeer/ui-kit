@@ -11,12 +11,32 @@ The `Player` component provides an easy way to display media in an application.
 import { Player } from '@livepeer/react';
 ```
 
+# Compatibility
+
+import { Callout } from 'nextra-theme-docs';
+
+<Callout emoji="🌐">
+  We aim to support over 92% of browsers tracked on
+  [caniuse](https://caniuse.com/).
+</Callout>
+
+|                    | [wagmi](https://github.com/wagmi-dev/wagmi)                                                     | [web3-react](https://github.com/NoahZinsmeister/web3-react)                                             | [useDApp](https://github.com/EthWorks/useDApp)                                                     | [web3modal](https://github.com/Web3Modal/web3modal)                                                     |
+| ------------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Chrome             | ![wagmi star count](https://img.shields.io/github/stars/wagmi-dev/wagmi?colorB=161b22&label=)   | ![web3-react star count](https://img.shields.io/github/stars/Uniswap/web3-react?colorB=161b22&label=)   | ![useDApp star count](https://img.shields.io/github/stars/EthWorks/useDApp?colorB=161b22&label=)   | ![web3modal star count](https://img.shields.io/github/stars/Web3Modal/web3modal?colorB=161b22&label=)   |
+| Chrome for Android | ![wagmi issue count](https://img.shields.io/github/issues/wagmi-dev/wagmi?colorB=161b22&label=) | ![web3-react issue count](https://img.shields.io/github/issues/Uniswap/web3-react?colorB=161b22&label=) | ![useDApp issue count](https://img.shields.io/github/issues/EthWorks/useDApp?colorB=161b22&label=) | ![web3modal issue count](https://img.shields.io/github/issues/Web3Modal/web3modal?colorB=161b22&label=) |
+| iOS Safari         | ![wagmi downloads](https://img.shields.io/npm/dw/wagmi?colorB=161b22&label=)                    | ![web3-react downloads](https://img.shields.io/npm/dw/@web3-react/core?colorB=161b22&label=)            | ![useDApp downloads](https://img.shields.io/npm/dw/@usedapp/core?colorB=161b22&label=)             | ![web3modal downloads](https://img.shields.io/npm/dw/web3modal?colorB=161b22&label=)                    |
+| Edge               | ![wagmi license](https://img.shields.io/github/license/wagmi-dev/wagmi?colorB=161b22&label=)    | ![web3-react license](https://img.shields.io/github/license/Uniswap/web3-react?colorB=161b22&label=)    | ![useDApp license](https://img.shields.io/github/license/EthWorks/useDApp?colorB=161b22&label=)    | ![web3modal license](https://img.shields.io/github/license/Web3Modal/web3modal?colorB=161b22&label=)    |
+| Safari             | –                                                                                               | none                                                                                                    | none                                                                                               | none                                                                                                    |
+| Firefox            | React, Vanilla JS                                                                               | React                                                                                                   | React                                                                                              | Vanilla JS                                                                                              |
+| Opera              | ✅                                                                                              | 🛑                                                                                                      | ✅                                                                                                 | 🛑                                                                                                      |
+
 ## Usage
 
 ```tsx
 import { Player } from '@livepeer/react';
 
-const playbackId = 'abcde6mykgkvtxav';
+const playbackId =
+  'bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy';
 
 function App() {
   return <Player playbackId={playbackId} />;

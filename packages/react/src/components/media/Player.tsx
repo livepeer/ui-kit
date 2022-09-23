@@ -1,7 +1,8 @@
 import {
+  AspectRatio,
   AudioSrc,
   ControlsOptions,
-  HlsSrc,
+  Src,
   ThemeConfig,
   VideoSrc,
   getMediaSourceType,
@@ -36,9 +37,16 @@ export type PlayerProps = Partial<
 
   /** The title of the media */
   title?: string;
-  /** Shows/hides the title at the top of the video */
+  /** Shows/hides the title at the top of the media */
   showTitle?: boolean;
 
+  /**
+   * The aspect ratio of the media. Defaults to 16 / 9.
+   * This significantly improves the cumulative layout shift and is required for the player.
+   *
+   * @see {@link https://web.dev/cls/}
+   * */
+  aspectRatio?: AspectRatio;
   /** Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
    * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility. */
   poster?: string | React.ReactNode;
@@ -58,7 +66,7 @@ export type PlayerProps = Partial<
   /** Custom controls passed in to override the default controls */
   children?: React.ReactNode;
 
-  /** The refetch interval for the playback info hook (used to query until there is a valid playback URL) */
+  /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
 } & (
     | {
@@ -96,6 +104,7 @@ export function Player({
   loop,
   showLoadingSpinner = true,
   showTitle = true,
+  aspectRatio = '16to9',
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -105,81 +114,100 @@ export function Player({
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
     enabled: !src,
   });
-  const [playbackUrl, setPlaybackUrl] = React.useState<string | undefined>(
-    undefined,
-  );
+  const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    if (playbackInfo) {
-      const url = playbackInfo?.meta?.source?.[0]?.url;
-      if (url) {
-        setPlaybackUrl(url);
-      }
+    const playbackInfoSources = playbackInfo?.meta?.source
+      ?.map((s) => s?.url)
+      ?.filter((s) => s);
+
+    if (playbackInfoSources) {
+      setPlaybackUrls(playbackInfoSources);
     }
   }, [playbackInfo]);
 
-  const sourceTyped = React.useMemo(
+  const sourceMimeTyped = React.useMemo(() => {
+    const sourceOrPlaybackInfoSrc =
+      playbackUrls.length > 0
+        ? playbackUrls
+        : typeof src === 'string'
+        ? [src]
+        : src;
+
+    if (!sourceOrPlaybackInfoSrc) {
+      return null;
+    }
+
+    const mediaSourceTypes = sourceOrPlaybackInfoSrc
+      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
+      .filter((s) => s) as Src[];
+
+    // if there are multiple Hls sources, we take only the first one
+    // otherwise we pass all sources to the video or audio player components
+    if (
+      mediaSourceTypes.every((s) => s.type === 'hls') &&
+      mediaSourceTypes?.[0]?.type === 'hls'
+    ) {
+      return mediaSourceTypes[0];
+    }
+
+    // we filter by the first source type in the array provided
+    const mediaSourceFiltered =
+      mediaSourceTypes?.[0]?.type === 'audio'
+        ? (mediaSourceTypes.filter((s) => s.type === 'audio') as AudioSrc[])
+        : mediaSourceTypes?.[0]?.type === 'video'
+        ? (mediaSourceTypes.filter((s) => s.type === 'video') as VideoSrc[])
+        : null;
+
+    return mediaSourceFiltered;
+  }, [playbackUrls, src]);
+
+  const hidePosterOnPlayer = React.useMemo(
     () =>
-      src
-        ? Array.isArray(src)
-          ? (src.map((s) => getMediaSourceType(s)).filter((s) => s) as (
-              | HlsSrc
-              | AudioSrc
-              | VideoSrc
-            )[])
-          : getMediaSourceType(src)
-        : playbackUrl
-        ? getMediaSourceType(playbackUrl)
-        : null,
-    [playbackUrl, src],
+      Array.isArray(sourceMimeTyped)
+        ? sourceMimeTyped?.[0]?.type !== 'audio'
+        : true,
+    [sourceMimeTyped],
   );
 
-  const playerRef = React.useCallback(
-    (element: HTMLMediaElement | null) => {
-      if (element && !mediaElement) {
-        setMediaElement(element);
-      }
-    },
-    [mediaElement],
-  );
+  const playerRef = React.useCallback((element: HTMLMediaElement | null) => {
+    if (element) {
+      setMediaElement(element);
+    }
+  }, []);
 
   const contextTheme = useTheme(theme);
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
-      <Container className={contextTheme}>
-        {sourceTyped &&
-        (Array.isArray(sourceTyped)
-          ? sourceTyped?.[0]?.type === 'hls'
-          : sourceTyped?.type === 'hls') ? (
+      <Container className={contextTheme} aspectRatio={aspectRatio}>
+        {sourceMimeTyped && !Array.isArray(sourceMimeTyped) ? (
           <HlsPlayer
             hlsConfig={hlsConfig}
             ref={playerRef}
             autoPlay={autoPlay}
             muted={autoPlay ? true : muted}
-            src={sourceTyped}
+            src={sourceMimeTyped}
             poster={typeof poster === 'string' ? poster : undefined}
             loop={loop}
           />
-        ) : sourceTyped?.type === 'video' ? (
-          <VideoPlayer
-            ref={playerRef}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={sourceTyped}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-          />
-        ) : sourceTyped?.type === 'audio' ? (
+        ) : sourceMimeTyped?.[0]?.type === 'audio' ? (
           <AudioPlayer
             ref={playerRef}
             autoPlay={autoPlay}
             muted={autoPlay ? true : muted}
-            src={sourceTyped}
+            src={sourceMimeTyped as AudioSrc[]}
             loop={loop}
           />
         ) : (
-          'Your audio or video format could not be identified. Please retry with another source.'
+          <VideoPlayer
+            ref={playerRef}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={sourceMimeTyped as VideoSrc[] | null}
+            poster={typeof poster === 'string' ? poster : undefined}
+            loop={loop}
+          />
         )}
 
         {React.isValidElement(children) ? (
@@ -187,7 +215,7 @@ export function Player({
         ) : (
           <>
             <ControlsContainer
-              hidePosterOnPlayed={sourceTyped?.type !== 'audio'}
+              hidePosterOnPlayed={hidePosterOnPlayer}
               showLoadingSpinner={showLoadingSpinner}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}

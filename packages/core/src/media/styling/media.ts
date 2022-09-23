@@ -2,29 +2,45 @@ import { css } from './stitches';
 
 const poster = css('img', {
   maxWidth: '100%',
-  width: '$containerWidth',
-  height: '$containerHeight',
+  width: '100%',
+  maxHeight: '100%',
+  height: '100%',
   pointerEvents: 'none',
   userSelect: 'none',
-  objectFit: 'cover',
   objectPosition: 'center',
-});
+  objectFit: 'cover',
 
-const video = css('video', {
   variants: {
     size: {
       fullscreen: {
         width: '100% !important',
         height: '100% !important',
+      },
+      default: {},
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const video = css('video', {
+  width: '100% !important',
+  height: '100% !important',
+
+  objectPosition: 'center',
+
+  variants: {
+    size: {
+      fullscreen: {
+        objectFit: 'contain',
 
         '&::-webkit-media-controls-enclosure': {
           display: 'none !important',
         },
       },
       default: {
-        maxWidth: '100%',
-        width: '$containerWidth',
-        height: '$containerHeight',
+        objectFit: 'cover',
       },
     },
   },

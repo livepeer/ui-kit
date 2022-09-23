@@ -87,7 +87,7 @@ function App() {
 ```tsx
 import { Player } from '@livepeer/react';
 
-const playbackId = 'a4e8o6mykgkvtxav';
+const playbackId = 'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe';
 
 function Livepeer() {
   return <Player autoplay loop muted playbackId={playbackId} />;
@@ -96,7 +96,7 @@ function Livepeer() {
 
 In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Then, we use the [`Player`](/react/Player) to play a video from a playback ID! Waterfalls!
+Then, we use the [`Player`](/react/Player) to play a video from a playback ID, in this case, an IPFS CID! Waterfalls!
 
 We've only scratched the surface for what you can do with livepeer.js!
 

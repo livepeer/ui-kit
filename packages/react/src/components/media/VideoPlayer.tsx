@@ -10,7 +10,7 @@ import { HlsPlayerProps } from './HlsPlayer';
 import { useMediaController } from './context';
 
 export type VideoPlayerProps = Omit<HlsPlayerProps, 'hlsConfig' | 'src'> & {
-  src: VideoSrc | VideoSrc[];
+  src: VideoSrc[] | null;
 };
 
 const mediaControllerSelector = ({
@@ -24,8 +24,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     const filteredSources = React.useMemo(() => {
-      const sources = Array.isArray(src) ? src : [src];
-      return sources.filter((s) => s?.mime && canPlayMediaNatively(s.mime));
+      return src?.filter((s) => s?.mime && canPlayMediaNatively(s.mime));
     }, [src]);
 
     return (
@@ -45,7 +44,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
         muted={muted}
         poster={poster}
       >
-        {filteredSources.map((source) => (
+        {filteredSources?.map((source) => (
           <source key={source.src} src={source.src} type={source.mime!} />
         ))}
         {
