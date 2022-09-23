@@ -1,56 +1,66 @@
 import {
+  HlsSrc,
   HlsVideoConfig,
   MediaControllerState,
+  canPlayMediaNatively,
   createNewHls,
   isHlsSupported,
   styling,
 } from 'livepeer';
 import * as React from 'react';
 
+import { VideoPlayer } from './VideoPlayer';
 import { useMediaController } from './context';
 
-export type GenericHlsPlayerProps =
-  React.VideoHTMLAttributes<HTMLVideoElement> & {
-    src: string;
-    hlsConfig?: HlsVideoConfig;
-    controls?: boolean;
-    width?: string | number;
-  };
+export type HlsPlayerProps = {
+  src: HlsSrc;
+  hlsConfig?: HlsVideoConfig;
+  controls?: boolean;
+  width?: string | number;
+  autoPlay?: boolean;
+  loop?: boolean;
+  title?: string;
+  muted?: boolean;
+  poster?: string;
+};
 
 const mediaControllerSelector = ({
   _element,
   fullscreen,
   setLive,
   onDurationChange,
+  onCanPlay,
 }: MediaControllerState<HTMLMediaElement>) => ({
   element: _element,
   fullscreen,
   setLive,
   onDurationChange,
+  onCanPlay,
 });
 
-export type HlsPlayerProps = GenericHlsPlayerProps;
-
 export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
-  ({ hlsConfig, src, autoPlay, ...props }, ref) => {
-    const { element, fullscreen, setLive, onDurationChange } =
+  (props, ref) => {
+    const { hlsConfig, src, autoPlay, title, loop, muted, poster } = props;
+
+    const { element, fullscreen, setLive, onDurationChange, onCanPlay } =
       useMediaController(mediaControllerSelector);
 
-    const [isMediaSourceSupported, canPlayAppleMpeg] = React.useMemo(
+    const [canUseHlsjs, canPlayAppleMpeg] = React.useMemo(
       () => [
-        typeof window !== 'undefined' && isHlsSupported(),
-        element ? element.canPlayType('application/vnd.apple.mpegurl') : null,
+        isHlsSupported(),
+        canPlayMediaNatively('application/vnd.apple.mpegurl'),
       ],
-      [element],
+      [],
     );
 
     React.useEffect(() => {
-      if (element && isMediaSourceSupported && !canPlayAppleMpeg) {
+      if (element && canUseHlsjs && !canPlayAppleMpeg && src) {
         const { destroy } = createNewHls(
           src,
           element,
           setLive,
           onDurationChange,
+          onCanPlay,
           {
             autoplay: autoPlay,
             ...hlsConfig,
@@ -66,20 +76,22 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       hlsConfig,
       src,
       element,
-      isMediaSourceSupported,
+      canUseHlsjs,
       canPlayAppleMpeg,
       setLive,
       onDurationChange,
+      onCanPlay,
     ]);
 
     // if Media Source is supported and if HLS is not supported by default in the user's browser, use HLS.js
     // fallback to using a regular video player
-    return canPlayAppleMpeg !== 'probably' &&
-      canPlayAppleMpeg !== 'maybe' &&
-      isMediaSourceSupported ? (
+    return !canPlayAppleMpeg && canUseHlsjs ? (
       <video
-        {...props}
-        aria-label="video-player"
+        className={styling.media.video({
+          size: fullscreen ? 'fullscreen' : 'default',
+        })}
+        loop={loop}
+        aria-label={title ?? 'Video player'}
         role="video"
         width="100%"
         height="100%"
@@ -87,26 +99,24 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
         webkit-playsinline="true"
         playsInline
         autoPlay={autoPlay}
-        className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : 'default',
-        })}
+        muted={muted}
+        poster={poster}
       />
     ) : (
-      // TODO handle this case better
-      <video
+      <VideoPlayer
         {...props}
-        aria-label="video-player"
-        role="video"
-        src={src}
-        autoPlay={autoPlay}
-        width="100%"
-        height="100%"
         ref={ref}
-        webkit-playsinline="true"
-        playsInline
-        className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : 'default',
-        })}
+        src={
+          Array.isArray(src)
+            ? src.map((s) => ({
+                ...s,
+                type: 'video',
+              }))
+            : {
+                ...src,
+                type: 'video',
+              }
+        }
       />
     );
   },

@@ -18,22 +18,23 @@ describe('Player', () => {
       <div>
         <span>
           <div
-            class="c-hQKyni c-hQKyni-hxnaIc-size-default"
+            class="c-juZXli c-juZXli-djNDqV-size-default"
             tabindex="0"
           >
             <video
-              aria-label="video-player"
+              aria-label="Video player"
               class="c-PJLV c-PJLV-iXcqjl-size-default"
               data-controller-initialized="true"
               height="100%"
               playsinline=""
               role="video"
-              src="https://livepeercdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8"
               webkit-playsinline="true"
               width="100%"
-            />
+            >
+              Your browser doesn't support the HTML5 &lt;code&gt;video&lt;/code&gt; tag, or the video format.
+            </video>
             <div
-              class="c-iSNkqM"
+              class="c-PJLV c-iSNkqM c-PJLV-hiRmpy-display-shown"
             >
               <div
                 class="c-kxrkoX"
@@ -49,7 +50,25 @@ describe('Player', () => {
     it('constructs src', async () => {
       const { container } = render(<Player playbackId={playbackId} />);
 
-      expect(container).toMatchInlineSnapshot('<div />');
+      expect(container).toMatchInlineSnapshot(`
+        <div>
+          <span>
+            <div
+              class="c-juZXli c-juZXli-djNDqV-size-default"
+              tabindex="0"
+            >
+              Your audio or video format could not be identified. Please retry with another source.
+              <div
+                class="c-PJLV c-iSNkqM c-PJLV-hiRmpy-display-shown"
+              >
+                <div
+                  class="c-kxrkoX"
+                />
+              </div>
+            </div>
+          </span>
+        </div>
+      `);
     });
   });
 });

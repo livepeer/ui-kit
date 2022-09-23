@@ -6,17 +6,20 @@ import { useMediaController } from '../context';
 const mediaControllerSelector = ({
   hidden,
   togglePlay,
-  buffered,
+  canPlay,
   hasPlayed,
+  buffered,
 }: MediaControllerState<HTMLMediaElement>) => ({
   hidden,
   togglePlay,
-  buffered,
+  canPlay,
   hasPlayed,
+  buffered,
 });
 
 export type ControlsContainerProps = {
   showLoadingSpinner?: boolean;
+  hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
 
   top?: React.ReactNode;
@@ -29,38 +32,48 @@ export const ControlsContainer = React.forwardRef<
   HTMLDivElement,
   ControlsContainerProps
 >((props, ref) => {
-  const { top, middle, left, right, poster, showLoadingSpinner } = props;
+  const {
+    top,
+    middle,
+    left,
+    right,
+    poster,
+    showLoadingSpinner,
+    hidePosterOnPlayed,
+  } = props;
 
-  const { hidden, togglePlay, buffered, hasPlayed } = useMediaController(
-    mediaControllerSelector,
-  );
+  const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
+    useMediaController(mediaControllerSelector);
 
   const onClickBackground = React.useCallback(() => togglePlay(), [togglePlay]);
 
-  const isLoading = React.useMemo(() => buffered === 0, [buffered]);
+  const isLoaded = React.useMemo(
+    () => canPlay || buffered !== 0,
+    [canPlay, buffered],
+  );
 
   return (
     <>
       {poster && (
         <div
           className={styling.controlsContainer.background({
-            display: hasPlayed ? 'hidden' : 'shown',
+            display: hasPlayed && hidePosterOnPlayed ? 'hidden' : 'shown',
           })}
           onMouseUp={onClickBackground}
         >
           {poster}
         </div>
       )}
-      {showLoadingSpinner && (
+      {showLoadingSpinner && !isLoaded && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={onClickBackground}
         >
-          {isLoading && <div className={styling.controlsContainer.loading()} />}
+          <div className={styling.controlsContainer.loading()} />
         </div>
       )}
 
-      {!isLoading && (
+      {isLoaded && (
         <>
           <div
             className={styling.controlsContainer.gradient({

@@ -33,7 +33,6 @@ const video = css('video', {
   },
 });
 
-export const media = {
-  poster,
-  video,
-};
+const audio = css('audio', video);
+
+export const media = { audio, poster, video };

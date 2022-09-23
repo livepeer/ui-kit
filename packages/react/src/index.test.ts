@@ -54,6 +54,7 @@ it('should expose correct exports', () => {
       "MediaControllerProvider",
       "PlayButton",
       "Player",
+      "Poster",
       "Progress",
       "ThemeProvider",
       "TimeDisplay",

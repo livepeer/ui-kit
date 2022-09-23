@@ -13,6 +13,8 @@ import {
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE = 'data-controller-initialized';
 
 export type MediaControllerState<TElement extends HTMLMediaElement> = {
+  /** If the media has loaded and can be played */
+  canPlay: boolean;
   /** If the controls are currently hidden */
   hidden: boolean;
   /** The last time that the media was interacted with */
@@ -53,6 +55,8 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
 
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
+
+  onCanPlay: () => void;
 
   onPlay: () => void;
   onPause: () => void;
@@ -128,6 +132,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
       (set, get) => ({
         _element: element,
 
+        canPlay: false,
         hidden: false,
         live: false,
 
@@ -153,6 +158,11 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
           set(({ playing }) => ({ hidden: playing ? hidden : false })),
         _updateLastInteraction: () =>
           set(() => ({ _lastInteraction: Date.now() })),
+
+        onCanPlay: () =>
+          set(() => ({
+            canPlay: true,
+          })),
 
         onPlay: () =>
           set(() => ({
@@ -247,6 +257,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
 ) => {
   const element = store?.getState()?._element;
 
+  const onCanPlay = () => store.getState().onCanPlay();
+
   const onPlay = () => store.getState().onPlay();
   const onPause = () => store.getState().onPause();
 
@@ -335,6 +347,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
 
     element.addEventListener('volumechange', onVolumeChange);
 
+    element.addEventListener('canplay', onCanPlay);
     element.addEventListener('play', onPlay);
     element.addEventListener('pause', onPause);
     element.addEventListener('durationchange', onDurationChange);
@@ -355,6 +368,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       parentElementOrElement.addEventListener('touchend', onTouchUpdate);
       parentElementOrElement.addEventListener('touchmove', onTouchUpdate);
     }
+
+    element.load();
 
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
   }
@@ -384,6 +399,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     destroy: () => {
       removeFullscreenListener?.();
 
+      element?.removeEventListener?.('canplay', onCanPlay);
       element?.removeEventListener?.('play', onPlay);
       element?.removeEventListener?.('pause', onPause);
       element?.removeEventListener?.('durationchange', onDurationChange);

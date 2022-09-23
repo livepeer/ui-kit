@@ -80,11 +80,13 @@ export type {
 export { HttpError, IncorrectChainIdError } from './errors';
 export {
   addEventListeners,
+  canPlayMediaNatively,
   createControllerStore,
   createNewHls,
   createPlayerTheme,
   defaultTheme,
   getCssText,
+  getMediaSourceType,
   getMetricsReportingUrl,
   isHlsSupported,
   MetricsStatus,
@@ -93,13 +95,16 @@ export {
   styling,
 } from './media';
 export type {
+  AudioSrc,
   ControlsOptions,
+  HlsSrc,
   HlsVideoConfig,
   MediaControllerState,
   MediaControllerStore,
   PlaybackRecord,
   RawMetrics,
   ThemeConfig,
+  VideoSrc,
 } from './media';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';

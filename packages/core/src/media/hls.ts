@@ -1,19 +1,40 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
+import { noop } from '../utils';
+
+import { IS_CLIENT } from './browser';
+
 import { getMetricsReportingUrl, reportMediaMetrics } from './metrics';
+import { HlsSrc } from './src';
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
-
-export const isHlsSupported = () => Hls.isSupported();
 
 export type VideoConfig = { autoplay?: boolean };
 export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
 
+/**
+ * Checks if hls.js can play in the browser.
+ */
+export const isHlsSupported = () => (IS_CLIENT ? Hls.isSupported() : true);
+
+/**
+ * Checks if the native HTML5 video player can play HLS.
+ */
+export const canPlayHLSNatively = (): boolean => {
+  if (IS_CLIENT) {
+    const video = document.createElement('video');
+    return video.canPlayType('application/vnd.apple.mpegurl').length > 0;
+  }
+
+  return false;
+};
+
 export const createNewHls = <TElement extends HTMLMediaElement>(
-  source: string,
+  source: HlsSrc,
   element: TElement,
-  setLive: (v: boolean) => void,
-  setDuration: (v: number) => void,
+  onLive: (v: boolean) => void,
+  onDuration: (v: number) => void,
+  onCanPlay: () => void,
   config?: HlsVideoConfig,
 ): {
   destroy: () => void;
@@ -21,9 +42,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   // do not attach twice
   if (element.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE) === 'true') {
     return {
-      destroy: () => {
-        //
-      },
+      destroy: noop,
     };
   }
 
@@ -46,14 +65,16 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Events.LEVEL_LOADED, async (_e, data) => {
     const { live, totalduration: duration } = data.details;
 
-    setLive(Boolean(live));
-    setDuration(duration ?? 0);
+    onLive(Boolean(live));
+    onDuration(duration ?? 0);
   });
 
   hls.on(Events.MEDIA_ATTACHED, async () => {
-    hls.loadSource(source);
+    hls.loadSource(source.src);
 
     hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
+      onCanPlay();
+
       if (config?.autoplay && element) {
         try {
           element.muted = true;
@@ -66,7 +87,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
       }
     });
 
-    const metricReportingUrl = await getMetricsReportingUrl(source);
+    const metricReportingUrl = await getMetricsReportingUrl(source.src);
     if (metricReportingUrl) {
       reportMediaMetrics(element, metricReportingUrl);
     } else {

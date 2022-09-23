@@ -45,6 +45,7 @@ export const container = css('div', {
 
         maxWidth: '100%',
         width: '$containerWidth',
+        height: '$containerHeight',
       },
     },
   },

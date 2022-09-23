@@ -1,3 +1,4 @@
+export { canPlayMediaNatively } from './browser';
 export { addEventListeners, createControllerStore } from './controls';
 export type {
   ControlsOptions,
@@ -13,6 +14,8 @@ export {
   reportMediaMetrics,
 } from './metrics';
 export type { PlaybackRecord, RawMetrics } from './metrics';
+export { getMediaSourceType } from './src';
+export type { AudioSrc, HlsSrc, VideoSrc } from './src';
 export {
   createPlayerTheme,
   defaultTheme,

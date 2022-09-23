@@ -1,8 +1,17 @@
-import { ControlsOptions, PlaybackInfo, ThemeConfig } from 'livepeer';
+import {
+  AudioSrc,
+  ControlsOptions,
+  HlsSrc,
+  ThemeConfig,
+  VideoSrc,
+  getMediaSourceType,
+} from 'livepeer';
 import * as React from 'react';
 
 import { usePlaybackInfo } from '../../hooks';
-import { GenericHlsPlayerProps, HlsPlayer } from './HlsPlayer';
+import { AudioPlayer } from './AudioPlayer';
+import { HlsPlayer, HlsPlayerProps } from './HlsPlayer';
+import { VideoPlayer } from './VideoPlayer';
 import { MediaControllerProvider, useTheme } from './context';
 
 import {
@@ -18,10 +27,10 @@ import {
 import { Title } from './controls/Title';
 
 export type PlayerProps = Partial<
-  Pick<GenericHlsPlayerProps, 'hlsConfig' | 'loop'>
+  Pick<HlsPlayerProps, 'hlsConfig' | 'loop'>
 > & {
-  /** The source of the media (required if `playbackId` is not provided) */
-  src?: string;
+  /** The source(s) of the media (required if `playbackId` is not provided) */
+  src?: string | string[];
   /** The playback ID for the media (required if `src` is not provided) */
   playbackId?: string;
 
@@ -51,16 +60,14 @@ export type PlayerProps = Partial<
 
   /** The refetch interval for the playback info hook (used to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
-  /** Callback for when the playback info is successfully updated */
-  onPlaybackInfoUpdated?: (playbackInfo: PlaybackInfo) => void;
-  /** Callback for when the playback info request fails */
-  onPlaybackInfoError?: (error: Error) => void;
 } & (
     | {
-        src: string;
+        src: string | string[];
+        playbackId?: never;
       }
     | {
         playbackId: string;
+        src?: never;
       }
   ) &
   (
@@ -79,9 +86,7 @@ export function Player({
   children,
   controls,
   hlsConfig,
-  muted = true,
-  onPlaybackInfoError,
-  onPlaybackInfoUpdated,
+  muted,
   playbackId,
   refetchPlaybackInfoInterval = 5000,
   src,
@@ -95,10 +100,10 @@ export function Player({
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
+  const { data: playbackInfo } = usePlaybackInfo({
     playbackId,
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
-    enabled: src ? false : undefined,
+    enabled: !src,
   });
   const [playbackUrl, setPlaybackUrl] = React.useState<string | undefined>(
     undefined,
@@ -110,26 +115,27 @@ export function Player({
       if (url) {
         setPlaybackUrl(url);
       }
-
-      onPlaybackInfoUpdated?.(playbackInfo);
     }
-  }, [playbackInfo, onPlaybackInfoUpdated]);
+  }, [playbackInfo]);
 
-  React.useEffect(() => {
-    if (playbackInfoError) {
-      console.error(playbackInfoError);
-
-      onPlaybackInfoError?.(playbackInfoError);
-    }
-  }, [playbackInfoError, onPlaybackInfoError]);
-
-  const srcOrPlaybackUrl = React.useMemo(
-    () => playbackUrl || src,
+  const sourceTyped = React.useMemo(
+    () =>
+      src
+        ? Array.isArray(src)
+          ? (src.map((s) => getMediaSourceType(s)).filter((s) => s) as (
+              | HlsSrc
+              | AudioSrc
+              | VideoSrc
+            )[])
+          : getMediaSourceType(src)
+        : playbackUrl
+        ? getMediaSourceType(playbackUrl)
+        : null,
     [playbackUrl, src],
   );
 
   const playerRef = React.useCallback(
-    (element: HTMLVideoElement) => {
+    (element: HTMLMediaElement | null) => {
       if (element && !mediaElement) {
         setMediaElement(element);
       }
@@ -139,24 +145,49 @@ export function Player({
 
   const contextTheme = useTheme(theme);
 
-  return srcOrPlaybackUrl ? (
+  return (
     <MediaControllerProvider element={mediaElement} options={controls}>
       <Container className={contextTheme}>
-        <HlsPlayer
-          hlsConfig={hlsConfig}
-          ref={playerRef}
-          autoPlay={autoPlay}
-          muted={autoPlay ? true : muted}
-          src={srcOrPlaybackUrl}
-          poster={typeof poster === 'string' ? poster : undefined}
-          loop={loop}
-        />
+        {sourceTyped &&
+        (Array.isArray(sourceTyped)
+          ? sourceTyped?.[0]?.type === 'hls'
+          : sourceTyped?.type === 'hls') ? (
+          <HlsPlayer
+            hlsConfig={hlsConfig}
+            ref={playerRef}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={sourceTyped}
+            poster={typeof poster === 'string' ? poster : undefined}
+            loop={loop}
+          />
+        ) : sourceTyped?.type === 'video' ? (
+          <VideoPlayer
+            ref={playerRef}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={sourceTyped}
+            poster={typeof poster === 'string' ? poster : undefined}
+            loop={loop}
+          />
+        ) : sourceTyped?.type === 'audio' ? (
+          <AudioPlayer
+            ref={playerRef}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={sourceTyped}
+            loop={loop}
+          />
+        ) : (
+          'Your audio or video format could not be identified. Please retry with another source.'
+        )}
 
         {React.isValidElement(children) ? (
           children
         ) : (
           <>
             <ControlsContainer
+              hidePosterOnPlayed={sourceTyped?.type !== 'audio'}
               showLoadingSpinner={showLoadingSpinner}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
@@ -174,5 +205,5 @@ export function Player({
         )}
       </Container>
     </MediaControllerProvider>
-  ) : null;
+  );
 }
