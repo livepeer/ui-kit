@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@livepeer/design-system": "^1.0.3",
-    "@livepeer/react": "^0.5.0",
+    "@livepeer/react": "^0.6.0",
     "@reach/skip-nav": "^0.17.0",
     "ethers": "^5.7.0",
     "formidable": "^2.0.1",

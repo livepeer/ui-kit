@@ -15,5 +15,6 @@
     "typescriptreact"
   ],
   "eslint.packageManager": "pnpm",
-  "cSpell.words": ["multistream"]
+  "cSpell.words": ["multistream"],
+  "json.format.enable": false
 }
