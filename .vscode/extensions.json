@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
+    "webben.browserslist",
     "streetsidesoftware.code-spell-checker"
   ]
 }

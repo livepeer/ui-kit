@@ -40,6 +40,7 @@
   "peerDependenciesMeta": {},
   "dependencies": {
     "@stitches/core": "^1.2.8",
+    "core-js": "^3.25.2",
     "cross-fetch": "^3.1.5",
     "hls.js": "^1.2.1",
     "tus-js-client": "^3.0.0",

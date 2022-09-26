@@ -18,8 +18,7 @@ the player.
 ## Step 1: Configuring Providers
 
 First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey),
-as well as a theme to use for the livepeer.js React components across the app (we use `next-themes` for theming across the docs,
-but this is not a necessary dependency).
+as well as a theme to use for all livepeer.js React components.
 
 ```tsx
 import {
@@ -30,16 +29,13 @@ import {
 } from '@livepeer/react';
 import * as React from 'react';
 
-// We use next-themes in our documentation for light/dark theming!
-import { useTheme } from 'next-themes';
-
 const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
   }),
 });
 
-const livepeerLightTheme: ThemeConfig = {
+const theme: ThemeConfig = {
   colors: {
     accent: 'rgb(0, 145, 255)',
     containerBorderColor: 'rgba(0, 145, 255, 0.9)',
@@ -49,26 +45,9 @@ const livepeerLightTheme: ThemeConfig = {
   },
 };
 
-const livepeerDarkTheme: ThemeConfig = {
-  colors: {
-    ...livepeerLightTheme.colors,
-    containerBorderColor: 'rgba(0, 145, 255, 0.5)',
-  },
-  fonts: {
-    ...livepeerLightTheme.fonts,
-  },
-};
-
 function App() {
-  const { theme } = useTheme();
-
-  const livepeerTheme = useMemo(
-    () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
-    [theme],
-  );
-
   return (
-    <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+    <LivepeerConfig client={livepeerClient} theme={theme}>
       <CreateAndViewAsset />
     </LivepeerConfig>
   );
@@ -77,28 +56,50 @@ function App() {
 
 ## Step 2: Play Video
 
-Now that our providers are set up, we use the [`Player`](/react/Player) with a `playbackId`, which we created
-previously when uploading a video asset. We override some of the custom styling to match the flow of our app!
+Now that our providers are set up, we use the [`Player`](/react/Player) with an IPFS CID as our `playbackId`, which we created
+previously when uploading a video asset and [storing to IPFS](/react/asset/useUpdateAsset). We use
+[Next.js Image](https://nextjs.org/docs/basic-features/image-optimization) as our optimized poster image, but this could also
+be a simple image URL.
+
+We also override some of the custom styling to match the flow of our app!
 
 ```tsx
 import { Player } from '@livepeer/react';
-import * as React from 'react';
+
+import Image from 'next/image';
 
 const playbackId =
   'bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy';
 
+import blenderPoster from '../../public/images/blender-poster.png';
+
+const PosterImage = () => {
+  return (
+    <Image
+      src={blenderPoster}
+      layout="fill"
+      objectFit="cover"
+      priority
+      placeholder="blur"
+    />
+  );
+};
+
 export const DemoPlayer = () => {
   return (
     <Player
-      title="Agent 327: Operation Barbershop"
+      title="Waterfalls"
       playbackId={playbackId}
       autoPlay
       muted
+      showTitle={false}
+      aspectRatio="16to9"
+      poster={<PosterImage />}
       controls={{
-        hotkeys: true,
         autohide: 3000,
       }}
       theme={{
+        borderStyles: { containerBorderStyle: 'hidden' },
         radii: { containerBorderRadius: '30px' },
         space: {
           controlsTopMarginX: '20px',

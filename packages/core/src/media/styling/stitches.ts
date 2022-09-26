@@ -58,7 +58,6 @@ export const {
       controlsBottomMarginY: '5px',
       controlsTopMarginX: '15px',
       controlsTopMarginY: '10px',
-      iconPaddingTop: '3px',
       timeMarginX: '8px',
     },
     radii: {

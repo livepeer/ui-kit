@@ -1,4 +1,4 @@
-import { isFunction, isUndefined, noop } from '../utils';
+import { noop } from '../utils';
 import { MimeType } from './mime';
 
 export const IS_CLIENT = typeof window !== 'undefined';
@@ -46,36 +46,36 @@ export const currentSafariVersion = (): number => {
 /**
  * Checks whether the `IntersectionObserver` API is available.
  */
-export const canObserveIntersection = (): boolean => {
-  return IS_CLIENT && !isUndefined(window.IntersectionObserver);
-};
+// export const canObserveIntersection = (): boolean => {
+//   return IS_CLIENT && !isUndefined(window.IntersectionObserver);
+// };
 
 /**
  * Checks if the ScreenOrientation API is available.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Screen/orientation}
  */
-export const canOrientScreen = (): boolean => {
-  return (
-    IS_CLIENT &&
-    !isUndefined(screen.orientation) &&
-    isFunction(screen.orientation.lock) &&
-    isFunction(screen.orientation.unlock)
-  );
-};
+// export const canOrientScreen = (): boolean => {
+//   return (
+//     IS_CLIENT &&
+//     !isUndefined(screen.orientation) &&
+//     isFunction(screen.orientation.lock) &&
+//     isFunction(screen.orientation.unlock)
+//   );
+// };
 
 /**
  * Checks if the screen orientation can be changed.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Screen/orientation}
  */
-export const canRotateScreen = (): boolean => {
-  return (
-    IS_CLIENT &&
-    !isUndefined(window.screen.orientation) &&
-    !isUndefined(window.screen.orientation.lock)
-  );
-};
+// export const canRotateScreen = (): boolean => {
+//   return (
+//     IS_CLIENT &&
+//     !isUndefined(window.screen.orientation) &&
+//     !isUndefined(window.screen.orientation.lock)
+//   );
+// };
 
 /**
  * Reduced motion iOS & MacOS setting.
@@ -96,11 +96,11 @@ export const isReducedMotionPreferred = (): boolean => {
  *
  * @see {@link https://developers.google.com/web/updates/2018/10/watch-video-using-picture-in-picture}
  */
-export const canUsePiPInChrome = (): boolean => {
-  if (!IS_CLIENT) return false;
-  const video = document.createElement('video');
-  return !!document.pictureInPictureEnabled && !video.disablePictureInPicture;
-};
+// export const canUsePiPInChrome = (): boolean => {
+//   if (!IS_CLIENT) return false;
+//   const video = document.createElement('video');
+//   return !!document.pictureInPictureEnabled && !video.disablePictureInPicture;
+// };
 
 /**
  * Checks if the native HTML5 video player can enter picture-in-picture (PIP) mode when using
@@ -109,24 +109,24 @@ export const canUsePiPInChrome = (): boolean => {
  *
  * @see {@link https://developer.apple.com/documentation/webkitjs/adding_picture_in_picture_to_your_safari_media_controls}
  */
-export const canUsePiPInSafari = (): boolean => {
-  if (!IS_CLIENT) return false;
+// export const canUsePiPInSafari = (): boolean => {
+//   if (!IS_CLIENT) return false;
 
-  const video = document.createElement('video');
+//   const video = document.createElement('video');
 
-  return (
-    isFunction(video.webkitSupportsPresentationMode) &&
-    isFunction(video.webkitSetPresentationMode) &&
-    !IS_IPHONE
-  );
-};
+//   return (
+//     isFunction(video.webkitSupportsPresentationMode) &&
+//     isFunction(video.webkitSetPresentationMode) &&
+//     !IS_IPHONE
+//   );
+// };
 
 /**
  * Checks if the native HTML5 video player can enter PIP.
  */
-export const canUsePiP = (): boolean => {
-  return canUsePiPInChrome() || canUsePiPInSafari();
-};
+// export const canUsePiP = (): boolean => {
+//   return canUsePiPInChrome() || canUsePiPInSafari();
+// };
 
 /**
  * To detect autoplay, we create a video element and call play on it, if it is `paused` after

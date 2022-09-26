@@ -38,8 +38,8 @@ export const ControlsContainer = React.forwardRef<
     left,
     right,
     poster,
-    showLoadingSpinner,
-    hidePosterOnPlayed,
+    showLoadingSpinner = true,
+    hidePosterOnPlayed = true,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =

@@ -24,6 +24,7 @@ importers:
       eslint: 8.23.0
       eslint-config-prettier: ^8.5.0
       eslint-import-resolver-typescript: ^3.5.1
+      eslint-plugin-compat: ^4.0.2
       eslint-plugin-eslint-comments: ^3.2.0
       eslint-plugin-import: ^2.26.0
       eslint-plugin-mdx: ^2.0.4
@@ -60,6 +61,7 @@ importers:
       eslint: 8.23.0
       eslint-config-prettier: 8.5.0_eslint@8.23.0
       eslint-import-resolver-typescript: 3.5.1_faomjyrlgqmwswvqymymzkxcqi
+      eslint-plugin-compat: 4.0.2_eslint@8.23.0
       eslint-plugin-eslint-comments: 3.2.0_eslint@8.23.0
       eslint-plugin-import: 2.26.0_ikxfxf6lcdzwf3sfhs76tj4x7m
       eslint-plugin-mdx: 2.0.4_eslint@8.23.0
@@ -203,6 +205,7 @@ importers:
     specifiers:
       '@ethersproject/abi': ^5.7.0
       '@stitches/core': ^1.2.8
+      core-js: ^3.25.2
       cross-fetch: ^3.1.5
       ethers: ^5.7.0
       hls.js: ^1.2.1
@@ -210,6 +213,7 @@ importers:
       zustand: ^4.1.1
     dependencies:
       '@stitches/core': 1.2.8
+      core-js: 3.25.2
       cross-fetch: 3.1.5
       hls.js: 1.2.1
       tus-js-client: 3.0.0
@@ -229,6 +233,7 @@ importers:
       '@types/react': ^18.0.18
       '@types/react-dom': ^18.0.6
       '@types/use-sync-external-store': ^0.0.3
+      core-js: ^3.25.2
       ethers: ^5.7.0
       livepeer: ^0.5.0
       react: ^18.2.0
@@ -241,6 +246,7 @@ importers:
       '@tanstack/query-sync-storage-persister': 4.2.3
       '@tanstack/react-query': 4.2.3_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.2.1
+      core-js: 3.25.2
       use-sync-external-store: 1.2.0_react@18.2.0
       zustand: 4.1.1_react@18.2.0
     devDependencies:
@@ -2385,6 +2391,14 @@ packages:
       fs-extra: 8.1.0
       globby: 11.1.0
       read-yaml-file: 1.1.0
+    dev: true
+
+  /@mdn/browser-compat-data/3.3.14:
+    resolution: {integrity: sha512-n2RC9d6XatVbWFdHLimzzUJxJ1KY8LdjqrW6YvGPiRmsHkhOUx74/Ct10x5Yo7bC/Jvqx7cDEW8IMPv/+vwEzA==}
+    dev: true
+
+  /@mdn/browser-compat-data/4.2.1:
+    resolution: {integrity: sha512-EWUguj2kd7ldmrF9F+vI5hUOralPd+sdsUnYbRy33vZTuZkduC1shE9TtEMEjAQwyfyMb4ole5KtjF8MsnQOlA==}
     dev: true
 
   /@mdx-js/mdx/2.1.2:
@@ -4688,6 +4702,12 @@ packages:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
     dev: true
 
+  /ast-metadata-inferer/0.7.0:
+    resolution: {integrity: sha512-OkMLzd8xelb3gmnp6ToFvvsHLtS6CbagTkFQvQ+ZYFe3/AIl9iKikNR9G7pY3GfOR/2Xc222hwBjzI7HLkE76Q==}
+    dependencies:
+      '@mdn/browser-compat-data': 3.3.14
+    dev: true
+
   /ast-types-flow/0.0.7:
     resolution: {integrity: sha512-eBvWn1lvIApYMhzQMsu9ciLfkBY499mFZlNqG+/9WR7PVlroQw0vG30cOQQbaKz3sCEc44TAOu2ykzqXSNnwag==}
     dev: true
@@ -4952,7 +4972,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001374
+      caniuse-lite: 1.0.30001377
       electron-to-chromium: 1.4.213
       node-releases: 2.0.6
       update-browserslist-db: 1.0.5_browserslist@4.21.3
@@ -5076,10 +5096,10 @@ packages:
 
   /caniuse-lite/1.0.30001374:
     resolution: {integrity: sha512-mWvzatRx3w+j5wx/mpFN5v5twlPrabG8NqX2c6e45LCpymdoGqNvRkRutFUqpRTXKFQFNQJasvK0YT7suW6/Hw==}
+    dev: true
 
   /caniuse-lite/1.0.30001377:
     resolution: {integrity: sha512-I5XeHI1x/mRSGl96LFOaSk528LA/yZG3m3iQgImGujjO8gotd/DL8QaI1R1h1dg5ATeI2jqPblMpKq4Tr5iKfQ==}
-    dev: false
 
   /ccount/2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -5381,6 +5401,10 @@ packages:
     resolution: {integrity: sha512-r1nJk41QLLPyozHUUPmILCEMtMw24NG4oWK6RbsDdjzQgg9ZvrUsPBj1MnG0wXXp1DCDU6j+wUvEmBSrtRbLXg==}
     requiresBuild: true
     dev: true
+
+  /core-js/3.25.2:
+    resolution: {integrity: sha512-YB4IAT1bjEfxTJ1XYy11hJAKskO+qmhuDBM8/guIfMz4JvdsAQAqvyb97zXX7JgSrfPLG5mRGFWJwJD39ruq2A==}
+    requiresBuild: true
 
   /cosmiconfig/7.0.1:
     resolution: {integrity: sha512-a1YWNUV2HwGimB7dU2s1wUMurNKjpx60HxBB6xUM8Re+2s1g1IIfJvFR0/iCF+XHdE0GMTKTuLR32UQff4TEyQ==}
@@ -6289,6 +6313,23 @@ packages:
       find-up: 2.1.0
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /eslint-plugin-compat/4.0.2_eslint@8.23.0:
+    resolution: {integrity: sha512-xqvoO54CLTVaEYGMzhu35Wzwk/As7rCvz/2dqwnFiWi0OJccEtGIn+5qq3zqIu9nboXlpdBN579fZcItC73Ycg==}
+    engines: {node: '>=9.x'}
+    peerDependencies:
+      eslint: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+    dependencies:
+      '@mdn/browser-compat-data': 4.2.1
+      ast-metadata-inferer: 0.7.0
+      browserslist: 4.21.3
+      caniuse-lite: 1.0.30001377
+      core-js: 3.25.2
+      eslint: 8.23.0
+      find-up: 5.0.0
+      lodash.memoize: 4.1.2
+      semver: 7.3.5
     dev: true
 
   /eslint-plugin-eslint-comments/3.2.0_eslint@8.23.0:
@@ -8207,6 +8248,10 @@ packages:
 
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+
+  /lodash.memoize/4.1.2:
+    resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
+    dev: true
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -10295,6 +10340,14 @@ packages:
   /semver/6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
+
+  /semver/7.3.5:
+    resolution: {integrity: sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+    dev: true
 
   /semver/7.3.7:
     resolution: {integrity: sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==}

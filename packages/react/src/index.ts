@@ -118,6 +118,7 @@ export {
 export { createReactClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
+  ControlsContainer,
   FullscreenButton,
   MediaControllerProvider,
   PlayButton,
@@ -126,11 +127,13 @@ export {
   Progress,
   ThemeProvider,
   TimeDisplay,
+  Title,
   useMediaController,
   useTheme,
   Volume,
 } from './components';
 export type {
+  ControlsContainerProps,
   FullscreenButtonProps,
   MediaControllerProviderProps,
   PlayButtonProps,
@@ -139,6 +142,7 @@ export type {
   ProgressProps,
   ThemeProviderProps,
   TimeDisplayProps,
+  TitleProps,
   VolumeProps,
 } from './components';
 export { Context, LivepeerConfig, useClient } from './context';

@@ -27,14 +27,21 @@ const DefaultUnmutedIcon = ({ size }: { size: number }) => (
 const mediaControllerSelector = ({
   isVolumeChangeSupported,
   requestToggleMute,
+  requestVolume,
   muted,
 }: MediaControllerState<HTMLMediaElement>) => ({
   isVolumeChangeSupported,
   requestToggleMute,
+  requestVolume,
   muted,
 });
 
 export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
+  /**
+   * Toggles showing the slider to change the volume level. Defaults to true.
+   * If false, the volume will toggle between 0% and 100%.
+   */
+  showSlider?: boolean;
   /**
    * The icon to be used for the button when unmuted.
    * @type React.ReactElement
@@ -45,27 +52,43 @@ export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
    * @type React.ReactElement
    */
   mutedIcon?: React.ReactElement;
-} & (
-    | {
-        unmutedIcon: React.ReactElement;
-        mutedIcon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
+};
 
 export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
   (props, ref) => {
-    const { requestToggleMute, muted, isVolumeChangeSupported } =
+    const { requestToggleMute, muted, requestVolume, isVolumeChangeSupported } =
       useMediaController(mediaControllerSelector);
 
-    const { unmutedIcon, mutedIcon, onClick, ...rest } = props;
+    const {
+      unmutedIcon,
+      mutedIcon,
+      onClick,
+      showSlider = true,
+      ...rest
+    } = props;
 
     const onClickComposed = React.useCallback(
       async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        requestToggleMute();
         await onClick?.(e);
+
+        if (!showSlider && isVolumeChangeSupported) {
+          if (muted) {
+            requestVolume(1);
+          } else {
+            requestVolume(0);
+          }
+        } else {
+          requestToggleMute();
+        }
       },
-      [onClick, requestToggleMute],
+      [
+        onClick,
+        requestToggleMute,
+        requestVolume,
+        showSlider,
+        isVolumeChangeSupported,
+        muted,
+      ],
     );
 
     const _children = useConditionalIcon(
@@ -94,7 +117,7 @@ export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
           {_children}
         </button>
 
-        {isVolumeChangeSupported && <VolumeProgress />}
+        {isVolumeChangeSupported && showSlider && <VolumeProgress />}
       </div>
     );
   },

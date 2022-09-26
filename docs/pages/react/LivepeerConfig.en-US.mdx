@@ -31,7 +31,7 @@ function App() {
 
 A livepeer [`Client`](/react/client) instance that consists of configuration options. Required to connect to a provider.
 
-```tsx {4-6,10}
+```tsx {3-5,9}
 import { createReactClient, studioProvider } from '@livepeer/react';
 
 const client = createReactClient({
@@ -41,6 +41,41 @@ const client = createReactClient({
 function App() {
   return (
     <LivepeerConfig client={client}>
+      <YourRoutes />
+    </LivepeerConfig>
+  );
+}
+```
+
+### theme
+
+Sets the global theme overrides. It is recommended to use this for any global app styles. This is optional and every value has
+a [default](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/media/styling/stitches.ts).
+
+```tsx {7-19,23}
+import { createReactClient, studioProvider } from '@livepeer/react';
+
+const client = createReactClient({
+  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+});
+
+const theme: ThemeConfig = {
+  colors: {
+    accent: 'rgb(0, 145, 255)',
+    containerBorderColor: 'rgba(0, 145, 255, 0.9)',
+  },
+  fonts: {
+    display: 'Inter',
+  },
+  radii: {
+    containerBorderRadius: '10px',
+    slider: '4px',
+  },
+};
+
+function App() {
+  return (
+    <LivepeerConfig client={client} theme={theme}>
       <YourRoutes />
     </LivepeerConfig>
   );

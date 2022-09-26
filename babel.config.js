@@ -3,7 +3,16 @@ module.exports = {
   overrides: [
     {
       include: ['./packages/core', './packages/react'],
-      presets: [['@babel/preset-env', { targets: 'defaults, not ie 11' }]],
+      presets: [
+        [
+          '@babel/preset-env',
+          {
+            // see here: https://babeljs.io/docs/en/babel-preset-env#usebuiltins-usage
+            useBuiltIns: 'usage',
+            corejs: 3,
+          },
+        ],
+      ],
     },
   ],
 };

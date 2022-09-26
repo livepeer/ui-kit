@@ -14,7 +14,6 @@ export const iconButton = css('button', {
   outline: 'inherit',
   padding: 0,
 
-  paddingTop: '$iconPaddingTop',
   color: '$icon',
   '&:hover': {
     color: '$iconHover',

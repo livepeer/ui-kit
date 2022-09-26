@@ -1,4 +1,5 @@
 export {
+  ControlsContainer,
   FullscreenButton,
   MediaControllerProvider,
   PlayButton,
@@ -7,11 +8,13 @@ export {
   Progress,
   ThemeProvider,
   TimeDisplay,
+  Title,
   useMediaController,
   useTheme,
   Volume,
 } from './media';
 export type {
+  ControlsContainerProps,
   FullscreenButtonProps,
   MediaControllerProviderProps,
   PlayButtonProps,
@@ -20,5 +23,6 @@ export type {
   ProgressProps,
   ThemeProviderProps,
   TimeDisplayProps,
+  TitleProps,
   VolumeProps,
 } from './media';

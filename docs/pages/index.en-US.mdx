@@ -86,17 +86,44 @@ function App() {
 
 ```tsx
 import { Player } from '@livepeer/react';
+import Image from 'next/image';
+import * as React from 'react';
 
-const playbackId = 'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe';
+import waterfallsPoster from '../../public/images/waterfalls-poster.png';
 
-function Livepeer() {
-  return <Player autoplay loop muted playbackId={playbackId} />;
+const PosterImage = () => {
+  return (
+    <Image
+      src={waterfallsPoster}
+      layout="fill"
+      objectFit="cover"
+      priority
+      placeholder="blur"
+    />
+  );
+};
+
+const playbackId =
+  'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe';
+
+export function Livepeer() {
+  return (
+    <Player
+      title="Waterfalls"
+      playbackId={playbackId}
+      loop
+      autoPlay
+      showTitle={false}
+      muted
+      poster={<PosterImage />}
+    />
+  );
 }
 ```
 
 In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Then, we use the [`Player`](/react/Player) to play a video from a playback ID, in this case, an IPFS CID! Waterfalls!
+Then, we use the [`Player`](/react/Player) to play a video from a playback ID **(actually the IPFS CID!)** with an optimized poster image! Waterfalls!
 
 We've only scratched the surface for what you can do with livepeer.js!
 

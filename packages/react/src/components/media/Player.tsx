@@ -11,7 +11,7 @@ import * as React from 'react';
 
 import { usePlaybackInfo } from '../../hooks';
 import { AudioPlayer } from './AudioPlayer';
-import { HlsPlayer, HlsPlayerProps } from './HlsPlayer';
+import { HlsPlayer } from './HlsPlayer';
 import { VideoPlayer } from './VideoPlayer';
 import { MediaControllerProvider, useTheme } from './context';
 
@@ -27,9 +27,7 @@ import {
 } from './controls';
 import { Title } from './controls/Title';
 
-export type PlayerProps = Partial<
-  Pick<HlsPlayerProps, 'hlsConfig' | 'loop'>
-> & {
+export type PlayerProps = {
   /** The source(s) of the media (required if `playbackId` is not provided) */
   src?: string | string[];
   /** The playback ID for the media (required if `src` is not provided) */
@@ -40,8 +38,11 @@ export type PlayerProps = Partial<
   /** Shows/hides the title at the top of the media */
   showTitle?: boolean;
 
+  /** Whether the media will loop when finished */
+  loop?: boolean;
+
   /**
-   * The aspect ratio of the media. Defaults to 16 / 9.
+   * The aspect ratio of the media. Defaults to 16to9 (16 / 9).
    * This significantly improves the cumulative layout shift and is required for the player.
    *
    * @see {@link https://web.dev/cls/}
@@ -69,15 +70,15 @@ export type PlayerProps = Partial<
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
 } & (
-    | {
-        src: string | string[];
-        playbackId?: never;
-      }
-    | {
-        playbackId: string;
-        src?: never;
-      }
-  ) &
+  | {
+      src: string | string[];
+      playbackId?: never;
+    }
+  | {
+      playbackId: string;
+      src?: never;
+    }
+) &
   (
     | {
         autoPlay: true;
@@ -93,7 +94,7 @@ export function Player({
   autoPlay,
   children,
   controls,
-  hlsConfig,
+
   muted,
   playbackId,
   refetchPlaybackInfoInterval = 5000,
@@ -162,11 +163,13 @@ export function Player({
     return mediaSourceFiltered;
   }, [playbackUrls, src]);
 
-  const hidePosterOnPlayer = React.useMemo(
+  const hidePosterOnPlayed = React.useMemo(
     () =>
       Array.isArray(sourceMimeTyped)
         ? sourceMimeTyped?.[0]?.type !== 'audio'
-        : true,
+          ? true
+          : undefined
+        : undefined,
     [sourceMimeTyped],
   );
 
@@ -183,7 +186,6 @@ export function Player({
       <Container className={contextTheme} aspectRatio={aspectRatio}>
         {sourceMimeTyped && !Array.isArray(sourceMimeTyped) ? (
           <HlsPlayer
-            hlsConfig={hlsConfig}
             ref={playerRef}
             autoPlay={autoPlay}
             muted={autoPlay ? true : muted}
@@ -215,7 +217,7 @@ export function Player({
         ) : (
           <>
             <ControlsContainer
-              hidePosterOnPlayed={hidePosterOnPlayer}
+              hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}

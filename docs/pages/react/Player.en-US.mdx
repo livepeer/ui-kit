@@ -1,63 +1,502 @@
 ---
 title: 'Player'
-description: 'The Player component provides an easy way to display media in an application.'
+description: 'The Player component provides an easy way to display video or audio.'
 ---
+
+import { Callout } from 'nextra-theme-docs';
+import {
+  DocsDemoPlayer as Player,
+  SimplePlayer,
+  ImagePosterPlayer,
+  CustomControlsPlayer,
+} from '@components/docs';
 
 # Player
 
-The `Player` component provides an easy way to display media in an application.
+The `Player` component provides an easy way to display video or audio.
 
 ```ts
 import { Player } from '@livepeer/react';
 ```
 
-# Compatibility
-
-import { Callout } from 'nextra-theme-docs';
-
-<Callout emoji="🌐">
-  We aim to support over 92% of browsers tracked on
-  [caniuse](https://caniuse.com/).
-</Callout>
-
-|                    | [wagmi](https://github.com/wagmi-dev/wagmi)                                                     | [web3-react](https://github.com/NoahZinsmeister/web3-react)                                             | [useDApp](https://github.com/EthWorks/useDApp)                                                     | [web3modal](https://github.com/Web3Modal/web3modal)                                                     |
-| ------------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Chrome             | ![wagmi star count](https://img.shields.io/github/stars/wagmi-dev/wagmi?colorB=161b22&label=)   | ![web3-react star count](https://img.shields.io/github/stars/Uniswap/web3-react?colorB=161b22&label=)   | ![useDApp star count](https://img.shields.io/github/stars/EthWorks/useDApp?colorB=161b22&label=)   | ![web3modal star count](https://img.shields.io/github/stars/Web3Modal/web3modal?colorB=161b22&label=)   |
-| Chrome for Android | ![wagmi issue count](https://img.shields.io/github/issues/wagmi-dev/wagmi?colorB=161b22&label=) | ![web3-react issue count](https://img.shields.io/github/issues/Uniswap/web3-react?colorB=161b22&label=) | ![useDApp issue count](https://img.shields.io/github/issues/EthWorks/useDApp?colorB=161b22&label=) | ![web3modal issue count](https://img.shields.io/github/issues/Web3Modal/web3modal?colorB=161b22&label=) |
-| iOS Safari         | ![wagmi downloads](https://img.shields.io/npm/dw/wagmi?colorB=161b22&label=)                    | ![web3-react downloads](https://img.shields.io/npm/dw/@web3-react/core?colorB=161b22&label=)            | ![useDApp downloads](https://img.shields.io/npm/dw/@usedapp/core?colorB=161b22&label=)             | ![web3modal downloads](https://img.shields.io/npm/dw/web3modal?colorB=161b22&label=)                    |
-| Edge               | ![wagmi license](https://img.shields.io/github/license/wagmi-dev/wagmi?colorB=161b22&label=)    | ![web3-react license](https://img.shields.io/github/license/Uniswap/web3-react?colorB=161b22&label=)    | ![useDApp license](https://img.shields.io/github/license/EthWorks/useDApp?colorB=161b22&label=)    | ![web3modal license](https://img.shields.io/github/license/Web3Modal/web3modal?colorB=161b22&label=)    |
-| Safari             | –                                                                                               | none                                                                                                    | none                                                                                               | none                                                                                                    |
-| Firefox            | React, Vanilla JS                                                                               | React                                                                                                   | React                                                                                              | Vanilla JS                                                                                              |
-| Opera              | ✅                                                                                              | 🛑                                                                                                      | ✅                                                                                                 | 🛑                                                                                                      |
-
 ## Usage
+
+The following example assumes a stream or asset was created via useCreateAsset or useCreateStream, and the `playbackId`
+was passed to the viewer.
+
+<br />
+
+<SimplePlayer />
 
 ```tsx
 import { Player } from '@livepeer/react';
+import Image from 'next/image';
 
-const playbackId =
-  'bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy';
+import blenderPoster from '../../../public/images/blender-poster.png';
 
-function App() {
-  return <Player playbackId={playbackId} />;
-}
+const PosterImage = () => {
+  return (
+    <Image
+      src={blenderPoster}
+      layout="fill"
+      objectFit="cover"
+      priority
+      placeholder="blur"
+    />
+  );
+};
+
+export const SimplePlayer = () => {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      poster={<PosterImage />}
+    />
+  );
+};
 ```
+
+Here we also introduce a custom `PosterImage` React component, which is described in
+more detail below in [`poster`](#poster) configuration.
+
+## Compatibility
+
+<Callout emoji="🌐">
+  We aim to support
+  [>92.9%](https://browsersl.ist/#q=last+2+versions%2C%3E+0.2%25%2Cnot+dead) of
+  browsers tracked on [caniuse](https://caniuse.com/). We use
+  [browserslist](https://browsersl.ist/) to track compatibility and
+  [core-js](https://github.com/zloirock/core-js) for polyfills.
+</Callout>
+
+| Browser            | Version |
+| ------------------ | ------- |
+| Chrome             | 102+    |
+| Chrome for Android | 105+    |
+| iOS Safari         | 12.2+   |
+| Edge               | 103+    |
+| Safari             | 13.1+   |
+| Firefox            | 103+    |
+| Opera              | 89+     |
+| Samsung Internet   | 17+     |
+| UC Browser         | 13.4+   |
+| Firefox Android    | 104+    |
+| Opera Mini         | all     |
 
 ## Configuration
 
 ### playbackId or src
 
-A playback ID for an [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts) or
-[Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts), or a source URL. One of these is
-required. If a playback ID is provided, livepeer.js will automatically poll the provider for a
-playback URL corresponding to the playback ID.
+A `playbackId` for an [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts) or
+[Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts), or `src`, a media source URL. One of these is
+required. If a playback ID is provided, it will automatically retrieve the playback URL corresponding to the playback ID.
+
+#### playbackId
+
+```tsx {7}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+    />
+  );
+}
+```
+
+The `playbackId` passed to the `Player` can be either a short playback ID
+which is created on asset/stream creation, or, for an asset, an IPFS CID
+**after the asset has been stored in IPFS using
+[`useUpdateAsset`](/react/asset/useUpdateAsset).**
+
+```tsx {9}
+import { Player } from '@livepeer/react';
+
+function App() {
+  // only after the asset has been persisted to IPFS
+  // equivalent to the above example
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
+    />
+  );
+}
+```
+
+#### src
+
+The Player also supports an arbitrary `src` URL which can correspond to any common video or audio which most browsers support.
+See [caniuse video format](https://caniuse.com/?search=video%20format) for more details. Metrics reporting **will not** work
+with an arbitrary `src` that is not a recognized provider (e.g. not a Studio playback URL).
+
+```tsx {7}
+import { Player } from '@livepeer/react';
+
+const src =
+  'https://ipfs.livepeer.studio/ipfs/QmPHSco6gGRL9WZTjsYeAvqTJkCTNe4VyCbX5SWYaK4h8L/earth.mp4';
+
+function App() {
+  return <Player src={src} />;
+}
+```
+
+<Callout type="warning" emoji="⚠️">
+  Using an arbitrary `src` that is not from a provider will not be transcoded,
+  and will take up significant network bandwidth. It's highly recommended to
+  upload media to a provider, and serve content to viewers with a `playbackId`
+  (which will serve transcoded content).
+</Callout>
+
+For example, try viewing/seeking the video below while [simulating a slower network
+connection](https://awik.io/simulate-slow-internet-connection-chrome-developer-tools/)
+in your browser - it will be _painfully_ slow. Then, check out the [transcoded
+version above](#usage) with the exact same network speed.
+
+<Player src="https://ipfs.livepeer.studio/ipfs/QmPHSco6gGRL9WZTjsYeAvqTJkCTNe4VyCbX5SWYaK4h8L/agent-327.mp4" />
+
+### title
+
+The `title` for the content. This is highly recommended, since it is used for [accessibility labels](https://web.dev/semantics-aria/)
+in the Player. If you do not want to show the title visually, see [`showTitle`](#showTitle).
 
 ```tsx {6}
 import { Player } from '@livepeer/react';
 
-const playbackId = 'abcde6mykgkvtxav';
-
 function App() {
-  return <Player playbackId={playbackId} />;
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+    />
+  );
 }
 ```
+
+<Player title="Agent 327: Operation Barbershop" playbackId="6d7el73r1y12chxr" />
+
+### showTitle
+
+Enables/disables the title component.
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      showTitle={false}
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  showTitle={false}
+/>
+
+### aspectRatio
+
+Sets the aspect ratio for the content. Highly recommended for a great viewing experience (see why we want to prevent
+[Cumulative Layout Shift](https://web.dev/cls/)). Defaults to `16to9`.
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      aspectRatio="1to1"
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  aspectRatio="1to1"
+/>
+
+### loop
+
+Sets whether the content will loop when finished. Defaults to `false`.
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      loop
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  loop
+/>
+
+### poster
+
+Sets the poster image. This can be either a string for an image URL, or a React component.
+
+<Callout>
+  It is recommended to use an optimized React image component for this, as
+  opposed to passing a simple URL.
+</Callout>
+
+#### Simple
+
+The `poster` can be a simple image URL, and it will be rendered with a regular `img` HTML tag.
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      poster="/images/blender-poster.png"
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  poster="/images/blender-poster.png"
+/>
+
+#### Advanced
+
+If the poster is a React component, it will be rendered with similar CSS attributes to the `img` above. In the below example,
+we show the use of [Next.js Image](https://nextjs.org/docs/basic-features/image-optimization) to render an optimized
+image, which will automatically handle slow network conditions/different device sizes.
+
+```tsx {4-8,15}
+import { Player } from '@livepeer/react';
+import Image from 'next/image';
+
+import blenderPoster from '../../../public/images/blender-poster.png';
+
+const PosterImage = () => {
+  return (
+    <Image
+      src={blenderPoster}
+      layout="fill"
+      objectFit="cover"
+      placeholder="blur"
+    />
+  );
+};
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      poster={<PosterImage />}
+    />
+  );
+}
+```
+
+<ImagePosterPlayer />
+
+### showLoadingSpinner
+
+Shows/hides the loading spinner for the media content. Defaults to `true`.
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      showLoadingSpinner={false}
+    />
+  );
+}
+```
+
+### controls
+
+Configures the timeout for autohiding controls, and if keyboard hotkeys for controlling video are enabled.
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      controls={{ autohide: 0, hotkeys: false }}
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  controls={{ autohide: 0, hotkeys: false }}
+/>
+
+### autoPlay and muted
+
+Sets the video to autoplay when the content comes into focus on the webpage. If `autoPlay` is specified, `muted` must also
+be present. This is [enforced in many modern browsers](https://developer.chrome.com/blog/autoplay/) and is a requirement for
+the Player.
+
+```tsx {8-9}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      muted
+      autoPlay
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  muted
+  autoPlay
+/>
+
+### theme
+
+Sets the Player-specific theme overrides. It is recommended to use [`LivepeerConfig`](/react/LivepeerConfig) for
+any global app styles, and the `theme` prop to override those styles on a per-Player basis.
+
+```tsx {8-24}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      theme={{
+        borderStyles: {
+          containerBorderStyle: 'hidden',
+        },
+        colors: {
+          accent: '#00a55f',
+        },
+        space: {
+          controlsBottomMarginX: '10px',
+          controlsBottomMarginY: '5px',
+          controlsTopMarginX: '15px',
+          controlsTopMarginY: '10px',
+        },
+        radii: {
+          containerBorderRadius: '0px',
+        },
+      }}
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  theme={{
+    borderStyles: {
+      containerBorderStyle: 'hidden',
+    },
+    colors: {
+      accent: '#00a55f',
+    },
+    space: {
+      controlsBottomMarginX: '10px',
+      controlsBottomMarginY: '5px',
+      controlsTopMarginX: '15px',
+      controlsTopMarginY: '10px',
+    },
+    radii: {
+      containerBorderRadius: '0px',
+    },
+  }}
+/>
+
+### children
+
+Overrides the custom controls for the Player. The below example removes the fullscreen controls on the right and the volume
+slider (so volume is only 0% or 100%). See the
+[`Player` default controls](https://github.com/livepeer/livepeer.js/blob/main/packages/react/src/components/media/Player.tsx)
+for more details on how the `ControlsContainer` component is used.
+
+```tsx {28-39}
+import {
+  ControlsContainer,
+  PlayButton,
+  Player,
+  Poster,
+  Progress,
+  TimeDisplay,
+  Title,
+  Volume,
+} from '@livepeer/react';
+
+import Image from 'next/image';
+
+import blenderPoster from '../../../public/images/blender-poster-2.png';
+
+const PosterImage = () => {
+  return <Image src={blenderPoster} layout="fill" objectFit="cover" />;
+};
+
+const title = 'Agent 327: Operation Barbershop';
+
+export const CustomControlsPlayer = () => {
+  return (
+    <Player
+      title={title}
+      playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
+    >
+      <ControlsContainer
+        poster={<Poster content={<PosterImage />} title={title} />}
+        top={<Title content={title} />}
+        middle={<Progress />}
+        left={
+          <>
+            <PlayButton />
+            <Volume showSlider={false} />
+            <TimeDisplay />
+          </>
+        }
+      />
+    </Player>
+  );
+};
+```
+
+<CustomControlsPlayer />
