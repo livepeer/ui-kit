@@ -21,6 +21,10 @@ export class MockedVideoElement extends HTMLVideoElement {
     super();
   }
 
+  load = vi.fn(() => {
+    return true;
+  });
+
   addEventListener = vi.fn(
     (event: string, listener: EventListenerOrEventListenerObject) => {
       this.listeners[event] = [...(this.listeners[event] ?? []), listener];
