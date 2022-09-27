@@ -179,19 +179,15 @@ importers:
       '@types/react-dom': ^18.0.6
       eslint: ^8.23.0
       eslint-config-next: ^12.2.5
-      ethers: ^5.7.0
       next: ^12.2.5
       react: ^18.2.0
       react-dom: ^18.2.0
       typescript: ^4.8.2
-      wagmi: ^0.6.4
     dependencies:
       '@livepeer/react': link:../../packages/react
-      ethers: 5.7.0
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      wagmi: 0.6.4_2iwq3bmdfa3kr5zxt7xazrj424
     devDependencies:
       '@preconstruct/next': 4.0.0
       '@types/node': 18.7.16

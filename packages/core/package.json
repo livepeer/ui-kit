@@ -21,17 +21,23 @@
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
       "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+    },
+    "./contracts": {
+      "module": "./contracts/dist/livepeer-contracts.esm.js",
+      "default": "./contracts/dist/livepeer-contracts.cjs.js"
     }
   },
   "sideEffects": false,
   "files": [
+    "/contracts",
     "/providers",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
-      "providers/studio/index.ts"
+      "providers/studio/index.ts",
+      "contracts/index.ts"
     ]
   },
   "peerDependencies": {

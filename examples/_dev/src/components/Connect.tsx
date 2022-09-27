@@ -1,4 +1,5 @@
-import { useLivepeerProvider, useRoundsManager } from '@livepeer/react';
+import { useLivepeerProvider } from '@livepeer/react';
+import { useRoundsManager } from '@livepeer/react/contracts';
 import { ConnectKitButton } from 'connectkit';
 import { useEffect, useState } from 'react';
 

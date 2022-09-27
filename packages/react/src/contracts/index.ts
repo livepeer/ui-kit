@@ -1,3 +1,4 @@
+export * from 'livepeer/contracts';
 export {
   useBondingManager,
   useController,

@@ -1,6 +1,7 @@
 import { Signer } from 'ethers';
 import { keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 
+import { Address } from '../types';
 import {
   L1Address,
   L1LivepeerChainId,
@@ -13,11 +14,9 @@ import {
   arbitrumRinkebyAddress,
   mainnetAddress,
   rinkebyAddress,
-} from '../../constants';
-import { IncorrectChainIdError } from '../../errors';
-
+} from './constants';
+import { IncorrectChainIdError } from './errors';
 import {
-  Address,
   BondingManagerFactory,
   ControllerFactory,
   L1MigratorFactory,
@@ -30,7 +29,7 @@ import {
   RoundsManagerFactory,
   ServiceRegistryFactory,
   TicketBrokerFactory,
-} from '../../types';
+} from './types';
 
 type SignerOrNil = Signer | null | undefined;
 
