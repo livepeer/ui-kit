@@ -70,7 +70,6 @@ export type {
   LivepeerAddress,
   LivepeerChain,
   LivepeerChainId,
-  StudioLivepeerProviderName,
   MainnetLivepeerChain,
   MainnetLivepeerChainId,
   TestnetLivepeerChain,

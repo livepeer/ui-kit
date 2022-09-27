@@ -25,13 +25,8 @@ export const defaultTranscodingProfiles: Array<TranscodingProfile> = [
   },
 ];
 
-const _studioConfigConst = {
+export const defaultStudioConfig: StudioLivepeerProviderConfig = {
   name: 'Livepeer Studio',
   baseUrl: 'https://livepeer.studio/api',
   apiKey: 'a616be3b-8980-4932-8079-0122e0106f95',
-} as const;
-
-export type StudioLivepeerProviderName = typeof _studioConfigConst.name;
-
-export const defaultStudioConfig =
-  _studioConfigConst as StudioLivepeerProviderConfig;
+};
