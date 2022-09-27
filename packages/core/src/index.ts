@@ -38,7 +38,7 @@ export {
   ArbRetryableTxABI,
   BondingManagerABI,
   ControllerABI,
-  defaultStudioApiKey,
+  defaultStudioConfig,
   defaultTranscodingProfiles,
   InboxABI,
   L1BondingManagerABI,
@@ -57,7 +57,6 @@ export {
   rinkebyAddress,
   RoundsManagerABI,
   ServiceRegistryABI,
-  studio,
   testnetChainId,
   TicketBrokerABI,
 } from './constants';

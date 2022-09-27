@@ -7,7 +7,7 @@ export {
   Client,
   ControllerABI,
   createStorage,
-  defaultStudioApiKey,
+  defaultStudioConfig,
   defaultTranscodingProfiles,
   InboxABI,
   L1BondingManagerABI,
@@ -27,7 +27,6 @@ export {
   rinkebyAddress,
   RoundsManagerABI,
   ServiceRegistryABI,
-  studio,
   testnetChainId,
   TicketBrokerABI,
 } from 'livepeer';
