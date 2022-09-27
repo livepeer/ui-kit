@@ -71,7 +71,7 @@ export type {
   LivepeerAddress,
   LivepeerChain,
   LivepeerChainId,
-  LivepeerProviderName,
+  StudioLivepeerProviderName,
   MainnetLivepeerChain,
   MainnetLivepeerChainId,
   TestnetLivepeerChain,

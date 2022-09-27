@@ -66,7 +66,7 @@ export type {
   LivepeerChainId,
   LivepeerProvider,
   LivepeerProviderConfig,
-  LivepeerProviderName,
+  StudioLivepeerProviderName,
   LivepeerToken,
   LivepeerTokenFaucet,
   MainnetLivepeerChain,
