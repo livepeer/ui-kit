@@ -42,9 +42,5 @@ export type {
   TestnetLivepeerChain,
   TestnetLivepeerChainId,
 } from './contracts';
-export {
-  defaultStudioApiKey,
-  defaultTranscodingProfiles,
-  studio,
-} from './provider';
+export { defaultTranscodingProfiles, defaultStudioConfig } from './provider';
 export type { LivepeerProviderName } from './provider';

@@ -1,6 +1,6 @@
 import * as tus from 'tus-js-client';
 
-import { defaultStudioApiKey, studio } from '../../constants';
+import { defaultStudioConfig } from '../../constants';
 
 import {
   Asset,
@@ -12,6 +12,7 @@ import {
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
+  LivepeerProviderConfig,
   Metrics,
   PlaybackInfo,
   Stream,
@@ -31,19 +32,19 @@ import {
   StudioViewsMetrics,
 } from './types';
 
-export type StudioLivepeerProviderConfig = {
-  apiKey?: string | null;
+export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
+  apiKey: string;
 };
 
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
-  readonly _apiKey: string;
-  readonly _defaultHeaders: { Authorization: `Bearer ${string}` };
+  readonly _defaultHeaders: { Authorization?: `Bearer ${string}` };
 
-  constructor(apiKey: string) {
-    super(studio);
+  constructor(config: StudioLivepeerProviderConfig) {
+    super(config);
 
-    this._apiKey = apiKey;
-    this._defaultHeaders = { Authorization: `Bearer ${apiKey}` };
+    this._defaultHeaders = config.apiKey
+      ? { Authorization: `Bearer ${config.apiKey}` }
+      : {};
   }
 
   async createStream(args: CreateStreamArgs): Promise<Stream> {
@@ -280,8 +281,8 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 }
 
 export function studioProvider(
-  config?: StudioLivepeerProviderConfig,
+  config?: Partial<StudioLivepeerProviderConfig>,
 ): LivepeerProviderFn<StudioLivepeerProvider> {
   return () =>
-    new StudioLivepeerProvider(config?.apiKey ?? defaultStudioApiKey);
+    new StudioLivepeerProvider({ ...defaultStudioConfig, ...config });
 }
