@@ -107,7 +107,7 @@ describe('reportMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "firstPlayback": 30000,
+          "firstPlayback": 213000,
           "nError": 0,
           "nStalled": 0,
           "nWaiting": 0,
