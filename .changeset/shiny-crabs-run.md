@@ -6,7 +6,7 @@
 Allow configuring base URL of Livepeer Studio provider
 
 You can now configure more parameters of the the Livepeer Studio provider,
-including especifically the `baseUrl` for the API calls.
+including specifically the `baseUrl` for the API calls.
 
 ```ts
 const livepeer = createReactClient({

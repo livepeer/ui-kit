@@ -30,10 +30,25 @@ const client = createReactClient({
 A [CORS protected](https://docs.livepeer.studio/quickstart) Studio API key. If no API key is provided, the provider
 will use a default key which is rate-limited.
 
-```ts {5}
+```ts {4}
 import { createReactClient, studioProvider } from '@livepeer/react';
 
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+});
+```
+
+### baseUrl
+
+A base URL for the provider. If no base URL is provided, the provider will use the `https://livepeer.studio` domain.
+
+```ts {6}
+import { createReactClient, studioProvider } from '@livepeer/react';
+
+const client = createReactClient({
+  provider: studioProvider({
+    apiKey: 'yourStudioApiKey',
+    baseUrl: 'https://studio.my-domain.com/root/api',
+  }),
 });
 ```
