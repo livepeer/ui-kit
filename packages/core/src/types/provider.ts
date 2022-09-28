@@ -302,6 +302,29 @@ export type Asset = {
       url?: string;
       /** URL to access file via HTTP through an IPFS gateway */
       gatewayUrl?: string;
+      spec?: {
+        /**
+         * Name of the NFT metadata template to export. 'player' will embed the
+         * Livepeer Player on the NFT while 'file' will reference only the
+         * immutable MP4 files.
+         */
+        nftMetadataTemplate?: 'player' | 'file';
+        /**
+         * Additional data to add to the NFT metadata exported to IPFS. Will be
+         * deep merged with the default metadata exported.
+         */
+        nftMetadata?: {
+          [k: string]: unknown;
+        };
+      };
+      nftMetadata?: {
+        /** CID of the file on IPFS */
+        cid?: string;
+        /** URL with IPFS scheme for the file */
+        url?: string;
+        /** URL to access file via HTTP through an IPFS gateway */
+        gatewayUrl?: string;
+      };
     };
     status?: {
       /** High-level descriptor of where the storage is in its lifecycle */

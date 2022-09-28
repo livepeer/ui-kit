@@ -4,9 +4,22 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { useTheme } from 'next-themes';
 
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
+
+import { WagmiConfig, chain, createClient } from 'wagmi';
+
+import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
+
+const wagmiClient = createClient(
+  getDefaultClient({
+    appName: 'livepeer.js',
+    chains: [chain.polygonMumbai],
+    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+  }),
+);
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -74,9 +87,28 @@ export function Providers({ children }: Props) {
     [theme],
   );
 
+  const [syncedTabsStore, setSyncedTabsStore] = useState<
+    SyncedTabsState['store']
+  >({});
+
+  const syncedTabsState: SyncedTabsState = useMemo(
+    () => ({
+      store: syncedTabsStore,
+      setNewIndex: (key, index) =>
+        setSyncedTabsStore((prev) => ({ ...prev, [key]: index })),
+    }),
+    [syncedTabsStore, setSyncedTabsStore],
+  );
+
   return (
-    <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
-      {children}
-    </LivepeerConfig>
+    <WagmiConfig client={wagmiClient}>
+      <ConnectKitProvider>
+        <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+          <SyncedTabsContext.Provider value={syncedTabsState}>
+            {children}
+          </SyncedTabsContext.Provider>
+        </LivepeerConfig>
+      </ConnectKitProvider>
+    </WagmiConfig>
   );
 }

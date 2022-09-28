@@ -9,7 +9,7 @@ The `livepeer` package contains vanilla JS data fetching and Livepeer provider/p
 Install livepeer and its peer dependencies.
 
 ```bash
-npm install livepeer ethers
+npm install livepeer
 ```
 
 ## Community

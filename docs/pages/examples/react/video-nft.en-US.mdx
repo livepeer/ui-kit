@@ -1,0 +1,310 @@
+---
+title: 'Mint a Video NFT'
+description: 'Learn how to mint a video NFT on the Aptos or an EVM-compatible blockchain with livepeer.js'
+---
+
+import { Callout, Tabs, Tab } from 'nextra-theme-docs';
+import { SyncedTab, SyncedTabs } from '@components/core';
+import { AptosNft, WagmiNft } from '@components/examples';
+
+# Mint a Video NFT
+
+The example below shows how to mint a video NFT easily, using either [`wagmi`](https://wagmi.sh/) for EVM-compatible blockchains or
+[`aptos`](https://aptos.dev/) for the Aptos blockchain.
+
+<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
+  <SyncedTab>
+    <AptosNft />
+  </SyncedTab>
+  <SyncedTab>
+    <WagmiNft />
+  </SyncedTab>
+</SyncedTabs>
+
+## Step 1: Adding Dependencies
+
+We first add the required dependencies using `npm` (or your preferred package manager).
+
+<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
+  <SyncedTab>
+    ```bash
+    npm i aptos
+    ```
+  </SyncedTab>
+  <SyncedTab>
+    ```bash
+    npm i wagmi ethers
+    ```
+
+    We also use [Family's ConnectKit](https://docs.family.co/connectkit) to show the connect wallet button, but this can be replaced
+    by any wallet connection provider (e.g. [RainbowKit](https://www.rainbowkit.com/docs/introduction)). You can install this with:
+
+    ```bash
+    npm i connectkit
+    ```
+  </SyncedTab>
+</SyncedTabs>
+
+## Step 2: Setting Up Providers
+
+<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
+  <SyncedTab>
+```tsx
+export const AptosNft = () => {
+  return (
+    <Box></Box>
+  );
+};
+```
+  </SyncedTab>
+  <SyncedTab>
+```tsx
+import {
+  LivepeerConfig,
+  ThemeConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+// this is an optional dependency, and can use another wallet connector (like RainbowKit)
+import { ConnectKitProvider, getDefaultClient } from 'connectkit';
+import { WagmiConfig, createClient } from 'wagmi';
+
+const wagmiClient = createClient(
+  getDefaultClient({
+    appName: 'livepeer.js',
+    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+  }),
+);
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+function App() {
+  return (
+    <WagmiConfig client={wagmiClient}>
+      <ConnectKitProvider>
+        <LivepeerConfig client={livepeerClient}>
+          <CreateAndViewAsset />
+        </LivepeerConfig>
+      </ConnectKitProvider>
+    </WagmiConfig>
+  );
+}
+```
+  </SyncedTab>
+</SyncedTabs>
+
+## Step 3: Add Connect Button
+
+<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
+  <SyncedTab>
+```tsx
+export const AptosNft = () => {
+  return (
+    <Box></Box>
+  );
+};
+```
+  </SyncedTab>
+  <SyncedTab>
+```tsx
+import { ConnectKitButton } from 'connectkit';
+import { useAccount } from 'wagmi';
+
+export const WagmiNft = () => {
+  const { address } = useAccount();
+
+  return (
+    <Box>
+      <ConnectKitButton />
+    </Box>
+  );
+};
+```
+  </SyncedTab>
+</SyncedTabs>
+
+## Step 4: Upload Asset to IPFS
+
+<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
+  <SyncedTab>
+```tsx
+export const AptosNft = () => {
+  return (
+    <Box></Box>
+  );
+};
+```
+  </SyncedTab>
+  <SyncedTab>
+```tsx
+import { useAsset, useUpdateAsset } from '@livepeer/react';
+import { ConnectKitButton } from 'connectkit';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
+import { useAccount } from 'wagmi';
+
+export const WagmiNft = () => {
+  const { address } = useAccount();
+  const router = useRouter();
+
+  const assetId = useMemo(
+    () => (router?.query?.id ? String(router?.query?.id) : undefined),
+    [router?.query],
+  );
+
+  const {
+    data: asset,
+    status: assetStatus,
+  } = useAsset({
+    assetId,
+    enabled: assetId?.length === 36,
+    refetchInterval: (asset) =>
+      asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
+  });
+  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+
+  return (
+    <Box>
+      <ConnectKitButton />
+      {address && assetId && (
+        <>
+          <Text>{assetId}</Text>
+          <Flex>
+            {asset?.status?.phase === 'ready' &&
+            asset?.storage?.status?.phase !== 'ready' && (
+              <Button
+                onClick={() => {
+                  updateAsset({
+                    assetId: asset.id,
+                    storage: { ipfs: true },
+                  });
+                }}
+              >
+                Upload to IPFS
+              </Button>
+            )}
+          </Flex>
+        </>
+      )}
+    </Box>
+  );
+};
+```
+  </SyncedTab>
+</SyncedTabs>
+
+## Step 5: Mint an NFT
+
+<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
+  <SyncedTab>
+```tsx
+export const AptosNft = () => {
+  return (
+    <Box></Box>
+  );
+};
+```
+  </SyncedTab>
+  <SyncedTab>
+```tsx
+import { useAsset, useUpdateAsset } from '@livepeer/react';
+import { ConnectKitButton } from 'connectkit';
+import { useRouter } from 'next/router';
+
+import { useMemo } from 'react';
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+
+// The demo NFT contract ABI
+const videoNftAbi = [
+  'event Mint(address indexed sender, address indexed owner, string tokenURI, uint256 tokenId)',
+  'function mint(address owner, string tokenURI) returns (uint256)',
+] as const;
+
+export const WagmiNft = () => {
+  const { address } = useAccount();
+  const router = useRouter();
+
+  const assetId = useMemo(
+    () => (router?.query?.id ? String(router?.query?.id) : undefined),
+    [router?.query],
+  );
+
+  const { data: asset } = useAsset({
+    assetId,
+    enabled: assetId?.length === 36,
+    refetchInterval: (asset) =>
+      asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
+  });
+  const { mutate: updateAsset } = useUpdateAsset();
+
+  const { config } = usePrepareContractWrite({
+    // The demo NFT contract address on Polygon Mumbai
+    addressOrName: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
+    contractInterface: videoNftAbi,
+    // Function on the contract
+    functionName: 'mint',
+    // Arguments for the mint function
+    args: [address, asset?.storage?.ipfs?.nftMetadata?.url],
+    enabled: Boolean(address && asset?.storage?.ipfs?.nftMetadata?.url),
+  });
+
+  const {
+    data: contractWriteData,
+    isSuccess,
+    write,
+    error: contractWriteError,
+  } = useContractWrite(config);
+
+  return (
+    <Box css={{ my: '$4' }}>
+      <ConnectKitButton />
+      {address && assetId && (
+        <>
+          <Text>{assetId}</Text>
+          <Flex css={{ jc: 'flex-end', mt: '$4', ai: 'center' }}>
+            {asset?.status?.phase === 'ready' &&
+            asset?.storage?.status?.phase !== 'ready' ? (
+              <Button
+                onClick={() => {
+                  updateAsset({
+                    assetId: asset.id,
+                    storage: { ipfs: true },
+                  });
+                }}
+              >
+                Upload to IPFS
+              </Button>
+            ) : contractWriteData?.hash && isSuccess ? (
+              <a
+                target="_blank"
+                href={`https://mumbai.polygonscan.com/tx/${contractWriteData.hash}`}
+              >
+                <Button>View Mint Transaction</Button>
+              </a>
+            ) : contractWriteError ? (
+              <Text>{contractWriteError.message}</Text>
+            ) : asset?.storage?.status?.phase === 'ready' && write ? (
+              <Button
+                onClick={() => {
+                  write();
+                }}
+              >
+                Mint NFT
+              </Button>
+            ) : (
+              <></>
+            )}
+          </Flex>
+        </>
+      )}
+    </Box>
+  );
+};
+```
+  </SyncedTab>
+</SyncedTabs>
+
