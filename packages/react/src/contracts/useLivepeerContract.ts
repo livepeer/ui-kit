@@ -20,12 +20,12 @@ import {
   getRoundsManager,
   getServiceRegistry,
   getTicketBroker,
-} from 'livepeer';
+} from 'livepeer/contracts';
 
 import { useNetwork, useSigner } from 'wagmi';
 
-import { QueryClientContext } from '../../context';
-import { useInternalQuery } from '../../utils';
+import { QueryClientContext } from '../context';
+import { useInternalQuery } from '../utils';
 
 function useContract<
   TContract extends BaseContract,

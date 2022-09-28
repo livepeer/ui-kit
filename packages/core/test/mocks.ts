@@ -1,5 +1,14 @@
 import { vi } from 'vitest';
 
+// make dates stable across runs and increment each call
+export const resetDateNow = () => {
+  let nowCount = 0;
+
+  Date.now = vi.fn(() =>
+    new Date(Date.UTC(2022, 1, 1)).setSeconds(nowCount++).valueOf(),
+  );
+};
+
 export const MockedWebSocket = vi.fn(() => ({
   onopen: vi.fn(),
   onclose: vi.fn(),

@@ -17,15 +17,21 @@
     ".": {
       "module": "./dist/livepeer-react.esm.js",
       "default": "./dist/livepeer-react.cjs.js"
+    },
+    "./contracts": {
+      "module": "./contracts/dist/livepeer-react-contracts.esm.js",
+      "default": "./contracts/dist/livepeer-react-contracts.cjs.js"
     }
   },
   "sideEffects": false,
   "files": [
+    "/contracts",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
-      "index.ts"
+      "index.ts",
+      "contracts/index.ts"
     ]
   },
   "peerDependencies": {

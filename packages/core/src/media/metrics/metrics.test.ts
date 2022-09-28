@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   MockedVideoElement,
+  resetDateNow,
   setupClient,
   waitForWebsocketOpen,
 } from '../../../test';
@@ -16,6 +17,7 @@ const playbackUrl =
 describe('reportMediaMetrics', () => {
   beforeAll(() => {
     setupClient();
+    resetDateNow();
   });
 
   describe('event listeners', () => {
@@ -107,7 +109,7 @@ describe('reportMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "firstPlayback": 30000,
+          "firstPlayback": 2000,
           "nError": 0,
           "nStalled": 0,
           "nWaiting": 0,
