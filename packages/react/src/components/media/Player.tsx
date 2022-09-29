@@ -29,9 +29,9 @@ import { Title } from './controls/Title';
 
 export type PlayerProps = {
   /** The source(s) of the media (required if `playbackId` is not provided) */
-  src?: string | string[];
+  src?: string | string[] | null | undefined;
   /** The playback ID for the media (required if `src` is not provided) */
-  playbackId?: string;
+  playbackId?: string | null | undefined;
 
   /** The title of the media */
   title?: string;
@@ -71,11 +71,11 @@ export type PlayerProps = {
   refetchPlaybackInfoInterval?: number;
 } & (
   | {
-      src: string | string[];
+      src: string | string[] | null | undefined;
       playbackId?: never;
     }
   | {
-      playbackId: string;
+      playbackId: string | null | undefined;
       src?: never;
     }
 ) &
@@ -94,7 +94,6 @@ export function Player({
   autoPlay,
   children,
   controls,
-
   muted,
   playbackId,
   refetchPlaybackInfoInterval = 5000,
