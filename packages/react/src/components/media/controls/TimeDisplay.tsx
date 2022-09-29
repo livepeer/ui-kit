@@ -43,6 +43,14 @@ export const TimeDisplay = React.forwardRef<HTMLSpanElement, TimeDisplayProps>(
       [duration],
     );
 
+    const formattedTime = React.useMemo(
+      () =>
+        live
+          ? formattedProgress
+          : `${formattedProgress} / ${formattedDuration}`,
+      [formattedProgress, formattedDuration, live],
+    );
+
     return (
       <>
         <span
@@ -51,7 +59,7 @@ export const TimeDisplay = React.forwardRef<HTMLSpanElement, TimeDisplayProps>(
           ref={ref}
           {...props}
         >
-          {`${formattedProgress} / ${formattedDuration}`}
+          {formattedTime}
         </span>
         {live && (
           <div className={styling.time.container()}>
