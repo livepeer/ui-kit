@@ -113,7 +113,7 @@ export function Player({
   const { data: playbackInfo } = usePlaybackInfo({
     playbackId,
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
-    enabled: !src,
+    enabled: !src && Boolean(playbackId),
   });
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
