@@ -67,7 +67,6 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
       if (config?.autoplay && element) {
         try {
           element.muted = true;
-          // element.play();
         } catch (e) {
           console.log(
             'Unable to autoplay prior to user interaction with the dom.',
@@ -93,6 +92,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     if (data.fatal) {
       switch (data.type) {
         case ErrorTypes.NETWORK_ERROR:
+          // test if we received a custom tag, and backoff retry if this is the case
           if (
             data?.response?.data?.toString()?.includes('Stream open failed')
           ) {
