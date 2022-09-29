@@ -110,7 +110,7 @@ export function Player({
     React.useState<HTMLMediaElement | null>(null);
 
   const { data: playbackInfo } = usePlaybackInfo({
-    playbackId,
+    playbackId: playbackId ?? undefined,
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
     enabled: !src && Boolean(playbackId),
   });
