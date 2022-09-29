@@ -1,6 +1,8 @@
 import { persist } from 'zustand/middleware';
 import create, { StoreApi } from 'zustand/vanilla';
 
+import { IS_ANDROID, IS_IOS, IS_MOBILE } from '../browser';
+
 import {
   addFullscreenEventListener,
   enterFullscreen,
@@ -50,6 +52,13 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
 
   /** Internal HTMLMediaElement (or extended class) used for toggling media events */
   _element: TElement | null;
+
+  /** Device tracking set on load of the media */
+  device: {
+    isMobile: boolean;
+    isIos: boolean;
+    isAndroid: boolean;
+  };
 
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
@@ -156,6 +165,12 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         hasPlayed: false,
         playing: !element?.paused,
         fullscreen: false,
+
+        device: {
+          isMobile: IS_MOBILE,
+          isIos: IS_IOS,
+          isAndroid: IS_ANDROID,
+        },
 
         progress: getFilteredNaN(element?.currentTime),
         duration: getFilteredNaN(element?.duration),

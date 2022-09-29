@@ -1,8 +1,9 @@
-import { styling } from 'livepeer';
+import { MediaControllerState, styling } from 'livepeer';
 
 import * as React from 'react';
 
 import { PropsOf, useMemoizedIcon } from '../../system';
+import { useMediaController } from '../context';
 
 export type BaseSliderProps = Omit<
   PropsOf<'div'>,
@@ -47,15 +48,23 @@ export type BaseSliderProps = Omit<
   onDone?: () => void;
 };
 
+const mediaControllerSelector = ({
+  device,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  device,
+});
+
 export const BaseSlider = (props: BaseSliderProps) => {
+  const { device } = useMediaController(mediaControllerSelector);
+
   const ref = React.useRef<HTMLDivElement | null>(null);
 
   const [isActive, setIsActive] = React.useState(false);
   const [isDragging, setIsDragging] = React.useState(false);
 
   const isActiveOrDragging = React.useMemo(
-    () => isActive || isDragging,
-    [isActive, isDragging],
+    () => device?.isMobile || isActive || isDragging,
+    [device?.isMobile, isActive, isDragging],
   );
 
   const onUpdate = React.useCallback(

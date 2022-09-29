@@ -19,7 +19,9 @@ const container = css('div', {
     minHeight: '$trackContainerHeight',
   },
 
-  zIndex: 2,
+  '@media (hover: none)': {
+    minHeight: '$trackContainerHeightSm',
+  },
 
   display: 'flex',
   alignItems: 'center',
