@@ -65,6 +65,10 @@ export class MockedVideoElement extends HTMLVideoElement {
   setAttribute = vi.fn(() => {
     return true;
   });
+
+  get duration() {
+    return 777;
+  }
 }
 
 // register the custom element

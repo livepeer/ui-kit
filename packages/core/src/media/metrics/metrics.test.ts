@@ -72,6 +72,7 @@ describe('reportMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
+          "duration": 777,
           "firstPlayback": 0,
           "nError": 0,
           "nStalled": 0,
@@ -109,6 +110,7 @@ describe('reportMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
+          "duration": 777,
           "firstPlayback": 2000,
           "nError": 0,
           "nStalled": 0,
@@ -141,6 +143,7 @@ describe('reportMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
+          "duration": 777,
           "firstPlayback": 0,
           "nError": 0,
           "nStalled": 0,
@@ -175,6 +178,7 @@ describe('reportMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
+          "duration": 777,
           "firstPlayback": 0,
           "nError": 0,
           "nStalled": 1,
