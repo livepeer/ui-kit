@@ -8,6 +8,9 @@ describe('useProvider', () => {
     const { result } = renderHook(() => useLivepeerProvider());
     expect(result.current.getConfig()).toMatchInlineSnapshot(`
       {
+        "apiKey": "${
+          process.env.STUDIO_API_KEY ?? 'a616be3b-8980-4932-8079-0122e0106f95'
+        }",
         "baseUrl": "https://livepeer.studio/api",
         "name": "Livepeer Studio",
       }

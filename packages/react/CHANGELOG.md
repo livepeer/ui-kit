@@ -1,5 +1,23 @@
 # @livepeer/react
 
+## 0.6.1
+
+### Patch Changes
+
+- [#68](https://github.com/livepeer/livepeer.js/pull/68) [`8f5e4a3`](https://github.com/livepeer/livepeer.js/commit/8f5e4a3118458b0b01b667ab81f98382eae7dc5d) Thanks [@victorges](https://github.com/victorges)! - Allow configuring base URL of Livepeer Studio provider
+
+  You can now configure more parameters of the the Livepeer Studio provider,
+  including specifically the `baseUrl` for the API calls.
+
+  ```ts
+  const livepeer = createReactClient({
+    provider: studioProvider({
+      baseUrl: 'https://studio.my-domain.com/root/api',
+      apiKey: '123-abcd',
+    }),
+  });
+  ```
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,6 +1,1 @@
-export {
-  defaultStudioApiKey,
-  defaultTranscodingProfiles,
-  studio,
-} from './provider';
-export type { LivepeerProviderName } from './provider';
+export { defaultStudioConfig, defaultTranscodingProfiles } from './provider';

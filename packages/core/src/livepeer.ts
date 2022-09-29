@@ -1,1 +1,1 @@
-export { studio } from './constants/provider';
+export { defaultStudioConfig } from './constants/provider';

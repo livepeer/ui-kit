@@ -1,6 +1,5 @@
-import { LivepeerProviderConfig, TranscodingProfile } from '../types';
-
-export const defaultStudioApiKey = 'a616be3b-8980-4932-8079-0122e0106f95';
+import { StudioLivepeerProviderConfig } from '../providers/studio';
+import { TranscodingProfile } from '../types';
 
 export const defaultTranscodingProfiles: Array<TranscodingProfile> = [
   {
@@ -26,9 +25,8 @@ export const defaultTranscodingProfiles: Array<TranscodingProfile> = [
   },
 ];
 
-export type LivepeerProviderName = 'studio';
-
-export const studio: LivepeerProviderConfig = {
+export const defaultStudioConfig: StudioLivepeerProviderConfig = {
   name: 'Livepeer Studio',
   baseUrl: 'https://livepeer.studio/api',
-} as const;
+  apiKey: 'a616be3b-8980-4932-8079-0122e0106f95',
+};

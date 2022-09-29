@@ -18,12 +18,7 @@ export type {
 } from './actions';
 export { Client, createClient } from './client';
 export type { ClientConfig } from './client';
-export {
-  defaultStudioApiKey,
-  defaultTranscodingProfiles,
-  studio,
-} from './constants';
-export type { LivepeerProviderName } from './constants';
+export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
 export {
   addEventListeners,
