@@ -1,5 +1,5 @@
 ---
-'livepeer': minor
+'livepeer': major
 ---
 
 **Fix:** moved all contract interactions to a separate subpackage, to remove the need for the `ethers`/`wagmi` peer dependencies.
