@@ -1,5 +1,190 @@
 # livepeer
 
+## 1.0.0
+
+### Major Changes
+
+- [#42](https://github.com/livepeer/livepeer.js/pull/42) [`ea9d083`](https://github.com/livepeer/livepeer.js/commit/ea9d083869acf571af4cdc22a97b540f5c440f11) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved all contract interactions to a separate subpackage, to remove the need for the `ethers`/`wagmi` peer dependencies.
+
+  ```diff
+  +import {
+  +  ArbRetryableTxABI,
+  +  BondingManagerABI,
+  +  ControllerABI,
+  +  InboxABI,
+  +  L1BondingManagerABI,
+  +  L1MigratorABI,
+  +  L2LPTGatewayABI,
+  +  L2MigratorABI,
+  +  LivepeerTokenABI,
+  +  LivepeerTokenFaucetABI,
+  +  MerkleSnapshotABI,
+  +  MinterABI,
+  +  NodeInterfaceABI,
+  +  PollABI,
+  +  PollCreatorABI,
+  +  RoundsManagerABI,
+  +  ServiceRegistryABI,
+  +  TicketBrokerABI,
+
+  +  allChainId,
+  +  arbitrumOneAddress,
+  +  arbitrumRinkebyAddress,
+  +  mainnetAddress,
+  +  mainnetChainId,
+  +  rinkebyAddress,
+  +  testnetChainId,
+
+  +  getBondingManager,
+  +  getContractAddressFromController,
+  +  getController,
+  +  getL1Migrator,
+  +  getL2Migrator,
+  +  getLivepeerToken,
+  +  getLivepeerTokenFaucet,
+  +  getMerkleSnapshot,
+  +  getMinter,
+  +  getPollCreator,
+  +  getRoundsManager,
+  +  getServiceRegistry,
+  +  getTicketBroker,
+
+  +  ArbRetryableTxFactory,
+  +  BondingManagerFactory,
+  +  ControllerFactory,
+  +  InboxFactory,
+  +  L1BondingManagerFactory,
+  +  L1MigratorFactory,
+  +  L2LPTGatewayFactory,
+  +  L2MigratorFactory,
+  +  LivepeerTokenFactory,
+  +  LivepeerTokenFaucetFactory,
+  +  MerkleSnapshotFactory,
+  +  MinterFactory,
+  +  NodeInterfaceFactory,
+  +  PollCreatorFactory,
+  +  PollFactory,
+  +  RoundsManagerFactory,
+  +  ServiceRegistryFactory,
+  +  TicketBrokerFactory,
+  +} from 'livepeer/contracts';
+
+  +import type {
+  +  L1Address,
+  +  L1LivepeerChain,
+  +  L1LivepeerChainId,
+  +  L2Address,
+  +  L2LivepeerChain,
+  +  L2LivepeerChainId,
+  +  LivepeerAddress,
+  +  LivepeerChain,
+  +  LivepeerChainId,
+  +  MainnetLivepeerChain,
+  +  MainnetLivepeerChainId,
+  +  TestnetLivepeerChain,
+  +  TestnetLivepeerChainId,
+
+  +  ArbRetryableTx,
+  +  BondingManager,
+  +  Controller,
+  +  Inbox,
+  +  L1BondingManager,
+  +  L1Migrator,
+  +  L2LPTGateway,
+  +  L2Migrator,
+  +  LivepeerToken,
+  +  LivepeerTokenFaucet,
+  +  MerkleSnapshot,
+  +  Minter,
+  +  NodeInterface,
+  +  Poll,
+  +  PollCreator,
+  +  RoundsManager,
+  +  ServiceRegistry,
+  +  TicketBroker,
+  +} from 'livepeer/contracts';
+  ```
+
+### Minor Changes
+
+- [#42](https://github.com/livepeer/livepeer.js/pull/42) [`ea9d083`](https://github.com/livepeer/livepeer.js/commit/ea9d083869acf571af4cdc22a97b540f5c440f11) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added styling for media player components using `@stitches/core` and polyfilling using `core-js`.
+
+  Added a core vanilla JS store based on Zustand, w/ state propagated to/from a media element (see `MediaControllerState` and `MediaControllerStore`). Also added more helper functions for validating/constructing media sources and mime types, theming, and browser interactions.
+
+  The following updates were made to `package.json`:
+
+  ```diff
+     },
+     "peerDependenciesMeta": {},
+     "dependencies": {
+  +    "@stitches/core": "^1.2.8",
+  +    "core-js": "^3.25.2",
+       "cross-fetch": "^3.1.5",
+       "hls.js": "^1.2.1",
+       "tus-js-client": "^3.0.0",
+  ```
+
+  The following updates were made to the exports from `livepeer`:
+
+  ```diff
+     TestnetLivepeerChainId,
+   } from './constants';
+   export { HttpError, IncorrectChainIdError } from './errors';
+  +export {
+  +  addEventListeners,
+  +  canPlayMediaNatively,
+  +  createControllerStore,
+  +  createNewHls,
+  +  createPlayerTheme,
+  +  defaultTheme,
+  +  getCssText,
+  +  getMediaSourceType,
+  +  getMetricsReportingUrl,
+  +  isHlsSupported,
+  +  MetricsStatus,
+  +  PlaybackMonitor,
+  +  reportMediaMetrics,
+  +  styling,
+  +} from './media';
+  +export type {
+  +  AspectRatio,
+  +  AudioSrc,
+  +  ControlsOptions,
+  +  HlsSrc,
+  +  HlsVideoConfig,
+  +  MediaControllerState,
+  +  MediaControllerStore,
+  +  PlaybackRecord,
+  +  RawMetrics,
+  +  Src,
+  +  ThemeConfig,
+  +  VideoSrc,
+  +} from './media';
+   export { createStorage, noopStorage } from './storage';
+   export type { ClientStorage as Storage } from './storage';
+
+   ...
+
+     UpdateStreamArgs,
+     ViewsMetrics,
+   } from './types';
+  -export { pick } from './utils';
+  -export {
+  -  createNewHls,
+  -  getMetricsReportingUrl,
+  -  isHlsSupported,
+  -  MetricsStatus,
+  -  PlaybackMonitor,
+  -  reportVideoMetrics,
+  -} from './video';
+  -export type { HlsVideoConfig, PlaybackRecord, RawMetrics } from './video';
+  +export { deepMerge, pick } from './utils';
+  ```
+
+### Patch Changes
+
+- [#73](https://github.com/livepeer/livepeer.js/pull/73) [`55a9b81`](https://github.com/livepeer/livepeer.js/commit/55a9b81ebdd524a42da0fb7679ca75d11c4c91a9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added media element duration to the metrics reporting plugin.
+
 ## 0.5.1
 
 ### Patch Changes
