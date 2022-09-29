@@ -58,7 +58,7 @@ export const ControlsContainer = React.forwardRef<
 
   return (
     <>
-      {poster && (
+      {poster ? (
         <div
           className={styling.controlsContainer.background({
             display: hasPlayed && hidePosterOnPlayed ? 'hidden' : 'shown',
@@ -67,6 +67,13 @@ export const ControlsContainer = React.forwardRef<
         >
           {poster}
         </div>
+      ) : (
+        <div
+          className={styling.controlsContainer.background({
+            display: 'hidden',
+          })}
+          onMouseUp={onClickBackground}
+        />
       )}
       {showLoadingSpinner && !isLoaded && (
         <div

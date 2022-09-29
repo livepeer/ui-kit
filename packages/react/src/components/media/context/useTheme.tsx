@@ -11,7 +11,7 @@ export const useTheme = (theme?: ThemeConfig) => {
       ? theme
         ? (deepMerge(contextTheme as object, theme as object) as ThemeConfig)
         : contextTheme
-      : undefined;
+      : theme;
 
     return mergedTheme ? createPlayerTheme(mergedTheme) : undefined;
   }, [theme, contextTheme]);

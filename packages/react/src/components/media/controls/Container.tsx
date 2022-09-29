@@ -22,7 +22,12 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     return (
-      <div className={className}>
+      <div
+        style={{
+          display: 'contents',
+        }}
+        className={className}
+      >
         <div
           className={styling.container({
             aspectRatio,

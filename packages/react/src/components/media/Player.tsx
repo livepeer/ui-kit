@@ -28,9 +28,9 @@ import {
 import { Title } from './controls/Title';
 
 export type PlayerProps = {
-  /** The source(s) of the media (required if `playbackId` is not provided) */
+  /** The source(s) of the media (**required** if `playbackId` is not provided) */
   src?: string | string[] | null | undefined;
-  /** The playback ID for the media (required if `src` is not provided) */
+  /** The playback ID for the media (**required** if `src` is not provided) */
   playbackId?: string | null | undefined;
 
   /** The title of the media */
@@ -69,26 +69,7 @@ export type PlayerProps = {
 
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
-} & (
-  | {
-      src: string | string[] | null | undefined;
-      playbackId?: never;
-    }
-  | {
-      playbackId: string | null | undefined;
-      src?: never;
-    }
-) &
-  (
-    | {
-        autoPlay: true;
-        muted: true;
-      }
-    | {
-        autoPlay?: false;
-        muted?: boolean;
-      }
-  );
+};
 
 export function Player({
   autoPlay,

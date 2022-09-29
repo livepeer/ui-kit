@@ -35,6 +35,9 @@ const video = css('video', {
       fullscreen: {
         objectFit: 'contain',
 
+        '&::-webkit-media-overlay-enclosure': {
+          display: 'none !important',
+        },
         '&::-webkit-media-controls-enclosure': {
           display: 'none !important',
         },

@@ -108,8 +108,6 @@ export const container = css(aspectRatioContainer, {
   backgroundColor: '$background',
   overflow: 'hidden',
   maxWidth: '100%',
-  width: '100%',
-  height: '100%',
   maxHeight: '100%',
 
   position: 'relative',
@@ -138,9 +136,6 @@ export const container = css(aspectRatioContainer, {
         borderColor: '$containerBorderColor',
         borderRadius: '$containerBorderRadius',
         borderWidth: '$containerBorderWidth',
-
-        // fix slight border issues with >0 border radius
-        margin: '-1px',
       },
     },
   },
