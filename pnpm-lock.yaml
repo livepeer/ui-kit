@@ -239,6 +239,7 @@ importers:
       '@tanstack/react-query': 4.2.3_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.2.1
       core-js: 3.25.2
+      livepeer: link:../core
       use-sync-external-store: 1.2.0_react@18.2.0
       zustand: 4.1.1_react@18.2.0
     devDependencies:
@@ -248,7 +249,6 @@ importers:
       '@types/react-dom': 18.0.6
       '@types/use-sync-external-store': 0.0.3
       ethers: 5.7.0
-      livepeer: link:../core
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       wagmi: 0.6.4_2iwq3bmdfa3kr5zxt7xazrj424
