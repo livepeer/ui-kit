@@ -1,5 +1,5 @@
 ---
-'@livepeer/react': major
+'@livepeer/react': minor
 ---
 
 **Feature:** added a new `<Player />` component and deprecated the previous `<VideoPlayer />`. Also added polyfills using `core-js` and `browserslist` to support major global browsers.
