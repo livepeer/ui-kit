@@ -1,5 +1,11 @@
 # @livepeer/react
 
+## 1.0.1
+
+### Patch Changes
+
+- [`a184505`](https://github.com/livepeer/livepeer.js/commit/a18450593e4f10d2622ffb70ea378c4c5f95dad5) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** hotfix for moving livepeer to dependency array from peer dependencies.
+
 ## 1.0.0
 
 ### Minor Changes
