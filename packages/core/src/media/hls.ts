@@ -37,7 +37,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   element.setAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE, 'true');
 
   const hls = new Hls({
-    // enableWorker: false,
+    maxBufferLength: 15,
+    maxMaxBufferLength: 60,
     ...config,
   });
 
@@ -86,11 +87,20 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     }
   });
 
-  hls.on(Events.ERROR, function (_event, data) {
+  let retryCount = 0;
+
+  hls.on(Events.ERROR, async (_event, data) => {
     if (data.fatal) {
       switch (data.type) {
         case ErrorTypes.NETWORK_ERROR:
-          hls?.startLoad();
+          if (
+            data?.response?.data?.toString()?.includes('Stream open failed')
+          ) {
+            await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+            hls?.recoverMediaError();
+          } else {
+            hls?.startLoad();
+          }
           break;
         case ErrorTypes.MEDIA_ERROR:
           hls?.recoverMediaError();
