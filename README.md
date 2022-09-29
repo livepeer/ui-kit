@@ -18,15 +18,13 @@
   </a>
 </div>
 
-<br>
-
 ## Features
 
-- 🚀 Hooks for working with Livepeer providers and the Livepeer protocol
-- 👟 Response caching, request deduplication, and persistence
-- 🌀 Auto-refresh data on network changes
-- 🦄 TypeScript ready
-- 🌳 Test suite across core and React components
+- 📺 Player for video/audio with built-in HLS support, accessibility, keyboard shortcuts, and customizable controls
+- 🪝 React hooks for working with Livepeer providers and the Livepeer protocol
+- 💾 Response caching, request deduplication, and persistence
+- 🐼 TypeScript ready
+- 🧪 Tests across core and React components
 
 ...and a lot more.
 
