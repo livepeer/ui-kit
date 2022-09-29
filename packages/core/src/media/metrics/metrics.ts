@@ -23,6 +23,7 @@ export type RawMetrics = {
 
   pageUrl: string;
   sourceUrl: string;
+  duration: number | null;
 };
 
 export type PlaybackRecord = {
@@ -161,6 +162,7 @@ export class MetricsStatus<
       pageUrl: '',
       sourceUrl: '',
       playbackScore: null,
+      duration: null,
     };
 
     element.addEventListener('waiting', () => {
@@ -241,6 +243,7 @@ export class MetricsStatus<
       videoHeight: (this.element as HTMLVideoElement)?.videoHeight
         ? (this.element as HTMLVideoElement)?.videoHeight
         : null,
+      duration: this.element.duration,
 
       timeWaiting: this._getTimeWaiting(),
       timeStalled: this._getTimeStalled(),
