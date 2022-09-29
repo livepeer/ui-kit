@@ -1,3 +1,3 @@
-export { Asset } from './Asset';
-export { DemoVideoPlayer } from './DemoVideoPlayer';
-export { Stream } from './Stream';
+export * from './Asset';
+export * from './DemoPlayer';
+export * from './Stream';

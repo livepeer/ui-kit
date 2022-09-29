@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
-import { VideoPlayer, useCreateStream, useStream } from '@livepeer/react';
+import { Player, useCreateStream, useStream } from '@livepeer/react';
 
 import { useMemo, useState } from 'react';
 
@@ -14,7 +14,7 @@ export const Stream = () => {
   } = useCreateStream();
   const { data: stream, status: streamStatus } = useStream({
     streamId: createdStream?.id,
-    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
+    // refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
   });
 
   const isLoading = useMemo(
@@ -66,7 +66,15 @@ export const Stream = () => {
 
       {stream?.playbackId && (
         <Box css={{ mt: '$2' }}>
-          <VideoPlayer playbackId={stream?.playbackId} />
+          <Player
+            title={stream?.name}
+            playbackId={stream?.playbackId}
+            theme={{
+              fonts: {
+                display: 'Inter',
+              },
+            }}
+          />
         </Box>
       )}
     </Box>

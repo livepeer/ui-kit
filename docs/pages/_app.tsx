@@ -20,17 +20,17 @@ function App({ Component, pageProps }: AppProps) {
     (Component as any).getLayout || ((page: React.ReactElement) => page);
 
   return (
-    <Providers>
-      <DesignSystemProvider>
-        <ThemeProvider
-          attribute="class"
-          disableTransitionOnChange
-          value={{
-            ...themeMap,
-            dark: 'dark',
-            light: 'light',
-          }}
-        >
+    <DesignSystemProvider>
+      <ThemeProvider
+        attribute="class"
+        disableTransitionOnChange
+        value={{
+          ...themeMap,
+          dark: 'dark',
+          light: 'light',
+        }}
+      >
+        <Providers>
           {/* Add styling for livepeer-design-system components */}
           <Box
             className={
@@ -39,9 +39,9 @@ function App({ Component, pageProps }: AppProps) {
           >
             {getLayout(<Component {...pageProps} />)}
           </Box>
-        </ThemeProvider>
-      </DesignSystemProvider>
-    </Providers>
+        </Providers>
+      </ThemeProvider>
+    </DesignSystemProvider>
   );
 }
 

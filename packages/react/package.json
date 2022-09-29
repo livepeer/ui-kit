@@ -17,15 +17,21 @@
     ".": {
       "module": "./dist/livepeer-react.esm.js",
       "default": "./dist/livepeer-react.cjs.js"
+    },
+    "./contracts": {
+      "module": "./contracts/dist/livepeer-react-contracts.esm.js",
+      "default": "./contracts/dist/livepeer-react-contracts.cjs.js"
     }
   },
   "sideEffects": false,
   "files": [
+    "/contracts",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
-      "index.ts"
+      "index.ts",
+      "contracts/index.ts"
     ]
   },
   "peerDependencies": {
@@ -35,10 +41,13 @@
     "wagmi": ">=0.6.2"
   },
   "dependencies": {
+    "@stitches/react": "^1.2.8",
     "@tanstack/query-sync-storage-persister": "4.2.3",
     "@tanstack/react-query": "4.2.3",
     "@tanstack/react-query-persist-client": "4.2.1",
-    "use-sync-external-store": "^1.2.0"
+    "core-js": "^3.25.2",
+    "use-sync-external-store": "^1.2.0",
+    "zustand": "^4.1.1"
   },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",

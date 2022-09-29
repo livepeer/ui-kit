@@ -12,7 +12,6 @@
     "@livepeer/design-system": "^1.0.3",
     "@livepeer/react": "^0.6.1",
     "@reach/skip-nav": "^0.17.0",
-    "ethers": "^5.7.0",
     "formidable": "^2.0.1",
     "hls.js": "^1.2.1",
     "livepeer": "^0.5.1",
@@ -22,8 +21,7 @@
     "nextra-theme-docs": "2.0.0-beta.17",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-dropzone": "^14.2.2",
-    "wagmi": "^0.6.4"
+    "react-dropzone": "^14.2.2"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.2.5",

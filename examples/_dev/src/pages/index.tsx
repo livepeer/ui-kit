@@ -11,8 +11,8 @@ const Page = () => {
       <hr />
       <Asset />
       <hr />
-      <Link href="/demoPlayer">
-        <a>Demo Video Player</a>
+      <Link href="/player">
+        <a>Demo Player</a>
       </Link>
     </>
   );

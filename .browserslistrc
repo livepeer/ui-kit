@@ -1,0 +1,9 @@
+# Browsers that we support
+
+[production]
+last 2 versions
+> 0.2%
+not dead
+
+[ssr]
+node 12

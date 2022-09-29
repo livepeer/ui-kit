@@ -1,2 +1,3 @@
-export { HeaderVideo } from './HeaderVideo';
-export { Header } from './Header';
+export * from './Header';
+export * from './HeaderVideo';
+export * from './player';

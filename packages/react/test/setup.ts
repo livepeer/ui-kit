@@ -1,11 +1,7 @@
 import { vi } from 'vitest';
 
-let nowCount = 0;
-
-// make dates stable across runs and increment each call
-Date.now = vi.fn(() =>
-  new Date(Date.UTC(2022, 1, 1)).setSeconds(nowCount++).valueOf(),
-);
+// make dates stable across runs
+Date.now = vi.fn(() => new Date(Date.UTC(2022, 1, 1)).valueOf());
 
 type ReactVersion = '17' | '18';
 const reactVersion: ReactVersion =

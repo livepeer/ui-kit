@@ -21,17 +21,17 @@ import { Header, HeaderVideo } from '@components/docs';
   <Tabs items={['npm', 'pnpm', 'yarn']}>
     <Tab>
 ```bash
-npm i @livepeer/react wagmi ethers
+npm i @livepeer/react
 ```
     </Tab>
     <Tab>
 ```bash
-pnpm i @livepeer/react wagmi ethers
+pnpm i @livepeer/react
 ```
     </Tab>
     <Tab>
 ```bash
-yarn add @livepeer/react wagmi ethers
+yarn add @livepeer/react
 ```
 </Tab>
   </Tabs>
@@ -56,6 +56,7 @@ we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context.
 ```tsx
 import {
   LivepeerConfig,
+  ThemeConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
@@ -64,9 +65,19 @@ const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
 
+const livepeerTheme: ThemeConfig = {
+  colors: {
+    accent: 'rgb(0, 145, 255)',
+    containerBorderColor: 'rgba(0, 145, 255, 0.9)',
+  },
+  fonts: {
+    display: 'Inter',
+  },
+};
+
 function App() {
   return (
-    <LivepeerConfig client={client}>
+    <LivepeerConfig client={client} theme={livepeerTheme}>
       <Livepeer />
     </LivepeerConfig>
   );
@@ -74,18 +85,45 @@ function App() {
 ```
 
 ```tsx
-import { VideoPlayer } from '@livepeer/react';
+import { Player } from '@livepeer/react';
+import Image from 'next/image';
+import * as React from 'react';
 
-const playbackId = 'a4e8o6mykgkvtxav';
+import waterfallsPoster from '../../public/images/waterfalls-poster.png';
 
-function Livepeer() {
-  return <VideoPlayer autoplay loop muted playbackId={playbackId} />;
+const PosterImage = () => {
+  return (
+    <Image
+      src={waterfallsPoster}
+      layout="fill"
+      objectFit="cover"
+      priority
+      placeholder="blur"
+    />
+  );
+};
+
+const playbackId =
+  'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe';
+
+export function Livepeer() {
+  return (
+    <Player
+      title="Waterfalls"
+      playbackId={playbackId}
+      loop
+      autoPlay
+      showTitle={false}
+      muted
+      poster={<PosterImage />}
+    />
+  );
 }
 ```
 
 In this example, we create a livepeer `Client` and pass it to the `LivepeerConfig` React Context. The client is set up to use the Studio provider.
 
-Then, we use the [`VideoPlayer`](/react/VideoPlayer) to play a video from a playback ID! Waterfalls!
+Then, we use the [`Player`](/react/Player) to play a video from a playback ID **(actually the IPFS CID!)** with an optimized poster image! Waterfalls!
 
 We've only scratched the surface for what you can do with livepeer.js!
 

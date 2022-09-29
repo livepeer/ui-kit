@@ -1,3 +1,4 @@
+import { getCssText } from '@livepeer/react';
 import { SkipNavLink } from '@reach/skip-nav';
 import {
   Head,
@@ -12,7 +13,12 @@ class Document extends NextDocument {
   render() {
     return (
       <Html lang="en">
-        <Head />
+        <Head>
+          <style
+            id="stitches"
+            dangerouslySetInnerHTML={{ __html: getCssText() }}
+          />
+        </Head>
         <body>
           <SkipNavLink />
           <Main />

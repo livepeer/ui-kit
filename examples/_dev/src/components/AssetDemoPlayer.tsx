@@ -1,45 +1,30 @@
-import { PlaybackInfo, VideoPlayer } from '@livepeer/react';
-import { useState } from 'react';
+import { Player } from '@livepeer/react';
 
-const playbackId = 'ca5df1nsuezgxu8q'; // clock
+const playbackId = '6d7el73r1y12chxr';
+// const streamId = '2c61917e-4f05-449a-ab7d-1b3c85f78993';
 
 export const AssetDemoPlayer = () => {
-  const [playbackUrl, setPlaybackUrl] = useState<string | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined,
-  );
-
-  const handlePlaybackInfo = (playbackInfo: PlaybackInfo) =>
-    setPlaybackUrl(playbackInfo.meta.source[0]?.url);
-  const handleError = (error: Error) => setErrorMessage(error.message);
-
   return (
     <>
-      <VideoPlayer
+      <Player
         playbackId={playbackId}
-        onPlaybackInfoUpdated={handlePlaybackInfo}
-        onPlaybackInfoError={handleError}
-        width="640"
+        // src={'/audio-example.mp3'}
         loop
+        autoPlay
         muted
+        theme={{
+          fonts: {
+            display: 'Inter',
+          },
+          radii: { containerBorderRadius: '30px' },
+          space: {
+            controlsTopMarginX: '20px',
+            controlsTopMarginY: '15px',
+            controlsBottomMarginX: '15px',
+            controlsBottomMarginY: '10px',
+          },
+        }}
       />
-
-      <p>
-        PlaybackId: {playbackId}
-        <br />
-        {errorMessage && (
-          <>
-            Error: {errorMessage}
-            <br />
-          </>
-        )}
-        {playbackUrl && (
-          <>
-            Playback url: {playbackUrl}
-            <br />
-          </>
-        )}
-      </p>
     </>
   );
 };
