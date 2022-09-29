@@ -1,5 +1,3 @@
-import { keyframes } from '@stitches/core';
-
 import { css } from './stitches';
 
 const aspectRatios = [
@@ -104,11 +102,6 @@ const aspectRatioContainer = css('div', {
   },
 });
 
-const fullscreen = keyframes({
-  '0%': { opacity: 0 },
-  '100%': { opacity: 1 },
-});
-
 export const container = css(aspectRatioContainer, {
   fontFamily:
     '$display, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji',
@@ -133,9 +126,7 @@ export const container = css(aspectRatioContainer, {
 
   variants: {
     size: {
-      fullscreen: {
-        animation: `${fullscreen} 0.2s`,
-      },
+      fullscreen: {},
       default: {
         '&:hover': {
           boxShadow: '$containerShadowHover',

@@ -1,8 +1,6 @@
 import { persist } from 'zustand/middleware';
 import create, { StoreApi } from 'zustand/vanilla';
 
-import { VIDEO_HLS_INITIALIZED_ATTRIBUTE } from '../hls';
-
 import {
   addFullscreenEventListener,
   enterFullscreen,
@@ -78,6 +76,7 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   setFullscreen: (fullscreen: boolean) => void;
   requestToggleFullscreen: () => void;
 
+  _setVolume: (volume: number) => void;
   requestVolume: (volume: number) => void;
   requestToggleMute: () => void;
   setIsVolumeChangeSupported: (supported: boolean) => void;
@@ -114,11 +113,29 @@ const getBoundedSeek = (seek: number, duration: number | undefined) =>
 const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 
-// volume change is unsupported on iOS devices
+// if volume change is unsupported, the element will always return 1
+// similar to https://github.com/videojs/video.js/pull/7514/files
+
 const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
   element: TElement,
 ) => {
-  return !isIOSBrowser(element);
+  return new Promise<boolean>((resolve) => {
+    const prevVolume = element?.volume ?? DEFAULT_VOLUME_LEVEL;
+
+    const newVolume = prevVolume - 0.01;
+
+    // set new value and test
+    element.volume = newVolume;
+
+    window.setTimeout(() => {
+      const isSupported = element.volume !== 1;
+
+      // reset to old value
+      element.volume = prevVolume;
+
+      resolve(isSupported);
+    });
+  });
 };
 
 export const createControllerStore = <TElement extends HTMLMediaElement>(
@@ -176,7 +193,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         requestSeek: (time) =>
           set(({ duration }) => ({
             _requestedRangeToSeekTo: getBoundedSeek(time, duration),
-            progress: time,
+            progress: getBoundedSeek(time, duration),
           })),
 
         onDurationChange: (duration) => set(() => ({ duration })),
@@ -207,6 +224,10 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
           set(({ volume }) => ({
             volume: newVolume === 0 ? volume : getBoundedVolume(newVolume),
             muted: newVolume === 0,
+          })),
+        _setVolume: (newVolume) =>
+          set(() => ({
+            volume: getBoundedVolume(newVolume),
           })),
 
         requestToggleMute: () =>
@@ -312,7 +333,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       typeof element?.volume !== 'undefined' &&
       element?.volume !== store.getState().volume
     ) {
-      store.getState().requestVolume(element.volume);
+      store.getState()._setVolume(element.volume);
     }
   };
 
@@ -341,10 +362,6 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   };
 
   if (element) {
-    const isVolumeChangeSupported = getIsVolumeChangeSupported(element);
-
-    store.getState().setIsVolumeChangeSupported(isVolumeChangeSupported);
-
     element.addEventListener('volumechange', onVolumeChange);
 
     element.addEventListener('canplay', onCanPlay);
@@ -370,6 +387,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     }
 
     element.load();
+
+    getIsVolumeChangeSupported(element).then((isVolumeChangeSupported) =>
+      store.getState().setIsVolumeChangeSupported(isVolumeChangeSupported),
+    );
 
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
   }
@@ -427,6 +448,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   };
 };
 
+let previousPromise: Promise<void> | boolean | null;
+
 const addEffectsToStore = <TElement extends HTMLMediaElement>(
   store: StoreApi<MediaControllerState<TElement>>,
   element: HTMLMediaElement | null,
@@ -435,8 +458,20 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
   // add effects to store changes
   return store.subscribe(async (current, prev) => {
     if (element) {
+      if (previousPromise) {
+        try {
+          await previousPromise;
+        } catch (e) {
+          //
+        }
+      }
+
       if (current.playing !== prev.playing) {
-        current.playing ? element.play() : element.pause();
+        if (current.playing && element.paused) {
+          previousPromise = element.play();
+        } else if (!element.paused) {
+          element.pause();
+        }
       }
 
       if (current.volume !== prev.volume) {
@@ -453,7 +488,10 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
       if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
         // Can't set the time before the media is ready
         // Ignore if readyState isn't supported
-        if (element.readyState > 0 || element.readyState === undefined) {
+        if (
+          typeof element.readyState === 'undefined' ||
+          element.readyState > 0
+        ) {
           element.currentTime = current._requestedRangeToSeekTo;
         }
       }
@@ -482,16 +520,11 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
         const isFullscreen = isCurrentlyFullscreen(element);
 
         if (!isFullscreen) {
-          await enterFullscreen(element);
+          previousPromise = enterFullscreen(element);
         } else {
-          await exitFullscreen(element);
+          previousPromise = exitFullscreen(element);
         }
       }
     }
   });
-};
-
-const isIOSBrowser = (element: HTMLMediaElement | null) => {
-  // ios does not use hls.js
-  return !element?.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
 };

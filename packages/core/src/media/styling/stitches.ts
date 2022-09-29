@@ -31,12 +31,12 @@ export const {
       display: 'ui-sans-serif',
     },
     fontSizes: {
-      titleFontSize: '1.2rem',
-      titleFontSizeMd: '1.1rem',
-      titleFontSizeSm: '0.8rem',
       timeFontSize: '1.0rem',
       timeFontSizeMd: '0.95rem',
       timeFontSizeSm: '0.85rem',
+      titleFontSize: '1.1rem',
+      titleFontSizeMd: '1rem',
+      titleFontSizeSm: '0.9rem',
     },
     fontWeights: {
       titleFontWeight: 400,
@@ -46,11 +46,14 @@ export const {
       containerShadowHover: '$containerShadow',
     },
     sizes: {
+      iconButtonSize: '42px',
+      iconButtonSizeSm: '36px',
       liveIndicatorSize: '5px',
       loading: '64px',
       thumb: '12px',
       trackActive: '5px',
       trackContainerHeight: '15px',
+      trackContainerHeightSm: '20px',
       trackInactive: '3px',
     },
     space: {

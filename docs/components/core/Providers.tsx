@@ -19,16 +19,11 @@ type Props = {
 };
 
 const livepeerLightTheme: ThemeConfig = {
-  borderStyles: {
-    containerBorderStyle: 'solid',
-  },
   borderWidths: {
-    containerBorderWidth: '3px',
     loadingWidth: '2px',
   },
   colors: {
     accent: 'rgb(0, 145, 255)',
-    containerBorderColor: 'rgba(0, 145, 255, 0.9)',
   },
   fonts: {
     display: 'Inter',
@@ -42,7 +37,6 @@ const livepeerLightTheme: ThemeConfig = {
     trackInactive: '3px',
   },
   radii: {
-    containerBorderRadius: '10px',
     slider: '4px',
   },
 };

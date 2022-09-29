@@ -4,10 +4,10 @@ import * as React from 'react';
 import { PropsOf, useConditionalIcon } from '../../system';
 import { useMediaController } from '../context';
 
-const DefaultPlayIcon = ({ size }: { size: number }) => (
+const DefaultPlayIcon = () => (
   <svg
-    width={size}
-    height={size}
+    width="100%"
+    height="100%"
     viewBox="0 0 36 36"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -19,8 +19,8 @@ const DefaultPlayIcon = ({ size }: { size: number }) => (
   </svg>
 );
 
-const DefaultPauseIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
+const DefaultPauseIcon = () => (
+  <svg width="100%" height="100%" viewBox="0 0 36 36" fill="none">
     <path
       // fillRule="evenodd"
       // clipRule="evenodd"
@@ -73,9 +73,9 @@ export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
     const _children = useConditionalIcon(
       playing,
       pauseIcon,
-      <DefaultPauseIcon size={42} />,
+      <DefaultPauseIcon />,
       playIcon,
-      <DefaultPlayIcon size={42} />,
+      <DefaultPlayIcon />,
     );
 
     const title = React.useMemo(

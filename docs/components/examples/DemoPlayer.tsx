@@ -22,11 +22,11 @@ const PosterImage = () => {
 export const DemoPlayer = () => {
   return (
     <Player
-      title="Waterfalls"
+      title="Agent 327"
       playbackId={playbackId}
-      autoPlay
-      muted
-      showTitle={false}
+      // autoPlay
+      // muted
+      showTitle
       aspectRatio="16to9"
       poster={<PosterImage />}
       controls={{
@@ -34,13 +34,7 @@ export const DemoPlayer = () => {
       }}
       theme={{
         borderStyles: { containerBorderStyle: 'hidden' },
-        radii: { containerBorderRadius: '30px' },
-        space: {
-          controlsTopMarginX: '20px',
-          controlsTopMarginY: '15px',
-          controlsBottomMarginX: '15px',
-          controlsBottomMarginY: '10px',
-        },
+        radii: { containerBorderRadius: '10px' },
       }}
     />
   );

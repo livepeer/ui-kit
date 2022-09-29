@@ -3,10 +3,8 @@ import { text } from './text';
 
 export const title = css(text, {
   fontWeight: '$titleFontWeight',
+  fontSize: '$titleFontSizeSm',
 
-  '@initial': {
-    fontSize: '$titleFontSizeSm',
-  },
   '@md': {
     fontSize: '$titleFontSizeMd',
   },

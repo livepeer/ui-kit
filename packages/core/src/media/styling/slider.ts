@@ -13,7 +13,13 @@ export const contract = keyframes({
 });
 
 const container = css('div', {
-  minHeight: '$trackContainerHeight',
+  minHeight: '$trackContainerHeightSm',
+
+  '@lg': {
+    minHeight: '$trackContainerHeight',
+  },
+
+  zIndex: 2,
 
   display: 'flex',
   alignItems: 'center',

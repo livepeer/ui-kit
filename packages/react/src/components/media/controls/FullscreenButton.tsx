@@ -4,10 +4,10 @@ import * as React from 'react';
 import { PropsOf, useConditionalIcon } from '../../system';
 import { useMediaController } from '../context';
 
-const DefaultEnterFullscreenIcon = ({ size }: { size: number }) => (
+const DefaultEnterFullscreenIcon = () => (
   <svg
-    width={size}
-    height={size}
+    width="100%"
+    height="100%"
     viewBox="0 0 36 36"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -34,10 +34,10 @@ const DefaultEnterFullscreenIcon = ({ size }: { size: number }) => (
   </svg>
 );
 
-const DefaultExitFullscreenIcon = ({ size }: { size: number }) => (
+const DefaultExitFullscreenIcon = () => (
   <svg
-    width={size}
-    height={size}
+    width="100%"
+    height="100%"
     viewBox="0 0 36 36"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -111,9 +111,9 @@ export const FullscreenButton = React.forwardRef<
   const _children = useConditionalIcon(
     fullscreen,
     exitIcon,
-    <DefaultExitFullscreenIcon size={42} />,
+    <DefaultExitFullscreenIcon />,
     enterIcon,
-    <DefaultEnterFullscreenIcon size={42} />,
+    <DefaultEnterFullscreenIcon />,
   );
 
   const title = React.useMemo(

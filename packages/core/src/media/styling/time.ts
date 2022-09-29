@@ -17,10 +17,10 @@ export const liveIndicator = css('div', {
 export const timeText = css(text, {
   marginLeft: '$timeMarginX',
   marginRight: '$timeMarginX',
+  fontVariant: 'tabular-nums',
 
-  '@initial': {
-    fontSize: '$timeFontSizeSm',
-  },
+  fontSize: '$timeFontSizeSm',
+
   '@md': {
     fontSize: '$timeFontSizeMd',
   },

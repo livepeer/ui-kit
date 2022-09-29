@@ -31,34 +31,18 @@ const mediaControllerSelector = ({
   duration,
   progress,
   requestSeek,
-  onPlay,
-  onPause,
-  playing,
   buffered,
 }: MediaControllerState<HTMLMediaElement>) => ({
   duration,
   progress,
   requestSeek,
-  onPlay,
-  onPause,
-  playing,
   buffered,
 });
 
 export const Progress = (props: ProgressProps) => {
-  const {
-    duration,
-    progress,
-    requestSeek,
-    onPlay,
-    onPause,
-    playing,
-    buffered,
-  } = useMediaController(mediaControllerSelector);
-
-  const [isDragging, setIsDragging] = React.useState<
-    'playing' | 'paused' | 'none'
-  >('none');
+  const { duration, progress, requestSeek, buffered } = useMediaController(
+    mediaControllerSelector,
+  );
 
   const [min, max, current] = React.useMemo(
     () =>
@@ -77,26 +61,13 @@ export const Progress = (props: ProgressProps) => {
 
   const onChange = React.useCallback(
     async (value: number) => {
-      if (isDragging === 'none') {
-        setIsDragging(playing ? 'playing' : 'paused');
-
-        onPause();
-      }
-
       const newSeek = value * (max - min);
 
       await props?.onSeek?.(newSeek);
       requestSeek(newSeek);
     },
-    [max, min, requestSeek, isDragging, props, playing, onPause],
+    [max, min, requestSeek, props],
   );
-
-  const onDone = React.useCallback(async () => {
-    if (isDragging === 'playing') {
-      onPlay();
-    }
-    setIsDragging('none');
-  }, [isDragging, onPlay]);
 
   const durationMinutes = React.useMemo(
     () => (duration / 60).toFixed(1),
@@ -109,7 +80,6 @@ export const Progress = (props: ProgressProps) => {
       value={value}
       secondaryValue={secondaryValue}
       onChange={onChange}
-      onDone={onDone}
     />
   );
 };

@@ -1,5 +1,7 @@
 import { keyframes } from '@stitches/core';
 
+import { IS_MOBILE } from '../browser';
+
 import { css } from './stitches';
 
 export const scaleUp = keyframes({
@@ -14,9 +16,21 @@ export const iconButton = css('button', {
   outline: 'inherit',
   padding: 0,
 
+  height: '$iconButtonSizeSm',
+  width: '$iconButtonSizeSm',
+  minHeight: '$iconButtonSizeSm',
+  minWidth: '$iconButtonSizeSm',
+
+  '@lg': {
+    height: '$iconButtonSize',
+    width: '$iconButtonSize',
+    minHeight: '$iconButtonSize',
+    minWidth: '$iconButtonSize',
+  },
+
   color: '$icon',
   '&:hover': {
     color: '$iconHover',
-    animation: `${scaleUp} 200ms`,
+    animation: !IS_MOBILE ? `${scaleUp} 200ms` : undefined,
   },
 });
