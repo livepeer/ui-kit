@@ -18,6 +18,7 @@ export type {
   FullscreenButtonProps,
   MediaControllerProviderProps,
   PlayButtonProps,
+  PlayerObjectFit,
   PlayerProps,
   PosterProps,
   ProgressProps,
