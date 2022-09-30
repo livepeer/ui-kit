@@ -390,6 +390,34 @@ function App() {
   autoPlay
 />
 
+### objectFit
+
+Sets the video's [object fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) property. Defaults to `cover` -
+`contain` is usually used in full-screen applications or when the `aspectRatio` does not match the content (or there is no
+guarantee the `aspectRatio` matches).
+
+```tsx {9}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      aspectRatio="1to1"
+      objectFit="contain"
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  aspectRatio="1to1"
+  objectFit="contain"
+/>
+
 ### theme
 
 Sets the Player-specific theme overrides. It is recommended to use [`LivepeerConfig`](/react/LivepeerConfig) for
