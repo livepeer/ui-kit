@@ -1,5 +1,11 @@
 # @livepeer/react
 
+## 1.0.3
+
+### Patch Changes
+
+- [#77](https://github.com/livepeer/livepeer.js/pull/77) [`7c3dc0b`](https://github.com/livepeer/livepeer.js/commit/7c3dc0bc6967fd05aa660a9d878d693f7ea2603d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `objectFit` to `<Player />` to apply to the video/poster element, to either be `contain` or `cover` depending on the use-case.
+
 ## 1.0.2
 
 ### Patch Changes
