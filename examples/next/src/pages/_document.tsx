@@ -18,6 +18,12 @@ class Document extends NextDocument {
             id="stitches"
             dangerouslySetInnerHTML={{ __html: getCssText() }}
           />
+          <style global jsx>{`
+            body {
+              margin: 0px;
+              padding: 0px;
+            }
+          `}</style>
         </Head>
         <body>
           <Main />
