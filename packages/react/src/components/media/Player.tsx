@@ -27,6 +27,8 @@ import {
 } from './controls';
 import { Title } from './controls/Title';
 
+export type PlayerObjectFit = 'cover' | 'contain';
+
 export type PlayerProps = {
   /** The source(s) of the media (**required** if `playbackId` is not provided) */
   src?: string | string[] | null | undefined;
@@ -38,7 +40,7 @@ export type PlayerProps = {
   /** Shows/hides the title at the top of the media */
   showTitle?: boolean;
 
-  /** Whether the media will loop when finished */
+  /** Whether the media will loop when finished. Defaults to false. */
   loop?: boolean;
 
   /**
@@ -48,21 +50,29 @@ export type PlayerProps = {
    * @see {@link https://web.dev/cls/}
    * */
   aspectRatio?: AspectRatio;
-  /** Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
-   * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility. */
+  /**
+   * Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
+   * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility.
+   */
   poster?: string | React.ReactNode;
   /** Shows/hides the loading spinner */
   showLoadingSpinner?: boolean;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
-  /** Play media automatically when the content loads (if this is specified, you must also specify muted, since this is required in browsers) */
+  /**
+   * Play media automatically when the content loads (if this is specified, you must also specify muted,
+   * since this is required in browsers)
+   */
   autoPlay?: boolean;
   /** Mute media by default */
   muted?: boolean;
 
   /** Theme configuration for the player */
   theme?: ThemeConfig;
+
+  /** The object-fit property for the video element. Defaults to cover (contain is usually used in full-screen applications) */
+  objectFit?: PlayerObjectFit;
 
   /** Custom controls passed in to override the default controls */
   children?: React.ReactNode;
@@ -91,6 +101,7 @@ export function Player({
   showLoadingSpinner = true,
   showTitle = true,
   aspectRatio = '16to9',
+  objectFit = 'cover',
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -177,6 +188,7 @@ export function Player({
             src={sourceMimeTyped}
             poster={typeof poster === 'string' ? poster : undefined}
             loop={loop}
+            objectFit={objectFit}
           />
         ) : sourceMimeTyped?.[0]?.type === 'audio' ? (
           <AudioPlayer
@@ -185,6 +197,7 @@ export function Player({
             muted={autoPlay ? true : muted}
             src={sourceMimeTyped as AudioSrc[]}
             loop={loop}
+            objectFit={objectFit}
           />
         ) : (
           <VideoPlayer
@@ -194,6 +207,7 @@ export function Player({
             src={sourceMimeTyped as VideoSrc[] | null}
             poster={typeof poster === 'string' ? poster : undefined}
             loop={loop}
+            objectFit={objectFit}
           />
         )}
 

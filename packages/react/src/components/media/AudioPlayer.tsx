@@ -23,7 +23,7 @@ const mediaControllerSelector = ({
 });
 
 export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
-  ({ src, autoPlay, title, loop, muted }, ref) => {
+  ({ src, autoPlay, title, loop, muted, objectFit }, ref) => {
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     const filteredSources = React.useMemo(() => {
@@ -33,7 +33,7 @@ export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
     return (
       <audio
         className={styling.media.audio({
-          size: fullscreen ? 'fullscreen' : 'default',
+          size: fullscreen ? 'fullscreen' : objectFit,
         })}
         loop={loop}
         aria-label={title ?? 'Audio player'}

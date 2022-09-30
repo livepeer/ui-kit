@@ -20,7 +20,7 @@ const mediaControllerSelector = ({
 });
 
 export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
-  ({ src, autoPlay, title, loop, muted, poster }, ref) => {
+  ({ src, autoPlay, title, loop, muted, poster, objectFit }, ref) => {
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     const filteredSources = React.useMemo(() => {
@@ -30,7 +30,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
     return (
       <video
         className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : 'default',
+          size: fullscreen ? 'fullscreen' : objectFit,
         })}
         loop={loop}
         aria-label={title ?? 'Video player'}

@@ -42,13 +42,16 @@ const video = css('video', {
           display: 'none !important',
         },
       },
-      default: {
+      contain: {
+        objectFit: 'contain',
+      },
+      cover: {
         objectFit: 'cover',
       },
     },
   },
   defaultVariants: {
-    size: 'default',
+    size: 'cover',
   },
 });
 

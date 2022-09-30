@@ -9,11 +9,13 @@ import {
 } from 'livepeer';
 import * as React from 'react';
 
+import { PlayerObjectFit } from './Player';
 import { VideoPlayer } from './VideoPlayer';
 import { useMediaController } from './context';
 
 export type HlsPlayerProps = {
   src: HlsSrc;
+  objectFit: PlayerObjectFit;
   hlsConfig?: HlsVideoConfig;
   controls?: boolean;
   width?: string | number;
@@ -40,7 +42,8 @@ const mediaControllerSelector = ({
 
 export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
   (props, ref) => {
-    const { hlsConfig, src, autoPlay, title, loop, muted, poster } = props;
+    const { hlsConfig, src, autoPlay, title, loop, muted, poster, objectFit } =
+      props;
 
     const { element, fullscreen, setLive, onDurationChange, onCanPlay } =
       useMediaController(mediaControllerSelector);
@@ -88,7 +91,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
     return !canPlayAppleMpeg && canUseHlsjs ? (
       <video
         className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : 'default',
+          size: fullscreen ? 'fullscreen' : objectFit,
         })}
         loop={loop}
         aria-label={title ?? 'Video player'}
