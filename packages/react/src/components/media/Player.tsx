@@ -69,7 +69,12 @@ export type PlayerProps = {
 
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
-};
+} & (
+  | {
+      src: string | string[] | null | undefined;
+    }
+  | { playbackId: string | null | undefined }
+);
 
 export function Player({
   autoPlay,
