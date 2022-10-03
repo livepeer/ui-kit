@@ -1,24 +1,25 @@
 import {
   Asset,
+  ClientConfig,
   GetAssetArgs,
   LivepeerProvider,
+  LivepeerProviderConfig,
+  Metrics,
+  createClient,
   getAsset,
   pick,
 } from 'livepeer';
-import { useMemo } from 'react';
 
-import { QueryClientContext } from '../../context';
 import {
   UsePickQueryOptions,
+  prefetchQuery,
   useInternalQuery,
   usePickQueryKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
-export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
-  args: GetAssetArgs,
-  livepeerProvider: TLivepeerProvider,
-) => [{ entity: 'getAsset', args, livepeerProvider }] as const;
+export const queryKey = (args: GetAssetArgs, config: LivepeerProviderConfig) =>
+  [{ entity: 'getAsset', args, config }] as const;
 
 export type UseAssetArgs<TData> = Partial<GetAssetArgs> &
   Partial<UsePickQueryOptions<Asset, TData, ReturnType<typeof queryKey>>>;
@@ -29,16 +30,32 @@ export function useAsset<
 >(args: UseAssetArgs<TData>) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const getAssetArgs: GetAssetArgs = useMemo(
-    () => (typeof args === 'string' ? args : { assetId: args?.assetId ?? '' }),
-    [args],
-  );
+  return useInternalQuery(getQueryParams(args, livepeerProvider));
+}
 
-  return useInternalQuery<Asset, TData, ReturnType<typeof queryKey>>({
-    context: QueryClientContext,
-    queryKey: queryKey(getAssetArgs, livepeerProvider),
+export async function prefetchAsset<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = Asset,
+>(
+  args: UseAssetArgs<TData>,
+  config: Omit<ClientConfig<TLivepeerProvider>, 'storage'>,
+) {
+  const livepeerClient = createClient(config);
+
+  return prefetchQuery(getQueryParams(args, livepeerClient.provider));
+}
+
+function getQueryParams<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = Metrics,
+>(args: UseAssetArgs<TData>, provider: TLivepeerProvider) {
+  const getAssetArgs: GetAssetArgs =
+    typeof args === 'string' ? args : { assetId: args?.assetId ?? '' };
+
+  return {
+    queryKey: queryKey(getAssetArgs, provider.getConfig()),
     queryFn: async () => getAsset<TLivepeerProvider>(getAssetArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.assetId),
     ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
-  });
+  };
 }

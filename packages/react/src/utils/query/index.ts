@@ -1,3 +1,4 @@
+export { prefetchQuery } from './prefetchQuery';
 export type { Status } from './types';
 export {
   useInternalMutation,

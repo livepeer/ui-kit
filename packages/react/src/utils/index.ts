@@ -1,5 +1,6 @@
 export { deserialize } from './deserialize';
 export {
+  prefetchQuery,
   useInternalMutation,
   useInternalQuery,
   usePickMutationKeys,

@@ -13,6 +13,21 @@ import {
 
 import { deserialize, serialize } from './utils';
 
+export const defaultQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 1_000 * 60 * 60 * 24, // 24 hours
+        networkMode: 'offlineFirst',
+        refetchOnWindowFocus: false,
+        retry: 0,
+      },
+      mutations: {
+        networkMode: 'offlineFirst',
+      },
+    },
+  });
+
 export type ReactClient<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
 > = CoreClient<TLivepeerProvider> & {
@@ -26,19 +41,7 @@ export type CreateReactClientConfig<
   persister?: Persister | null;
 };
 export function createReactClient<TLivepeerProvider extends LivepeerProvider>({
-  queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        cacheTime: 1_000 * 60 * 60 * 24, // 24 hours
-        networkMode: 'offlineFirst',
-        refetchOnWindowFocus: false,
-        retry: 0,
-      },
-      mutations: {
-        networkMode: 'offlineFirst',
-      },
-    },
-  }),
+  queryClient = defaultQueryClient(),
   ...config
 }: CreateReactClientConfig<TLivepeerProvider>): ReactClient<TLivepeerProvider> {
   const client = createClient<TLivepeerProvider>(config);

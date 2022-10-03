@@ -30,7 +30,7 @@ function App({ Component, pageProps }: AppProps) {
           light: 'light',
         }}
       >
-        <Providers>
+        <Providers dehydratedState={pageProps?.dehydratedState}>
           {/* Add styling for livepeer-design-system components */}
           <Box
             className={

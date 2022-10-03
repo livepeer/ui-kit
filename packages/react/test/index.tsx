@@ -23,6 +23,10 @@ import { Client, createReactClient } from '../src/client';
 // set up React globally for tests
 global.React = React;
 
+export const provider = studioProvider({
+  apiKey: process.env.STUDIO_API_KEY,
+});
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -47,9 +51,7 @@ type Props = { client?: Client<StudioLivepeerProvider> } & {
 };
 export function wrapper({
   client = createReactClient({
-    provider: studioProvider({
-      apiKey: process.env.STUDIO_API_KEY,
-    }),
+    provider,
     queryClient,
   }),
   ...rest

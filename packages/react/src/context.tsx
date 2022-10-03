@@ -1,4 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  Hydrate,
+  HydrateOptions,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 
 import { LivepeerProvider, ThemeConfig } from 'livepeer';
 import * as React from 'react';
@@ -22,12 +27,19 @@ export type LivepeerConfigProps<
   client: ReactClient<TLivepeerProvider>;
   /** Theme used for React components */
   theme?: ThemeConfig;
+  /**
+   * Dehydrated state passed from a server after SSR.
+   *
+   * @see {@link https://tanstack.com/query/v4/docs/guides/ssr}
+   */
+  dehydratedState?: string;
 };
 
 export function LivepeerConfig<TLivepeerProvider extends LivepeerProvider>({
   children,
   client,
   theme,
+  dehydratedState,
 }: React.PropsWithChildren<LivepeerConfigProps<TLivepeerProvider>>) {
   return (
     <Context.Provider value={client as unknown as Client}>
@@ -35,7 +47,12 @@ export function LivepeerConfig<TLivepeerProvider extends LivepeerProvider>({
         context={QueryClientContext}
         client={client.queryClient}
       >
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <Hydrate
+          options={{ context: QueryClientContext } as HydrateOptions}
+          state={dehydratedState ?? undefined}
+        >
+          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        </Hydrate>
       </QueryClientProvider>
     </Context.Provider>
   );

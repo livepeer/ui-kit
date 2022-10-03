@@ -1,24 +1,26 @@
 import {
+  ClientConfig,
   GetPlaybackInfoArgs,
   LivepeerProvider,
+  LivepeerProviderConfig,
   PlaybackInfo,
+  createClient,
   getPlaybackInfo,
   pick,
 } from 'livepeer';
-import { useMemo } from 'react';
 
-import { QueryClientContext } from '../../context';
 import {
   UsePickQueryOptions,
+  prefetchQuery,
   useInternalQuery,
   usePickQueryKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
-export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
+export const queryKey = (
   args: GetPlaybackInfoArgs,
-  livepeerProvider: TLivepeerProvider,
-) => [{ entity: 'getPlaybackInfo', args, livepeerProvider }] as const;
+  config: LivepeerProviderConfig,
+) => [{ entity: 'getPlaybackInfo', args, config }] as const;
 
 export type UsePlaybackInfoArgs<TData> = Partial<GetPlaybackInfoArgs> &
   Partial<
@@ -29,20 +31,37 @@ export function usePlaybackInfo<
   TLivepeerProvider extends LivepeerProvider,
   TData = PlaybackInfo,
 >(args: UsePlaybackInfoArgs<TData>) {
-  const livepeerProvider = useLivepeerProvider<LivepeerProvider>();
+  const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const getPlaybackInfoArgs: GetPlaybackInfoArgs = useMemo(
-    () =>
-      typeof args === 'string' ? args : { playbackId: args?.playbackId ?? '' },
-    [args],
+  return useInternalQuery<PlaybackInfo, TData, ReturnType<typeof queryKey>>(
+    getQueryParams(args, livepeerProvider),
   );
+}
 
-  return useInternalQuery({
-    context: QueryClientContext,
-    queryKey: queryKey(getPlaybackInfoArgs, livepeerProvider),
+export async function prefetchPlaybackInfo<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = PlaybackInfo,
+>(
+  args: UsePlaybackInfoArgs<TData>,
+  config: Omit<ClientConfig<TLivepeerProvider>, 'storage'>,
+) {
+  const livepeerClient = createClient(config);
+
+  return prefetchQuery(getQueryParams(args, livepeerClient.provider));
+}
+
+function getQueryParams<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = PlaybackInfo,
+>(args: UsePlaybackInfoArgs<TData>, provider: TLivepeerProvider) {
+  const getPlaybackInfoArgs: GetPlaybackInfoArgs =
+    typeof args === 'string' ? args : { playbackId: args?.playbackId ?? '' };
+
+  return {
+    queryKey: queryKey(getPlaybackInfoArgs, provider.getConfig()),
     queryFn: async () =>
       getPlaybackInfo<TLivepeerProvider>(args as GetPlaybackInfoArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.playbackId),
     ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
-  });
+  };
 }

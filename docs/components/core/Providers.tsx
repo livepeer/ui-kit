@@ -16,6 +16,7 @@ const livepeerClient = createReactClient({
 
 type Props = {
   children?: ReactNode;
+  dehydratedState?: string;
 };
 
 const livepeerLightTheme: ThemeConfig = {
@@ -66,7 +67,7 @@ const livepeerDarkTheme: ThemeConfig = {
   },
 };
 
-export function Providers({ children }: Props) {
+export function Providers({ children, dehydratedState }: Props) {
   const { theme } = useTheme();
 
   const livepeerTheme = useMemo(
@@ -75,7 +76,11 @@ export function Providers({ children }: Props) {
   );
 
   return (
-    <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+    <LivepeerConfig
+      dehydratedState={dehydratedState}
+      client={livepeerClient}
+      theme={livepeerTheme}
+    >
       {children}
     </LivepeerConfig>
   );

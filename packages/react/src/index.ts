@@ -3,7 +3,7 @@ export {
   studioProvider,
   type StudioLivepeerProviderConfig,
 } from 'livepeer/providers/studio';
-export { createReactClient } from './client';
+export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
   ControlsContainer,
@@ -37,6 +37,12 @@ export type {
 export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';
 export {
+  prefetchAsset,
+  prefetchAssetMetrics,
+  prefetchPlaybackInfo,
+  prefetchStream,
+  prefetchStreamSession,
+  prefetchStreamSessions,
   useAsset,
   useAssetMetrics,
   useCreateAsset,

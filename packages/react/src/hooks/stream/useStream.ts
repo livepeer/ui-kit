@@ -1,24 +1,24 @@
 import {
+  ClientConfig,
   GetStreamArgs,
   LivepeerProvider,
+  LivepeerProviderConfig,
   Stream,
+  createClient,
   getStream,
   pick,
 } from 'livepeer';
-import { useMemo } from 'react';
 
-import { QueryClientContext } from '../../context';
 import {
   UsePickQueryOptions,
+  prefetchQuery,
   useInternalQuery,
   usePickQueryKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
-export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
-  args: GetStreamArgs,
-  livepeerProvider: TLivepeerProvider,
-) => [{ entity: 'getStream', args, livepeerProvider }] as const;
+export const queryKey = (args: GetStreamArgs, config: LivepeerProviderConfig) =>
+  [{ entity: 'getStream', args, config }] as const;
 
 export type UseStreamArgs<TData> = Partial<GetStreamArgs> &
   Partial<UsePickQueryOptions<Stream, TData, ReturnType<typeof queryKey>>>;
@@ -29,17 +29,34 @@ export function useStream<
 >(args: UseStreamArgs<TData>) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const getStreamArgs: GetStreamArgs = useMemo(
-    () =>
-      typeof args === 'string' ? args : { streamId: args?.streamId ?? '' },
-    [args],
+  return useInternalQuery<Stream, TData, ReturnType<typeof queryKey>>(
+    getQueryParams(args, livepeerProvider),
   );
+}
 
-  return useInternalQuery<Stream, TData, ReturnType<typeof queryKey>>({
-    context: QueryClientContext,
-    queryKey: queryKey(getStreamArgs, livepeerProvider),
+export async function prefetchStream<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = Stream,
+>(
+  args: UseStreamArgs<TData>,
+  config: Omit<ClientConfig<TLivepeerProvider>, 'storage'>,
+) {
+  const livepeerClient = createClient(config);
+
+  return prefetchQuery(getQueryParams(args, livepeerClient.provider));
+}
+
+function getQueryParams<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = Stream,
+>(args: UseStreamArgs<TData>, provider: TLivepeerProvider) {
+  const getStreamArgs: GetStreamArgs =
+    typeof args === 'string' ? args : { streamId: args?.streamId ?? '' };
+
+  return {
+    queryKey: queryKey(getStreamArgs, provider.getConfig()),
     queryFn: async () => getStream<TLivepeerProvider>(getStreamArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamId),
     ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
-  });
+  };
 }

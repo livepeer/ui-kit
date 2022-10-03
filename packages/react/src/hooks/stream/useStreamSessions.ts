@@ -1,24 +1,26 @@
 import {
+  ClientConfig,
   GetStreamSessionsArgs,
   LivepeerProvider,
+  LivepeerProviderConfig,
   StreamSession,
+  createClient,
   getStreamSessions,
   pick,
 } from 'livepeer';
-import { useMemo } from 'react';
 
-import { QueryClientContext } from '../../context';
 import {
   UsePickQueryOptions,
+  prefetchQuery,
   useInternalQuery,
   usePickQueryKeys,
 } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
-export const queryKey = <TLivepeerProvider extends LivepeerProvider>(
+export const queryKey = (
   args: GetStreamSessionsArgs,
-  livepeerProvider: TLivepeerProvider,
-) => [{ entity: 'getStreamSessions', args, livepeerProvider }] as const;
+  config: LivepeerProviderConfig,
+) => [{ entity: 'getStreamSessions', args, config }] as const;
 
 export type UseStreamSessionsArgs<TData> = Partial<GetStreamSessionsArgs> &
   Partial<
@@ -31,18 +33,35 @@ export function useStreamSessions<
 >(args: UseStreamSessionsArgs<TData>) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const getStreamSessionsArgs: GetStreamSessionsArgs = useMemo(
-    () =>
-      typeof args === 'string' ? args : { streamId: args?.streamId ?? '' },
-    [args],
+  return useInternalQuery<StreamSession[], TData, ReturnType<typeof queryKey>>(
+    getQueryParams(args, livepeerProvider),
   );
+}
 
-  return useInternalQuery({
-    context: QueryClientContext,
-    queryKey: queryKey(getStreamSessionsArgs, livepeerProvider),
+export async function prefetchStreamSessions<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = StreamSession[],
+>(
+  args: UseStreamSessionsArgs<TData>,
+  config: Omit<ClientConfig<TLivepeerProvider>, 'storage'>,
+) {
+  const livepeerClient = createClient(config);
+
+  return prefetchQuery(getQueryParams(args, livepeerClient.provider));
+}
+
+function getQueryParams<
+  TLivepeerProvider extends LivepeerProvider,
+  TData = StreamSession[],
+>(args: UseStreamSessionsArgs<TData>, provider: TLivepeerProvider) {
+  const getStreamSessionsArgs: GetStreamSessionsArgs =
+    typeof args === 'string' ? args : { streamId: args?.streamId ?? '' };
+
+  return {
+    queryKey: queryKey(getStreamSessionsArgs, provider.getConfig()),
     queryFn: async () =>
       getStreamSessions<TLivepeerProvider>(getStreamSessionsArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamId),
     ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
-  });
+  };
 }

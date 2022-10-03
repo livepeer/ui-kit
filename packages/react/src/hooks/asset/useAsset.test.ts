@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderHook } from '../../../test';
-import { useAsset } from './useAsset';
+import { provider, renderHook } from '../../../test';
+import { prefetchAsset, useAsset } from './useAsset';
 
 // asset ID which was generated previously for tests
 const assetId = 'd8e8b87d-6774-4083-a2d7-4e85872d18cd';
@@ -26,5 +26,22 @@ describe('useAsset', () => {
         },
       ]
     `);
+  });
+
+  describe('prefetchAssetMetrics', () => {
+    it('prefetches', async () => {
+      const state = await prefetchAsset({ assetId }, { provider });
+
+      expect(state.queries[0]?.queryHash).toMatchInlineSnapshot(
+        '"[{\\"args\\":{\\"assetId\\":\\"d8e8b87d-6774-4083-a2d7-4e85872d18cd\\"},\\"config\\":{\\"apiKey\\":\\"a616be3b-8980-4932-8079-0122e0106f95\\",\\"baseUrl\\":\\"https://livepeer.studio/api\\",\\"name\\":\\"Livepeer Studio\\"},\\"entity\\":\\"getAsset\\"}]"',
+      );
+      expect(state.queries[0]?.state?.data).haveOwnProperty('id', assetId);
+    });
+
+    it('does not prefetch when undefined', async () => {
+      const state = await prefetchAsset({ assetId: undefined }, { provider });
+
+      expect(state.queries).toMatchInlineSnapshot('[]');
+    });
   });
 });
