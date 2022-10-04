@@ -12,12 +12,12 @@ import { AptosNft, WagmiNft } from '@components/examples';
 The example below shows how to mint a video NFT easily, using either [`wagmi`](https://wagmi.sh/) for EVM-compatible blockchains or
 [`aptos`](https://aptos.dev/) for the Aptos blockchain.
 
-<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
-  <SyncedTab>
-    <AptosNft />
-  </SyncedTab>
+<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
   <SyncedTab>
     <WagmiNft />
+  </SyncedTab>
+  <SyncedTab>
+    <AptosNft />
   </SyncedTab>
 </SyncedTabs>
 
@@ -25,12 +25,7 @@ The example below shows how to mint a video NFT easily, using either [`wagmi`](h
 
 We first add the required dependencies using `npm` (or your preferred package manager).
 
-<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
-  <SyncedTab>
-    ```bash
-    npm i aptos
-    ```
-  </SyncedTab>
+<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
   <SyncedTab>
     ```bash
     npm i wagmi ethers
@@ -43,20 +38,16 @@ We first add the required dependencies using `npm` (or your preferred package ma
     npm i connectkit
     ```
   </SyncedTab>
+  <SyncedTab>
+    ```bash
+    npm i aptos
+    ```
+  </SyncedTab>
 </SyncedTabs>
 
 ## Step 2: Setting Up Providers
 
-<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
-  <SyncedTab>
-```tsx
-export const AptosNft = () => {
-  return (
-    <Box></Box>
-  );
-};
-```
-  </SyncedTab>
+<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
   <SyncedTab>
 ```tsx
 import {
@@ -95,11 +86,6 @@ function App() {
 }
 ```
   </SyncedTab>
-</SyncedTabs>
-
-## Step 3: Add Connect Button
-
-<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
   <SyncedTab>
 ```tsx
 export const AptosNft = () => {
@@ -109,6 +95,11 @@ export const AptosNft = () => {
 };
 ```
   </SyncedTab>
+</SyncedTabs>
+
+## Step 3: Add Connect Button
+
+<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
   <SyncedTab>
 ```tsx
 import { ConnectKitButton } from 'connectkit';
@@ -125,11 +116,6 @@ export const WagmiNft = () => {
 };
 ```
   </SyncedTab>
-</SyncedTabs>
-
-## Step 4: Upload Asset to IPFS
-
-<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
   <SyncedTab>
 ```tsx
 export const AptosNft = () => {
@@ -139,6 +125,11 @@ export const AptosNft = () => {
 };
 ```
   </SyncedTab>
+</SyncedTabs>
+
+## Step 4: Upload Asset to IPFS
+
+<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
   <SyncedTab>
 ```tsx
 import { useAsset, useUpdateAsset } from '@livepeer/react';
@@ -195,11 +186,6 @@ export const WagmiNft = () => {
 };
 ```
   </SyncedTab>
-</SyncedTabs>
-
-## Step 5: Mint an NFT
-
-<SyncedTabs group="wallet-type" items={['aptos', 'wagmi']}>
   <SyncedTab>
 ```tsx
 export const AptosNft = () => {
@@ -209,6 +195,11 @@ export const AptosNft = () => {
 };
 ```
   </SyncedTab>
+</SyncedTabs>
+
+## Step 5: Mint an NFT
+
+<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
   <SyncedTab>
 ```tsx
 import { useAsset, useUpdateAsset } from '@livepeer/react';
@@ -306,5 +297,13 @@ export const WagmiNft = () => {
 };
 ```
   </SyncedTab>
+  <SyncedTab>
+```tsx
+export const AptosNft = () => {
+  return (
+    <Box></Box>
+  );
+};
+```
+  </SyncedTab>
 </SyncedTabs>
-

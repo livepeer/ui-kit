@@ -1,11 +1,17 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { useAsset, useUpdateAsset } from '@livepeer/react';
+import { AptosClient, Types } from 'aptos';
 
-import { AptosClient, TokenClient, Types } from 'aptos';
 import { useRouter } from 'next/router';
 import { Callout } from 'nextra-theme-docs';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+
+import { ApiError } from '../../lib/error';
+import {
+  CreateAptosTokenBody,
+  CreateAptosTokenResponse,
+} from '../../pages/api/create-aptos-token';
 
 import { Spinner } from '../core';
 
@@ -19,53 +25,25 @@ declare global {
 const client = new AptosClient('https://fullnode.devnet.aptoslabs.com/v1');
 
 export const AptosNft = () => {
-  // Retrieve aptos.account on initial render and store it.
+  const isAptosDefined = useMemo(
+    () => (typeof window !== 'undefined' ? Boolean(window?.aptos) : false),
+    [],
+  );
+
   const [address, setAddress] = useState<string | null>(null);
-  useEffect(() => {
-    (async () => {
-      if (typeof window !== 'undefined' && window?.aptos) {
+
+  const connectWallet = useCallback(async () => {
+    try {
+      if (isAptosDefined) {
+        await window.aptos.connect();
         const account: { address: string } = await window.aptos.account();
 
         setAddress(account.address);
       }
-    })();
-  }, []);
-
-  // Use the AptosClient to retrieve details about the account.
-  const [account, setAccount] = useState<Types.AccountData | null>(null);
-  useEffect(() => {
-    (async () => {
-      if (address) {
-        const account = await client.getAccount(address);
-
-        setAccount(account);
-      }
-    })();
-  }, [address]);
-
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        // Create client for working with the token module.
-        // :!:>section_1b
-        const tokenClient = new TokenClient(client);
-
-        const txnHash2 = await tokenClient.createToken.createToken(
-          account,
-          collectionName,
-          tokenName,
-          "Alice's simple token",
-          1,
-          'https://aptos.dev/img/nyan.jpeg',
-        ); // <:!:section_5
-        await client.waitForTransaction(txnHash2, { checkSuccess: true });
-
-        setAccount(account);
-      }
-    })();
-  }, [account]);
-
-  console.log({ account });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [isAptosDefined]);
 
   const router = useRouter();
 
@@ -86,14 +64,77 @@ export const AptosNft = () => {
   });
   const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
 
+  const [isCreatingNft, setIsCreatingNft] = useState(false);
+
   const isLoading = useMemo(
     () =>
       assetStatus === 'loading' ||
       updateStatus === 'loading' ||
       (asset && asset?.status?.phase !== 'ready') ||
-      (asset?.storage && asset?.storage?.status?.phase !== 'ready'),
-    [asset, assetStatus, updateStatus],
+      (asset?.storage && asset?.storage?.status?.phase !== 'ready') ||
+      isCreatingNft,
+    [asset, assetStatus, updateStatus, isCreatingNft],
   );
+
+  const [creationHash, setCreationHash] = useState('');
+
+  const mintNft = useCallback(async () => {
+    setIsCreatingNft(true);
+
+    try {
+      if (address && asset?.storage?.ipfs?.nftMetadata?.url) {
+        const body: CreateAptosTokenBody = {
+          receiver: address,
+          metadataUri: asset.storage.ipfs.nftMetadata.url,
+        };
+
+        const response = await fetch('/api/create-aptos-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+
+        const json = (await response.json()) as
+          | CreateAptosTokenResponse
+          | ApiError;
+
+        if ((json as CreateAptosTokenResponse).tokenName) {
+          const createResponse = json as CreateAptosTokenResponse;
+
+          const transaction = {
+            type: 'entry_function_payload',
+            function: '0x3::token_transfers::claim_script',
+            arguments: [
+              createResponse.creator,
+              createResponse.creator,
+              createResponse.collectionName,
+              createResponse.tokenName,
+              createResponse.tokenPropertyVersion,
+            ],
+            type_arguments: [],
+          };
+
+          const aptosResponse: Types.PendingTransaction =
+            await window.aptos.signAndSubmitTransaction(transaction);
+
+          const result = await client.waitForTransactionWithResult(
+            aptosResponse.hash,
+            { checkSuccess: true },
+          );
+
+          console.log(result);
+
+          setCreationHash(result.hash);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsCreatingNft(false);
+    }
+  }, [address, asset?.storage?.ipfs?.nftMetadata?.url, setIsCreatingNft]);
 
   return !router?.query?.id ? (
     <Box css={{ my: '$4' }}>
@@ -110,7 +151,9 @@ export const AptosNft = () => {
     </Box>
   ) : (
     <Box css={{ my: '$4' }}>
-      {/* <ConnectKitButton /> */}
+      <Button size="3" disabled={!isAptosDefined} onClick={connectWallet}>
+        Connect Wallet
+      </Button>
       {address && (
         <>
           <Box
@@ -163,10 +206,10 @@ export const AptosNft = () => {
                 {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
                 Upload to IPFS
               </Button>
-            ) : contractWriteData?.hash && isSuccess ? (
+            ) : creationHash ? (
               <a
                 target="_blank"
-                href={`https://mumbai.polygonscan.com/tx/${contractWriteData.hash}`}
+                href={`https://explorer.aptoslabs.com/txn/${creationHash}?network=Devnet`}
               >
                 <Button
                   css={{ display: 'flex', ai: 'center' }}
@@ -176,16 +219,10 @@ export const AptosNft = () => {
                   View Mint Transaction
                 </Button>
               </a>
-            ) : contractWriteError ? (
-              <Box>
-                <Text variant="red">{contractWriteError.message}</Text>
-              </Box>
-            ) : asset?.storage?.status?.phase === 'ready' && write ? (
+            ) : asset?.storage?.status?.phase === 'ready' ? (
               <Button
                 css={{ display: 'flex', ai: 'center' }}
-                onClick={() => {
-                  write();
-                }}
+                onClick={mintNft}
                 size="2"
                 disabled={isLoading}
                 variant="primary"
