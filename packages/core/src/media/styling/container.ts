@@ -114,6 +114,7 @@ export const container = css(aspectRatioContainer, {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  flex: 1,
 
   svg: {
     pointerEvents: 'none',

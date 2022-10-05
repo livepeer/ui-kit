@@ -1,5 +1,14 @@
 # @livepeer/react
 
+## 1.0.5
+
+### Patch Changes
+
+- [#85](https://github.com/livepeer/livepeer.js/pull/85) [`adf52c5`](https://github.com/livepeer/livepeer.js/commit/adf52c5e0fb43676eb89db7244f896a41f4a5760) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed Safari flex not taking up entire parent container.
+
+- Updated dependencies [[`adf52c5`](https://github.com/livepeer/livepeer.js/commit/adf52c5e0fb43676eb89db7244f896a41f4a5760)]:
+  - livepeer@1.0.3
+
 ## 1.0.4
 
 ### Patch Changes
