@@ -1,19 +1,20 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { useAsset, useUpdateAsset } from '@livepeer/react';
-import { AptosClient, Types } from 'aptos';
+import { Types } from 'aptos';
 
 import { useRouter } from 'next/router';
 import { Callout } from 'nextra-theme-docs';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 
+import { formatAddress } from '../../lib/address';
 import { ApiError } from '../../lib/error';
 import {
   CreateAptosTokenBody,
   CreateAptosTokenResponse,
 } from '../../pages/api/create-aptos-token';
 
-import { Spinner } from '../core';
+import { AptosContext, Spinner } from '../core';
 
 declare global {
   interface Window {
@@ -21,10 +22,9 @@ declare global {
   }
 }
 
-// Create an AptosClient to interact with devnet.
-const client = new AptosClient('https://fullnode.devnet.aptoslabs.com/v1');
-
 export const AptosNft = () => {
+  const aptosClient = useContext(AptosContext);
+
   const isAptosDefined = useMemo(
     () => (typeof window !== 'undefined' ? Boolean(window?.aptos) : false),
     [],
@@ -82,7 +82,7 @@ export const AptosNft = () => {
     setIsCreatingNft(true);
 
     try {
-      if (address && asset?.storage?.ipfs?.nftMetadata?.url) {
+      if (address && aptosClient && asset?.storage?.ipfs?.nftMetadata?.url) {
         const body: CreateAptosTokenBody = {
           receiver: address,
           metadataUri: asset.storage.ipfs.nftMetadata.url,
@@ -119,12 +119,10 @@ export const AptosNft = () => {
           const aptosResponse: Types.PendingTransaction =
             await window.aptos.signAndSubmitTransaction(transaction);
 
-          const result = await client.waitForTransactionWithResult(
+          const result = await aptosClient.waitForTransactionWithResult(
             aptosResponse.hash,
             { checkSuccess: true },
           );
-
-          console.log(result);
 
           setCreationHash(result.hash);
         }
@@ -134,9 +132,14 @@ export const AptosNft = () => {
     } finally {
       setIsCreatingNft(false);
     }
-  }, [address, asset?.storage?.ipfs?.nftMetadata?.url, setIsCreatingNft]);
+  }, [
+    address,
+    aptosClient,
+    asset?.storage?.ipfs?.nftMetadata?.url,
+    setIsCreatingNft,
+  ]);
 
-  return !router?.query?.id ? (
+  return !assetId ? (
     <Box css={{ my: '$4' }}>
       <Callout type="error" emoji="⚠️">
         <p>
@@ -151,8 +154,27 @@ export const AptosNft = () => {
     </Box>
   ) : (
     <Box css={{ my: '$4' }}>
-      <Button size="3" disabled={!isAptosDefined} onClick={connectWallet}>
-        Connect Wallet
+      <Button
+        size="3"
+        disabled={!isAptosDefined || Boolean(address)}
+        onClick={connectWallet}
+      >
+        {!address ? (
+          'Connect Wallet'
+        ) : (
+          <>
+            <Box
+              css={{
+                mr: '$1',
+                backgroundColor: '#1A88F8',
+                width: 24,
+                height: 24,
+                borderRadius: '100%',
+              }}
+            />
+            {formatAddress(address)}
+          </>
+        )}
       </Button>
       {address && (
         <>

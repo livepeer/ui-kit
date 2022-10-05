@@ -1,7 +1,5 @@
 import { AptosAccount, AptosClient, HexString, TokenClient } from 'aptos';
 
-const NODE_URL = 'https://fullnode.devnet.aptoslabs.com';
-
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { ApiError } from '../../lib/error';
@@ -17,6 +15,17 @@ export type CreateAptosTokenResponse = {
   tokenName: string;
   tokenPropertyVersion: number;
 };
+
+const NODE_URL = 'https://fullnode.devnet.aptoslabs.com';
+
+const COLLECTION_NAME = 'Livepeer Video NFT';
+const COLLECTION_DESCRIPTION =
+  "Video NFTs using Livepeer's decentralized video transcoding protocol.";
+const COLLECTION_URI = 'https://livepeer.org';
+
+const TOKEN_VERSION = 0;
+const TOKEN_DESCRIPTION =
+  "A video NFT which uses Livepeer's decentralized video transcoding protocol.";
 
 const handler = async (
   req: NextApiRequest,
@@ -43,43 +52,59 @@ const handler = async (
         new HexString(process.env.APTOS_PRIVATE_KEY).toUint8Array(),
       );
 
-      const collectionName = 'Livepeer';
-      const tokenPropertyVersion = 0;
+      let collectionData: any;
 
-      const collectionData = await tokenClient.getCollectionData(
-        issuer.address(),
-        collectionName,
-      );
+      try {
+        collectionData = await tokenClient.getCollectionData(
+          issuer.address(),
+          COLLECTION_NAME,
+        );
+      } catch (e) {
+        // if the collection does not exist, we create it
+        const createCollectionHash = await tokenClient.createCollection(
+          issuer,
+          COLLECTION_NAME,
+          COLLECTION_DESCRIPTION,
+          COLLECTION_URI,
+        );
+        await client.waitForTransaction(createCollectionHash, {
+          checkSuccess: true,
+        });
+
+        collectionData = await tokenClient.getCollectionData(
+          issuer.address(),
+          COLLECTION_NAME,
+        );
+      }
 
       const tokenName = `Video NFT ${Number(collectionData?.supply ?? 0) + 1}`;
 
-      const txnHash2 = await tokenClient.createToken(
+      const createTokenHash = await tokenClient.createToken(
         issuer,
-        collectionName,
+        COLLECTION_NAME,
         tokenName,
-        tokenName,
+        TOKEN_DESCRIPTION,
         1,
         metadataUri,
       );
-      await client.waitForTransaction(txnHash2, { checkSuccess: true });
+      await client.waitForTransaction(createTokenHash, { checkSuccess: true });
 
-      const txnHash5 = await tokenClient.offerToken(
+      const offerTokenHash = await tokenClient.offerToken(
         issuer,
         receiver,
         issuer.address(),
-        collectionName,
+        COLLECTION_NAME,
         tokenName,
         1,
-        tokenPropertyVersion,
+        TOKEN_VERSION,
       );
-      await client.waitForTransaction(txnHash5, { checkSuccess: true });
+      await client.waitForTransaction(offerTokenHash, { checkSuccess: true });
 
       return res.status(200).json({
         creator: issuer.address().hex(),
-        collectionName,
+        collectionName: COLLECTION_NAME,
         tokenName,
-
-        tokenPropertyVersion,
+        tokenPropertyVersion: TOKEN_VERSION,
       });
     }
 

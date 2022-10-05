@@ -61,7 +61,7 @@ export const WagmiNft = () => {
     [asset, assetStatus, updateStatus, isContractWriteLoading],
   );
 
-  return !router?.query?.id ? (
+  return !assetId ? (
     <Box css={{ my: '$4' }}>
       <Callout type="error" emoji="⚠️">
         <p>

@@ -9,10 +9,10 @@ import { AptosNft, WagmiNft } from '@components/examples';
 
 # Mint a Video NFT
 
-The example below shows how to mint a video NFT easily, using either [`wagmi`](https://wagmi.sh/) for EVM-compatible blockchains or
+The example below shows how to mint a video NFT using either [`wagmi`](https://wagmi.sh/) for EVM-compatible blockchains or
 [`aptos`](https://aptos.dev/) for the Aptos blockchain.
 
-<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
+<SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
     <WagmiNft />
   </SyncedTab>
@@ -25,7 +25,7 @@ The example below shows how to mint a video NFT easily, using either [`wagmi`](h
 
 We first add the required dependencies using `npm` (or your preferred package manager).
 
-<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
+<SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
     ```bash
     npm i wagmi ethers
@@ -42,268 +42,756 @@ We first add the required dependencies using `npm` (or your preferred package ma
     ```bash
     npm i aptos
     ```
-  </SyncedTab>
+  </SyncedTab> 
 </SyncedTabs>
 
 ## Step 2: Setting Up Providers
 
-<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
+<SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
-```tsx
-import {
-  LivepeerConfig,
-  ThemeConfig,
-  createReactClient,
-  studioProvider,
-} from '@livepeer/react';
-// this is an optional dependency, and can use another wallet connector (like RainbowKit)
-import { ConnectKitProvider, getDefaultClient } from 'connectkit';
-import { WagmiConfig, createClient } from 'wagmi';
+    <span />
 
-const wagmiClient = createClient(
-  getDefaultClient({
-    appName: 'livepeer.js',
-    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
-  }),
-);
+    We create both a new livepeer.js client (using a [CORS-protected API key](/react/providers/studio#apikey))
+    and a `wagmi` client which is configured to interact with our demo NFT contract on the
+    [Polygon Mumbai](https://mumbai.polygonscan.com/address/0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643) chain.
+    _This could be replaced with any [EIP-721](https://eips.ethereum.org/EIPS/eip-721) or [EIP-1155](https://eips.ethereum.org/EIPS/eip-1155)
+    contract on an EVM-compatible chain._
 
-const livepeerClient = createReactClient({
-  provider: studioProvider({
-    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
-  }),
-});
+    ```tsx {14}
+    import {
+      LivepeerConfig,
+      createReactClient,
+      studioProvider,
+    } from '@livepeer/react';
+    // this is an optional dependency, and can use another wallet connector (like RainbowKit)
+    import { ConnectKitProvider, getDefaultClient } from 'connectkit';
+    import { WagmiConfig, chain, createClient } from 'wagmi';
 
-function App() {
-  return (
-    <WagmiConfig client={wagmiClient}>
-      <ConnectKitProvider>
-        <LivepeerConfig client={livepeerClient}>
-          <CreateAndViewAsset />
-        </LivepeerConfig>
-      </ConnectKitProvider>
-    </WagmiConfig>
-  );
-}
-```
+    const wagmiClient = createClient(
+      getDefaultClient({
+        appName: 'livepeer.js',
+        chains: [chain.polygonMumbai],
+        infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+      }),
+    );
+
+    const livepeerClient = createReactClient({
+      provider: studioProvider({
+        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+      }),
+    });
+
+    function App() {
+      return (
+        <WagmiConfig client={wagmiClient}>
+          <ConnectKitProvider>
+            <LivepeerConfig client={livepeerClient}>
+              <CreateAndViewAsset />
+            </LivepeerConfig>
+          </ConnectKitProvider>
+        </WagmiConfig>
+      );
+    }
+    ```
   </SyncedTab>
   <SyncedTab>
-```tsx
-export const AptosNft = () => {
-  return (
-    <Box></Box>
-  );
-};
-```
+    <span />
+
+    We create both a new livepeer.js client (using a [CORS-protected API key](/react/providers/studio#apikey))
+    and a React `Context` which contains an `AptosClient` to interact with our demo NFT collection on
+    [Aptos Devnet](https://explorer.aptoslabs.com/?network=Devnet).
+
+    ```tsx
+    import {
+      LivepeerConfig,
+      createReactClient,
+      studioProvider,
+    } from '@livepeer/react';
+    import { AptosClient } from 'aptos';
+    import { createContext, useMemo } from 'react';
+
+    export const AptosContext = createContext<AptosClient | null>(null);
+
+    const livepeerClient = createReactClient({
+      provider: studioProvider({
+        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+      }),
+    });
+
+    function App() {
+      // create an aptos client using the devnet endpoint on app mount
+      const aptosClient = useMemo(
+        () => new AptosClient('https://fullnode.devnet.aptoslabs.com/v1'),
+        [],
+      );
+
+      return (
+        <AptosContext.Provider value={aptosClient}>
+          <LivepeerConfig client={livepeerClient}>
+            <CreateAndViewAsset />
+          </LivepeerConfig>
+        </AptosContext.Provider>
+      );
+    }
+    ```
   </SyncedTab>
 </SyncedTabs>
 
-## Step 3: Add Connect Button
+## Step 3: Add Connect Wallet Button
 
-<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
+<Callout>
+  This example assumes you have chosen a component library with typical
+  components like `Button`, `Box`, `Flex`, etc.
+</Callout>
+
+<SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
-```tsx
-import { ConnectKitButton } from 'connectkit';
-import { useAccount } from 'wagmi';
+    <span />
 
-export const WagmiNft = () => {
-  const { address } = useAccount();
+    Now that our providers are set up, we add a connect button which "logs in" a user using their wallet. We use
+    [`connectkit`](https://docs.family.co/connectkit) for the
+    wallet connection flow. It integrates easily with `wagmi` hooks, as well as WalletConnect and Metamask
+    to support a number of popular wallets.
 
-  return (
-    <Box>
-      <ConnectKitButton />
-    </Box>
-  );
-};
-```
+    ```tsx
+    import { ConnectKitButton } from 'connectkit';
+    import { useAccount } from 'wagmi';
+
+    export const WagmiNft = () => {
+      const { address } = useAccount();
+
+      return (
+        <Box>
+          <ConnectKitButton />
+        </Box>
+      );
+    };
+    ```
   </SyncedTab>
   <SyncedTab>
-```tsx
-export const AptosNft = () => {
-  return (
-    <Box></Box>
-  );
-};
-```
+    <span />
+
+    Now that our providers are set up, we add a connect button which "logs in" a user using their wallet. We recommend using
+    [Petra Wallet](https://petra.app/) - it has a similar interface to Metamask and helps facilitate interactions with
+    the [devnet faucet](https://aptos.dev/reference/glossary/#faucet).
+
+    ```tsx
+    import { useCallback, useMemo, useState } from 'react';
+
+    // we type the global aptos as `any` - it's recommended to narrow these types
+    declare global {
+      interface Window {
+        aptos: any;
+      }
+    }
+
+    export const AptosNft = () => {
+      const isAptosDefined = useMemo(
+        () => (typeof window !== 'undefined' ? Boolean(window?.aptos) : false),
+        [],
+      );
+
+      const [address, setAddress] = useState<string | null>(null);
+
+      // callback when a user clicks the "connect" button
+      const connectWallet = useCallback(async () => {
+        try {
+          if (isAptosDefined) {
+            // we use the global `aptos` object to interact with the wallet browser extension
+            await window.aptos.connect();
+            const account: { address: string } = await window.aptos.account();
+
+            setAddress(account.address);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, [isAptosDefined]);
+
+      return (
+        <Box>
+          <Button
+            disabled={!isAptosDefined || Boolean(address)}
+            onClick={connectWallet}
+          >
+            {!address ? 'Connect Wallet' : address}
+          </Button>
+        </Box>
+      );
+    };
+    ```
   </SyncedTab>
 </SyncedTabs>
 
 ## Step 4: Upload Asset to IPFS
 
-<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
+We then add a feature to let a user upload the Asset to IPFS. Under the hood, the livepeer provider will upload the Asset file
+to IPFS, then generate [ERC-1155 compatible metadata](https://eips.ethereum.org/EIPS/eip-1155#metadata) in
+IPFS which points to that Asset's CID.
+
+<SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
-```tsx
-import { useAsset, useUpdateAsset } from '@livepeer/react';
-import { ConnectKitButton } from 'connectkit';
-import { useRouter } from 'next/router';
-import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
+    <Callout>
+      In this example, the Asset ID is hardcoded in the component for simplicity, but could be
+      dynamic (see the [WagmiNft component](https://github.com/livepeer/livepeer.js/tree/main/docs/components/examples/WagmiNft.tsx)
+      used for this page, which uses the query string to get the Asset ID).
+    </Callout>
 
-export const WagmiNft = () => {
-  const { address } = useAccount();
-  const router = useRouter();
+    ```tsx {20-23}
+    import { useAsset, useUpdateAsset } from '@livepeer/react';
+    import { ConnectKitButton } from 'connectkit';
+    import { useMemo } from 'react';
+    import { useAccount } from 'wagmi';
 
-  const assetId = useMemo(
-    () => (router?.query?.id ? String(router?.query?.id) : undefined),
-    [router?.query],
-  );
+    const assetId = '64d3ddee-c44b-4c9c-8739-c3c530d6dfea';
 
-  const {
-    data: asset,
-    status: assetStatus,
-  } = useAsset({
-    assetId,
-    enabled: assetId?.length === 36,
-    refetchInterval: (asset) =>
-      asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
-  });
-  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+    export const WagmiNft = () => {
+      const { address } = useAccount();
+      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
 
-  return (
-    <Box>
-      <ConnectKitButton />
-      {address && assetId && (
-        <>
-          <Text>{assetId}</Text>
-          <Flex>
-            {asset?.status?.phase === 'ready' &&
-            asset?.storage?.status?.phase !== 'ready' && (
+      return (
+        <Box>
+          <ConnectKitButton />
+          {address && assetId && (
+            <>
+              <Text>{assetId}</Text>
               <Button
                 onClick={() => {
                   updateAsset({
-                    assetId: asset.id,
+                    assetId,
                     storage: { ipfs: true },
                   });
                 }}
               >
                 Upload to IPFS
               </Button>
-            )}
-          </Flex>
-        </>
-      )}
-    </Box>
-  );
-};
-```
+            </>
+          )}
+        </Box>
+      );
+    };
+    ```
   </SyncedTab>
   <SyncedTab>
-```tsx
-export const AptosNft = () => {
-  return (
-    <Box></Box>
-  );
-};
-```
+    <Callout>
+      In this example, the Asset ID is hardcoded in the component for simplicity, but could be
+      dynamic (see the [AptosNft component](https://github.com/livepeer/livepeer.js/tree/main/docs/components/examples/AptosNft.tsx)
+      used for this page, which uses the query string to get the Asset ID).
+    </Callout>
+
+    ```tsx {49-52}
+    import { useUpdateAsset } from '@livepeer/react';
+
+    import { useCallback, useContext, useMemo, useState } from 'react';
+
+    import { AptosContext } from '../core';
+
+    declare global {
+      interface Window {
+        aptos: any;
+      }
+    }
+
+    const assetId = '64d3ddee-c44b-4c9c-8739-c3c530d6dfea';
+
+    export const AptosNft = () => {
+      const isAptosDefined = useMemo(
+        () => (typeof window !== 'undefined' ? Boolean(window?.aptos) : false),
+        [],
+      );
+
+      const [address, setAddress] = useState<string | null>(null);
+
+      const connectWallet = useCallback(async () => {
+        try {
+          if (isAptosDefined) {
+            await window.aptos.connect();
+            const account: { address: string } = await window.aptos.account();
+
+            setAddress(account.address);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, [isAptosDefined]);
+
+      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+
+      return (
+        <Box>
+          <Button
+            disabled={!isAptosDefined || Boolean(address)}
+            onClick={connectWallet}
+          >
+            {!address ? 'Connect Wallet' : address}
+          </Button>
+          {address && (
+            <Button
+              onClick={() => {
+                updateAsset({
+                  assetId,
+                  storage: { ipfs: true },
+                });
+              }}
+            >
+              Upload to IPFS
+            </Button>
+          )}
+        </Box>
+      );
+    };
+    ```
   </SyncedTab>
 </SyncedTabs>
 
-## Step 5: Mint an NFT
+Here is an [example](https://ipfs.livepeer.studio/ipfs/bafkreieahfmjcey7gdy22xitre2ijskg7zkg5cm732c354sduwlz7tfg7q) of
+the ERC-1155 compatible metadata which will be created in IPFS. 
+The metadata can also be customized to override any of these default fields!
 
-<SyncedTabs group="wallet-type" items={['wagmi', 'aptos']}>
-  <SyncedTab>
-```tsx
-import { useAsset, useUpdateAsset } from '@livepeer/react';
-import { ConnectKitButton } from 'connectkit';
-import { useRouter } from 'next/router';
 
-import { useMemo } from 'react';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
-
-// The demo NFT contract ABI
-const videoNftAbi = [
-  'event Mint(address indexed sender, address indexed owner, string tokenURI, uint256 tokenId)',
-  'function mint(address owner, string tokenURI) returns (uint256)',
-] as const;
-
-export const WagmiNft = () => {
-  const { address } = useAccount();
-  const router = useRouter();
-
-  const assetId = useMemo(
-    () => (router?.query?.id ? String(router?.query?.id) : undefined),
-    [router?.query],
-  );
-
-  const { data: asset } = useAsset({
-    assetId,
-    enabled: assetId?.length === 36,
-    refetchInterval: (asset) =>
-      asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
-  });
-  const { mutate: updateAsset } = useUpdateAsset();
-
-  const { config } = usePrepareContractWrite({
-    // The demo NFT contract address on Polygon Mumbai
-    addressOrName: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
-    contractInterface: videoNftAbi,
-    // Function on the contract
-    functionName: 'mint',
-    // Arguments for the mint function
-    args: [address, asset?.storage?.ipfs?.nftMetadata?.url],
-    enabled: Boolean(address && asset?.storage?.ipfs?.nftMetadata?.url),
-  });
-
-  const {
-    data: contractWriteData,
-    isSuccess,
-    write,
-    error: contractWriteError,
-  } = useContractWrite(config);
-
-  return (
-    <Box css={{ my: '$4' }}>
-      <ConnectKitButton />
-      {address && assetId && (
-        <>
-          <Text>{assetId}</Text>
-          <Flex css={{ jc: 'flex-end', mt: '$4', ai: 'center' }}>
-            {asset?.status?.phase === 'ready' &&
-            asset?.storage?.status?.phase !== 'ready' ? (
-              <Button
-                onClick={() => {
-                  updateAsset({
-                    assetId: asset.id,
-                    storage: { ipfs: true },
-                  });
-                }}
-              >
-                Upload to IPFS
-              </Button>
-            ) : contractWriteData?.hash && isSuccess ? (
-              <a
-                target="_blank"
-                href={`https://mumbai.polygonscan.com/tx/${contractWriteData.hash}`}
-              >
-                <Button>View Mint Transaction</Button>
-              </a>
-            ) : contractWriteError ? (
-              <Text>{contractWriteError.message}</Text>
-            ) : asset?.storage?.status?.phase === 'ready' && write ? (
-              <Button
-                onClick={() => {
-                  write();
-                }}
-              >
-                Mint NFT
-              </Button>
-            ) : (
-              <></>
-            )}
-          </Flex>
-        </>
-      )}
-    </Box>
-  );
-};
+```json
+{
+  "animation_url": "ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy/?loop=1&v=c6aahonu1mkijh8u",
+  "description": "Livepeer video from asset \"earth.mp4\"",
+  "external_url": "https://lvpr.tv/?muted=0&v=c6aahonu1mkijh8u",
+  "image": "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
+  "name": "earth.mp4",
+  "properties": {
+    "com.livepeer.playbackId": "c6aahonu1mkijh8u",
+    "video": "ipfs://bafybeiew466bk3caift2gsnzeb23qmzmpqnim32utahanj5f5ks2ycvk7y"
+  }
+}
 ```
+
+## Step 5: Mint a Video NFT
+
+We can now use the NFT metadata CID to mint a video NFT! After the transaction is successful, we show a link to a blockchain explorer
+so the user can see the blockchain confirmation.
+
+<SyncedTabs group="chain" items={['wagmi', 'aptos']}>
+  <SyncedTab>
+    <span />
+
+    In this example, we rely on [`usePrepareContractWrite`](https://wagmi.sh/docs/hooks/useContractWrite) to write to our demo
+    [Polygon Mumbai NFT contract](https://mumbai.polygonscan.com/address/0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643). This could be
+    replaced by `ethers` or another library, but `wagmi` hooks make it easy
+    to read/write with React.
+
+    ```tsx
+    import { useAsset, useUpdateAsset } from '@livepeer/react';
+    import { ConnectKitButton } from 'connectkit';
+    import { useRouter } from 'next/router';
+
+    import { useMemo } from 'react';
+    import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+
+    // The demo NFT contract ABI
+    const videoNftAbi = [
+      'event Mint(address indexed sender, address indexed owner, string tokenURI, uint256 tokenId)',
+      'function mint(address owner, string tokenURI) returns (uint256)',
+    ] as const;
+
+    export const WagmiNft = () => {
+      const { address } = useAccount();
+      const router = useRouter();
+
+      const assetId = useMemo(
+        () => (router?.query?.id ? String(router?.query?.id) : undefined),
+        [router?.query],
+      );
+
+      const { data: asset } = useAsset({
+        assetId,
+        enabled: assetId?.length === 36,
+        refetchInterval: (asset) =>
+          asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
+      });
+      const { mutate: updateAsset } = useUpdateAsset();
+
+      const { config } = usePrepareContractWrite({
+        // The demo NFT contract address on Polygon Mumbai
+        addressOrName: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
+        contractInterface: videoNftAbi,
+        // Function on the contract
+        functionName: 'mint',
+        // Arguments for the mint function
+        args: [address, asset?.storage?.ipfs?.nftMetadata?.url],
+        enabled: Boolean(address && asset?.storage?.ipfs?.nftMetadata?.url),
+      });
+
+      const {
+        data: contractWriteData,
+        isSuccess,
+        write,
+        error: contractWriteError,
+      } = useContractWrite(config);
+
+      return (
+        <Box>
+          <ConnectKitButton />
+          {address && assetId && (
+            <>
+              <Text>{assetId}</Text>
+              <Flex>
+                {asset?.status?.phase === 'ready' &&
+                asset?.storage?.status?.phase !== 'ready' ? (
+                  <Button
+                    onClick={() => {
+                      updateAsset({
+                        assetId: asset.id,
+                        storage: { ipfs: true },
+                      });
+                    }}
+                  >
+                    Upload to IPFS
+                  </Button>
+                ) : contractWriteData?.hash && isSuccess ? (
+                  <a
+                    target="_blank"
+                    href={`https://mumbai.polygonscan.com/tx/${contractWriteData.hash}`}
+                  >
+                    <Button>View Mint Transaction</Button>
+                  </a>
+                ) : contractWriteError ? (
+                  <Text>{contractWriteError.message}</Text>
+                ) : asset?.storage?.status?.phase === 'ready' && write ? (
+                  <Button
+                    onClick={() => {
+                      write();
+                    }}
+                  >
+                    Mint NFT
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </Flex>
+            </>
+          )}
+        </Box>
+      );
+    };
+    ```
   </SyncedTab>
   <SyncedTab>
-```tsx
-export const AptosNft = () => {
-  return (
-    <Box></Box>
-  );
-};
-```
+    <Callout>
+      We add a custom [Next.js API route](https://nextjs.org/docs/api-routes/introduction) for the Aptos NFT minting, to
+      demonstrate the "offer token" flow which can be used
+      to mint NFTs. This is different from the EVM demo, since we have an NFT collection which we mint a new NFT and
+      "offer" it to the recipient. The recipient can then accept this offer and transfer the token to their wallet.
+    </Callout>
+
+    ```typescript
+    import { AptosAccount, AptosClient, HexString, TokenClient } from 'aptos';
+
+    import { NextApiRequest, NextApiResponse } from 'next';
+
+    export type ApiError = {
+      message: string;
+    };
+
+    export type CreateAptosTokenBody = {
+      receiver: string;
+      metadataUri: string;
+    };
+
+    export type CreateAptosTokenResponse = {
+      creator: string;
+      collectionName: string;
+      tokenName: string;
+      tokenPropertyVersion: number;
+    };
+
+    const NODE_URL = 'https://fullnode.devnet.aptoslabs.com';
+
+    const COLLECTION_NAME = 'Livepeer Video NFT';
+    const COLLECTION_DESCRIPTION =
+      "Video NFTs using Livepeer's decentralized video transcoding protocol.";
+    const COLLECTION_URI = 'https://livepeer.org';
+
+    const TOKEN_VERSION = 0;
+    const TOKEN_DESCRIPTION =
+      "A video NFT which uses Livepeer's decentralized video transcoding protocol.";
+
+    const handler = async (
+      req: NextApiRequest,
+      res: NextApiResponse<CreateAptosTokenResponse | ApiError>,
+    ) => {
+      try {
+        const method = req.method;
+
+        if (method === 'POST') {
+          const { receiver, metadataUri }: CreateAptosTokenBody = req.body;
+
+          if (!receiver || !metadataUri) {
+            return res.status(400).json({ message: 'Missing data in body.' });
+          }
+
+          const client = new AptosClient(NODE_URL);
+          const tokenClient = new TokenClient(client);
+
+          if (!process.env.APTOS_PRIVATE_KEY) {
+            return res.status(500).json({ message: 'Aptos config missing.' });
+          }
+
+          const issuer = new AptosAccount(
+            new HexString(process.env.APTOS_PRIVATE_KEY).toUint8Array(),
+          );
+
+          let collectionData: any;
+
+          try {
+            collectionData = await tokenClient.getCollectionData(
+              issuer.address(),
+              COLLECTION_NAME,
+            );
+          } catch (e) {
+            // if the collection does not exist, we create it
+            const createCollectionHash = await tokenClient.createCollection(
+              issuer,
+              COLLECTION_NAME,
+              COLLECTION_DESCRIPTION,
+              COLLECTION_URI,
+            );
+            await client.waitForTransaction(createCollectionHash, {
+              checkSuccess: true,
+            });
+
+            collectionData = await tokenClient.getCollectionData(
+              issuer.address(),
+              COLLECTION_NAME,
+            );
+          }
+
+          // each token increments by 1, e.g. "Video NFT 1"
+          const tokenName = `Video NFT ${Number(collectionData?.supply ?? 0) + 1}`;
+
+          const createTokenHash = await tokenClient.createToken(
+            issuer,
+            COLLECTION_NAME,
+            tokenName,
+            TOKEN_DESCRIPTION,
+            1,
+            metadataUri,
+          );
+          await client.waitForTransaction(createTokenHash, { checkSuccess: true });
+
+          // offer the token to the address in the request body
+          // this must be confirmed by the recipient, so this is safe
+          // (a random address could be passed in to the POST body)
+          //
+          // a better way would be to have the recipient sign a payload
+          // and confirm that signature in the backend
+          const offerTokenHash = await tokenClient.offerToken(
+            issuer,
+            receiver,
+            issuer.address(),
+            COLLECTION_NAME,
+            tokenName,
+            1,
+            TOKEN_VERSION,
+          );
+          await client.waitForTransaction(offerTokenHash, { checkSuccess: true });
+
+          return res.status(200).json({
+            creator: issuer.address().hex(),
+            collectionName: COLLECTION_NAME,
+            tokenName,
+            tokenPropertyVersion: TOKEN_VERSION,
+          });
+        }
+
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).end(`Method ${method} Not Allowed`);
+      } catch (err) {
+        console.error(err);
+        return res
+          .status(500)
+          .json({ message: (err as Error)?.message ?? 'Error' });
+      }
+    };
+
+    export default handler;
+    ```
+
+    We then use the API route above (`POST` to `/api/create-aptos-token`) to request creation of a token,
+    and use the response to "accept" the offer (which uses the function
+    `0x3::token_transfers::claim_script`).
+
+    ```tsx {70-111}
+    import { useAsset, useUpdateAsset } from '@livepeer/react';
+    import { Types } from 'aptos';
+
+    import { useRouter } from 'next/router';
+
+    import { useCallback, useContext, useMemo, useState } from 'react';
+
+    import {
+      CreateAptosTokenBody,
+      CreateAptosTokenResponse,
+    } from '../../pages/api/create-aptos-token';
+
+    import { AptosContext } from '../core';
+
+    declare global {
+      interface Window {
+        aptos: any;
+      }
+    }
+
+    export const AptosNft = () => {
+      const aptosClient = useContext(AptosContext);
+
+      const isAptosDefined = useMemo(
+        () => (typeof window !== 'undefined' ? Boolean(window?.aptos) : false),
+        [],
+      );
+
+      const [address, setAddress] = useState<string | null>(null);
+
+      const connectWallet = useCallback(async () => {
+        try {
+          if (isAptosDefined) {
+            await window.aptos.connect();
+            const account: { address: string } = await window.aptos.account();
+
+            setAddress(account.address);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, [isAptosDefined]);
+
+      const router = useRouter();
+
+      const assetId = useMemo(
+        () => (router?.query?.id ? String(router?.query?.id) : undefined),
+        [router?.query],
+      );
+
+      const {
+        data: asset,
+        status: assetStatus,
+      } = useAsset({
+        assetId,
+        enabled: assetId?.length === 36,
+        refetchInterval: (asset) =>
+          asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
+      });
+      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+
+      const [isCreatingNft, setIsCreatingNft] = useState(false);
+
+      const [creationHash, setCreationHash] = useState('');
+
+      const mintNft = useCallback(async () => {
+        setIsCreatingNft(true);
+
+        try {
+          if (address && aptosClient && asset?.storage?.ipfs?.nftMetadata?.url) {
+            const body: CreateAptosTokenBody = {
+              receiver: address,
+              metadataUri: asset.storage.ipfs.nftMetadata.url,
+            };
+
+            const response = await fetch('/api/create-aptos-token', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body),
+            });
+
+            const json = (await response.json()) as CreateAptosTokenResponse
+
+            if ((json as CreateAptosTokenResponse).tokenName) {
+              const createResponse = json as CreateAptosTokenResponse;
+
+              const transaction = {
+                type: 'entry_function_payload',
+                function: '0x3::token_transfers::claim_script',
+                arguments: [
+                  createResponse.creator,
+                  createResponse.creator,
+                  createResponse.collectionName,
+                  createResponse.tokenName,
+                  createResponse.tokenPropertyVersion,
+                ],
+                type_arguments: [],
+              };
+
+              const aptosResponse: Types.PendingTransaction =
+                await window.aptos.signAndSubmitTransaction(transaction);
+
+              const result = await aptosClient.waitForTransactionWithResult(
+                aptosResponse.hash,
+                { checkSuccess: true },
+              );
+
+              setCreationHash(result.hash);
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsCreatingNft(false);
+        }
+      }, [
+        address,
+        aptosClient,
+        asset?.storage?.ipfs?.nftMetadata?.url,
+        setIsCreatingNft,
+      ]);
+
+      return (
+        <Box>
+          <Button
+            disabled={!isAptosDefined || Boolean(address)}
+            onClick={connectWallet}
+          >
+            {!address ? (
+              'Connect Wallet'
+            ) : (
+              address
+            )}
+          </Button>
+          {address && (
+            <>
+              <Flex>
+                {asset?.status?.phase === 'ready' &&
+                asset?.storage?.status?.phase !== 'ready' ? (
+                  <Button
+                    onClick={() => {
+                      updateAsset({
+                        assetId: asset.id,
+                        storage: { ipfs: true },
+                      });
+                    }}
+                    disabled={
+                      !assetId || Boolean(asset?.storage?.ipfs?.cid)
+                    }
+                  >
+                    Upload to IPFS
+                  </Button>
+                ) : creationHash ? (
+                  <a href={`https://explorer.aptoslabs.com/txn/${creationHash}?network=Devnet`}>
+                    View Mint Transaction
+                  </a>
+                ) : asset?.storage?.status?.phase === 'ready' ? (
+                  <Button
+                    onClick={mintNft}
+                  >
+                    Mint NFT
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </Flex>
+            </>
+          )}
+        </Box>
+      );
+    };
+    ```
   </SyncedTab>
 </SyncedTabs>

@@ -4,14 +4,18 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { AptosClient } from 'aptos';
 import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
 
 import { WagmiConfig, chain, createClient } from 'wagmi';
 
 import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
+
+export const AptosContext = createContext<AptosClient | null>(null);
 
 const wagmiClient = createClient(
   getDefaultClient({
@@ -81,6 +85,7 @@ const livepeerDarkTheme: ThemeConfig = {
 
 export function Providers({ children }: Props) {
   const { theme } = useTheme();
+  const router = useRouter();
 
   const livepeerTheme = useMemo(
     () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
@@ -91,23 +96,55 @@ export function Providers({ children }: Props) {
     SyncedTabsState['store']
   >({});
 
+  useEffect(() => {
+    if (Object.keys(router.query).length > 0) {
+      setSyncedTabsStore(
+        Object.keys(router?.query)?.reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr]: Number(router?.query?.[curr] ?? 0),
+          }),
+          {},
+        ),
+      );
+    }
+  }, [router.query]);
+
   const syncedTabsState: SyncedTabsState = useMemo(
     () => ({
       store: syncedTabsStore,
-      setNewIndex: (key, index) =>
-        setSyncedTabsStore((prev) => ({ ...prev, [key]: index })),
+      setNewIndex: (key, index) => {
+        router.push(
+          {
+            pathname: router.pathname,
+            query: {
+              ...(router.query ? router.query : {}),
+              [key]: index,
+            },
+          },
+          undefined,
+          { scroll: false },
+        );
+      },
     }),
-    [syncedTabsStore, setSyncedTabsStore],
+    [router, syncedTabsStore],
+  );
+
+  const aptosClient = useMemo(
+    () => new AptosClient('https://fullnode.devnet.aptoslabs.com/v1'),
+    [],
   );
 
   return (
     <WagmiConfig client={wagmiClient}>
       <ConnectKitProvider>
-        <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
-          <SyncedTabsContext.Provider value={syncedTabsState}>
-            {children}
-          </SyncedTabsContext.Provider>
-        </LivepeerConfig>
+        <AptosContext.Provider value={aptosClient}>
+          <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+            <SyncedTabsContext.Provider value={syncedTabsState}>
+              {children}
+            </SyncedTabsContext.Provider>
+          </LivepeerConfig>
+        </AptosContext.Provider>
       </ConnectKitProvider>
     </WagmiConfig>
   );
