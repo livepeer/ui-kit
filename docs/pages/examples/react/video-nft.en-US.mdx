@@ -226,7 +226,7 @@ We first add the required dependencies using `npm` (or your preferred package ma
 ## Step 4: Upload Asset to IPFS
 
 We then add a feature to let a user upload the Asset to IPFS. Under the hood, the livepeer provider will upload the Asset file
-to IPFS, then generate [ERC-1155 compatible metadata](https://eips.ethereum.org/EIPS/eip-1155#metadata) in
+to IPFS, then generate [ERC-721 compatible metadata](https://eips.ethereum.org/EIPS/eip-721) in
 IPFS which points to that Asset's CID.
 
 <SyncedTabs group="chain" items={['wagmi', 'aptos']}>
@@ -345,7 +345,7 @@ IPFS which points to that Asset's CID.
 </SyncedTabs>
 
 Here is an [example](https://ipfs.livepeer.studio/ipfs/bafkreieahfmjcey7gdy22xitre2ijskg7zkg5cm732c354sduwlz7tfg7q) of
-the ERC-1155 compatible metadata which will be created in IPFS. 
+the ERC-721 compatible metadata which will be created in IPFS. 
 The metadata can also be customized to override any of these default fields!
 
 
