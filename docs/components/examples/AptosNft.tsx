@@ -30,6 +30,9 @@ export const AptosNft = () => {
     [],
   );
 
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+
   const [address, setAddress] = useState<string | null>(null);
 
   const connectWallet = useCallback(async () => {
@@ -205,7 +208,7 @@ export const AptosNft = () => {
             </Text>
             <TextField disabled size="3" value={assetId} />
 
-            {asset?.storage?.ipfs?.nftMetadata?.url && (
+            {asset?.storage?.ipfs?.nftMetadata?.url ? (
               <>
                 <Text css={{ my: '$1' }} variant="gray">
                   Metadata IPFS CID
@@ -214,6 +217,25 @@ export const AptosNft = () => {
                   disabled
                   size="3"
                   value={asset?.storage?.ipfs?.nftMetadata?.url}
+                />
+              </>
+            ) : (
+              <>
+                <Text css={{ my: '$1' }} variant="gray">
+                  Name
+                </Text>
+                <TextField
+                  size="3"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                />
+                <Text css={{ my: '$1' }} variant="gray">
+                  Description
+                </Text>
+                <TextField
+                  size="3"
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
                 />
               </>
             )}
@@ -232,12 +254,22 @@ export const AptosNft = () => {
                 onClick={() => {
                   updateAsset({
                     assetId: asset.id,
-                    storage: { ipfs: true },
+                    storage: {
+                      ipfs: true,
+                      metadata: {
+                        name,
+                        description,
+                      },
+                    },
                   });
                 }}
                 size="2"
                 disabled={
-                  !assetId || isLoading || Boolean(asset?.storage?.ipfs?.cid)
+                  !assetId ||
+                  isLoading ||
+                  Boolean(asset?.storage?.ipfs?.cid) ||
+                  !name ||
+                  !description
                 }
                 variant="primary"
               >
