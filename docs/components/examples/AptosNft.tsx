@@ -176,6 +176,22 @@ export const AptosNft = () => {
           </>
         )}
       </Button>
+      {!isAptosDefined && (
+        <Box css={{ mt: '$2' }}>
+          <Text variant="red">
+            You must install an Aptos wallet (we recommend{' '}
+            <a
+              href="https://aptos.dev/guides/install-petra-wallet-extension"
+              target="_blank"
+              rel="noreferrer"
+              aria-selected="false"
+            >
+              Petra
+            </a>{' '}
+            wallet).
+          </Text>
+        </Box>
+      )}
       {address && (
         <>
           <Box
