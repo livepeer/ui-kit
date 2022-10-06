@@ -1,5 +1,6 @@
 {
   "player": "Player",
   "view-asset": "Create & Watch an Asset",
-  "view-stream": "Create & Watch a Stream"
+  "view-stream": "Create & Watch a Stream",
+  "video-nft": "Mint a Video NFT"
 }

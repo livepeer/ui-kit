@@ -4,9 +4,26 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { AptosClient } from 'aptos';
+import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
+
+import { WagmiConfig, chain, createClient } from 'wagmi';
+
+import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
+
+export const AptosContext = createContext<AptosClient | null>(null);
+
+const wagmiClient = createClient(
+  getDefaultClient({
+    appName: 'livepeer.js',
+    chains: [chain.polygonMumbai],
+    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+  }),
+);
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -68,15 +85,67 @@ const livepeerDarkTheme: ThemeConfig = {
 
 export function Providers({ children }: Props) {
   const { theme } = useTheme();
+  const router = useRouter();
 
   const livepeerTheme = useMemo(
     () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
     [theme],
   );
 
+  const [syncedTabsStore, setSyncedTabsStore] = useState<
+    SyncedTabsState['store']
+  >({});
+
+  useEffect(() => {
+    if (Object.keys(router.query).length > 0) {
+      setSyncedTabsStore(
+        Object.keys(router?.query)?.reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr]: Number(router?.query?.[curr] ?? 0),
+          }),
+          {},
+        ),
+      );
+    }
+  }, [router.query]);
+
+  const syncedTabsState: SyncedTabsState = useMemo(
+    () => ({
+      store: syncedTabsStore,
+      setNewIndex: (key, index) => {
+        router.push(
+          {
+            pathname: router.pathname,
+            query: {
+              ...(router.query ? router.query : {}),
+              [key]: index,
+            },
+          },
+          undefined,
+          { scroll: false },
+        );
+      },
+    }),
+    [router, syncedTabsStore],
+  );
+
+  const aptosClient = useMemo(
+    () => new AptosClient('https://fullnode.devnet.aptoslabs.com/v1'),
+    [],
+  );
+
   return (
-    <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
-      {children}
-    </LivepeerConfig>
+    <WagmiConfig client={wagmiClient}>
+      <ConnectKitProvider>
+        <AptosContext.Provider value={aptosClient}>
+          <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+            <SyncedTabsContext.Provider value={syncedTabsState}>
+              {children}
+            </SyncedTabsContext.Provider>
+          </LivepeerConfig>
+        </AptosContext.Provider>
+      </ConnectKitProvider>
+    </WagmiConfig>
   );
 }
