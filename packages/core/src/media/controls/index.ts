@@ -383,7 +383,6 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   let retryCount = 0;
 
   const onError = async () => {
-    console.log('ERRRROOOOORRR');
     await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
     element?.load();
   };
