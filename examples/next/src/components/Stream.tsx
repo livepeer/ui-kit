@@ -1,4 +1,5 @@
 import {
+  Player,
   useCreateStream,
   useStream,
   useStreamSessions,
@@ -40,6 +41,7 @@ export const Stream = () => {
         <>
           <div>Stream Key: {stream.streamKey}</div>
           <div>Recording?: {String(Boolean(stream.record))}</div>
+          <Player playbackId={stream.playbackId} />
         </>
       )}
       {streamSessions && (

@@ -25,6 +25,7 @@ import {
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
   StudioAsset,
+  StudioAssetPatchPayload,
   StudioCreateStreamArgs,
   StudioPlaybackInfo,
   StudioStream,
@@ -182,15 +183,23 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
-    const { assetId, name, meta, storage } = args;
+    const { assetId, name, storage } = args;
     const asset = await this._update<
-      Omit<UpdateAssetArgs, 'assetId'>,
+      Omit<StudioAssetPatchPayload, 'assetId'>,
       StudioAsset
     >(`/asset/${assetId}`, {
       json: {
         name: typeof name !== 'undefined' ? String(name) : undefined,
-        meta,
-        storage,
+        storage: storage?.ipfs
+          ? {
+              ipfs: {
+                spec: {
+                  nftMetadata: storage?.metadata ?? {},
+                  nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+                },
+              },
+            }
+          : undefined,
       },
       headers: this._defaultHeaders,
     });

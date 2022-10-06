@@ -1,4 +1,9 @@
-import { useAsset, useCreateAsset, useUpdateAsset } from '@livepeer/react';
+import {
+  Player,
+  useAsset,
+  useCreateAsset,
+  useUpdateAsset,
+} from '@livepeer/react';
 import { useState } from 'react';
 
 export const Asset = () => {
@@ -47,11 +52,12 @@ export const Asset = () => {
       >
         Upload to IPFS
       </button>
-      {asset && (
+      {asset?.playbackId && (
         <>
           <div>Asset Name: {asset?.name}</div>
           <div>Playback URL: {asset?.playbackUrl}</div>
           <div>IPFS CID: {asset?.storage?.ipfs?.cid ?? 'None'}</div>
+          <Player playbackId={asset.playbackId} />
         </>
       )}
       {error && <div>{error.message}</div>}
