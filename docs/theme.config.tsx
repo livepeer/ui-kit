@@ -10,7 +10,7 @@ const TITLE_WITH_TRANSLATIONS = {
 } as const;
 
 const EDIT_LINK_WITH_TRANSLATIONS = {
-  'en-US': 'Question? Give us feedback →',
+  'en-US': 'Questions? Give us feedback →',
 } as const;
 
 import { DocsThemeConfig, useConfig, useTheme } from 'nextra-theme-docs';
@@ -37,39 +37,44 @@ const Logo = ({ height }: { height: number }) => {
 };
 
 const config: DocsThemeConfig = {
-  github,
-  projectLink: github,
   docsRepositoryBase: `${github}/tree/main/docs/pages`,
   titleSuffix() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     // const { locale } = useRouter();
     return ` – livepeer.js`;
   },
-  projectChatLink: 'https://discord.gg/livepeer',
-  search: true,
-  floatTOC: true,
-  defaultMenuCollapsed: true,
+  chat: {
+    link: 'https://discord.gg/livepeer',
+  },
+  toc: {
+    float: true,
+  },
+  project: {
+    link: github,
+  },
   darkMode: true,
   nextThemes: {
     defaultTheme: 'dark',
   },
-  bannerKey: 'livepeerjs-launch',
-  banner() {
-    return (
+  banner: {
+    key: 'livepeerjs-launch',
+    text: (
       <div className="flex justify-center items-center gap-2">
         We've just launched - check out our docs! 📗
       </div>
-    );
+    ),
   },
-  footerText: `MIT ${new Date().getFullYear()} © Livepeer Inc.`,
+  footer: {
+    text: `MIT ${new Date().getFullYear()} © Livepeer Inc.`,
+  },
   logo() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { locale } = useRouter();
     return (
-      <>
+      <div className="flex items-center gap-2">
         <Logo height={25} />
         <span
-          className="ml-2 font-extrabold hidden md:inline select-none"
+          className="font-extrabold hidden md:inline select-none"
           title={
             'livepeer.js: ' +
             TITLE_WITH_TRANSLATIONS[
@@ -79,7 +84,7 @@ const config: DocsThemeConfig = {
         >
           livepeer.js
         </span>
-      </>
+      </div>
     );
   },
   head() {
@@ -87,11 +92,13 @@ const config: DocsThemeConfig = {
     const config = useConfig();
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { theme } = useTheme();
+    const title = (config as any)?.frontMatter?.title || 'Build with Livepeer';
     const description =
-      config.meta.description ||
+      (config as any)?.frontMatter?.description ||
       'livepeer.js makes building with Livepeer effortless.';
-    const image = config.meta.image || '/og.png';
+    const image = (config as any)?.frontMatter?.image || '/og.png';
     const folder = theme === 'light' ? '/light' : '/dark';
+
     return (
       <>
         <link
@@ -130,37 +137,43 @@ const config: DocsThemeConfig = {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@livepeer" />
         <meta name="twitter:image" content={image} />
-        <meta
-          name="og:title"
-          content={`${config?.title || 'Build with Livepeer'} – livepeer.js`}
-        />
+        <meta name="og:title" content={`${title} – livepeer.js`} />
         <meta name="og:image" content={image} />
         <meta name="apple-mobile-web-app-title" content="livepeer.js" />
       </>
     );
   },
-  sidebarSubtitle: ({ title }) => (
-    <div className="flex items-center gap-2">
-      <Logo height={10} />
-      {title}
-    </div>
-  ),
-  footerEditLink() {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { locale } = useRouter();
-    return (
-      <>
-        {
-          EDIT_LINK_WITH_TRANSLATIONS[
-            (locale as keyof typeof EDIT_LINK_WITH_TRANSLATIONS) ?? 'en-US'
-          ]
-        }
-      </>
-    );
+  sidebar: {
+    defaultMenuCollapsed: true,
+    titleComponent: ({ title, type }) =>
+      type === 'separator' ? (
+        <div className="flex items-center gap-2">
+          <Logo height={10} />
+          {title}
+        </div>
+      ) : (
+        <>{title}</>
+      ),
+  },
+  editLink: {
+    text() {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { locale } = useRouter();
+      return (
+        <>
+          {
+            EDIT_LINK_WITH_TRANSLATIONS[
+              (locale as keyof typeof EDIT_LINK_WITH_TRANSLATIONS) ?? 'en-US'
+            ]
+          }
+        </>
+      );
+    },
   },
   i18n: [{ locale: 'en-US', text: 'English' }],
-  gitTimestamp: 'Last updated on',
-  font: false,
+  gitTimestamp: ({ timestamp }) => (
+    <>Last updated on {timestamp.toLocaleDateString()}</>
+  ),
 };
 
 export default config;
