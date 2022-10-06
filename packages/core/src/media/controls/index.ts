@@ -110,7 +110,7 @@ const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding contro
 const DEFAULT_VOLUME_LEVEL = 0.2; // 0-1 for how loud the audio is
 
 const getFilteredNaN = (value: number | undefined | null) =>
-  value && !isNaN(value) ? value : 0;
+  value && !isNaN(value) && isFinite(value) ? value : 0;
 
 const getBoundedSeek = (seek: number, duration: number | undefined) =>
   Math.min(
@@ -211,7 +211,11 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
             progress: getBoundedSeek(time, duration),
           })),
 
-        onDurationChange: (duration) => set(() => ({ duration })),
+        onDurationChange: (duration) =>
+          set(({ live }) => ({
+            duration,
+            live: duration === Number.POSITIVE_INFINITY ? true : live,
+          })),
 
         _updateBuffered: (buffered) => set(() => ({ buffered })),
 
@@ -376,6 +380,13 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     }
   };
 
+  let retryCount = 0;
+
+  const onError = async () => {
+    await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+    element?.load();
+  };
+
   if (element) {
     element.addEventListener('volumechange', onVolumeChange);
 
@@ -385,6 +396,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     element.addEventListener('durationchange', onDurationChange);
     element.addEventListener('timeupdate', onTimeUpdate);
     element.addEventListener('progress', onProgress);
+    element.addEventListener('error', onError);
 
     const parentElementOrElement = element?.parentElement ?? element;
 
