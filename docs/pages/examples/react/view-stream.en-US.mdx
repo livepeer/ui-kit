@@ -152,7 +152,9 @@ export const Stream = () => {
           </Text>
         )}
 
-      {stream?.playbackId && <Player playbackId={stream?.playbackId} />}
+      {stream?.playbackId && (
+        <Player playbackId={stream?.playbackId} autoPlay muted />
+      )}
     </>
   );
 };
