@@ -1,7 +1,7 @@
-import { prefetchPlaybackInfo, studioProvider } from '@livepeer/react';
+import { prefetchPlayer, studioProvider } from '@livepeer/react';
 
-export const prefetchPlaybackStaticProps = async (playbackId: string) => {
-  const dehydratedState = await prefetchPlaybackInfo(
+export const prefetchPlayerStaticProps = async (playbackId: string) => {
+  const dehydratedState = await prefetchPlayer(
     {
       playbackId,
     },

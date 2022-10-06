@@ -49,6 +49,7 @@ it('should expose correct exports', () => {
       "PlayButton",
       "Player",
       "Poster",
+      "prefetchPlayer",
       "Progress",
       "ThemeProvider",
       "TimeDisplay",

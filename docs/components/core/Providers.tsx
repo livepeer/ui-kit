@@ -8,12 +8,6 @@ import { useTheme } from 'next-themes';
 
 import { ReactNode, useMemo } from 'react';
 
-const livepeerClient = createReactClient({
-  provider: studioProvider({
-    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
-  }),
-});
-
 type Props = {
   children?: ReactNode;
   dehydratedState?: string;
@@ -73,6 +67,16 @@ export function Providers({ children, dehydratedState }: Props) {
   const livepeerTheme = useMemo(
     () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
     [theme],
+  );
+
+  const livepeerClient = useMemo(
+    () =>
+      createReactClient({
+        provider: studioProvider({
+          apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+        }),
+      }),
+    [],
   );
 
   return (

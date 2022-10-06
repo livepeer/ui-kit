@@ -12,6 +12,7 @@ export {
   PlayButton,
   Player,
   Poster,
+  prefetchPlayer,
   Progress,
   ThemeProvider,
   TimeDisplay,
@@ -55,3 +56,4 @@ export {
   useUpdateStream,
 } from './hooks';
 export { deserialize, serialize } from './utils';
+export type { PrefetchQueryOptions } from './utils';

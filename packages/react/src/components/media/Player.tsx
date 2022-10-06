@@ -10,9 +10,6 @@ import {
 import * as React from 'react';
 
 import { usePlaybackInfo } from '../../hooks';
-import { AudioPlayer } from './AudioPlayer';
-import { HlsPlayer } from './HlsPlayer';
-import { VideoPlayer } from './VideoPlayer';
 import { MediaControllerProvider, useTheme } from './context';
 
 import {
@@ -26,6 +23,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
+import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 

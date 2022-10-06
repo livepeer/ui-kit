@@ -5,6 +5,7 @@ export {
   useInternalQuery,
   usePickMutationKeys,
   usePickQueryKeys,
+  type PrefetchQueryOptions,
   type Status,
   type UsePickMutationOptions,
   type UsePickQueryOptions,

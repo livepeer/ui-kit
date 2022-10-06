@@ -10,6 +10,7 @@ import {
 } from 'livepeer';
 
 import {
+  PrefetchQueryOptions,
   UsePickQueryOptions,
   prefetchQuery,
   useInternalQuery,
@@ -22,7 +23,8 @@ export const queryKey = (
   config: LivepeerProviderConfig,
 ) => [{ entity: 'getAssetMetrics', args, config }] as const;
 
-export type UseAssetMetricsArgs<TData> = Partial<GetAssetMetricsArgs> &
+export type UseAssetMetricsArgs<TData> = PrefetchQueryOptions &
+  Partial<GetAssetMetricsArgs> &
   Partial<UsePickQueryOptions<Metrics, TData, ReturnType<typeof queryKey>>>;
 
 export function useAssetMetrics<
@@ -41,7 +43,8 @@ export async function prefetchAssetMetrics<
   TData = Metrics,
 >(
   args: UseAssetMetricsArgs<TData>,
-  config: Omit<ClientConfig<TLivepeerProvider>, 'storage'>,
+  config: Omit<ClientConfig<TLivepeerProvider>, 'storage'> &
+    PrefetchQueryOptions,
 ) {
   const livepeerClient = createClient(config);
 
@@ -57,6 +60,7 @@ function getQueryParams<
   };
 
   return {
+    clearClient: args.clearClient,
     queryKey: queryKey(getAssetMetricsArgs, provider.getConfig()),
     queryFn: async () =>
       getAssetMetrics<TLivepeerProvider>(args as GetAssetMetricsArgs),

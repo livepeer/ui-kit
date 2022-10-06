@@ -8,6 +8,10 @@ import {
 import { defaultQueryClient } from '../../client';
 import { InternalQueryError } from './useInternalQuery';
 
+export type PrefetchQueryOptions = {
+  clearClient?: boolean;
+};
+
 export async function prefetchQuery<
   TQueryFnData = unknown,
   TData = TQueryFnData,
@@ -18,14 +22,21 @@ export async function prefetchQuery<
     InternalQueryError,
     TData,
     TQueryKey
-  >,
+  > &
+    PrefetchQueryOptions,
 ): Promise<DehydratedState> {
   try {
     const client = defaultQueryClient();
 
     await client.prefetchQuery(options);
 
-    return dehydrate(client);
+    const dehydratedState = dehydrate(client);
+
+    if (options?.clearClient) {
+      client.clear();
+    }
+
+    return dehydratedState;
   } catch (e) {
     console.warn(e);
     return { mutations: [], queries: [] };

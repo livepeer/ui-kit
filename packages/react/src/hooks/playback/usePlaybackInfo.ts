@@ -10,6 +10,7 @@ import {
 } from 'livepeer';
 
 import {
+  PrefetchQueryOptions,
   UsePickQueryOptions,
   prefetchQuery,
   useInternalQuery,
@@ -22,7 +23,8 @@ export const queryKey = (
   config: LivepeerProviderConfig,
 ) => [{ entity: 'getPlaybackInfo', args, config }] as const;
 
-export type UsePlaybackInfoArgs<TData> = Partial<GetPlaybackInfoArgs> &
+export type UsePlaybackInfoArgs<TData> = PrefetchQueryOptions &
+  Partial<GetPlaybackInfoArgs> &
   Partial<
     UsePickQueryOptions<PlaybackInfo, TData, ReturnType<typeof queryKey>>
   >;
@@ -58,6 +60,7 @@ function getQueryParams<
     typeof args === 'string' ? args : { playbackId: args?.playbackId ?? '' };
 
   return {
+    clearClient: args.clearClient,
     queryKey: queryKey(getPlaybackInfoArgs, provider.getConfig()),
     queryFn: async () =>
       getPlaybackInfo<TLivepeerProvider>(args as GetPlaybackInfoArgs),

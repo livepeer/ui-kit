@@ -9,9 +9,9 @@ import {
 } from 'livepeer';
 import * as React from 'react';
 
-import { PlayerObjectFit } from './Player';
+import { PlayerObjectFit } from '../Player';
+import { useMediaController } from '../context';
 import { VideoPlayer } from './VideoPlayer';
-import { useMediaController } from './context';
 
 export type HlsPlayerProps = {
   src: HlsSrc;

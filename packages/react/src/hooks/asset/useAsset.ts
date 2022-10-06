@@ -11,6 +11,7 @@ import {
 } from 'livepeer';
 
 import {
+  PrefetchQueryOptions,
   UsePickQueryOptions,
   prefetchQuery,
   useInternalQuery,
@@ -21,7 +22,8 @@ import { useLivepeerProvider } from '../providers';
 export const queryKey = (args: GetAssetArgs, config: LivepeerProviderConfig) =>
   [{ entity: 'getAsset', args, config }] as const;
 
-export type UseAssetArgs<TData> = Partial<GetAssetArgs> &
+export type UseAssetArgs<TData> = PrefetchQueryOptions &
+  Partial<GetAssetArgs> &
   Partial<UsePickQueryOptions<Asset, TData, ReturnType<typeof queryKey>>>;
 
 export function useAsset<
@@ -53,6 +55,7 @@ function getQueryParams<
     typeof args === 'string' ? args : { assetId: args?.assetId ?? '' };
 
   return {
+    clearClient: args.clearClient,
     queryKey: queryKey(getAssetArgs, provider.getConfig()),
     queryFn: async () => getAsset<TLivepeerProvider>(getAssetArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.assetId),

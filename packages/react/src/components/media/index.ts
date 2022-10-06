@@ -32,3 +32,4 @@ export type {
 } from './controls';
 export { Player } from './Player';
 export type { PlayerObjectFit, PlayerProps } from './Player';
+export { prefetchPlayer } from './prefetchPlayer';

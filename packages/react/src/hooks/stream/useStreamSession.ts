@@ -10,6 +10,7 @@ import {
 } from 'livepeer';
 
 import {
+  PrefetchQueryOptions,
   UsePickQueryOptions,
   prefetchQuery,
   useInternalQuery,
@@ -22,7 +23,8 @@ export const queryKey = (
   config: LivepeerProviderConfig,
 ) => [{ entity: 'getStreamSession', args, config }] as const;
 
-export type UseStreamSessionArgs<TData> = Partial<GetStreamSessionArgs> &
+export type UseStreamSessionArgs<TData> = PrefetchQueryOptions &
+  Partial<GetStreamSessionArgs> &
   Partial<
     UsePickQueryOptions<StreamSession, TData, ReturnType<typeof queryKey>>
   >;
@@ -60,6 +62,7 @@ function getQueryParams<
       : { streamSessionId: args?.streamSessionId ?? '' };
 
   return {
+    clearClient: args.clearClient,
     queryKey: queryKey(getStreamSessionArgs, provider.getConfig()),
     queryFn: async () =>
       getStreamSession<TLivepeerProvider>(getStreamSessionArgs),

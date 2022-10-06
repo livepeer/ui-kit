@@ -1,4 +1,4 @@
-import { Player, prefetchPlaybackInfo } from '@livepeer/react';
+import { Player, prefetchPlayer } from '@livepeer/react';
 import type { GetStaticPropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps = async (props: GetStaticPropsContext<Path>) => {
-  const dehydratedState = await prefetchPlaybackInfo(
+  const dehydratedState = await prefetchPlayer(
     { playbackId: props.params?.id },
     { provider },
   );
