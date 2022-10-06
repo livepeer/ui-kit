@@ -17,7 +17,11 @@ const mediaControllerSelector = ({
 });
 
 const getFormattedMinutesAndSeconds = (valueInSeconds: number | null) => {
-  if (valueInSeconds !== null && !isNaN(valueInSeconds)) {
+  if (
+    valueInSeconds !== null &&
+    !isNaN(valueInSeconds) &&
+    isFinite(valueInSeconds)
+  ) {
     const minutes = Math.floor(valueInSeconds / 60);
     const seconds = Math.round(valueInSeconds % 60);
 

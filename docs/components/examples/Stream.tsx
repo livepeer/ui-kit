@@ -69,6 +69,8 @@ export const Stream = () => {
           <Player
             title={stream?.name}
             playbackId={stream?.playbackId}
+            autoPlay
+            muted
             theme={{
               fonts: {
                 display: 'Inter',
