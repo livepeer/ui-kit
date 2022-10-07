@@ -28,12 +28,7 @@
   "preconstruct": {
     "packages": [
       "packages/*"
-    ],
-    "globals": {
-      "ethers/lib/utils": "ethers/lib/utils",
-      "react": "React",
-      "ethers": "ethers"
-    }
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
