@@ -1,8 +1,4 @@
 {
   "main": "dist/livepeer-react-utils.cjs.js",
-  "module": "dist/livepeer-react-utils.esm.js",
-  "umd:main": "dist/livepeer-react-utils.umd.min.js",
-  "preconstruct": {
-    "umdName": "@livepeer/react/utils"
-  }
+  "module": "dist/livepeer-react-utils.esm.js"
 }

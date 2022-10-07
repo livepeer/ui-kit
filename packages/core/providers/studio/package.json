@@ -1,8 +1,4 @@
 {
   "main": "dist/livepeer-providers-studio.cjs.js",
-  "module": "dist/livepeer-providers-studio.esm.js",
-  "umd:main": "dist/livepeer-providers-studio.umd.min.js",
-  "preconstruct": {
-    "umdName": "livepeer/providers/studio"
-  }
+  "module": "dist/livepeer-providers-studio.esm.js"
 }

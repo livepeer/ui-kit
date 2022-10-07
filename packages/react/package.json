@@ -12,7 +12,6 @@
   "main": "dist/livepeer-react.cjs.js",
   "module": "dist/livepeer-react.esm.js",
   "types": "dist/livepeer-react.cjs.d.ts",
-  "umd:main": "dist/livepeer-react.umd.min.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -40,16 +39,18 @@
   "files": [
     "/components",
     "/contracts",
-    "/dist",
     "/hooks",
-    "/utils"
+    "/utils",
+    "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
-      "*/index.ts"
-    ],
-    "umdName": "@livepeer/react"
+      "components/index.ts",
+      "contracts/index.ts",
+      "hooks/index.ts",
+      "utils/index.ts"
+    ]
   },
   "peerDependencies": {
     "ethers": ">=5.5.1",

@@ -1,8 +1,4 @@
 {
   "main": "dist/livepeer-react-hooks.cjs.js",
-  "module": "dist/livepeer-react-hooks.esm.js",
-  "umd:main": "dist/livepeer-react-hooks.umd.min.js",
-  "preconstruct": {
-    "umdName": "@livepeer/react/hooks"
-  }
+  "module": "dist/livepeer-react-hooks.esm.js"
 }

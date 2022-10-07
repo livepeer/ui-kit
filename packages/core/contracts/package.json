@@ -1,8 +1,4 @@
 {
   "main": "dist/livepeer-contracts.cjs.js",
-  "module": "dist/livepeer-contracts.esm.js",
-  "umd:main": "dist/livepeer-contracts.umd.min.js",
-  "preconstruct": {
-    "umdName": "livepeer/contracts"
-  }
+  "module": "dist/livepeer-contracts.esm.js"
 }

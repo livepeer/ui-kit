@@ -12,7 +12,6 @@
   "main": "dist/livepeer.cjs.js",
   "module": "dist/livepeer.esm.js",
   "types": "dist/livepeer.cjs.d.ts",
-  "umd:main": "dist/livepeer.umd.min.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -53,19 +52,23 @@
     "/actions",
     "/constants",
     "/contracts",
-    "/dist",
     "/media",
     "/providers",
     "/types",
-    "/utils"
+    "/utils",
+    "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
-      "*/index.ts",
-      "providers/*/index.ts"
-    ],
-    "umdName": "livepeer"
+      "actions/index.ts",
+      "constants/index.ts",
+      "contracts/index.ts",
+      "media/index.ts",
+      "providers/studio/index.ts",
+      "types/index.ts",
+      "utils/index.ts"
+    ]
   },
   "peerDependencies": {
     "ethers": ">=5.6.9",

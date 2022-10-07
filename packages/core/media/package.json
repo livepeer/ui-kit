@@ -1,8 +1,4 @@
 {
   "main": "dist/livepeer-media.cjs.js",
-  "module": "dist/livepeer-media.esm.js",
-  "umd:main": "dist/livepeer-media.umd.min.js",
-  "preconstruct": {
-    "umdName": "livepeer/media"
-  }
+  "module": "dist/livepeer-media.esm.js"
 }
