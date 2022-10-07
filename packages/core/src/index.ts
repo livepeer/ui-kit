@@ -16,7 +16,7 @@ export type {
   GetLivepeerProviderResult,
   WatchLivepeerProviderCallback,
 } from './actions';
-export { Client, createClient } from './client';
+export { Client, createClient, clearClient } from './client';
 export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';

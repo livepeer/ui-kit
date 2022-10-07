@@ -1,18 +1,17 @@
+import { Box, getThemes } from '@livepeer/design-system';
 import {
   LivepeerConfig,
   ThemeConfig,
   createReactClient,
-  studioProvider,
 } from '@livepeer/react';
 import { AptosClient } from 'aptos';
 import { ConnectKitProvider, getDefaultClient } from 'connectkit';
-import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-
+import { useTheme } from 'nextra-theme-docs';
 import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
-
 import { WagmiConfig, chain, createClient } from 'wagmi';
 
+import { provider } from '../../lib/provider';
 import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
 
 export const AptosContext = createContext<AptosClient | null>(null);
@@ -26,9 +25,7 @@ const wagmiClient = createClient(
 );
 
 const livepeerClient = createReactClient({
-  provider: studioProvider({
-    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
-  }),
+  provider,
 });
 
 type Props = {
@@ -83,6 +80,8 @@ const livepeerDarkTheme: ThemeConfig = {
   },
 };
 
+const themes: any = getThemes();
+
 export function Providers({ children }: Props) {
   const { theme } = useTheme();
   const router = useRouter();
@@ -136,16 +135,21 @@ export function Providers({ children }: Props) {
   );
 
   return (
-    <WagmiConfig client={wagmiClient}>
-      <ConnectKitProvider>
-        <AptosContext.Provider value={aptosClient}>
-          <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
-            <SyncedTabsContext.Provider value={syncedTabsState}>
-              {children}
-            </SyncedTabsContext.Provider>
-          </LivepeerConfig>
-        </AptosContext.Provider>
-      </ConnectKitProvider>
-    </WagmiConfig>
+    // Add styling for livepeer-design-system components
+    <Box
+      className={themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]}
+    >
+      <WagmiConfig client={wagmiClient}>
+        <ConnectKitProvider>
+          <AptosContext.Provider value={aptosClient}>
+            <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+              <SyncedTabsContext.Provider value={syncedTabsState}>
+                {children}
+              </SyncedTabsContext.Provider>
+            </LivepeerConfig>
+          </AptosContext.Provider>
+        </ConnectKitProvider>
+      </WagmiConfig>
+    </Box>
   );
 }

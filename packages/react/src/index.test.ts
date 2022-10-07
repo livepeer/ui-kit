@@ -19,6 +19,7 @@ it('should expose correct exports', () => {
       "watchLivepeerProvider",
       "Client",
       "createClient",
+      "clearClient",
       "defaultStudioConfig",
       "defaultTranscodingProfiles",
       "HttpError",

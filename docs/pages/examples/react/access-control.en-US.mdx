@@ -1,17 +1,17 @@
 ---
-title: 'Create and Watch Stream Example'
-description: 'Learn how to create a stream and watch live content with livepeer.js'
+title: 'Stream with Access Control'
+description: 'Learn how to add access control to a stream with livepeer.js'
 ---
 
 import { Callout } from 'nextra-theme-docs';
-import { Stream } from '@components/examples';
+import { AccessControl } from '@components/examples';
 
-# Create and Watch a Stream
+# Stream with Access Control
 
 Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/react/hooks/useCreateStream)
-to create and watch a livestream.
+and [`useStream`](/react/hooks/useStream) to create and watch a livestream.
 
-<Stream />
+<AccessControl />
 
 ## Step 1: Configuring Providers
 
@@ -21,7 +21,7 @@ to create and watch a livestream.
   [`Player`](/react/Player) is the only visual component provided.
 </Callout>
 
-Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
+First step, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
 ```tsx
 import {
@@ -91,7 +91,8 @@ export const Stream = () => {
 
 ## Step 3: Stream Content
 
-Lastly, when the stream is created, we display the streaming content using the [`Player`](/react/Player).
+Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active (see `refetchInterval` for
+how we do that). Then, we stop polling and display the streaming content using the [`Player`](/react/Player).
 
 <Callout>
   In a production application, the viewer **should not have access** to the
@@ -101,18 +102,26 @@ Lastly, when the stream is created, we display the streaming content using the [
 </Callout>
 
 ```tsx
-import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
-import { Player, useCreateStream } from '@livepeer/react';
+import { Player, useCreateStream, useStream } from '@livepeer/react';
 
-import { useMemo, useState } from 'react';
-
-import { Spinner } from '../core';
+import { useState } from 'react';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
-  const { mutate: createStream, data: stream, status } = useCreateStream();
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status: createStatus,
+  } = useCreateStream();
+  const { data: stream, status: streamStatus } = useStream({
+    streamId: createdStream?.id,
+    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
+  });
 
-  const isLoading = useMemo(() => status === 'loading', [status]);
+  const isLoading = useMemo(
+    () => createStatus === 'loading' || streamStatus === 'loading',
+    [createStatus, streamStatus],
+  );
 
   return (
     <>
@@ -122,31 +131,29 @@ export const Stream = () => {
         onChange={(e) => setStreamName(e.target.value)}
       />
 
-      <Flex>
-        <Button
-          onClick={() => {
-            if (streamName) {
-              createStream({ name: streamName });
-            }
-          }}
-          disabled={!streamName || isLoading || Boolean(stream)}
-        >
-          Create Stream
-        </Button>
-      </Flex>
+      <Button
+        onClick={() => {
+          if (streamName) {
+            createStream({ name: streamName });
+          }
+        }}
+        disabled={!streamName || isLoading || Boolean(stream)}
+      >
+        {isLoading && <Spinner />}
+        Create Stream
+      </Button>
+
+      {stream &&
+        stream.rtmpIngestUrl &&
+        (!stream?.playbackId || !stream.isActive) && (
+          <Text>
+            Use the ingest URL <code>{stream.rtmpIngestUrl}</code> in a stream
+            client like OBS to see content below.
+          </Text>
+        )}
 
       {stream?.playbackId && (
-        <Player
-          title={stream?.name}
-          playbackId={stream?.playbackId}
-          autoPlay
-          muted
-          theme={{
-            fonts: {
-              display: 'Inter',
-            },
-          }}
-        />
+        <Player playbackId={stream?.playbackId} autoPlay muted />
       )}
     </>
   );
@@ -155,4 +162,4 @@ export const Stream = () => {
 
 ## Wrap Up
 
-That's it! Streaming, complete. You now have a solution for streaming video content for your app.
+That's it! Streaming, complete. You now have a solution for both static and dynamic video content for an app.

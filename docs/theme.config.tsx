@@ -92,11 +92,11 @@ const config: DocsThemeConfig = {
     const config = useConfig();
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { theme } = useTheme();
-    const title = (config as any)?.frontMatter?.title || 'Build with Livepeer';
+    const title = config?.frontMatter?.title || 'Build with Livepeer';
     const description =
-      (config as any)?.frontMatter?.description ||
+      config?.frontMatter?.description ||
       'livepeer.js makes building with Livepeer effortless.';
-    const image = (config as any)?.frontMatter?.image || '/og.png';
+    const image = config?.frontMatter?.image || '/og.png';
     const folder = theme === 'light' ? '/light' : '/dark';
 
     return (

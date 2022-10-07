@@ -110,7 +110,7 @@ export class Client<
   }
 }
 
-export let client: Client<LivepeerProvider>;
+export let client: Client<LivepeerProvider> | null = null;
 
 export function createClient<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
@@ -127,4 +127,8 @@ export function getClient<
     throw new Error('No livepeer client found.');
   }
   return client as unknown as Client<TLivepeerProvider>;
+}
+
+export function clearClient() {
+  client = null;
 }

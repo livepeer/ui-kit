@@ -17,6 +17,7 @@ export type {
   MultistreamTarget,
   MultistreamTargetRef,
   PlaybackInfo,
+  PlaybackPolicy,
   Stream,
   StreamSession,
   TranscodingProfile,

@@ -99,7 +99,7 @@ importers:
       hls.js: ^1.2.1
       livepeer: ^1.0.4
       next: ^12.2.5
-      next-themes: ^0.2.0
+      next-themes: ^0.2.1
       nextra: 2.0.0-beta.29
       nextra-theme-docs: 2.0.0-beta.29
       postcss: ^8.4.16
@@ -120,7 +120,7 @@ importers:
       hls.js: 1.2.1
       livepeer: link:../packages/core
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-themes: 0.2.0_3xcjr4wz26biff45sz3jtokgje
+      next-themes: 0.2.1_3xcjr4wz26biff45sz3jtokgje
       nextra: 2.0.0-beta.29_3xcjr4wz26biff45sz3jtokgje
       nextra-theme-docs: 2.0.0-beta.29_3xcjr4wz26biff45sz3jtokgje
       react: 18.2.0
@@ -209,6 +209,7 @@ importers:
       cross-fetch: ^3.1.5
       ethers: ^5.7.0
       hls.js: ^1.2.1
+      jose: ^4.10.0
       tus-js-client: ^3.0.0
       zustand: ^4.1.1
     dependencies:
@@ -216,6 +217,7 @@ importers:
       core-js: 3.25.2
       cross-fetch: 3.1.5
       hls.js: 1.2.1
+      jose: 4.10.0
       tus-js-client: 3.0.0
       zustand: 4.1.1
     devDependencies:
@@ -2363,7 +2365,7 @@ packages:
       '@stitches/react': 1.2.8_react@18.2.0
       lodash.merge: 4.6.2
       lodash.omit: 4.5.0
-      next-themes: 0.2.0_3xcjr4wz26biff45sz3jtokgje
+      next-themes: 0.2.1_3xcjr4wz26biff45sz3jtokgje
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-transition-group: 4.4.5_biqbaboplfbrettd7655fr4n2y
@@ -7960,6 +7962,10 @@ packages:
       supports-color: 7.2.0
     dev: true
 
+  /jose/4.10.0:
+    resolution: {integrity: sha512-KEhB/eLGLomWGPTb+/RNbYsTjIyx03JmbqAyIyiXBuNSa7CmNrJd5ysFhblayzs/e/vbOPMUaLnjHUMhGp4yLw==}
+    dev: false
+
   /js-base64/3.7.2:
     resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
     dev: false
@@ -9057,8 +9063,8 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-themes/0.2.0_3xcjr4wz26biff45sz3jtokgje:
-    resolution: {integrity: sha512-myhpDL4vadBD9YDSHiewqvzorGzB03N84e+3LxCwHRlM/hiBOaW+UsKsQojQAzC7fdcJA0l2ppveXcYaVV+hxQ==}
+  /next-themes/0.2.1_3xcjr4wz26biff45sz3jtokgje:
+    resolution: {integrity: sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==}
     peerDependencies:
       next: '*'
       react: '*'
@@ -9132,7 +9138,7 @@ packages:
       intersection-observer: 0.12.2
       match-sorter: 6.3.1
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-themes: 0.2.0_3xcjr4wz26biff45sz3jtokgje
+      next-themes: 0.2.1_3xcjr4wz26biff45sz3jtokgje
       parse-git-url: 1.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0

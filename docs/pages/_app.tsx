@@ -1,5 +1,5 @@
-import { Box, DesignSystemProvider, getThemes } from '@livepeer/design-system';
-import { ThemeProvider, useTheme } from 'next-themes';
+import { DesignSystemProvider, getThemes } from '@livepeer/design-system';
+import { ThemeProvider } from 'next-themes';
 import type { AppProps } from 'next/app';
 
 import * as React from 'react';
@@ -15,7 +15,6 @@ Object.keys(themes).map(
 );
 
 function App({ Component, pageProps }: AppProps) {
-  const { theme } = useTheme();
   const getLayout =
     (Component as any).getLayout || ((page: React.ReactElement) => page);
 
@@ -30,16 +29,7 @@ function App({ Component, pageProps }: AppProps) {
           light: 'light',
         }}
       >
-        <Providers>
-          {/* Add styling for livepeer-design-system components */}
-          <Box
-            className={
-              themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]
-            }
-          >
-            {getLayout(<Component {...pageProps} />)}
-          </Box>
-        </Providers>
+        <Providers>{getLayout(<Component {...pageProps} />)}</Providers>
       </ThemeProvider>
     </DesignSystemProvider>
   );

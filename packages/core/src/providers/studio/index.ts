@@ -81,6 +81,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
               },
             }
           : {}),
+        ...(typeof args?.playbackPolicy?.type !== 'undefined'
+          ? {
+              playbackPolicy: {
+                type: args.playbackPolicy.type,
+              },
+            }
+          : {}),
       },
       headers: this._defaultHeaders,
     });
