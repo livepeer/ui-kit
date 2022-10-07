@@ -1,5 +1,4 @@
 *.local
-.DS_Store
 .eslintcache
 .next
 .pnpm-debug.log*
@@ -8,11 +7,22 @@ coverage
 dist
 node_modules
 tsconfig.tsbuildinfo
+logs
+*.log
+pnpm-debug.log*
 
 # local env files
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 .envrc
+
+# svelte
+dist-ssr
+
+# editor directories and files
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
