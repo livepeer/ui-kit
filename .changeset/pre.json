@@ -9,5 +9,5 @@
     "livepeer": "1.0.4",
     "@livepeer/react": "1.0.6"
   },
-  "changesets": ["selfish-mugs-watch"]
+  "changesets": ["giant-donuts-pump", "selfish-mugs-watch"]
 }
