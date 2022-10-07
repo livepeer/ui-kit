@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#92](https://github.com/livepeer/livepeer.js/pull/92) [`e7348f4`](https://github.com/livepeer/livepeer.js/commit/e7348f4c16fbcd5448147516c086c182d842a552) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated dependencies and fixed exporting to have individual paths for smaller bundle size.
+
+### Patch Changes
+
+- Updated dependencies [[`e7348f4`](https://github.com/livepeer/livepeer.js/commit/e7348f4c16fbcd5448147516c086c182d842a552)]:
+  - livepeer@1.1.0-next.0
+
 ## 1.0.6
 
 ### Patch Changes
