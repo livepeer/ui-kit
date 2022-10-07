@@ -1,10 +1,10 @@
+import { getStreamSession } from 'livepeer/actions';
 import {
   GetStreamSessionArgs,
   LivepeerProvider,
   StreamSession,
-  getStreamSession,
-  pick,
-} from 'livepeer';
+} from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';

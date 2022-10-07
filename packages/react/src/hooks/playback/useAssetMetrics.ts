@@ -1,10 +1,6 @@
-import {
-  GetAssetMetricsArgs,
-  LivepeerProvider,
-  Metrics,
-  getAssetMetrics,
-  pick,
-} from 'livepeer';
+import { getAssetMetrics } from 'livepeer/actions';
+import { GetAssetMetricsArgs, LivepeerProvider, Metrics } from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';

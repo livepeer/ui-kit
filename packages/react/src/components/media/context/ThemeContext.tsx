@@ -1,4 +1,4 @@
-import { ThemeConfig } from 'livepeer';
+import { ThemeConfig } from 'livepeer/styling';
 
 import * as React from 'react';
 

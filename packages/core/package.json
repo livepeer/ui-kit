@@ -22,6 +22,10 @@
       "module": "./actions/dist/livepeer-actions.esm.js",
       "default": "./actions/dist/livepeer-actions.cjs.js"
     },
+    "./client": {
+      "module": "./client/dist/livepeer-client.esm.js",
+      "default": "./client/dist/livepeer-client.cjs.js"
+    },
     "./constants": {
       "module": "./constants/dist/livepeer-constants.esm.js",
       "default": "./constants/dist/livepeer-constants.cjs.js"
@@ -30,13 +34,29 @@
       "module": "./contracts/dist/livepeer-contracts.esm.js",
       "default": "./contracts/dist/livepeer-contracts.cjs.js"
     },
+    "./errors": {
+      "module": "./errors/dist/livepeer-errors.esm.js",
+      "default": "./errors/dist/livepeer-errors.cjs.js"
+    },
     "./media": {
       "module": "./media/dist/livepeer-media.esm.js",
       "default": "./media/dist/livepeer-media.cjs.js"
     },
+    "./media/controls": {
+      "module": "./media/controls/dist/livepeer-media-controls.esm.js",
+      "default": "./media/controls/dist/livepeer-media-controls.cjs.js"
+    },
+    "./media/hls": {
+      "module": "./media/hls/dist/livepeer-media-hls.esm.js",
+      "default": "./media/hls/dist/livepeer-media-hls.cjs.js"
+    },
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
       "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+    },
+    "./styling": {
+      "module": "./styling/dist/livepeer-styling.esm.js",
+      "default": "./styling/dist/livepeer-styling.cjs.js"
     },
     "./types": {
       "module": "./types/dist/livepeer-types.esm.js",
@@ -50,10 +70,13 @@
   "sideEffects": false,
   "files": [
     "/actions",
+    "/client",
     "/constants",
     "/contracts",
+    "/errors",
     "/media",
     "/providers",
+    "/styling",
     "/types",
     "/utils",
     "/dist"
@@ -61,20 +84,29 @@
   "preconstruct": {
     "entrypoints": [
       "index.ts",
+      "errors.ts",
       "actions/index.ts",
+      "client/index.ts",
       "constants/index.ts",
       "contracts/index.ts",
       "media/index.ts",
+      "media/controls/index.ts",
+      "media/hls/index.ts",
       "providers/studio/index.ts",
+      "styling/index.ts",
       "types/index.ts",
       "utils/index.ts"
     ]
   },
   "peerDependencies": {
-    "ethers": ">=5.6.9"
+    "ethers": ">=5.6.9",
+    "react": ">=17.0.0"
   },
   "peerDependenciesMeta": {
     "ethers": {
+      "optional": true
+    },
+    "react": {
       "optional": true
     }
   },

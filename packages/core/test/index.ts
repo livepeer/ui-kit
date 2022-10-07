@@ -1,4 +1,4 @@
-import { ClientConfig, createClient } from '../src';
+import { ClientConfig, createClient } from '../src/client';
 import { studioProvider } from '../src/providers/studio';
 
 export function setupClient(config?: Partial<ClientConfig>) {

@@ -1,22 +1,25 @@
 import { noop } from '../utils';
 import { MimeType } from './mime';
 
-export const IS_CLIENT = typeof window !== 'undefined';
-export const UA = IS_CLIENT ? window?.navigator?.userAgent?.toLowerCase() : '';
-export const IS_IOS = /iphone|ipad|ipod|ios|CriOS|FxiOS/.test(UA);
-export const IS_ANDROID = /android/.test(UA);
-export const IS_MOBILE = IS_CLIENT && (IS_IOS || IS_ANDROID);
-export const IS_IPHONE =
-  IS_CLIENT && /(iPhone|iPod)/gi.test(window?.navigator?.platform);
-export const IS_FIREFOX = /firefox/.test(UA);
-export const IS_CHROME = IS_CLIENT && !!window?.chrome;
-export const IS_SAFARI =
-  IS_CLIENT &&
-  !IS_CHROME &&
-  (window?.safari || IS_IOS || /(apple|safari)/.test(UA));
+export const isClient = () => typeof window !== 'undefined';
+export const ua = () =>
+  isClient() ? window?.navigator?.userAgent?.toLowerCase() : '';
+export const isIos = () => /iphone|ipad|ipod|ios|CriOS|FxiOS/.test(ua());
+export const isAndroid = () => /android/.test(ua());
+export const isMobile = () => isClient() && (isIos() || isAndroid());
+export const isIphone = () =>
+  isClient() && /(iPhone|iPod)/gi.test(window?.navigator?.platform);
+export const isFirefox = () => /firefox/.test(ua());
+export const isChrome = () => isClient() && !!window?.chrome;
+export const isSafari = () =>
+  Boolean(
+    isClient() &&
+      !isChrome() &&
+      (window?.safari || isIos() || /(apple|safari)/.test(ua())),
+  );
 
-export const ORIGIN =
-  IS_CLIENT &&
+export const origin = () =>
+  isClient() &&
   window?.location?.protocol &&
   window?.location?.protocol !== 'file:' &&
   window?.location?.hostname
@@ -27,7 +30,7 @@ export const ORIGIN =
  * Returns the current version of Safari. Defaults to `0` if unknown.
  */
 export const currentSafariVersion = (): number => {
-  return IS_CLIENT
+  return isClient()
     ? Number((/Safari\/(\d+)/.exec(navigator.userAgent) ?? ['', 0])[1])
     : 0;
 };
@@ -38,7 +41,7 @@ export const currentSafariVersion = (): number => {
  * @see {@link https://developer.apple.com/documentation/webkitjs/htmlvideoelement/1633500-webkitenterfullscreen}
  */
 // export const canFullscreenVideo = (): boolean => {
-//   if (!IS_CLIENT) return false;
+//   if (!isClient()) return false;
 //   const video = document.createElement('video');
 //   return isFunction(video.webkitEnterFullscreen);
 // };
@@ -47,7 +50,7 @@ export const currentSafariVersion = (): number => {
  * Checks whether the `IntersectionObserver` API is available.
  */
 // export const canObserveIntersection = (): boolean => {
-//   return IS_CLIENT && !isUndefined(window.IntersectionObserver);
+//   return isClient() && !isUndefined(window.IntersectionObserver);
 // };
 
 /**
@@ -57,7 +60,7 @@ export const currentSafariVersion = (): number => {
  */
 // export const canOrientScreen = (): boolean => {
 //   return (
-//     IS_CLIENT &&
+//     isClient() &&
 //     !isUndefined(screen.orientation) &&
 //     isFunction(screen.orientation.lock) &&
 //     isFunction(screen.orientation.unlock)
@@ -71,7 +74,7 @@ export const currentSafariVersion = (): number => {
  */
 // export const canRotateScreen = (): boolean => {
 //   return (
-//     IS_CLIENT &&
+//     isClient() &&
 //     !isUndefined(window.screen.orientation) &&
 //     !isUndefined(window.screen.orientation.lock)
 //   );
@@ -84,7 +87,7 @@ export const currentSafariVersion = (): number => {
  */
 export const isReducedMotionPreferred = (): boolean => {
   return (
-    IS_CLIENT &&
+    isClient() &&
     'matchMedia' in window &&
     window.matchMedia('(prefers-reduced-motion)').matches
   );
@@ -97,7 +100,7 @@ export const isReducedMotionPreferred = (): boolean => {
  * @see {@link https://developers.google.com/web/updates/2018/10/watch-video-using-picture-in-picture}
  */
 // export const canUsePiPInChrome = (): boolean => {
-//   if (!IS_CLIENT) return false;
+//   if (!isClient()) return false;
 //   const video = document.createElement('video');
 //   return !!document.pictureInPictureEnabled && !video.disablePictureInPicture;
 // };
@@ -110,14 +113,14 @@ export const isReducedMotionPreferred = (): boolean => {
  * @see {@link https://developer.apple.com/documentation/webkitjs/adding_picture_in_picture_to_your_safari_media_controls}
  */
 // export const canUsePiPInSafari = (): boolean => {
-//   if (!IS_CLIENT) return false;
+//   if (!isClient()) return false;
 
 //   const video = document.createElement('video');
 
 //   return (
 //     isFunction(video.webkitSupportsPresentationMode) &&
 //     isFunction(video.webkitSetPresentationMode) &&
-//     !IS_IPHONE
+//     !isIphone()
 //   );
 // };
 
@@ -139,7 +142,7 @@ export const canAutoplay = (
   muted = true,
   playsinline = true,
 ): Promise<boolean> => {
-  if (!IS_CLIENT) return Promise.resolve(false);
+  if (!isClient()) return Promise.resolve(false);
 
   const video = document.createElement('video');
 
@@ -173,7 +176,7 @@ export const canAutoplay = (
  * Checks if the native HTML5 video player can play the mime type.
  */
 export const canPlayMediaNatively = (type: MimeType): boolean => {
-  if (IS_CLIENT) {
+  if (isClient()) {
     // TODO fix this to better support audio mime types
     if (type.includes('audio')) {
       const audio = document.createElement('audio');

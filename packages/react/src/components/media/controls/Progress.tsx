@@ -1,4 +1,4 @@
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState } from 'livepeer/media/controls';
 import * as React from 'react';
 
 import { PropsOf } from '../../system';

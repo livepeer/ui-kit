@@ -1,4 +1,4 @@
-import { IS_CLIENT } from '../browser';
+import { isClient } from '../browser';
 
 const methodsList = [
   // modern browsers
@@ -172,7 +172,7 @@ const removeFullscreenEventListener = (
 };
 
 const getFullscreenMethods = (element?: HTMLMediaElement | null) => {
-  if (IS_CLIENT) {
+  if (isClient()) {
     for (const methods of methodsList) {
       const exitFullscreenMethod = methods.exitFullscreen;
 

@@ -3,6 +3,7 @@ export {
   studioProvider,
   type StudioLivepeerProviderConfig,
 } from 'livepeer/providers/studio';
+export { defaultTheme, getCssText, styling } from 'livepeer/styling';
 export { createReactClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {

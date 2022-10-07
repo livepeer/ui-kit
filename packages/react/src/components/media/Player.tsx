@@ -1,12 +1,6 @@
-import {
-  AspectRatio,
-  AudioSrc,
-  ControlsOptions,
-  Src,
-  ThemeConfig,
-  VideoSrc,
-  getMediaSourceType,
-} from 'livepeer';
+import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer/media';
+import { ControlsOptions } from 'livepeer/media/controls';
+import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import * as React from 'react';
 
 import { usePlaybackInfo } from '../../hooks';

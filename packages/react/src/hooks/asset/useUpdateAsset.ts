@@ -1,10 +1,6 @@
-import {
-  Asset,
-  LivepeerProvider,
-  UpdateAssetArgs,
-  pick,
-  updateAsset,
-} from 'livepeer';
+import { updateAsset } from 'livepeer/actions';
+import { Asset, LivepeerProvider, UpdateAssetArgs } from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 
 import { QueryClientContext } from '../../context';
 import {
