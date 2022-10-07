@@ -1,16 +1,19 @@
 <script>
-  import { onMount } from "svelte";
   import {
     canPlayMediaNatively,
-    createClient,
-    createNewHls,
     getMediaSourceType,
     getMetricsReportingUrl,
     getPlaybackInfo,
-    isHlsSupported,
-    reportMediaMetrics,
+    reportMediaMetrics
   } from "livepeer";
+  import {
+    createClient
+  } from "livepeer/client";
+  import {
+    isHlsSupported
+  } from "livepeer/media/hls";
   import { studioProvider } from "livepeer/providers/studio";
+  import { onMount } from "svelte";
 
   let videoSrc = "";
   let video;
