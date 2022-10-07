@@ -35,9 +35,7 @@
   ],
   "preconstruct": {
     "entrypoints": [
-      "index.ts",
-      "providers/studio/index.ts",
-      "contracts/index.ts"
+      "index.{ts,tsx}"
     ]
   },
   "peerDependencies": {
