@@ -18,43 +18,77 @@
       "module": "./dist/livepeer.esm.js",
       "default": "./dist/livepeer.cjs.js"
     },
-    "./providers/studio": {
-      "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
-      "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+    "./actions": {
+      "module": "./actions/dist/livepeer-actions.esm.js",
+      "default": "./actions/dist/livepeer-actions.cjs.js"
+    },
+    "./constants": {
+      "module": "./constants/dist/livepeer-constants.esm.js",
+      "default": "./constants/dist/livepeer-constants.cjs.js"
     },
     "./contracts": {
       "module": "./contracts/dist/livepeer-contracts.esm.js",
       "default": "./contracts/dist/livepeer-contracts.cjs.js"
+    },
+    "./media": {
+      "module": "./media/dist/livepeer-media.esm.js",
+      "default": "./media/dist/livepeer-media.cjs.js"
+    },
+    "./providers/studio": {
+      "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
+      "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+    },
+    "./types": {
+      "module": "./types/dist/livepeer-types.esm.js",
+      "default": "./types/dist/livepeer-types.cjs.js"
+    },
+    "./utils": {
+      "module": "./utils/dist/livepeer-utils.esm.js",
+      "default": "./utils/dist/livepeer-utils.cjs.js"
     }
   },
   "sideEffects": false,
   "files": [
+    "/actions",
+    "/constants",
     "/contracts",
+    "/media",
     "/providers",
+    "/types",
+    "/utils",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
+      "actions/index.ts",
+      "constants/index.ts",
+      "contracts/index.ts",
+      "media/index.ts",
       "providers/studio/index.ts",
-      "contracts/index.ts"
+      "types/index.ts",
+      "utils/index.ts"
     ]
   },
   "peerDependencies": {
     "ethers": ">=5.6.9"
   },
-  "peerDependenciesMeta": {},
+  "peerDependenciesMeta": {
+    "ethers": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@stitches/core": "^1.2.8",
-    "core-js": "^3.25.2",
+    "core-js": "^3.25.5",
     "cross-fetch": "^3.1.5",
-    "hls.js": "^1.2.1",
-    "tus-js-client": "^3.0.0",
+    "hls.js": "^1.2.4",
+    "tus-js-client": "^3.0.1",
     "zustand": "^4.1.1"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
-    "ethers": "^5.7.0"
+    "ethers": "^5.7.1"
   },
   "keywords": [
     "eth",

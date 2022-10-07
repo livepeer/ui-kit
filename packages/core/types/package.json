@@ -1,0 +1,4 @@
+{
+  "main": "dist/livepeer-types.cjs.js",
+  "module": "dist/livepeer-types.esm.js"
+}
