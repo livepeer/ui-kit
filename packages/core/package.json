@@ -71,18 +71,10 @@
     ]
   },
   "peerDependencies": {
-    "ethers": ">=5.6.9",
-    "immer": ">=9.0",
-    "react": ">=17.0.0"
+    "ethers": ">=5.6.9"
   },
   "peerDependenciesMeta": {
     "ethers": {
-      "optional": true
-    },
-    "immer": {
-      "optional": true
-    },
-    "react": {
       "optional": true
     }
   },
