@@ -13,6 +13,29 @@
   "module": "dist/livepeer-react.esm.js",
   "types": "dist/livepeer-react.cjs.d.ts",
   "umd:main": "dist/livepeer-react.umd.min.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/livepeer-react.esm.js",
+      "default": "./dist/livepeer-react.cjs.js"
+    },
+    "./components": {
+      "module": "./components/dist/livepeer-react-components.esm.js",
+      "default": "./components/dist/livepeer-react-components.cjs.js"
+    },
+    "./contracts": {
+      "module": "./contracts/dist/livepeer-react-contracts.esm.js",
+      "default": "./contracts/dist/livepeer-react-contracts.cjs.js"
+    },
+    "./hooks": {
+      "module": "./hooks/dist/livepeer-react-hooks.esm.js",
+      "default": "./hooks/dist/livepeer-react-hooks.cjs.js"
+    },
+    "./utils": {
+      "module": "./utils/dist/livepeer-react-utils.esm.js",
+      "default": "./utils/dist/livepeer-react-utils.cjs.js"
+    }
+  },
   "sideEffects": false,
   "files": [
     "/components",
