@@ -1,0 +1,8 @@
+{
+  "main": "dist/livepeer-constants.cjs.js",
+  "module": "dist/livepeer-constants.esm.js",
+  "umd:main": "dist/livepeer-constants.umd.min.js",
+  "preconstruct": {
+    "umdName": "livepeer/constants"
+  }
+}

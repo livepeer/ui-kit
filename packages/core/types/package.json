@@ -1,0 +1,8 @@
+{
+  "main": "dist/livepeer-types.cjs.js",
+  "module": "dist/livepeer-types.esm.js",
+  "umd:main": "dist/livepeer-types.umd.min.js",
+  "preconstruct": {
+    "umdName": "livepeer/types"
+  }
+}
