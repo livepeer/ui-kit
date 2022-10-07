@@ -6,8 +6,8 @@
     getPlaybackInfo,
     reportMediaMetrics,
   } from 'livepeer';
-  import { createClient, createNewHls } from 'livepeer/client';
-  import { isHlsSupported } from 'livepeer/media/hls';
+  import { createClient } from 'livepeer/client';
+  import { createNewHls, isHlsSupported } from 'livepeer/media/hls';
   import { studioProvider } from 'livepeer/providers/studio';
   import { onMount } from 'svelte';
 
