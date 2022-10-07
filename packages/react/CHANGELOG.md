@@ -1,5 +1,14 @@
 # @livepeer/react
 
+## 1.1.0-next.1
+
+### Patch Changes
+
+- [#95](https://github.com/livepeer/livepeer.js/pull/95) [`0b02851`](https://github.com/livepeer/livepeer.js/commit/0b02851ed86e4c6ab0e28b5f575181d62c8dc629) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** further changes to imports to change build config to be smaller.
+
+- Updated dependencies [[`0b02851`](https://github.com/livepeer/livepeer.js/commit/0b02851ed86e4c6ab0e28b5f575181d62c8dc629)]:
+  - livepeer@1.1.0-next.1
+
 ## 1.1.0-next.0
 
 ### Minor Changes
