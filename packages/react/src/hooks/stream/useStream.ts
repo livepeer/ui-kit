@@ -1,10 +1,6 @@
-import {
-  GetStreamArgs,
-  LivepeerProvider,
-  Stream,
-  getStream,
-  pick,
-} from 'livepeer';
+import { getStream } from 'livepeer/actions';
+import { GetStreamArgs, LivepeerProvider, Stream } from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';

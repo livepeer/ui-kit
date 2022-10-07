@@ -1,10 +1,6 @@
-import {
-  LivepeerProvider,
-  Stream,
-  UpdateStreamArgs,
-  pick,
-  updateStream,
-} from 'livepeer';
+import { updateStream } from 'livepeer/actions';
+import { LivepeerProvider, Stream, UpdateStreamArgs } from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 
 import { QueryClientContext } from '../../context';
 import {

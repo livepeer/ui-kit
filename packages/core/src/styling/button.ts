@@ -1,6 +1,6 @@
 import { keyframes } from '@stitches/core';
 
-import { IS_MOBILE } from '../browser';
+import { isMobile } from '../media/browser';
 
 import { css } from './stitches';
 
@@ -31,6 +31,6 @@ export const iconButton = css('button', {
   color: '$icon',
   '&:hover': {
     color: '$iconHover',
-    animation: !IS_MOBILE ? `${scaleUp} 200ms` : undefined,
+    animation: !isMobile() ? `${scaleUp} 200ms` : undefined,
   },
 });

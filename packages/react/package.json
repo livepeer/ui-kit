@@ -37,6 +37,8 @@
   },
   "sideEffects": false,
   "files": [
+    "client",
+    "context",
     "/components",
     "/contracts",
     "/hooks",
@@ -46,6 +48,8 @@
   "preconstruct": {
     "entrypoints": [
       "index.ts",
+      "client.ts",
+      "context.tsx",
       "components/index.ts",
       "contracts/index.ts",
       "hooks/index.ts",

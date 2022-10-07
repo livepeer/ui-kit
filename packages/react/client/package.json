@@ -1,0 +1,4 @@
+{
+  "main": "dist/livepeer-react-client.cjs.js",
+  "module": "dist/livepeer-react-client.esm.js"
+}

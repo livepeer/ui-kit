@@ -4,7 +4,7 @@ import {
   UseMutationResult,
   useMutation,
 } from '@tanstack/react-query';
-import { HttpError } from 'livepeer';
+import { HttpError } from 'livepeer/errors';
 
 export const usePickMutationKeys = [
   'cacheTime',

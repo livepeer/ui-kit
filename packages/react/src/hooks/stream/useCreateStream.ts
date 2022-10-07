@@ -1,10 +1,6 @@
-import {
-  CreateStreamArgs,
-  LivepeerProvider,
-  Stream,
-  createStream,
-  pick,
-} from 'livepeer';
+import { createStream } from 'livepeer/actions';
+import { CreateStreamArgs, LivepeerProvider, Stream } from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 
 import { QueryClientContext } from '../../context';
 import {

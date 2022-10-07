@@ -1,10 +1,10 @@
+import { getPlaybackInfo } from 'livepeer/actions';
 import {
   GetPlaybackInfoArgs,
   LivepeerProvider,
   PlaybackInfo,
-  getPlaybackInfo,
-  pick,
-} from 'livepeer';
+} from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';

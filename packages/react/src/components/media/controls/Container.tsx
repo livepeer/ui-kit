@@ -1,4 +1,5 @@
-import { AspectRatio, MediaControllerState, styling } from 'livepeer';
+import { MediaControllerState } from 'livepeer/media/controls';
+import { AspectRatio, styling } from 'livepeer/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../context';
