@@ -13,6 +13,7 @@ import {
   Container,
   ControlsContainer,
   FullscreenButton,
+  PictureInPictureButton,
   PlayButton,
   Poster,
   Progress,
@@ -222,7 +223,12 @@ export function Player({
                   <TimeDisplay />
                 </>
               }
-              right={<FullscreenButton />}
+              right={
+                <>
+                  <PictureInPictureButton />
+                  <FullscreenButton />
+                </>
+              }
             />
           </>
         )}

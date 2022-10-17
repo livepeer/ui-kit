@@ -33,6 +33,7 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   hasPlayed: boolean;
   /** If the element is fullscreen */
   fullscreen: boolean;
+
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
 
@@ -84,6 +85,7 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
 
   setFullscreen: (fullscreen: boolean) => void;
   requestToggleFullscreen: () => void;
+  requestTogglePictureInPicture: () => void;
 
   _setVolume: (volume: number) => void;
   requestVolume: (volume: number) => void;
@@ -236,6 +238,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
           set(() => ({
             _requestedFullscreenLastTime: Date.now(),
           })),
+        requestTogglePictureInPicture: () => element.requestPictureInPicture(),
 
         setLive: (live: boolean) => set(() => ({ live })),
 
