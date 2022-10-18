@@ -25,6 +25,10 @@ declare global {
      * Enters fullscreen mode. Used in old IE.
      */
     msRequestFullscreen?(): void;
+    /**
+     * Enters picture-in-picture mode
+     */
+    requestPictureInPicture?(): void;
   }
 
   interface HTMLVideoElement extends HTMLVideoElement {

@@ -9,6 +9,12 @@ import {
   exitFullscreen,
   isCurrentlyFullscreen,
 } from './fullscreen';
+import {
+  addPictureInPictureEventListener,
+  enterPictureInPicture,
+  exitPictureInPicture,
+  isCurrentlyPictureInPicture,
+} from './pictureinpicture';
 
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE = 'data-controller-initialized';
 
@@ -34,8 +40,14 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   /** If the element is fullscreen */
   fullscreen: boolean;
 
+  /** If the element is in picture in picture mode */
+  pictureInPicture: boolean;
+
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
+
+  /** The last time that picture in picture was changed*/
+  _requestedPictureInPictureLastTime: number;
 
   /** If the content is live media */
   live: boolean;
@@ -84,6 +96,7 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   setLive: (fullscreen: boolean) => void;
 
   setFullscreen: (fullscreen: boolean) => void;
+  setPictureInPicture: (pictureInPicture: boolean) => void;
   requestToggleFullscreen: () => void;
   requestTogglePictureInPicture: () => void;
 
@@ -101,6 +114,7 @@ export const allKeyTriggers = [
   'KeyF',
   'KeyK',
   'KeyM',
+  'KeyP',
   'Space',
   'ArrowRight',
   'ArrowLeft',
@@ -167,6 +181,9 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         hasPlayed: false,
         playing: !element?.paused,
         fullscreen: false,
+        pictureInPicture: false,
+
+        mail: {},
 
         device: {
           isMobile: isMobile(),
@@ -187,6 +204,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
 
         _requestedRangeToSeekTo: 0,
         _requestedFullscreenLastTime: Date.now(),
+        _requestedPictureInPictureLastTime: Date.now(),
 
         setHidden: (hidden: boolean) =>
           set(({ playing }) => ({ hidden: playing ? hidden : false })),
@@ -234,11 +252,17 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
           get()._requestSeekDiff(difference),
 
         setFullscreen: (fullscreen: boolean) => set(() => ({ fullscreen })),
+        setPictureInPicture: (pictureInPicture: boolean) =>
+          set(() => ({ pictureInPicture })),
         requestToggleFullscreen: () =>
           set(() => ({
             _requestedFullscreenLastTime: Date.now(),
           })),
-        requestTogglePictureInPicture: () => element.requestPictureInPicture(),
+
+        requestTogglePictureInPicture: () =>
+          set(() => ({
+            _requestedPictureInPictureLastTime: Date.now(),
+          })),
 
         setLive: (live: boolean) => set(() => ({ live })),
 
@@ -324,6 +348,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
         store.getState().togglePlay();
       } else if (code === 'KeyF') {
         store.getState().requestToggleFullscreen();
+      } else if (code === 'KeyP') {
+        store.getState().requestTogglePictureInPicture();
       } else if (code === 'ArrowRight') {
         store.getState().requestSeekForward();
       } else if (code === 'ArrowLeft') {
@@ -437,6 +463,21 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     }
   };
 
+  const onPictureInPictureChange = (e: Event) => {
+    const isPictureInPictureElementPresent =
+      isCurrentlyPictureInPicture(element);
+
+    const eventTargetIncludesElement = Boolean(
+      (e?.target as Element)?.contains?.(element),
+    );
+
+    if (eventTargetIncludesElement) {
+      store
+        .getState()
+        .setPictureInPicture(Boolean(isPictureInPictureElementPresent));
+    }
+  };
+
   // add effects
   const removeEffectsFromStore = addEffectsToStore(store, element, {
     autohide,
@@ -446,9 +487,15 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   const removeFullscreenListener =
     addFullscreenEventListener(onFullScreenChange);
 
+  // add picture in picture listener
+  const removePictureINPictureListener = addPictureInPictureEventListener(
+    onPictureInPictureChange,
+  );
+
   return {
     destroy: () => {
       removeFullscreenListener?.();
+      removePictureINPictureListener?.();
 
       element?.removeEventListener?.('canplay', onCanPlay);
       element?.removeEventListener?.('play', onPlay);
@@ -553,6 +600,19 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           previousPromise = enterFullscreen(element);
         } else {
           previousPromise = exitFullscreen(element);
+        }
+      }
+
+      if (
+        current._requestedPictureInPictureLastTime !==
+        prev._requestedPictureInPictureLastTime
+      ) {
+        const isPictureInPicture = isCurrentlyPictureInPicture(element);
+
+        if (!isPictureInPicture) {
+          enterPictureInPicture(element);
+        } else {
+          exitPictureInPicture(element);
         }
       }
     }

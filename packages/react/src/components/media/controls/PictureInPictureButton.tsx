@@ -1,6 +1,8 @@
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
+import { isPictureInPictureSupported } from '../../../../../core/src/media/controls/pictureinpicture'; // TODO: Implement absolute imports
+
 import { PropsOf } from '../../system';
 import { useMediaController } from '../context';
 
@@ -63,6 +65,14 @@ export const PictureInPictureButton = React.forwardRef<
   );
 
   const _children = icon ? icon : <DefaultPictureInPictureIcon />;
+
+  const isPiPSupported = isPictureInPictureSupported(
+    document.querySelector('video'),
+  );
+
+  if (!isPiPSupported) {
+    return null;
+  }
 
   const title = 'Toggle Picture-in-Picture';
   return (
