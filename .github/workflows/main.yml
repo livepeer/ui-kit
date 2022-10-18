@@ -205,6 +205,7 @@ jobs:
   security-dependency-review:
     name: Security (Dependency Review)
     needs: build
+    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -235,3 +236,5 @@ jobs:
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Dependency Review
         uses: actions/dependency-review-action@v2
+        with:
+          base-ref: ea458b2e6225d1b48a7b13990c07f968c8fc98fe
