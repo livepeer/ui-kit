@@ -94,7 +94,7 @@ export class PlaybackMonitor<TElement extends HTMLMediaElement> {
 
       const oldestValue = this.values[0];
 
-      if (oldestValue !== undefined && currentValue !== undefined) {
+      if (oldestValue !== undefined) {
         // diff between oldest score and current
         const averagedScore = this.valueToScore(oldestValue, currentValue); // should be 1, decreases if bad
 
