@@ -163,6 +163,7 @@ export const WagmiNft = () => {
               </Button>
             ) : contractWriteData?.hash && isSuccess ? (
               <a
+                rel="noreferrer"
                 target="_blank"
                 href={`https://mumbai.polygonscan.com/tx/${contractWriteData.hash}`}
               >

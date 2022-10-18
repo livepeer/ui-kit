@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [16]
         pnpm-version: [7]
     steps:
       - uses: actions/checkout@v3
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [16]
         pnpm-version: [7]
     steps:
       - uses: actions/checkout@v3
@@ -86,11 +86,11 @@ jobs:
 
   build:
     name: Build
-    needs: lint
+    needs: install
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [16]
         pnpm-version: [7]
     steps:
       - uses: actions/checkout@v3
@@ -119,13 +119,11 @@ jobs:
 
   test:
     name: Test
-    needs: lint
+    needs: install
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # TODO: Switch back to Node 16 once Vitest is patched
-        # https://github.com/vitest-dev/vitest/issues/1191
-        node-version: [18]
+        node-version: [16]
         pnpm-version: [7]
         react-version: [17, 18]
     steps:
@@ -148,23 +146,6 @@ jobs:
             packages/*/node_modules
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-      # - name: Install rust
-      #   uses: actions-rs/toolchain@v1
-      #   with:
-      #     toolchain: stable
-      #     target: wasm32-unknown-unknown
-      #     profile: minimal
-      #     override: true
-      # - name: Install Anvil
-      #   uses: foundry-rs/foundry-toolchain@v1
-      #   with:
-      #     version: nightly
-      # TODO: Cache Anvil RPC calls between runs to speed up tests
-      # - name: Launch Anvil
-      #   run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
-      #   env:
-      #     ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-      #     ANVIL_BLOCK_NUMBER: 15132000
       - name: Test React 18
         if: matrix.react-version == 18
         run: pnpm test:coverage
@@ -181,3 +162,76 @@ jobs:
         env:
           REACT_VERSION: ${{ matrix.react-version }}
           STUDIO_API_KEY: ${{ secrets.STUDIO_API_KEY }}
+
+  security-codeql:
+    name: Security (CodeQL)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    strategy:
+      matrix:
+        node-version: [16]
+        pnpm-version: [7]
+        react-version: [18]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ${{ matrix.pnpm-version }}
+      - name: Set up Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: 'pnpm'
+          node-version: ${{ matrix.node-version }}
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            docs/node_modules
+            examples/*/node_modules
+            packages/*/node_modules
+            packages/**/dist
+          key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: typescript
+          queries: security-extended,security-and-quality
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  security-dependency-review:
+    name: Security (Dependency Review)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        node-version: [16]
+        pnpm-version: [7]
+        react-version: [18]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ${{ matrix.pnpm-version }}
+      - name: Set up Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: 'pnpm'
+          node-version: ${{ matrix.node-version }}
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            docs/node_modules
+            examples/*/node_modules
+            packages/*/node_modules
+            packages/**/dist
+          key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v2
