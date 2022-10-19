@@ -486,14 +486,14 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     addFullscreenEventListener(onFullScreenChange);
 
   // add picture in picture listener
-  const removePictureINPictureListener = addPictureInPictureEventListener(
+  const removePictureInPictureListener = addPictureInPictureEventListener(
     onPictureInPictureChange,
   );
 
   return {
     destroy: () => {
       removeFullscreenListener?.();
-      removePictureINPictureListener?.();
+      removePictureInPictureListener?.();
 
       element?.removeEventListener?.('canplay', onCanPlay);
       element?.removeEventListener?.('play', onPlay);
