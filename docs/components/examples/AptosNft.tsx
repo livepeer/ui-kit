@@ -278,6 +278,7 @@ export const AptosNft = () => {
               </Button>
             ) : creationHash ? (
               <a
+                rel="noreferrer"
                 target="_blank"
                 href={`https://explorer.aptoslabs.com/txn/${creationHash}?network=Devnet`}
               >

@@ -1,4 +1,4 @@
-name: Bust actions cache
+name: Bust Actions Cache
 
 on:
   workflow_dispatch:
