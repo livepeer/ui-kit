@@ -74,6 +74,9 @@ export type PlayerProps = {
 
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
+
+  /** Whether to show the picture in picture button */
+  showPictureInPictureButton?: boolean;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -97,6 +100,7 @@ export function Player({
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
+  showPictureInPictureButton = false,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -225,7 +229,7 @@ export function Player({
               }
               right={
                 <>
-                  <PictureInPictureButton />
+                  {showPictureInPictureButton && <PictureInPictureButton />}
                   <FullscreenButton />
                 </>
               }

@@ -11,6 +11,7 @@ export const AssetDemoPlayer = () => {
         // src={'/audio-example.mp3'}
         loop
         autoPlay
+        showPictureInPictureButton
         muted
         theme={{
           fonts: {
