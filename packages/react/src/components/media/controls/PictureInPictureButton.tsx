@@ -52,7 +52,7 @@ export const PictureInPictureButton = React.forwardRef<
   HTMLButtonElement,
   PictureInPictureButtonProps
 >((props, ref) => {
-  const { requestTogglePictureInPicture } = useMediaController();
+  const { requestTogglePictureInPicture, _element } = useMediaController();
 
   const { icon, onClick, ...rest } = props;
 
@@ -66,9 +66,7 @@ export const PictureInPictureButton = React.forwardRef<
 
   const _children = icon ? icon : <DefaultPictureInPictureIcon />;
 
-  const isPiPSupported = isPictureInPictureSupported(
-    document.querySelector('video'),
-  );
+  const isPiPSupported = isPictureInPictureSupported(_element);
 
   if (!isPiPSupported) {
     return null;
