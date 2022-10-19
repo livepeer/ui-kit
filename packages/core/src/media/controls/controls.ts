@@ -183,8 +183,6 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         fullscreen: false,
         pictureInPicture: false,
 
-        mail: {},
-
         device: {
           isMobile: isMobile(),
           isIos: isIos(),

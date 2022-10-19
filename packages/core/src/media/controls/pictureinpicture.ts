@@ -17,9 +17,9 @@ const methodsList = [
 const getPictureInPictureMethods = (element?: HTMLMediaElement | null) => {
   if (isClient()) {
     for (const methods of methodsList) {
-      const exitPictureInPicturenMethod = methods.exitPictureInPicture;
+      const exitPictureInPictureMethod = methods.exitPictureInPicture;
 
-      if (exitPictureInPicturenMethod in document) {
+      if (exitPictureInPictureMethod in document) {
         return { methods, element: element as HTMLVideoElement };
       }
     }
