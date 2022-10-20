@@ -1,5 +1,24 @@
 # livepeer
 
+## 1.1.0-next.2
+
+### Minor Changes
+
+- [#98](https://github.com/livepeer/livepeer.js/pull/98) [`5fc44a5`](https://github.com/livepeer/livepeer.js/commit/5fc44a56e9e5ee5790bb05e76e1e430c44aee02a) Thanks [@suhailkakar](https://github.com/suhailkakar)! - **Feature:** added picture in picture support to the Livepeer player.
+
+  We support both the [w3c](https://w3c.github.io/picture-in-picture/) standard (which most modern browsers support), as well as the [older Safari/iOS
+  spec](https://developer.apple.com/documentation/webkitjs/adding_picture_in_picture_to_your_safari_media_controls).
+  See the browsers which support Picture-in-Picture on
+  [caniuse](https://caniuse.com/picture-in-picture).
+
+  ```tsx
+  <Player playbackId="6d7el73r1y12chxr" showPipButton />
+  ```
+
+### Patch Changes
+
+- [#98](https://github.com/livepeer/livepeer.js/pull/98) [`5fc44a5`](https://github.com/livepeer/livepeer.js/commit/5fc44a56e9e5ee5790bb05e76e1e430c44aee02a) Thanks [@suhailkakar](https://github.com/suhailkakar)! - **Fix:** fixed fullscreen state updating properly when entering/exiting fullscreen.
+
 ## 1.1.0-next.1
 
 ### Patch Changes

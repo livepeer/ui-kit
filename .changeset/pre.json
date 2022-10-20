@@ -9,5 +9,10 @@
     "livepeer": "1.0.4",
     "@livepeer/react": "1.0.6"
   },
-  "changesets": ["giant-donuts-pump", "selfish-mugs-watch"]
+  "changesets": [
+    "giant-donuts-pump",
+    "poor-trains-divide",
+    "pretty-seals-worry",
+    "selfish-mugs-watch"
+  ]
 }
