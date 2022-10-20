@@ -4,4 +4,4 @@ export type {
   MediaControllerState,
   MediaControllerStore,
 } from './controls';
-export { isPictureInPictureSupported } from './pictureinpicture';
+export { isPictureInPictureSupported } from './pictureInPicture';

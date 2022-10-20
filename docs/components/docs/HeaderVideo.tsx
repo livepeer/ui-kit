@@ -29,6 +29,7 @@ export function HeaderVideo() {
       showTitle={false}
       muted
       poster={<PosterImage />}
+      showPipButton
     />
   );
 }

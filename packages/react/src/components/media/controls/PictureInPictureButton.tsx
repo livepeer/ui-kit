@@ -1,4 +1,7 @@
-import { isPictureInPictureSupported } from 'livepeer/media/controls';
+import {
+  MediaControllerState,
+  isPictureInPictureSupported,
+} from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
@@ -7,27 +10,15 @@ import { useMediaController } from '../context';
 
 const DefaultPictureInPictureIcon = () => (
   <svg
-    width="25"
-    height="20"
-    viewBox="0 0 25 20"
-    style={{ marginTop: 6 }}
-    fill="none"
+    width="100%"
+    height="100%"
+    viewBox="0 0 36 36"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M23.0417 1H1.95833C1.42906 1 1 1.42906 1 1.95833V17.2917C1 17.8209 1.42906 18.25 1.95833 18.25H23.0417C23.5709 18.25 24 17.8209 24 17.2917V1.95833C24 1.42906 23.5709 1 23.0417 1Z"
-      stroke="white"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-    <path
-      d="M13.4584 18.25V10.5833C13.4584 10.3292 13.5593 10.0854 13.7391 9.90569C13.9188 9.72597 14.1625 9.625 14.4167 9.625H24"
-      stroke="white"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+      fill="currentColor"
+      d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z"
+    ></path>
   </svg>
 );
 
@@ -40,18 +31,30 @@ export type PictureInPictureButtonProps = Omit<
    * @type React.ReactElement
    */
   icon?: React.ReactElement;
-} & (
-    | {
-        icon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
+};
+
+const mediaControllerSelector = ({
+  requestTogglePictureInPicture,
+  pictureInPicture,
+  _element,
+  fullscreen,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  requestTogglePictureInPicture,
+  pictureInPicture,
+  _element,
+  fullscreen,
+});
 
 export const PictureInPictureButton = React.forwardRef<
   HTMLButtonElement,
   PictureInPictureButtonProps
 >((props, ref) => {
-  const { requestTogglePictureInPicture, _element } = useMediaController();
+  const {
+    requestTogglePictureInPicture,
+    _element,
+    pictureInPicture,
+    fullscreen,
+  } = useMediaController(mediaControllerSelector);
 
   const { icon, onClick, ...rest } = props;
 
@@ -63,15 +66,23 @@ export const PictureInPictureButton = React.forwardRef<
     [onClick, requestTogglePictureInPicture],
   );
 
-  const _children = icon ? icon : <DefaultPictureInPictureIcon />;
+  const isPiPSupported = React.useMemo(
+    () => isPictureInPictureSupported(_element),
+    [_element],
+  );
 
-  const isPiPSupported = isPictureInPictureSupported(_element);
+  const title = React.useMemo(
+    () => (pictureInPicture ? 'Exit mini player (i)' : 'Mini player (i)'),
+    [pictureInPicture],
+  );
 
-  if (!isPiPSupported) {
-    return null;
+  // do not show button if it is not supported or if currently fullscreen
+  if (!isPiPSupported || fullscreen) {
+    return <></>;
   }
 
-  const title = 'Toggle Picture-in-Picture';
+  const _children = icon ? icon : <DefaultPictureInPictureIcon />;
+
   return (
     <button
       {...rest}

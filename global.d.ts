@@ -32,8 +32,6 @@ declare global {
   }
 
   interface HTMLVideoElement extends HTMLVideoElement {
-    disablePictureInPicture?: boolean;
-
     /**
      * A Boolean value indicating whether the video is displaying in fullscreen mode.
      *

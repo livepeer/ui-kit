@@ -1,8 +1,8 @@
 export {
   ControlsContainer,
   FullscreenButton,
-  PictureInPictureButton,
   MediaControllerProvider,
+  PictureInPictureButton,
   PlayButton,
   Player,
   Poster,
@@ -17,8 +17,8 @@ export {
 export type {
   ControlsContainerProps,
   FullscreenButtonProps,
-  PictureInPictureButtonProps,
   MediaControllerProviderProps,
+  PictureInPictureButtonProps,
   PlayButtonProps,
   PlayerObjectFit,
   PlayerProps,

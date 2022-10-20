@@ -1,4 +1,5 @@
 export * from 'livepeer';
+export { isPictureInPictureSupported } from 'livepeer/media/controls';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
@@ -9,8 +10,8 @@ export type { CreateReactClientConfig, ReactClient } from './client';
 export {
   ControlsContainer,
   FullscreenButton,
-  PictureInPictureButton,
   MediaControllerProvider,
+  PictureInPictureButton,
   PlayButton,
   Player,
   Poster,
@@ -25,8 +26,8 @@ export {
 export type {
   ControlsContainerProps,
   FullscreenButtonProps,
-  PictureInPictureButtonProps,
   MediaControllerProviderProps,
+  PictureInPictureButtonProps,
   PlayButtonProps,
   PlayerObjectFit,
   PlayerProps,
