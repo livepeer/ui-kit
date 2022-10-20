@@ -1,7 +1,6 @@
+import { isPictureInPictureSupported } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
-
-import { isPictureInPictureSupported } from '../../../../../core/src/media/controls/pictureinpicture'; // TODO: Implement absolute imports
 
 import { PropsOf } from '../../system';
 import { useMediaController } from '../context';
