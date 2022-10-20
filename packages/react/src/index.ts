@@ -1,4 +1,5 @@
 export * from 'livepeer';
+export { isPictureInPictureSupported } from 'livepeer/media/controls';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
@@ -10,6 +11,7 @@ export {
   ControlsContainer,
   FullscreenButton,
   MediaControllerProvider,
+  PictureInPictureButton,
   PlayButton,
   Player,
   Poster,
@@ -25,6 +27,7 @@ export type {
   ControlsContainerProps,
   FullscreenButtonProps,
   MediaControllerProviderProps,
+  PictureInPictureButtonProps,
   PlayButtonProps,
   PlayerObjectFit,
   PlayerProps,

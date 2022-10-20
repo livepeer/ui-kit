@@ -9,6 +9,13 @@ import {
   exitFullscreen,
   isCurrentlyFullscreen,
 } from './fullscreen';
+import {
+  addEnterPictureInPictureEventListener,
+  addExitPictureInPictureEventListener,
+  enterPictureInPicture,
+  exitPictureInPicture,
+  isCurrentlyPictureInPicture,
+} from './pictureInPicture';
 
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE = 'data-controller-initialized';
 
@@ -33,8 +40,15 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   hasPlayed: boolean;
   /** If the element is fullscreen */
   fullscreen: boolean;
+
+  /** If the element is in picture in picture mode */
+  pictureInPicture: boolean;
+
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
+
+  /** The last time that picture in picture was changed*/
+  _requestedPictureInPictureLastTime: number;
 
   /** If the content is live media */
   live: boolean;
@@ -83,7 +97,9 @@ export type MediaControllerState<TElement extends HTMLMediaElement> = {
   setLive: (fullscreen: boolean) => void;
 
   setFullscreen: (fullscreen: boolean) => void;
+  setPictureInPicture: (pictureInPicture: boolean) => void;
   requestToggleFullscreen: () => void;
+  requestTogglePictureInPicture: () => void;
 
   _setVolume: (volume: number) => void;
   requestVolume: (volume: number) => void;
@@ -99,6 +115,7 @@ export const allKeyTriggers = [
   'KeyF',
   'KeyK',
   'KeyM',
+  'KeyI',
   'Space',
   'ArrowRight',
   'ArrowLeft',
@@ -165,6 +182,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         hasPlayed: false,
         playing: !element?.paused,
         fullscreen: false,
+        pictureInPicture: false,
 
         device: {
           isMobile: isMobile(),
@@ -185,6 +203,7 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
 
         _requestedRangeToSeekTo: 0,
         _requestedFullscreenLastTime: Date.now(),
+        _requestedPictureInPictureLastTime: Date.now(),
 
         setHidden: (hidden: boolean) =>
           set(({ playing }) => ({ hidden: playing ? hidden : false })),
@@ -235,6 +254,13 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         requestToggleFullscreen: () =>
           set(() => ({
             _requestedFullscreenLastTime: Date.now(),
+          })),
+
+        setPictureInPicture: (pictureInPicture: boolean) =>
+          set(() => ({ pictureInPicture })),
+        requestTogglePictureInPicture: () =>
+          set(() => ({
+            _requestedPictureInPictureLastTime: Date.now(),
           })),
 
         setLive: (live: boolean) => set(() => ({ live })),
@@ -321,6 +347,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
         store.getState().togglePlay();
       } else if (code === 'KeyF') {
         store.getState().requestToggleFullscreen();
+      } else if (code === 'KeyI') {
+        store.getState().requestTogglePictureInPicture();
       } else if (code === 'ArrowRight') {
         store.getState().requestSeekForward();
       } else if (code === 'ArrowLeft') {
@@ -422,16 +450,15 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
   }
 
-  const onFullScreenChange = (e: Event) => {
-    const isFullscreenElementPresent = isCurrentlyFullscreen(element);
+  const onFullscreenChange = () => {
+    store.getState().setFullscreen(isCurrentlyFullscreen(element));
+  };
 
-    const eventTargetIncludesElement = Boolean(
-      (e?.target as Element)?.contains?.(element),
-    );
-
-    if (eventTargetIncludesElement) {
-      store.getState().setFullscreen(Boolean(isFullscreenElementPresent));
-    }
+  const onEnterPictureInPicture = () => {
+    store.getState().setPictureInPicture(true);
+  };
+  const onExitPictureInPicture = () => {
+    store.getState().setPictureInPicture(false);
   };
 
   // add effects
@@ -440,12 +467,23 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   });
 
   // add fullscreen listener
-  const removeFullscreenListener =
-    addFullscreenEventListener(onFullScreenChange);
+  const removeFullscreenListener = addFullscreenEventListener(
+    element,
+    onFullscreenChange,
+  );
+
+  // add picture in picture listeners
+  const removeEnterPictureInPictureListener =
+    addEnterPictureInPictureEventListener(element, onEnterPictureInPicture);
+  const removeExitPictureInPictureListener =
+    addExitPictureInPictureEventListener(element, onExitPictureInPicture);
 
   return {
     destroy: () => {
       removeFullscreenListener?.();
+
+      removeEnterPictureInPictureListener?.();
+      removeExitPictureInPictureListener?.();
 
       element?.removeEventListener?.('canplay', onCanPlay);
       element?.removeEventListener?.('play', onPlay);
@@ -475,7 +513,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   };
 };
 
-let previousPromise: Promise<void> | boolean | null;
+let previousPromise: Promise<void> | Promise<null> | boolean | null;
 
 const addEffectsToStore = <TElement extends HTMLMediaElement>(
   store: StoreApi<MediaControllerState<TElement>>,
@@ -484,74 +522,92 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
 ) => {
   // add effects to store changes
   return store.subscribe(async (current, prev) => {
-    if (element) {
-      if (previousPromise) {
-        try {
-          await previousPromise;
-        } catch (e) {
-          //
+    try {
+      if (element) {
+        if (previousPromise) {
+          try {
+            // wait for the previous promise to execute before handling the next effect
+            await previousPromise;
+          } catch (e) {
+            console.warn(e);
+          }
         }
-      }
 
-      if (current.playing !== prev.playing) {
-        if (current.playing) {
-          previousPromise = element.play();
-        } else {
-          element.pause();
+        if (current.playing !== prev.playing) {
+          if (current.playing) {
+            previousPromise = element.play();
+          } else {
+            element.pause();
+          }
         }
-      }
 
-      if (current.volume !== prev.volume) {
-        element.volume = current.volume;
-      }
-
-      if (current.muted !== prev.muted) {
-        element.muted = current.muted;
-        if (current.volume === 0) {
-          element.volume = DEFAULT_VOLUME_LEVEL;
+        if (current.volume !== prev.volume) {
+          element.volume = current.volume;
         }
-      }
 
-      if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
-        // Can't set the time before the media is ready
-        // Ignore if readyState isn't supported
+        if (current.muted !== prev.muted) {
+          element.muted = current.muted;
+          if (current.volume === 0) {
+            element.volume = DEFAULT_VOLUME_LEVEL;
+          }
+        }
+
+        if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
+          // Can't set the time before the media is ready
+          // Ignore if readyState isn't supported
+          if (
+            typeof element.readyState === 'undefined' ||
+            element.readyState > 0
+          ) {
+            element.currentTime = current._requestedRangeToSeekTo;
+          }
+        }
+
+        // user has interacted with element
         if (
-          typeof element.readyState === 'undefined' ||
-          element.readyState > 0
+          options.autohide &&
+          current._lastInteraction !== prev._lastInteraction
         ) {
-          element.currentTime = current._requestedRangeToSeekTo;
+          store.getState().setHidden(false);
+
+          await delay(options.autohide);
+
+          if (
+            !store.getState().hidden &&
+            current._lastInteraction === store.getState()._lastInteraction
+          ) {
+            store.getState().setHidden(true);
+          }
         }
-      }
-
-      // user has interacted with element
-      if (
-        options.autohide &&
-        current._lastInteraction !== prev._lastInteraction
-      ) {
-        store.getState().setHidden(false);
-
-        await delay(options.autohide);
 
         if (
-          !store.getState().hidden &&
-          current._lastInteraction === store.getState()._lastInteraction
+          current._requestedFullscreenLastTime !==
+          prev._requestedFullscreenLastTime
         ) {
-          store.getState().setHidden(true);
+          const isFullscreen = isCurrentlyFullscreen(element);
+
+          if (!isFullscreen) {
+            previousPromise = enterFullscreen(element);
+          } else {
+            previousPromise = exitFullscreen(element);
+          }
+        }
+
+        if (
+          current._requestedPictureInPictureLastTime !==
+          prev._requestedPictureInPictureLastTime
+        ) {
+          const isPictureInPicture = isCurrentlyPictureInPicture(element);
+
+          if (!isPictureInPicture) {
+            previousPromise = enterPictureInPicture(element);
+          } else {
+            previousPromise = exitPictureInPicture(element);
+          }
         }
       }
-
-      if (
-        current._requestedFullscreenLastTime !==
-        prev._requestedFullscreenLastTime
-      ) {
-        const isFullscreen = isCurrentlyFullscreen(element);
-
-        if (!isFullscreen) {
-          previousPromise = enterFullscreen(element);
-        } else {
-          previousPromise = exitFullscreen(element);
-        }
-      }
+    } catch (e) {
+      console.warn(e);
     }
   });
 };

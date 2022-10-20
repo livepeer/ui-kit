@@ -8,6 +8,10 @@ export {
   FullscreenButton,
   type FullscreenButtonProps,
 } from './FullscreenButton';
+export {
+  PictureInPictureButton,
+  type PictureInPictureButtonProps,
+} from './PictureInPictureButton';
 export { PlayButton, type PlayButtonProps } from './PlayButton';
 export { Poster, type PosterProps } from './Poster';
 export { Progress, type ProgressProps } from './Progress';
