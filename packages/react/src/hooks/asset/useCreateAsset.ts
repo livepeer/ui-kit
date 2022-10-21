@@ -12,27 +12,31 @@ import {
 import { useLivepeerProvider } from '../providers';
 
 export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
-  options?: Partial<
-    UsePickMutationOptions<
-      Asset,
-      Error,
-      Omit<CreateAssetArgs, 'onUploadProgress'>
-    >
-  >,
+  options?: <TData = Asset[], TError = Error>(
+    provider: TLivepeerProvider,
+  ) => UsePickMutationOptions<TData, TError, CreateAssetArgs>,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const [uploadProgress, setUploadProgress] = useState<number | undefined>(
+  const [uploadProgress, setUploadProgress] = useState<number[] | undefined>(
     undefined,
   );
 
   const internalQuery = useInternalMutation(
-    async (args: CreateAssetArgs) =>
-      createAsset<TLivepeerProvider>({
-        ...args,
-        onUploadProgress: (progress) =>
-          setUploadProgress(progress === 1 ? undefined : progress),
-      }),
+    async (args: CreateAssetArgs[]) =>
+      Promise.all(
+        args.map((arg, index) =>
+          createAsset<TLivepeerProvider>({
+            ...arg,
+            onUploadProgress: (progress) =>
+              setUploadProgress((prev) => {
+                const next = [...(prev || [])];
+                next[index] = progress;
+                return next;
+              }),
+          }),
+        ),
+      ),
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'createAsset', livepeerProvider }],

@@ -22,18 +22,20 @@ import { Callout } from 'nextra-theme-docs';
   [`Player`](/docs/Player).
 </Callout>
 
+You can upload multiple assets at once by passing an array of files to the `mutate` function.
+
 The following example shows how an asset can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
 function.
 
-```tsx {7, 25-28}
+```tsx {7, 29-34}
 import { useAsset, useCreateAsset } from '@livepeer/react';
 import { useState } from 'react';
 
 function App() {
-  const [video, setVideo] = useState<File | undefined>();
+  const [videos, setVideos] = useState<File[]>([]);
   const {
-    mutate: createAsset,
-    data: asset,
+    mutate: createAssets,
+    data: assets,
     uploadProgress,
     status,
     error,
@@ -43,30 +45,42 @@ function App() {
     <div>
       <input
         type="file"
+        multiple
         accept="video/*"
-        onChange={(e) => setVideo(e?.target?.files?.[0])}
+        onChange={(e) => {
+          if (e.target.files) {
+            setVideos(Array.from(e.target.files));
+          }
+        }}
       />
       <button
-        disabled={!video || status === 'loading'}
+        disabled={!videos || status === 'loading'}
         onClick={() => {
-          if (video) {
-            createAsset({
-              name: video.name,
-              file: video,
-            });
-          }
+          const files = videos.map((video) => ({
+            file: video,
+            name: video.name,
+          }));
+
+          createAssets(files);
         }}
       >
         Create Asset
       </button>
-      {asset && (
-        <>
-          <div>Asset Name: {asset?.name}</div>
-          <div>Playback URL: {asset?.playbackUrl}</div>
-          {uploadProgress && <div>Upload Progress: {Math.floor(uploadProgress * 100)}}%</div>}
-          {asset?.status?.progress && <div>Processing Progress: {Math.floor(asset.status.progress * 100)}}%</div>}
-        </>
-      )}
+      {assets?.map((asset) => (
+        <div
+          style={{
+            marginTop: 20,
+          }}
+          key={asset.id}
+        >
+          <div>
+            <div>Asset Name: {asset?.name}</div>
+            <div>Playback URL: {asset?.playbackUrl}</div>
+            <div>IPFS CID: {asset?.storage?.ipfs?.cid ?? 'None'}</div>
+          </div>
+        </div>
+      ))}
+
       {error && <div>{error.message}</div>}
     </div>
   );
@@ -80,19 +94,21 @@ aggregated for simplicity. The `uploadProgress` is a number from 0-1 which repre
 [tus](https://github.com/tus/tus-js-client) - the value is undefined unless an upload is in progress.
 
 ```tsx
-{
-  data?: Asset,
-  uploadProgress?: number,
-  error?: Error,
-  isError: boolean,
-  isIdle: boolean,
-  isLoading: boolean,
-  isSuccess: boolean,
-  status: 'idle' | 'loading' | 'success' | 'error',
-  mutate: (config: CreateAssetArgs, options?: MutateOptions) => void,
-  mutateAsync: (config: CreateAssetArgs, options?: MutateOptions) => Promise<Asset>,
-  variables?: CreateAssetArgs
-}
+[
+  {
+    data?: Asset,
+    uploadProgress?: number[],
+    error?: Error,
+    isError: boolean,
+    isIdle: boolean,
+    isLoading: boolean,
+    isSuccess: boolean,
+    status: 'idle' | 'loading' | 'success' | 'error',
+    mutate: (config: CreateAssetArgs, options?: MutateOptions) => void,
+    mutateAsync: (config: CreateAssetArgs, options?: MutateOptions) => Promise<Asset>,
+    variables?: CreateAssetArgs
+  }
+]
 ```
 
 The variables for the mutate function(s) are defined as:
