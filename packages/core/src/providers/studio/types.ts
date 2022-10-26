@@ -57,12 +57,7 @@ export type StudioAssetPatchPayload = {
    * Name of the asset. This is not necessarily the filename, can be a custom name or title
    */
   name?: string;
-  /**
-   * User input metadata associated with the asset
-   */
-  meta?: {
-    [k: string]: string;
-  };
+  /** Storage configs for the asset */
   storage?: {
     ipfs?:
       | {
