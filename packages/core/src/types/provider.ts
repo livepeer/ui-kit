@@ -23,7 +23,7 @@ export interface LivepeerProvider {
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
   /** Create a new asset */
-  createAsset(args: CreateAssetArgs): Promise<Asset>;
+  createAsset(args: CreateAssetArgs): Promise<Asset[]>;
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
@@ -148,7 +148,7 @@ export type AssetIdOrString =
       assetId: string;
     };
 
-export type CreateAssetArgs = {
+export type CreateAssetFile = {
   /** Name for the new asset */
   name: string;
   /** Metadata associated with the asset */
@@ -157,17 +157,27 @@ export type CreateAssetArgs = {
   file: File | ReadStream;
   /** Size of the upload file. Must provide this if the file is a ReadStream */
   uploadSize?: number;
+};
+
+export type UploadFileProgress = {
+  name: string;
+  progress: number;
+};
+
+export type UploadProgress = {
+  /** Total bytes uploaded */
+  average: number;
+  /** Total bytes uploaded */
+  files: UploadFileProgress[];
+};
+
+export type CreateAssetArgs = {
+  files: CreateAssetFile[];
   /**
-   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   * Callback to receive progress, it is a object that include average and array of files
    */
-  onUploadProgress?: (progress: number) => void;
-} & (
-  | { file: File }
-  | {
-      file: ReadStream;
-      uploadSize: number;
-    }
-);
+  onUploadProgress?: (progress: UploadProgress) => void;
+};
 
 export type Metadata = {
   /** Name of the Asset */

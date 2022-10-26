@@ -3,9 +3,12 @@ import { useState } from 'react';
 
 export const Asset = () => {
   const [videos, setVideos] = useState<File[]>([]);
-
-  const { mutate: createAssets, data: assets, status } = useCreateAsset();
-
+  const {
+    mutate: createAsset,
+    data: assets,
+    status,
+    uploadProgress,
+  } = useCreateAsset();
   const { mutate: updateAsset, status: updateStatus, error } = useUpdateAsset();
 
   const handleCreateAsset = async () => {
@@ -13,10 +16,12 @@ export const Asset = () => {
       file: video,
       name: video.name,
     }));
-
-    createAssets(files);
+    createAsset({
+      files,
+    });
   };
 
+  console.log('upload progress', uploadProgress);
   return (
     <div>
       <input
@@ -25,7 +30,7 @@ export const Asset = () => {
         accept="video/*"
         onChange={(e) => {
           if (e.target.files) {
-            setVideos(Array.from(e.target.files));
+            setVideos([...e.target.files]);
           }
         }}
       />
@@ -68,7 +73,6 @@ export const Asset = () => {
           </div>
         ))}
       </>
-
       {error && <div>{error.message}</div>}
     </div>
   );

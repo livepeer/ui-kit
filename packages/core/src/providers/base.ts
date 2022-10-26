@@ -116,7 +116,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
   abstract getStreamSessions(
     args: GetStreamSessionsArgs,
   ): Promise<StreamSession[]>;
-  abstract createAsset(args: CreateAssetArgs): Promise<Asset>;
+  abstract createAsset(args: CreateAssetArgs): Promise<Asset[]>;
   abstract getAsset(args: GetAssetArgs): Promise<Asset>;
   abstract updateAsset(args: UpdateAssetArgs): Promise<Asset>;
   abstract getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;

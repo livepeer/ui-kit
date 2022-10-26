@@ -1,4 +1,5 @@
 import { createAsset } from 'livepeer/actions';
+import { UploadProgress } from 'livepeer/src/types/provider';
 import { Asset, CreateAssetArgs, LivepeerProvider } from 'livepeer/types';
 import { pick } from 'livepeer/utils';
 import { useState } from 'react';
@@ -12,31 +13,26 @@ import {
 import { useLivepeerProvider } from '../providers';
 
 export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
-  options?: <TData = Asset[], TError = Error>(
-    provider: TLivepeerProvider,
-  ) => UsePickMutationOptions<TData, TError, CreateAssetArgs>,
+  options?: Partial<
+    UsePickMutationOptions<
+      Asset[],
+      Error,
+      Omit<CreateAssetArgs, 'onUploadProgress'>
+    >
+  >,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
-  const [uploadProgress, setUploadProgress] = useState<number[] | undefined>(
-    undefined,
-  );
+  const [uploadProgress, setUploadProgress] = useState<
+    UploadProgress | undefined
+  >(undefined);
 
   const internalQuery = useInternalMutation(
-    async (args: CreateAssetArgs[]) =>
-      Promise.all(
-        args.map((arg, index) =>
-          createAsset<TLivepeerProvider>({
-            ...arg,
-            onUploadProgress: (progress) =>
-              setUploadProgress((prev) => {
-                const next = [...(prev || [])];
-                next[index] = progress;
-                return next;
-              }),
-          }),
-        ),
-      ),
+    async (args: CreateAssetArgs) =>
+      createAsset<TLivepeerProvider>({
+        files: args.files,
+        onUploadProgress: (progress) => setUploadProgress(progress),
+      }),
     {
       context: QueryClientContext,
       mutationKey: [{ entity: 'createAsset', livepeerProvider }],

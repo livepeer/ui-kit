@@ -34,12 +34,14 @@ describe('useCreateAsset', () => {
       const { result, waitFor } = utils;
       await waitFor(() => expect(result.current.mutate).toBeDefined());
       await act(async () => {
-        result.current.mutateAsync?.([
-          {
-            name: assetName,
-            ...getSampleVideo(),
-          },
-        ]);
+        result.current.mutateAsync?.({
+          files: [
+            {
+              name: assetName,
+              ...getSampleVideo(),
+            },
+          ],
+        });
       });
 
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
@@ -62,9 +64,15 @@ describe('useCreateAsset', () => {
           "mutate": [Function],
           "mutateAsync": [Function],
           "status": "success",
-          "uploadProgress": [
-            1,
-          ],
+          "uploadProgress": {
+            "average": 1,
+            "files": [
+              {
+                "name": "livepeer.js tests :: new asset",
+                "progress": 1,
+              },
+            ],
+          },
         }
       `);
     }, 20_000);

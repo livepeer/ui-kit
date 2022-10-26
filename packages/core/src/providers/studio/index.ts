@@ -21,6 +21,7 @@ import {
   UpdateStreamArgs,
   ViewsMetrics,
 } from '../../types';
+import { CreateAssetFile, UploadFileProgress } from '../../types/provider';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
@@ -120,56 +121,91 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return studioStreamSessions;
   }
 
-  async createAsset(args: CreateAssetArgs): Promise<Asset> {
-    const uploadReq = await this._create<
-      { tusEndpoint: string; asset: { id: string } },
-      Omit<CreateAssetArgs, 'file'>
-    >('/asset/request-upload', {
-      json: {
-        name: args.name,
-        meta: args.meta,
-      },
-      headers: this._defaultHeaders,
-    });
-    const {
-      tusEndpoint,
-      asset: { id: assetId },
-    } = uploadReq;
+  async createAsset(args: CreateAssetArgs): Promise<Asset[]> {
+    const { files, onUploadProgress } = args;
 
-    await new Promise<void>((resolve, reject) => {
-      const upload = new tus.Upload(args.file, {
-        endpoint: tusEndpoint,
-        metadata: {
-          id: assetId,
-        },
-        uploadSize: args.uploadSize,
-        // Chunk size is required if input is a stream (and S3 min is 5MB), but
-        // not recommended if it is a file.
-        ...(args.file instanceof File ? null : { chunkSize: 5 * 1024 * 1024 }),
+    let uploadProgress = {
+      average: 0,
+      files: [] as UploadFileProgress[],
+    };
 
-        onError(error) {
-          reject(error);
-        },
-        onProgress(bytesSent, bytesTotal) {
-          args?.onUploadProgress?.(bytesSent / bytesTotal);
-        },
-        onSuccess() {
-          args?.onUploadProgress?.(1);
-          return resolve();
-        },
-      });
+    const assets = await Promise.all(
+      files.map(async (file, index) => {
+        const uploadReq = await this._create<
+          { tusEndpoint: string; asset: { id: string } },
+          Omit<CreateAssetFile, 'file'>
+        >('/asset/request-upload', {
+          json: {
+            name: file.name,
+            meta: file.meta,
+          },
+          headers: this._defaultHeaders,
+        });
 
-      upload
-        .findPreviousUploads()
-        .then((previousUploads) => {
-          if (previousUploads?.length > 0 && previousUploads[0]) {
-            upload.resumeFromPreviousUpload(previousUploads[0]);
-          }
-          upload.start();
-        })
-        .catch(reject);
-    });
-    return this.getAsset(assetId);
+        const {
+          tusEndpoint,
+          asset: { id: assetId },
+        } = uploadReq;
+
+        await new Promise<void>((resolve, reject) => {
+          const upload = new tus.Upload(file.file, {
+            endpoint: tusEndpoint,
+            metadata: {
+              id: assetId,
+            },
+            uploadSize: file.uploadSize,
+            ...(file.file instanceof File
+              ? null
+              : { chunkSize: 5 * 1024 * 1024 }),
+
+            onError: (error) => {
+              console.log('Failed because: ', error);
+            },
+            onProgress(bytesSent, bytesTotal) {
+              const progress = bytesSent / bytesTotal;
+
+              uploadProgress = {
+                average: uploadProgress.average,
+                files: [
+                  ...uploadProgress.files.slice(0, index),
+                  {
+                    name: file.name,
+                    progress,
+                  },
+                  ...uploadProgress.files.slice(index + 1),
+                ],
+              };
+
+              uploadProgress.average =
+                uploadProgress.files.reduce(
+                  (acc, { progress }) => acc + progress,
+                  0,
+                ) / uploadProgress.files.length;
+
+              onUploadProgress?.(uploadProgress);
+            },
+
+            onSuccess() {
+              resolve();
+            },
+          });
+
+          upload
+            .findPreviousUploads()
+            .then((previousUploads) => {
+              if (previousUploads?.length > 0 && previousUploads[0]) {
+                upload.resumeFromPreviousUpload(previousUploads[0]);
+              }
+              upload.start();
+            })
+            .catch(reject);
+        });
+
+        return this.getAsset(assetId);
+      }),
+    );
+
+    return assets;
   }
 
   async getAsset(args: GetAssetArgs): Promise<Asset> {
