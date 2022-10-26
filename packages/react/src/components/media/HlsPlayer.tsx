@@ -1,12 +1,12 @@
+import { HlsSrc, canPlayMediaNatively } from 'livepeer/media';
+import { MediaControllerState } from 'livepeer/media/controls';
 import {
-  HlsSrc,
   HlsVideoConfig,
-  MediaControllerState,
-  canPlayMediaNatively,
   createNewHls,
   isHlsSupported,
-  styling,
-} from 'livepeer';
+} from 'livepeer/media/hls';
+import { styling } from 'livepeer/styling';
+
 import * as React from 'react';
 
 import { PlayerObjectFit } from './Player';

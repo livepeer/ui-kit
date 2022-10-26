@@ -24,8 +24,7 @@ export const DemoPlayer = () => {
     <Player
       title="Agent 327"
       playbackId={playbackId}
-      // autoPlay
-      // muted
+      showPipButton
       showTitle
       aspectRatio="16to9"
       poster={<PosterImage />}

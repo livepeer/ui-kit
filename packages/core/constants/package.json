@@ -1,0 +1,4 @@
+{
+  "main": "dist/livepeer-constants.cjs.js",
+  "module": "dist/livepeer-constants.esm.js"
+}

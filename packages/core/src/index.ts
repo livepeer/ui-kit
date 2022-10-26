@@ -21,33 +21,19 @@ export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
 export {
-  addEventListeners,
   canPlayMediaNatively,
-  createControllerStore,
-  createNewHls,
-  createPlayerTheme,
-  defaultTheme,
-  getCssText,
   getMediaSourceType,
   getMetricsReportingUrl,
-  isHlsSupported,
   MetricsStatus,
   PlaybackMonitor,
   reportMediaMetrics,
-  styling,
 } from './media';
 export type {
-  AspectRatio,
   AudioSrc,
-  ControlsOptions,
   HlsSrc,
-  HlsVideoConfig,
-  MediaControllerState,
-  MediaControllerStore,
   PlaybackRecord,
   RawMetrics,
   Src,
-  ThemeConfig,
   VideoSrc,
 } from './media';
 export { createStorage, noopStorage } from './storage';

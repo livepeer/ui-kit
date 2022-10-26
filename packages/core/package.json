@@ -2,7 +2,7 @@
   "name": "livepeer",
   "description": "Livepeer's vanilla JS library.",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -18,6 +18,18 @@
       "module": "./dist/livepeer.esm.js",
       "default": "./dist/livepeer.cjs.js"
     },
+    "./actions": {
+      "module": "./actions/dist/livepeer-actions.esm.js",
+      "default": "./actions/dist/livepeer-actions.cjs.js"
+    },
+    "./client": {
+      "module": "./client/dist/livepeer-client.esm.js",
+      "default": "./client/dist/livepeer-client.cjs.js"
+    },
+    "./constants": {
+      "module": "./constants/dist/livepeer-constants.esm.js",
+      "default": "./constants/dist/livepeer-constants.cjs.js"
+    },
     "./contracts": {
       "module": "./contracts/dist/livepeer-contracts.esm.js",
       "default": "./contracts/dist/livepeer-contracts.cjs.js"
@@ -26,42 +38,95 @@
       "module": "./crypto/dist/livepeer-crypto.esm.js",
       "default": "./crypto/dist/livepeer-crypto.cjs.js"
     },
+    "./errors": {
+      "module": "./errors/dist/livepeer-errors.esm.js",
+      "default": "./errors/dist/livepeer-errors.cjs.js"
+    },
+    "./media": {
+      "module": "./media/dist/livepeer-media.esm.js",
+      "default": "./media/dist/livepeer-media.cjs.js"
+    },
+    "./media/controls": {
+      "module": "./media/controls/dist/livepeer-media-controls.esm.js",
+      "default": "./media/controls/dist/livepeer-media-controls.cjs.js"
+    },
+    "./media/hls": {
+      "module": "./media/hls/dist/livepeer-media-hls.esm.js",
+      "default": "./media/hls/dist/livepeer-media-hls.cjs.js"
+    },
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
       "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+    },
+    "./styling": {
+      "module": "./styling/dist/livepeer-styling.esm.js",
+      "default": "./styling/dist/livepeer-styling.cjs.js"
+    },
+    "./types": {
+      "module": "./types/dist/livepeer-types.esm.js",
+      "default": "./types/dist/livepeer-types.cjs.js"
+    },
+    "./utils": {
+      "module": "./utils/dist/livepeer-utils.esm.js",
+      "default": "./utils/dist/livepeer-utils.cjs.js"
     }
   },
   "sideEffects": false,
   "files": [
+    "/actions",
+    "/client",
+    "/constants",
     "/contracts",
     "/crypto",
+    "/errors",
+    "/media",
     "/providers",
+    "/styling",
+    "/types",
+    "/utils",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
+      "errors.ts",
+      "actions/index.ts",
+      "client/index.ts",
+      "constants/index.ts",
       "contracts/index.ts",
       "crypto/index.ts",
-      "providers/studio/index.ts"
+      "media/index.ts",
+      "media/controls/index.ts",
+      "media/hls/index.ts",
+      "providers/studio/index.ts",
+      "styling/index.ts",
+      "types/index.ts",
+      "utils/index.ts"
     ]
   },
   "peerDependencies": {
-    "ethers": ">=5.6.9"
+    "ethers": ">=5.6.9",
+    "react": ">=17.0.0"
   },
-  "peerDependenciesMeta": {},
+  "peerDependenciesMeta": {
+    "ethers": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@stitches/core": "^1.2.8",
-    "core-js": "^3.25.2",
+    "core-js": "^3.26.0",
     "cross-fetch": "^3.1.5",
-    "hls.js": "^1.2.1",
-    "jose": "^4.10.0",
-    "tus-js-client": "^3.0.0",
-    "zustand": "^4.1.1"
+    "hls.js": "^1.2.4",
+    "tus-js-client": "^3.0.1",
+    "zustand": "^4.1.3"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
-    "ethers": "^5.7.0"
+    "ethers": "^5.7.2"
   },
   "keywords": [
     "eth",

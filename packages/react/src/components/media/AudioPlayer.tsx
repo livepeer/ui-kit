@@ -1,9 +1,6 @@
-import {
-  AudioSrc,
-  MediaControllerState,
-  canPlayMediaNatively,
-  styling,
-} from 'livepeer';
+import { AudioSrc, canPlayMediaNatively } from 'livepeer/media';
+import { MediaControllerState } from 'livepeer/media/controls';
+import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
 import { HlsPlayerProps } from './HlsPlayer';

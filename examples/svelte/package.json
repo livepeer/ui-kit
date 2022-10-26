@@ -1,0 +1,19 @@
+{
+  "name": "example-svelte",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "svelte": "^3.52.0",
+    "vite": "^3.2.0"
+  },
+  "dependencies": {
+    "livepeer": "workspace:^1.2.0"
+  }
+}

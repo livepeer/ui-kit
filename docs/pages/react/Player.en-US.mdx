@@ -52,6 +52,7 @@ export const SimplePlayer = () => {
       title="Agent 327: Operation Barbershop"
       playbackId="6d7el73r1y12chxr"
       poster={<PosterImage />}
+      showPipButton
     />
   );
 };
@@ -418,6 +419,39 @@ function App() {
   objectFit="contain"
 />
 
+### showPipButton
+
+Shows the Picture-in-Picture button to the left of the fullscreen button. Defaults to `false`.
+See [children](#children) for an example on how to use the underlying `<PictureInPictureButton />`.
+
+<Callout emoji="🌐">
+  We support both the [w3c](https://w3c.github.io/picture-in-picture/) standard
+  (which most modern browsers support), as well as the [older Safari/iOS
+  spec](https://developer.apple.com/documentation/webkitjs/adding_picture_in_picture_to_your_safari_media_controls).
+  See the browsers which support Picture-in-Picture on
+  [caniuse](https://caniuse.com/picture-in-picture).
+</Callout>
+
+```tsx {8}
+import { Player } from '@livepeer/react';
+
+function App() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      showPipButton
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  showPipButton
+/>
+
 ### theme
 
 Sets the Player-specific theme overrides. It is recommended to use [`LivepeerConfig`](/react/LivepeerConfig) for
@@ -477,14 +511,15 @@ function App() {
 
 ### children
 
-Overrides the custom controls for the Player. The below example removes the fullscreen controls on the right and the volume
+Overrides the custom controls for the Player. The below example removes the fullscreen button, adds a PiP button, and the volume
 slider (so volume is only 0% or 100%). See the
 [`Player` default controls](https://github.com/livepeer/livepeer.js/blob/main/packages/react/src/components/media/Player.tsx)
 for more details on how the `ControlsContainer` component is used.
 
-```tsx {28-39}
+```tsx {29-41}
 import {
   ControlsContainer,
+  PictureInPictureButton,
   PlayButton,
   Player,
   Poster,
@@ -521,6 +556,7 @@ export const CustomControlsPlayer = () => {
             <TimeDisplay />
           </>
         }
+        right={<PictureInPictureButton />}
       />
     </Player>
   );

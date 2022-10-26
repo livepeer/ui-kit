@@ -1,5 +1,6 @@
 import {
   ControlsContainer,
+  PictureInPictureButton,
   PlayButton,
   Poster,
   Progress,
@@ -36,6 +37,7 @@ export const CustomControlsPlayer = () => {
             <TimeDisplay />
           </>
         }
+        right={<PictureInPictureButton />}
       />
     </DocsDemoPlayer>
   );

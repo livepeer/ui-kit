@@ -1,0 +1,4 @@
+{
+  "main": "dist/livepeer-media-hls.cjs.js",
+  "module": "dist/livepeer-media-hls.esm.js"
+}

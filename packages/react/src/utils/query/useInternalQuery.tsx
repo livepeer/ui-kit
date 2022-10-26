@@ -1,5 +1,5 @@
 import { QueryKey, UseQueryOptions, useQuery } from '@tanstack/react-query';
-import { HttpError } from 'livepeer';
+import { HttpError } from 'livepeer/errors';
 import { useMemo } from 'react';
 
 import { Status } from './types';

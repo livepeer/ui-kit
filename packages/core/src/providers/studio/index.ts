@@ -134,7 +134,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     >('/asset/request-upload', {
       json: {
         name: args.name,
-        meta: args.meta,
       },
       headers: this._defaultHeaders,
     });

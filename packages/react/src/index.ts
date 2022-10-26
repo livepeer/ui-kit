@@ -1,14 +1,17 @@
 export * from 'livepeer';
+export { isPictureInPictureSupported } from 'livepeer/media/controls';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
 } from 'livepeer/providers/studio';
+export { defaultTheme, getCssText, styling } from 'livepeer/styling';
 export { createReactClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
   ControlsContainer,
   FullscreenButton,
   MediaControllerProvider,
+  PictureInPictureButton,
   PlayButton,
   Player,
   Poster,
@@ -24,6 +27,7 @@ export type {
   ControlsContainerProps,
   FullscreenButtonProps,
   MediaControllerProviderProps,
+  PictureInPictureButtonProps,
   PlayButtonProps,
   PlayerObjectFit,
   PlayerProps,

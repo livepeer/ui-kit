@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React components & hooks for apps built with Livepeer.",
   "license": "MIT",
-  "version": "1.0.6",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -18,48 +18,85 @@
       "module": "./dist/livepeer-react.esm.js",
       "default": "./dist/livepeer-react.cjs.js"
     },
+    "./components": {
+      "module": "./components/dist/livepeer-react-components.esm.js",
+      "default": "./components/dist/livepeer-react-components.cjs.js"
+    },
     "./contracts": {
       "module": "./contracts/dist/livepeer-react-contracts.esm.js",
       "default": "./contracts/dist/livepeer-react-contracts.cjs.js"
+    },
+    "./hooks": {
+      "module": "./hooks/dist/livepeer-react-hooks.esm.js",
+      "default": "./hooks/dist/livepeer-react-hooks.cjs.js"
+    },
+    "./utils": {
+      "module": "./utils/dist/livepeer-react-utils.esm.js",
+      "default": "./utils/dist/livepeer-react-utils.cjs.js"
     }
   },
   "sideEffects": false,
   "files": [
+    "client",
+    "context",
+    "/components",
     "/contracts",
+    "/hooks",
+    "/utils",
     "/dist"
   ],
   "preconstruct": {
     "entrypoints": [
       "index.ts",
-      "contracts/index.ts"
+      "client.ts",
+      "context.tsx",
+      "components/index.ts",
+      "contracts/index.ts",
+      "hooks/index.ts",
+      "utils/index.ts"
     ]
   },
   "peerDependencies": {
     "ethers": ">=5.5.1",
     "react": ">=17.0.0",
+    "react-dom": ">=17.0.0",
+    "react-native": "*",
     "wagmi": ">=0.6.2"
+  },
+  "peerDependenciesMeta": {
+    "ethers": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "wagmi": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@stitches/react": "^1.2.8",
-    "@tanstack/query-sync-storage-persister": "4.2.3",
-    "@tanstack/react-query": "4.2.3",
-    "@tanstack/react-query-persist-client": "4.2.1",
-    "core-js": "^3.25.2",
-    "livepeer": "^1.0.4",
+    "@tanstack/query-sync-storage-persister": "4.13.0",
+    "@tanstack/react-query": "4.13.0",
+    "@tanstack/react-query-persist-client": "4.13.0",
+    "core-js": "^3.26.0",
+    "livepeer": "workspace:^1.2.0",
     "use-sync-external-store": "^1.2.0",
-    "zustand": "^4.1.1"
+    "zustand": "^4.1.3"
   },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.0.18",
-    "@types/react-dom": "^18.0.6",
+    "@types/react": "^18.0.23",
+    "@types/react-dom": "^18.0.7",
     "@types/use-sync-external-store": "^0.0.3",
-    "ethers": "^5.7.0",
-    "livepeer": "^1.0.4",
+    "ethers": "^5.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "wagmi": "^0.6.4"
+    "wagmi": "^0.7.7"
   },
   "keywords": [
     "dapps",

@@ -1,6 +1,6 @@
 import { keyframes } from '@stitches/core';
 
-import { IS_MOBILE } from '../browser';
+import { isMobile } from '../media/browser';
 
 import { loading } from './loading';
 import { css } from './stitches';
@@ -20,11 +20,11 @@ const sharedContainer = css('div', {
     display: {
       shown: {
         opacity: 1,
-        animation: !IS_MOBILE ? `${shown} 0.2s` : undefined,
+        animation: !isMobile() ? `${shown} 0.2s` : undefined,
       },
       hidden: {
         opacity: 0,
-        animation: !IS_MOBILE ? `${hidden} 0.2s` : undefined,
+        animation: !isMobile() ? `${hidden} 0.2s` : undefined,
       },
     },
   },

@@ -167,8 +167,6 @@ export type AssetIdOrString =
 export type CreateAssetArgs = {
   /** Name for the new asset */
   name: string;
-  /** Metadata associated with the asset */
-  meta?: Record<string, string>;
   /** Content to be uploaded */
   file: File | ReadStream;
   /** Size of the upload file. Must provide this if the file is a ReadStream */
@@ -371,10 +369,7 @@ export type Asset = {
    * name or title
    */
   name: string;
-  /** User-managed metadata associated with the asset */
-  meta?: {
-    [k: string]: string;
-  };
+  /** Storage configs for the asset */
   storage?: {
     ipfs?: {
       /** CID of the file on IPFS */
