@@ -1,5 +1,11 @@
 # livepeer
 
+## 1.2.0
+
+### Minor Changes
+
+- [#104](https://github.com/livepeer/livepeer.js/pull/104) [`39d277f`](https://github.com/livepeer/livepeer.js/commit/39d277f6147bae605e97d64a0f56c0a3f4651f28) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** removed the `meta` field on an Asset (which is a custom field stored in the Studio provider and not replicated to IPFS) to reduce confusion around metadata fields.
+
 ## 1.1.0
 
 ### Minor Changes
