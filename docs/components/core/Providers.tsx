@@ -30,9 +30,9 @@ const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
     baseUrl:
-      process.env.VERCEL_ENV === 'production'
-        ? defaultStudioConfig.baseUrl
-        : 'https://livepeer.monster/api',
+      process.env.VERCEL_ENV === 'preview'
+        ? 'https://livepeer.monster/api'
+        : defaultStudioConfig.baseUrl,
   }),
 });
 

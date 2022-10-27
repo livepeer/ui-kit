@@ -125,7 +125,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       const createdAsset = await this._create<
         StudioAsset,
         Omit<CreateAssetArgs, 'file'>
-      >('/asset/import', {
+      >('/asset/upload/url', {
         json: {
           name: args.name,
           url: args.url,
