@@ -77,6 +77,9 @@ export type PlayerProps = {
 
   /** Whether to show the picture in picture button */
   showPipButton?: boolean;
+
+  /** If an IPFS CID or URL should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  autoImportIpfs?: boolean;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -90,7 +93,7 @@ export function Player({
   controls,
   muted,
   playbackId,
-  refetchPlaybackInfoInterval = 5000,
+  refetchPlaybackInfoInterval = 10000,
   src,
   theme,
   title,
@@ -101,6 +104,7 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
+  autoImportIpfs = true,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -109,6 +113,7 @@ export function Player({
     src,
     playbackId,
     refetchPlaybackInfoInterval,
+    autoImportIpfs,
   );
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);

@@ -8,8 +8,8 @@ import { IpfsPlayback } from '@components/examples';
 
 # Play a Video from IPFS
 
-Playing back video from IPFS is easy with livepeer.js! The example below uses [`useCreateAsset`](/react/hooks/useCreateAsset)
-and [`useAsset`](/react/hooks/useAsset) to create and view a video asset.
+Playing back video from IPFS is easy with livepeer.js! The example below uses the Player's built-in automatic IPFS import to
+play back transcoded IPFS content without any additional configuration.
 
 <IpfsPlayback />
 
@@ -47,188 +47,44 @@ function App() {
 }
 ```
 
-## Step 2: Video File Upload
+## Step 2: IPFS Playback
 
-Now that our providers are set up, we set up file uploads with [React Dropzone](https://react-dropzone.js.org/),
-a library for easily creating HTML5-compliant drag and drop zones for files (you can use another solution for file uploads):
+Now that our providers are set up, we can add a text input for an IPFS CID or URL using `parseCid` from the core `livepeer` package - _this is only
+used for UI purposes, to provide feedback if the user input is valid_.
 
-```tsx
-import { useCreateAsset } from '@livepeer/react';
-
-import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-
-export const CreateAndViewAsset = () => {
-  const [video, setVideo] = useState<File | undefined>();
-  const {
-    mutate: createAsset,
-    data: createdAsset,
-    status: createStatus,
-    error: createError,
-    uploadProgress,
-  } = useCreateAsset();
-
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles && acceptedFiles.length > 0 && acceptedFiles?.[0]) {
-      setVideo(acceptedFiles[0]);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      'video/*': ['*.mp4'],
-    },
-    maxFiles: 1,
-    onDrop,
-  });
-
-  const progressFormatted = useMemo(
-    () =>
-      uploadProgress
-        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
-        : asset?.status?.progress
-        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
-        : null,
-    [uploadProgress, asset?.status?.progress],
-  );
-
-  return (
-    <>
-      <Box {...getRootProps()}>
-        <Box as="input" {...getInputProps()} />
-        <Box as="p">
-          <Text>Drag and drop or browse files</Text>
-        </Box>
-      </Box>
-
-      {createError?.message && <Text>{createError.message}</Text>}
-
-      {video ? (
-        <Badge>{video.name}</Badge>
-      ) : (
-        <Text>Select a video file to upload.</Text>
-      )}
-      {progressFormatted && <Text>{progressFormatted}</Text>}
-
-      <Button
-        onClick={() => {
-          if (video) {
-            createAsset({ name: video.name, file: video });
-          }
-        }}
-        disabled={!video || createStatus === 'loading'}
-      >
-        Upload
-      </Button>
-    </>
-  );
-};
-```
-
-## Step 3: Stream Transcoded Video
-
-Lastly, when the video is uploaded, we use `refetchInterval` to poll the API until the asset has been processed and
-has a `playbackId`. Then, we stop polling and show the video using the [`Player`](/react/Player).
+If the input is valid, we then pass that input to the [`Player`](/react/Player), which automatically detects if it is a valid CID and attempts
+to fetch the playback info for that CID. If the provider does not have an `Asset` with that CID, the Player will automatically attempt
+to import the CID from IPFS, and then play the transcoded content back, without any additional code on the frontend.
 
 ```tsx
-import { Player, useAsset, useCreateAsset } from '@livepeer/react';
+import { Player } from '@livepeer/react';
+import { parseCid } from 'livepeer/media';
 
-import { useCallback, useMemo, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useMemo, useState } from 'react';
 
-export const CreateAndViewAsset = () => {
-  const [video, setVideo] = useState<File | undefined>();
-  const {
-    mutate: createAsset,
-    data: createdAsset,
-    status: createStatus,
-    error: createError,
-    uploadProgress,
-  } = useCreateAsset();
-  const { data: asset, status: assetStatus } = useAsset({
-    assetId: createdAsset?.id,
-    refetchInterval: (asset) =>
-      asset?.status?.phase !== 'ready' ? 5000 : false,
-  });
-  const { data: metrics } = useAssetMetrics({
-    assetId: createdAsset?.id,
-    refetchInterval: 30000,
-  });
+export const IpfsPlayback = () => {
+  const [ipfsUrl, setIpfsUrl] = useState<string>('');
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles && acceptedFiles.length > 0 && acceptedFiles?.[0]) {
-      setVideo(acceptedFiles[0]);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      'video/*': ['*.mp4'],
-    },
-    maxFiles: 1,
-    onDrop,
-  });
-
-  // we check here for either creating the asset, or polling for the asset
-  // until the video is in the ready phase and can be consumed
-  const isLoading = useMemo(
-    () =>
-      createStatus === 'loading' ||
-      assetStatus === 'loading' ||
-      (asset && asset?.status?.phase !== 'ready'),
-    [createStatus, asset, assetStatus],
-  );
-
-  const progressFormatted = useMemo(
-    () =>
-      uploadProgress
-        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
-        : asset?.status?.progress
-        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
-        : null,
-    [uploadProgress, asset?.status?.progress],
-  );
+  const ipfsParsed = useMemo(() => parseCid(ipfsUrl), [ipfsUrl]);
 
   return (
-    <>
-      <Box {...getRootProps()}>
-        <Box as="input" {...getInputProps()} />
-        <Box as="p">
-          <Text>Drag and drop or browse files</Text>
-        </Box>
+    <Box>
+      <Box>
+        <TextField onChange={(e) => setIpfsUrl(e.target.value)} />
+
+        {ipfsUrl && !ipfsParsed && (
+          <Text>Provided value is not a valid CID.</Text>
+        )}
       </Box>
 
-      {createError?.message && <Text>{createError.message}</Text>}
-
-      {video ? (
-        <Badge>{video.name}</Badge>
-      ) : (
-        <Text>Select a video file to upload.</Text>
+      {ipfsParsed && (
+        <Player title={ipfsParsed.cid} src={ipfsUrl} autoPlay muted />
       )}
-      {progressFormatted && <Text>{progressFormatted}</Text>}
-
-      <Button
-        onClick={() => {
-          if (video) {
-            createAsset({ name: video.name, file: video });
-          }
-        }}
-        disabled={!video || isLoading || Boolean(asset)}
-      >
-        {isLoading && <Spinner />}
-        Upload
-      </Button>
-
-      {asset?.playbackId && <Player playbackId={asset?.playbackId} />}
-
-      {metrics?.metrics?.[0] && (
-        <Badge>Views: {metrics?.metrics?.[0]?.startViews}</Badge>
-      )}
-    </>
+    </Box>
   );
 };
 ```
 
 ## Wrap Up
 
-That's it! You just set up a scalable, decentralized video asset streaming solution for an app.
+That's it! You just configured a caching & transcoding layer on top of IPFS with a few lines of code!

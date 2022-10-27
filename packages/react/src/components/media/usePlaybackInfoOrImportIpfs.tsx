@@ -17,6 +17,7 @@ export const usePlaybackInfoOrImportIpfs = (
   src: PlayerProps['src'],
   playbackId: PlayerProps['playbackId'],
   refetchPlaybackInfoInterval: number,
+  autoImportIpfs: boolean,
 ) => {
   const {
     mutate: importAsset,
@@ -34,7 +35,7 @@ export const usePlaybackInfoOrImportIpfs = (
   useAsset({
     assetId: importedAsset?.id,
     refetchInterval: (asset) =>
-      asset?.status?.phase !== 'ready' ? 5000 : false,
+      asset?.status?.phase !== 'ready' ? refetchPlaybackInfoInterval : false,
   });
 
   // check if the src or playbackId are IPFS sources (does not handle src arrays)
@@ -57,10 +58,12 @@ export const usePlaybackInfoOrImportIpfs = (
   });
 
   // trigger an import if the playback info had a 404 error and the asset is an IPFS source
+  // must be enabled
   React.useEffect(() => {
     console.log({ playbackInfoError });
 
     if (
+      autoImportIpfs &&
       ipfsSrcOrPlaybackId?.url &&
       ipfsSrcOrPlaybackId?.cid &&
       (playbackInfoError as HttpError)?.code === 404
@@ -70,7 +73,7 @@ export const usePlaybackInfoOrImportIpfs = (
         url: ipfsSrcOrPlaybackId.url,
       });
     }
-  }, [ipfsSrcOrPlaybackId, playbackInfoError, importAsset]);
+  }, [autoImportIpfs, ipfsSrcOrPlaybackId, playbackInfoError, importAsset]);
 
   return playbackInfo;
 };

@@ -11,7 +11,7 @@ const pathGatewayPattern = /^https?:\/\/[^/]+\/(ip[fn]s)\/([^/?#]+)$/;
 const subdomainGatewayPattern = /^https?:\/\/([^/]+)\.(ip[fn]s)\.[^/?#]+$/;
 
 /**
- * Takes an IPFS URL and returns a formatted IPFS URL if the URL is valid.
+ * Takes an IPFS CID or URL and returns a formatted IPFS URL if the CID/URL is valid.
  * _This does not allow paths, query params, or hash in the URL and will return null_.
  *
  * @param possibleIpfsString A possible URL for an IPFS resource. Can be a gateway or IPFS protocol URL.
