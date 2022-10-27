@@ -3,7 +3,6 @@ import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import * as React from 'react';
 
-import { usePlaybackInfo } from '../../hooks';
 import { AudioPlayer } from './AudioPlayer';
 import { HlsPlayer } from './HlsPlayer';
 import { VideoPlayer } from './VideoPlayer';
@@ -21,6 +20,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
+import { usePlaybackInfoOrImportIpfs } from './usePlaybackInfoOrImportIpfs';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
@@ -105,11 +105,12 @@ export function Player({
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const { data: playbackInfo } = usePlaybackInfo({
-    playbackId: playbackId ?? undefined,
-    refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
-    enabled: !src && Boolean(playbackId),
-  });
+  const playbackInfo = usePlaybackInfoOrImportIpfs(
+    src,
+    playbackId,
+    refetchPlaybackInfoInterval,
+  );
+
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
   React.useEffect(() => {

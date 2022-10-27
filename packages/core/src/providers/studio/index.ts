@@ -121,6 +121,21 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
+    if (args.url) {
+      const createdAsset = await this._create<
+        StudioAsset,
+        Omit<CreateAssetArgs, 'file'>
+      >('/asset/import', {
+        json: {
+          name: args.name,
+          url: args.url,
+        },
+        headers: this._defaultHeaders,
+      });
+
+      return this.getAsset(createdAsset?.id);
+    }
+
     const uploadReq = await this._create<
       { tusEndpoint: string; asset: { id: string } },
       Omit<CreateAssetArgs, 'file'>
@@ -136,6 +151,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     } = uploadReq;
 
     await new Promise<void>((resolve, reject) => {
+      if (!args.file) {
+        return reject('No file provided.');
+      }
+
       const upload = new tus.Upload(args.file, {
         endpoint: tusEndpoint,
         metadata: {
