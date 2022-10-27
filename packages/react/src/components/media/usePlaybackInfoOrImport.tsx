@@ -13,11 +13,11 @@ import { PlayerProps } from './Player';
  * @param src Source URL for the media.
  * @param playbackId Playback ID of the media.
  */
-export const usePlaybackInfoOrImportIpfs = (
+export const usePlaybackInfoOrImport = (
   src: PlayerProps['src'],
   playbackId: PlayerProps['playbackId'],
   refetchPlaybackInfoInterval: number,
-  autoImportIpfs: boolean,
+  autoImport: boolean,
 ) => {
   const {
     mutate: importAsset,
@@ -63,7 +63,7 @@ export const usePlaybackInfoOrImportIpfs = (
     console.log({ playbackInfoError });
 
     if (
-      autoImportIpfs &&
+      autoImport &&
       ipfsSrcOrPlaybackId?.url &&
       ipfsSrcOrPlaybackId?.cid &&
       (playbackInfoError as HttpError)?.code === 404
@@ -73,7 +73,7 @@ export const usePlaybackInfoOrImportIpfs = (
         url: ipfsSrcOrPlaybackId.url,
       });
     }
-  }, [autoImportIpfs, ipfsSrcOrPlaybackId, playbackInfoError, importAsset]);
+  }, [autoImport, ipfsSrcOrPlaybackId, playbackInfoError, importAsset]);
 
   return playbackInfo;
 };

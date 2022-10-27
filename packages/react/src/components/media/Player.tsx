@@ -20,7 +20,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
-import { usePlaybackInfoOrImportIpfs } from './usePlaybackInfoOrImportIpfs';
+import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
@@ -78,8 +78,8 @@ export type PlayerProps = {
   /** Whether to show the picture in picture button */
   showPipButton?: boolean;
 
-  /** If an IPFS CID or URL should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoImportIpfs?: boolean;
+  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  autoImport?: boolean;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -104,16 +104,16 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
-  autoImportIpfs = true,
+  autoImport = true,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const playbackInfo = usePlaybackInfoOrImportIpfs(
+  const playbackInfo = usePlaybackInfoOrImport(
     src,
     playbackId,
     refetchPlaybackInfoInterval,
-    autoImportIpfs,
+    autoImport,
   );
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
