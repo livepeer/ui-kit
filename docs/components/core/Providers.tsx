@@ -2,6 +2,7 @@ import {
   LivepeerConfig,
   ThemeConfig,
   createReactClient,
+  defaultStudioConfig,
   studioProvider,
 } from '@livepeer/react';
 import { AptosClient } from 'aptos';
@@ -28,8 +29,10 @@ const wagmiClient = createClient(
 const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
-    // TODO REMOVE THIS
-    baseUrl: 'https://livepeer.monster/api',
+    baseUrl:
+      process.env.VERCEL_ENV === 'production'
+        ? defaultStudioConfig.baseUrl
+        : 'https://livepeer.monster/api',
   }),
 });
 
