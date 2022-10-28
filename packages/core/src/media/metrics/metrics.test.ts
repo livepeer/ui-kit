@@ -1,20 +1,13 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import {
-  MockedVideoElement,
-  resetDateNow,
-  setupClient,
-  waitForWebsocketOpen,
-} from '../../../test';
+import { MockedVideoElement, resetDateNow, setupClient } from '../../../test';
 
-import { reportMediaMetrics } from './metrics';
-import { getMetricsReportingUrl } from './utils';
+import { addMediaMetrics } from './metrics';
 
-// const assetId = 'ec4cb9ca-cebe-4b41-a263-1ba4aa7cb695';
 const playbackUrl =
   'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
 
-describe('reportMediaMetrics', () => {
+describe('addMediaMetrics', () => {
   beforeAll(() => {
     setupClient();
     resetDateNow();
@@ -22,11 +15,9 @@ describe('reportMediaMetrics', () => {
 
   describe('event listeners', () => {
     it('registers listeners', async () => {
-      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
-
       const element = new MockedVideoElement();
 
-      const { metrics } = reportMediaMetrics(element, reportingUrl ?? '');
+      const { metrics } = addMediaMetrics(element, playbackUrl);
 
       expect(metrics).toBeTruthy;
       expect(element.setAttribute).toHaveBeenCalledOnce();
@@ -62,11 +53,9 @@ describe('reportMediaMetrics', () => {
     });
 
     it('should initialize to base state', async () => {
-      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
-
       const element = new MockedVideoElement();
 
-      const { metrics } = reportMediaMetrics(element, reportingUrl ?? '');
+      const { metrics } = addMediaMetrics(element, playbackUrl);
 
       const metricsSnapshot = metrics?.getMetrics();
 
@@ -93,16 +82,9 @@ describe('reportMediaMetrics', () => {
     });
 
     it('should update time unpaused and first playback', async () => {
-      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
-
       const element = new MockedVideoElement();
 
-      const { metrics, websocket } = reportMediaMetrics(
-        element,
-        reportingUrl ?? '',
-      );
-
-      await waitForWebsocketOpen(websocket);
+      const { metrics } = addMediaMetrics(element, playbackUrl);
 
       element.dispatchEvent(new Event('playing'));
 
@@ -131,11 +113,9 @@ describe('reportMediaMetrics', () => {
     });
 
     it('should update time waiting and waiting count', async () => {
-      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
-
       const element = new MockedVideoElement();
 
-      const { metrics } = reportMediaMetrics(element, reportingUrl ?? '');
+      const { metrics } = addMediaMetrics(element, playbackUrl);
 
       element.dispatchEvent(new Event('waiting'));
 
@@ -164,11 +144,9 @@ describe('reportMediaMetrics', () => {
     });
 
     it('should update time stalled and stalled count', async () => {
-      const reportingUrl = await getMetricsReportingUrl(playbackUrl);
-
       const element = new MockedVideoElement();
 
-      const { metrics } = reportMediaMetrics(element, reportingUrl ?? '');
+      const { metrics } = addMediaMetrics(element, playbackUrl);
 
       expect(element.dispatchEvent.mock.calls).toMatchInlineSnapshot('[]');
 

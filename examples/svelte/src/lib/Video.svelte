@@ -1,10 +1,10 @@
 <script>
   import {
+    addMediaMetrics,
     canPlayMediaNatively,
     getMediaSourceType,
     getMetricsReportingUrl,
     getPlaybackInfo,
-    reportMediaMetrics,
   } from 'livepeer';
   import { createClient } from 'livepeer/client';
   import { createNewHls, isHlsSupported } from 'livepeer/media/hls';
@@ -25,6 +25,10 @@
 
     const hlsSrc = getMediaSourceType(source);
 
+    addMediaMetrics(video, source, (e) =>
+      console.error('Error adding metrics', e),
+    );
+
     if (isHlsSupported() && hlsSrc.type === 'hls') {
       createNewHls(
         hlsSrc,
@@ -35,16 +39,6 @@
       );
     } else if (canPlayMediaNatively('application/vnd.apple.mpegurl')) {
       videoSrc = source;
-
-      const metricReportingUrl = await getMetricsReportingUrl(hlsSrc.src);
-      if (metricReportingUrl) {
-        reportMediaMetrics(video, metricReportingUrl);
-      } else {
-        console.log(
-          'Not able to report player metrics given the source url',
-          source,
-        );
-      }
     }
   }
 
