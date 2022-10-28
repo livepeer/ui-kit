@@ -156,7 +156,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
             metadata: {
               id: assetId,
             },
-            uploadSize: source.uploadSize,
             ...(source.file instanceof File
               ? null
               : { chunkSize: 5 * 1024 * 1024 }),
