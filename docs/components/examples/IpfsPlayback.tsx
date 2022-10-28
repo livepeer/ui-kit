@@ -36,7 +36,13 @@ export const IpfsPlayback = () => {
 
       {ipfsParsed && (
         <Box css={{ mt: '$2' }}>
-          <Player title={ipfsParsed.cid} src={ipfsUrl} autoPlay muted />
+          <Player
+            title={ipfsParsed.cid}
+            src={ipfsUrl}
+            autoPlay
+            muted
+            autoUrlUpload
+          />
         </Box>
       )}
     </Box>
