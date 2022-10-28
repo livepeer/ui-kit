@@ -6,6 +6,14 @@ import * as React from 'react';
 import { useAsset, useCreateAsset, usePlaybackInfo } from '../../hooks';
 import { PlayerProps } from './Player';
 
+export type UsePlaybackInfoOrImportProps = {
+  src: PlayerProps['src'];
+  playbackId: PlayerProps['playbackId'];
+  refetchPlaybackInfoInterval: number;
+  autoImport: boolean;
+  onAssetStatusChange: (status: Asset['status']) => void;
+};
+
 /**
  * Retrieves the playback info for a playback ID or source URL.
  * Automatically imports a source URL from IPFS if it is a valid CID.
@@ -13,25 +21,16 @@ import { PlayerProps } from './Player';
  * @param src Source URL for the media.
  * @param playbackId Playback ID of the media.
  */
-export const usePlaybackInfoOrImport = (
-  src: PlayerProps['src'],
-  playbackId: PlayerProps['playbackId'],
-  refetchPlaybackInfoInterval: number,
-  autoImport: boolean,
-  onAssetStatusChange: (status: Asset['status']) => void,
-) => {
-  const {
-    mutate: importAsset,
-    data: importedAsset,
-    // status: importStatus,
-    // error: importError,
-  } = useCreateAsset();
+export const usePlaybackInfoOrImport = ({
+  src,
+  playbackId,
+  refetchPlaybackInfoInterval,
+  autoImport,
+  onAssetStatusChange,
+}: UsePlaybackInfoOrImportProps) => {
+  const { mutate: importAsset, data: importedAsset } = useCreateAsset();
 
-  const {
-    data: asset,
-    // error: assetError,
-    // status: assetStatus,
-  } = useAsset({
+  const { data: asset } = useAsset({
     assetId: importedAsset?.id,
     refetchInterval: (asset) =>
       asset?.status?.phase !== 'ready' ? refetchPlaybackInfoInterval : false,
@@ -42,8 +41,6 @@ export const usePlaybackInfoOrImport = (
       onAssetStatusChange(asset.status);
     }
   }, [asset?.status, onAssetStatusChange]);
-
-  console.log({ asset });
 
   // check if the src or playbackId are IPFS sources (does not handle src arrays)
   const ipfsSrcOrPlaybackId = React.useMemo(
@@ -63,7 +60,7 @@ export const usePlaybackInfoOrImport = (
   });
 
   // trigger an import if the playback info had a 404 error and the asset is an IPFS source
-  // must be enabled
+  // also must be enabled
   React.useEffect(() => {
     if (
       autoImport &&

@@ -222,7 +222,7 @@ importers:
       cross-fetch: ^3.1.5
       ethers: ^5.7.1
       hls.js: ^1.2.4
-      multiformats: ^10.0.2
+      multiformats: 9.9.0
       tus-js-client: ^3.0.1
       zustand: ^4.1.1
     dependencies:
@@ -230,7 +230,7 @@ importers:
       core-js: 3.25.5
       cross-fetch: 3.1.5
       hls.js: 1.2.4
-      multiformats: 10.0.2
+      multiformats: 9.9.0
       tus-js-client: 3.0.1
       zustand: 4.1.1
     devDependencies:
@@ -8957,9 +8957,8 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /multiformats/10.0.2:
-    resolution: {integrity: sha512-nJEHLFOYhO4L+aNApHhCnWqa31FyqAHv9Q77AhmwU3KsM2f1j7tuJpCk5ByZ33smzycNCpSG5klNIejIyfFx2A==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+  /multiformats/9.9.0:
+    resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
     dev: false
 
   /nanoid/3.3.4:
