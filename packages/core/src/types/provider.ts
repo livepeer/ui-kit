@@ -166,6 +166,7 @@ export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
 
+
   /** Metadata associated with the asset */
   meta?: Record<string, string>;
 };
@@ -188,6 +189,30 @@ export type CreateAssetArgs = {
   /** Callback to receive progress, it is a object that include average and array of files */
   onUploadProgress?: (progress: CreateAssetProgress) => void;
 };
+=======
+  /** External URL to be imported */
+  url?: string;
+
+  /** Content to be uploaded */
+  file?: File | ReadStream;
+  /** Size of the upload file. Must provide this if the file is a ReadStream */
+  uploadSize?: number;
+
+  /**
+   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   */
+  onUploadProgress?: (progress: number) => void;
+} & (
+  | { file: File }
+  | {
+      file: ReadStream;
+      uploadSize: number;
+    }
+  | {
+      url: string;
+    }
+);
+>>>>>>> main
 
 export type Metadata = {
   /** Name of the Asset */
@@ -373,10 +398,7 @@ export type Asset = {
    * name or title
    */
   name: string;
-  /** User-managed metadata associated with the asset */
-  meta?: {
-    [k: string]: string;
-  };
+  /** Storage configs for the asset */
   storage?: {
     ipfs?: {
       /** CID of the file on IPFS */

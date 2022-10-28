@@ -1,4 +1,5 @@
 export { canPlayMediaNatively } from './browser';
+export { parseCid } from './decentralizedStorage';
 export {
   getMetricsReportingUrl,
   MetricsStatus,

@@ -10,6 +10,7 @@ tsconfig.tsbuildinfo
 logs
 *.log
 pnpm-debug.log*
+
 # local env files
 .env
 .envrc
