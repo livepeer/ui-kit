@@ -109,9 +109,9 @@ function App() {
 ```
 
 The `playbackId` passed to the `Player` can be either a short playback ID
-which is created on asset/stream creation, or, for an asset, an IPFS CID
-**after the asset has been stored in IPFS using
-[`useUpdateAsset`](/react/asset/useUpdateAsset).**
+which is created on asset/stream creation, or, for an asset, an IPFS CID. If
+the provided IPFS CID has not been imported yet, it will be auto-imported and
+played back - see [`autoImport`](#autoimport) for more details.
 
 ```tsx {9}
 import { Player } from '@livepeer/react';
@@ -134,11 +134,14 @@ The Player also supports an arbitrary `src` URL which can correspond to any comm
 See [caniuse video format](https://caniuse.com/?search=video%20format) for more details. Metrics reporting **will not** work
 with an arbitrary `src` that is not a recognized provider (e.g. not a Studio playback URL).
 
+If the `src` is an IPFS URL, it will be auto-imported and played back - see [`autoImport`](#autoimport) for
+more details.
+
 ```tsx {7}
 import { Player } from '@livepeer/react';
 
 const src =
-  'https://ipfs.livepeer.studio/ipfs/QmPHSco6gGRL9WZTjsYeAvqTJkCTNe4VyCbX5SWYaK4h8L/earth.mp4';
+  'https://ipfs.livepeer.studio/ipfs/QmURv3J5BGsz23GaCUm7oXncm2M9SCj8RQDuFPGzAFSJw8';
 
 function App() {
   return <Player src={src} />;
