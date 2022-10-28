@@ -86,7 +86,7 @@ export type PlayerProps = {
   showPipButton?: boolean;
 
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoImport?: boolean;
+  autoUrlUpload?: boolean;
 
   /** Callback called when the metrics plugin cannot be initialized properly */
   onMetricsError?: (error: Error) => void;
@@ -114,28 +114,28 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
-  autoImport = true,
+  autoUrlUpload = true,
   onMetricsError,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const [importStatus, setImportStatus] = React.useState<
+  const [uploadStatus, setUploadStatus] = React.useState<
     Asset['status'] | null
   >(null);
 
   const onAssetStatusChange = React.useCallback(
     (status: Asset['status']) => {
-      setImportStatus(status);
+      setUploadStatus(status);
     },
-    [setImportStatus],
+    [setUploadStatus],
   );
 
   const playbackInfo = usePlaybackInfoOrImport({
     src,
     playbackId,
     refetchPlaybackInfoInterval,
-    autoImport,
+    autoUrlUpload,
     onAssetStatusChange,
   });
 
@@ -261,7 +261,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              importProgress={importStatus?.progress}
+              uploadProgress={uploadStatus?.progress}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

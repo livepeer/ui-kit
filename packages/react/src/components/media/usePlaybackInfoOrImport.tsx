@@ -10,7 +10,7 @@ export type UsePlaybackInfoOrImportProps = {
   src: PlayerProps['src'];
   playbackId: PlayerProps['playbackId'];
   refetchPlaybackInfoInterval: number;
-  autoImport: boolean;
+  autoUrlUpload: boolean;
   onAssetStatusChange: (status: Asset['status']) => void;
 };
 
@@ -25,7 +25,7 @@ export const usePlaybackInfoOrImport = ({
   src,
   playbackId,
   refetchPlaybackInfoInterval,
-  autoImport,
+  autoUrlUpload,
   onAssetStatusChange,
 }: UsePlaybackInfoOrImportProps) => {
   const { mutate: importAsset, data: importedAsset } = useCreateAsset();
@@ -63,7 +63,7 @@ export const usePlaybackInfoOrImport = ({
   // also must be enabled
   React.useEffect(() => {
     if (
-      autoImport &&
+      autoUrlUpload &&
       !importedAsset &&
       ipfsSrcOrPlaybackId?.url &&
       ipfsSrcOrPlaybackId?.cid &&
@@ -75,7 +75,7 @@ export const usePlaybackInfoOrImport = ({
       });
     }
   }, [
-    autoImport,
+    autoUrlUpload,
     importedAsset,
     ipfsSrcOrPlaybackId,
     playbackInfoError,

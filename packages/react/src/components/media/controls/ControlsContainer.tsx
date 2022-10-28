@@ -20,7 +20,7 @@ const mediaControllerSelector = ({
 });
 
 export type ControlsContainerProps = {
-  importProgress?: number;
+  uploadProgress?: number;
   showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
@@ -43,7 +43,7 @@ export const ControlsContainer = React.forwardRef<
     poster,
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
-    importProgress,
+    uploadProgress,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -62,10 +62,10 @@ export const ControlsContainer = React.forwardRef<
 
   const loadingText = React.useMemo(
     () =>
-      isNumber(importProgress)
-        ? `${(Number(importProgress) * 100).toFixed(0)}%`
+      isNumber(uploadProgress)
+        ? `Processing: ${(Number(uploadProgress) * 100).toFixed(0)}%`
         : null,
-    [importProgress],
+    [uploadProgress],
   );
 
   return (
