@@ -15,7 +15,7 @@ import { useLivepeerProvider } from '../providers';
 export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
   options?: Partial<
     UsePickMutationOptions<
-      Asset[],
+      PromiseSettledResult<Asset>[],
       Error,
       Omit<CreateAssetArgs, 'onUploadProgress'>
     >
@@ -29,7 +29,7 @@ export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
 
   const internalQuery = useInternalMutation(
     async (args: CreateAssetArgs) =>
-      createAsset<TLivepeerProvider>({
+      createAsset({
         sources: args.sources,
         onUploadProgress: (progress) => setUploadProgress(progress),
       }),

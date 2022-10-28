@@ -187,6 +187,9 @@ export type CreateAssetArgs = {
   sources: CreateAssetSource[];
   /** Callback to receive progress, it is a object that include average and array of files */
   onUploadProgress?: (progress: CreateAssetProgress) => void;
+
+  /** External URL to be imported */
+  url?: string;
 };
 
 export type Metadata = {

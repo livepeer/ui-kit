@@ -112,6 +112,9 @@ The variables for the mutate function(s) are defined as:
 type CreateAssetArgs = {
   /** Source(s) to upload */
   sources: CreateAssetSource[];
+
+  /** External URL to be imported */
+  url?: string;
 };
 
 type CreateAssetSource = {
