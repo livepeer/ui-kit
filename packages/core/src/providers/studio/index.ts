@@ -169,16 +169,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
             onProgress(bytesSent, bytesTotal) {
               const progress = bytesSent / bytesTotal;
 
-              uploadProgress = {
-                average: uploadProgress.average,
-                sources: [
-                  ...uploadProgress.sources.slice(0, index),
-                  {
-                    name: source.name,
-                    progress,
-                  },
-                  ...uploadProgress.sources.slice(index + 1),
-                ],
+              uploadProgress.sources[index] = {
+                name: source.name,
+                progress,
               };
 
               uploadProgress.average =
