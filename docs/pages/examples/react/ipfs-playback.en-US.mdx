@@ -12,10 +12,11 @@ Playing back video from IPFS is easy with livepeer.js! The example below uses th
 play back transcoded IPFS content without any additional configuration.
 
 <Callout type="warning" emoji="⚠️">
-  **This example shows how Livepeer is the caching layer for IPFS video
-  playback.** As shown below, there are delays when an IPFS CID has never been
-  viewed - the first user will need to wait for upload. We recommend, whenever
-  possible, to upload via `useCreateAsset` before displaying it in the player.
+  **This example illustrates how Livepeer can be used as a video processing and
+  caching layer on top of IPFS for optimized video playback.** As shown below,
+  there are delays when an IPFS CID has never been viewed - the first user will
+  need to wait for upload. We recommend, whenever possible, to upload via
+  `useCreateAsset` before displaying it in the player.
 </Callout>
 
 <IpfsPlayback />
