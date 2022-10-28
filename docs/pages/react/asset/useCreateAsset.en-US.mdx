@@ -96,9 +96,8 @@ aggregated for simplicity. The `uploadProgress` is a number from 0-1 which repre
 [tus](https://github.com/tus/tus-js-client) - the value is undefined unless an upload is in progress.
 
 ```tsx
-[
   {
-    data?: Asset,
+    data?: Asset[],
     uploadProgress?: CreateAssetProgress,
     error?: Error,
     isError: boolean,
@@ -110,7 +109,6 @@ aggregated for simplicity. The `uploadProgress` is a number from 0-1 which repre
     mutateAsync: (config: CreateAssetArgs, options?: MutateOptions) => Promise<Asset>,
     variables?: CreateAssetArgs
   }
-]
 ```
 
 The variables for the mutate function(s) are defined as:
