@@ -21,7 +21,10 @@ import {
   UpdateStreamArgs,
   ViewsMetrics,
 } from '../../types';
-import { CreateAssetFile, UploadFileProgress } from '../../types/provider';
+import {
+  CreateAssetFileProgress,
+  CreateAssetSource,
+} from '../../types/provider';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
@@ -122,22 +125,22 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset[]> {
-    const { files, onUploadProgress } = args;
+    const { sources, onUploadProgress } = args;
 
     let uploadProgress = {
       average: 0,
-      files: [] as UploadFileProgress[],
+      sources: [] as CreateAssetFileProgress[],
     };
 
     const assets = await Promise.all(
-      files.map(async (file, index) => {
+      sources.map(async (source, index) => {
         const uploadReq = await this._create<
           { tusEndpoint: string; asset: { id: string } },
-          Omit<CreateAssetFile, 'file'>
+          Omit<CreateAssetSource, 'file'>
         >('/asset/request-upload', {
           json: {
-            name: file.name,
-            meta: file.meta,
+            name: source.name,
+            meta: source.meta,
           },
           headers: this._defaultHeaders,
         });
@@ -148,13 +151,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         } = uploadReq;
 
         await new Promise<void>((resolve, reject) => {
-          const upload = new tus.Upload(file.file, {
+          const upload = new tus.Upload(source.file, {
             endpoint: tusEndpoint,
             metadata: {
               id: assetId,
             },
-            uploadSize: file.uploadSize,
-            ...(file.file instanceof File
+            uploadSize: source.uploadSize,
+            ...(source.file instanceof File
               ? null
               : { chunkSize: 5 * 1024 * 1024 }),
 
@@ -166,21 +169,21 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
               uploadProgress = {
                 average: uploadProgress.average,
-                files: [
-                  ...uploadProgress.files.slice(0, index),
+                sources: [
+                  ...uploadProgress.sources.slice(0, index),
                   {
-                    name: file.name,
+                    name: source.name,
                     progress,
                   },
-                  ...uploadProgress.files.slice(index + 1),
+                  ...uploadProgress.sources.slice(index + 1),
                 ],
               };
 
               uploadProgress.average =
-                uploadProgress.files.reduce(
+                uploadProgress.sources.reduce(
                   (acc, { progress }) => acc + progress,
                   0,
-                ) / uploadProgress.files.length;
+                ) / uploadProgress.sources.length;
 
               onUploadProgress?.(uploadProgress);
             },

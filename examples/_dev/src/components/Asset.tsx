@@ -17,7 +17,7 @@ export const Asset = () => {
       name: video.name,
     }));
     createAsset({
-      files,
+      sources: files,
     });
   };
 

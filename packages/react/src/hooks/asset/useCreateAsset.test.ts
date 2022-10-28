@@ -35,7 +35,7 @@ describe('useCreateAsset', () => {
       await waitFor(() => expect(result.current.mutate).toBeDefined());
       await act(async () => {
         result.current.mutateAsync?.({
-          files: [
+          sources: [
             {
               name: assetName,
               ...getSampleVideo(),
@@ -66,7 +66,7 @@ describe('useCreateAsset', () => {
           "status": "success",
           "uploadProgress": {
             "average": 1,
-            "files": [
+            "sources": [
               {
                 "name": "livepeer.js tests :: new asset",
                 "progress": 1,

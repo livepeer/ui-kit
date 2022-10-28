@@ -1,5 +1,5 @@
 import { createAsset } from 'livepeer/actions';
-import { UploadProgress } from 'livepeer/src/types/provider';
+import { CreateAssetProgress } from 'livepeer/src/types/provider';
 import { Asset, CreateAssetArgs, LivepeerProvider } from 'livepeer/types';
 import { pick } from 'livepeer/utils';
 import { useState } from 'react';
@@ -24,13 +24,13 @@ export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
   const [uploadProgress, setUploadProgress] = useState<
-    UploadProgress | undefined
+    CreateAssetProgress | undefined
   >(undefined);
 
   const internalQuery = useInternalMutation(
     async (args: CreateAssetArgs) =>
       createAsset<TLivepeerProvider>({
-        files: args.files,
+        sources: args.sources,
         onUploadProgress: (progress) => setUploadProgress(progress),
       }),
     {

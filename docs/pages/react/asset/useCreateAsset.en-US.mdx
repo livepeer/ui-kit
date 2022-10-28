@@ -49,7 +49,7 @@ function App() {
         accept="video/*"
         onChange={(e) => {
           if (e.target.files) {
-            setVideos(Array.from(e.target.files));
+            setVideos(e.target.files);
           }
         }}
       />

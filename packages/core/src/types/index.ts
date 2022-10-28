@@ -6,8 +6,6 @@ export type {
   CreateAssetArgs,
   CreateAssetProgress,
   CreateAssetSource,
-  CreateAssetSourceFile,
-  CreateAssetSourceStream,
   CreateAssetSourceUrl,
   CreateStreamArgs,
   GetAssetArgs,

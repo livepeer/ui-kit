@@ -165,6 +165,9 @@ export type CreateAssetProgress = {
 export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
+
+  /** Metadata associated with the asset */
+  meta?: Record<string, string>;
 };
 
 export type CreateAssetSourceUrl = CreateAssetSourceBase & {
@@ -172,19 +175,12 @@ export type CreateAssetSourceUrl = CreateAssetSourceBase & {
   url: string;
 };
 
-export type CreateAssetSourceStream = CreateAssetSourceBase & {
-  /** Content to be uploaded */
-  stream: ReadStream;
+export type CreateAssetSource = CreateAssetSourceBase & {
+  /** Content to be uploaded or streamed */
+  file: File | ReadStream;
   /** Size of the file, required if this is a stream. */
-  uploadSize: number;
+  uploadSize?: number;
 };
-
-export type CreateAssetSourceFile = CreateAssetSourceBase & {
-  /** Content to be uploaded */
-  file: File;
-};
-
-export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceStream;
 
 export type CreateAssetArgs = {
   /** Source(s) to upload */

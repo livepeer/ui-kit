@@ -15,7 +15,7 @@ export const Asset = () => {
     }));
 
     createAssets({
-      files,
+      sources: files,
     });
   };
 

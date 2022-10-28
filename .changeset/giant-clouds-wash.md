@@ -1,5 +1,6 @@
 ---
 '@livepeer/react': minor
+'livepeer': minor
 ---
 
 **Feature:** Add support for multiple files at once using useCreateAsset.
