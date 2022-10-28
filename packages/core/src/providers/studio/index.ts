@@ -151,7 +151,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         } = uploadReq;
 
         await new Promise<void>((resolve, reject) => {
-          const upload = new tus.Upload(source?.file, {
+          const upload = new tus.Upload(source.file!, {
             endpoint: tusEndpoint,
             metadata: {
               id: assetId,
