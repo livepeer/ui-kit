@@ -3,12 +3,7 @@ import { useState } from 'react';
 
 export const Asset = () => {
   const [videos, setVideos] = useState<File[]>([]);
-  const {
-    mutate: createAsset,
-    data: assets,
-    status,
-    uploadProgress,
-  } = useCreateAsset();
+  const { mutate: createAsset, data: assets, status } = useCreateAsset();
   const { mutate: updateAsset, status: updateStatus, error } = useUpdateAsset();
 
   const handleCreateAsset = async () => {
@@ -21,7 +16,6 @@ export const Asset = () => {
     });
   };
 
-  console.log('upload progress', uploadProgress);
   return (
     <div>
       <input
@@ -44,12 +38,7 @@ export const Asset = () => {
       </button>
       <>
         {assets?.map((asset) => (
-          <div
-            style={{
-              marginTop: 20,
-            }}
-            key={asset.id}
-          >
+          <div key={asset.id}>
             <div>
               <div>Asset Name: {asset?.name}</div>
               <div>Playback URL: {asset?.playbackUrl}</div>

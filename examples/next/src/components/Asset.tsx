@@ -42,12 +42,7 @@ export const Asset = () => {
 
       <>
         {assets?.map((asset) => (
-          <div
-            style={{
-              marginTop: 20,
-            }}
-            key={asset.id}
-          >
+          <div key={asset.id}>
             <div>
               <div>Asset Name: {asset?.name}</div>
               <div>Playback URL: {asset?.playbackUrl}</div>

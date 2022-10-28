@@ -127,7 +127,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   async createAsset(args: CreateAssetArgs): Promise<Asset[]> {
     const { sources, onUploadProgress } = args;
 
-    let uploadProgress = {
+    const uploadProgress = {
       average: 0,
       sources: [] as CreateAssetFileProgress[],
     };
