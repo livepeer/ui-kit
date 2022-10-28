@@ -4,6 +4,11 @@ export type Hash = `0x${string}`;
 export type {
   Asset,
   CreateAssetArgs,
+  CreateAssetProgress,
+  CreateAssetSource,
+  CreateAssetSourceFile,
+  CreateAssetSourceStream,
+  CreateAssetSourceUrl,
   CreateStreamArgs,
   GetAssetArgs,
   GetAssetMetricsArgs,

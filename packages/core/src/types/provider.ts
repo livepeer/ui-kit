@@ -148,35 +148,49 @@ export type AssetIdOrString =
       assetId: string;
     };
 
-export type CreateAssetFile = {
-  /** Name for the new asset */
+export type CreateAssetFileProgress = {
+  /** Name of the asset */
   name: string;
-  /** Metadata associated with the asset */
-  meta?: Record<string, string>;
-  /** Content to be uploaded */
-  file: File | ReadStream;
-  /** Size of the upload file. Must provide this if the file is a ReadStream */
-  uploadSize?: number;
-};
-
-export type UploadFileProgress = {
-  name: string;
+  /** Progress from 0 to 1 */
   progress: number;
 };
 
-export type UploadProgress = {
-  /** Total bytes uploaded */
+export type CreateAssetProgress = {
+  /** Average of the progress values */
   average: number;
-  /** Total bytes uploaded */
-  files: UploadFileProgress[];
+  /** Progress values */
+  sources: CreateAssetFileProgress[];
 };
 
+export type CreateAssetSourceBase = {
+  /** Name for the new asset */
+  name: string;
+};
+
+export type CreateAssetSourceUrl = CreateAssetSourceBase & {
+  /** URL of the asset to import */
+  url: string;
+};
+
+export type CreateAssetSourceStream = CreateAssetSourceBase & {
+  /** Content to be uploaded */
+  stream: ReadStream;
+  /** Size of the file, required if this is a stream. */
+  uploadSize: number;
+};
+
+export type CreateAssetSourceFile = CreateAssetSourceBase & {
+  /** Content to be uploaded */
+  file: File;
+};
+
+export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceStream;
+
 export type CreateAssetArgs = {
-  files: CreateAssetFile[];
-  /**
-   * Callback to receive progress, it is a object that include average and array of files
-   */
-  onUploadProgress?: (progress: UploadProgress) => void;
+  /** Source(s) to upload */
+  sources: CreateAssetSource[];
+  /** Callback to receive progress, it is a object that include average and array of files */
+  onUploadProgress?: (progress: CreateAssetProgress) => void;
 };
 
 export type Metadata = {
