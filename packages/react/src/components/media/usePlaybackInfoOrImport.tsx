@@ -1,4 +1,4 @@
-import { HttpError } from 'livepeer';
+import { Asset, HttpError } from 'livepeer';
 import { parseCid } from 'livepeer/media';
 
 import * as React from 'react';
@@ -18,6 +18,7 @@ export const usePlaybackInfoOrImport = (
   playbackId: PlayerProps['playbackId'],
   refetchPlaybackInfoInterval: number,
   autoImport: boolean,
+  onAssetStatusChange: (status: Asset['status']) => void,
 ) => {
   const {
     mutate: importAsset,
@@ -26,17 +27,23 @@ export const usePlaybackInfoOrImport = (
     // error: importError,
   } = useCreateAsset();
 
-  // const {
-  //   data: asset,
-  //   error: assetError,
-  //   status: assetStatus,
-  // } =
-
-  useAsset({
+  const {
+    data: asset,
+    // error: assetError,
+    // status: assetStatus,
+  } = useAsset({
     assetId: importedAsset?.id,
     refetchInterval: (asset) =>
       asset?.status?.phase !== 'ready' ? refetchPlaybackInfoInterval : false,
   });
+
+  React.useEffect(() => {
+    if (asset?.status) {
+      onAssetStatusChange(asset.status);
+    }
+  }, [asset?.status, onAssetStatusChange]);
+
+  console.log({ asset });
 
   // check if the src or playbackId are IPFS sources (does not handle src arrays)
   const ipfsSrcOrPlaybackId = React.useMemo(
@@ -49,8 +56,6 @@ export const usePlaybackInfoOrImport = (
     [playbackId, src],
   );
 
-  console.log({ ipfsSrcOrPlaybackId });
-
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
     // attempt to fetch if the source is IPFS, or a playback ID is provided
     playbackId: ipfsSrcOrPlaybackId?.cid ?? playbackId ?? undefined,
@@ -60,10 +65,9 @@ export const usePlaybackInfoOrImport = (
   // trigger an import if the playback info had a 404 error and the asset is an IPFS source
   // must be enabled
   React.useEffect(() => {
-    console.log({ playbackInfoError });
-
     if (
       autoImport &&
+      !importedAsset &&
       ipfsSrcOrPlaybackId?.url &&
       ipfsSrcOrPlaybackId?.cid &&
       (playbackInfoError as HttpError)?.code === 404
@@ -73,7 +77,13 @@ export const usePlaybackInfoOrImport = (
         url: ipfsSrcOrPlaybackId.url,
       });
     }
-  }, [autoImport, ipfsSrcOrPlaybackId, playbackInfoError, importAsset]);
+  }, [
+    autoImport,
+    importedAsset,
+    ipfsSrcOrPlaybackId,
+    playbackInfoError,
+    importAsset,
+  ]);
 
   return playbackInfo;
 };

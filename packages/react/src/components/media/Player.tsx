@@ -1,6 +1,7 @@
 import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
+import { Asset } from 'livepeer/types';
 import * as React from 'react';
 
 import { AudioPlayer } from './AudioPlayer';
@@ -109,11 +110,28 @@ export function Player({
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
+  const [importStatus, setImportStatus] = React.useState<
+    Asset['status'] | null
+  >(null);
+
+  const onAssetStatusChange = React.useCallback(
+    (status: Asset['status']) => {
+      setImportStatus(status);
+    },
+    [setImportStatus],
+  );
+
   const playbackInfo = usePlaybackInfoOrImport(
     src,
     playbackId,
     refetchPlaybackInfoInterval,
     autoImport,
+    onAssetStatusChange,
+  );
+
+  const importProgress = React.useMemo(
+    () => importStatus?.progress,
+    [importStatus],
   );
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
@@ -223,6 +241,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
+              importProgress={importProgress}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

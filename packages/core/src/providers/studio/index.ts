@@ -123,7 +123,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
     if (args.url) {
       const createdAsset = await this._create<
-        StudioAsset,
+        { asset: StudioAsset },
         Omit<CreateAssetArgs, 'file'>
       >('/asset/upload/url', {
         json: {
@@ -133,7 +133,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         headers: this._defaultHeaders,
       });
 
-      return this.getAsset(createdAsset?.id);
+      return this.getAsset(createdAsset?.asset?.id);
     }
 
     const uploadReq = await this._create<
