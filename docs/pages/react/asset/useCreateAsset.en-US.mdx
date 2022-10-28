@@ -27,7 +27,7 @@ You can upload multiple assets at once by passing an array of files to the `muta
 The following example shows how an asset can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
 function.
 
-```tsx {7, 29-34}
+```tsx {7, 29-36}
 import { useAsset, useCreateAsset } from '@livepeer/react';
 import { useState } from 'react';
 
@@ -61,7 +61,9 @@ function App() {
             name: video.name,
           }));
 
-          createAssets(files);
+          createAssets({
+            sources: files,
+          });
         }}
       >
         Create Asset
@@ -97,7 +99,7 @@ aggregated for simplicity. The `uploadProgress` is a number from 0-1 which repre
 [
   {
     data?: Asset,
-    uploadProgress?: number[],
+    uploadProgress?: CreateAssetProgress,
     error?: Error,
     isError: boolean,
     isIdle: boolean,
@@ -115,8 +117,15 @@ The variables for the mutate function(s) are defined as:
 
 ```tsx
 type CreateAssetArgs = {
-  name: string;
+  /** Source(s) to upload */
+  sources: CreateAssetSource[];
+};
+
+type CreateAssetSource = {
+  /** File to upload */
   file: File;
+  /** Name of the file */
+  name: string;
 };
 ```
 
