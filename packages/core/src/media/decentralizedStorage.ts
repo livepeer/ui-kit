@@ -1,14 +1,14 @@
 import { CID } from 'multiformats/cid';
 
-// IPFS CID (naive check for URL indicators)
+// IPFS CID (naive check for lack of URL indicators)
 const ipfsCidPattern = /^([^/?#]+)$/;
 
 // IPFS Protocol
-const ipfsProtocolPattern = /^(ip[fn]s):\/\/([^/?#]+)$/;
+const ipfsProtocolPattern = /^(ipfs):\/\/([^/?#]+)$/;
 
 // Gateways
-const pathGatewayPattern = /^https?:\/\/[^/]+\/(ip[fn]s)\/([^/?#]+)$/;
-const subdomainGatewayPattern = /^https?:\/\/([^/]+)\.(ip[fn]s)\.[^/?#]+$/;
+const pathGatewayPattern = /^https?:\/\/[^/]+\/(ipfs)\/([^/?#]+)$/;
+const subdomainGatewayPattern = /^https?:\/\/([^/]+)\.(ipfs)\.[^/?#]+$/;
 
 /**
  * Takes an IPFS CID or URL and returns a formatted IPFS URL if the CID/URL is valid.

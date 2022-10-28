@@ -121,18 +121,13 @@ export function Player({
     [setImportStatus],
   );
 
-  const playbackInfo = usePlaybackInfoOrImport(
+  const playbackInfo = usePlaybackInfoOrImport({
     src,
     playbackId,
     refetchPlaybackInfoInterval,
     autoImport,
     onAssetStatusChange,
-  );
-
-  const importProgress = React.useMemo(
-    () => importStatus?.progress,
-    [importStatus],
-  );
+  });
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
@@ -241,7 +236,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              importProgress={importProgress}
+              importProgress={importStatus?.progress}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}
