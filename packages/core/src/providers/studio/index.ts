@@ -124,9 +124,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return studioStreamSessions;
   }
 
-  async createAsset(
-    args: CreateAssetArgs,
-  ): Promise<PromiseSettledResult<Asset>[]> {
+  async createAsset(args: CreateAssetArgs): Promise<Asset[]> {
     const { sources, onUploadProgress } = args;
 
     const uploadProgress = {
@@ -153,7 +151,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         } = uploadReq;
 
         await new Promise<void>((resolve, reject) => {
-          const upload = new tus.Upload(source.file, {
+          const upload = new tus.Upload(source?.file, {
             endpoint: tusEndpoint,
             metadata: {
               id: assetId,
@@ -203,7 +201,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       }),
     );
 
-    return assets;
+    return assets.map((asset) => {
+      if (asset.status === 'fulfilled') {
+        return asset.value;
+      } else {
+        throw asset.reason;
+      }
+    });
   }
 
   async getAsset(args: GetAssetArgs): Promise<Asset> {

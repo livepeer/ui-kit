@@ -23,7 +23,7 @@ export interface LivepeerProvider {
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
   /** Create a new asset */
-  createAsset(args: CreateAssetArgs): Promise<PromiseSettledResult<Asset>[]>;
+  createAsset(args: CreateAssetArgs): Promise<Asset[]>;
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
@@ -177,9 +177,11 @@ export type CreateAssetSourceUrl = CreateAssetSourceBase & {
 
 export type CreateAssetSource = CreateAssetSourceBase & {
   /** Content to be uploaded or streamed */
-  file: File | ReadStream;
+  file?: File | ReadStream;
   /** Size of the file, required if this is a stream. */
   uploadSize?: number;
+  /** External URL to be imported */
+  url?: string;
 };
 
 export type CreateAssetArgs = {
@@ -187,9 +189,6 @@ export type CreateAssetArgs = {
   sources: CreateAssetSource[];
   /** Callback to receive progress, it is a object that include average and array of files */
   onUploadProgress?: (progress: CreateAssetProgress) => void;
-
-  /** External URL to be imported */
-  url?: string;
 };
 
 export type Metadata = {

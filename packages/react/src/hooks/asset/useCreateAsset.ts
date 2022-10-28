@@ -15,7 +15,7 @@ import { useLivepeerProvider } from '../providers';
 export function useCreateAsset<TLivepeerProvider extends LivepeerProvider>(
   options?: Partial<
     UsePickMutationOptions<
-      PromiseSettledResult<Asset>[],
+      Asset[],
       Error,
       Omit<CreateAssetArgs, 'onUploadProgress'>
     >
