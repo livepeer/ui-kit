@@ -1,9 +1,9 @@
 import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
+import { Asset } from 'livepeer/types';
 import * as React from 'react';
 
-import { usePlaybackInfo } from '../../hooks';
 import { AudioPlayer } from './AudioPlayer';
 import { HlsPlayer } from './HlsPlayer';
 import { VideoPlayer } from './VideoPlayer';
@@ -21,6 +21,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
+import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
@@ -77,6 +78,9 @@ export type PlayerProps = {
 
   /** Whether to show the picture in picture button */
   showPipButton?: boolean;
+
+  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  autoImport?: boolean;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -90,7 +94,7 @@ export function Player({
   controls,
   muted,
   playbackId,
-  refetchPlaybackInfoInterval = 5000,
+  refetchPlaybackInfoInterval = 10000,
   src,
   theme,
   title,
@@ -101,15 +105,35 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
+  autoImport = true,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const { data: playbackInfo } = usePlaybackInfo({
-    playbackId: playbackId ?? undefined,
-    refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
-    enabled: !src && Boolean(playbackId),
-  });
+  const [importStatus, setImportStatus] = React.useState<
+    Asset['status'] | null
+  >(null);
+
+  const onAssetStatusChange = React.useCallback(
+    (status: Asset['status']) => {
+      setImportStatus(status);
+    },
+    [setImportStatus],
+  );
+
+  const playbackInfo = usePlaybackInfoOrImport(
+    src,
+    playbackId,
+    refetchPlaybackInfoInterval,
+    autoImport,
+    onAssetStatusChange,
+  );
+
+  const importProgress = React.useMemo(
+    () => importStatus?.progress,
+    [importStatus],
+  );
+
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
   React.useEffect(() => {
@@ -217,6 +241,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
+              importProgress={importProgress}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

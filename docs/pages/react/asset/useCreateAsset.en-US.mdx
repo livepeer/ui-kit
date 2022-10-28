@@ -99,13 +99,28 @@ The variables for the mutate function(s) are defined as:
 
 ```tsx
 type CreateAssetArgs = {
+  /** Name for the new asset */
   name: string;
-  file: File;
+
+  /** External URL to be imported */
+  url?: string;
+
+  /** Content to be uploaded */
+  file?: File | ReadStream;
+  /** Size of the upload file. Must provide this if the file is a ReadStream */
+  uploadSize?: number;
+
+  /**
+   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   */
+  onUploadProgress?: (progress: number) => void;
 };
 ```
 
-The `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for resumable uploads and checks for existing uploads by default, before starting a
+If a file is provided, the `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for resumable uploads and checks for existing uploads by default, before starting a
 new upload.
+
+If a URL is provided, the hook will make a request to the background to start an import. **Either a URL or file must be provided.**
 
 ## Configuration
 

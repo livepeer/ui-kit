@@ -1,0 +1,90 @@
+---
+title: 'Play a Video from IPFS'
+description: 'Learn how to import and play back a video on IPFS with livepeer.js'
+---
+
+import { Callout } from 'nextra-theme-docs';
+import { IpfsPlayback } from '@components/examples';
+
+# Play a Video from IPFS
+
+Playing back video from IPFS is easy with livepeer.js! The example below uses the Player's built-in automatic IPFS import to
+play back transcoded IPFS content without any additional configuration.
+
+<IpfsPlayback />
+
+## Step 1: Configuring Providers
+
+<Callout>
+  This example assumes you have chosen a component library with typical
+  components like `Button`, `TextField`, `Spinner`, etc. The
+  [`Player`](/react/Player) is the only visual component provided.
+</Callout>
+
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
+
+```tsx
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+import * as React from 'react';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+// Pass client to React Context Provider
+function App() {
+  return (
+    <LivepeerConfig client={livepeerClient}>
+      <IpfsPlayback />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Step 2: IPFS Playback
+
+Now that our providers are set up, we can add a text input for an IPFS CID or URL using `parseCid` from the core `livepeer` package - _this is only
+used for UI purposes, to provide feedback if the user input is valid_.
+
+If the input is valid, we then pass that input to the [`Player`](/react/Player), which automatically detects if it is a valid CID and attempts
+to fetch the playback info for that CID. If the provider does not have an `Asset` with that CID, the Player will automatically attempt
+to import the CID from IPFS, and then play the transcoded content back, without any additional code on the frontend.
+
+```tsx
+import { Player } from '@livepeer/react';
+import { parseCid } from 'livepeer/media';
+
+import { useMemo, useState } from 'react';
+
+export const IpfsPlayback = () => {
+  const [ipfsUrl, setIpfsUrl] = useState<string>('');
+
+  const ipfsParsed = useMemo(() => parseCid(ipfsUrl), [ipfsUrl]);
+
+  return (
+    <Box>
+      <Box>
+        <TextField onChange={(e) => setIpfsUrl(e.target.value)} />
+
+        {ipfsUrl && !ipfsParsed && (
+          <Text>Provided value is not a valid CID.</Text>
+        )}
+      </Box>
+
+      {ipfsParsed && (
+        <Player title={ipfsParsed.cid} src={ipfsUrl} autoPlay muted />
+      )}
+    </Box>
+  );
+};
+```
+
+## Wrap Up
+
+That's it! You just configured a caching & transcoding layer on top of IPFS with a few lines of code!
