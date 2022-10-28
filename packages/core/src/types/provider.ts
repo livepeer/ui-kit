@@ -23,7 +23,7 @@ export interface LivepeerProvider {
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
   /** Create a new asset */
-  createAsset(args: CreateAssetArgs): Promise<Asset[]>;
+  createAsset(args: CreateAssetArgs): Promise<PromiseSettledResult<Asset>[]>;
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */

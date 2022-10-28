@@ -124,7 +124,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return studioStreamSessions;
   }
 
-  async createAsset(args: CreateAssetArgs): Promise<Asset[]> {
+  async createAsset(
+    args: CreateAssetArgs,
+  ): Promise<PromiseSettledResult<Asset>[]> {
     const { sources, onUploadProgress } = args;
 
     const uploadProgress = {
@@ -132,7 +134,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       sources: [] as CreateAssetFileProgress[],
     };
 
-    const assets = await Promise.all(
+    const assets = await Promise.allSettled(
       sources.map(async (source, index) => {
         const uploadReq = await this._create<
           { tusEndpoint: string; asset: { id: string } },
