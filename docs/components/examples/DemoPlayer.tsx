@@ -2,8 +2,7 @@ import { Player } from '@livepeer/react';
 
 import Image from 'next/image';
 
-const playbackId =
-  'bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy';
+const playbackId = '0ff7i28n5klnmwy1';
 
 import blenderPoster from '../../public/images/blender-poster.png';
 
