@@ -22,7 +22,6 @@ export {
   addMediaMetrics,
   canPlayMediaNatively,
   getMediaSourceType,
-  getMetricsReportingUrl,
   MetricsStatus,
   PlaybackMonitor,
 } from './media';
