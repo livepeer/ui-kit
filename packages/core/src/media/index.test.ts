@@ -7,10 +7,9 @@ it('should expose correct exports', () => {
     [
       "canPlayMediaNatively",
       "parseCid",
-      "getMetricsReportingUrl",
+      "addMediaMetrics",
       "MetricsStatus",
       "PlaybackMonitor",
-      "reportMediaMetrics",
       "getMediaSourceType",
     ]
   `);

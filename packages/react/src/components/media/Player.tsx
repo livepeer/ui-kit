@@ -1,4 +1,10 @@
-import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer/media';
+import {
+  AudioSrc,
+  Src,
+  VideoSrc,
+  addMediaMetrics,
+  getMediaSourceType,
+} from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import { Asset } from 'livepeer/types';
@@ -79,8 +85,11 @@ export type PlayerProps = {
   /** Whether to show the picture in picture button */
   showPipButton?: boolean;
 
-  /** If a decentralized identifier (an IPFS CID/URL) should automatically be uploaded as an Asset if playback info does not exist. Defaults to true. */
+  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   autoUrlUpload?: boolean;
+
+  /** Callback called when the metrics plugin cannot be initialized properly */
+  onMetricsError?: (error: Error) => void;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -105,7 +114,8 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
-  autoUrlUpload = false,
+  autoUrlUpload = true,
+  onMetricsError,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -192,6 +202,21 @@ export function Player({
       setMediaElement(element);
     }
   }, []);
+
+  React.useEffect(() => {
+    const { destroy } = addMediaMetrics(
+      mediaElement,
+      Array.isArray(sourceMimeTyped)
+        ? sourceMimeTyped?.[0]?.src
+        : sourceMimeTyped?.src,
+      (e) => {
+        onMetricsError?.(e as Error);
+        console.error('Not able to report player metrics', e);
+      },
+    );
+
+    return destroy;
+  }, [onMetricsError, mediaElement, sourceMimeTyped]);
 
   const contextTheme = useTheme(theme);
 
