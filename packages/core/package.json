@@ -2,7 +2,7 @@
   "name": "livepeer",
   "description": "Livepeer's vanilla JS library.",
   "license": "MIT",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
