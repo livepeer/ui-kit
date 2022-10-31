@@ -318,8 +318,6 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
     const createNewWebSocket = async (numRetries = 0) => {
       const reportingWebsocketUrl = await getMetricsReportingUrl(sourceUrl);
 
-      console.log(reportingWebsocketUrl);
-
       if (reportingWebsocketUrl) {
         const newWebSocket = new WebSocket(reportingWebsocketUrl);
 

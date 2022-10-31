@@ -3,7 +3,6 @@
     addMediaMetrics,
     canPlayMediaNatively,
     getMediaSourceType,
-    getMetricsReportingUrl,
     getPlaybackInfo,
   } from 'livepeer';
   import { createClient } from 'livepeer/client';
