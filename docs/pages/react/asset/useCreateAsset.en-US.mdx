@@ -112,16 +112,39 @@ The variables for the mutate function(s) are defined as:
 type CreateAssetArgs = {
   /** Source(s) to upload */
   sources: CreateAssetSource[];
-
-  /** External URL to be imported */
-  url?: string;
+  /** Callback to receive progress, it is a object that include average and array of files */
+  onUploadProgress?: (progress: CreateAssetProgress) => void;
 };
 
-type CreateAssetSource = {
-  /** File to upload */
-  file: File;
-  /** Name of the file */
+type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;
+
+type CreateAssetSourceBase = {
+  /** Name for the new asset */
   name: string;
+};
+
+type CreateAssetSourceUrl = CreateAssetSourceBase & {
+  /** External URL to be imported */
+  url: string;
+};
+
+type CreateAssetSourceFile = CreateAssetSourceBase & {
+  /** Content to be uploaded or streamed */
+  file: File | ReadStream;
+};
+
+type CreateAssetProgress = {
+  /** Average of the progress values */
+  average: number;
+  /** Progress values */
+  sources: CreateAssetFileProgress[];
+};
+
+type CreateAssetFileProgress = {
+  /** Name of the asset */
+  name: string;
+  /** Progress from 0 to 1 */
+  progress: number;
 };
 ```
 
