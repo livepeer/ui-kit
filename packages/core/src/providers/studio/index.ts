@@ -24,6 +24,7 @@ import {
 import {
   CreateAssetFileProgress,
   CreateAssetSource,
+  CreateAssetSourceFile,
 } from '../../types/provider';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
@@ -150,39 +151,42 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         } = uploadReq;
 
         await new Promise<void>((resolve, reject) => {
-          const upload = new tus.Upload(source.file!, {
-            endpoint: tusEndpoint,
-            metadata: {
-              id: assetId,
+          const upload = new tus.Upload(
+            (source as CreateAssetSourceFile).file,
+            {
+              endpoint: tusEndpoint,
+              metadata: {
+                id: assetId,
+              },
+              ...((source as CreateAssetSourceFile) instanceof File
+                ? null
+                : { chunkSize: 5 * 1024 * 1024 }),
+
+              onError: (error) => {
+                console.log('Failed because: ', error);
+              },
+              onProgress(bytesSent, bytesTotal) {
+                const progress = bytesSent / bytesTotal;
+
+                uploadProgress.sources[index] = {
+                  name: source.name,
+                  progress,
+                };
+
+                uploadProgress.average =
+                  uploadProgress.sources.reduce(
+                    (acc, { progress }) => acc + progress,
+                    0,
+                  ) / uploadProgress.sources.length;
+
+                onUploadProgress?.(uploadProgress);
+              },
+
+              onSuccess() {
+                resolve();
+              },
             },
-            ...(source.file instanceof File
-              ? null
-              : { chunkSize: 5 * 1024 * 1024 }),
-
-            onError: (error) => {
-              console.log('Failed because: ', error);
-            },
-            onProgress(bytesSent, bytesTotal) {
-              const progress = bytesSent / bytesTotal;
-
-              uploadProgress.sources[index] = {
-                name: source.name,
-                progress,
-              };
-
-              uploadProgress.average =
-                uploadProgress.sources.reduce(
-                  (acc, { progress }) => acc + progress,
-                  0,
-                ) / uploadProgress.sources.length;
-
-              onUploadProgress?.(uploadProgress);
-            },
-
-            onSuccess() {
-              resolve();
-            },
-          });
+          );
 
           upload
             .findPreviousUploads()
