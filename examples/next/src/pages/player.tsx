@@ -36,7 +36,7 @@ const PlayerPage: NextPage = () => {
       <Player
         src={url}
         objectFit="contain"
-        playbackId={v ?? 'ce4d4q4z1hj08e2s'}
+        playbackId={v ?? '8f0f84h33aey6mk8'}
         muted={isTrue(muted)}
         autoPlay={isTrue(autoplay)}
         loop={isTrue(loop)}
