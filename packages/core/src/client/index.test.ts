@@ -8,6 +8,7 @@ it('should expose correct exports', () => {
       "Client",
       "createClient",
       "getClient",
+      "clearClient",
     ]
   `);
 });
