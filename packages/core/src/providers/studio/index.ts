@@ -168,6 +168,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         onError(error) {
           reject(error);
         },
+        fingerprint: function (file) {
+          const value = [file.name, file.type, file.size].join('-');
+          return Promise.resolve(value);
+        },
         onProgress(bytesSent, bytesTotal) {
           args?.onUploadProgress?.(bytesSent / bytesTotal);
         },
