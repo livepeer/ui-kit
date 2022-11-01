@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderHook } from '../../../test';
-import { usePlaybackInfo } from './usePlaybackInfo';
+import { provider, renderHook } from '../../../test';
+import { prefetchPlaybackInfo, usePlaybackInfo } from './usePlaybackInfo';
 
 const playbackId = 'a4e8o6mykgkvtxav';
 
@@ -20,7 +20,6 @@ describe('usePlaybackInfo', () => {
     expect(result.current.data).toMatchInlineSnapshot(`
       {
         "meta": {
-          "live": undefined,
           "source": [
             {
               "hrn": "HLS (TS)",
@@ -32,5 +31,19 @@ describe('usePlaybackInfo', () => {
         "type": "vod",
       }
     `);
+  });
+
+  describe('prefetchPlaybackInfo', () => {
+    it('prefetches', async () => {
+      const state = await prefetchPlaybackInfo(playbackId, { provider });
+
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.args,
+      ).toMatchInlineSnapshot('"a4e8o6mykgkvtxav"');
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.entity,
+      ).toMatchInlineSnapshot('"getPlaybackInfo"');
+      expect(state.queries[0]?.state?.data).haveOwnProperty('type', 'vod');
+    });
   });
 });
