@@ -45,7 +45,6 @@ it('should expose correct exports', () => {
       "Poster",
       "prefetchPlayer",
       "Progress",
-      "ThemeProvider",
       "TimeDisplay",
       "Title",
       "useMediaController",
