@@ -7,7 +7,10 @@ import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
 import { useMemo } from 'react';
 
-const App = ({ Component, pageProps }: AppProps) => {
+const App = ({
+  Component,
+  pageProps,
+}: AppProps<{ dehydratedState: string }>) => {
   const livepeerClient = useMemo(() => {
     return createReactClient({
       provider: studioProvider({

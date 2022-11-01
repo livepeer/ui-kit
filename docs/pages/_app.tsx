@@ -14,7 +14,7 @@ Object.keys(themes).map(
   (key, _index) => (themeMap[themes[key].className] = themes[key].className),
 );
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps<{ dehydratedState: string }>) {
   const { theme } = useTheme();
   const getLayout =
     (Component as any).getLayout || ((page: React.ReactElement) => page);
