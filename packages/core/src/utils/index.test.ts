@@ -20,6 +20,7 @@ it('should expose correct exports', () => {
       "isFunction",
       "isArray",
       "isWindow",
+      "isReactNative",
       "warn",
     ]
   `);
