@@ -3,10 +3,14 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
-import { ConnectKitProvider, getDefaultClient } from 'connectkit';
+import '@rainbow-me/rainbowkit/styles.css';
+
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
-import { WagmiConfig, createClient } from 'wagmi';
+import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';
+import { infuraProvider } from 'wagmi/providers/infura';
+import { publicProvider } from 'wagmi/providers/public';
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -14,12 +18,23 @@ const livepeerClient = createReactClient({
   }),
 });
 
-const wagmiClient = createClient(
-  getDefaultClient({
-    appName: 'livepeer.js dev',
-    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
-  }),
+const { chains, provider } = configureChains(
+  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+  [
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
+    publicProvider(),
+  ],
 );
+
+const { connectors } = getDefaultWallets({
+  appName: 'livepeer.js dev',
+  chains,
+});
+
+const wagmiClient = createClient({
+  connectors,
+  provider,
+});
 
 const App = ({
   Component,
@@ -32,14 +47,14 @@ const App = ({
       </NextHead>
 
       <WagmiConfig client={wagmiClient}>
-        <ConnectKitProvider>
+        <RainbowKitProvider chains={chains}>
           <LivepeerConfig
             dehydratedState={pageProps?.dehydratedState}
             client={livepeerClient}
           >
             <Component {...pageProps} />
           </LivepeerConfig>
-        </ConnectKitProvider>
+        </RainbowKitProvider>
       </WagmiConfig>
     </>
   );

@@ -4,28 +4,44 @@ import {
   ThemeConfig,
   createReactClient,
 } from '@livepeer/react';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { AptosClient } from 'aptos';
-import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { useRouter } from 'next/router';
 import { useTheme } from 'nextra-theme-docs';
 import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
-import { WagmiConfig, chain, createClient } from 'wagmi';
+import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';
 
-import { provider } from '../../lib/provider';
+import { infuraProvider } from 'wagmi/providers/infura';
+
+import { publicProvider } from 'wagmi/providers/public';
+
+import { provider as livepeerProvider } from '../../lib/provider';
 import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
+
+import '@rainbow-me/rainbowkit/styles.css';
 
 export const AptosContext = createContext<AptosClient | null>(null);
 
-const wagmiClient = createClient(
-  getDefaultClient({
-    appName: 'livepeer.js',
-    chains: [chain.polygonMumbai],
-    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
-  }),
+const { chains, provider } = configureChains(
+  [chain.polygonMumbai],
+  [
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
+    publicProvider(),
+  ],
 );
 
-const livepeerClient = createReactClient({
+const { connectors } = getDefaultWallets({
+  appName: 'livepeer.js docs',
+  chains,
+});
+
+const wagmiClient = createClient({
+  connectors,
   provider,
+});
+
+const livepeerClient = createReactClient({
+  provider: livepeerProvider,
 });
 
 type Props = {
@@ -141,7 +157,7 @@ export function Providers({ children, dehydratedState }: Props) {
       className={themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]}
     >
       <WagmiConfig client={wagmiClient}>
-        <ConnectKitProvider>
+        <RainbowKitProvider chains={chains}>
           <AptosContext.Provider value={aptosClient}>
             <LivepeerConfig
               dehydratedState={dehydratedState}
@@ -153,7 +169,7 @@ export function Providers({ children, dehydratedState }: Props) {
               </SyncedTabsContext.Provider>
             </LivepeerConfig>
           </AptosContext.Provider>
-        </ConnectKitProvider>
+        </RainbowKitProvider>
       </WagmiConfig>
     </Box>
   );

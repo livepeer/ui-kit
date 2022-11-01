@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@livepeer/react": "^1.2.1",
-    "connectkit": "^0.0.2",
+    "@rainbow-me/rainbowkit": "^0.7.4",
     "ethers": "^5.7.2",
     "next": "^13.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "wagmi": "^0.7.7"
+    "wagmi": "^0.7.9"
   },
   "devDependencies": {
     "@preconstruct/next": "^4.0.0",
