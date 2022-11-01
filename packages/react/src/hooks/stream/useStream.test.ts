@@ -23,9 +23,12 @@ describe('useStream', () => {
     it('prefetches', async () => {
       const state = await prefetchStream(streamId, { provider });
 
-      expect(state.queries[0]?.queryHash).toMatchInlineSnapshot(
-        '"[{\\"args\\":\\"d7ae985a-7a27-4c18-a00c-22a5b5ea7e10\\",\\"config\\":{\\"apiKey\\":\\"a616be3b-8980-4932-8079-0122e0106f95\\",\\"baseUrl\\":\\"https://livepeer.studio/api\\",\\"name\\":\\"Livepeer Studio\\"},\\"entity\\":\\"getStream\\"}]"',
-      );
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.args,
+      ).toMatchInlineSnapshot('"d7ae985a-7a27-4c18-a00c-22a5b5ea7e10"');
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.entity,
+      ).toMatchInlineSnapshot('"getStream"');
       expect(state.queries[0]?.state?.data).haveOwnProperty('id', streamId);
     });
   });

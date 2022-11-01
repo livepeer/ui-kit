@@ -37,9 +37,12 @@ describe('usePlaybackInfo', () => {
     it('prefetches', async () => {
       const state = await prefetchPlaybackInfo(playbackId, { provider });
 
-      expect(state.queries[0]?.queryHash).toMatchInlineSnapshot(
-        '"[{\\"args\\":\\"a4e8o6mykgkvtxav\\",\\"config\\":{\\"apiKey\\":\\"a616be3b-8980-4932-8079-0122e0106f95\\",\\"baseUrl\\":\\"https://livepeer.studio/api\\",\\"name\\":\\"Livepeer Studio\\"},\\"entity\\":\\"getPlaybackInfo\\"}]"',
-      );
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.args,
+      ).toMatchInlineSnapshot('"a4e8o6mykgkvtxav"');
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.entity,
+      ).toMatchInlineSnapshot('"getPlaybackInfo"');
       expect(state.queries[0]?.state?.data).haveOwnProperty('type', 'vod');
     });
   });

@@ -23,9 +23,12 @@ describe('useStreamSession', () => {
     it('prefetches', async () => {
       const state = await prefetchStreamSession(streamSessionId, { provider });
 
-      expect(state.queries[0]?.queryHash).toMatchInlineSnapshot(
-        '"[{\\"args\\":\\"d7aeaae0-ab35-486c-a164-171594c0c65f\\",\\"config\\":{\\"apiKey\\":\\"a616be3b-8980-4932-8079-0122e0106f95\\",\\"baseUrl\\":\\"https://livepeer.studio/api\\",\\"name\\":\\"Livepeer Studio\\"},\\"entity\\":\\"getStreamSession\\"}]"',
-      );
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.args,
+      ).toMatchInlineSnapshot('"d7aeaae0-ab35-486c-a164-171594c0c65f"');
+      expect(
+        (state.queries[0]?.queryKey?.[0] as any)?.entity,
+      ).toMatchInlineSnapshot('"getStreamSession"');
       expect(state.queries[0]?.state?.data).haveOwnProperty(
         'id',
         streamSessionId,
