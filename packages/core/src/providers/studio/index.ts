@@ -21,6 +21,8 @@ import {
   UpdateStreamArgs,
   ViewsMetrics,
 } from '../../types';
+import { isReactNative } from '../../utils';
+import { hashCode } from '../../utils/hashcode';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
@@ -169,8 +171,19 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           reject(error);
         },
         fingerprint: function (file) {
-          const value = [file.name, file.type, file.size].join('-');
-          return Promise.resolve(value);
+          if (isReactNative()) {
+            return Promise.resolve(reactNativeFingerprint(file));
+          } else {
+            return Promise.resolve(
+              [
+                'browser',
+                file.name,
+                file.type,
+                file.size,
+                file.lastModified,
+              ].join('-'),
+            );
+          }
         },
         onProgress(bytesSent, bytesTotal) {
           args?.onUploadProgress?.(bytesSent / bytesTotal);
@@ -325,3 +338,13 @@ export function studioProvider(
       ...definedProps(config),
     });
 }
+
+const reactNativeFingerprint = (file: any) => {
+  const exifHash = file.exif ? hashCode(JSON.stringify(file.exif)) : 'noexif';
+  return [
+    'react-native',
+    file.name || 'noname',
+    file.size || 'nosize',
+    exifHash,
+  ].join('/');
+};
