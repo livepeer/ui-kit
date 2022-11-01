@@ -1,9 +1,11 @@
 export { deserialize } from './deserialize';
 export {
+  prefetchQuery,
   useInternalMutation,
   useInternalQuery,
   usePickMutationKeys,
   usePickQueryKeys,
+  type PrefetchQueryOptions,
   type Status,
   type UsePickMutationOptions,
   type UsePickQueryOptions,

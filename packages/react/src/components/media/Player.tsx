@@ -10,9 +10,6 @@ import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import { Asset } from 'livepeer/types';
 import * as React from 'react';
 
-import { AudioPlayer } from './AudioPlayer';
-import { HlsPlayer } from './HlsPlayer';
-import { VideoPlayer } from './VideoPlayer';
 import { MediaControllerProvider, useTheme } from './context';
 
 import {
@@ -27,6 +24,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
+import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 export type PlayerObjectFit = 'cover' | 'contain';

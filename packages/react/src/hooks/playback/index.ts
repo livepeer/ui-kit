@@ -1,2 +1,2 @@
-export { useAssetMetrics } from './useAssetMetrics';
-export { usePlaybackInfo } from './usePlaybackInfo';
+export { prefetchAssetMetrics, useAssetMetrics } from './useAssetMetrics';
+export { prefetchPlaybackInfo, usePlaybackInfo } from './usePlaybackInfo';

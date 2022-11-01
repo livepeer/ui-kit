@@ -146,3 +146,11 @@ Check out the following places for more livepeer-related content:
 - Follow [@livepeer](https://twitter.com/livepeer) on Twitter for project updates
 - Join the [discussions on GitHub](https://github.com/livepeer/livepeer.js/discussions)
 - Jump into our [Discord](https://discord.gg/livepeer)
+
+import { prefetchPlayerStaticProps } from '@lib/prefetchStaticProps';
+
+export const getStaticProps = async () => {
+  return prefetchPlayerStaticProps(
+    'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe'
+  );
+};
