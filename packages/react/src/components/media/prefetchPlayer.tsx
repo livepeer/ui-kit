@@ -1,4 +1,5 @@
-import { ClientConfig, LivepeerProvider, PlaybackInfo } from 'livepeer';
+import { LivepeerProvider, PlaybackInfo } from 'livepeer';
+import { ClientConfig } from 'livepeer/client';
 
 import { prefetchPlaybackInfo } from '../../hooks';
 import { PrefetchQueryOptions } from '../../utils';

@@ -85,7 +85,7 @@ function App() {
 The `useAsset` hook also comes with a [React Query](https://tanstack.com/query/v4/docs/guides/ssr) prefetch query, `prefetchAsset`,
 which makes it easy to prefetch data for server-side rendering.
 
-First, you add [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching/get-static-props) to the page which
+First, you add a [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching/get-static-props) function to the page which
 you want to prefetch data on. The props should match the `useAsset` hook to ensure that the correct data is prefetched.
 
 ```tsx
@@ -107,7 +107,7 @@ export const getStaticProps = async () => {
 };
 ```
 
-We also need to update the `_app.tsx` to pass the `dehydratedState` in `pageProps` to the LivepeerConfig. We also move the
+We need to update the `_app.tsx` to pass the `dehydratedState` in `pageProps` to the LivepeerConfig. We also move the
 `livepeerClient` into a useMemo hook so that a new client is created on each request.
 
 ```tsx
@@ -145,7 +145,7 @@ function App({ Component, pageProps }: AppProps) {
 }
 ```
 
-That's it! You now have prefetching on the server, which is passed to the user and used to hydrate the initial query client.
+That's it! You now have data prefetching on the server, which is passed to the browser and used to hydrate the initial query client.
 
 ### Other Frameworks
 
