@@ -1,3 +1,5 @@
+'use client'; // client component browser directive (React RFC-0227)
+
 import { MediaControllerState } from 'livepeer/media/controls';
 import { AspectRatio, styling } from 'livepeer/styling';
 import * as React from 'react';

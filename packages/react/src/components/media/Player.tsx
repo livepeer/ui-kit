@@ -1,3 +1,5 @@
+'use client'; // client component browser directive (React RFC-0227)
+
 import {
   AudioSrc,
   Src,
