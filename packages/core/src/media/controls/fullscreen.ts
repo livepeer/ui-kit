@@ -1,4 +1,4 @@
-import { IS_CLIENT } from '../browser';
+import { isClient } from '../browser';
 
 const methodsList = [
   // modern browsers
@@ -59,24 +59,25 @@ const iosMethods = {
 } as const;
 
 export const isFullscreenSupported = (
-  inputElement?: HTMLMediaElement | null,
+  inputElement: HTMLMediaElement | null,
 ) => {
   return Boolean(getFullscreenMethods(inputElement));
 };
 
 export const isCurrentlyFullscreen = (
-  inputElement?: HTMLMediaElement | null,
+  inputElement: HTMLMediaElement | null,
 ) => {
-  const { methods } = getFullscreenMethods(inputElement);
+  const { methods, element } = getFullscreenMethods(inputElement);
 
   if (methods?.fullscreenElement) {
     return Boolean(document[methods.fullscreenElement]);
+  } else {
+    // handle iOS API
+    return Boolean(element?.webkitPresentationMode === 'fullscreen');
   }
-
-  return false;
 };
 
-export const enterFullscreen = (inputElement?: HTMLMediaElement | null) => {
+export const enterFullscreen = (inputElement: HTMLMediaElement | null) => {
   const { methods, element } = getFullscreenMethods(inputElement);
 
   if (methods) {
@@ -84,11 +85,11 @@ export const enterFullscreen = (inputElement?: HTMLMediaElement | null) => {
       const fullscreenMethod = methods.requestFullscreen;
 
       const onFullScreen = () => {
-        removeFullscreenEventListener(onFullScreen);
+        removeFullscreenEventListener(inputElement, onFullScreen);
         resolve();
       };
 
-      addFullscreenEventListener(onFullScreen);
+      addFullscreenEventListener(inputElement, onFullScreen);
 
       const returnPromise: Promise<void> | void | null =
         methods.fullscreenElement
@@ -110,22 +111,22 @@ export const enterFullscreen = (inputElement?: HTMLMediaElement | null) => {
   return false;
 };
 
-export const exitFullscreen = (inputElement?: HTMLMediaElement | null) => {
+export const exitFullscreen = (inputElement: HTMLMediaElement | null) => {
   const { methods, element } = getFullscreenMethods(inputElement);
 
   if (methods) {
     return new Promise<void>((resolve, reject) => {
-      if (!isCurrentlyFullscreen()) {
+      if (!isCurrentlyFullscreen(inputElement)) {
         resolve();
         return;
       }
 
       const onFullScreenExit = () => {
-        removeFullscreenEventListener(onFullScreenExit);
+        removeFullscreenEventListener(inputElement, onFullScreenExit);
         resolve();
       };
 
-      addFullscreenEventListener(onFullScreenExit);
+      addFullscreenEventListener(inputElement, onFullScreenExit);
 
       const returnPromise: Promise<void> | void | null =
         methods.fullscreenElement
@@ -142,15 +143,22 @@ export const exitFullscreen = (inputElement?: HTMLMediaElement | null) => {
 };
 
 export const addFullscreenEventListener = (
-  callback: EventListenerOrEventListenerObject,
+  inputElement: HTMLMediaElement | null,
+  callback: EventListener,
 ) => {
-  const { methods } = getFullscreenMethods();
+  const { methods, element } = getFullscreenMethods(inputElement);
 
-  if (methods) {
-    document.addEventListener(methods.fullscreenchange, callback, false);
+  if (methods && element) {
+    const parentElementOrElement = element?.parentElement ?? element;
+
+    parentElementOrElement?.addEventListener(
+      methods.fullscreenchange,
+      callback,
+      false,
+    );
 
     return () => {
-      removeFullscreenEventListener(callback);
+      removeFullscreenEventListener(inputElement, callback);
     };
   }
 
@@ -158,12 +166,19 @@ export const addFullscreenEventListener = (
 };
 
 const removeFullscreenEventListener = (
+  inputElement: HTMLMediaElement | null,
   callback: EventListenerOrEventListenerObject,
 ) => {
-  const { methods } = getFullscreenMethods();
+  const { methods, element } = getFullscreenMethods(inputElement);
 
-  if (methods) {
-    document.removeEventListener(methods.fullscreenchange, callback, false);
+  if (methods && element) {
+    const parentElementOrElement = element?.parentElement ?? element;
+
+    parentElementOrElement?.removeEventListener(
+      methods.fullscreenchange,
+      callback,
+      false,
+    );
 
     return true;
   }
@@ -171,8 +186,8 @@ const removeFullscreenEventListener = (
   return false;
 };
 
-const getFullscreenMethods = (element?: HTMLMediaElement | null) => {
-  if (IS_CLIENT) {
+const getFullscreenMethods = (element: HTMLMediaElement | null) => {
+  if (isClient()) {
     for (const methods of methodsList) {
       const exitFullscreenMethod = methods.exitFullscreen;
 

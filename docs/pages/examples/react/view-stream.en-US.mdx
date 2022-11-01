@@ -104,7 +104,7 @@ how we do that). Then, we stop polling and display the streaming content using t
 ```tsx
 import { Player, useCreateStream, useStream } from '@livepeer/react';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
@@ -152,7 +152,9 @@ export const Stream = () => {
           </Text>
         )}
 
-      {stream?.playbackId && <Player playbackId={stream?.playbackId} />}
+      {stream?.playbackId && (
+        <Player playbackId={stream?.playbackId} autoPlay muted />
+      )}
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { Files, IncomingForm } from 'formidable';
 
-import { Asset, createAsset } from 'livepeer';
+import { createAsset } from 'livepeer/actions';
+import { Asset } from 'livepeer/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { ApiError } from '../../lib/error';

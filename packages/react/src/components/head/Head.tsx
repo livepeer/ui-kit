@@ -1,4 +1,4 @@
-import { getMediaSourceType } from 'livepeer';
+import { getMediaSourceType } from 'livepeer/media';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 

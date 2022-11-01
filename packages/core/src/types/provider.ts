@@ -151,12 +151,15 @@ export type AssetIdOrString =
 export type CreateAssetArgs = {
   /** Name for the new asset */
   name: string;
-  /** Metadata associated with the asset */
-  meta?: Record<string, string>;
+
+  /** External URL to be imported */
+  url?: string;
+
   /** Content to be uploaded */
-  file: File | ReadStream;
+  file?: File | ReadStream;
   /** Size of the upload file. Must provide this if the file is a ReadStream */
   uploadSize?: number;
+
   /**
    * Callback to receive progress (0-1 completion ratio) updates of the upload.
    */
@@ -167,28 +170,94 @@ export type CreateAssetArgs = {
       file: ReadStream;
       uploadSize: number;
     }
+  | {
+      url: string;
+    }
 );
+
+export type Metadata = {
+  /** Name of the Asset */
+  name?: string;
+  /** Description of the Asset */
+  description?: string;
+  /** Image URL for the Asset */
+  image?: string;
+  /** Properties of the Asset */
+  properties?: {
+    [k: string]: unknown;
+  };
+  /**
+   * Background color for the Asset (OpenSea Standard)
+   *
+   * @see {@link https://docs.opensea.io/docs/metadata-standards}
+   */
+  background_color?: string;
+  /**
+   * Attributes for the Asset (OpenSea Standard)
+   *
+   * @see {@link https://docs.opensea.io/docs/metadata-standards}
+   */
+  attributes?: {
+    [k: string]: unknown;
+  };
+};
 
 export type UpdateAssetArgs = {
   /** The unique identifier for the asset */
   assetId: string;
   /** The name of the asset */
   name?: string;
-  /** What storages to use for the asset */
+  /**
+   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
+   */
   storage?: {
+    /**
+     * If the asset should be stored on IPFS.
+     */
     ipfs?: boolean;
+    /**
+     * Metadata exported to the storage provider. This will be deep merged with the default
+     * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
+     *
+     * @see {@link https://eips.ethereum.org/EIPS/eip-721}
+     */
+    metadata?:
+      | Partial<Metadata> & {
+          [k: string]: unknown;
+        };
+    /**
+     * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
+     * will reference only the immutable media files.
+     */
+    metadataTemplate?: 'player' | 'file';
   };
-  /** Metadata associated with the asset */
-  meta?: Record<string, string>;
 } & (
   | {
       name: string;
     }
   | {
-      storage?: { ipfs?: boolean };
+      storage: {
+        metadata: {
+          [k: string]: unknown;
+        };
+      } & {
+        ipfs: boolean;
+      };
     }
   | {
-      meta: Record<string, string>;
+      storage: {
+        metadataTemplate: 'player' | 'file';
+      } & {
+        ipfs: boolean;
+      };
+    }
+  | {
+      storage: {
+        ipfs: boolean;
+      };
+    }
+  | {
+      storage?: undefined;
     }
 );
 
@@ -290,10 +359,7 @@ export type Asset = {
    * name or title
    */
   name: string;
-  /** User-managed metadata associated with the asset */
-  meta?: {
-    [k: string]: string;
-  };
+  /** Storage configs for the asset */
   storage?: {
     ipfs?: {
       /** CID of the file on IPFS */
@@ -302,6 +368,29 @@ export type Asset = {
       url?: string;
       /** URL to access file via HTTP through an IPFS gateway */
       gatewayUrl?: string;
+      spec?: {
+        /**
+         * Name of the NFT metadata template to export. 'player' will embed the
+         * Livepeer Player on the NFT while 'file' will reference only the
+         * immutable MP4 files.
+         */
+        nftMetadataTemplate?: 'player' | 'file';
+        /**
+         * Additional data to add to the NFT metadata exported to IPFS. Will be
+         * deep merged with the default metadata exported.
+         */
+        nftMetadata?: {
+          [k: string]: unknown;
+        };
+      };
+      nftMetadata?: {
+        /** CID of the file on IPFS */
+        cid?: string;
+        /** URL with IPFS scheme for the file */
+        url?: string;
+        /** URL to access file via HTTP through an IPFS gateway */
+        gatewayUrl?: string;
+      };
     };
     status?: {
       /** High-level descriptor of where the storage is in its lifecycle */

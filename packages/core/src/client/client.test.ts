@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { studioProvider } from '../providers/studio';
+
+import { createStorage } from '../storage';
 import { Client, createClient, getClient } from './client';
-
-import { studioProvider } from './providers/studio';
-
-import { createStorage } from './storage';
 
 const provider = studioProvider();
 

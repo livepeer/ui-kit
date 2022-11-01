@@ -1,4 +1,5 @@
-import { MediaControllerState, styling } from 'livepeer';
+import { MediaControllerState } from 'livepeer/media/controls';
+import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
 import { PropsOf, useConditionalIcon } from '../../system';
@@ -65,9 +66,11 @@ const DefaultExitFullscreenIcon = () => (
 
 const mediaControllerSelector = ({
   fullscreen,
+  pictureInPicture,
   requestToggleFullscreen,
 }: MediaControllerState<HTMLMediaElement>) => ({
   fullscreen,
+  pictureInPicture,
   requestToggleFullscreen,
 });
 
@@ -94,9 +97,8 @@ export const FullscreenButton = React.forwardRef<
   HTMLButtonElement,
   FullscreenButtonProps
 >((props, ref) => {
-  const { fullscreen, requestToggleFullscreen } = useMediaController(
-    mediaControllerSelector,
-  );
+  const { fullscreen, pictureInPicture, requestToggleFullscreen } =
+    useMediaController(mediaControllerSelector);
 
   const { enterIcon, exitIcon, onClick, ...rest } = props;
 
@@ -120,6 +122,10 @@ export const FullscreenButton = React.forwardRef<
     () => (fullscreen ? 'Exit full screen (f)' : 'Full screen (f)'),
     [fullscreen],
   );
+
+  if (pictureInPicture) {
+    return <></>;
+  }
 
   return (
     <button

@@ -1,9 +1,6 @@
-import {
-  MediaControllerState,
-  VideoSrc,
-  canPlayMediaNatively,
-  styling,
-} from 'livepeer';
+import { VideoSrc, canPlayMediaNatively } from 'livepeer/media';
+import { MediaControllerState } from 'livepeer/media/controls';
+import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../context';

@@ -1,6 +1,6 @@
 import { keyframes } from '@stitches/core';
 
-import { IS_MOBILE } from '../browser';
+import { isMobile } from '../media/browser';
 
 import { loading } from './loading';
 import { css } from './stitches';
@@ -20,11 +20,11 @@ const sharedContainer = css('div', {
     display: {
       shown: {
         opacity: 1,
-        animation: !IS_MOBILE ? `${shown} 0.2s` : undefined,
+        animation: !isMobile() ? `${shown} 0.2s` : undefined,
       },
       hidden: {
         opacity: 0,
-        animation: !IS_MOBILE ? `${hidden} 0.2s` : undefined,
+        animation: !isMobile() ? `${hidden} 0.2s` : undefined,
       },
     },
   },
@@ -107,10 +107,40 @@ const left = css(spaceBetweenContainer, {
   width: 'auto',
 });
 
+const loadingText = css(sharedContainer, {
+  top: 0,
+  userSelect: 'none',
+  color: '$icon',
+
+  marginTop: '$controlsTopMarginY',
+  marginBottom: '$controlsTopMarginY',
+  marginLeft: '$controlsTopMarginX',
+  marginRight: '$controlsTopMarginX',
+
+  display: 'inline-flex',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  position: 'absolute',
+
+  fontSize: '$timeFontSizeSm',
+
+  '@md': {
+    fontSize: '$timeFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$timeFontSize',
+  },
+
+  left: 0,
+  right: 0,
+  bottom: 0,
+});
+
 export const controlsContainer = {
   background,
   gradient,
   loading,
+  loadingText,
 
   top: {
     container: topContainer,

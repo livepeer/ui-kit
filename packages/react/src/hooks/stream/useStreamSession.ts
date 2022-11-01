@@ -1,13 +1,12 @@
+import { getStreamSession } from 'livepeer/actions';
+import { ClientConfig, createClient } from 'livepeer/client';
 import {
-  ClientConfig,
   GetStreamSessionArgs,
   LivepeerProvider,
   LivepeerProviderConfig,
   StreamSession,
-  createClient,
-  getStreamSession,
-  pick,
-} from 'livepeer';
+} from 'livepeer/types';
+import { pick } from 'livepeer/utils';
 
 import {
   PrefetchQueryOptions,

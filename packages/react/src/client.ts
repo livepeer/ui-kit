@@ -7,9 +7,9 @@ import {
 import {
   ClientConfig,
   Client as CoreClient,
-  LivepeerProvider,
   createClient,
-} from 'livepeer';
+} from 'livepeer/client';
+import { LivepeerProvider } from 'livepeer/types';
 
 import { deserialize, serialize } from './utils';
 

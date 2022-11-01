@@ -1,21 +1,22 @@
 import {
-  AspectRatio,
   AudioSrc,
-  ControlsOptions,
   Src,
-  ThemeConfig,
   VideoSrc,
+  addMediaMetrics,
   getMediaSourceType,
-} from 'livepeer';
+} from 'livepeer/media';
+import { ControlsOptions } from 'livepeer/media/controls';
+import { AspectRatio, ThemeConfig } from 'livepeer/styling';
+import { Asset } from 'livepeer/types';
 import * as React from 'react';
 
-import { usePlaybackInfo } from '../../hooks';
 import { MediaControllerProvider, useTheme } from './context';
 
 import {
   Container,
   ControlsContainer,
   FullscreenButton,
+  PictureInPictureButton,
   PlayButton,
   Poster,
   Progress,
@@ -24,6 +25,7 @@ import {
 } from './controls';
 import { Title } from './controls/Title';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
@@ -77,6 +79,15 @@ export type PlayerProps = {
 
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
+
+  /** Whether to show the picture in picture button */
+  showPipButton?: boolean;
+
+  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  autoUrlUpload?: boolean;
+
+  /** Callback called when the metrics plugin cannot be initialized properly */
+  onMetricsError?: (error: Error) => void;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -90,7 +101,7 @@ export function Player({
   controls,
   muted,
   playbackId,
-  refetchPlaybackInfoInterval = 5000,
+  refetchPlaybackInfoInterval = 10000,
   src,
   theme,
   title,
@@ -100,15 +111,32 @@ export function Player({
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
+  showPipButton,
+  autoUrlUpload = true,
+  onMetricsError,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const { data: playbackInfo } = usePlaybackInfo({
-    playbackId: playbackId ?? undefined,
-    refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
-    enabled: !src && Boolean(playbackId),
+  const [uploadStatus, setUploadStatus] = React.useState<
+    Asset['status'] | null
+  >(null);
+
+  const onAssetStatusChange = React.useCallback(
+    (status: Asset['status']) => {
+      setUploadStatus(status);
+    },
+    [setUploadStatus],
+  );
+
+  const playbackInfo = usePlaybackInfoOrImport({
+    src,
+    playbackId,
+    refetchPlaybackInfoInterval,
+    autoUrlUpload,
+    onAssetStatusChange,
   });
+
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
   React.useEffect(() => {
@@ -173,6 +201,21 @@ export function Player({
     }
   }, []);
 
+  React.useEffect(() => {
+    const { destroy } = addMediaMetrics(
+      mediaElement,
+      Array.isArray(sourceMimeTyped)
+        ? sourceMimeTyped?.[0]?.src
+        : sourceMimeTyped?.src,
+      (e) => {
+        onMetricsError?.(e as Error);
+        console.error('Not able to report player metrics', e);
+      },
+    );
+
+    return destroy;
+  }, [onMetricsError, mediaElement, sourceMimeTyped]);
+
   const contextTheme = useTheme(theme);
 
   return (
@@ -216,6 +259,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
+              uploadProgress={uploadStatus?.progress}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}
@@ -226,7 +270,12 @@ export function Player({
                   <TimeDisplay />
                 </>
               }
-              right={<FullscreenButton />}
+              right={
+                <>
+                  {showPipButton && <PictureInPictureButton />}
+                  <FullscreenButton />
+                </>
+              }
             />
           </>
         )}

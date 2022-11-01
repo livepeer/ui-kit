@@ -1,8 +1,8 @@
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { Mutate, StoreApi, default as create } from 'zustand/vanilla';
 
-import { ClientStorage, createStorage, noopStorage } from './storage';
-import { LivepeerProvider } from './types';
+import { ClientStorage, createStorage, noopStorage } from '../storage';
+import { LivepeerProvider } from '../types';
 
 export type ClientConfig<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,

@@ -1,4 +1,5 @@
-import { MediaControllerState, styling } from 'livepeer';
+import { MediaControllerState } from 'livepeer/media/controls';
+import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
 import { PropsOf } from '../../system';
@@ -17,7 +18,11 @@ const mediaControllerSelector = ({
 });
 
 const getFormattedMinutesAndSeconds = (valueInSeconds: number | null) => {
-  if (valueInSeconds !== null && !isNaN(valueInSeconds)) {
+  if (
+    valueInSeconds !== null &&
+    !isNaN(valueInSeconds) &&
+    isFinite(valueInSeconds)
+  ) {
     const minutes = Math.floor(valueInSeconds / 60);
     const seconds = Math.round(valueInSeconds % 60);
 

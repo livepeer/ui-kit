@@ -82,12 +82,62 @@ type UpdateAssetArgs = {
   assetId: string;
   /** The name of the asset */
   name?: string;
-  /** What storages to use for the asset */
+  /**
+   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
+   */
   storage?: {
+    /**
+     * If the asset should be stored on IPFS.
+     */
     ipfs?: boolean;
+    /**
+     * Metadata exported to the storage provider. This will be deep merged with the default
+     * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
+     *
+     * @see {@link https://eips.ethereum.org/EIPS/eip-721}
+     */
+    metadata?:
+      | Partial<Metadata> & {
+          [k: string]: unknown;
+        };
+    /**
+     * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
+     * will reference only the immutable media files.
+     */
+    metadataTemplate?: 'player' | 'file';
   };
-  /** Metadata associated with the asset */
-  meta?: Record<string, string>;
+};
+```
+
+The metadata can be overridden when the Asset and its metadata are exported to IPFS - we provide some
+helper types for metadata best practices:
+
+```tsx
+type Metadata = {
+  /** Name of the Asset */
+  name?: string;
+  /** Description of the Asset */
+  description?: string;
+  /** Image URL for the Asset */
+  image?: string;
+  /** Properties of the Asset */
+  properties?: {
+    [k: string]: unknown;
+  };
+  /**
+   * Background color for the Asset (OpenSea Standard)
+   *
+   * @see {@link https://docs.opensea.io/docs/metadata-standards}
+   */
+  background_color?: string;
+  /**
+   * Attributes for the Asset (OpenSea Standard)
+   *
+   * @see {@link https://docs.opensea.io/docs/metadata-standards}
+   */
+  attributes?: {
+    [k: string]: unknown;
+  };
 };
 ```
 

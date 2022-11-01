@@ -5,6 +5,7 @@ import {
   useAssetMetrics,
   useCreateAsset,
 } from '@livepeer/react';
+import { useRouter } from 'next/router';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -24,6 +25,8 @@ const rejectStyle = {
 };
 
 export const Asset = () => {
+  const router = useRouter();
+
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
@@ -94,101 +97,116 @@ export const Asset = () => {
 
   return (
     <Box css={{ my: '$6' }}>
-      <Box
-        css={{
-          mb: '$3',
-          width: '100%',
-        }}
-      >
+      {!asset && (
         <Box
-          as="div"
           css={{
+            mb: '$3',
             width: '100%',
-            cursor: 'pointer',
-            p: '$1',
-            mb: '$0',
-            height: 'auto',
-            border: '1px solid $colors$primary7',
-            borderRadius: '$1',
           }}
-          {...getRootProps({ style })}
         >
-          <Box as="input" {...getInputProps()} />
           <Box
-            as="p"
+            as="div"
             css={{
               width: '100%',
-              height: '100%',
-              border: '1px dotted $colors$primary7',
+              cursor: 'pointer',
+              p: '$1',
+              mb: '$0',
+              height: 'auto',
+              border: '1px solid $colors$primary7',
               borderRadius: '$1',
-              m: 0,
-              fontSize: '$3',
-              p: '$3',
-              transition: 'border .24s ease-in-out',
-              minWidth: '296px',
-              minHeight: '70px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
             }}
+            {...getRootProps({ style })}
           >
-            <Text variant="gray">
-              Drag and drop or{' '}
-              <Box as="span" css={{ color: '$primary9', fontWeight: 700 }}>
-                browse files
-              </Box>
-            </Text>
+            <Box as="input" {...getInputProps()} />
+            <Box
+              as="p"
+              css={{
+                width: '100%',
+                height: '100%',
+                border: '1px dotted $colors$primary7',
+                borderRadius: '$1',
+                m: 0,
+                fontSize: '$3',
+                p: '$3',
+                transition: 'border .24s ease-in-out',
+                minWidth: '296px',
+                minHeight: '70px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text variant="gray">
+                Drag and drop or{' '}
+                <Box as="span" css={{ color: '$primary9', fontWeight: 700 }}>
+                  browse files
+                </Box>
+              </Text>
+            </Box>
           </Box>
+
+          {error?.message && (
+            <Box>
+              <Text variant="red">{error.message}</Text>
+            </Box>
+          )}
         </Box>
-
-        {error?.message && (
-          <Box>
-            <Text variant="red">{error.message}</Text>
-          </Box>
-        )}
-      </Box>
-
-      <Flex css={{ gap: '$2', ai: 'center', mt: '$1', mb: '$4' }}>
-        {video ? (
-          <Badge size="2" variant="gray">
-            {video.name}
-          </Badge>
-        ) : (
-          <Text size="2" variant="gray">
-            Select a video file to upload.
-          </Text>
-        )}
-        {progressFormatted && <Text size="2">{progressFormatted}</Text>}
-      </Flex>
-
-      <Flex css={{ jc: 'flex-end', mt: '$4', ai: 'center' }}>
-        <Button
-          type="submit"
-          css={{ display: 'flex', ai: 'center' }}
-          onClick={() => {
-            if (video) {
-              createAsset({ name: video.name, file: video });
-            }
-          }}
-          size="2"
-          disabled={!video || isLoading || Boolean(asset)}
-          variant="primary"
-        >
-          {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
-          Upload
-        </Button>
-      </Flex>
+      )}
 
       {asset?.playbackId && (
         <Box css={{ mt: '$2' }}>
           <Player title={asset?.name} playbackId={asset?.playbackId} />
         </Box>
       )}
-      {metrics?.metrics?.[0] && (
-        <Badge css={{ mt: '$2' }} size="2" variant="gray">
-          Views: {metrics?.metrics?.[0]?.startViews}
-        </Badge>
-      )}
+
+      <Flex css={{ jc: 'space-between', mt: '$3', ai: 'center' }}>
+        <Flex css={{ ai: 'center', gap: '$2' }}>
+          {metrics?.metrics?.[0] && (
+            <Badge size="2" variant="gray">
+              Views: {metrics?.metrics?.[0]?.startViews}
+            </Badge>
+          )}
+          {video ? (
+            <Badge size="2" variant="gray">
+              {video.name}
+            </Badge>
+          ) : (
+            <Text size="2" variant="gray">
+              Select a video file to upload.
+            </Text>
+          )}
+          {progressFormatted && <Text size="2">{progressFormatted}</Text>}
+        </Flex>
+        {asset?.id ? (
+          <Button
+            onClick={() =>
+              router.push(`/examples/react/video-nft?id=${asset.id}`)
+            }
+            disabled={asset?.status?.phase !== 'ready'}
+            variant="primary"
+            size="2"
+          >
+            {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
+            Mint an NFT
+          </Button>
+        ) : (
+          <Button
+            type="submit"
+            css={{ display: 'flex', ai: 'center' }}
+            onClick={() => {
+              if (video) {
+                createAsset({ name: video.name, file: video });
+              }
+            }}
+            size="2"
+            disabled={!video || isLoading}
+            variant="primary"
+          >
+            {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
+            Upload
+          </Button>
+        )}
+      </Flex>
     </Box>
   );
 };

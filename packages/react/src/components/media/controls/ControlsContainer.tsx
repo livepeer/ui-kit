@@ -1,4 +1,6 @@
-import { MediaControllerState, styling } from 'livepeer';
+import { MediaControllerState } from 'livepeer/media/controls';
+import { styling } from 'livepeer/styling';
+import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
 import { useMediaController } from '../context';
@@ -18,6 +20,7 @@ const mediaControllerSelector = ({
 });
 
 export type ControlsContainerProps = {
+  uploadProgress?: number;
   showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
@@ -40,6 +43,7 @@ export const ControlsContainer = React.forwardRef<
     poster,
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
+    uploadProgress,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -55,6 +59,14 @@ export const ControlsContainer = React.forwardRef<
       togglePlay();
     }
   }, [togglePlay, isLoaded]);
+
+  const loadingText = React.useMemo(
+    () =>
+      isNumber(uploadProgress)
+        ? `Processing: ${(Number(uploadProgress) * 100).toFixed(0)}%`
+        : null,
+    [uploadProgress],
+  );
 
   return (
     <>
@@ -80,6 +92,10 @@ export const ControlsContainer = React.forwardRef<
           className={styling.controlsContainer.background()}
           onMouseUp={onClickBackground}
         >
+          <div className={styling.controlsContainer.loadingText()}>
+            {loadingText}
+          </div>
+
           <div className={styling.controlsContainer.loading()} />
         </div>
       )}

@@ -1,11 +1,10 @@
 import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
 
-import { noop } from '../utils';
+import { noop } from '../../utils';
 
-import { IS_CLIENT } from './browser';
+import { isClient } from '../browser';
 
-import { getMetricsReportingUrl, reportMediaMetrics } from './metrics';
-import { HlsSrc } from './src';
+import { HlsSrc } from '../src';
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
 
@@ -15,7 +14,7 @@ export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
 /**
  * Checks if hls.js can play in the browser.
  */
-export const isHlsSupported = () => (IS_CLIENT ? Hls.isSupported() : true);
+export const isHlsSupported = () => (isClient() ? Hls.isSupported() : true);
 
 export const createNewHls = <TElement extends HTMLMediaElement>(
   source: HlsSrc,
@@ -74,16 +73,6 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
         }
       }
     });
-
-    const metricReportingUrl = await getMetricsReportingUrl(source.src);
-    if (metricReportingUrl) {
-      reportMediaMetrics(element, metricReportingUrl);
-    } else {
-      console.log(
-        'Not able to report player metrics given the source url',
-        source,
-      );
-    }
   });
 
   let retryCount = 0;

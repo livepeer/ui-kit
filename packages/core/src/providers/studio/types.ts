@@ -57,12 +57,7 @@ export type StudioAssetPatchPayload = {
    * Name of the asset. This is not necessarily the filename, can be a custom name or title
    */
   name?: string;
-  /**
-   * User input metadata associated with the asset
-   */
-  meta?: {
-    [k: string]: string;
-  };
+  /** Storage configs for the asset */
   storage?: {
     ipfs?:
       | {
@@ -99,36 +94,7 @@ export type StudioError = {
   errors: [string, ...string[]];
 };
 
-export interface StudioAsset extends Asset {
-  storage?: {
-    status: NonNullable<Asset['storage']>['status'];
-    ipfs?: NonNullable<Asset['storage']>['ipfs'] & {
-      spec?: {
-        /**
-         * Name of the NFT metadata template to export. 'player' will embed the
-         * Livepeer Player on the NFT while 'file' will reference only the
-         * immutable MP4 files.
-         */
-        nftMetadataTemplate?: 'player' | 'file';
-        /**
-         * Additional data to add to the NFT metadata exported to IPFS. Will be
-         * deep merged with the default metadata exported.
-         */
-        nftMetadata?: {
-          [k: string]: unknown;
-        };
-      };
-      nftMetadata?: {
-        /** CID of the file on IPFS */
-        cid?: string;
-        /** URL with IPFS scheme for the file */
-        url?: string;
-        /** URL to access file via HTTP through an IPFS gateway */
-        gatewayUrl?: string;
-      };
-    };
-  };
-}
+export type StudioAsset = Asset;
 
 // TODO: create a description of the fields
 // Type copied from https://github.com/livepeer/player/blob/be5eebb47efdaa997ee4dcce818dc72cbf7ff627/src/index.ts#L27
