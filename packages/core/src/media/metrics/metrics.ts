@@ -1,3 +1,5 @@
+import { getMetricsReportingUrl } from './utils';
+
 export type RawMetrics = {
   firstPlayback: number;
 
@@ -222,6 +224,9 @@ export class MetricsStatus<
     this.currentMetrics.nWaiting++;
   }
 
+  getFirstPlayback() {
+    return this.currentMetrics.firstPlayback;
+  }
   setFirstPlayback() {
     this.currentMetrics.firstPlayback = Date.now() - bootMs;
   }
@@ -265,28 +270,34 @@ const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
 type MediaMetrics<TElement extends HTMLMediaElement> = {
   metrics: MetricsStatus<TElement> | null;
-  websocket: WebSocket | null;
-  report: (() => void) | null;
+  destroy: () => void;
 };
 
 /**
- * Gather playback metrics from a generic HTML5 video (or audio) element and
- * report those back to a websocket.
- * @param element                 Element to capture playback metrics from
- * @param reportingWebsocketUrl   URL to the websocket to report to
+ * Gather playback metrics from a generic HTML5 video/audio element and
+ * report them to a websocket. Automatically handles a redirect to get the
+ * metrics endpoint.
+ *
+ * @param element Element to capture playback metrics from
  */
-export function reportMediaMetrics<TElement extends HTMLMediaElement>(
-  element: TElement,
-  reportingWebsocketUrl: string,
+export function addMediaMetrics<TElement extends HTMLMediaElement>(
+  element: TElement | undefined | null,
+  sourceUrl: string | undefined | null,
+  onError?: (error: unknown) => void,
 ): MediaMetrics<TElement> {
   const defaultResponse: MediaMetrics<TElement> = {
     metrics: null,
-    websocket: null,
-    report: null,
+    destroy: () => {
+      //
+    },
   };
 
+  if (!element || !sourceUrl) {
+    return defaultResponse;
+  }
+
   // do not attach twice (to the same websocket)
-  if (element.getAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE) === 'true') {
+  if (element.hasAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE)) {
     return defaultResponse;
   }
 
@@ -304,31 +315,50 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
   const metricsStatus = new MetricsStatus(element);
 
   try {
-    const createNewWebSocket = (numRetries = 0) => {
-      const newWebSocket = new WebSocket(reportingWebsocketUrl);
+    const createNewWebSocket = async (numRetries = 0) => {
+      const reportingWebsocketUrl = await getMetricsReportingUrl(sourceUrl);
 
-      newWebSocket.onopen = function () {
-        // enable active statistics reporting
-        report();
-      };
-      newWebSocket.onclose = function () {
-        // disable active statistics gathering
-        if (timeOut) {
-          clearTimeout(timeOut);
-          timeOut = null;
-          enabled = false;
-        }
+      if (reportingWebsocketUrl) {
+        const newWebSocket = new WebSocket(reportingWebsocketUrl);
 
-        // auto-reconnect with exponential backoff
-        setTimeout(function () {
-          createNewWebSocket(numRetries++);
-        }, Math.pow(2, numRetries) * 1e3);
-      };
+        newWebSocket.addEventListener('open', () => {
+          // enable active statistics reporting
+          report();
+        });
+        newWebSocket.addEventListener('close', (event) => {
+          // disable active statistics gathering
+          if (timeOut) {
+            clearTimeout(timeOut);
+            timeOut = null;
+            enabled = false;
+          }
 
-      return newWebSocket;
+          // use random code for internal error
+          if (event.code !== 3077) {
+            // auto-reconnect with exponential backoff
+            setTimeout(function () {
+              createNewWebSocket(numRetries++).then((websocket) => {
+                ws = websocket;
+              });
+            }, Math.pow(2, numRetries) * 1e3);
+          }
+        });
+        return newWebSocket;
+      }
+
+      return null;
     };
 
-    const ws = createNewWebSocket();
+    let ws: WebSocket | null;
+
+    createNewWebSocket()
+      .then((websocket) => {
+        ws = websocket;
+      })
+      .catch((e) => {
+        console.error(e);
+        onError?.(e);
+      });
 
     let timeOut: NodeJS.Timeout | null = null;
     let enabled = true;
@@ -394,7 +424,7 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
     }
 
     const report = () => {
-      if (!enabled) {
+      if (!enabled || !ws) {
         return;
       }
 
@@ -424,7 +454,17 @@ export function reportMediaMetrics<TElement extends HTMLMediaElement>(
       }, 1e3);
     };
 
-    return { metrics: metricsStatus, websocket: ws, report };
+    const destroy = () => {
+      enabled = false;
+      monitor.destroy();
+      if (timeOut) {
+        clearTimeout(timeOut);
+      }
+      ws?.close(3077);
+      element.removeAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE);
+    };
+
+    return { metrics: metricsStatus, destroy };
   } catch (e) {
     console.log(e);
   }

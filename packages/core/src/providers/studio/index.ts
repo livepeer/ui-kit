@@ -128,6 +128,21 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async createAsset(args: CreateAssetArgs): Promise<Asset> {
+    if (args.url) {
+      const createdAsset = await this._create<
+        { asset: StudioAsset },
+        Omit<CreateAssetArgs, 'file'>
+      >('/asset/upload/url', {
+        json: {
+          name: args.name,
+          url: args.url,
+        },
+        headers: this._defaultHeaders,
+      });
+
+      return this.getAsset(createdAsset?.asset?.id);
+    }
+
     const uploadReq = await this._create<
       { tusEndpoint: string; asset: { id: string } },
       Omit<CreateAssetArgs, 'file'>
@@ -143,6 +158,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     } = uploadReq;
 
     await new Promise<void>((resolve, reject) => {
+      if (!args.file) {
+        return reject('No file provided.');
+      }
+
       const upload = new tus.Upload(args.file, {
         endpoint: tusEndpoint,
         metadata: {
@@ -275,9 +294,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return {
       type: studioPlaybackInfo?.['type'],
       meta: {
-        live: studioPlaybackInfo?.['meta']?.['live']
-          ? Boolean(studioPlaybackInfo?.['meta']['live'])
-          : undefined,
+        ...(studioPlaybackInfo?.['meta']?.['live']
+          ? { live: Boolean(studioPlaybackInfo?.['meta']['live']) }
+          : {}),
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           hrn: source?.['hrn'],
           type: source?.['type'],

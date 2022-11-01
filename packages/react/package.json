@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React components & hooks for apps built with Livepeer.",
   "license": "MIT",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -79,11 +79,11 @@
   },
   "dependencies": {
     "@stitches/react": "^1.2.8",
-    "@tanstack/query-sync-storage-persister": "4.13.0",
-    "@tanstack/react-query": "4.13.0",
-    "@tanstack/react-query-persist-client": "4.13.0",
-    "core-js": "^3.26.0",
-    "livepeer": "workspace:^1.2.0",
+    "@tanstack/query-sync-storage-persister": "4.10.1",
+    "@tanstack/react-query": "4.10.1",
+    "@tanstack/react-query-persist-client": "4.10.1",
+    "core-js": "^3.25.5",
+    "livepeer": "^1.2.1",
     "use-sync-external-store": "^1.2.0",
     "zustand": "^4.1.3"
   },

@@ -167,10 +167,15 @@ export type AssetIdOrString =
 export type CreateAssetArgs = {
   /** Name for the new asset */
   name: string;
+
+  /** External URL to be imported */
+  url?: string;
+
   /** Content to be uploaded */
-  file: File | ReadStream;
+  file?: File | ReadStream;
   /** Size of the upload file. Must provide this if the file is a ReadStream */
   uploadSize?: number;
+
   /**
    * Callback to receive progress (0-1 completion ratio) updates of the upload.
    */
@@ -180,6 +185,9 @@ export type CreateAssetArgs = {
   | {
       file: ReadStream;
       uploadSize: number;
+    }
+  | {
+      url: string;
     }
 );
 

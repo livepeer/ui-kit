@@ -6,10 +6,10 @@ it('should expose correct exports', () => {
   expect(Object.keys(Exports)).toMatchInlineSnapshot(`
     [
       "canPlayMediaNatively",
-      "getMetricsReportingUrl",
+      "parseCid",
+      "addMediaMetrics",
       "MetricsStatus",
       "PlaybackMonitor",
-      "reportMediaMetrics",
       "getMediaSourceType",
     ]
   `);

@@ -4,8 +4,13 @@ export {
   studioProvider,
   type StudioLivepeerProviderConfig,
 } from 'livepeer/providers/studio';
-export { defaultTheme, getCssText, styling } from 'livepeer/styling';
-export { createReactClient } from './client';
+export {
+  defaultTheme,
+  getCssText,
+  styling,
+  type ThemeConfig,
+} from 'livepeer/styling';
+export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
   ControlsContainer,
@@ -15,6 +20,7 @@ export {
   PlayButton,
   Player,
   Poster,
+  prefetchPlayer,
   Progress,
   ThemeProvider,
   TimeDisplay,
@@ -41,6 +47,12 @@ export type {
 export { Context, LivepeerConfig, useClient } from './context';
 export type { LivepeerConfigProps } from './context';
 export {
+  prefetchAsset,
+  prefetchAssetMetrics,
+  prefetchPlaybackInfo,
+  prefetchStream,
+  prefetchStreamSession,
+  prefetchStreamSessions,
   useAsset,
   useAssetMetrics,
   useCreateAsset,
@@ -53,3 +65,4 @@ export {
   useUpdateStream,
 } from './hooks';
 export { deserialize, serialize } from './utils';
+export type { PrefetchQueryOptions } from './utils';

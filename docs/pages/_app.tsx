@@ -14,7 +14,7 @@ Object.keys(themes).map(
   (key, _index) => (themeMap[themes[key].className] = themes[key].className),
 );
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps<{ dehydratedState: string }>) {
   const getLayout =
     (Component as any).getLayout || ((page: React.ReactElement) => page);
 
@@ -29,7 +29,9 @@ function App({ Component, pageProps }: AppProps) {
           light: 'light',
         }}
       >
-        <Providers>{getLayout(<Component {...pageProps} />)}</Providers>
+        <Providers dehydratedState={pageProps?.dehydratedState}>
+          {getLayout(<Component {...pageProps} />)}
+        </Providers>
       </ThemeProvider>
     </DesignSystemProvider>
   );

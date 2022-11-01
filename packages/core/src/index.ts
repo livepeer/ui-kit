@@ -21,12 +21,11 @@ export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
 export {
+  addMediaMetrics,
   canPlayMediaNatively,
   getMediaSourceType,
-  getMetricsReportingUrl,
   MetricsStatus,
   PlaybackMonitor,
-  reportMediaMetrics,
 } from './media';
 export type {
   AudioSrc,

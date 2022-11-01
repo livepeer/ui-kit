@@ -4,7 +4,6 @@ import { noop } from '../../utils';
 
 import { isClient } from '../browser';
 
-import { getMetricsReportingUrl, reportMediaMetrics } from '../metrics';
 import { HlsSrc } from '../src';
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
@@ -74,16 +73,6 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
         }
       }
     });
-
-    const metricReportingUrl = await getMetricsReportingUrl(source.src);
-    if (metricReportingUrl) {
-      reportMediaMetrics(element, metricReportingUrl);
-    } else {
-      console.log(
-        'Not able to report player metrics given the source url',
-        source,
-      );
-    }
   });
 
   let retryCount = 0;

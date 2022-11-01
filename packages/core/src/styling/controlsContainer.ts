@@ -107,10 +107,40 @@ const left = css(spaceBetweenContainer, {
   width: 'auto',
 });
 
+const loadingText = css(sharedContainer, {
+  top: 0,
+  userSelect: 'none',
+  color: '$icon',
+
+  marginTop: '$controlsTopMarginY',
+  marginBottom: '$controlsTopMarginY',
+  marginLeft: '$controlsTopMarginX',
+  marginRight: '$controlsTopMarginX',
+
+  display: 'inline-flex',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  position: 'absolute',
+
+  fontSize: '$timeFontSizeSm',
+
+  '@md': {
+    fontSize: '$timeFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$timeFontSize',
+  },
+
+  left: 0,
+  right: 0,
+  bottom: 0,
+});
+
 export const controlsContainer = {
   background,
   gradient,
   loading,
+  loadingText,
 
   top: {
     container: topContainer,

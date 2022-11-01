@@ -5,21 +5,30 @@ import {
 } from '@livepeer/react';
 import type { AppProps } from 'next/app';
 import NextHead from 'next/head';
+import { useMemo } from 'react';
 
-const livepeerClient = createReactClient({
-  provider: studioProvider({
-    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
-  }),
-});
+const App = ({
+  Component,
+  pageProps,
+}: AppProps<{ dehydratedState: string }>) => {
+  const livepeerClient = useMemo(() => {
+    return createReactClient({
+      provider: studioProvider({
+        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+      }),
+    });
+  }, []);
 
-const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <NextHead>
         <title>nextjs example - livepeer.js</title>
       </NextHead>
 
-      <LivepeerConfig client={livepeerClient}>
+      <LivepeerConfig
+        dehydratedState={pageProps?.dehydratedState}
+        client={livepeerClient}
+      >
         <Component {...pageProps} />
       </LivepeerConfig>
     </>

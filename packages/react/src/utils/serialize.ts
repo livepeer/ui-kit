@@ -112,9 +112,13 @@ export function serialize(
   indent?: number | null | undefined,
   circularReplacer?: CircularReplacer | null | undefined,
 ) {
-  return JSON.stringify(
-    value,
-    createReplacer(replacer, circularReplacer),
-    indent ?? undefined,
-  );
+  try {
+    return JSON.stringify(
+      value,
+      createReplacer(replacer, circularReplacer),
+      indent ?? undefined,
+    );
+  } catch (e) {
+    return '{}';
+  }
 }

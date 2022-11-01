@@ -30,6 +30,7 @@ const livepeerClient = createReactClient({
 
 type Props = {
   children?: ReactNode;
+  dehydratedState?: string;
 };
 
 const livepeerLightTheme: ThemeConfig = {
@@ -82,7 +83,7 @@ const livepeerDarkTheme: ThemeConfig = {
 
 const themes: any = getThemes();
 
-export function Providers({ children }: Props) {
+export function Providers({ children, dehydratedState }: Props) {
   const { theme } = useTheme();
   const router = useRouter();
 
@@ -142,7 +143,11 @@ export function Providers({ children }: Props) {
       <WagmiConfig client={wagmiClient}>
         <ConnectKitProvider>
           <AptosContext.Provider value={aptosClient}>
-            <LivepeerConfig client={livepeerClient} theme={livepeerTheme}>
+            <LivepeerConfig
+              dehydratedState={dehydratedState}
+              client={livepeerClient}
+              theme={livepeerTheme}
+            >
               <SyncedTabsContext.Provider value={syncedTabsState}>
                 {children}
               </SyncedTabsContext.Provider>

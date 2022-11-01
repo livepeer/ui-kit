@@ -14,6 +14,6 @@
     "vite": "^3.2.0"
   },
   "dependencies": {
-    "livepeer": "workspace:^1.2.0"
+    "livepeer": "^1.2.1"
   }
 }

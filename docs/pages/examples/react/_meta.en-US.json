@@ -1,7 +1,8 @@
 {
   "player": "Player",
-  "view-asset": "Create & Watch an Asset",
-  "video-nft": "Mint a Video NFT",
   "view-stream": "Create & Watch a Stream",
+  "view-asset": "Create & Watch an Asset",
+  "video-nft": "Mint a Video NFT from an Asset",
+  "ipfs-playback": "Play a Video from IPFS",
   "access-control": "Stream w/ Access Control"
 }

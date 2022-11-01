@@ -21,7 +21,10 @@ const wagmiClient = createClient(
   }),
 );
 
-const App = ({ Component, pageProps }: AppProps) => {
+const App = ({
+  Component,
+  pageProps,
+}: AppProps<{ dehydratedState: string }>) => {
   return (
     <>
       <NextHead>
@@ -30,7 +33,10 @@ const App = ({ Component, pageProps }: AppProps) => {
 
       <WagmiConfig client={wagmiClient}>
         <ConnectKitProvider>
-          <LivepeerConfig client={livepeerClient}>
+          <LivepeerConfig
+            dehydratedState={pageProps?.dehydratedState}
+            client={livepeerClient}
+          >
             <Component {...pageProps} />
           </LivepeerConfig>
         </ConnectKitProvider>
