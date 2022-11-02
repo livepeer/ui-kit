@@ -101,7 +101,7 @@ export function Player({
   controls,
   muted,
   playbackId,
-  refetchPlaybackInfoInterval = 10000,
+  refetchPlaybackInfoInterval = 5000,
   src,
   theme,
   title,
@@ -259,7 +259,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              uploadProgress={uploadStatus?.progress}
+              uploadStatus={uploadStatus}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

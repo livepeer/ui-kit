@@ -1,5 +1,5 @@
 import { Asset, HttpError } from 'livepeer';
-import { parseCid } from 'livepeer/media';
+import { parseArweaveTxId, parseCid } from 'livepeer/media';
 
 import * as React from 'react';
 
@@ -16,7 +16,7 @@ export type UsePlaybackInfoOrImportProps = {
 
 /**
  * Retrieves the playback info for a playback ID or source URL.
- * Automatically imports a source URL from IPFS if it is a valid CID.
+ * Conditionally, automatically imports a source URL from IPFS or Arweave.
  *
  * @param src Source URL for the media.
  * @param playbackId Playback ID of the media.
@@ -42,20 +42,20 @@ export const usePlaybackInfoOrImport = ({
     }
   }, [asset?.status, onAssetStatusChange]);
 
-  // check if the src or playbackId are IPFS sources (does not handle src arrays)
-  const ipfsSrcOrPlaybackId = React.useMemo(
+  // check if the src or playbackId are decentralized storage sources (does not handle src arrays)
+  const decentralizedSrcOrPlaybackId = React.useMemo(
     () =>
       playbackId
-        ? parseCid(playbackId)
+        ? parseCid(playbackId) ?? parseArweaveTxId(playbackId)
         : !Array.isArray(src)
-        ? parseCid(src)
+        ? parseCid(src) ?? parseArweaveTxId(src)
         : null,
     [playbackId, src],
   );
 
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
-    // attempt to fetch if the source is IPFS, or a playback ID is provided
-    playbackId: ipfsSrcOrPlaybackId?.cid ?? playbackId ?? undefined,
+    // attempt to fetch if the source is from decentralized storage, or a playback ID is provided
+    playbackId: decentralizedSrcOrPlaybackId?.id ?? playbackId ?? undefined,
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
   });
 
@@ -65,19 +65,19 @@ export const usePlaybackInfoOrImport = ({
     if (
       autoUrlUpload &&
       !importedAsset &&
-      ipfsSrcOrPlaybackId?.url &&
-      ipfsSrcOrPlaybackId?.cid &&
+      decentralizedSrcOrPlaybackId?.url &&
+      decentralizedSrcOrPlaybackId?.id &&
       (playbackInfoError as HttpError)?.code === 404
     ) {
       importAsset({
-        name: ipfsSrcOrPlaybackId.cid,
-        url: ipfsSrcOrPlaybackId.url,
+        name: decentralizedSrcOrPlaybackId.id,
+        url: decentralizedSrcOrPlaybackId.url,
       });
     }
   }, [
     autoUrlUpload,
     importedAsset,
-    ipfsSrcOrPlaybackId,
+    decentralizedSrcOrPlaybackId,
     playbackInfoError,
     importAsset,
   ]);
