@@ -457,17 +457,18 @@ function App() {
 
 ### autoUrlUpload
 
-Enables automatic upload and playback from decentralized storage providers. Currently supports IPFS CIDs/URLs. Defaults to `false`.
+Enables automatic upload and playback from decentralized storage providers. Currently supports IPFS CIDs and IPFS/Arweave URLs. Defaults to `false`.
 
-It is highly recommended for the best playback experience to upload from an IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>`)
+It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>` or `ar://<HASH>`)
 before presenting the content to the user - the first view with automatic URL upload can take a few minutes, then it will be permanently
 cached and play back quickly.
 
 <Callout>
-  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or URL (such as `ipfs://<CID>`, `https://<CID>.ipfs.dweb.link/` or
-  `https://cloudflare-ipfs.com/ipfs/<CID>`, _but not a directory_) can be passed as the `src` or `playbackID` to the Player, and it will
-  automatically detect if it is a valid CID and attempt to fetch the playback info for the CID. If the API does not have an Asset with the corresponding CID,
-  the Player will automatically attempt to upload the CID from IPFS, and then play the transcoded content back. This may take a few minutes.
+  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or IPFS/Arweave URL (such as `ipfs://<CID>`, `https://<CID>.ipfs.dweb.link/` or
+  `https://cloudflare-ipfs.com/ipfs/<CID>`, `ar://<HASH>`, `https://<SUBDOMAIN>.arweave.dev/<HASH>` or `https://arweave.net/<HASH>`, _but not a directory_)
+  can be passed as the `src` or `playbackID` to the Player, and it will
+  automatically detect if it is a decentralized storage identifier and attempt to fetch the playback info. If the API does not have an Asset with the corresponding ID,
+  the Player will automatically attempt to upload the content from IPFS/Arweave, and then play the transcoded content back. This may take a few minutes.
 </Callout>
 
 ```tsx {8}
