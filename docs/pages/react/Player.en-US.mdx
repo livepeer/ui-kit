@@ -110,7 +110,7 @@ function App() {
 
 The `playbackId` passed to the `Player` can be either a short playback ID
 which is created on asset/stream creation, or, for an asset, an IPFS CID. If
-the provided IPFS CID has not been uploaded yet, it will be auto-uploaded and
+the provided IPFS CID or IPFS/Arweave URL has not been uploaded yet, it will be auto-uploaded and
 played back - see [`autoUrlUpload`](#autourlupload) for more details.
 
 ```tsx {9}
@@ -134,7 +134,7 @@ The Player also supports an arbitrary `src` URL which can correspond to any comm
 See [caniuse video format](https://caniuse.com/?search=video%20format) for more details. Metrics reporting **will not** work
 with an arbitrary `src` that is not a recognized provider (e.g. not a Studio playback URL).
 
-If the `src` is an IPFS URL, it will be auto-uploaded and played back - see [`autoUrlUpload`](#autourlupload) for
+If the `src` is an IPFS/Arweave URL, it will be auto-uploaded and played back - see [`autoUrlUpload`](#autourlupload) for
 more details.
 
 ```tsx {7}
