@@ -1,25 +1,25 @@
 ---
 title: 'Play a Video from IPFS'
-description: 'Learn how to automatically upload and play back a video on IPFS with livepeer.js'
+description: 'Learn how to automatically upload and play back a video on IPFS and Arweave with livepeer.js'
 ---
 
 import { Callout } from 'nextra-theme-docs';
-import { IpfsPlayback } from '@components/examples';
+import { DecentralizedStoragePlayback } from '@components/examples';
 
-# Play a Video from IPFS
+# Play a Video from IPFS or Arweave
 
-Playing back video from IPFS is easy with livepeer.js! The example below uses the Player's built-in automatic IPFS upload to
-play back transcoded IPFS content without any additional configuration.
+Playing back transcoded video from IPFS or Arweave is easy with livepeer.js! The example below uses the Player's built-in automatic IPFS/Arweave upload to
+play back transcoded IPFS/Arweave content without any additional configuration.
 
 <Callout type="warning" emoji="⚠️">
   **This example illustrates how Livepeer can be used as a video processing and
-  caching layer on top of IPFS for optimized video playback.** As shown below,
-  there are delays when an IPFS CID has never been viewed - the first user will
-  need to wait for upload. We recommend, whenever possible, to upload via
-  `useCreateAsset` before displaying it in the player.
+  caching layer on top of IPFS and Arweave for optimized video playback.** As
+  shown below, there are delays when content has never been viewed - the first
+  user will need to wait for upload. We recommend, whenever possible, to upload
+  via `useCreateAsset` before displaying it in the player.
 </Callout>
 
-<IpfsPlayback />
+<DecentralizedStoragePlayback />
 
 ## Step 1: Configuring Providers
 
@@ -49,9 +49,10 @@ function App() {
 }
 ```
 
-## Step 2: IPFS Playback
+## Step 2: Automatic Playback
 
-Now that our providers are set up, we can add a text input for an IPFS CID or URL using `parseCid` from the core `livepeer` package - _this is only
+Now that our providers are set up, we can add a text input for an IPFS CID or an IPFS/Arweave URL using `parseCid` and `parseArweaveTxId`
+from the core `livepeer` package - _this is only
 used for UI purposes, to provide feedback if the user input is valid_.
 
 If the input is valid, we then pass that input to the [`Player`](/react/Player), which automatically detects if it is a valid CID and attempts
@@ -60,39 +61,38 @@ to upload the CID from IPFS, and then play the transcoded content back, without 
 
 ```tsx
 import { Player } from '@livepeer/react';
-import { parseCid } from 'livepeer/media';
+import { parseArweaveTxId, parseCid } from 'livepeer/media';
 
 import { useMemo, useState } from 'react';
 
-export const IpfsPlayback = () => {
-  const [ipfsUrl, setIpfsUrl] = useState<string>('');
+export const DecentralizedStoragePlayback = () => {
+  const [url, setUrl] = useState<string>('');
 
-  const ipfsParsed = useMemo(() => parseCid(ipfsUrl), [ipfsUrl]);
+  const idParsed = useMemo(() => parseCid(url) ?? parseArweaveTxId(url), [url]);
 
   return (
-    <Box>
+    <>
       <Box>
-        <TextField onChange={(e) => setIpfsUrl(e.target.value)} />
+        <Text>IPFS or Arweave URL</Text>
+        <TextField
+          type="text"
+          placeholder="ipfs://... or ar://"
+          onChange={(e) => setUrl(e.target.value)}
+        />
 
-        {ipfsUrl && !ipfsParsed && (
-          <Text>Provided value is not a valid CID.</Text>
+        {url && !idParsed && (
+          <Text>Provided value is not a valid identifier.</Text>
         )}
       </Box>
 
-      {ipfsParsed && (
-        <Player
-          title={ipfsParsed.cid}
-          src={ipfsUrl}
-          autoPlay
-          muted
-          autoUrlUpload
-        />
+      {idParsed && (
+        <Player title={idParsed.id} src={url} autoPlay muted autoUrlUpload />
       )}
-    </Box>
+    </>
   );
 };
 ```
 
 ## Wrap Up
 
-That's it! You just configured a caching & transcoding layer on top of IPFS with a few lines of code!
+That's it! You just configured a caching & transcoding layer on top of IPFS and Arweave with a few lines of code!

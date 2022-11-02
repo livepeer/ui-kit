@@ -51,7 +51,7 @@ export const parseCid = (possibleIpfsString: string | null | undefined) => {
   return null;
 };
 
-export const isCid = (
+const isCid = (
   hash: CID | Uint8Array | string | undefined | null,
 ): hash is CID => {
   try {
@@ -76,6 +76,6 @@ export const isCid = (
 const formatReturnCid = (cid: string) => {
   return {
     url: `ipfs://${cid}`,
-    cid,
+    id: cid,
   };
 };
