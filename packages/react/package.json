@@ -91,7 +91,7 @@
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.0.23",
+    "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.7",
     "@types/use-sync-external-store": "^0.0.3",
     "ethers": "^5.7.2",
