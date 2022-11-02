@@ -1,6 +1,7 @@
 import * as tus from 'tus-js-client';
 
 import { defaultStudioConfig } from '../../constants';
+import { isReactNative } from '../../media/browser';
 
 import {
   Asset,
@@ -21,7 +22,6 @@ import {
   UpdateStreamArgs,
   ViewsMetrics,
 } from '../../types';
-import { isReactNative } from '../../utils';
 import { hashCode } from '../../utils/hashcode';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
@@ -80,6 +80,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                     ? { ...t, id: undefined }
                     : { ...t, spec: undefined },
                 ),
+              },
+            }
+          : {}),
+        ...(typeof args?.playbackPolicy?.type !== 'undefined'
+          ? {
+              playbackPolicy: {
+                type: args.playbackPolicy.type,
               },
             }
           : {}),

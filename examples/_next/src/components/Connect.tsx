@@ -1,6 +1,6 @@
 import { useLivepeerProvider } from '@livepeer/react';
 import { useRoundsManager } from '@livepeer/react/contracts';
-import { ConnectKitButton } from 'connectkit';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEffect, useState } from 'react';
 
 export const Connect = () => {
@@ -20,7 +20,7 @@ export const Connect = () => {
 
   return (
     <div>
-      <ConnectKitButton />
+      <ConnectButton />
       <div>{livepeerProvider.getConfig().name}</div>
       <div>Current round: {currentRound}</div>
     </div>

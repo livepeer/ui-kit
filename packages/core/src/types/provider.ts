@@ -63,6 +63,17 @@ export type CreateStreamArgs = {
      */
     targets: MultistreamTarget[];
   };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
+};
+
+export type PlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `public` indicates no access control will be applied (anyone
+   * with the `playbackId` can view without a JWT).
+   */
+  type: 'jwt' | 'public';
 };
 
 export type UpdateStreamArgs = {
@@ -79,6 +90,8 @@ export type UpdateStreamArgs = {
      */
     targets: (MultistreamTarget | MultistreamTargetRef)[];
   };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
 } & (
   | {
       suspend: boolean;
@@ -90,6 +103,9 @@ export type UpdateStreamArgs = {
       multistream: {
         targets: (MultistreamTarget | MultistreamTargetRef)[];
       };
+    }
+  | {
+      playbackPolicy?: PlaybackPolicy;
     }
 );
 
@@ -279,6 +295,8 @@ export type Stream = {
      */
     targets: MultistreamTargetRef[];
   };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
 
   // Stream information
 

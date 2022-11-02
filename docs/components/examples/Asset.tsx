@@ -187,7 +187,7 @@ export const Asset = () => {
             size="2"
           >
             {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
-            Mint an NFT
+            Mint an NFT ↗
           </Button>
         ) : (
           <Button

@@ -42,7 +42,7 @@ export function useInternalMutation<
   >,
 ): Omit<
   UseMutationResult<TData, TError, TVariables, TContext>,
-  'reset' | 'context' | 'failureCount' | 'isPaused'
+  'reset' | 'context' | 'failureCount' | 'isPaused' | 'failureReason'
 > & {
   internal: Pick<
     UseMutationResult<TData, TError, TVariables, TContext>,

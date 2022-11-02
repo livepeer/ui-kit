@@ -1,26 +1,18 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
-import { Player, useCreateStream, useStream } from '@livepeer/react';
+import { Player, useCreateStream } from '@livepeer/react';
+import { useRouter } from 'next/router';
 
 import { useMemo, useState } from 'react';
 
 import { Spinner } from '../core';
 
 export const Stream = () => {
-  const [streamName, setStreamName] = useState<string>('');
-  const {
-    mutate: createStream,
-    data: createdStream,
-    status: createStatus,
-  } = useCreateStream();
-  const { data: stream, status: streamStatus } = useStream({
-    streamId: createdStream?.id,
-    // refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
-  });
+  const router = useRouter();
 
-  const isLoading = useMemo(
-    () => createStatus === 'loading' || streamStatus === 'loading',
-    [createStatus, streamStatus],
-  );
+  const [streamName, setStreamName] = useState<string>('');
+  const { mutate: createStream, data: stream, status } = useCreateStream();
+
+  const isLoading = useMemo(() => status === 'loading', [status]);
 
   return (
     <Box css={{ my: '$6' }}>
@@ -37,23 +29,6 @@ export const Stream = () => {
           onChange={(e) => setStreamName(e.target.value)}
         />
       </Box>
-
-      <Flex css={{ jc: 'flex-end', gap: '$3', mt: '$4' }}>
-        <Button
-          css={{ display: 'flex', ai: 'center' }}
-          onClick={() => {
-            if (streamName) {
-              createStream({ name: streamName });
-            }
-          }}
-          size="2"
-          disabled={!streamName || isLoading || Boolean(stream)}
-          variant="primary"
-        >
-          {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
-          Create Stream
-        </Button>
-      </Flex>
 
       {stream &&
         stream.rtmpIngestUrl &&
@@ -74,6 +49,36 @@ export const Stream = () => {
           />
         </Box>
       )}
+
+      <Flex css={{ jc: 'flex-end', gap: '$3', mt: '$4' }}>
+        {!stream ? (
+          <Button
+            css={{ display: 'flex', ai: 'center' }}
+            onClick={() => {
+              if (streamName) {
+                createStream({ name: streamName });
+              }
+            }}
+            size="2"
+            disabled={!streamName || isLoading || Boolean(stream)}
+            variant="primary"
+          >
+            {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
+            Create Stream
+          </Button>
+        ) : (
+          <Button
+            onClick={() =>
+              router.push(`/examples/react/access-control?id=${stream.id}`)
+            }
+            variant="primary"
+            size="2"
+          >
+            {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
+            Add Access Control ↗
+          </Button>
+        )}
+      </Flex>
     </Box>
   );
 };
