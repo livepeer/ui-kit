@@ -383,7 +383,8 @@ so the user can see the blockchain confirmation.
     import { useMemo } from 'react';
     import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-    // The demo NFT contract ABI
+    // The demo NFT contract ABI (exported as `const`)
+    // See: https://wagmi.sh/docs/typescript
     import { videoNftAbi } from './videoNftAbi';
 
     export const WagmiNft = () => {

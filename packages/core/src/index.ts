@@ -16,7 +16,7 @@ export type {
   GetLivepeerProviderResult,
   WatchLivepeerProviderCallback,
 } from './actions';
-export { Client, createClient, clearClient } from './client';
+export { clearClient, Client, createClient } from './client';
 export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
@@ -62,4 +62,4 @@ export type {
   UpdateStreamArgs,
   ViewsMetrics,
 } from './types';
-export { deepMerge, pick } from './utils';
+export { b64UrlDecode, b64UrlEncode, deepMerge, pick } from './utils';

@@ -1,8 +1,10 @@
-import { decodeJwt } from 'jose';
+// use jose to test
+import { importSPKI, jwtVerify } from 'jose';
 import { describe, expect, it } from 'vitest';
 
 import { setupClient } from '../../test';
 import { studioProvider } from '../providers/studio';
+import { b64UrlDecode } from '../utils';
 
 import { signAccessJwt } from './jwt';
 
@@ -17,6 +19,16 @@ const commonOptions = {
   issuer: 'https://livepeerjs.org',
 } as const;
 
+const verifyJwt = async (jws: string) => {
+  const publicKey = await importSPKI(
+    b64UrlDecode(commonOptions.publicKey) ?? '',
+    'ES256',
+  );
+
+  // override the currentDate for verification
+  return jwtVerify(jws, publicKey, { currentDate: new Date(Date.now()) });
+};
+
 describe('signAccessJwt', () => {
   it('signs with playbackId', async () => {
     const token = await signAccessJwt({
@@ -24,15 +36,21 @@ describe('signAccessJwt', () => {
       playbackId: 'abcd1234',
     });
 
-    const decoded = decodeJwt(token);
+    const decoded = await verifyJwt(token);
 
-    expect(decoded.action).toEqual('pull');
-    expect(decoded.pub).toEqual(
+    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
+      {
+        "alg": "ES256",
+        "typ": "JWT",
+      }
+    `);
+    expect(decoded.payload.action).toEqual('pull');
+    expect(decoded.payload.pub).toEqual(
       'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
     );
-    expect(decoded.iss).toEqual('https://livepeerjs.org');
-    expect(decoded.sub).toEqual('abcd1234');
-    expect(decoded.video).toEqual('none');
+    expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
+    expect(decoded.payload.sub).toEqual('abcd1234');
+    expect(decoded.payload.video).toEqual('none');
   });
 
   it('fails to signs with streamId and no client', async () => {
@@ -57,15 +75,21 @@ describe('signAccessJwt', () => {
       },
     );
 
-    const decoded = decodeJwt(token);
+    const decoded = await verifyJwt(token);
 
-    expect(decoded.action).toEqual('pull');
-    expect(decoded.pub).toEqual(
+    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
+      {
+        "alg": "ES256",
+        "typ": "JWT",
+      }
+    `);
+    expect(decoded.payload.action).toEqual('pull');
+    expect(decoded.payload.pub).toEqual(
       'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
     );
-    expect(decoded.iss).toEqual('https://livepeerjs.org');
-    expect(decoded.sub).toEqual('d7aer9qx8act4lfd');
-    expect(decoded.video).toEqual('none');
+    expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
+    expect(decoded.payload.sub).toEqual('d7aer9qx8act4lfd');
+    expect(decoded.payload.video).toEqual('none');
   });
 
   it('signs with streamId and a global client', async () => {
@@ -76,45 +100,61 @@ describe('signAccessJwt', () => {
       streamId,
     });
 
-    const decoded = decodeJwt(token);
+    const decoded = await verifyJwt(token);
 
-    expect(decoded.action).toEqual('pull');
-    expect(decoded.pub).toEqual(
+    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
+      {
+        "alg": "ES256",
+        "typ": "JWT",
+      }
+    `);
+    expect(decoded.payload.action).toEqual('pull');
+    expect(decoded.payload.pub).toEqual(
       'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
     );
-    expect(decoded.iss).toEqual('https://livepeerjs.org');
-    expect(decoded.sub).toEqual('d7aer9qx8act4lfd');
-    expect(decoded.video).toEqual('none');
+    expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
+    expect(decoded.payload.sub).toEqual('d7aer9qx8act4lfd');
+    expect(decoded.payload.video).toEqual('none');
   });
 
   it('signs with a default duration', async () => {
-    setupClient();
-
     const token = await signAccessJwt({
       ...commonOptions,
-      streamId,
+      playbackId: 'abcd1234',
     });
 
-    const decoded = decodeJwt(token);
+    const decoded = await verifyJwt(token);
 
-    expect((decoded.exp ?? 0) - (decoded.iat ?? 0)).toMatchInlineSnapshot(
-      '86400',
-    );
+    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
+      {
+        "alg": "ES256",
+        "typ": "JWT",
+      }
+    `);
+
+    expect(
+      (decoded.payload.exp ?? 0) - (decoded.payload.iat ?? 0),
+    ).toMatchInlineSnapshot('86400');
   });
 
   it('signs with a custom duration', async () => {
-    setupClient();
-
     const token = await signAccessJwt({
       ...commonOptions,
-      streamId,
+      playbackId: 'abcd1234',
       expiration: '300s',
     });
 
-    const decoded = decodeJwt(token);
+    const decoded = await verifyJwt(token);
 
-    expect((decoded.exp ?? 0) - (decoded.iat ?? 0)).toMatchInlineSnapshot(
-      '300',
-    );
+    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
+      {
+        "alg": "ES256",
+        "typ": "JWT",
+      }
+    `);
+
+    expect(
+      (decoded.payload.exp ?? 0) - (decoded.payload.iat ?? 0),
+    ).toMatchInlineSnapshot('300');
   });
 });
