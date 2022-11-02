@@ -8,8 +8,8 @@ import { AccessControl } from '@components/examples';
 
 # Stream with Access Control
 
-Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/react/hooks/useCreateStream)
-and [`useStream`](/react/hooks/useStream) to create and watch a livestream.
+Adding access control to a stream only takes a few lines of code. The example below uses [`useCreateStream`](/react/hooks/useCreateStream)
+and [`useStream`](/react/hooks/useStream) to create and watch a gated livestream.
 
 <AccessControl />
 
@@ -47,9 +47,9 @@ function App() {
 }
 ```
 
-## Step 2: Stream Creation
+## Step 2: Gated Stream Creation
 
-We then can create our stream, with the stream key returned once we create it (styling has been removed for simplicity):
+We then can create our gated stream, with the stream key returned once we create it (styling has been removed for simplicity):
 
 ```tsx
 import { useCreateStream } from '@livepeer/react';
@@ -75,7 +75,7 @@ export const Stream = () => {
       <Button
         onClick={() => {
           if (streamName) {
-            createStream({ name: streamName });
+            createStream({ name: streamName, playbackPolicy: { type: 'jwt' } });
           }
         }}
         disabled={

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { b64UrlDecode, b64UrlEncode } from './b64';
+import { b64UrlDecode, b64UrlEncode } from './string';
 
 describe('b64', () => {
   describe('encodes', () => {

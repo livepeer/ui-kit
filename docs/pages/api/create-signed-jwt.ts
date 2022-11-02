@@ -1,11 +1,12 @@
+import { b64UrlDecode } from 'livepeer';
 import { signAccessJwt } from 'livepeer/crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { ApiError } from '../../lib/error';
-import { provider } from '../../lib/provider';
 
 export type CreateSignedPlaybackBody = {
   playbackId: string;
+  secret: string;
 };
 
 export type CreateSignedPlaybackResponse = {
@@ -30,23 +31,22 @@ const handler = async (
           .json({ message: 'No private/public key configured.' });
       }
 
-      const { playbackId }: CreateSignedPlaybackBody = req.body;
+      const { playbackId, secret }: CreateSignedPlaybackBody = req.body;
 
-      if (!playbackId) {
+      if (!playbackId || !secret) {
         return res.status(400).json({ message: 'Missing data in body.' });
       }
 
-      const token = await signAccessJwt(
-        {
-          privateKey: accessControlPrivateKey,
-          publicKey: accessControlPublicKey,
-          issuer: 'https://livepeerjs.org',
-          playbackId,
-        },
-        {
-          provider,
-        },
-      );
+      if (secret !== 'supersecretkey') {
+        return res.status(401).json({ message: 'Incorrect secret.' });
+      }
+
+      const token = await signAccessJwt({
+        privateKey: b64UrlDecode(accessControlPrivateKey) ?? '',
+        publicKey: accessControlPublicKey,
+        issuer: 'https://livepeerjs.org',
+        playbackId,
+      });
 
       return res.status(200).json({
         token,

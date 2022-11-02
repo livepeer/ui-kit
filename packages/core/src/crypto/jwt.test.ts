@@ -13,9 +13,9 @@ const streamId = 'd7ae985a-7a27-4c18-a00c-22a5b5ea7e10';
 
 const commonOptions = {
   privateKey:
-    '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgIiR3kYwhLTMY7Jfe\nZZ20lK5WF8QcUhiBfr/VXukkijGhRANCAASijOcHY3nUo9ZiA1Z9JK+UMKAtHM+3\nvD987L87T7E59y49z+7D6nruo9TAm+vhr7AuCBy8OoalKKoiKcChO0Y4\n-----END PRIVATE KEY-----\n',
+    '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgKlIbqh9vFNCxqHOz\nRblWZJB29a9VA46SlFklfGuSV06hRANCAASJHiaCxOvME7UQ5JXpY82vFzgUO1tQ\ns/59LPGC//voxE6lB6ucaHFdgotKAz+8Ka4ZOv6ORDr/CNz3A3cZViXL\n-----END PRIVATE KEY-----\n',
   publicKey:
-    'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
+    'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFaVI0bWdzVHJ6Qk8xRU9TVjZXUE5yeGM0RkR0YgpVTFArZlN6eGd2Lzc2TVJPcFFlcm5HaHhYWUtMU2dNL3ZDbXVHVHIramtRNi93amM5d04zR1ZZbHl3PT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
   issuer: 'https://livepeerjs.org',
 } as const;
 
@@ -45,9 +45,7 @@ describe('signAccessJwt', () => {
       }
     `);
     expect(decoded.payload.action).toEqual('pull');
-    expect(decoded.payload.pub).toEqual(
-      'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
-    );
+    expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
     expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
     expect(decoded.payload.sub).toEqual('abcd1234');
     expect(decoded.payload.video).toEqual('none');
@@ -84,9 +82,7 @@ describe('signAccessJwt', () => {
       }
     `);
     expect(decoded.payload.action).toEqual('pull');
-    expect(decoded.payload.pub).toEqual(
-      'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
-    );
+    expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
     expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
     expect(decoded.payload.sub).toEqual('d7aer9qx8act4lfd');
     expect(decoded.payload.video).toEqual('none');
@@ -109,9 +105,7 @@ describe('signAccessJwt', () => {
       }
     `);
     expect(decoded.payload.action).toEqual('pull');
-    expect(decoded.payload.pub).toEqual(
-      'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFb296bkIyTjUxS1BXWWdOV2ZTU3ZsRENnTFJ6UAp0N3cvZk95L08wK3hPZmN1UGMvdXcrcDY3cVBVd0p2cjRhK3dMZ2djdkRxR3BTaXFJaW5Bb1R0R09BPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
-    );
+    expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
     expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
     expect(decoded.payload.sub).toEqual('d7aer9qx8act4lfd');
     expect(decoded.payload.video).toEqual('none');

@@ -5,6 +5,7 @@ import {
   createReactClient,
 } from '@livepeer/react';
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AptosClient } from 'aptos';
 import { useRouter } from 'next/router';
 import { useTheme } from 'nextra-theme-docs';
@@ -99,6 +100,8 @@ const livepeerDarkTheme: ThemeConfig = {
 
 const themes: any = getThemes();
 
+const queryClient = new QueryClient();
+
 export function Providers({ children, dehydratedState }: Props) {
   const { theme } = useTheme();
   const router = useRouter();
@@ -156,21 +159,23 @@ export function Providers({ children, dehydratedState }: Props) {
     <Box
       className={themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]}
     >
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          <AptosContext.Provider value={aptosClient}>
-            <LivepeerConfig
-              dehydratedState={dehydratedState}
-              client={livepeerClient}
-              theme={livepeerTheme}
-            >
-              <SyncedTabsContext.Provider value={syncedTabsState}>
-                {children}
-              </SyncedTabsContext.Provider>
-            </LivepeerConfig>
-          </AptosContext.Provider>
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider chains={chains}>
+            <AptosContext.Provider value={aptosClient}>
+              <LivepeerConfig
+                dehydratedState={dehydratedState}
+                client={livepeerClient}
+                theme={livepeerTheme}
+              >
+                <SyncedTabsContext.Provider value={syncedTabsState}>
+                  {children}
+                </SyncedTabsContext.Provider>
+              </LivepeerConfig>
+            </AptosContext.Provider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </QueryClientProvider>
     </Box>
   );
 }

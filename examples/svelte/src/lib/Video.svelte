@@ -29,13 +29,7 @@
     );
 
     if (isHlsSupported() && hlsSrc.type === 'hls') {
-      createNewHls(
-        hlsSrc,
-        video,
-        () => {},
-        () => {},
-        () => {},
-      );
+      createNewHls(hlsSrc, video);
     } else if (canPlayMediaNatively('application/vnd.apple.mpegurl')) {
       videoSrc = source;
     }

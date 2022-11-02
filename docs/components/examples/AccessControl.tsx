@@ -1,93 +1,115 @@
-import { Box, Button, Flex, Text } from '@livepeer/design-system';
-import { Player, useStream, useUpdateStream } from '@livepeer/react';
-import { useRouter } from 'next/router';
-import { Callout } from 'nextra-theme-docs';
+import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
+import { Player, useCreateStream, useStream } from '@livepeer/react';
 
-import { useMemo } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
 
+import { ApiError } from '../../lib/error';
+import {
+  CreateSignedPlaybackBody,
+  CreateSignedPlaybackResponse,
+} from '../../pages/api/create-signed-jwt';
 import { Spinner } from '../core';
 
 export const AccessControl = () => {
-  const router = useRouter();
+  const [streamName, setStreamName] = useState<string>('');
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status,
+  } = useCreateStream();
 
-  const streamId = useMemo(
-    () => (router?.query?.id ? String(router?.query?.id) : undefined),
-    [router?.query],
-  );
-
-  const { data: stream, status } = useStream({
-    streamId,
-    refetchInterval: (s) => (!s?.isActive ? 5000 : false),
+  const { data: stream } = useStream({
+    streamId: createdStream?.id,
+    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
   });
-  const { mutate: updateStream, data: updatedStream } = useUpdateStream();
+
+  const { mutate: createJwt, data: createdJwt } = useMutation({
+    mutationFn: async () => {
+      if (!stream?.playbackId) {
+        throw new Error('No playback ID yet.');
+      }
+
+      const body: CreateSignedPlaybackBody = {
+        playbackId: stream.playbackId,
+        // we pass along a "secret key" to demonstrate how gating can work
+        secret: 'supersecretkey',
+      };
+
+      // eslint-disable-next-line compat/compat
+      const response = await fetch('/api/create-signed-jwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      return response.json() as Promise<
+        CreateSignedPlaybackResponse | ApiError
+      >;
+    },
+  });
+
+  useEffect(() => {
+    if (stream?.playbackId) {
+      createJwt();
+    }
+  }, [stream?.playbackId, createJwt]);
 
   const isLoading = useMemo(() => status === 'loading', [status]);
 
-  console.log({ stream });
-
-  return !streamId ? (
-    <Box css={{ my: '$4' }}>
-      <Callout type="error" emoji="⚠️">
-        <p>
-          This is an extension of the{' '}
-          <a href="/examples/react/view-stream">Create Stream</a> example.
-          Please be sure to go through that example before trying this one -{' '}
-          <strong>
-            you will need an stream ID from that example in this demo.
-          </strong>
-        </p>
-      </Callout>
-    </Box>
-  ) : (
+  return (
     <Box css={{ my: '$6' }}>
-      {stream &&
-        stream.rtmpIngestUrl &&
-        (!stream?.playbackUrl || !stream.isActive) && (
-          <Text size="3" variant="gray" css={{ mt: '$3', mb: '$4' }}>
-            Use the ingest URL <code>{stream.rtmpIngestUrl}</code> in a stream
-            client like OBS to see content below.{' '}
-            <strong>
-              In this example, you must stream before applying access control.
-            </strong>
-          </Text>
-        )}
-
-      {stream?.playbackId && (
-        <Box css={{ mt: '$2' }}>
-          <Player
-            title={stream?.name}
-            playbackId={stream?.playbackId}
-            autoPlay
-            muted
-            theme={{
-              fonts: {
-                display: 'Inter',
-              },
-            }}
+      {!stream?.id ? (
+        <>
+          <TextField
+            size="3"
+            type="text"
+            placeholder="Stream name"
+            onChange={(e) => setStreamName(e.target.value)}
           />
-        </Box>
-      )}
+          <Flex css={{ jc: 'flex-end', mt: '$4' }}>
+            <Button
+              css={{ display: 'flex', ai: 'center' }}
+              onClick={() => {
+                if (streamName) {
+                  createStream({
+                    name: streamName,
+                    playbackPolicy: { type: 'jwt' },
+                  });
+                }
+              }}
+              size="2"
+              disabled={!streamName || isLoading || Boolean(stream)}
+              variant="primary"
+            >
+              {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
+              Create Gated Stream
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <>
+          {stream &&
+            stream.rtmpIngestUrl &&
+            (!stream?.playbackUrl || !stream.isActive) && (
+              <Text size="3" variant="gray" css={{ mt: '$3', mb: '$4' }}>
+                Use the ingest URL <code>{stream.rtmpIngestUrl}</code> in a
+                stream client like OBS to see content below.
+              </Text>
+            )}
 
-      {updatedStream?.playbackPolicy?.type !== 'jwt' && (
-        <Flex css={{ jc: 'flex-end', gap: '$3', mt: '$4' }}>
-          <Button
-            css={{ display: 'flex', ai: 'center' }}
-            onClick={() => {
-              updateStream({
-                streamId,
-                playbackPolicy: {
-                  type: 'jwt',
-                },
-              });
-            }}
-            size="2"
-            disabled={isLoading}
-            variant="primary"
-          >
-            {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
-            Enable Access Control
-          </Button>
-        </Flex>
+          <Box css={{ mt: '$2' }}>
+            <Player
+              title={stream?.name}
+              playbackId={stream?.playbackId}
+              autoPlay
+              muted
+              jwt={(createdJwt as CreateSignedPlaybackResponse)?.token}
+            />
+          </Box>
+        </>
       )}
     </Box>
   );

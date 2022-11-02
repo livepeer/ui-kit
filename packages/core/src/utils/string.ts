@@ -1,18 +1,18 @@
 export const b64UrlEncode = (input: string): string | null => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && 'btoa' in window) {
     return escape(window?.btoa?.(input) ?? null);
   } else {
-    return escape(Buffer?.from(input)?.toString('base64') ?? null);
+    return escape(Buffer?.from(input, 'binary')?.toString('base64') ?? null);
   }
 };
 
 export const b64UrlDecode = (input: string): string | null => {
   const unescaped = unescape(input);
   if (unescaped) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && 'atob' in window) {
       return window?.atob?.(unescaped) ?? null;
     } else {
-      return Buffer?.from(unescaped, 'base64')?.toString('utf8') ?? null;
+      return Buffer?.from(unescaped, 'base64')?.toString('binary') ?? null;
     }
   }
   return null;

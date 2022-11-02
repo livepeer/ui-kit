@@ -226,26 +226,26 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
     const { assetId, name, storage } = args;
-    const asset = await this._update<
-      Omit<StudioAssetPatchPayload, 'assetId'>,
-      StudioAsset
-    >(`/asset/${assetId}`, {
-      json: {
-        name: typeof name !== 'undefined' ? String(name) : undefined,
-        storage: storage?.ipfs
-          ? {
-              ipfs: {
-                spec: {
-                  nftMetadata: storage?.metadata ?? {},
-                  nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+    await this._update<Omit<StudioAssetPatchPayload, 'assetId'>>(
+      `/asset/${assetId}`,
+      {
+        json: {
+          name: typeof name !== 'undefined' ? String(name) : undefined,
+          storage: storage?.ipfs
+            ? {
+                ipfs: {
+                  spec: {
+                    nftMetadata: storage?.metadata ?? {},
+                    nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+                  },
                 },
-              },
-            }
-          : undefined,
+              }
+            : undefined,
+        },
+        headers: this._defaultHeaders,
       },
-      headers: this._defaultHeaders,
-    });
-    return asset;
+    );
+    return this.getAsset({ assetId });
   }
 
   _getRtmpIngestUrl(streamKey: string) {
