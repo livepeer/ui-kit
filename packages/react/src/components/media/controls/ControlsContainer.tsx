@@ -1,3 +1,4 @@
+import { Asset } from 'livepeer';
 import { MediaControllerState } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import { isNumber } from 'livepeer/utils';
@@ -20,7 +21,7 @@ const mediaControllerSelector = ({
 });
 
 export type ControlsContainerProps = {
-  uploadProgress?: number;
+  uploadStatus?: Asset['status'] | null;
   showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
@@ -43,7 +44,7 @@ export const ControlsContainer = React.forwardRef<
     poster,
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
-    uploadProgress,
+    uploadStatus,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -62,10 +63,12 @@ export const ControlsContainer = React.forwardRef<
 
   const loadingText = React.useMemo(
     () =>
-      isNumber(uploadProgress)
-        ? `Processing: ${(Number(uploadProgress) * 100).toFixed(0)}%`
+      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+        : uploadStatus?.phase === 'failed'
+        ? 'Upload Failed'
         : null,
-    [uploadProgress],
+    [uploadStatus],
   );
 
   return (
