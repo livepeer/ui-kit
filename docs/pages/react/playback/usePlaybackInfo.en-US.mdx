@@ -78,3 +78,105 @@ function App() {
   });
 }
 ```
+
+## SSR
+
+### Next.js
+
+The `usePlaybackInfo` hook also comes with a [React Query](https://tanstack.com/query/v4/docs/guides/ssr) prefetch query, `prefetchPlaybackInfo`,
+which makes it easy to prefetch data for server-side rendering.
+
+First, you add a [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching/get-static-props) function to the page which
+you want to prefetch data on. The props should match the `usePlaybackInfo` hook to ensure that the correct data is prefetched.
+
+```tsx
+// pages/demo.tsx
+import { prefetchPlaybackInfo, studioProvider } from '@livepeer/react';
+
+export const getStaticProps = async () => {
+  const dehydratedState = await prefetchPlaybackInfo(
+    { playbackId },
+    { provider: studioProvider({ apiKey: 'yourStudioApiKey' }) },
+  );
+
+  return {
+    props: {
+      dehydratedState,
+    },
+    revalidate: 600,
+  };
+};
+```
+
+We need to update the `_app.tsx` to pass the `dehydratedState` in `pageProps` to the LivepeerConfig. We also move the
+`livepeerClient` into a useMemo hook so that a new client is created on each request.
+
+```tsx
+// pages/_app.tsx
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+import type { AppProps } from 'next/app';
+
+import { useMemo } from 'react';
+
+function App({ Component, pageProps }: AppProps<{ dehydratedState: string }>) {
+  // we create a new livepeer client on each request so data is
+  // not shared between users
+  const livepeerClient = useMemo(
+    () =>
+      createReactClient({
+        provider: studioProvider({
+          apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+        }),
+      }),
+    [],
+  );
+
+  return (
+    <LivepeerConfig
+      dehydratedState={pageProps?.dehydratedState}
+      client={livepeerClient}
+    >
+      <Component {...pageProps} />
+    </LivepeerConfig>
+  );
+}
+```
+
+That's it! You now have data prefetching on the server, which is passed to the browser and used to hydrate the initial query client.
+
+### Other Frameworks
+
+The process is very similar for other frameworks, with the exception that there is a `clearClient` boolean which should be used
+to ensure that the client cache is not reused across users.
+
+```tsx {7}
+import { prefetchPlaybackInfo, studioProvider } from '@livepeer/react';
+
+export const handleRequest = async (req, res) => {
+  const dehydratedState = await prefetchPlaybackInfo(
+    {
+      playbackId,
+      clearClient: true,
+    },
+    { provider: studioProvider({ apiKey: 'yourStudioApiKey' }) },
+  );
+
+  // sanitize the custom SSR generated data
+  // https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0
+
+  res.send(`
+    <html>
+      <body>
+        <div id="root">${html}</div>
+        <script>
+          window.__REACT_QUERY_STATE__ = ${yourSanitizedDehydratedState};
+        </script>
+      </body>
+    </html>
+  `);
+};
+```

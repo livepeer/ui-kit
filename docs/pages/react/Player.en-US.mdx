@@ -110,8 +110,8 @@ function App() {
 
 The `playbackId` passed to the `Player` can be either a short playback ID
 which is created on asset/stream creation, or, for an asset, an IPFS CID. If
-the provided IPFS CID has not been imported yet, it will be auto-imported and
-played back - see [`autoImport`](#autoimport) for more details.
+the provided IPFS CID or IPFS/Arweave URL has not been uploaded yet, it will be auto-uploaded and
+played back - see [`autoUrlUpload`](#autourlupload) for more details.
 
 ```tsx {9}
 import { Player } from '@livepeer/react';
@@ -134,7 +134,7 @@ The Player also supports an arbitrary `src` URL which can correspond to any comm
 See [caniuse video format](https://caniuse.com/?search=video%20format) for more details. Metrics reporting **will not** work
 with an arbitrary `src` that is not a recognized provider (e.g. not a Studio playback URL).
 
-If the `src` is an IPFS URL, it will be auto-imported and played back - see [`autoImport`](#autoimport) for
+If the `src` is an IPFS/Arweave URL, it will be auto-uploaded and played back - see [`autoUrlUpload`](#autourlupload) for
 more details.
 
 ```tsx {7}
@@ -455,15 +455,20 @@ function App() {
   showPipButton
 />
 
-### autoImport
+### autoUrlUpload
 
-Enables automatic import and playback from decentralized storage providers. Currently supports IPFS CIDs/URLs. Defaults to `true`.
+Enables automatic upload and playback from decentralized storage providers. Currently supports IPFS CIDs and IPFS/Arweave URLs. Defaults to `false`.
+
+It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>` or `ar://<HASH>`)
+before presenting the content to the user - the first view with automatic URL upload can take a few minutes, then it will be permanently
+cached and play back quickly.
 
 <Callout>
-  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or URL (such as `ipfs://<CID>`, `https://<CID>.ipfs.dweb.link/` or
-  `https://cloudflare-ipfs.com/ipfs/<CID>`, _but not a directory_) can be passed as the `src` or `playbackID` to the Player, and it will
-  automatically detect if it is a valid CID and attempt to fetch the playback info for the CID. If the API does not have an Asset with the corresponding CID,
-  the Player will automatically attempt to import the CID from IPFS, and then play the transcoded content back.
+  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or IPFS/Arweave URL (such as `ipfs://<CID>`, `https://<CID>.ipfs.dweb.link/` or
+  `https://cloudflare-ipfs.com/ipfs/<CID>`, `ar://<HASH>`, `https://<SUBDOMAIN>.arweave.dev/<HASH>` or `https://arweave.net/<HASH>`, _but not a directory_)
+  can be passed as the `src` or `playbackID` to the Player, and it will
+  automatically detect if it is a decentralized storage identifier and attempt to fetch the playback info. If the API does not have an Asset with the corresponding ID,
+  the Player will automatically attempt to upload the content from IPFS/Arweave, and then play the transcoded content back. This may take a few minutes.
 </Callout>
 
 ```tsx {8}
@@ -474,7 +479,7 @@ function App() {
     <Player
       title="Agent 327: Operation Barbershop"
       playbackId="Qmc5rn4Hi8a5JJQdrVAKyeEpCNJnM8t5fhJnoobstVcSFB"
-      autoImport
+      autoUrlUpload
     />
   );
 }
@@ -483,7 +488,7 @@ function App() {
 <Player
   title="Agent 327: Operation Barbershop"
   playbackId="Qmc5rn4Hi8a5JJQdrVAKyeEpCNJnM8t5fhJnoobstVcSFB"
-  autoImport
+  autoUrlUpload
 />
 
 ### theme
@@ -598,3 +603,105 @@ export const CustomControlsPlayer = () => {
 ```
 
 <CustomControlsPlayer />
+
+## SSR
+
+### Next.js
+
+The Player also comes with a [React Query](https://tanstack.com/query/v4/docs/guides/ssr) prefetch query, `prefetchPlayer`,
+which makes it easy to prefetch the data used internally for the Player during server-side rendering.
+
+First, you add a [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching/get-static-props) function to the page which
+you want to prefetch data on. The props should match the Player props to ensure that the correct data is prefetched.
+
+```tsx
+// pages/demo.tsx
+import { prefetchPlayer, studioProvider } from '@livepeer/react';
+
+export const getStaticProps = async () => {
+  const dehydratedState = await prefetchPlayer(
+    { playbackId },
+    { provider: studioProvider({ apiKey: 'yourStudioApiKey' }) },
+  );
+
+  return {
+    props: {
+      dehydratedState,
+    },
+    revalidate: 600,
+  };
+};
+```
+
+We need to update the `_app.tsx` to pass the `dehydratedState` in `pageProps` to the LivepeerConfig. We also move the
+`livepeerClient` into a useMemo hook so that a new client is created on each request.
+
+```tsx
+// pages/_app.tsx
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+import type { AppProps } from 'next/app';
+
+import { useMemo } from 'react';
+
+function App({ Component, pageProps }: AppProps<{ dehydratedState: string }>) {
+  // we create a new livepeer client on each request so data is
+  // not shared between users
+  const livepeerClient = useMemo(
+    () =>
+      createReactClient({
+        provider: studioProvider({
+          apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+        }),
+      }),
+    [],
+  );
+
+  return (
+    <LivepeerConfig
+      dehydratedState={pageProps?.dehydratedState}
+      client={livepeerClient}
+    >
+      <Component {...pageProps} />
+    </LivepeerConfig>
+  );
+}
+```
+
+That's it! You now have data prefetching on the server, which is passed to the browser and used to hydrate the initial query client.
+
+### Other Frameworks
+
+The process is very similar for other frameworks, with the exception that there is a `clearClient` boolean which should be used
+to ensure that the client cache is not reused across users.
+
+```tsx {7}
+import { prefetchPlayer, studioProvider } from '@livepeer/react';
+
+export const handleRequest = async (req, res) => {
+  const dehydratedState = await prefetchPlayer(
+    {
+      playbackId,
+      clearClient: true,
+    },
+    { provider: studioProvider({ apiKey: 'yourStudioApiKey' }) },
+  );
+
+  // sanitize the custom SSR generated data
+  // https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0
+
+  res.send(`
+    <html>
+      <body>
+        <div id="root">${html}</div>
+        <script>
+          window.__REACT_QUERY_STATE__ = ${yourSanitizedDehydratedState};
+        </script>
+      </body>
+    </html>
+  `);
+};
+```

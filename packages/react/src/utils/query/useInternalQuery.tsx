@@ -2,6 +2,8 @@ import { QueryKey, UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { HttpError } from 'livepeer/errors';
 import { useMemo } from 'react';
 
+import { QueryClientContext } from '../../context';
+
 import { Status } from './types';
 
 export type InternalQueryError = HttpError | Error;
@@ -73,7 +75,10 @@ export function useInternalQuery<
     remove,
     status: internalStatus,
     fetchStatus,
-  } = useQuery<TQueryFnData, HttpError | Error, TData, TQueryKey>(options);
+  } = useQuery<TQueryFnData, HttpError | Error, TData, TQueryKey>({
+    ...options,
+    context: QueryClientContext,
+  });
 
   const status: Status = useMemo(
     () =>

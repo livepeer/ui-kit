@@ -1,13 +1,13 @@
 import { Box, Text, TextField } from '@livepeer/design-system';
 import { Player } from '@livepeer/react';
-import { parseCid } from 'livepeer/media';
+import { parseArweaveTxId, parseCid } from 'livepeer/media';
 
 import { useMemo, useState } from 'react';
 
-export const IpfsPlayback = () => {
-  const [ipfsUrl, setIpfsUrl] = useState<string>('');
+export const DecentralizedStoragePlayback = () => {
+  const [url, setUrl] = useState<string>('');
 
-  const ipfsParsed = useMemo(() => parseCid(ipfsUrl), [ipfsUrl]);
+  const idParsed = useMemo(() => parseCid(url) ?? parseArweaveTxId(url), [url]);
 
   return (
     <Box css={{ my: '$6' }}>
@@ -18,25 +18,25 @@ export const IpfsPlayback = () => {
         }}
       >
         <Text css={{ my: '$1' }} variant="gray">
-          IPFS URL
+          IPFS or Arweave URL
         </Text>
         <TextField
           size="3"
           type="text"
-          placeholder="https://cloudflare-ipfs.com/ipfs/..."
-          onChange={(e) => setIpfsUrl(e.target.value)}
+          placeholder="ipfs://... or ar://"
+          onChange={(e) => setUrl(e.target.value)}
         />
 
-        {ipfsUrl && !ipfsParsed && (
+        {url && !idParsed && (
           <Text css={{ my: '$1' }} variant="red">
-            Provided value is not a valid CID.
+            Provided value is not a valid identifier.
           </Text>
         )}
       </Box>
 
-      {ipfsParsed && (
+      {idParsed && (
         <Box css={{ mt: '$2' }}>
-          <Player title={ipfsParsed.cid} src={ipfsUrl} autoPlay muted />
+          <Player title={idParsed.id} src={url} autoPlay muted autoUrlUpload />
         </Box>
       )}
     </Box>

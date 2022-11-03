@@ -6,11 +6,11 @@ it('should expose correct exports', () => {
   expect(Object.keys(Exports)).toMatchInlineSnapshot(`
     [
       "canPlayMediaNatively",
+      "parseArweaveTxId",
       "parseCid",
-      "getMetricsReportingUrl",
+      "addMediaMetrics",
       "MetricsStatus",
       "PlaybackMonitor",
-      "reportMediaMetrics",
       "getMediaSourceType",
     ]
   `);

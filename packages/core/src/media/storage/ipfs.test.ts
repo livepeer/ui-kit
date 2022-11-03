@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseCid } from './decentralizedStorage';
+import { parseCid } from './ipfs';
 
 const ipfsPathGateways = [
   'https://w3s.link/ipfs/',
@@ -24,6 +24,14 @@ describe('parseCid', () => {
     expect(url?.url).toEqual(
       'ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy',
     );
+  });
+
+  it('errors on regular playback ID', async () => {
+    const sourceCid = '6d7el73r1y12chxr';
+
+    const url = parseCid(sourceCid);
+
+    expect(url).toEqual(null);
   });
 
   it('errors on paths in a CID', async () => {

@@ -1,12 +1,15 @@
-import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer/media';
+import {
+  AudioSrc,
+  Src,
+  VideoSrc,
+  addMediaMetrics,
+  getMediaSourceType,
+} from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import { Asset } from 'livepeer/types';
 import * as React from 'react';
 
-import { AudioPlayer } from './AudioPlayer';
-import { HlsPlayer } from './HlsPlayer';
-import { VideoPlayer } from './VideoPlayer';
 import { MediaControllerProvider, useTheme } from './context';
 
 import {
@@ -21,6 +24,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
+import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 export type PlayerObjectFit = 'cover' | 'contain';
@@ -80,7 +84,10 @@ export type PlayerProps = {
   showPipButton?: boolean;
 
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoImport?: boolean;
+  autoUrlUpload?: boolean;
+
+  /** Callback called when the metrics plugin cannot be initialized properly */
+  onMetricsError?: (error: Error) => void;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -94,7 +101,7 @@ export function Player({
   controls,
   muted,
   playbackId,
-  refetchPlaybackInfoInterval = 10000,
+  refetchPlaybackInfoInterval = 5000,
   src,
   theme,
   title,
@@ -105,27 +112,28 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
-  autoImport = true,
+  autoUrlUpload = true,
+  onMetricsError,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const [importStatus, setImportStatus] = React.useState<
+  const [uploadStatus, setUploadStatus] = React.useState<
     Asset['status'] | null
   >(null);
 
   const onAssetStatusChange = React.useCallback(
     (status: Asset['status']) => {
-      setImportStatus(status);
+      setUploadStatus(status);
     },
-    [setImportStatus],
+    [setUploadStatus],
   );
 
   const playbackInfo = usePlaybackInfoOrImport({
     src,
     playbackId,
     refetchPlaybackInfoInterval,
-    autoImport,
+    autoUrlUpload,
     onAssetStatusChange,
   });
 
@@ -193,6 +201,21 @@ export function Player({
     }
   }, []);
 
+  React.useEffect(() => {
+    const { destroy } = addMediaMetrics(
+      mediaElement,
+      Array.isArray(sourceMimeTyped)
+        ? sourceMimeTyped?.[0]?.src
+        : sourceMimeTyped?.src,
+      (e) => {
+        onMetricsError?.(e as Error);
+        console.error('Not able to report player metrics', e);
+      },
+    );
+
+    return destroy;
+  }, [onMetricsError, mediaElement, sourceMimeTyped]);
+
   const contextTheme = useTheme(theme);
 
   return (
@@ -236,7 +259,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              importProgress={importStatus?.progress}
+              uploadStatus={uploadStatus}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

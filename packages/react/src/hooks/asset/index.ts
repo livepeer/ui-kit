@@ -1,3 +1,3 @@
-export { useAsset } from './useAsset';
+export { prefetchAsset, useAsset } from './useAsset';
 export { useCreateAsset } from './useCreateAsset';
 export { useUpdateAsset } from './useUpdateAsset';
