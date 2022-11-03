@@ -15,6 +15,6 @@
     "typescriptreact"
   ],
   "eslint.packageManager": "pnpm",
-  "cSpell.words": ["multistream"],
+  "cSpell.words": ["Arweave", "multistream"],
   "json.format.enable": false
 }

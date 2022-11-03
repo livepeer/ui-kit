@@ -1,10 +1,11 @@
 // Arweave Protocol
-const arweaveProtocolPattern = /^(ar):\/\/([^/?#]+)$/;
+const arweaveProtocolPattern = /^(ar):\/\/([^/?#]+)(.*)$/;
 
 // Gateways
-const pathGatewayPattern = /^https:\/\/(arweave\.net|arweave\.dev)\/([^/?#]+)$/;
+const pathGatewayPattern =
+  /^https:\/\/(arweave\.net|arweave\.dev)\/([^/?#]+)(.*)$/;
 const subdomainGatewayPattern =
-  /^https:\/\/([^/]+)\.(arweave\.net|arweave\.dev)\/([^/?#]+)$/;
+  /^https:\/\/([^/]+)\.(arweave\.net|arweave\.dev)\/([^/?#]+)(.*)$/;
 
 /**
  * Takes an Arweave URL and returns a formatted Arweave URL if it is valid.
@@ -24,31 +25,43 @@ export const parseArweaveTxId = (
   const arweaveProtocolHash = possibleArweaveString.match(
     arweaveProtocolPattern,
   )?.[2];
+  const arweaveProtocolUrlIndicators = possibleArweaveString.match(
+    arweaveProtocolPattern,
+  )?.[3];
 
   if (arweaveProtocolHash) {
-    return formatReturnHash(arweaveProtocolHash);
+    return formatReturnHash(arweaveProtocolHash, arweaveProtocolUrlIndicators);
   }
 
   const subdomainGatewayHash = possibleArweaveString.match(
     subdomainGatewayPattern,
   )?.[3];
+  const subdomainGatewayUrlIndicators = possibleArweaveString.match(
+    subdomainGatewayPattern,
+  )?.[4];
 
   if (subdomainGatewayHash) {
-    return formatReturnHash(subdomainGatewayHash);
+    return formatReturnHash(
+      subdomainGatewayHash,
+      subdomainGatewayUrlIndicators,
+    );
   }
 
   const pathGatewayHash = possibleArweaveString.match(pathGatewayPattern)?.[2];
+  const pathGatewayUrlIndicators =
+    possibleArweaveString.match(pathGatewayPattern)?.[3];
 
   if (pathGatewayHash) {
-    return formatReturnHash(pathGatewayHash);
+    return formatReturnHash(pathGatewayHash, pathGatewayUrlIndicators);
   }
 
   return null;
 };
 
-const formatReturnHash = (hash: string) => {
+const formatReturnHash = (hash: string, urlIndicators?: string) => {
+  const hashWithUrlIndicators = `${hash}${urlIndicators ?? ''}`;
   return {
-    url: `ar://${hash}`,
-    id: hash,
+    url: `ar://${hashWithUrlIndicators}`,
+    id: hashWithUrlIndicators,
   };
 };
