@@ -21,7 +21,7 @@ import fs from 'fs';
 
 const NUM_POSTS = 5000;
 
-type CombinedMedia = {
+export type CombinedMedia = {
   url: string;
   mimeType: string;
   isDStorage: boolean;

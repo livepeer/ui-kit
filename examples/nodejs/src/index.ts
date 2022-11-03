@@ -1,37 +1,35 @@
-import { Asset, createAsset, getAsset } from 'livepeer';
+import { Asset } from 'livepeer';
 import { createClient } from 'livepeer/client';
 import { studioProvider } from 'livepeer/providers/studio';
 
+import { CombinedMedia } from './create-dataset';
 import * as fs from 'fs';
 
 const BATCH_SIZE = 20;
 
-// create the global livepeer.js client
-createClient({
+// create the livepeer.js client
+const { provider } = createClient({
   provider: studioProvider(),
 });
 
-type CombinedMedia = {
-  url: string;
-  mimeType: string;
-  isDStorage: boolean;
-  source: 'zora' | 'lens';
-};
+type MediaResult = {
+  assetId: string;
+  success: boolean;
+  errorMessage?: string;
+  seconds: number;
+} & CombinedMedia;
 
 export const importVideos = async (videos: CombinedMedia[]) => {
-  const uploadedVideos: ({
-    assetId: Asset['id'];
-    success: boolean;
-    errorMessage?: string;
-    seconds: number;
-  } & CombinedMedia)[] = [];
+  const uploadedVideos: MediaResult[] = [];
 
   while (videos.length) {
+    // splice the input array into batches of BATCH_SIZE
     const videoBatch = videos.splice(0, BATCH_SIZE);
 
+    // upload the videos using createAsset
     const createdVideos = await Promise.all(
       videoBatch.map(async (video) => {
-        const asset = await createAsset({
+        const asset = await provider.createAsset({
           name: video.url,
           url: video.url,
         });
@@ -44,8 +42,9 @@ export const importVideos = async (videos: CombinedMedia[]) => {
       }),
     );
 
-    console.log(`Started ${createdVideos.length} videos`);
+    console.log(`Uploaded ${createdVideos.length} videos`);
 
+    // wait for upload results for the videos using getAsset
     const batchStatuses = await Promise.all(
       createdVideos.map(async (importedVideo) => {
         let asset: Asset | null = null;
@@ -54,16 +53,16 @@ export const importVideos = async (videos: CombinedMedia[]) => {
           asset?.status?.phase !== 'ready' &&
           asset?.status?.phase !== 'failed'
         ) {
-          // introduce random jitter
+          // wait w/ random jitter
           await new Promise((resolve) =>
             setTimeout(resolve, Math.random() * 300 + 200),
           );
 
-          asset = await getAsset(importedVideo.asset.id);
+          asset = await provider.getAsset(importedVideo.asset.id);
         }
 
         console.log(
-          `${asset.status.phase}: ${asset.id} -- error: ${
+          `${asset.status.phase}: ${asset.id} :: error: ${
             asset.status.errorMessage ?? 'none'
           }`,
         );
@@ -80,7 +79,11 @@ export const importVideos = async (videos: CombinedMedia[]) => {
       }),
     );
 
+    // add results to final array
     uploadedVideos.push(...batchStatuses);
+
+    // write to file as a checkpoint
+    fs.writeFileSync('results.json', JSON.stringify(uploadedVideos, null, 2));
   }
 
   return uploadedVideos;
@@ -91,12 +94,5 @@ export const importVideos = async (videos: CombinedMedia[]) => {
     fs.readFileSync('output.json', 'utf8'),
   ) as CombinedMedia[];
 
-  const mappedVideos = videos.slice(10, 30).map((video) => ({
-    ...video,
-    url: video.url.replace('ipfs.infura.io', 'infura-ipfs.io'),
-  }));
-
-  const results = await importVideos(mappedVideos);
-
-  fs.writeFileSync('results.json', JSON.stringify(results, null, 2));
+  await importVideos(videos);
 })().then(() => console.log('Done!'));
