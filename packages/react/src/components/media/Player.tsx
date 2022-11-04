@@ -219,7 +219,7 @@ export function Player({
         : null;
 
     return mediaSourceFiltered;
-  }, [playbackUrls, src, jwt]);
+  }, [decentralizedSrcOrPlaybackId, playbackUrls, src, autoUrlUpload, jwt]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
