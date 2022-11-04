@@ -4,6 +4,8 @@ import {
   VideoSrc,
   addMediaMetrics,
   getMediaSourceType,
+  parseArweaveTxId,
+  parseCid,
 } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
@@ -134,8 +136,19 @@ export function Player({
     [setUploadStatus],
   );
 
+  // check if the src or playbackId are decentralized storage sources (does not handle src arrays)
+  const decentralizedSrcOrPlaybackId = React.useMemo(
+    () =>
+      playbackId
+        ? parseCid(playbackId) ?? parseArweaveTxId(playbackId)
+        : !Array.isArray(src)
+        ? parseCid(src) ?? parseArweaveTxId(src)
+        : null,
+    [playbackId, src],
+  );
+
   const playbackInfo = usePlaybackInfoOrImport({
-    src,
+    decentralizedSrcOrPlaybackId,
     playbackId,
     refetchPlaybackInfoInterval,
     autoUrlUpload,
@@ -189,6 +202,12 @@ export function Player({
       mediaSourceTypes?.[0]?.type === 'hls'
     ) {
       return mediaSourceTypes[0];
+    }
+
+    // if the player is auto uploading, we do not play back the detected input file
+    // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
+    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
+      return null;
     }
 
     // we filter by the first source type in the array provided

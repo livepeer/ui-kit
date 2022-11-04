@@ -464,8 +464,8 @@ before presenting the content to the user - the first view with automatic URL up
 cached and play back quickly.
 
 <Callout>
-  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or IPFS/Arweave URL (such as `ipfs://<CID>`, `https://<CID>.ipfs.dweb.link/` or
-  `https://cloudflare-ipfs.com/ipfs/<CID>`, `ar://<HASH>`, `https://<SUBDOMAIN>.arweave.dev/<HASH>` or `https://arweave.net/<HASH>`, _but not a directory_)
+  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or IPFS/Arweave URL (such as `ipfs://<CID>`, `ipfs://<CID>/asset.mp4`, `https://<CID>.ipfs.dweb.link/` or
+  `https://cloudflare-ipfs.com/ipfs/<CID>`, `ar://<HASH>`, `https://<SUBDOMAIN>.arweave.dev/<HASH>` or `https://arweave.net/<HASH>`, _including directories_)
   can be passed as the `src` or `playbackID` to the Player, and it will
   automatically detect if it is a decentralized storage identifier and attempt to fetch the playback info. If the API does not have an Asset with the corresponding ID,
   the Player will automatically attempt to upload the content from IPFS/Arweave, and then play the transcoded content back. This may take a few minutes.

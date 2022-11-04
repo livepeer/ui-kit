@@ -31,22 +31,22 @@ describe('parseArweaveTxId', () => {
     expect(url).toEqual(null);
   });
 
-  it('errors on paths in a regular Arweave url', async () => {
+  it('handles paths in a regular Arweave url', async () => {
     const sourceUrl =
       'ar://tdTf7tKuV6wQNx_-uzEsVQFi8j0KQs-rU_kggzBTyto/somepath.mp4';
 
     const url = parseArweaveTxId(sourceUrl);
 
-    expect(url).toEqual(null);
+    expect(url?.url).toEqual(sourceUrl);
   });
 
-  it('errors on query params in a regular Arweave url', async () => {
+  it('handles query params in a regular Arweave url', async () => {
     const sourceUrl =
       'ar://tdTf7tKuV6wQNx_-uzEsVQFi8j0KQs-rU_kggzBTyto?key=value';
 
     const url = parseArweaveTxId(sourceUrl);
 
-    expect(url).toEqual(null);
+    expect(url?.url).toEqual(sourceUrl);
   });
 
   it('handles Arweave gateways', async () => {
@@ -61,13 +61,15 @@ describe('parseArweaveTxId', () => {
     }
   });
 
-  it('errors on paths in an Arweave gateway', async () => {
+  it('handles paths in an Arweave gateway', async () => {
     for (const gateway of arweavePathGateways) {
       const url = parseArweaveTxId(
         `${gateway}tdTf7tKuV6wQNx_-uzEsVQFi8j0KQs-rU_kggzBTyto/somepath.mp4`,
       );
 
-      expect(url).toEqual(null);
+      expect(url?.url).toEqual(
+        'ar://tdTf7tKuV6wQNx_-uzEsVQFi8j0KQs-rU_kggzBTyto/somepath.mp4',
+      );
     }
   });
 
@@ -86,7 +88,7 @@ describe('parseArweaveTxId', () => {
     }
   });
 
-  it('errors on paths in a subdomain gateway', async () => {
+  it('handles paths in a subdomain gateway', async () => {
     for (const gateway of arweaveSubdomainGateways) {
       const url = parseArweaveTxId(
         `${gateway.replace(
@@ -95,11 +97,13 @@ describe('parseArweaveTxId', () => {
         )}/somepath.mp4`,
       );
 
-      expect(url).toEqual(null);
+      expect(url?.url).toEqual(
+        'ar://tdTf7tKuV6wQNx_-uzEsVQFi8j0KQs-rU_kggzBTyto/somepath.mp4',
+      );
     }
   });
 
-  it('errors on query params in a subdomain gateway', async () => {
+  it('handles query params in a subdomain gateway', async () => {
     for (const gateway of arweaveSubdomainGateways) {
       const url = parseArweaveTxId(
         `${gateway.replace(
@@ -108,7 +112,9 @@ describe('parseArweaveTxId', () => {
         )}?key=value`,
       );
 
-      expect(url).toEqual(null);
+      expect(url?.url).toEqual(
+        'ar://tdTf7tKuV6wQNx_-uzEsVQFi8j0KQs-rU_kggzBTyto?key=value',
+      );
     }
   });
 });
