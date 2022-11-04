@@ -54,25 +54,7 @@ function App() {
 }
 ```
 
-## Return Value
-
-The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
-aggregated for simplicity.
-
-```tsx
-{
-  data?: Asset,
-  error?: Error,
-  isError: boolean,
-  isIdle: boolean,
-  isLoading: boolean,
-  isSuccess: boolean,
-  status: 'idle' | 'loading' | 'success' | 'error',
-  mutate: (config: UpdateAssetArgs, options?: MutateOptions) => void,
-  mutateAsync: (config: UpdateAssetArgs, options?: MutateOptions) => Promise<Asset>,
-  variables?: UpdateAssetArgs
-}
-```
+## Mutation
 
 The variables for the mutate function(s) are defined as:
 
@@ -83,7 +65,7 @@ type UpdateAssetArgs = {
   /** The name of the asset */
   name?: string;
   /**
-   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
+   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible metadata configs.
    */
   storage?: {
     /**
@@ -101,7 +83,7 @@ type UpdateAssetArgs = {
           [k: string]: unknown;
         };
     /**
-     * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
+     * The metadata template to use. `player` will embed the Livepeer Player's IPFS CID while `file`
      * will reference only the immutable media files.
      */
     metadataTemplate?: 'player' | 'file';
@@ -110,7 +92,7 @@ type UpdateAssetArgs = {
 ```
 
 The metadata can be overridden when the Asset and its metadata are exported to IPFS - we provide some
-helper types for metadata best practices:
+helper types for metadata best practices based on ERC-721 and ERC-1155:
 
 ```tsx
 type Metadata = {
@@ -139,6 +121,26 @@ type Metadata = {
     [k: string]: unknown;
   };
 };
+```
+
+## Return Value
+
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
+aggregated for simplicity.
+
+```tsx
+{
+  data?: Asset,
+  error?: Error,
+  isError: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isSuccess: boolean,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  mutate: (config: UpdateAssetArgs, options?: MutateOptions) => void,
+  mutateAsync: (config: UpdateAssetArgs, options?: MutateOptions) => Promise<Asset>,
+  variables?: UpdateAssetArgs
+}
 ```
 
 ## Configuration

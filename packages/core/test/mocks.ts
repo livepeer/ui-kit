@@ -1,5 +1,9 @@
 import { vi } from 'vitest';
 
+import crypto from 'node:crypto';
+
+vi.stubGlobal('crypto', { subtle: crypto.webcrypto.subtle });
+
 // make dates stable across runs and increment each call
 export const resetDateNow = () => {
   let nowCount = 0;

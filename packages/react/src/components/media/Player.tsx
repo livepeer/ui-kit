@@ -10,6 +10,7 @@ import {
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import { Asset } from 'livepeer/types';
+import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
 import { MediaControllerProvider, useTheme } from './context';
@@ -88,6 +89,9 @@ export type PlayerProps = {
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   autoUrlUpload?: boolean;
 
+  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  jwt?: string;
+
   /** Callback called when the metrics plugin cannot be initialized properly */
   onMetricsError?: (error: Error) => void;
 } & (
@@ -116,6 +120,7 @@ export function Player({
   showPipButton,
   autoUrlUpload = true,
   onMetricsError,
+  jwt,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -163,18 +168,30 @@ export function Player({
   }, [playbackInfo]);
 
   const sourceMimeTyped = React.useMemo(() => {
-    const sourceOrPlaybackInfoSrc =
+    // cast all URLs to an array of strings
+    const sources =
       playbackUrls.length > 0
         ? playbackUrls
         : typeof src === 'string'
         ? [src]
         : src;
 
-    if (!sourceOrPlaybackInfoSrc) {
+    if (!sources) {
       return null;
     }
 
-    const mediaSourceTypes = sourceOrPlaybackInfoSrc
+    const authenticatedSources = sources.map((source) => {
+      // append the JWT to the query params
+      if (jwt) {
+        const url = new URL(source);
+        url.searchParams.append('jwt', jwt);
+        return url.toString();
+      }
+
+      return source;
+    });
+
+    const mediaSourceTypes = authenticatedSources
       .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
       .filter((s) => s) as Src[];
 
@@ -202,7 +219,7 @@ export function Player({
         : null;
 
     return mediaSourceFiltered;
-  }, [playbackUrls, src]);
+  }, [decentralizedSrcOrPlaybackId, playbackUrls, src, autoUrlUpload, jwt]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -236,6 +253,16 @@ export function Player({
   }, [onMetricsError, mediaElement, sourceMimeTyped]);
 
   const contextTheme = useTheme(theme);
+
+  const topLoadingText = React.useMemo(
+    () =>
+      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+        : uploadStatus?.phase === 'failed'
+        ? 'Upload Failed'
+        : null,
+    [uploadStatus],
+  );
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
@@ -278,7 +305,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              uploadStatus={uploadStatus}
+              topLoadingText={topLoadingText}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

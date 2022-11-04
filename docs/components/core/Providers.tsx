@@ -1,39 +1,48 @@
+import { Box, getThemes } from '@livepeer/design-system';
 import {
   LivepeerConfig,
   ThemeConfig,
   createReactClient,
-  defaultStudioConfig,
-  studioProvider,
 } from '@livepeer/react';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AptosClient } from 'aptos';
-import { ConnectKitProvider, getDefaultClient } from 'connectkit';
-import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-
+import { useTheme } from 'nextra-theme-docs';
 import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
+import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';
 
-import { WagmiConfig, chain, createClient } from 'wagmi';
+import { infuraProvider } from 'wagmi/providers/infura';
 
+import { publicProvider } from 'wagmi/providers/public';
+
+import { provider as livepeerProvider } from '../../lib/provider';
 import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
+
+import '@rainbow-me/rainbowkit/styles.css';
 
 export const AptosContext = createContext<AptosClient | null>(null);
 
-const wagmiClient = createClient(
-  getDefaultClient({
-    appName: 'livepeer.js',
-    chains: [chain.polygonMumbai],
-    infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
-  }),
+const { chains, provider } = configureChains(
+  [chain.polygonMumbai],
+  [
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
+    publicProvider(),
+  ],
 );
 
+const { connectors } = getDefaultWallets({
+  appName: 'livepeer.js docs',
+  chains,
+});
+
+const wagmiClient = createClient({
+  connectors,
+  provider,
+});
+
 const livepeerClient = createReactClient({
-  provider: studioProvider({
-    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
-    baseUrl:
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
-        ? 'https://livepeer.monster/api'
-        : defaultStudioConfig.baseUrl,
-  }),
+  provider: livepeerProvider,
 });
 
 type Props = {
@@ -89,6 +98,10 @@ const livepeerDarkTheme: ThemeConfig = {
   },
 };
 
+const themes: any = getThemes();
+
+const queryClient = new QueryClient();
+
 export function Providers({ children, dehydratedState }: Props) {
   const { theme } = useTheme();
   const router = useRouter();
@@ -142,20 +155,27 @@ export function Providers({ children, dehydratedState }: Props) {
   );
 
   return (
-    <WagmiConfig client={wagmiClient}>
-      <ConnectKitProvider>
-        <AptosContext.Provider value={aptosClient}>
-          <LivepeerConfig
-            dehydratedState={dehydratedState}
-            client={livepeerClient}
-            theme={livepeerTheme}
-          >
-            <SyncedTabsContext.Provider value={syncedTabsState}>
-              {children}
-            </SyncedTabsContext.Provider>
-          </LivepeerConfig>
-        </AptosContext.Provider>
-      </ConnectKitProvider>
-    </WagmiConfig>
+    // Add styling for livepeer-design-system components
+    <Box
+      className={themes[`${theme === 'light' ? 'light' : 'dark'}-theme-blue`]}
+    >
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider chains={chains}>
+            <AptosContext.Provider value={aptosClient}>
+              <LivepeerConfig
+                dehydratedState={dehydratedState}
+                client={livepeerClient}
+                theme={livepeerTheme}
+              >
+                <SyncedTabsContext.Provider value={syncedTabsState}>
+                  {children}
+                </SyncedTabsContext.Provider>
+              </LivepeerConfig>
+            </AptosContext.Provider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </QueryClientProvider>
+    </Box>
   );
 }
