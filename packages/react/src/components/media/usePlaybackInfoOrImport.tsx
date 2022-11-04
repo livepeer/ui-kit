@@ -1,5 +1,5 @@
 import { Asset, HttpError } from 'livepeer';
-import { parseArweaveTxId, parseCid } from 'livepeer/media';
+import { parseCid } from 'livepeer/media';
 
 import * as React from 'react';
 
@@ -7,7 +7,7 @@ import { useAsset, useCreateAsset, usePlaybackInfo } from '../../hooks';
 import { PlayerProps } from './Player';
 
 export type UsePlaybackInfoOrImportProps = {
-  src: PlayerProps['src'];
+  decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;
   playbackId: PlayerProps['playbackId'];
   refetchPlaybackInfoInterval: number;
   autoUrlUpload: boolean;
@@ -22,7 +22,7 @@ export type UsePlaybackInfoOrImportProps = {
  * @param playbackId Playback ID of the media.
  */
 export const usePlaybackInfoOrImport = ({
-  src,
+  decentralizedSrcOrPlaybackId,
   playbackId,
   refetchPlaybackInfoInterval,
   autoUrlUpload,
@@ -41,17 +41,6 @@ export const usePlaybackInfoOrImport = ({
       onAssetStatusChange(asset.status);
     }
   }, [asset?.status, onAssetStatusChange]);
-
-  // check if the src or playbackId are decentralized storage sources (does not handle src arrays)
-  const decentralizedSrcOrPlaybackId = React.useMemo(
-    () =>
-      playbackId
-        ? parseCid(playbackId) ?? parseArweaveTxId(playbackId)
-        : !Array.isArray(src)
-        ? parseCid(src) ?? parseArweaveTxId(src)
-        : null,
-    [playbackId, src],
-  );
 
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
     // attempt to fetch if the source is from decentralized storage, or a playback ID is provided

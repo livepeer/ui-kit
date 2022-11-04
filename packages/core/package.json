@@ -50,6 +50,10 @@
       "module": "./media/hls/dist/livepeer-media-hls.esm.js",
       "default": "./media/hls/dist/livepeer-media-hls.cjs.js"
     },
+    "./media/storage": {
+      "module": "./media/storage/dist/livepeer-media-storage.esm.js",
+      "default": "./media/storage/dist/livepeer-media-storage.cjs.js"
+    },
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
       "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
@@ -92,6 +96,7 @@
       "media/index.ts",
       "media/controls/index.ts",
       "media/hls/index.ts",
+      "media/storage/index.ts",
       "providers/studio/index.ts",
       "styling/index.ts",
       "types/index.ts",
