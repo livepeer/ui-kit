@@ -118,10 +118,18 @@ const loadingText = css(sharedContainer, {
   marginRight: '$controlsTopMarginX',
 
   display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
   position: 'absolute',
-  textAlign: 'center',
+
+  fontSize: '$timeFontSizeSm',
+
+  '@md': {
+    fontSize: '$timeFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$timeFontSize',
+  },
 
   left: 0,
   right: 0,

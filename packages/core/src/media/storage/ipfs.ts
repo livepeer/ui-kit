@@ -4,11 +4,11 @@ import { CID } from 'multiformats/cid';
 const ipfsCidPattern = /^([^/?#]+)$/;
 
 // IPFS Protocol
-const ipfsProtocolPattern = /^(ipfs):\/\/([^/?#]+)$/;
+const ipfsProtocolPattern = /^(ipfs):\/\/([^/?#]+)(.*)$/;
 
 // Gateways
-const pathGatewayPattern = /^https?:\/\/[^/]+\/(ipfs)\/([^/?#]+)$/;
-const subdomainGatewayPattern = /^https?:\/\/([^/]+)\.(ipfs)\.[^/?#]+$/;
+const pathGatewayPattern = /^https?:\/\/[^/]+\/(ipfs)\/([^/?#]+)(.*)$/;
+const subdomainGatewayPattern = /^https?:\/\/([^/]+)\.(ipfs)\.[^/?#]+(.*)$/;
 
 /**
  * Takes an IPFS CID or URL and returns a formatted IPFS URL if the CID/URL is valid.
@@ -23,23 +23,30 @@ export const parseCid = (possibleIpfsString: string | null | undefined) => {
   }
 
   const ipfsProtocolCid = possibleIpfsString.match(ipfsProtocolPattern)?.[2];
+  const ipfsProtocolUrlIndicators =
+    possibleIpfsString.match(ipfsProtocolPattern)?.[3];
 
   if (isCid(ipfsProtocolCid)) {
-    return formatReturnCid(ipfsProtocolCid);
+    return formatReturnCid(ipfsProtocolCid, ipfsProtocolUrlIndicators);
   }
 
   const subdomainGatewayCid = possibleIpfsString.match(
     subdomainGatewayPattern,
   )?.[1];
+  const subdomainGatewayUrlIndicators = possibleIpfsString.match(
+    subdomainGatewayPattern,
+  )?.[3];
 
   if (isCid(subdomainGatewayCid)) {
-    return formatReturnCid(subdomainGatewayCid);
+    return formatReturnCid(subdomainGatewayCid, subdomainGatewayUrlIndicators);
   }
 
   const pathGatewayCid = possibleIpfsString.match(pathGatewayPattern)?.[2];
+  const pathGatewayUrlIndicators =
+    possibleIpfsString.match(pathGatewayPattern)?.[3];
 
   if (isCid(pathGatewayCid)) {
-    return formatReturnCid(pathGatewayCid);
+    return formatReturnCid(pathGatewayCid, pathGatewayUrlIndicators);
   }
 
   const ipfsCid = possibleIpfsString.match(ipfsCidPattern)?.[1];
@@ -51,7 +58,7 @@ export const parseCid = (possibleIpfsString: string | null | undefined) => {
   return null;
 };
 
-export const isCid = (
+const isCid = (
   hash: CID | Uint8Array | string | undefined | null,
 ): hash is CID => {
   try {
@@ -73,9 +80,10 @@ export const isCid = (
   }
 };
 
-const formatReturnCid = (cid: string) => {
+const formatReturnCid = (cid: string, urlIndicators?: string) => {
+  const cidWithUrlIndicators = `${cid}${urlIndicators ?? ''}`;
   return {
-    url: `ipfs://${cid}`,
-    cid,
+    url: `ipfs://${cidWithUrlIndicators}`,
+    id: cidWithUrlIndicators,
   };
 };

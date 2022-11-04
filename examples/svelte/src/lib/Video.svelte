@@ -1,10 +1,8 @@
 <script>
   import {
+    addMediaMetrics,
     canPlayMediaNatively,
     getMediaSourceType,
-    getMetricsReportingUrl,
-    getPlaybackInfo,
-    reportMediaMetrics,
   } from 'livepeer';
   import { createClient } from 'livepeer/client';
   import { createNewHls, isHlsSupported } from 'livepeer/media/hls';
@@ -14,10 +12,10 @@
   let videoSrc = '';
   let video;
 
-  createClient({ provider: studioProvider() });
+  const { provider } = createClient({ provider: studioProvider() });
 
   async function fetchPlaybackInfo() {
-    const playbackInfo = await getPlaybackInfo({
+    const playbackInfo = await provider.getPlaybackInfo({
       playbackId: 'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe',
     });
 
@@ -25,26 +23,14 @@
 
     const hlsSrc = getMediaSourceType(source);
 
+    addMediaMetrics(video, source, (e) =>
+      console.error('Error adding metrics', e),
+    );
+
     if (isHlsSupported() && hlsSrc.type === 'hls') {
-      createNewHls(
-        hlsSrc,
-        video,
-        () => {},
-        () => {},
-        () => {},
-      );
+      createNewHls(hlsSrc.src, video);
     } else if (canPlayMediaNatively('application/vnd.apple.mpegurl')) {
       videoSrc = source;
-
-      const metricReportingUrl = await getMetricsReportingUrl(hlsSrc.src);
-      if (metricReportingUrl) {
-        reportMediaMetrics(video, metricReportingUrl);
-      } else {
-        console.log(
-          'Not able to report player metrics given the source url',
-          source,
-        );
-      }
     }
   }
 

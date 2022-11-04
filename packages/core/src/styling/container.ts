@@ -120,12 +120,12 @@ export const container = css(aspectRatioContainer, {
     pointerEvents: 'none',
   },
 
-  // for iOS rendering custom controls
-  zIndex: 2147483647,
-
   variants: {
     size: {
-      fullscreen: {},
+      fullscreen: {
+        // for iOS rendering custom controls
+        zIndex: 2147483647,
+      },
       default: {
         '&:hover': {
           boxShadow: '$containerShadowHover',
@@ -137,6 +137,8 @@ export const container = css(aspectRatioContainer, {
         borderColor: '$containerBorderColor',
         borderRadius: '$containerBorderRadius',
         borderWidth: '$containerBorderWidth',
+
+        zIndex: 1,
       },
     },
   },

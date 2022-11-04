@@ -84,6 +84,20 @@ function App() {
 }
 ```
 
+## Mutation
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type CreateAssetArgs = {
+  name: string;
+  file: File;
+};
+```
+
+The `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for resumable uploads and checks for existing uploads by default, before starting a
+new upload.
+
 ## Return Value
 
 The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
@@ -128,7 +142,8 @@ type CreateAssetSource = {
 If a file is provided, the `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for resumable uploads and checks for existing uploads by default, before starting a
 new upload.
 
-If a URL is provided, the hook will make a request to the background to start an import. **Either a URL or file must be provided.**
+If a URL is provided, the hook will make a request to the background to start an import. This can also
+be an IPFS URL (`ipfs://<CID>`) or Arweave URL (`ar://<HASH>`). **Either a URL or file must be provided.**
 
 ## Configuration
 

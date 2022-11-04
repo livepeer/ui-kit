@@ -16,15 +16,16 @@ export type {
   GetLivepeerProviderResult,
   WatchLivepeerProviderCallback,
 } from './actions';
+export { clearClient, Client, createClient } from './client';
+export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
 export {
+  addMediaMetrics,
   canPlayMediaNatively,
   getMediaSourceType,
-  getMetricsReportingUrl,
   MetricsStatus,
   PlaybackMonitor,
-  reportMediaMetrics,
 } from './media';
 export type {
   AudioSrc,
@@ -61,4 +62,11 @@ export type {
   UpdateStreamArgs,
   ViewsMetrics,
 } from './types';
-export { deepMerge, pick } from './utils';
+export {
+  b64Decode,
+  b64Encode,
+  b64UrlDecode,
+  b64UrlEncode,
+  deepMerge,
+  pick,
+} from './utils';

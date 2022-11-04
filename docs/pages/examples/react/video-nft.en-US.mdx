@@ -31,11 +31,11 @@ We first add the required dependencies using `npm` (or your preferred package ma
     npm i wagmi ethers
     ```
 
-    We also use [Family's ConnectKit](https://docs.family.co/connectkit) to show the connect wallet button, but this can be replaced
-    by any wallet connection provider (e.g. [RainbowKit](https://www.rainbowkit.com/docs/introduction)). You can install this with:
+    We also use [RainbowKit](https://www.rainbowkit.com/docs/introduction) to show the connect wallet button, but this can be replaced
+    by any wallet connection provider (e.g. [Family's ConnectKit](https://docs.family.co/connectkit)). You can install this with:
 
     ```bash
-    npm i connectkit
+    npm i @rainbow-me/rainbowkit
     ```
   </SyncedTab>
   <SyncedTab>
@@ -63,17 +63,9 @@ We first add the required dependencies using `npm` (or your preferred package ma
       createReactClient,
       studioProvider,
     } from '@livepeer/react';
-    // this is an optional dependency, and can use another wallet connector (like RainbowKit)
-    import { ConnectKitProvider, getDefaultClient } from 'connectkit';
     import { WagmiConfig, chain, createClient } from 'wagmi';
 
-    const wagmiClient = createClient(
-      getDefaultClient({
-        appName: 'livepeer.js',
-        chains: [chain.polygonMumbai],
-        infuraId: process.env.NEXT_PUBLIC_INFURA_API_KEY,
-      }),
-    );
+    const wagmiClient = ...; // set up the wagmi client with RainbowKit or ConnectKit
 
     const livepeerClient = createReactClient({
       provider: studioProvider({
@@ -84,11 +76,11 @@ We first add the required dependencies using `npm` (or your preferred package ma
     function App() {
       return (
         <WagmiConfig client={wagmiClient}>
-          <ConnectKitProvider>
+          <RainbowKitProvider {...}>
             <LivepeerConfig client={livepeerClient}>
               <CreateAndViewAsset />
             </LivepeerConfig>
-          </ConnectKitProvider>
+          </RainbowKitProvider>
         </WagmiConfig>
       );
     }
@@ -149,12 +141,11 @@ We first add the required dependencies using `npm` (or your preferred package ma
     <span />
 
     Now that our providers are set up, we add a connect button which "logs in" a user using their wallet. We use
-    [`connectkit`](https://docs.family.co/connectkit) for the
-    wallet connection flow. It integrates easily with `wagmi` hooks, as well as WalletConnect and Metamask
+    RainbowKit for the wallet connection flow. It integrates easily with `wagmi` hooks, as well as WalletConnect and Metamask
     to support a number of popular wallets.
 
     ```tsx
-    import { ConnectKitButton } from 'connectkit';
+    import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useAccount } from 'wagmi';
 
     export const WagmiNft = () => {
@@ -162,7 +153,7 @@ We first add the required dependencies using `npm` (or your preferred package ma
 
       return (
         <Box>
-          <ConnectKitButton />
+          <ConnectButton />
         </Box>
       );
     };
@@ -239,7 +230,7 @@ IPFS which points to that Asset's CID.
 
     ```tsx {20-27}
     import { useAsset, useUpdateAsset } from '@livepeer/react';
-    import { ConnectKitButton } from 'connectkit';
+    import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useMemo } from 'react';
     import { useAccount } from 'wagmi';
 
@@ -251,7 +242,7 @@ IPFS which points to that Asset's CID.
 
       return (
         <Box>
-          <ConnectKitButton />
+          <ConnectButton />
           {address && assetId && (
             <>
               <Text>{assetId}</Text>
@@ -386,17 +377,15 @@ so the user can see the blockchain confirmation.
 
     ```tsx
     import { useAsset, useUpdateAsset } from '@livepeer/react';
-    import { ConnectKitButton } from 'connectkit';
+    import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useRouter } from 'next/router';
 
     import { useMemo } from 'react';
     import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-    // The demo NFT contract ABI
-    const videoNftAbi = [
-      'event Mint(address indexed sender, address indexed owner, string tokenURI, uint256 tokenId)',
-      'function mint(address owner, string tokenURI) returns (uint256)',
-    ] as const;
+    // The demo NFT contract ABI (exported as `const`)
+    // See: https://wagmi.sh/docs/typescript
+    import { videoNftAbi } from './videoNftAbi';
 
     export const WagmiNft = () => {
       const { address } = useAccount();
@@ -417,12 +406,15 @@ so the user can see the blockchain confirmation.
 
       const { config } = usePrepareContractWrite({
         // The demo NFT contract address on Polygon Mumbai
-        addressOrName: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
-        contractInterface: videoNftAbi,
+        address: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
+        abi: videoNftAbi,
         // Function on the contract
         functionName: 'mint',
         // Arguments for the mint function
-        args: [address, asset?.storage?.ipfs?.nftMetadata?.url],
+        args:
+          address && asset?.storage?.ipfs?.nftMetadata?.url
+            ? [address, asset?.storage?.ipfs?.nftMetadata?.url]
+            : undefined,
         enabled: Boolean(address && asset?.storage?.ipfs?.nftMetadata?.url),
       });
 
@@ -435,7 +427,7 @@ so the user can see the blockchain confirmation.
 
       return (
         <Box>
-          <ConnectKitButton />
+          <ConnectButton />
           {address && assetId && (
             <>
               <Text>{assetId}</Text>

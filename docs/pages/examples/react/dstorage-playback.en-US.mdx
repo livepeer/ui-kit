@@ -1,0 +1,98 @@
+---
+title: 'Play a Video from IPFS'
+description: 'Learn how to automatically upload and play back a video on IPFS and Arweave with livepeer.js'
+---
+
+import { Callout } from 'nextra-theme-docs';
+import { DecentralizedStoragePlayback } from '@components/examples';
+
+# Play a Video from IPFS or Arweave
+
+Playing back transcoded video from IPFS or Arweave is easy with livepeer.js! The example below uses the Player's built-in automatic IPFS/Arweave upload to
+play back transcoded IPFS/Arweave content without any additional configuration.
+
+<Callout type="warning" emoji="⚠️">
+  **This example illustrates how Livepeer can be used as a video processing and
+  caching layer on top of IPFS and Arweave for optimized video playback.** As
+  shown below, there are delays when content has never been viewed - the first
+  user will need to wait for upload. We recommend, whenever possible, to upload
+  via `useCreateAsset` before displaying it in the player.
+</Callout>
+
+<DecentralizedStoragePlayback />
+
+## Step 1: Configuring Providers
+
+First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
+
+```tsx
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+import * as React from 'react';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+// Pass client to React Context Provider
+function App() {
+  return (
+    <LivepeerConfig client={livepeerClient}>
+      <IpfsPlayback />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Step 2: Automatic Playback
+
+Now that our providers are set up, we can add a text input for an IPFS CID or an IPFS/Arweave URL using `parseCid` and `parseArweaveTxId`
+from the core `livepeer` package - _this is only
+used for UI purposes, to provide feedback if the user input is valid_.
+
+If the input is valid, we then pass that input to the [`Player`](/react/Player), which automatically detects if it is a valid CID and attempts
+to fetch the playback info for that CID. If the provider does not have an `Asset` with that CID, the Player will automatically attempt
+to upload the CID from IPFS, and then play the transcoded content back, without any additional code on the frontend.
+
+```tsx
+import { Player } from '@livepeer/react';
+import { parseArweaveTxId, parseCid } from 'livepeer/media';
+
+import { useMemo, useState } from 'react';
+
+export const DecentralizedStoragePlayback = () => {
+  const [url, setUrl] = useState<string>('');
+
+  const idParsed = useMemo(() => parseCid(url) ?? parseArweaveTxId(url), [url]);
+
+  return (
+    <>
+      <Box>
+        <Text>IPFS or Arweave URL</Text>
+        <TextField
+          type="text"
+          placeholder="ipfs://... or ar://"
+          onChange={(e) => setUrl(e.target.value)}
+        />
+
+        {url && !idParsed && (
+          <Text>Provided value is not a valid identifier.</Text>
+        )}
+      </Box>
+
+      {idParsed && (
+        <Player title={idParsed.id} src={url} autoPlay muted autoUrlUpload />
+      )}
+    </>
+  );
+};
+```
+
+## Wrap Up
+
+That's it! You just configured a caching & transcoding layer on top of IPFS and Arweave with a few lines of code!

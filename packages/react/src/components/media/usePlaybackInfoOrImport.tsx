@@ -7,25 +7,25 @@ import { useAsset, useCreateAsset, usePlaybackInfo } from '../../hooks';
 import { PlayerProps } from './Player';
 
 export type UsePlaybackInfoOrImportProps = {
-  src: PlayerProps['src'];
+  decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;
   playbackId: PlayerProps['playbackId'];
   refetchPlaybackInfoInterval: number;
-  autoImport: boolean;
+  autoUrlUpload: boolean;
   onAssetStatusChange: (status: Asset['status']) => void;
 };
 
 /**
  * Retrieves the playback info for a playback ID or source URL.
- * Automatically imports a source URL from IPFS if it is a valid CID.
+ * Conditionally, automatically imports a source URL from IPFS or Arweave.
  *
  * @param src Source URL for the media.
  * @param playbackId Playback ID of the media.
  */
 export const usePlaybackInfoOrImport = ({
-  src,
+  decentralizedSrcOrPlaybackId,
   playbackId,
   refetchPlaybackInfoInterval,
-  autoImport,
+  autoUrlUpload,
   onAssetStatusChange,
 }: UsePlaybackInfoOrImportProps) => {
   const { mutate: importAsset, data: importedAsset } = useCreateAsset();
@@ -42,20 +42,9 @@ export const usePlaybackInfoOrImport = ({
     }
   }, [asset?.status, onAssetStatusChange]);
 
-  // check if the src or playbackId are IPFS sources (does not handle src arrays)
-  const ipfsSrcOrPlaybackId = React.useMemo(
-    () =>
-      playbackId
-        ? parseCid(playbackId)
-        : !Array.isArray(src)
-        ? parseCid(src)
-        : null,
-    [playbackId, src],
-  );
-
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
-    // attempt to fetch if the source is IPFS, or a playback ID is provided
-    playbackId: ipfsSrcOrPlaybackId?.cid ?? playbackId ?? undefined,
+    // attempt to fetch if the source is from decentralized storage, or a playback ID is provided
+    playbackId: decentralizedSrcOrPlaybackId?.id ?? playbackId ?? undefined,
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
   });
 
@@ -63,25 +52,25 @@ export const usePlaybackInfoOrImport = ({
   // also must be enabled
   React.useEffect(() => {
     if (
-      autoImport &&
+      autoUrlUpload &&
       !importedAsset &&
-      ipfsSrcOrPlaybackId?.url &&
-      ipfsSrcOrPlaybackId?.cid &&
+      decentralizedSrcOrPlaybackId?.url &&
+      decentralizedSrcOrPlaybackId?.id &&
       (playbackInfoError as HttpError)?.code === 404
     ) {
       importAsset({
         sources: [
           {
-            name: ipfsSrcOrPlaybackId?.cid,
-            url: ipfsSrcOrPlaybackId.url,
+            name: decentralizedSrcOrPlaybackId.id,
+            url: decentralizedSrcOrPlaybackId.url,
           },
         ],
       });
     }
   }, [
-    autoImport,
+    autoUrlUpload,
     importedAsset,
-    ipfsSrcOrPlaybackId,
+    decentralizedSrcOrPlaybackId,
     playbackInfoError,
     importAsset,
   ]);

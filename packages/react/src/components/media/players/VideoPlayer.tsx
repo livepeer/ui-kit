@@ -3,8 +3,8 @@ import { MediaControllerState } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
+import { useMediaController } from '../context';
 import { HlsPlayerProps } from './HlsPlayer';
-import { useMediaController } from './context';
 
 export type VideoPlayerProps = Omit<HlsPlayerProps, 'hlsConfig' | 'src'> & {
   src: VideoSrc[] | null;

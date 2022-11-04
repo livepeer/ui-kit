@@ -1,6 +1,7 @@
 import * as tus from 'tus-js-client';
 
 import { defaultStudioConfig } from '../../constants';
+import { isReactNative } from '../../media/browser';
 
 import {
   Asset,
@@ -86,6 +87,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
               },
             }
           : {}),
+        ...(typeof args?.playbackPolicy?.type !== 'undefined'
+          ? {
+              playbackPolicy: {
+                type: args.playbackPolicy.type,
+              },
+            }
+          : {}),
       },
       headers: this._defaultHeaders,
     });
@@ -161,7 +169,21 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
               ...((source as CreateAssetSourceFile) instanceof File
                 ? null
                 : { chunkSize: 5 * 1024 * 1024 }),
-
+              fingerprint: function (file) {
+                if (isReactNative()) {
+                  return Promise.resolve(reactNativeFingerprint(file));
+                } else {
+                  return Promise.resolve(
+                    [
+                      'browser',
+                      file.name,
+                      file.type,
+                      file.size,
+                      file.lastModified,
+                    ].join('-'),
+                  );
+                }
+              },
               onError: (error) => {
                 console.log('Failed because: ', error);
               },
@@ -224,26 +246,26 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
     const { assetId, name, storage } = args;
-    const asset = await this._update<
-      Omit<StudioAssetPatchPayload, 'assetId'>,
-      StudioAsset
-    >(`/asset/${assetId}`, {
-      json: {
-        name: typeof name !== 'undefined' ? String(name) : undefined,
-        storage: storage?.ipfs
-          ? {
-              ipfs: {
-                spec: {
-                  nftMetadata: storage?.metadata ?? {},
-                  nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+    await this._update<Omit<StudioAssetPatchPayload, 'assetId'>>(
+      `/asset/${assetId}`,
+      {
+        json: {
+          name: typeof name !== 'undefined' ? String(name) : undefined,
+          storage: storage?.ipfs
+            ? {
+                ipfs: {
+                  spec: {
+                    nftMetadata: storage?.metadata ?? {},
+                    nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+                  },
                 },
-              },
-            }
-          : undefined,
+              }
+            : undefined,
+        },
+        headers: this._defaultHeaders,
       },
-      headers: this._defaultHeaders,
-    });
-    return asset;
+    );
+    return this.getAsset({ assetId });
   }
 
   _getRtmpIngestUrl(streamKey: string) {
@@ -253,8 +275,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   async getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo> {
     const playbackId = typeof args === 'string' ? args : args.playbackId;
 
+    const urlEncodedPlaybackId = encodeURIComponent(playbackId);
+
     const studioPlaybackInfo = await this._get<StudioPlaybackInfo>(
-      `/playback/${playbackId}`,
+      `/playback/${urlEncodedPlaybackId}`,
       {
         headers: this._defaultHeaders,
       },
@@ -309,9 +333,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return {
       type: studioPlaybackInfo?.['type'],
       meta: {
-        live: studioPlaybackInfo?.['meta']?.['live']
-          ? Boolean(studioPlaybackInfo?.['meta']['live'])
-          : undefined,
+        ...(studioPlaybackInfo?.['meta']?.['live']
+          ? { live: Boolean(studioPlaybackInfo?.['meta']['live']) }
+          : {}),
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           hrn: source?.['hrn'],
           type: source?.['type'],
@@ -343,3 +367,23 @@ export function studioProvider(
       ...definedProps(config),
     });
 }
+
+const reactNativeFingerprint = (file: any) => {
+  const exifHash = file.exif ? hashCode(JSON.stringify(file.exif)) : 'noexif';
+  return [
+    'react-native',
+    file.name || 'noname',
+    file.size || 'nosize',
+    exifHash,
+  ].join('/');
+};
+
+const hashCode = (str: string) => {
+  let hash = 0;
+  for (let i = 0, len = str.length; i < len; i++) {
+    const chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};

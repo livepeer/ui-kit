@@ -1,13 +1,20 @@
-import Hls, { ErrorTypes, Events, HlsConfig } from 'hls.js';
+import Hls, { ErrorData, ErrorTypes, Events, HlsConfig } from 'hls.js';
 
 import { noop } from '../../utils';
 
 import { isClient } from '../browser';
 
-import { getMetricsReportingUrl, reportMediaMetrics } from '../metrics';
-import { HlsSrc } from '../src';
+// errors which trigger an exponential backoff
+const backoffRetryErrors = [
+  // custom error to indicate invalid JWT was provided
+  'Shutting down since this session is not allowed to view this stream',
+  // custom error to indicate stream could not be opened
+  'Stream open failed',
+] as const;
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
+
+export type HlsError = ErrorData;
 
 export type VideoConfig = { autoplay?: boolean };
 export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
@@ -17,12 +24,18 @@ export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
  */
 export const isHlsSupported = () => (isClient() ? Hls.isSupported() : true);
 
+/**
+ * Create an hls.js instance and attach to the provided media element.
+ */
 export const createNewHls = <TElement extends HTMLMediaElement>(
-  source: HlsSrc,
+  source: string,
   element: TElement,
-  onLive: (v: boolean) => void,
-  onDuration: (v: number) => void,
-  onCanPlay: () => void,
+  callbacks?: {
+    onLive?: (v: boolean) => void;
+    onDuration?: (v: number) => void;
+    onCanPlay?: () => void;
+    onError?: (data: HlsError) => void;
+  },
   config?: HlsVideoConfig,
 ): {
   destroy: () => void;
@@ -54,15 +67,15 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Events.LEVEL_LOADED, async (_e, data) => {
     const { live, totalduration: duration } = data.details;
 
-    onLive(Boolean(live));
-    onDuration(duration ?? 0);
+    callbacks?.onLive?.(Boolean(live));
+    callbacks?.onDuration?.(duration ?? 0);
   });
 
   hls.on(Events.MEDIA_ATTACHED, async () => {
-    hls.loadSource(source.src);
+    hls.loadSource(source);
 
     hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
-      onCanPlay();
+      callbacks?.onCanPlay?.();
 
       if (config?.autoplay && element) {
         try {
@@ -74,28 +87,18 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
         }
       }
     });
-
-    const metricReportingUrl = await getMetricsReportingUrl(source.src);
-    if (metricReportingUrl) {
-      reportMediaMetrics(element, metricReportingUrl);
-    } else {
-      console.log(
-        'Not able to report player metrics given the source url',
-        source,
-      );
-    }
   });
 
   let retryCount = 0;
 
   hls.on(Events.ERROR, async (_event, data) => {
     if (data.fatal) {
+      callbacks?.onError?.(data);
+      const response = data?.response?.data?.toString() ?? '';
+
       switch (data.type) {
         case ErrorTypes.NETWORK_ERROR:
-          // test if we received a custom tag, and backoff retry if this is the case
-          if (
-            data?.response?.data?.toString()?.includes('Stream open failed')
-          ) {
+          if (backoffRetryErrors.some((error) => response.includes(error))) {
             await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
             hls?.recoverMediaError();
           } else {

@@ -2,7 +2,7 @@
   "name": "livepeer",
   "description": "Livepeer's vanilla JS library.",
   "license": "MIT",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -34,6 +34,10 @@
       "module": "./contracts/dist/livepeer-contracts.esm.js",
       "default": "./contracts/dist/livepeer-contracts.cjs.js"
     },
+    "./crypto": {
+      "module": "./crypto/dist/livepeer-crypto.esm.js",
+      "default": "./crypto/dist/livepeer-crypto.cjs.js"
+    },
     "./errors": {
       "module": "./errors/dist/livepeer-errors.esm.js",
       "default": "./errors/dist/livepeer-errors.cjs.js"
@@ -49,6 +53,10 @@
     "./media/hls": {
       "module": "./media/hls/dist/livepeer-media-hls.esm.js",
       "default": "./media/hls/dist/livepeer-media-hls.cjs.js"
+    },
+    "./media/storage": {
+      "module": "./media/storage/dist/livepeer-media-storage.esm.js",
+      "default": "./media/storage/dist/livepeer-media-storage.cjs.js"
     },
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
@@ -73,6 +81,7 @@
     "/client",
     "/constants",
     "/contracts",
+    "/crypto",
     "/errors",
     "/media",
     "/providers",
@@ -89,9 +98,11 @@
       "client/index.ts",
       "constants/index.ts",
       "contracts/index.ts",
+      "crypto/index.ts",
       "media/index.ts",
       "media/controls/index.ts",
       "media/hls/index.ts",
+      "media/storage/index.ts",
       "providers/studio/index.ts",
       "styling/index.ts",
       "types/index.ts",
@@ -112,16 +123,19 @@
   },
   "dependencies": {
     "@stitches/core": "^1.2.8",
-    "core-js": "^3.25.5",
+    "core-js": "^3.26.0",
     "cross-fetch": "^3.1.5",
     "hls.js": "^1.2.4",
+    "ms": "^3.0.0-canary.1",
     "multiformats": "9.9.0",
     "tus-js-client": "^3.0.1",
-    "zustand": "^4.1.1"
+    "zustand": "^4.1.3"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
-    "ethers": "^5.7.1"
+    "@types/ms": "^0.7.31",
+    "ethers": "^5.7.2",
+    "jose": "^4.10.4"
   },
   "keywords": [
     "eth",

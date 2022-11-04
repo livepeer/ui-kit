@@ -1,12 +1,18 @@
-import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer/media';
+import {
+  AudioSrc,
+  Src,
+  VideoSrc,
+  addMediaMetrics,
+  getMediaSourceType,
+  parseArweaveTxId,
+  parseCid,
+} from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/controls';
 import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import { Asset } from 'livepeer/types';
+import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
-import { AudioPlayer } from './AudioPlayer';
-import { HlsPlayer } from './HlsPlayer';
-import { VideoPlayer } from './VideoPlayer';
 import { MediaControllerProvider, useTheme } from './context';
 
 import {
@@ -21,6 +27,7 @@ import {
   Volume,
 } from './controls';
 import { Title } from './controls/Title';
+import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 export type PlayerObjectFit = 'cover' | 'contain';
@@ -80,7 +87,13 @@ export type PlayerProps = {
   showPipButton?: boolean;
 
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoImport?: boolean;
+  autoUrlUpload?: boolean;
+
+  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  jwt?: string;
+
+  /** Callback called when the metrics plugin cannot be initialized properly */
+  onMetricsError?: (error: Error) => void;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -94,7 +107,7 @@ export function Player({
   controls,
   muted,
   playbackId,
-  refetchPlaybackInfoInterval = 10000,
+  refetchPlaybackInfoInterval = 5000,
   src,
   theme,
   title,
@@ -105,27 +118,40 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
-  autoImport = true,
+  autoUrlUpload = true,
+  onMetricsError,
+  jwt,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
 
-  const [importStatus, setImportStatus] = React.useState<
+  const [uploadStatus, setUploadStatus] = React.useState<
     Asset['status'] | null
   >(null);
 
   const onAssetStatusChange = React.useCallback(
     (status: Asset['status']) => {
-      setImportStatus(status);
+      setUploadStatus(status);
     },
-    [setImportStatus],
+    [setUploadStatus],
+  );
+
+  // check if the src or playbackId are decentralized storage sources (does not handle src arrays)
+  const decentralizedSrcOrPlaybackId = React.useMemo(
+    () =>
+      playbackId
+        ? parseCid(playbackId) ?? parseArweaveTxId(playbackId)
+        : !Array.isArray(src)
+        ? parseCid(src) ?? parseArweaveTxId(src)
+        : null,
+    [playbackId, src],
   );
 
   const playbackInfo = usePlaybackInfoOrImport({
-    src,
+    decentralizedSrcOrPlaybackId,
     playbackId,
     refetchPlaybackInfoInterval,
-    autoImport,
+    autoUrlUpload,
     onAssetStatusChange,
   });
 
@@ -142,18 +168,30 @@ export function Player({
   }, [playbackInfo]);
 
   const sourceMimeTyped = React.useMemo(() => {
-    const sourceOrPlaybackInfoSrc =
+    // cast all URLs to an array of strings
+    const sources =
       playbackUrls.length > 0
         ? playbackUrls
         : typeof src === 'string'
         ? [src]
         : src;
 
-    if (!sourceOrPlaybackInfoSrc) {
+    if (!sources) {
       return null;
     }
 
-    const mediaSourceTypes = sourceOrPlaybackInfoSrc
+    const authenticatedSources = sources.map((source) => {
+      // append the JWT to the query params
+      if (jwt) {
+        const url = new URL(source);
+        url.searchParams.append('jwt', jwt);
+        return url.toString();
+      }
+
+      return source;
+    });
+
+    const mediaSourceTypes = authenticatedSources
       .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
       .filter((s) => s) as Src[];
 
@@ -166,6 +204,12 @@ export function Player({
       return mediaSourceTypes[0];
     }
 
+    // if the player is auto uploading, we do not play back the detected input file
+    // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
+    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
+      return null;
+    }
+
     // we filter by the first source type in the array provided
     const mediaSourceFiltered =
       mediaSourceTypes?.[0]?.type === 'audio'
@@ -175,7 +219,7 @@ export function Player({
         : null;
 
     return mediaSourceFiltered;
-  }, [playbackUrls, src]);
+  }, [decentralizedSrcOrPlaybackId, playbackUrls, src, autoUrlUpload, jwt]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -193,7 +237,32 @@ export function Player({
     }
   }, []);
 
+  React.useEffect(() => {
+    const { destroy } = addMediaMetrics(
+      mediaElement,
+      Array.isArray(sourceMimeTyped)
+        ? sourceMimeTyped?.[0]?.src
+        : sourceMimeTyped?.src,
+      (e) => {
+        onMetricsError?.(e as Error);
+        console.error('Not able to report player metrics', e);
+      },
+    );
+
+    return destroy;
+  }, [onMetricsError, mediaElement, sourceMimeTyped]);
+
   const contextTheme = useTheme(theme);
+
+  const topLoadingText = React.useMemo(
+    () =>
+      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+        : uploadStatus?.phase === 'failed'
+        ? 'Upload Failed'
+        : null,
+    [uploadStatus],
+  );
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
@@ -236,7 +305,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              importProgress={importStatus?.progress}
+              topLoadingText={topLoadingText}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

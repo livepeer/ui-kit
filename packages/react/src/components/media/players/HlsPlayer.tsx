@@ -1,6 +1,7 @@
 import { HlsSrc, canPlayMediaNatively } from 'livepeer/media';
 import { MediaControllerState } from 'livepeer/media/controls';
 import {
+  HlsError,
   HlsVideoConfig,
   createNewHls,
   isHlsSupported,
@@ -9,9 +10,9 @@ import { styling } from 'livepeer/styling';
 
 import * as React from 'react';
 
-import { PlayerObjectFit } from './Player';
+import { PlayerObjectFit } from '../Player';
+import { useMediaController } from '../context';
 import { VideoPlayer } from './VideoPlayer';
-import { useMediaController } from './context';
 
 export type HlsPlayerProps = {
   src: HlsSrc;
@@ -24,6 +25,7 @@ export type HlsPlayerProps = {
   title?: string;
   muted?: boolean;
   poster?: string;
+  jwt?: string;
 };
 
 const mediaControllerSelector = ({
@@ -57,13 +59,14 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
     );
 
     React.useEffect(() => {
-      if (element && canUseHlsjs && !canPlayAppleMpeg && src) {
+      if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
+        const onError = (error: HlsError) => {
+          console.warn(error.response?.data.toString());
+        };
         const { destroy } = createNewHls(
-          src,
+          src.src,
           element,
-          setLive,
-          onDurationChange,
-          onCanPlay,
+          { onLive: setLive, onDuration: onDurationChange, onCanPlay, onError },
           {
             autoplay: autoPlay,
             ...hlsConfig,
