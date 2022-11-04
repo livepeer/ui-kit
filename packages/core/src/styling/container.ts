@@ -137,6 +137,8 @@ export const container = css(aspectRatioContainer, {
         borderColor: '$containerBorderColor',
         borderRadius: '$containerBorderRadius',
         borderWidth: '$containerBorderWidth',
+
+        zIndex: 1,
       },
     },
   },
