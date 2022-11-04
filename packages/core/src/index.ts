@@ -62,4 +62,11 @@ export type {
   UpdateStreamArgs,
   ViewsMetrics,
 } from './types';
-export { b64UrlDecode, b64UrlEncode, deepMerge, pick } from './utils';
+export {
+  b64Decode,
+  b64Encode,
+  b64UrlDecode,
+  b64UrlEncode,
+  deepMerge,
+  pick,
+} from './utils';

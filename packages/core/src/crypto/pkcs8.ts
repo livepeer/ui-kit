@@ -1,7 +1,7 @@
 import { b64UrlDecode } from '../utils';
 import { getSubtleCrypto } from './getSubtleCrypto';
 
-export const importPKCS8 = async (pkcs8: string) => {
+export const importPKCS8 = async (pkcs8: string): Promise<CryptoKey> => {
   if (
     typeof pkcs8 !== 'string' ||
     pkcs8.indexOf('-----BEGIN PRIVATE KEY-----') !== 0

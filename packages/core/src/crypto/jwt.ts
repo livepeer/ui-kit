@@ -3,7 +3,7 @@ import ms, { StringValue } from 'ms';
 import { getStream } from '../actions';
 import { ClientConfig, createClient } from '../client';
 import { LivepeerProvider } from '../types';
-import { b64UrlEncode } from '../utils';
+import { b64Decode, b64UrlEncode } from '../utils';
 import { signEcdsaSha256 } from './ecdsa';
 import { importPKCS8 } from './pkcs8';
 
@@ -72,13 +72,16 @@ export type JWTHeader = {
 
 export type SignAccessJwtOptions = {
   /**
-   * The private key used to sign the token.
+   * The private key used to sign the token. **This comes base64-encoded from the livepeer provider
+   * - this should be kept as base64.**
+   *
+   * This can also be a CryptoKey if the key has already been imported on the client.
    */
   privateKey: CryptoKey | string;
 
   /**
    * The public key corresponding to the public key. **This comes
-   * base64-encoded from the livepeer provider - this should be passed as-is.**
+   * base64-encoded from the livepeer provider - this should be kept as base64.**
    */
   publicKey: string;
 
@@ -133,10 +136,11 @@ export const signAccessJwt = async <
   options: SignAccessJwtOptions,
   config?: ClientConfig<TLivepeerProvider>,
 ): Promise<string> => {
-  // we assume strings passed are PEM-encoded PKCS8
+  // assume strings passed are PEM-encoded PKCS8 (or base64 encoded)
+  // try to coerce the input from base64, or use as-is
   const privateKey =
     typeof options.privateKey === 'string'
-      ? await importPKCS8(options.privateKey)
+      ? await importPKCS8(b64Decode(options.privateKey) ?? options.privateKey)
       : options.privateKey;
 
   if (!privateKey) {
