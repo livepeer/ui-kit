@@ -2,6 +2,7 @@ import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { Player, useCreateStream, useStream } from '@livepeer/react';
 
 import { useMutation } from '@tanstack/react-query';
+import { b64UrlDecode } from 'livepeer/utils';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiError } from '../../lib/error';
@@ -12,6 +13,8 @@ import {
 import { Spinner } from '../core';
 
 export const AccessControl = () => {
+  const [jwtDetailsShown, setJwtDetailsShown] = useState<boolean>(false);
+
   const [streamName, setStreamName] = useState<string>('');
   const {
     mutate: createStream,
@@ -58,6 +61,10 @@ export const AccessControl = () => {
   }, [stream?.playbackId, createJwt]);
 
   const isLoading = useMemo(() => status === 'loading', [status]);
+
+  const splitJwt = (createdJwt as CreateSignedPlaybackResponse)?.token?.split(
+    '.',
+  );
 
   return (
     <Box css={{ my: '$6' }}>
@@ -109,6 +116,45 @@ export const AccessControl = () => {
               jwt={(createdJwt as CreateSignedPlaybackResponse)?.token}
             />
           </Box>
+
+          {jwtDetailsShown && (
+            <>
+              <Text size="4" css={{ fontWeight: 600, mt: '$3', mb: '$2' }}>
+                JWT Header
+              </Text>
+              <pre>
+                <code>
+                  {splitJwt?.[0] &&
+                    JSON.stringify(
+                      JSON.parse(b64UrlDecode(splitJwt?.[0]) ?? '{}'),
+                      null,
+                      2,
+                    )}
+                </code>
+              </pre>
+              <Text size="4" css={{ fontWeight: 600, mt: '$3', mb: '$2' }}>
+                JWT Body
+              </Text>
+              <pre>
+                <code>
+                  {splitJwt?.[1] &&
+                    JSON.stringify(
+                      JSON.parse(b64UrlDecode(splitJwt?.[1]) ?? '{}'),
+                      null,
+                      2,
+                    )}
+                </code>
+              </pre>
+            </>
+          )}
+          <Button
+            onClick={() => setJwtDetailsShown(!jwtDetailsShown)}
+            variant="primary"
+            size="2"
+            css={{ mt: '$3' }}
+          >
+            {jwtDetailsShown ? 'Hide' : 'Show'} JWT Details
+          </Button>
         </>
       )}
     </Box>

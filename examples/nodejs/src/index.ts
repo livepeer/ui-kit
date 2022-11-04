@@ -27,20 +27,29 @@ export const importVideos = async (videos: CombinedMedia[]) => {
     const videoBatch = videos.splice(0, BATCH_SIZE);
 
     // upload the videos using createAsset
-    const createdVideos = await Promise.all(
-      videoBatch.map(async (video) => {
-        const asset = await provider.createAsset({
-          name: video.url,
-          url: video.url,
-        });
+    const createdVideos = (
+      await Promise.all(
+        videoBatch.map(async (video) => {
+          try {
+            const asset = await provider.createAsset({
+              name: video.url,
+              url: video.url,
+            });
 
-        return {
-          asset,
-          source: video,
-          startTime: Date.now(),
-        };
-      }),
-    );
+            return {
+              asset,
+              source: video,
+              startTime: Date.now(),
+            };
+          } catch (e) {
+            console.warn('error with createAsset, skipping', e);
+            return null;
+          }
+        }),
+      )
+    )
+      .filter((e) => e)
+      .map((e) => e!);
 
     console.log(`Uploaded ${createdVideos.length} videos`);
 
@@ -53,12 +62,16 @@ export const importVideos = async (videos: CombinedMedia[]) => {
           asset?.status?.phase !== 'ready' &&
           asset?.status?.phase !== 'failed'
         ) {
-          // wait w/ random jitter
-          await new Promise((resolve) =>
-            setTimeout(resolve, Math.random() * 300 + 200),
-          );
+          try {
+            // wait w/ random jitter
+            await new Promise((resolve) =>
+              setTimeout(resolve, Math.random() * 600 + 600),
+            );
 
-          asset = await provider.getAsset(importedVideo.asset.id);
+            asset = await provider.getAsset(importedVideo.asset.id);
+          } catch (e) {
+            console.warn('error with getAsset, retrying', e);
+          }
         }
 
         console.log(
@@ -75,7 +88,7 @@ export const importVideos = async (videos: CombinedMedia[]) => {
             : {}),
           seconds: (Date.now() - importedVideo.startTime) / 1000,
           ...importedVideo.source,
-        };
+        } as MediaResult;
       }),
     );
 

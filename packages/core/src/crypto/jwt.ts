@@ -174,8 +174,8 @@ export const signAccessJwt = async <
     pub: options.publicKey,
     sub: playbackId,
     video: 'none',
-    exp: expirationSec,
-    iat: issuedAtSec,
+    exp: Number(expirationSec.toFixed(0)),
+    iat: Number(issuedAtSec.toFixed(0)),
 
     ...(options.custom
       ? {

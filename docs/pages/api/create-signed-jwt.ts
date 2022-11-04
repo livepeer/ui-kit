@@ -1,4 +1,3 @@
-import { b64UrlDecode } from 'livepeer';
 import { signAccessJwt } from 'livepeer/crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -37,15 +36,27 @@ const handler = async (
         return res.status(400).json({ message: 'Missing data in body.' });
       }
 
+      // we check that the "supersecretkey" was passed in the body
+      // this could be a more complex check, like taking a signed payload,
+      // getting the address for that signature, and fetching if they own an NFT
+      //
+      // https://docs.ethers.io/v5/single-page/#/v5/api/utils/signing-key/-%23-SigningKey--other-functions
       if (secret !== 'supersecretkey') {
         return res.status(401).json({ message: 'Incorrect secret.' });
       }
 
       const token = await signAccessJwt({
-        privateKey: b64UrlDecode(accessControlPrivateKey) ?? '',
+        privateKey: accessControlPrivateKey,
         publicKey: accessControlPublicKey,
         issuer: 'https://livepeerjs.org',
+        // playback ID to include in the JWT
         playbackId,
+        // expire the JWT in 1 hour
+        expiration: '1h',
+        // custom metadata to include
+        custom: {
+          userId: 'user-id-1',
+        },
       });
 
       return res.status(200).json({

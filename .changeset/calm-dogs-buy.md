@@ -3,7 +3,20 @@
 '@livepeer/react': minor
 ---
 
-**Feature:** added `livepeer/crypto` subpackage with JWT helpers for access control on Assets and Streams.
+**Feature:** added JWT handling in Player, with `livepeer/crypto` subpackage with JWT helpers for NodeJS access control on Assets and Streams.
 
-Does not work on RN
-https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto#browser_compatibility
+The Player has a new prop, `jwt`, which takes a base64Url-encoded signed JWT payload and passes it as a query parameter with the stream playlist request. The livepeer provider will evaluate the JWT and determine if it is valid, before returning a response.
+
+_Note: this currently only works for Streams! Assets will be supported in the future._
+
+```diff
++ import { importPKCS8, signAccessJwt, type SignAccessJwtOptions } from 'livepeer';
+```
+
+```tsx
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  jwt={jwt}
+/>
+```
