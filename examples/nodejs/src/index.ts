@@ -5,7 +5,7 @@ import { studioProvider } from 'livepeer/providers/studio';
 import { CombinedMedia } from './create-dataset';
 import * as fs from 'fs';
 
-const BATCH_SIZE = 20;
+const BATCH_SIZE = 10;
 
 // create the livepeer.js client
 const { provider } = createClient({
@@ -62,9 +62,9 @@ export const importVideos = async (videos: CombinedMedia[]) => {
         }
 
         console.log(
-          `${asset.status.phase}: ${asset.id} :: error: ${
-            asset.status.errorMessage ?? 'none'
-          }`,
+          `${asset.status.phase}: ${asset.id} :: url: ${
+            importedVideo.source.url
+          } :: error: ${asset.status.errorMessage ?? 'none'}`,
         );
 
         return {

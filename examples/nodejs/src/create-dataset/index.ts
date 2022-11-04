@@ -28,8 +28,6 @@ export type CombinedMedia = {
   source: 'zora' | 'lens';
 };
 
-let urlSet = new Set<string>();
-
 export const getLensVideoPublications = async () => {
   const httpLink = new HttpLink({
     uri: 'https://api.lens.dev',
@@ -96,15 +94,29 @@ export const getLensVideoPublications = async () => {
         isDStorage: media!.isDStorage!,
         source: 'lens' as const,
       }))
-      .filter((media) => !urlSet.has(media.url))
-      .filter((media) => !media.url.includes('livepeer'))
-      .map((media) => ({
-        ...media,
-        url: media.url.replace('ipfs.infura.io', 'infura-ipfs.io'),
-      }));
+      .filter((media) => !allMedia.some((m) => m.url === media.url))
+      .filter((media) => !media.url.includes('livepeer'));
 
-    allMedia.push(...ipfsOrArweaveMedia);
-    urlSet = new Set([...urlSet, ...ipfsOrArweaveMedia.map((e) => e.url)]);
+    const filteredBySuccessCode = await Promise.all(
+      ipfsOrArweaveMedia.filter(async (media) => {
+        try {
+          if (parseCid(media.url)?.url ?? parseArweaveTxId(media.url)?.url) {
+            return true;
+          }
+          const response = await fetch(media.url, { method: 'HEAD' });
+
+          if (response.status === 200) {
+            return true;
+          }
+        } catch (e) {
+          console.error('error with url, filtering', e);
+        }
+
+        return false;
+      }),
+    );
+
+    allMedia.push(...filteredBySuccessCode);
 
     cursor = result.data.explorePublications.pageInfo.next;
 
@@ -186,15 +198,29 @@ export const getZoraVideoNfts = async () => {
         isDStorage: media!.isDStorage!,
         source: 'zora' as const,
       }))
-      .filter((media) => !urlSet.has(media.url))
-      .filter((media) => !media.url.includes('livepeer'))
-      .map((media) => ({
-        ...media,
-        url: media.url.replace('ipfs.infura.io', 'infura-ipfs.io'),
-      }));
+      .filter((media) => !allMedia.some((m) => m.url === media.url))
+      .filter((media) => !media.url.includes('livepeer'));
 
-    allMedia.push(...ipfsOrArweaveMedia);
-    urlSet = new Set([...urlSet, ...ipfsOrArweaveMedia.map((e) => e.url)]);
+    const filteredBySuccessCode = await Promise.all(
+      ipfsOrArweaveMedia.filter(async (media) => {
+        try {
+          if (parseCid(media.url)?.url ?? parseArweaveTxId(media.url)?.url) {
+            return true;
+          }
+          const response = await fetch(media.url, { method: 'HEAD' });
+
+          if (response.status === 200) {
+            return true;
+          }
+        } catch (e) {
+          console.error('error with url, filtering', e);
+        }
+
+        return false;
+      }),
+    );
+
+    allMedia.push(...filteredBySuccessCode);
 
     cursor = result.data.tokens.pageInfo.endCursor ?? undefined;
 
