@@ -1,0 +1,13 @@
+query ExplorePublications($request: ExplorePublicationRequest!) {
+  explorePublications(request: $request) {
+    items {
+      __typename
+      ... on Post {
+        ...PostMediaFields
+      }
+    }
+    pageInfo {
+      ...CommonPaginatedResultInfoFields
+    }
+  }
+}
