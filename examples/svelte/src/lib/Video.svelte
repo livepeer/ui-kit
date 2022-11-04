@@ -3,7 +3,6 @@
     addMediaMetrics,
     canPlayMediaNatively,
     getMediaSourceType,
-    getPlaybackInfo,
   } from 'livepeer';
   import { createClient } from 'livepeer/client';
   import { createNewHls, isHlsSupported } from 'livepeer/media/hls';
@@ -13,10 +12,10 @@
   let videoSrc = '';
   let video;
 
-  createClient({ provider: studioProvider() });
+  const { provider } = createClient({ provider: studioProvider() });
 
   async function fetchPlaybackInfo() {
-    const playbackInfo = await getPlaybackInfo({
+    const playbackInfo = await provider.getPlaybackInfo({
       playbackId: 'bafybeigtqixg4ywcem3p6sitz55wy6xvnr565s6kuwhznpwjices3mmxoe',
     });
 
@@ -29,7 +28,7 @@
     );
 
     if (isHlsSupported() && hlsSrc.type === 'hls') {
-      createNewHls(hlsSrc, video);
+      createNewHls(hlsSrc.src, video);
     } else if (canPlayMediaNatively('application/vnd.apple.mpegurl')) {
       videoSrc = source;
     }
