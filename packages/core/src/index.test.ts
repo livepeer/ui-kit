@@ -30,6 +30,8 @@ it('should expose correct exports', () => {
       "PlaybackMonitor",
       "createStorage",
       "noopStorage",
+      "b64Decode",
+      "b64Encode",
       "b64UrlDecode",
       "b64UrlEncode",
       "deepMerge",

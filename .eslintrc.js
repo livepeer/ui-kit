@@ -79,6 +79,9 @@ module.exports = {
     'node_modules',
     'typechain',
     'coverage',
+    'generated.ts',
+    'output.json',
+    'results.json',
   ],
   settings: {
     'import/parsers': {

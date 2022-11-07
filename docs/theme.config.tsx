@@ -38,11 +38,6 @@ const Logo = ({ height }: { height: number }) => {
 
 const config: DocsThemeConfig = {
   docsRepositoryBase: `${github}/tree/main/docs/pages`,
-  titleSuffix() {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    // const { locale } = useRouter();
-    return ` – livepeer.js`;
-  },
   chat: {
     link: 'https://discord.gg/livepeer',
   },
@@ -86,6 +81,11 @@ const config: DocsThemeConfig = {
         </span>
       </div>
     );
+  },
+  getNextSeoProps() {
+    return {
+      titleTemplate: `%s - livepeer.js`,
+    };
   },
   head() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -144,7 +144,7 @@ const config: DocsThemeConfig = {
     );
   },
   sidebar: {
-    defaultMenuCollapsed: true,
+    defaultMenuCollapseLevel: 2,
     titleComponent: ({ title, type }) =>
       type === 'separator' ? (
         <div className="flex items-center gap-2">

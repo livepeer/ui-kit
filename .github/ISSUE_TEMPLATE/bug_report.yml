@@ -1,11 +1,13 @@
 name: Bug Report
 description: File a bug/issue
 title: '[bug] <title>'
+labels: ['bug', 'triage', 'team: studio']
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! The more info you provide, the more we can help you.
+
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?

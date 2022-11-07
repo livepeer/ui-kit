@@ -1,14 +1,11 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { Player, useCreateStream } from '@livepeer/react';
-import { useRouter } from 'next/router';
 
 import { useMemo, useState } from 'react';
 
 import { Spinner } from '../core';
 
 export const Stream = () => {
-  const router = useRouter();
-
   const [streamName, setStreamName] = useState<string>('');
   const { mutate: createStream, data: stream, status } = useCreateStream();
 
@@ -51,7 +48,7 @@ export const Stream = () => {
       )}
 
       <Flex css={{ jc: 'flex-end', gap: '$3', mt: '$4' }}>
-        {!stream ? (
+        {!stream && (
           <Button
             css={{ display: 'flex', ai: 'center' }}
             onClick={() => {
@@ -65,17 +62,6 @@ export const Stream = () => {
           >
             {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
             Create Stream
-          </Button>
-        ) : (
-          <Button
-            onClick={() =>
-              router.push(`/examples/react/access-control?id=${stream.id}`)
-            }
-            variant="primary"
-            size="2"
-          >
-            {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
-            Add Access Control ↗
           </Button>
         )}
       </Flex>

@@ -22,8 +22,8 @@ export interface LivepeerProvider {
   /** List sessions for a specific parent stream ID */
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
-  /** Create a new asset */
-  createAsset(args: CreateAssetArgs): Promise<Asset>;
+  /** Create a new asset(s) */
+  createAsset(args: CreateAssetArgs): Promise<Asset[]>;
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
@@ -164,32 +164,43 @@ export type AssetIdOrString =
       assetId: string;
     };
 
-export type CreateAssetArgs = {
+export type CreateAssetFileProgress = {
+  /** Name of the asset */
+  name: string;
+  /** Progress from 0 to 1 */
+  progress: number;
+};
+
+export type CreateAssetProgress = {
+  /** Average of the progress values */
+  average: number;
+  /** Progress values */
+  sources: CreateAssetFileProgress[];
+};
+
+export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
+};
 
+export type CreateAssetSourceUrl = CreateAssetSourceBase & {
   /** External URL to be imported */
-  url?: string;
+  url: string;
+};
 
-  /** Content to be uploaded */
-  file?: File | ReadStream;
-  /** Size of the upload file. Must provide this if the file is a ReadStream */
-  uploadSize?: number;
+export type CreateAssetSourceFile = CreateAssetSourceBase & {
+  /** Content to be uploaded or streamed */
+  file: File | ReadStream;
+};
 
-  /**
-   * Callback to receive progress (0-1 completion ratio) updates of the upload.
-   */
-  onUploadProgress?: (progress: number) => void;
-} & (
-  | { file: File }
-  | {
-      file: ReadStream;
-      uploadSize: number;
-    }
-  | {
-      url: string;
-    }
-);
+export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;
+
+export type CreateAssetArgs = {
+  /** Source(s) to upload */
+  sources: CreateAssetSource[];
+  /** Callback to receive progress, it is a object that include average and array of files */
+  onUploadProgress?: (progress: CreateAssetProgress) => void;
+};
 
 export type Metadata = {
   /** Name of the Asset */
