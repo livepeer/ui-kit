@@ -22,18 +22,20 @@ import { Callout } from 'nextra-theme-docs';
   [`Player`](/docs/Player).
 </Callout>
 
+You can upload multiple assets at once by passing an array of files to the `mutate` function.
+
 The following example shows how an asset can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
 function.
 
-```tsx {7, 25-28}
+```tsx {7, 29-36}
 import { useAsset, useCreateAsset } from '@livepeer/react';
 import { useState } from 'react';
 
 function App() {
-  const [video, setVideo] = useState<File | undefined>();
+  const [videos, setVideos] = useState<File[]>([]);
   const {
-    mutate: createAsset,
-    data: asset,
+    mutate: createAssets,
+    data: assets,
     uploadProgress,
     status,
     error,
@@ -43,36 +45,39 @@ function App() {
     <div>
       <input
         type="file"
+        multiple
         accept="video/*"
-        onChange={(e) => setVideo(e?.target?.files?.[0])}
+        onChange={(e) => {
+          if (e.target.files) {
+            setVideos(e.target.files);
+          }
+        }}
       />
       <button
-        disabled={!video || status === 'loading'}
+        disabled={!videos || status === 'loading'}
         onClick={() => {
-          if (video) {
-            createAsset({
-              name: video.name,
-              file: video,
-            });
-          }
+          const files = videos.map((video) => ({
+            file: video,
+            name: video.name,
+          }));
+
+          createAssets({
+            sources: files,
+          });
         }}
       >
         Create Asset
       </button>
-      {asset && (
-        <>
-          <div>Asset Name: {asset?.name}</div>
-          <div>Playback URL: {asset?.playbackUrl}</div>
-          {uploadProgress && (
-            <div>Upload Progress: {Math.floor(uploadProgress * 100)}%</div>
-          )}
-          {asset?.status?.progress && (
-            <div>
-              Processing Progress: {Math.floor(asset.status.progress * 100)}%
-            </div>
-          )}
-        </>
-      )}
+      {assets?.map((asset) => (
+        <div key={asset.id}>
+          <div>
+            <div>Asset Name: {asset?.name}</div>
+            <div>Playback URL: {asset?.playbackUrl}</div>
+            <div>IPFS CID: {asset?.storage?.ipfs?.cid ?? 'None'}</div>
+          </div>
+        </div>
+      ))}
+
       {error && <div>{error.message}</div>}
     </div>
   );
@@ -100,40 +105,60 @@ aggregated for simplicity. The `uploadProgress` is a number from 0-1 which repre
 [tus](https://github.com/tus/tus-js-client) - the value is undefined unless an upload is in progress.
 
 ```tsx
-{
-  data?: Asset,
-  uploadProgress?: number,
-  error?: Error,
-  isError: boolean,
-  isIdle: boolean,
-  isLoading: boolean,
-  isSuccess: boolean,
-  status: 'idle' | 'loading' | 'success' | 'error',
-  mutate: (config: CreateAssetArgs, options?: MutateOptions) => void,
-  mutateAsync: (config: CreateAssetArgs, options?: MutateOptions) => Promise<Asset>,
-  variables?: CreateAssetArgs
-}
+  {
+    data?: Asset[],
+    uploadProgress?: CreateAssetProgress,
+    error?: Error,
+    isError: boolean,
+    isIdle: boolean,
+    isLoading: boolean,
+    isSuccess: boolean,
+    status: 'idle' | 'loading' | 'success' | 'error',
+    mutate: (config: CreateAssetArgs, options?: MutateOptions) => void,
+    mutateAsync: (config: CreateAssetArgs, options?: MutateOptions) => Promise<Asset>,
+    variables?: CreateAssetArgs
+  }
 ```
 
 The variables for the mutate function(s) are defined as:
 
 ```tsx
 type CreateAssetArgs = {
+  /** Source(s) to upload */
+  sources: CreateAssetSource[];
+  /** Callback to receive progress, it is a object that include average and array of files */
+  onUploadProgress?: (progress: CreateAssetProgress) => void;
+};
+
+type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;
+
+type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
+};
 
+type CreateAssetSourceUrl = CreateAssetSourceBase & {
   /** External URL to be imported */
-  url?: string;
+  url: string;
+};
 
-  /** Content to be uploaded */
-  file?: File | ReadStream;
-  /** Size of the upload file. Must provide this if the file is a ReadStream */
-  uploadSize?: number;
+type CreateAssetSourceFile = CreateAssetSourceBase & {
+  /** Content to be uploaded or streamed */
+  file: File | ReadStream;
+};
 
-  /**
-   * Callback to receive progress (0-1 completion ratio) updates of the upload.
-   */
-  onUploadProgress?: (progress: number) => void;
+type CreateAssetProgress = {
+  /** Average of the progress values */
+  average: number;
+  /** Progress values */
+  sources: CreateAssetFileProgress[];
+};
+
+type CreateAssetFileProgress = {
+  /** Name of the asset */
+  name: string;
+  /** Progress from 0 to 1 */
+  progress: number;
 };
 ```
 

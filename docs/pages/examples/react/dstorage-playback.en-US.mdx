@@ -11,7 +11,13 @@ import { DecentralizedStoragePlayback } from '@components/examples';
 Playing back transcoded video from IPFS or Arweave is easy with livepeer.js! The example below uses the Player's built-in capabilities to transcode IPFS/Arweave content without any additional configuration.
 
 <Callout type="warning" emoji="⚠️">
-  **This example illustrates how Livepeer can be used as a video processing and caching layer on top of content available on IPFS or the Arweave gateway   for optimized video playback.** As shown below, there are delays when content has never been viewed - the first user will need to wait for the content   to be downloaded from the network and uploaded to the Livepeer player. We recommend, whenever possible, to upload via `useCreateAsset` before       displaying  it in the player.
+  **This example illustrates how Livepeer can be used as a video processing and
+  caching layer on top of content available on IPFS or the Arweave gateway for
+  optimized video playback.** As shown below, there are delays when content has
+  never been viewed - the first user will need to wait for the content to be
+  downloaded from the network and uploaded to the Livepeer player. We recommend,
+  whenever possible, to upload via `useCreateAsset` before displaying it in the
+  player.
 </Callout>
 
 IPFS is a network of nodes that allow you to read content from the network using a content identifier unique to the data you’re requesting, ensuring you are able to securely and verifiably get exactly what you are asking for, regardless of where the data is physically stored. Arweave is a set of nodes that are incentivized to store data for as long as the network can support it; content stored on the network is pulled through an Arweave gateway.
@@ -48,11 +54,11 @@ function App() {
 
 ## Step 2: Automatic Playback
 
-Now that our providers are set up, we can add a text input for an IPFS CID or an IPFS/Arweave HTTP gateway URL. 
+Now that our providers are set up, we can add a text input for an IPFS CID or an IPFS/Arweave HTTP gateway URL.
 
 The raw input is passed to the [`Player`](/react/Player), which automatically detects if it is a valid CID and attempts
 to fetch the playback info for that CID. If the provider does not have an `Asset` with that CID, the Player will automatically attempt
-to upload the CID from IPFS, and then play the transcoded content back, without any additional code on the frontend. As mentioned above, to ensure that there is no delay in playback, we recommend uploading via `useCreateAsset` before displaying it in the player. 
+to upload the CID from IPFS, and then play the transcoded content back, without any additional code on the frontend. As mentioned above, to ensure that there is no delay in playback, we recommend uploading via `useCreateAsset` before displaying it in the player.
 
 ```tsx
 import { Player } from '@livepeer/react';

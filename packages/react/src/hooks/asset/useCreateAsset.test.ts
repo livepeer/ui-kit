@@ -31,15 +31,16 @@ describe('useCreateAsset', () => {
   describe('create', () => {
     it('mutates', async () => {
       const utils = renderHook(() => useCreateAsset());
-
       const { result, waitFor } = utils;
-
       await waitFor(() => expect(result.current.mutate).toBeDefined());
-
       await act(async () => {
         result.current.mutateAsync?.({
-          name: assetName,
-          ...getSampleVideo(),
+          sources: [
+            {
+              name: assetName,
+              ...getSampleVideo(),
+            },
+          ],
         });
       });
 
@@ -48,7 +49,7 @@ describe('useCreateAsset', () => {
       });
 
       const { data, variables, ...res } = result.current;
-      expect(data?.id).toBeDefined();
+      expect(data).toHaveLength(1);
       expect(variables).toBeDefined();
       expect(res).toMatchInlineSnapshot(`
         {
@@ -63,7 +64,15 @@ describe('useCreateAsset', () => {
           "mutate": [Function],
           "mutateAsync": [Function],
           "status": "success",
-          "uploadProgress": undefined,
+          "uploadProgress": {
+            "average": 1,
+            "sources": [
+              {
+                "name": "livepeer.js tests :: new asset",
+                "progress": 1,
+              },
+            ],
+          },
         }
       `);
     }, 20_000);

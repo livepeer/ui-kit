@@ -31,7 +31,7 @@ export const usePlaybackInfoOrImport = ({
   const { mutate: importAsset, data: importedAsset } = useCreateAsset();
 
   const { data: asset } = useAsset({
-    assetId: importedAsset?.id,
+    assetId: importedAsset?.[0]?.id,
     refetchInterval: (asset) =>
       asset?.status?.phase !== 'ready' ? refetchPlaybackInfoInterval : false,
   });
@@ -59,8 +59,12 @@ export const usePlaybackInfoOrImport = ({
       (playbackInfoError as HttpError)?.code === 404
     ) {
       importAsset({
-        name: decentralizedSrcOrPlaybackId.id,
-        url: decentralizedSrcOrPlaybackId.url,
+        sources: [
+          {
+            name: decentralizedSrcOrPlaybackId.id,
+            url: decentralizedSrcOrPlaybackId.url,
+          },
+        ],
       });
     }
   }, [

@@ -2,58 +2,66 @@ import { useCreateAsset, useUpdateAsset } from '@livepeer/react';
 import { useState } from 'react';
 
 export const Asset = () => {
-  const [video, setVideo] = useState<File | undefined>();
-  const { mutate: createAsset, data: asset, status } = useCreateAsset();
-  // const { data: asset } = useAsset({
-  //   assetId: createdAsset?.id,
-  //   refetchInterval: 10000,
-  // });
+  const [videos, setVideos] = useState<File[]>([]);
+  const { mutate: createAsset, data: assets, status } = useCreateAsset();
   const { mutate: updateAsset, status: updateStatus, error } = useUpdateAsset();
+
+  const handleCreateAsset = async () => {
+    const files = videos.map((video) => ({
+      file: video,
+      name: video.name,
+    }));
+    createAsset({
+      sources: files,
+    });
+  };
 
   return (
     <div>
       <input
         type="file"
+        multiple
         accept="video/*"
-        onChange={(e) => setVideo(e?.target?.files?.[0])}
+        onChange={(e) => {
+          if (e.target.files) {
+            setVideos([...e.target.files]);
+          }
+        }}
       />
       <button
-        disabled={!video || status === 'loading'}
+        disabled={!videos || status === 'loading'}
         onClick={() => {
-          if (video) {
-            createAsset({
-              name: video.name,
-              file: video,
-            });
-          }
+          handleCreateAsset();
         }}
       >
-        Create Asset
+        Create Assets
       </button>
-      <button
-        disabled={
-          !asset?.id || status === 'loading' || updateStatus === 'loading'
-        }
-        onClick={async () => {
-          if (asset?.id) {
-            updateAsset({
-              assetId: asset.id,
-              storage: {
-                ipfs: true,
-              },
-            });
-          }
-        }}
-      >
-        Upload to IPFS
-      </button>
-      {asset && (
-        <>
-          <div>Asset Name: {asset?.name}</div>
-          <div>Playback URL: {asset?.playbackUrl}</div>
-          <div>IPFS CID: {asset?.storage?.ipfs?.cid ?? 'None'}</div>
-        </>
-      )}
+      <>
+        {assets?.map((asset) => (
+          <div key={asset.id}>
+            <div>
+              <div>Asset Name: {asset?.name}</div>
+              <div>Playback URL: {asset?.playbackUrl}</div>
+              <div>IPFS CID: {asset?.storage?.ipfs?.cid ?? 'None'}</div>
+            </div>
+            <button
+              disabled={status === 'loading' || updateStatus === 'loading'}
+              onClick={async () => {
+                if (asset?.id) {
+                  updateAsset({
+                    assetId: asset.id,
+                    storage: {
+                      ipfs: true,
+                    },
+                  });
+                }
+              }}
+            >
+              Upload to IPFS
+            </button>
+          </div>
+        ))}
+      </>
       {error && <div>{error.message}</div>}
     </div>
   );

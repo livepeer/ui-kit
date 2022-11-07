@@ -22,7 +22,11 @@ import {
   UpdateStreamArgs,
   ViewsMetrics,
 } from '../../types';
-import { hashCode } from '../../utils/hashcode';
+import {
+  CreateAssetFileProgress,
+  CreateAssetSource,
+  CreateAssetSourceFile,
+} from '../../types/provider';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
 import {
@@ -129,89 +133,105 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return studioStreamSessions;
   }
 
-  async createAsset(args: CreateAssetArgs): Promise<Asset> {
-    if (args.url) {
-      const createdAsset = await this._create<
-        { asset: StudioAsset },
-        Omit<CreateAssetArgs, 'file'>
-      >('/asset/upload/url', {
-        json: {
-          name: args.name,
-          url: args.url,
-        },
-        headers: this._defaultHeaders,
-      });
+  async createAsset(args: CreateAssetArgs): Promise<Asset[]> {
+    const { sources, onUploadProgress } = args;
 
-      return this.getAsset(createdAsset?.asset?.id);
-    }
+    const uploadProgress = {
+      average: 0,
+      sources: [] as CreateAssetFileProgress[],
+    };
 
-    const uploadReq = await this._create<
-      { tusEndpoint: string; asset: { id: string } },
-      Omit<CreateAssetArgs, 'file'>
-    >('/asset/request-upload', {
-      json: {
-        name: args.name,
-      },
-      headers: this._defaultHeaders,
-    });
-    const {
-      tusEndpoint,
-      asset: { id: assetId },
-    } = uploadReq;
+    const assets = await Promise.allSettled(
+      sources.map(async (source, index) => {
+        const uploadReq = await this._create<
+          { tusEndpoint: string; asset: { id: string } },
+          Omit<CreateAssetSource, 'file'>
+        >('/asset/request-upload', {
+          json: {
+            name: source.name,
+          },
+          headers: this._defaultHeaders,
+        });
 
-    await new Promise<void>((resolve, reject) => {
-      if (!args.file) {
-        return reject('No file provided.');
+        const {
+          tusEndpoint,
+          asset: { id: assetId },
+        } = uploadReq;
+
+        await new Promise<void>((resolve, reject) => {
+          const upload = new tus.Upload(
+            (source as CreateAssetSourceFile).file,
+            {
+              endpoint: tusEndpoint,
+              metadata: {
+                id: assetId,
+              },
+              ...((source as CreateAssetSourceFile) instanceof File
+                ? null
+                : { chunkSize: 5 * 1024 * 1024 }),
+              fingerprint: function (file) {
+                if (isReactNative()) {
+                  return Promise.resolve(reactNativeFingerprint(file));
+                } else {
+                  return Promise.resolve(
+                    [
+                      'browser',
+                      file.name,
+                      file.type,
+                      file.size,
+                      file.lastModified,
+                    ].join('-'),
+                  );
+                }
+              },
+              onError: (error) => {
+                console.log('Failed because: ', error);
+              },
+              onProgress(bytesSent, bytesTotal) {
+                const progress = bytesSent / bytesTotal;
+
+                uploadProgress.sources[index] = {
+                  name: source.name,
+                  progress,
+                };
+
+                uploadProgress.average =
+                  uploadProgress.sources.reduce(
+                    (acc, { progress }) => acc + progress,
+                    0,
+                  ) / uploadProgress.sources.length;
+
+                onUploadProgress?.(uploadProgress);
+              },
+
+              onSuccess() {
+                resolve();
+              },
+            },
+          );
+
+          upload
+            .findPreviousUploads()
+            .then((previousUploads) => {
+              if (previousUploads?.length > 0 && previousUploads[0]) {
+                upload.resumeFromPreviousUpload(previousUploads[0]);
+              }
+              upload.start();
+            })
+            .catch(reject);
+        });
+
+        return this.getAsset(assetId);
+      }),
+    );
+
+    return assets.map((asset) => {
+      if (asset.status === 'fulfilled') {
+        return asset.value;
+      } else {
+        throw asset.reason;
       }
-
-      const upload = new tus.Upload(args.file, {
-        endpoint: tusEndpoint,
-        metadata: {
-          id: assetId,
-        },
-        uploadSize: args.uploadSize,
-        // Chunk size is required if input is a stream (and S3 min is 5MB), but
-        // not recommended if it is a file.
-        ...(args.file instanceof File ? null : { chunkSize: 5 * 1024 * 1024 }),
-
-        onError(error) {
-          reject(error);
-        },
-        fingerprint: function (file) {
-          if (isReactNative()) {
-            return Promise.resolve(reactNativeFingerprint(file));
-          } else {
-            return Promise.resolve(
-              [
-                'browser',
-                file.name,
-                file.type,
-                file.size,
-                file.lastModified,
-              ].join('-'),
-            );
-          }
-        },
-        onProgress(bytesSent, bytesTotal) {
-          args?.onUploadProgress?.(bytesSent / bytesTotal);
-        },
-        onSuccess() {
-          args?.onUploadProgress?.(1);
-          return resolve();
-        },
-      });
-
-      upload
-        .findPreviousUploads()
-        .then((previousUploads) => {
-          if (previousUploads?.length > 0 && previousUploads[0]) {
-            upload.resumeFromPreviousUpload(previousUploads[0]);
-          }
-          upload.start();
-        })
-        .catch(reject);
     });
-    return this.getAsset(assetId);
   }
 
   async getAsset(args: GetAssetArgs): Promise<Asset> {
@@ -313,9 +333,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return {
       type: studioPlaybackInfo?.['type'],
       meta: {
-        ...(studioPlaybackInfo?.['meta']?.['live']
-          ? { live: Boolean(studioPlaybackInfo?.['meta']['live']) }
-          : {}),
+        live: studioPlaybackInfo?.['meta']?.['live']
+          ? Boolean(studioPlaybackInfo?.['meta']['live'])
+          : undefined,
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           hrn: source?.['hrn'],
           type: source?.['type'],
@@ -347,13 +367,3 @@ export function studioProvider(
       ...definedProps(config),
     });
 }
-
-const reactNativeFingerprint = (file: any) => {
-  const exifHash = file.exif ? hashCode(JSON.stringify(file.exif)) : 'noexif';
-  return [
-    'react-native',
-    file.name || 'noname',
-    file.size || 'nosize',
-    exifHash,
-  ].join('/');
-};
