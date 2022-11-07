@@ -3,11 +3,11 @@ export {
   prefetchQuery,
   useInternalMutation,
   useInternalQuery,
-  usePickMutationKeys,
+  useInternalMutationKeys,
   usePickQueryKeys,
   type PrefetchQueryOptions,
   type Status,
-  type UsePickMutationOptions,
+  type UseInternalMutationOptions,
   type UsePickQueryOptions,
 } from './query';
 export { serialize } from './serialize';

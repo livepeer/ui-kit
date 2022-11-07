@@ -40,12 +40,15 @@ const handler = async (
       }
 
       const asset = await createAsset({
-        name: 'slkdf',
-        file: fs.createReadStream(file?.filepath),
-        uploadSize: file?.size,
+        sources: [
+          {
+            name: 'slkdf',
+            file: fs.createReadStream(file?.filepath),
+          },
+        ] as const,
       });
 
-      return res.status(200).json(asset);
+      return res.status(200).json(asset[0]);
     }
 
     res.setHeader('Allow', ['POST']);

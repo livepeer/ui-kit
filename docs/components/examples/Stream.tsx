@@ -7,7 +7,11 @@ import { Spinner } from '../core';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
-  const { mutate: createStream, data: stream, status } = useCreateStream();
+  const {
+    mutate: createStream,
+    data: stream,
+    status,
+  } = useCreateStream(streamName ? { name: streamName } : null);
 
   const isLoading = useMemo(() => status === 'loading', [status]);
 
@@ -52,12 +56,10 @@ export const Stream = () => {
           <Button
             css={{ display: 'flex', ai: 'center' }}
             onClick={() => {
-              if (streamName) {
-                createStream({ name: streamName });
-              }
+              createStream?.();
             }}
             size="2"
-            disabled={!streamName || isLoading || Boolean(stream)}
+            disabled={isLoading || !createStream}
             variant="primary"
           >
             {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}

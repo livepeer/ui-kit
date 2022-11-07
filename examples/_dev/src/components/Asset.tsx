@@ -3,18 +3,28 @@ import { useState } from 'react';
 
 export const Asset = () => {
   const [videos, setVideos] = useState<File[]>([]);
-  const { mutate: createAsset, data: assets, status } = useCreateAsset();
-  const { mutate: updateAsset, status: updateStatus, error } = useUpdateAsset();
-
-  const handleCreateAsset = async () => {
-    const files = videos.map((video) => ({
+  const {
+    mutate: createAsset,
+    data: assets,
+    status,
+  } = useCreateAsset({
+    sources: videos.map((video) => ({
       file: video,
       name: video.name,
-    }));
-    createAsset({
-      sources: files,
-    });
-  };
+    })),
+  });
+  const {
+    mutate: uploadToIpfs,
+    status: updateStatus,
+    error,
+  } = useUpdateAsset(
+    assets?.[0].id
+      ? {
+          assetId: assets?.[0].id,
+          storage: { ipfs: true },
+        }
+      : null,
+  );
 
   return (
     <div>
@@ -31,7 +41,7 @@ export const Asset = () => {
       <button
         disabled={!videos || status === 'loading'}
         onClick={() => {
-          handleCreateAsset();
+          createAsset?.();
         }}
       >
         Create Assets
@@ -48,12 +58,7 @@ export const Asset = () => {
               disabled={status === 'loading' || updateStatus === 'loading'}
               onClick={async () => {
                 if (asset?.id) {
-                  updateAsset({
-                    assetId: asset.id,
-                    storage: {
-                      ipfs: true,
-                    },
-                  });
+                  uploadToIpfs?.();
                 }
               }}
             >

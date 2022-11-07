@@ -228,7 +228,7 @@ IPFS which points to that Asset's CID.
       used for this page, which uses the query string to get the Asset ID).
     </Callout>
 
-    ```tsx {20-27}
+    ```tsx
     import { useAsset, useUpdateAsset } from '@livepeer/react';
     import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useMemo } from 'react';
@@ -238,7 +238,14 @@ IPFS which points to that Asset's CID.
 
     export const WagmiNft = () => {
       const { address } = useAccount();
-      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset({
+        assetId,
+        storage: {
+          ipfs: true,
+          // metadata overrides can be added here
+          // see the source code behind this example
+        },
+      });
 
       return (
         <Box>
@@ -248,14 +255,7 @@ IPFS which points to that Asset's CID.
               <Text>{assetId}</Text>
               <Button
                 onClick={() => {
-                  updateAsset({
-                    assetId,
-                    storage: {
-                      ipfs: true,
-                      {/* metadata overrides can be added here */}
-                      {/* see the source code behind this example */}
-                    },
-                  });
+                  updateAsset?.();
                 }}
               >
                 Upload to IPFS
@@ -274,7 +274,7 @@ IPFS which points to that Asset's CID.
       used for this page, which uses the query string to get the Asset ID).
     </Callout>
 
-    ```tsx {49-56}
+    ```tsx
     import { useUpdateAsset } from '@livepeer/react';
 
     import { useCallback, useContext, useMemo, useState } from 'react';
@@ -310,7 +310,14 @@ IPFS which points to that Asset's CID.
         }
       }, [isAptosDefined]);
 
-      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset({
+        assetId,
+        storage: {
+          ipfs: true,
+          // metadata overrides can be added here
+          // see the source code behind this example
+        },
+      });
 
       return (
         <Box>
@@ -323,14 +330,7 @@ IPFS which points to that Asset's CID.
           {address && (
             <Button
               onClick={() => {
-                updateAsset({
-                  assetId,
-                  storage: {
-                    ipfs: true,
-                    {/* metadata overrides can be added here */}
-                    {/* see the source code behind this example */}
-                  },
-                });
+                updateAsset?.();
               }}
             >
               Upload to IPFS
@@ -402,7 +402,20 @@ so the user can see the blockchain confirmation.
         refetchInterval: (asset) =>
           asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
       });
-      const { mutate: updateAsset } = useUpdateAsset();
+      const { mutate: updateAsset } = useUpdateAsset(
+        asset
+          ? {
+              assetId: asset.id,
+              storage: {
+                ipfs: true,
+                metadata: {
+                  name,
+                  description,
+                },
+              },
+            }
+          : null,
+      );
 
       const { config } = usePrepareContractWrite({
         // The demo NFT contract address on Polygon Mumbai
@@ -436,10 +449,7 @@ so the user can see the blockchain confirmation.
                 asset?.storage?.status?.phase !== 'ready' ? (
                   <Button
                     onClick={() => {
-                      updateAsset({
-                        assetId: asset.id,
-                        storage: { ipfs: true },
-                      });
+                      updateAsset?.();
                     }}
                   >
                     Upload to IPFS
@@ -617,7 +627,7 @@ so the user can see the blockchain confirmation.
     and use the response to "accept" the offer (which uses the function
     `0x3::token_transfers::claim_script`).
 
-    ```tsx {70-111}
+    ```tsx
     import { useAsset, useUpdateAsset } from '@livepeer/react';
     import { Types } from 'aptos';
 
@@ -677,7 +687,15 @@ so the user can see the blockchain confirmation.
         refetchInterval: (asset) =>
           asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
       });
-      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+      const { mutate: updateAsset, status: updateStatus } = useUpdateAsset(asset
+          ? {
+              assetId: asset.id,
+              storage: {
+                ipfs: true,
+              },
+            }
+          : null,
+      );
 
       const [isCreatingNft, setIsCreatingNft] = useState(false);
 
@@ -761,13 +779,10 @@ so the user can see the blockchain confirmation.
                 asset?.storage?.status?.phase !== 'ready' ? (
                   <Button
                     onClick={() => {
-                      updateAsset({
-                        assetId: asset.id,
-                        storage: { ipfs: true },
-                      });
+                      updateAsset?.();
                     }}
                     disabled={
-                      !assetId || Boolean(asset?.storage?.ipfs?.cid)
+                      !updateAsset || !assetId || Boolean(asset?.storage?.ipfs?.cid)
                     }
                   >
                     Upload to IPFS

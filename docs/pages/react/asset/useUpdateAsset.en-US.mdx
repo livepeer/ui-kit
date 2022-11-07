@@ -13,10 +13,9 @@ import { useUpdateAsset } from '@livepeer/react';
 
 ## Usage
 
-The following example shows how an asset can be updated with the `mutate` function, but could also use the asynchronous `mutateAsync`
-function.
+The following example shows how an asset can be updated.
 
-```tsx {11, 18-21}
+```tsx {15-18, 25}
 import { useAsset, useUpdateAsset } from '@livepeer/react';
 import { useState } from 'react';
 
@@ -27,17 +26,21 @@ function App() {
     assetId,
     refetchInterval: 10000,
   });
-  const { mutate: updateAsset, status, error } = useUpdateAsset();
+  const {
+    mutate: updateAsset,
+    status,
+    error,
+  } = useUpdateAsset({
+    assetId,
+    storage: { ipfs: true },
+  });
 
   return (
     <div>
       <button
         disabled={status === 'loading'}
         onClick={() => {
-          updateAsset({
-            assetId,
-            storage: { ipfs: true },
-          });
+          updateAsset?.();
         }}
       >
         Upload to IPFS
@@ -54,40 +57,72 @@ function App() {
 }
 ```
 
-## Mutation
+## Return Value
 
-The variables for the mutate function(s) are defined as:
+The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
+aggregated for simplicity.
 
 ```tsx
-type UpdateAssetArgs = {
-  /** The unique identifier for the asset */
-  assetId: string;
-  /** The name of the asset */
-  name?: string;
+{
+  data?: Asset,
+  error?: Error,
+  isError: boolean,
+  isIdle: boolean,
+  isLoading: boolean,
+  isSuccess: boolean,
+  status: 'idle' | 'loading' | 'success' | 'error',
+  mutate: () => void,
+  mutateAsync: () => Promise<Asset>,
+  variables?: UpdateAssetArgs
+}
+```
+
+## Configuration
+
+### assetId
+
+The asset ID to update - required.
+
+```tsx {5}
+import { useUpdateAsset } from '@livepeer/react';
+
+function App() {
+  const { mutate: updateAsset } = useUpdateAsset({
+    assetId,
+    name: 'New Name',
+  });
+}
+```
+
+### name
+
+The updated name for the asset.
+
+### storage
+
+The storage configs to use for the asset. This is preferably EIP-721 or EIP-1155 compatible metadata configs.
+
+```tsx
+type Storage = {
   /**
-   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible metadata configs.
+   * If the asset should be stored on IPFS.
    */
-  storage?: {
-    /**
-     * If the asset should be stored on IPFS.
-     */
-    ipfs?: boolean;
-    /**
-     * Metadata exported to the storage provider. This will be deep merged with the default
-     * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
-     *
-     * @see {@link https://eips.ethereum.org/EIPS/eip-721}
-     */
-    metadata?:
-      | Partial<Metadata> & {
-          [k: string]: unknown;
-        };
-    /**
-     * The metadata template to use. `player` will embed the Livepeer Player's IPFS CID while `file`
-     * will reference only the immutable media files.
-     */
-    metadataTemplate?: 'player' | 'file';
-  };
+  ipfs?: boolean;
+  /**
+   * Metadata exported to the storage provider. This will be deep merged with the default
+   * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
+   *
+   * @see {@link https://eips.ethereum.org/EIPS/eip-721}
+   */
+  metadata?:
+    | Partial<Metadata> & {
+        [k: string]: unknown;
+      };
+  /**
+   * The metadata template to use. `player` will embed the Livepeer Player's IPFS CID while `file`
+   * will reference only the immutable media files.
+   */
+  metadataTemplate?: 'player' | 'file';
 };
 ```
 
@@ -123,39 +158,19 @@ type Metadata = {
 };
 ```
 
-## Return Value
+### mutationConfig
 
-The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
-aggregated for simplicity.
-
-```tsx
-{
-  data?: Asset,
-  error?: Error,
-  isError: boolean,
-  isIdle: boolean,
-  isLoading: boolean,
-  isSuccess: boolean,
-  status: 'idle' | 'loading' | 'success' | 'error',
-  mutate: (config: UpdateAssetArgs, options?: MutateOptions) => void,
-  mutateAsync: (config: UpdateAssetArgs, options?: MutateOptions) => Promise<Asset>,
-  variables?: UpdateAssetArgs
-}
-```
-
-## Configuration
-
-### UseMutationOptions
-
-The `useUpdateAsset` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+The `mutationConfig` parameter allows for any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
 `cacheTime` or `retry`. These override any configs passed by default by the internal hook.
 
-```tsx {5}
+```tsx {7}
 import { useUpdateAsset } from '@livepeer/react';
 
 function App() {
   const { mutate: updateAsset } = useUpdateAsset({
-    retry: 5,
+    assetId,
+    name: 'New Name',
+    mutationConfig: { retry: 3 },
   });
 }
 ```

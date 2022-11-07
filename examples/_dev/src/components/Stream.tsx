@@ -8,7 +8,9 @@ import {
 const streamName = `New Stream`;
 
 export const Stream = () => {
-  const { mutate: createStream, data: createdStream } = useCreateStream();
+  const { mutate: createStream, data: createdStream } = useCreateStream(
+    streamName ? { name: streamName, mutationConfig: { retry: 3 } } : null,
+  );
   const { data: stream } = useStream({
     streamId: createdStream?.id,
     refetchInterval: 10000,
@@ -16,19 +18,18 @@ export const Stream = () => {
   const { data: streamSessions } = useStreamSessions({
     streamId: createdStream?.id,
   });
-  const { mutate: updateStream } = useUpdateStream();
+  const { mutate: updateStream } = useUpdateStream(
+    stream
+      ? {
+          streamId: stream?.id,
+          record: true,
+        }
+      : null,
+  );
 
   return (
     <div>
-      <button
-        onClick={() =>
-          createStream({
-            name: streamName,
-          })
-        }
-      >
-        Create Stream
-      </button>
+      <button onClick={() => createStream?.()}>Create Stream</button>
       {stream && (
         <>
           <div>Stream Key: {stream.streamKey}</div>
@@ -49,12 +50,7 @@ export const Stream = () => {
       <div>
         <button
           onClick={() => {
-            if (stream?.id) {
-              updateStream({
-                streamId: stream?.id,
-                record: true,
-              });
-            }
+            updateStream?.();
           }}
         >
           Record Stream

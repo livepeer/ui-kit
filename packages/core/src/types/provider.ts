@@ -1,3 +1,4 @@
+import { MirrorSizeArray } from '.';
 import { ReadStream } from 'fs';
 
 export type LivepeerProviderConfig = {
@@ -23,7 +24,10 @@ export interface LivepeerProvider {
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
   /** Create a new asset(s) */
-  createAsset(args: CreateAssetArgs): Promise<Asset[]>;
+  createAsset<TSource extends CreateAssetSourceType>(
+    args: CreateAssetArgs<TSource>,
+  ): Promise<MirrorSizeArray<TSource, Asset>>;
+
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
@@ -164,18 +168,30 @@ export type AssetIdOrString =
       assetId: string;
     };
 
-export type CreateAssetFileProgress = {
+export type CreateAssetProgressBase = {
   /** Name of the asset */
   name: string;
-  /** Progress from 0 to 1 */
+  /**
+   * Progress from 0 to 1 **in the current phase**.
+   * This will reset to zero upon beginning the next phase.
+   */
   progress: number;
 };
 
-export type CreateAssetProgress = {
-  /** Average of the progress values */
-  average: number;
-  /** Progress values */
-  sources: CreateAssetFileProgress[];
+export type CreateAssetFileProgress = CreateAssetProgressBase & {
+  /** Phase of the asset */
+  phase: 'uploading' | 'waiting' | 'processing' | 'ready' | 'failed';
+};
+
+export type CreateAssetUrlProgress = CreateAssetProgressBase & {
+  /** Phase of the asset */
+  phase: 'waiting' | 'processing' | 'ready' | 'failed';
+};
+
+export type CreateAssetProgress<TSource extends CreateAssetSourceType> = {
+  [K in keyof TSource]: TSource[K] extends CreateAssetSourceUrl
+    ? CreateAssetUrlProgress
+    : CreateAssetFileProgress;
 };
 
 export type CreateAssetSourceBase = {
@@ -195,11 +211,24 @@ export type CreateAssetSourceFile = CreateAssetSourceBase & {
 
 export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;
 
-export type CreateAssetArgs = {
+export type CreateAssetSourceType =
+  | ReadonlyArray<CreateAssetSource>
+  | Array<CreateAssetSource>;
+
+export type CreateAssetArgs<TSource extends CreateAssetSourceType> = {
   /** Source(s) to upload */
-  sources: CreateAssetSource[];
-  /** Callback to receive progress, it is a object that include average and array of files */
-  onUploadProgress?: (progress: CreateAssetProgress) => void;
+  sources: TSource;
+  /**
+   * Callback to receive progress of the asset creation.
+   * For file/URL uploads, it will poll the API for completion.
+   */
+  onProgress?: (progress: CreateAssetProgress<TSource>) => void;
+  /**
+   * Skips the internal polling mechanism and immediately returns after
+   * file upload is done. Will not receive onProgress updates on processing
+   * status.
+   */
+  noWait?: boolean;
 };
 
 export type Metadata = {

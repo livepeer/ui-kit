@@ -18,14 +18,6 @@ export const isSafari = () =>
       (window?.safari || isIos() || /(apple|safari)/.test(ua())),
   );
 
-export const isReactNative = (): boolean => {
-  return (
-    typeof navigator !== 'undefined' &&
-    typeof navigator.product === 'string' &&
-    navigator.product === 'ReactNative'
-  );
-};
-
 export const origin = () =>
   isClient() &&
   window?.location?.protocol &&

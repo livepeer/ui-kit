@@ -74,13 +74,9 @@ export const Stream = () => {
 
       <Button
         onClick={() => {
-          if (streamName) {
-            createStream({ name: streamName });
-          }
+          createStream?.();
         }}
-        disabled={
-          !streamName || createStatus === 'loading' || Boolean(createdStream)
-        }
+        disabled={createStatus === 'loading' || !createStream}
       >
         Create Stream
       </Button>
@@ -101,37 +97,31 @@ Lastly, when the stream is created, we display the streaming content using the [
 </Callout>
 
 ```tsx
-import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { Player, useCreateStream } from '@livepeer/react';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+import { Spinner } from '../core';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
-  const { mutate: createStream, data: stream, status } = useCreateStream();
+  const {
+    mutate: createStream,
+    data: stream,
+    status,
+  } = useCreateStream(streamName ? { name: streamName } : null);
 
   const isLoading = useMemo(() => status === 'loading', [status]);
 
   return (
-    <>
-      <TextField
-        type="text"
-        placeholder="Stream name"
-        onChange={(e) => setStreamName(e.target.value)}
-      />
-
-      <Flex>
-        <Button
-          onClick={() => {
-            if (streamName) {
-              createStream({ name: streamName });
-            }
-          }}
-          disabled={!streamName || isLoading || Boolean(stream)}
-        >
-          Create Stream
-        </Button>
-      </Flex>
+    <Box>
+      <Box>
+        <TextField
+          type="text"
+          placeholder="Stream name"
+          onChange={(e) => setStreamName(e.target.value)}
+        />
+      </Box>
 
       {stream?.playbackId && (
         <Player
@@ -139,14 +129,23 @@ export const Stream = () => {
           playbackId={stream?.playbackId}
           autoPlay
           muted
-          theme={{
-            fonts: {
-              display: 'Inter',
-            },
-          }}
         />
       )}
-    </>
+
+      <Flex>
+        {!stream && (
+          <Button
+            onClick={() => {
+              createStream?.();
+            }}
+            disabled={isLoading || !createStream}
+            variant="primary"
+          >
+            Create Stream
+          </Button>
+        )}
+      </Flex>
+    </Box>
   );
 };
 ```

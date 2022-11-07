@@ -9,7 +9,7 @@ import { Asset } from '@components/examples';
 # Create and Watch an Asset
 
 Creating and viewing assets is easy with livepeer.js! The example below uses [`useCreateAsset`](/react/asset/useCreateAsset)
-and [`useAsset`](/react/asset/useAsset) to create and view a video asset.
+to create and view a video asset.
 
 <Asset />
 
@@ -62,11 +62,17 @@ export const CreateAndViewAsset = () => {
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
-    data: createdAsset,
-    status: createStatus,
-    error: createError,
-    uploadProgress,
-  } = useCreateAsset();
+    data: asset,
+    status,
+    progress,
+    error,
+  } = useCreateAsset(
+    video
+      ? {
+          sources: [{ name: video.name, file: video }] as const,
+        }
+      : null,
+  );
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles.length > 0 && acceptedFiles?.[0]) {
@@ -84,12 +90,16 @@ export const CreateAndViewAsset = () => {
 
   const progressFormatted = useMemo(
     () =>
-      uploadProgress
-        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
-        : asset?.status?.progress
-        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
+      progress?.[0].phase === 'failed'
+        ? 'Failed to process video.'
+        : progress?.[0].phase === 'waiting'
+        ? 'Waiting'
+        : progress?.[0].phase === 'uploading'
+        ? `Uploading: ${Math.round(progress?.[0]?.progress * 100)}%`
+        : progress?.[0].phase === 'processing'
+        ? `Processing: ${Math.round(progress?.[0].progress * 100)}%`
         : null,
-    [uploadProgress, asset?.status?.progress],
+    [progress],
   );
 
   return (
@@ -112,11 +122,10 @@ export const CreateAndViewAsset = () => {
 
       <Button
         onClick={() => {
-          if (video) {
-            createAsset({ name: video.name, file: video });
-          }
+          createAsset?.();
         }}
-        disabled={!video || createStatus === 'loading'}
+        size="2"
+        disabled={!createAsset || createStatus === 'loading'}
       >
         Upload
       </Button>
@@ -127,31 +136,32 @@ export const CreateAndViewAsset = () => {
 
 ## Step 3: Stream Transcoded Video
 
-Lastly, when the video is uploaded, we use `refetchInterval` to poll the API until the asset has been processed and
-has a `playbackId`. Then, we stop polling and show the video using the [`Player`](/react/Player).
+Lastly, when the video is uploaded, we wait for `useCreateAsset` to poll the API until the asset has been processed and
+has a `playbackId`. Then, we show the video using the [`Player`](/react/Player).
 
 ```tsx
-import { Player, useAsset, useCreateAsset } from '@livepeer/react';
+import { Player, useAssetMetrics, useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-export const CreateAndViewAsset = () => {
+export const Asset = () => {
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
-    data: createdAsset,
-    status: createStatus,
-    error: createError,
-    uploadProgress,
-  } = useCreateAsset();
-  const { data: asset, status: assetStatus } = useAsset({
-    assetId: createdAsset?.id,
-    refetchInterval: (asset) =>
-      asset?.status?.phase !== 'ready' ? 5000 : false,
-  });
+    data: asset,
+    status,
+    progress,
+    error,
+  } = useCreateAsset(
+    video
+      ? {
+          sources: [{ name: video.name, file: video }] as const,
+        }
+      : null,
+  );
   const { data: metrics } = useAssetMetrics({
-    assetId: createdAsset?.id,
+    assetId: asset?.[0].id,
     refetchInterval: 30000,
   });
 
@@ -169,62 +179,70 @@ export const CreateAndViewAsset = () => {
     onDrop,
   });
 
-  // we check here for either creating the asset, or polling for the asset
-  // until the video is in the ready phase and can be consumed
   const isLoading = useMemo(
     () =>
-      createStatus === 'loading' ||
-      assetStatus === 'loading' ||
-      (asset && asset?.status?.phase !== 'ready'),
-    [createStatus, asset, assetStatus],
+      status === 'loading' ||
+      (asset?.[0] && asset[0].status?.phase !== 'ready'),
+    [status, asset],
   );
 
   const progressFormatted = useMemo(
     () =>
-      uploadProgress
-        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
-        : asset?.status?.progress
-        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
+      progress?.[0].phase === 'failed'
+        ? 'Failed to process video.'
+        : progress?.[0].phase === 'waiting'
+        ? 'Waiting...'
+        : progress?.[0].phase === 'uploading'
+        ? `Uploading: ${Math.round(progress?.[0]?.progress * 100)}%`
+        : progress?.[0].phase === 'processing'
+        ? `Processing: ${Math.round(progress?.[0].progress * 100)}%`
         : null,
-    [uploadProgress, asset?.status?.progress],
+    [progress],
   );
 
   return (
-    <>
-      <Box {...getRootProps()}>
-        <Box as="input" {...getInputProps()} />
-        <Box as="p">
-          <Text>Drag and drop or browse files</Text>
+    <Box>
+      {!asset && (
+        <Box>
+          <Box as="div" {...getRootProps()}>
+            <Box as="input" {...getInputProps()} />
+            <Box as="p">
+              <Text>Drag and drop or browse files</Text>
+            </Box>
+          </Box>
+
+          {error?.message && <Text variant="red">{error.message}</Text>}
         </Box>
-      </Box>
-
-      {createError?.message && <Text>{createError.message}</Text>}
-
-      {video ? (
-        <Badge>{video.name}</Badge>
-      ) : (
-        <Text>Select a video file to upload.</Text>
       )}
-      {progressFormatted && <Text>{progressFormatted}</Text>}
 
-      <Button
-        onClick={() => {
-          if (video) {
-            createAsset({ name: video.name, file: video });
-          }
-        }}
-        disabled={!video || isLoading || Boolean(asset)}
-      >
-        {isLoading && <Spinner />}
-        Upload
-      </Button>
-
-      {asset?.playbackId && <Player playbackId={asset?.playbackId} />}
-
-      {metrics?.metrics?.[0] && (
-        <Badge>Views: {metrics?.metrics?.[0]?.startViews}</Badge>
+      {asset?.[0]?.playbackId && (
+        <Player title={asset[0].name} playbackId={asset[0].playbackId} />
       )}
-    </>
+
+      <Flex>
+        <Flex>
+          {metrics?.metrics?.[0] && (
+            <Badge>Views: {metrics?.metrics?.[0]?.startViews}</Badge>
+          )}
+          {video ? (
+            <Badge>{video.name}</Badge>
+          ) : (
+            <Text>Select a video file to upload.</Text>
+          )}
+          {progressFormatted && <Text>{progressFormatted}</Text>}
+        </Flex>
+        {!asset?.[0].id && (
+          <Button
+            onClick={() => {
+              createAsset?.();
+            }}
+            disabled={isLoading || !createAsset}
+          >
+            Upload
+          </Button>
+        )}
+      </Flex>
+    </Box>
   );
 };
 ```

@@ -20,6 +20,7 @@ describe('usePlaybackInfo', () => {
     expect(result.current.data).toMatchInlineSnapshot(`
       {
         "meta": {
+          "live": undefined,
           "source": [
             {
               "hrn": "HLS (TS)",
