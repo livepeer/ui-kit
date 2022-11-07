@@ -333,9 +333,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return {
       type: studioPlaybackInfo?.['type'],
       meta: {
-        ...(studioPlaybackInfo?.['meta']?.['live']
-          ? { live: Boolean(studioPlaybackInfo?.['meta']['live']) }
-          : {}),
+        live: studioPlaybackInfo?.['meta']?.['live']
+          ? Boolean(studioPlaybackInfo?.['meta']['live'])
+          : undefined,
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           hrn: source?.['hrn'],
           type: source?.['type'],
@@ -367,23 +367,3 @@ export function studioProvider(
       ...definedProps(config),
     });
 }
-
-const reactNativeFingerprint = (file: any) => {
-  const exifHash = file.exif ? hashCode(JSON.stringify(file.exif)) : 'noexif';
-  return [
-    'react-native',
-    file.name || 'noname',
-    file.size || 'nosize',
-    exifHash,
-  ].join('/');
-};
-
-const hashCode = (str: string) => {
-  let hash = 0;
-  for (let i = 0, len = str.length; i < len; i++) {
-    const chr = str.charCodeAt(i);
-    hash = (hash << 5) - hash + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
-};
