@@ -63,8 +63,14 @@ function App() {
         <>
           <div>Asset Name: {asset?.name}</div>
           <div>Playback URL: {asset?.playbackUrl}</div>
-          {uploadProgress && <div>Upload Progress: {Math.floor(uploadProgress * 100)}}%</div>}
-          {asset?.status?.progress && <div>Processing Progress: {Math.floor(asset.status.progress * 100)}}%</div>}
+          {uploadProgress && (
+            <div>Upload Progress: {Math.floor(uploadProgress * 100)}%</div>
+          )}
+          {asset?.status?.progress && (
+            <div>
+              Processing Progress: {Math.floor(asset.status.progress * 100)}%
+            </div>
+          )}
         </>
       )}
       {error && <div>{error.message}</div>}
