@@ -2,8 +2,8 @@ export { prefetchQuery, type PrefetchQueryOptions } from './prefetchQuery';
 export type { Status } from './types';
 export {
   useInternalMutation,
-  usePickMutationKeys,
-  type UsePickMutationOptions,
+  useInternalMutationKeys,
+  type UseInternalMutationOptions,
 } from './useInternalMutation';
 export {
   useInternalQuery,

@@ -3,21 +3,28 @@ import { useState } from 'react';
 
 export const Asset = () => {
   const [videos, setVideos] = useState<File[]>([]);
-
-  const { mutate: createAssets, data: assets, status } = useCreateAsset();
-
-  const { mutate: updateAsset, status: updateStatus, error } = useUpdateAsset();
-
-  const handleCreateAsset = async () => {
-    const files = videos.map((video) => ({
+  const {
+    mutate: createAsset,
+    data: assets,
+    status,
+  } = useCreateAsset({
+    sources: videos.map((video) => ({
       file: video,
       name: video.name,
-    }));
-
-    createAssets({
-      sources: files,
-    });
-  };
+    })),
+  });
+  const {
+    mutate: uploadToIpfs,
+    status: updateStatus,
+    error,
+  } = useUpdateAsset(
+    assets?.[0].id
+      ? {
+          assetId: assets?.[0].id,
+          storage: { ipfs: true },
+        }
+      : null,
+  );
 
   return (
     <div>
@@ -27,19 +34,18 @@ export const Asset = () => {
         accept="video/*"
         onChange={(e) => {
           if (e.target.files) {
-            setVideos(Array.from(e.target.files));
+            setVideos([...e.target.files]);
           }
         }}
       />
       <button
         disabled={!videos || status === 'loading'}
         onClick={() => {
-          handleCreateAsset();
+          createAsset?.();
         }}
       >
         Create Assets
       </button>
-
       <>
         {assets?.map((asset) => (
           <div key={asset.id}>
@@ -52,12 +58,7 @@ export const Asset = () => {
               disabled={status === 'loading' || updateStatus === 'loading'}
               onClick={async () => {
                 if (asset?.id) {
-                  updateAsset({
-                    assetId: asset.id,
-                    storage: {
-                      ipfs: true,
-                    },
-                  });
+                  uploadToIpfs?.();
                 }
               }}
             >

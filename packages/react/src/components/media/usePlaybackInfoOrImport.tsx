@@ -28,7 +28,18 @@ export const usePlaybackInfoOrImport = ({
   autoUrlUpload,
   onAssetStatusChange,
 }: UsePlaybackInfoOrImportProps) => {
-  const { mutate: importAsset, data: importedAsset } = useCreateAsset();
+  const { mutate: importAsset, data: importedAsset } = useCreateAsset(
+    decentralizedSrcOrPlaybackId
+      ? ({
+          sources: [
+            {
+              name: decentralizedSrcOrPlaybackId.id,
+              url: decentralizedSrcOrPlaybackId.url,
+            },
+          ],
+        } as const)
+      : null,
+  );
 
   const { data: asset } = useAsset({
     assetId: importedAsset?.[0]?.id,
@@ -54,26 +65,12 @@ export const usePlaybackInfoOrImport = ({
     if (
       autoUrlUpload &&
       !importedAsset &&
-      decentralizedSrcOrPlaybackId?.url &&
-      decentralizedSrcOrPlaybackId?.id &&
+      importAsset &&
       (playbackInfoError as HttpError)?.code === 404
     ) {
-      importAsset({
-        sources: [
-          {
-            name: decentralizedSrcOrPlaybackId.id,
-            url: decentralizedSrcOrPlaybackId.url,
-          },
-        ],
-      });
+      importAsset();
     }
-  }, [
-    autoUrlUpload,
-    importedAsset,
-    decentralizedSrcOrPlaybackId,
-    playbackInfoError,
-    importAsset,
-  ]);
+  }, [autoUrlUpload, importedAsset, playbackInfoError, importAsset]);
 
   return playbackInfo;
 };

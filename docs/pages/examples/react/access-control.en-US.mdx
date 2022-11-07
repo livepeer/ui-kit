@@ -62,7 +62,14 @@ export const AccessControl = () => {
     mutate: createStream,
     data: createdStream,
     status,
-  } = useCreateStream();
+  } = useCreateStream(
+    streamName
+      ? {
+          name: streamName,
+          playbackPolicy: { type: 'jwt' },
+        }
+      : null,
+  );
 
   const { data: stream } = useStream({
     streamId: createdStream?.id,
@@ -77,14 +84,9 @@ export const AccessControl = () => {
 
       <Button
         onClick={() => {
-          if (streamName) {
-            createStream({
-              name: streamName,
-              playbackPolicy: { type: 'jwt' },
-            });
-          }
+          createStream?.();
         }}
-        disabled={!streamName || isLoading || Boolean(stream)}
+        disabled={isLoading || !createStream || Boolean(stream)}
       >
         Create Gated Stream
       </Button>
@@ -206,7 +208,14 @@ export const AccessControl = () => {
     mutate: createStream,
     data: createdStream,
     status,
-  } = useCreateStream();
+  } = useCreateStream(
+    streamName
+      ? {
+          name: streamName,
+          playbackPolicy: { type: 'jwt' },
+        }
+      : null,
+  );
 
   const { data: stream } = useStream({
     streamId: createdStream?.id,
@@ -257,14 +266,9 @@ export const AccessControl = () => {
           <Flex>
             <Button
               onClick={() => {
-                if (streamName) {
-                  createStream({
-                    name: streamName,
-                    playbackPolicy: { type: 'jwt' },
-                  });
-                }
+                createStream?.();
               }}
-              disabled={!streamName || isLoading || Boolean(stream)}
+              disabled={isLoading || !createStream || Boolean(stream)}
             >
               Create Gated Stream
             </Button>

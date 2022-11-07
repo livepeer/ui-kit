@@ -20,7 +20,14 @@ export const AccessControl = () => {
     mutate: createStream,
     data: createdStream,
     status,
-  } = useCreateStream();
+  } = useCreateStream(
+    streamName
+      ? {
+          name: streamName,
+          playbackPolicy: { type: 'jwt' },
+        }
+      : null,
+  );
 
   const { data: stream } = useStream({
     streamId: createdStream?.id,
@@ -80,15 +87,10 @@ export const AccessControl = () => {
             <Button
               css={{ display: 'flex', ai: 'center' }}
               onClick={() => {
-                if (streamName) {
-                  createStream({
-                    name: streamName,
-                    playbackPolicy: { type: 'jwt' },
-                  });
-                }
+                createStream?.();
               }}
               size="2"
-              disabled={!streamName || isLoading || Boolean(stream)}
+              disabled={isLoading || !createStream || Boolean(stream)}
               variant="primary"
             >
               {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}

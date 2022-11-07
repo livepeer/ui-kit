@@ -1,28 +1,17 @@
 import { updateAsset } from 'livepeer/actions';
 import { Asset, LivepeerProvider, UpdateAssetArgs } from 'livepeer/types';
-import { pick } from 'livepeer/utils';
 
-import { QueryClientContext } from '../../context';
-import {
-  UsePickMutationOptions,
-  useInternalMutation,
-  usePickMutationKeys,
-} from '../../utils';
+import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLivepeerProvider } from '../providers';
 
 export function useUpdateAsset<TLivepeerProvider extends LivepeerProvider>(
-  options?: Partial<UsePickMutationOptions<Asset, Error, UpdateAssetArgs>>,
+  options: UseInternalMutationOptions<Asset, UpdateAssetArgs>,
 ) {
   const livepeerProvider = useLivepeerProvider<TLivepeerProvider>();
 
   return useInternalMutation(
+    options,
     async (args: UpdateAssetArgs) => updateAsset<TLivepeerProvider>(args),
-    {
-      context: QueryClientContext,
-      mutationKey: [{ entity: 'updateAsset', livepeerProvider }],
-      ...(typeof options === 'object'
-        ? pick(options, usePickMutationKeys)
-        : {}),
-    },
+    [{ entity: 'updateAsset', livepeerProvider }],
   );
 }

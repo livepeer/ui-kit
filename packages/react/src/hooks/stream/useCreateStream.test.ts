@@ -7,7 +7,7 @@ const streamName = 'livepeer.js tests :: new stream';
 
 describe('useCreateStream', () => {
   it('mounts', async () => {
-    const { result, waitFor } = renderHook(() => useCreateStream());
+    const { result, waitFor } = renderHook(() => useCreateStream(null));
 
     await waitFor(() => expect(result.current.isIdle).toBeTruthy());
 
@@ -21,7 +21,7 @@ describe('useCreateStream', () => {
         "isIdle": true,
         "isLoading": false,
         "isSuccess": false,
-        "mutate": [Function],
+        "mutate": undefined,
         "mutateAsync": [Function],
         "status": "idle",
         "variables": undefined,
@@ -31,14 +31,14 @@ describe('useCreateStream', () => {
 
   describe('create', () => {
     it('mutates', async () => {
-      const utils = renderHook(() => useCreateStream());
+      const utils = renderHook(() => useCreateStream({ name: streamName }));
 
       const { result, waitFor } = utils;
 
       await waitFor(() => expect(result.current.mutate).toBeDefined());
 
       await act(async () => {
-        result.current.mutate?.({ name: streamName });
+        result.current.mutate?.();
       });
 
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {

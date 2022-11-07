@@ -1,16 +1,16 @@
 import {
-  Player,
   useCreateStream,
   useStream,
   useStreamSessions,
   useUpdateStream,
 } from '@livepeer/react';
-import { useState } from 'react';
+
+const streamName = `New Stream`;
 
 export const Stream = () => {
-  const [streamName, setStreamName] = useState<string>('');
-
-  const { mutate: createStream, data: createdStream } = useCreateStream();
+  const { mutate: createStream, data: createdStream } = useCreateStream(
+    streamName ? { name: streamName } : null,
+  );
   const { data: stream } = useStream({
     streamId: createdStream?.id,
     refetchInterval: 10000,
@@ -18,30 +18,22 @@ export const Stream = () => {
   const { data: streamSessions } = useStreamSessions({
     streamId: createdStream?.id,
   });
-  const { mutate: updateStream } = useUpdateStream();
+  const { mutate: updateStream } = useUpdateStream(
+    stream
+      ? {
+          streamId: stream?.id,
+          record: true,
+        }
+      : null,
+  );
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Stream name"
-        onChange={(e) => setStreamName(e.target.value)}
-      />
-      <button
-        onClick={() =>
-          createStream({
-            name: streamName,
-          })
-        }
-        disabled={!streamName}
-      >
-        Create Stream
-      </button>
+      <button onClick={() => createStream?.()}>Create Stream</button>
       {stream && (
         <>
           <div>Stream Key: {stream.streamKey}</div>
           <div>Recording?: {String(Boolean(stream.record))}</div>
-          <Player playbackId={stream.playbackId} />
         </>
       )}
       {streamSessions && (
@@ -58,12 +50,7 @@ export const Stream = () => {
       <div>
         <button
           onClick={() => {
-            if (stream?.id) {
-              updateStream({
-                streamId: stream?.id,
-                record: true,
-              });
-            }
+            updateStream?.();
           }}
         >
           Record Stream

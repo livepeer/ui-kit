@@ -7,7 +7,7 @@ const assetName = 'livepeer.js tests :: new asset';
 
 describe('useCreateAsset', () => {
   it('mounts', () => {
-    const { result } = renderHook(() => useCreateAsset());
+    const { result } = renderHook(() => useCreateAsset(null));
     expect(result.current).toMatchInlineSnapshot(`
       {
         "data": undefined,
@@ -19,10 +19,10 @@ describe('useCreateAsset', () => {
         "isIdle": true,
         "isLoading": false,
         "isSuccess": false,
-        "mutate": [Function],
+        "mutate": undefined,
         "mutateAsync": [Function],
+        "progress": undefined,
         "status": "idle",
-        "uploadProgress": undefined,
         "variables": undefined,
       }
     `);
@@ -30,51 +30,50 @@ describe('useCreateAsset', () => {
 
   describe('create', () => {
     it('mutates', async () => {
-      const utils = renderHook(() => useCreateAsset());
-      const { result, waitFor } = utils;
-      await waitFor(() => expect(result.current.mutate).toBeDefined());
-      await act(async () => {
-        result.current.mutateAsync?.({
+      const utils = renderHook(() =>
+        useCreateAsset({
           sources: [
             {
               name: assetName,
               ...getSampleVideo(),
             },
-          ],
-        });
+          ] as const,
+        }),
+      );
+      const { result, waitFor } = utils;
+      await waitFor(() => expect(result.current.mutateAsync).toBeDefined());
+      await act(async () => {
+        result.current.mutateAsync?.();
       });
 
-      await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
-        timeout: 15_000,
-      });
-
-      const { data, variables, ...res } = result.current;
-      expect(data).toHaveLength(1);
-      expect(variables).toBeDefined();
-      expect(res).toMatchInlineSnapshot(`
+      await waitFor(
+        () =>
+          expect(
+            result.current.progress?.[0].phase === 'processing',
+          ).toBeTruthy(),
         {
+          timeout: 35_000,
+        },
+      );
+
+      const { variables, ...res } = result.current;
+      expect(variables).toBeDefined();
+
+      expect({
+        phase: res.progress?.[0].phase,
+        progress: undefined,
+        status: res.status,
+        error: res.error,
+        data: res.data,
+      }).toMatchInlineSnapshot(`
+        {
+          "data": undefined,
           "error": null,
-          "internal": {
-            "reset": [Function],
-          },
-          "isError": false,
-          "isIdle": false,
-          "isLoading": false,
-          "isSuccess": true,
-          "mutate": [Function],
-          "mutateAsync": [Function],
-          "status": "success",
-          "uploadProgress": {
-            "average": 1,
-            "sources": [
-              {
-                "name": "livepeer.js tests :: new asset",
-                "progress": 1,
-              },
-            ],
-          },
+          "phase": "processing",
+          "progress": undefined,
+          "status": "loading",
         }
       `);
-    }, 20_000);
+    }, 45_000);
   });
 });
