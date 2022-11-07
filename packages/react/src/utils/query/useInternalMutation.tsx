@@ -1,12 +1,14 @@
 import {
   MutationFunction,
   UseMutationOptions,
-  UseMutationResult,
   useMutation,
 } from '@tanstack/react-query';
+import { pick } from 'livepeer';
 import { HttpError } from 'livepeer/errors';
 
-export const usePickMutationKeys = [
+import { QueryClientContext } from '../../context';
+
+export const useInternalMutationKeys = [
   'cacheTime',
   'networkMode',
   'onError',
@@ -19,36 +21,41 @@ export const usePickMutationKeys = [
   'meta',
 ] as const;
 
-export type UsePickMutationOptions<
-  TData = unknown,
+export type UseInternalMutationOptions<
+  TData,
+  TVariables,
   TError = HttpError | Error,
-  TVariables = void,
   TContext = unknown,
-> = Pick<
-  UseMutationOptions<TData, TError, TVariables, TContext>,
-  typeof usePickMutationKeys[number]
->;
+> =
+  | (TVariables & {
+      mutationConfig?: Partial<
+        Pick<
+          UseMutationOptions<TData, TError, TVariables, TContext>,
+          typeof useInternalMutationKeys[number]
+        >
+      >;
+    })
+  | undefined
+  | null;
 
 export function useInternalMutation<
-  TData = unknown,
+  TData,
+  TVariables,
   TError = HttpError | Error,
-  TVariables = void,
   TContext = unknown,
 >(
+  options:
+    | UseInternalMutationOptions<TData, TVariables, TError, TContext>
+    | undefined
+    | null,
   mutationFn: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationFn'
-  >,
-): Omit<
-  UseMutationResult<TData, TError, TVariables, TContext>,
-  'reset' | 'context' | 'failureCount' | 'isPaused' | 'failureReason'
-> & {
-  internal: Pick<
-    UseMutationResult<TData, TError, TVariables, TContext>,
-    'reset'
-  >;
-} {
+  mutationKey: UseMutationOptions<
+    TData,
+    TVariables,
+    TError,
+    TContext
+  >['mutationKey'],
+) {
   const {
     data,
     error,
@@ -62,7 +69,11 @@ export function useInternalMutation<
     variables,
     status,
   } = useMutation<TData, TError, TVariables, TContext>(mutationFn, {
-    ...options,
+    context: QueryClientContext,
+    mutationKey: mutationKey,
+    ...(typeof options?.mutationConfig === 'object'
+      ? pick(options.mutationConfig, useInternalMutationKeys)
+      : {}),
     useErrorBoundary: false,
   });
 
@@ -73,8 +84,11 @@ export function useInternalMutation<
     isIdle,
     isLoading,
     isSuccess,
-    mutate,
-    mutateAsync,
+    mutate: options
+      ? () => mutate({ ...options, config: undefined })
+      : undefined,
+    mutateAsync: () =>
+      options ? mutateAsync({ ...options, config: undefined }) : undefined,
     variables,
     status,
     internal: {

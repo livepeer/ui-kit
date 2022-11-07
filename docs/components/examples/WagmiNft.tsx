@@ -32,7 +32,20 @@ export const WagmiNft = () => {
     refetchInterval: (asset) =>
       asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
   });
-  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset(
+    asset
+      ? {
+          assetId: asset.id,
+          storage: {
+            ipfs: true,
+            metadata: {
+              name,
+              description,
+            },
+          },
+        }
+      : undefined,
+  );
 
   const { config } = usePrepareContractWrite({
     address: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
@@ -136,20 +149,11 @@ export const WagmiNft = () => {
               <Button
                 css={{ display: 'flex', ai: 'center' }}
                 onClick={() => {
-                  updateAsset({
-                    assetId: asset.id,
-                    storage: {
-                      ipfs: true,
-                      metadata: {
-                        name,
-                        description,
-                      },
-                    },
-                  });
+                  updateAsset?.();
                 }}
                 size="2"
                 disabled={
-                  !assetId ||
+                  !updateAsset ||
                   isLoading ||
                   Boolean(asset?.storage?.ipfs?.cid) ||
                   !name ||

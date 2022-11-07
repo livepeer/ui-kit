@@ -1,10 +1,4 @@
-import { isReactNative } from '../media/browser';
-
 export const getSubtleCrypto = async () => {
-  if (isReactNative()) {
-    throw new Error('React Native does not support SubtleCrypto.');
-  }
-
   if (typeof window !== 'undefined') {
     if (window?.crypto?.subtle) {
       return window.crypto.subtle;
