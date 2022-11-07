@@ -1,5 +1,34 @@
 # @livepeer/react
 
+## 1.4.0
+
+### Minor Changes
+
+- [#93](https://github.com/livepeer/livepeer.js/pull/93) [`f19779f`](https://github.com/livepeer/livepeer.js/commit/f19779f321fdd44b5c6a63b379f5d722e71a46e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added JWT handling in Player, with `livepeer/crypto` subpackage with JWT helpers for NodeJS access control on Assets and Streams.
+
+  The Player has a new prop, `jwt`, which takes a base64Url-encoded signed JWT payload and passes it as a query parameter with the stream playlist request. The livepeer provider will evaluate the JWT and determine if it is valid, before returning a response.
+
+  _Note: this currently only works for Streams! Assets will be supported in the future._
+
+  ```diff
+  + import { importPKCS8, signAccessJwt, type SignAccessJwtOptions } from 'livepeer';
+  ```
+
+  ```tsx
+  <Player
+    title="Agent 327: Operation Barbershop"
+    playbackId="6d7el73r1y12chxr"
+    jwt={jwt}
+  />
+  ```
+
+### Patch Changes
+
+- [#131](https://github.com/livepeer/livepeer.js/pull/131) [`118c262`](https://github.com/livepeer/livepeer.js/commit/118c262d7d1bc4a05d7eadf7f5445598a08320ce) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added handling of paths in IPFS and Arweave URLs for both auto-upload and Player playback.
+
+- Updated dependencies [[`f19779f`](https://github.com/livepeer/livepeer.js/commit/f19779f321fdd44b5c6a63b379f5d722e71a46e9), [`61ce2dc`](https://github.com/livepeer/livepeer.js/commit/61ce2dc733e97216cb5ca3cc3066a489a796f7ca), [`118c262`](https://github.com/livepeer/livepeer.js/commit/118c262d7d1bc4a05d7eadf7f5445598a08320ce)]:
+  - livepeer@1.3.0
+
 ## 1.3.0
 
 ### Minor Changes
