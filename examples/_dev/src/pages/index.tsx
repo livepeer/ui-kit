@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
-import { Asset, Connect, Stream } from '../components';
+import { Asset, Stream } from '../components';
 
 const Page = () => {
   return (
     <>
-      <Connect />
-      <hr />
+      {/* <Connect />
+      <hr /> */}
       <Stream />
       <hr />
       <Asset />

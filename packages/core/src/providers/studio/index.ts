@@ -1,6 +1,7 @@
 import * as tus from 'tus-js-client';
 
 import { defaultStudioConfig } from '../../constants';
+import { isReactNative } from '../../media/browser';
 
 import {
   Asset,
@@ -21,7 +22,6 @@ import {
   UpdateStreamArgs,
   ViewsMetrics,
 } from '../../types';
-import { isReactNative } from '../../utils';
 import { hashCode } from '../../utils/hashcode';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
@@ -80,6 +80,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                     ? { ...t, id: undefined }
                     : { ...t, spec: undefined },
                 ),
+              },
+            }
+          : {}),
+        ...(typeof args?.playbackPolicy?.type !== 'undefined'
+          ? {
+              playbackPolicy: {
+                type: args.playbackPolicy.type,
               },
             }
           : {}),
@@ -219,26 +226,26 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
     const { assetId, name, storage } = args;
-    const asset = await this._update<
-      Omit<StudioAssetPatchPayload, 'assetId'>,
-      StudioAsset
-    >(`/asset/${assetId}`, {
-      json: {
-        name: typeof name !== 'undefined' ? String(name) : undefined,
-        storage: storage?.ipfs
-          ? {
-              ipfs: {
-                spec: {
-                  nftMetadata: storage?.metadata ?? {},
-                  nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+    await this._update<Omit<StudioAssetPatchPayload, 'assetId'>>(
+      `/asset/${assetId}`,
+      {
+        json: {
+          name: typeof name !== 'undefined' ? String(name) : undefined,
+          storage: storage?.ipfs
+            ? {
+                ipfs: {
+                  spec: {
+                    nftMetadata: storage?.metadata ?? {},
+                    nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+                  },
                 },
-              },
-            }
-          : undefined,
+              }
+            : undefined,
+        },
+        headers: this._defaultHeaders,
       },
-      headers: this._defaultHeaders,
-    });
-    return asset;
+    );
+    return this.getAsset({ assetId });
   }
 
   _getRtmpIngestUrl(streamKey: string) {
@@ -248,8 +255,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   async getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo> {
     const playbackId = typeof args === 'string' ? args : args.playbackId;
 
+    const urlEncodedPlaybackId = encodeURIComponent(playbackId);
+
     const studioPlaybackInfo = await this._get<StudioPlaybackInfo>(
-      `/playback/${playbackId}`,
+      `/playback/${urlEncodedPlaybackId}`,
       {
         headers: this._defaultHeaders,
       },

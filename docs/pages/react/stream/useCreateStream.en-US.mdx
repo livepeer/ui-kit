@@ -51,6 +51,86 @@ function App() {
 }
 ```
 
+## Mutation
+
+The variables for the mutate functions are defined as:
+
+```tsx
+type CreateStreamArgs = {
+  /** Name for the new stream */
+  name: string;
+  /** Transcoding profiles to use for the stream for ABR playback */
+  profiles?: TranscodingProfile[];
+  /** Whether to create recordings of the livestream sessions */
+  record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * Targets where this stream should be simultaneously streamed to
+     */
+    targets: MultistreamTarget[];
+  };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
+};
+```
+
+```tsx
+type TranscodingProfile = {
+  /** The name of the profile */
+  name: string;
+  /** Output width in pixels */
+  width: number;
+  /** Output height in pixels */
+  height: number;
+  /** Output bitrate in pixels in bits per second (bps) */
+  bitrate: number;
+  /** Output FPS of the video. Set to 0 to keep input FPS */
+  fps: number;
+  /** Denominator to divide the FPS by. Used for specifying exact FPS ratios */
+  fpsDen?: number;
+};
+```
+
+```tsx
+type MultistreamTarget = {
+  /**
+   * Name of transcoding profile that should be sent. Use "source" for pushing
+   * source stream data
+   */
+  profile: string;
+  /**
+   * If true, the stream audio will be muted and only silent video will be
+   * pushed to the target.
+   */
+  videoOnly?: boolean;
+  /**
+   * Inline spec for the multistream target object. Underlying target resource
+   * will be automatically created.
+   */
+  spec?: {
+    /** Name for the multistream target. Defaults to the URL hostname */
+    name?: string;
+    /** Livepeer-compatible multistream target URL (RTMP(s) or SRT) */
+    url: string;
+  };
+};
+```
+
+```tsx
+type PlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `public` indicates no access control will be applied (anyone
+   * with the `playbackId` can view without a JWT).
+   */
+  type: 'jwt' | 'public';
+};
+```
+
+For more details on the playback policy, see the [Access Control example](/examples/react/access-control).
+If `profiles` are not set, the `defaultTranscodingProfiles` are used (720p, 480p, and 360p).
+
 ## Return Value
 
 The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types
@@ -70,38 +150,6 @@ aggregated for simplicity.
   variables?: CreateStreamArgs
 }
 ```
-
-The variables for the mutate function(s) are defined as:
-
-```tsx
-type CreateStreamArgs = {
-  name: string;
-  profiles?: TranscodingProfile[];
-  record?: boolean;
-  multistream?: {
-    targets: MultistreamTarget[];
-  };
-};
-
-type TranscodingProfile = {
-  name: string;
-  bitrate: number;
-  fps: number;
-  width: number;
-  height: number;
-};
-
-type MultistreamTarget = {
-  profile: string;
-  videoOnly?: boolean;
-  spec: {
-    name?: string;
-    url: string;
-  };
-};
-```
-
-If `profiles` are not set, the `defaultTranscodingProfiles` are used (720p, 480p, and 360p).
 
 ## Configuration
 

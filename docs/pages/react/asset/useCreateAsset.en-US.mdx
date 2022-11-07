@@ -79,6 +79,20 @@ function App() {
 }
 ```
 
+## Mutation
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type CreateAssetArgs = {
+  name: string;
+  file: File;
+};
+```
+
+The `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for resumable uploads and checks for existing uploads by default, before starting a
+new upload.
+
 ## Return Value
 
 The return value is partially based on [React Query](https://tanstack.com/query/v4/docs/reference/useMutation), with some return types

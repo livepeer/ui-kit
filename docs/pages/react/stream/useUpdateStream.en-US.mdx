@@ -13,10 +13,11 @@ import { useUpdateStream } from '@livepeer/react';
 
 ## Usage
 
-The following example shows how an stream can be updated with the `mutate` function, but could also use the asynchronous `mutateAsync`
-function.
+The following example shows how an stream can be updated with the `mutate` function to enable recording and
+require a JWT for playback (see the [Access Control example](/examples/react/access-control) for more details).
+We could also use the asynchronous `mutateAsync` function.
 
-```tsx {11, 18-21}
+```tsx {11, 18-24}
 import { useStream, useUpdateStream } from '@livepeer/react';
 import { useState } from 'react';
 
@@ -37,6 +38,9 @@ function App() {
           updateStream({
             streamId,
             record: true,
+            playbackPolicy: {
+              type: 'jwt',
+            },
           });
         }}
       >
@@ -53,6 +57,74 @@ function App() {
   );
 }
 ```
+
+## Mutation
+
+The variables for the mutate function(s) are defined as:
+
+```tsx
+type UpdateStreamArgs = {
+  /** The unique identifier for the stream */
+  streamId: string;
+  /** Whether to immediately block ingest and playback of the stream */
+  suspend?: boolean;
+  /** Whether to create recordings of the livestream sessions */
+  record?: boolean;
+  /** Configuration for multistreaming (AKA restream, simulcast) */
+  multistream?: {
+    /**
+     * Targets where this stream should be simultaneously streamed to.
+     */
+    targets: (MultistreamTarget | MultistreamTargetRef)[];
+  };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
+};
+```
+
+```tsx
+type MultistreamTarget = {
+  /**
+   * Name of transcoding profile that should be sent. Use "source" for pushing
+   * source stream data
+   */
+  profile: string;
+  /**
+   * If true, the stream audio will be muted and only silent video will be
+   * pushed to the target.
+   */
+  videoOnly?: boolean;
+  /**
+   * Unique ID of this multistream target. Used to dedup targets on update.
+   */
+  id?: string;
+  /**
+   * Inline spec for the multistream target object. Underlying target resource
+   * will be automatically created.
+   */
+  spec?: {
+    /** Name for the multistream target. Defaults to the URL hostname */
+    name?: string;
+    /** Livepeer-compatible multistream target URL (RTMP(s) or SRT) */
+    url: string;
+  };
+};
+```
+
+```tsx
+type PlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `public` indicates no access control will be applied (anyone
+   * with the `playbackId` can view without a JWT).
+   */
+  type: 'jwt' | 'public';
+};
+```
+
+The multistream targets can be either a full `MultistreamTarget` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
+from the existing `Stream` object, in case multistream has already been configured for the given stream. It contains a vanity ID instead of the full
+`Spec` since the ingest URL contains user secrets like the stream key.
 
 ## Return Value
 
@@ -73,37 +145,6 @@ aggregated for simplicity.
   variables?: UpdateStreamArgs
 }
 ```
-
-The variables for the mutate function(s) are defined as:
-
-```tsx
-type UpdateStreamArgs = {
-  /** The unique identifier for the stream */
-  streamId: string;
-  /** Whether to immediately block ingest and playback of the stream */
-  suspend?: boolean;
-  /** Whether to create recordings of the livestream sessions as assets */
-  record?: boolean;
-  /** Configuration for multistreaming (AKA restream, simulcast) */
-  multistream?: {
-    /** Targets where this stream should be simultaneously streamed to. */
-    targets: (MultistreamTarget | MultistreamTargetRef)[];
-  };
-};
-
-type MultistreamTarget = {
-  profile: string;
-  videoOnly?: boolean;
-  spec: {
-    name?: string;
-    url: string;
-  };
-};
-```
-
-The multistream targets can be either a full `MultistreamTarget` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
-from the existing `Stream` object, in case multistream has already been configured for the given stream. It contains a vanity ID instead of the full
-`Spec` since the ingest URL contains user secrets like the stream key.
 
 ## Configuration
 

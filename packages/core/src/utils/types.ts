@@ -51,11 +51,3 @@ export const isArray = (value: unknown): value is unknown[] => {
 export const isWindow = (value: unknown): value is Window => {
   return value === window;
 };
-
-export const isReactNative = (): boolean => {
-  return (
-    typeof navigator !== 'undefined' &&
-    typeof navigator.product === 'string' &&
-    navigator.product === 'ReactNative'
-  );
-};

@@ -4,11 +4,11 @@ import { getLivepeerProvider } from '../providers';
 
 export function createStream<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
->({
-  name,
-  profiles = defaultTranscodingProfiles,
-}: CreateStreamArgs): Promise<Stream> {
+>(args: CreateStreamArgs): Promise<Stream> {
   const provider = getLivepeerProvider<TLivepeerProvider>();
 
-  return provider.createStream({ name, profiles });
+  return provider.createStream({
+    ...args,
+    profiles: args?.profiles ?? defaultTranscodingProfiles,
+  });
 }

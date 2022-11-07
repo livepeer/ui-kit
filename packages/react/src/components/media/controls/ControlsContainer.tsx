@@ -1,7 +1,5 @@
-import { Asset } from 'livepeer';
 import { MediaControllerState } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
-import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
 import { useMediaController } from '../context';
@@ -21,7 +19,7 @@ const mediaControllerSelector = ({
 });
 
 export type ControlsContainerProps = {
-  uploadStatus?: Asset['status'] | null;
+  topLoadingText?: string | null;
   showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
@@ -44,7 +42,7 @@ export const ControlsContainer = React.forwardRef<
     poster,
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
-    uploadStatus,
+    topLoadingText,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -60,16 +58,6 @@ export const ControlsContainer = React.forwardRef<
       togglePlay();
     }
   }, [togglePlay, isLoaded]);
-
-  const loadingText = React.useMemo(
-    () =>
-      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
-        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
-        : uploadStatus?.phase === 'failed'
-        ? 'Upload Failed'
-        : null,
-    [uploadStatus],
-  );
 
   return (
     <>
@@ -95,9 +83,11 @@ export const ControlsContainer = React.forwardRef<
           className={styling.controlsContainer.background()}
           onMouseUp={onClickBackground}
         >
-          <div className={styling.controlsContainer.loadingText()}>
-            {loadingText}
-          </div>
+          {topLoadingText && (
+            <div className={styling.controlsContainer.loadingText()}>
+              {topLoadingText}
+            </div>
+          )}
 
           <div className={styling.controlsContainer.loading()} />
         </div>

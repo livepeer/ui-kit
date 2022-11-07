@@ -1,0 +1,37 @@
+query VideoNfts($pagination: PaginationInput!, $filter: TokensQueryFilter!) {
+  tokens(
+    networks: [{ network: ETHEREUM, chain: MAINNET }]
+    pagination: $pagination
+    filter: $filter
+  ) {
+    nodes {
+      token {
+        collectionAddress
+        tokenId
+        name
+        owner
+        metadata
+        image {
+          url
+          mimeType
+          size
+          mediaEncoding {
+            ... on VideoEncodingTypes {
+              __typename
+              original
+              large
+              poster
+              preview
+              thumbnail
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      limit
+      endCursor
+      hasNextPage
+    }
+  }
+}

@@ -1,3 +1,4 @@
+export * from './AccessControl';
 export * from './AptosNft';
 export * from './Asset';
 export * from './DecentralizedStoragePlayback';
