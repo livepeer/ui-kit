@@ -19,6 +19,34 @@ type MediaResult = {
   seconds: number;
 } & CombinedMedia;
 
+const importVideo = async (
+  video: CombinedMedia,
+): Promise<{
+  asset: Asset;
+  source: CombinedMedia;
+  startTime: number;
+}> => {
+  try {
+    const asset = await provider.createAsset({
+      sources: [
+        {
+          name: video.url,
+          url: video.url,
+        },
+      ] as const,
+    });
+
+    return {
+      asset: asset[0],
+      source: video,
+      startTime: Date.now(),
+    };
+  } catch (e) {
+    console.warn('error with createAsset, retrying', e);
+    return importVideo(video);
+  }
+};
+
 export const importVideos = async (videos: CombinedMedia[]) => {
   const uploadedVideos: MediaResult[] = [];
 
@@ -26,21 +54,11 @@ export const importVideos = async (videos: CombinedMedia[]) => {
     // splice the input array into batches of BATCH_SIZE
     const videoBatch = videos.splice(0, BATCH_SIZE);
 
-    const assets = await provider.createAsset({
-      sources: videoBatch.map((video) => ({
-        name: video.url,
-        url: video.url,
-      })),
-    });
-
     // upload the videos using createAsset
-    const createdVideos = assets
-      .map((asset, index) => ({
-        asset,
-        source: videoBatch[index],
-        startTime: Date.now(),
-      }))
-      .filter((e) => e && e.source)
+    const createdVideos = (
+      await Promise.all(videoBatch.map(async (video) => importVideo(video)))
+    )
+      .filter((e) => e)
       .map((e) => e!);
 
     console.log(`Uploaded ${createdVideos.length} videos`);
