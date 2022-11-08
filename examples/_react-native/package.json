@@ -10,26 +10,28 @@
   },
   "dependencies": {
     "@livepeer/react": "^1.2.1",
-    "react": "18.1.0",
-    "react-native": "0.70.4"
+    "react": "18.2.0",
+    "react-native": "0.70.4",
+    "react-native-video": "6.0.0-alpha.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/cli-platform-android": "^9.2.1",
     "@react-native-community/cli-platform-ios": "^9.2.1",
-    "@react-native-community/eslint-config": "^2.0.0",
-    "@rnx-kit/metro-config": "^1.3.2",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@rnx-kit/metro-config": "^1.3.3",
     "@rnx-kit/metro-resolver-symlinks": "^0.1.21",
     "@tsconfig/react-native": "^2.0.2",
     "@types/react": "^18.0.21",
     "@types/react-native": "^0.70.6",
+    "@types/react-native-video": "^5.0.14",
     "@types/react-test-renderer": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.37.0",
-    "@typescript-eslint/parser": "^5.37.0",
-    "eslint": "^7.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
+    "eslint": "^8.27.0",
     "metro-react-native-babel-preset": "0.72.3",
-    "react-test-renderer": "18.1.0",
+    "react-test-renderer": "18.2.0",
     "typescript": "^4.8.3"
   }
 }

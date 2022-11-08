@@ -9,8 +9,8 @@ import { ThemeConfig } from 'livepeer/styling';
 import { LivepeerProvider } from 'livepeer/types';
 import * as React from 'react';
 
-import { Client, ReactClient } from './client';
-import { ThemeProvider } from './components';
+import { Client, ReactClient } from '../client';
+import { ThemeProvider } from './ThemeProvider';
 
 export const Context = React.createContext<
   Client<LivepeerProvider> | undefined

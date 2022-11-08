@@ -125,7 +125,7 @@
     "@stitches/core": "^1.2.8",
     "core-js": "^3.26.0",
     "cross-fetch": "^3.1.5",
-    "hls.js": "^1.2.4",
+    "hls.js": "^1.2.5",
     "ms": "^3.0.0-canary.1",
     "multiformats": "9.9.0",
     "tus-js-client": "^3.0.1",
@@ -135,7 +135,7 @@
     "@ethersproject/abi": "^5.7.0",
     "@types/ms": "^0.7.31",
     "ethers": "^5.7.2",
-    "jose": "^4.10.4"
+    "jose": "^4.11.0"
   },
   "keywords": [
     "eth",

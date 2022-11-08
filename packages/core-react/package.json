@@ -1,0 +1,101 @@
+{
+  "name": "@livepeer/core-react",
+  "description": "React components & hooks for apps built with Livepeer.",
+  "license": "MIT",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeer.js.git",
+    "directory": "packages/core-react"
+  },
+  "homepage": "https://livepeerjs.org",
+  "main": "dist/livepeer-core-react.cjs.js",
+  "module": "dist/livepeer-core-react.esm.js",
+  "types": "dist/livepeer-core-react.cjs.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/livepeer-core-react.esm.js",
+      "default": "./dist/livepeer-core-react.cjs.js"
+    },
+    "./client": {
+      "module": "./client/dist/livepeer-core-react-client.esm.js",
+      "default": "./client/dist/livepeer-core-react-client.cjs.js"
+    },
+    "./components": {
+      "module": "./components/dist/livepeer-core-react-components.esm.js",
+      "default": "./components/dist/livepeer-core-react-components.cjs.js"
+    },
+    "./context": {
+      "module": "./context/dist/livepeer-core-react-context.esm.js",
+      "default": "./context/dist/livepeer-core-react-context.cjs.js"
+    },
+    "./contracts": {
+      "module": "./contracts/dist/livepeer-core-react-contracts.esm.js",
+      "default": "./contracts/dist/livepeer-core-react-contracts.cjs.js"
+    },
+    "./hooks": {
+      "module": "./hooks/dist/livepeer-core-react-hooks.esm.js",
+      "default": "./hooks/dist/livepeer-core-react-hooks.cjs.js"
+    },
+    "./utils": {
+      "module": "./utils/dist/livepeer-core-react-utils.esm.js",
+      "default": "./utils/dist/livepeer-core-react-utils.cjs.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "client",
+    "/components",
+    "/context",
+    "/contracts",
+    "/hooks",
+    "/utils",
+    "/dist"
+  ],
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts",
+      "client.ts",
+      "components/index.ts",
+      "context/index.ts",
+      "contracts/index.ts",
+      "hooks/index.ts",
+      "utils/index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "ethers": ">=5.5.1",
+    "react": ">=17.0.0",
+    "wagmi": ">=0.7.0"
+  },
+  "peerDependenciesMeta": {
+    "ethers": {
+      "optional": true
+    },
+    "wagmi": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@stitches/core": "^1.2.8",
+    "@tanstack/query-core": "^4.14.5",
+    "@tanstack/query-sync-storage-persister": "4.14.5",
+    "@tanstack/react-query": "4.14.5",
+    "@tanstack/react-query-persist-client": "4.14.5",
+    "livepeer": "^1.3.0",
+    "use-sync-external-store": "^1.2.0",
+    "zustand": "^4.1.3"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@types/react": "^18.0.23",
+    "@types/react-dom": "^18.0.7",
+    "@types/use-sync-external-store": "^0.0.3",
+    "ethers": "^5.7.2",
+    "react": "^18.2.0",
+    "wagmi": "^0.7.13"
+  }
+}

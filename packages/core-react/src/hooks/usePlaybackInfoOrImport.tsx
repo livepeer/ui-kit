@@ -3,8 +3,8 @@ import { parseCid } from 'livepeer/media';
 
 import * as React from 'react';
 
-import { useAsset, useCreateAsset, usePlaybackInfo } from '../../hooks';
-import { PlayerProps } from './Player';
+import { useAsset, useCreateAsset, usePlaybackInfo } from '.';
+import { PlayerProps } from '../components/Player';
 
 export type UsePlaybackInfoOrImportProps = {
   decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;

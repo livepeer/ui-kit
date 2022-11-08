@@ -1,10 +1,9 @@
 import { LivepeerProvider, PlaybackInfo } from 'livepeer';
 import { ClientConfig } from 'livepeer/client';
 
-import { prefetchPlaybackInfo } from '../../hooks';
+import { prefetchPlaybackInfo } from '..';
+import { PlayerProps } from '../../components';
 import { PrefetchQueryOptions } from '../../utils';
-
-import { PlayerProps } from './Player';
 
 export async function prefetchPlayer<
   TLivepeerProvider extends LivepeerProvider,

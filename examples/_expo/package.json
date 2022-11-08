@@ -10,17 +10,17 @@
   "dependencies": {
     "@livepeer/react": "^1.2.1",
     "expo": "^46.0.0",
-    "react": "18.0.0",
-    "react-dom": "18.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "react-native": "0.69.6",
     "react-native-web": "~0.18.7"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
-    "@rnx-kit/metro-config": "^1.3.2",
+    "@rnx-kit/metro-config": "^1.3.3",
     "@rnx-kit/metro-resolver-symlinks": "^0.1.21",
     "@types/react": "~18.0.0",
-    "@types/react-native": "~0.69.1",
+    "@types/react-native": "~0.70.6",
     "typescript": "^4.6.3"
   }
 }

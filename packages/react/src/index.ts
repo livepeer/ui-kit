@@ -1,4 +1,4 @@
-export * from 'livepeer';
+export * from '@livepeer/core-react';
 export { isPictureInPictureSupported } from 'livepeer/media/controls';
 export {
   studioProvider,
@@ -64,5 +64,3 @@ export {
   useUpdateAsset,
   useUpdateStream,
 } from './hooks';
-export { deserialize, serialize } from './utils';
-export type { PrefetchQueryOptions } from './utils';

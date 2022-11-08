@@ -36,8 +36,9 @@ it('should expose correct exports', () => {
       "b64UrlEncode",
       "deepMerge",
       "pick",
-      "isPictureInPictureSupported",
+      "StudioLivepeerProvider",
       "studioProvider",
+      "isPictureInPictureSupported",
       "defaultTheme",
       "getCssText",
       "styling",
@@ -77,8 +78,6 @@ it('should expose correct exports', () => {
       "useStreamSessions",
       "useUpdateAsset",
       "useUpdateStream",
-      "deserialize",
-      "serialize",
     ]
   `);
 });
