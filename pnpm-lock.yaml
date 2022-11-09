@@ -400,6 +400,7 @@ importers:
       '@testing-library/react-hooks': ^8.0.1
       '@types/react': ^18.0.23
       '@types/react-dom': ^18.0.7
+      core-js: ^3.26.0
       ethers: ^5.7.2
       livepeer: workspace:^1.3.0
       react: ^18.2.0
@@ -408,6 +409,7 @@ importers:
     dependencies:
       '@livepeer/core-react': link:../core-react
       '@stitches/react': 1.2.8_react@18.2.0
+      core-js: 3.26.0
       livepeer: link:../core
     devDependencies:
       '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
@@ -11019,7 +11021,7 @@ packages:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 15.8.0
-      tslib: 2.4.1
+      tslib: 2.4.0
     dev: false
 
   /graphql-tag/2.12.6_graphql@16.6.0:
