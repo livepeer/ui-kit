@@ -22,26 +22,25 @@ import { Callout } from 'nextra-theme-docs';
   [`Player`](/docs/Player).
 </Callout>
 
-The following example shows how a stream can be created with the `mutate` function, but could also use the asynchronous `mutateAsync`
-function.
+The following example shows how a stream can be created.
 
-```tsx {6, 13-15}
+```tsx {10, 16}
 import { useCreateStream } from '@livepeer/react';
 
 const streamName = `New Stream`;
 
 function App() {
-  const { mutate: createStream, data: stream, status } = useCreateStream();
+  const {
+    mutate: createStream,
+    data: stream,
+    status,
+  } = useCreateStream({ name: streamName });
 
   return (
     <div>
       <button
-        disabled={status === 'loading'}
-        onClick={() =>
-          createStream({
-            name: streamName,
-          })
-        }
+        disabled={status === 'loading' || !createStream}
+        onClick={() => createStream?.()}
       >
         Create Stream
       </button>
@@ -65,57 +64,69 @@ aggregated for simplicity.
   isLoading: boolean,
   isSuccess: boolean,
   status: 'idle' | 'loading' | 'success' | 'error',
-  mutate: (config: CreateStreamArgs, options?: MutateOptions) => void,
-  mutateAsync: (config: CreateStreamArgs, options?: MutateOptions) => Promise<Stream>,
+  mutate: () => void,
+  mutateAsync: () => Promise<Stream>,
   variables?: CreateStreamArgs
 }
 ```
 
-The variables for the mutate function(s) are defined as:
-
-```tsx
-type CreateStreamArgs = {
-  name: string;
-  profiles?: TranscodingProfile[];
-  record?: boolean;
-  multistream?: {
-    targets: MultistreamTarget[];
-  };
-};
-
-type TranscodingProfile = {
-  name: string;
-  bitrate: number;
-  fps: number;
-  width: number;
-  height: number;
-};
-
-type MultistreamTarget = {
-  profile: string;
-  videoOnly?: boolean;
-  spec: {
-    name?: string;
-    url: string;
-  };
-};
-```
-
-If `profiles` are not set, the `defaultTranscodingProfiles` are used (720p, 480p, and 360p).
-
 ## Configuration
 
-### UseMutationOptions
+### name
 
-The `useCreateStream` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
-`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+The name for the new stream. Required to create a stream.
 
 ```tsx {5}
 import { useCreateStream } from '@livepeer/react';
 
 function App() {
   const { mutate: createStream } = useCreateStream({
-    retry: 5,
+    name: 'My new stream',
+  });
+}
+```
+
+### profiles
+
+Transcoding profiles to use for the stream for ABR playback. When this is not defined, the `defaultTranscodingProfiles` are used (720p, 480p, and 360p).
+
+### record
+
+Whether to create recordings of the stream sessions. Defaults to `false`.
+
+### multistream
+
+The configuration for multistreaming (AKA "restream" or "simulcast") - allows configuration of targets where this stream should be simultaneously streamed to.
+
+### playbackPolicy
+
+Configuration for stream playback access-control policy. Defaults to `public`.
+
+```tsx
+type PlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `public` indicates no access control will be applied (anyone
+   * with the `playbackId` can view without a JWT).
+   */
+  type: 'jwt' | 'public';
+};
+```
+
+For more details on the playback policy, see the [Access Control example](/examples/react/access-control).
+
+### mutationConfig
+
+The `mutationConfig` parameter allows for any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+
+```tsx {6}
+import { useCreateStream } from '@livepeer/react';
+
+function App() {
+  const { mutate: createStream } = useCreateStream({
+    name: 'My new stream',
+    mutationConfig: { retry: 3 },
   });
 }
 ```

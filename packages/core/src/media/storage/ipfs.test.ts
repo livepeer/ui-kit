@@ -61,22 +61,22 @@ describe('parseCid', () => {
     expect(url?.url).toEqual(sourceUrl);
   });
 
-  it('errors on paths in a regular ipfs url', async () => {
+  it('handles paths in a regular ipfs url', async () => {
     const sourceUrl =
       'ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy/somepath.mp4';
 
     const url = parseCid(sourceUrl);
 
-    expect(url).toEqual(null);
+    expect(url?.url).toEqual(sourceUrl);
   });
 
-  it('errors on query params in a regular ipfs url', async () => {
+  it('handles query params in a regular ipfs url', async () => {
     const sourceUrl =
       'ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy?key=value';
 
     const url = parseCid(sourceUrl);
 
-    expect(url).toEqual(null);
+    expect(url?.url).toEqual(sourceUrl);
   });
 
   it('handles ipfs gateways', async () => {
@@ -101,13 +101,15 @@ describe('parseCid', () => {
     }
   });
 
-  it('errors on paths in an ipfs gateway', async () => {
+  it('handles paths in an ipfs gateway', async () => {
     for (const gateway of ipfsPathGateways) {
       const url = parseCid(
         `${gateway}bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy/somepath.mp4`,
       );
 
-      expect(url).toEqual(null);
+      expect(url?.url).toEqual(
+        'ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy/somepath.mp4',
+      );
     }
   });
 
@@ -126,7 +128,7 @@ describe('parseCid', () => {
     }
   });
 
-  it('errors on paths in a subdomain gateway', async () => {
+  it('handles paths in a subdomain gateway', async () => {
     for (const gateway of ipfsSubdomainGateways) {
       const url = parseCid(
         `${gateway.replace(
@@ -135,11 +137,13 @@ describe('parseCid', () => {
         )}/somepath.mp4`,
       );
 
-      expect(url).toEqual(null);
+      expect(url?.url).toEqual(
+        'ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy/somepath.mp4',
+      );
     }
   });
 
-  it('errors on query params in a subdomain gateway', async () => {
+  it('handles query params in a subdomain gateway', async () => {
     for (const gateway of ipfsSubdomainGateways) {
       const url = parseCid(
         `${gateway.replace(
@@ -148,7 +152,9 @@ describe('parseCid', () => {
         )}?key=value`,
       );
 
-      expect(url).toEqual(null);
+      expect(url?.url).toEqual(
+        'ipfs://bafybeiar26nqkdtiyrzbaxwcdm7zkr2o36xljqskdvg6z6ugwlmpkdhamy?key=value',
+      );
     }
   });
 });

@@ -1,3 +1,6 @@
+/**
+ * Browser Compatibility Types
+ */
 declare global {
   interface Window extends Window {
     readonly chrome: boolean;

@@ -65,7 +65,20 @@ export const AptosNft = () => {
     refetchInterval: (asset) =>
       asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
   });
-  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset(
+    asset
+      ? {
+          assetId: asset.id,
+          storage: {
+            ipfs: true,
+            metadata: {
+              name,
+              description,
+            },
+          },
+        }
+      : null,
+  );
 
   const [isCreatingNft, setIsCreatingNft] = useState(false);
 
@@ -252,19 +265,11 @@ export const AptosNft = () => {
               <Button
                 css={{ display: 'flex', ai: 'center' }}
                 onClick={() => {
-                  updateAsset({
-                    assetId: asset.id,
-                    storage: {
-                      ipfs: true,
-                      metadata: {
-                        name,
-                        description,
-                      },
-                    },
-                  });
+                  updateAsset?.();
                 }}
                 size="2"
                 disabled={
+                  !updateAsset ||
                   !assetId ||
                   isLoading ||
                   Boolean(asset?.storage?.ipfs?.cid) ||

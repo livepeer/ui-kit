@@ -8,8 +8,8 @@ import { Stream } from '@components/examples';
 
 # Create and Watch a Stream
 
-Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/react/hooks/useCreateStream)
-and [`useStream`](/react/hooks/useStream) to create and watch a livestream.
+Creating and watching a stream is also easy! The example below uses [`useCreateStream`](/react/stream/useCreateStream)
+and [`useStream`](/react/stream/useStream) to create and watch a livestream.
 
 <Stream />
 
@@ -74,13 +74,9 @@ export const Stream = () => {
 
       <Button
         onClick={() => {
-          if (streamName) {
-            createStream({ name: streamName });
-          }
+          createStream?.();
         }}
-        disabled={
-          !streamName || createStatus === 'loading' || Boolean(createdStream)
-        }
+        disabled={createStatus === 'loading' || !createStream}
       >
         Create Stream
       </Button>
@@ -91,8 +87,7 @@ export const Stream = () => {
 
 ## Step 3: Stream Content
 
-Lastly, when the stream is created, we use `refetchInterval` to poll the API until the stream becomes active (see `refetchInterval` for
-how we do that). Then, we stop polling and display the streaming content using the [`Player`](/react/Player).
+Lastly, when the stream is created, we display the streaming content using the [`Player`](/react/Player).
 
 <Callout>
   In a production application, the viewer **should not have access** to the
@@ -102,64 +97,59 @@ how we do that). Then, we stop polling and display the streaming content using t
 </Callout>
 
 ```tsx
-import { Player, useCreateStream, useStream } from '@livepeer/react';
+import { Player, useCreateStream } from '@livepeer/react';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+import { Spinner } from '../core';
 
 export const Stream = () => {
   const [streamName, setStreamName] = useState<string>('');
   const {
     mutate: createStream,
-    data: createdStream,
-    status: createStatus,
-  } = useCreateStream();
-  const { data: stream, status: streamStatus } = useStream({
-    streamId: createdStream?.id,
-    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
-  });
+    data: stream,
+    status,
+  } = useCreateStream(streamName ? { name: streamName } : null);
 
-  const isLoading = useMemo(
-    () => createStatus === 'loading' || streamStatus === 'loading',
-    [createStatus, streamStatus],
-  );
+  const isLoading = useMemo(() => status === 'loading', [status]);
 
   return (
-    <>
-      <TextField
-        type="text"
-        placeholder="Stream name"
-        onChange={(e) => setStreamName(e.target.value)}
-      />
-
-      <Button
-        onClick={() => {
-          if (streamName) {
-            createStream({ name: streamName });
-          }
-        }}
-        disabled={!streamName || isLoading || Boolean(stream)}
-      >
-        {isLoading && <Spinner />}
-        Create Stream
-      </Button>
-
-      {stream &&
-        stream.rtmpIngestUrl &&
-        (!stream?.playbackId || !stream.isActive) && (
-          <Text>
-            Use the ingest URL <code>{stream.rtmpIngestUrl}</code> in a stream
-            client like OBS to see content below.
-          </Text>
-        )}
+    <Box>
+      <Box>
+        <TextField
+          type="text"
+          placeholder="Stream name"
+          onChange={(e) => setStreamName(e.target.value)}
+        />
+      </Box>
 
       {stream?.playbackId && (
-        <Player playbackId={stream?.playbackId} autoPlay muted />
+        <Player
+          title={stream?.name}
+          playbackId={stream?.playbackId}
+          autoPlay
+          muted
+        />
       )}
-    </>
+
+      <Flex>
+        {!stream && (
+          <Button
+            onClick={() => {
+              createStream?.();
+            }}
+            disabled={isLoading || !createStream}
+            variant="primary"
+          >
+            Create Stream
+          </Button>
+        )}
+      </Flex>
+    </Box>
   );
 };
 ```
 
 ## Wrap Up
 
-That's it! Streaming, complete. You now have a solution for both static and dynamic video content for an app.
+That's it! Streaming, complete. You now have a solution for streaming live video content.

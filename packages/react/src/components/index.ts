@@ -6,7 +6,6 @@ export {
   PlayButton,
   Player,
   Poster,
-  prefetchPlayer,
   Progress,
   ThemeProvider,
   TimeDisplay,

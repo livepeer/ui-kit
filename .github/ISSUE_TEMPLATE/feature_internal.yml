@@ -1,0 +1,16 @@
+name: Request Feature (Internal Team)
+description: File a feature (internal team use only)
+title: '[feature] <title>'
+labels: ['feature', 'triage', 'team: studio']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for adding a feature request! _Note: this is only for the internal Livepeer team - please use
+        [Discussions](https://github.com/livepeer/livepeer.js/discussions) if you are not a maintainer of this project._
+  - type: textarea
+    attributes:
+      label: Description
+      description: A concise description of the feature request.
+    validations:
+      required: false

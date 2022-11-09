@@ -1,10 +1,5 @@
 import { Badge, Box, Button, Flex, Text } from '@livepeer/design-system';
-import {
-  Player,
-  useAsset,
-  useAssetMetrics,
-  useCreateAsset,
-} from '@livepeer/react';
+import { Player, useAssetMetrics, useCreateAsset } from '@livepeer/react';
 import { useRouter } from 'next/router';
 
 import { useCallback, useMemo, useState } from 'react';
@@ -30,21 +25,19 @@ export const Asset = () => {
   const [video, setVideo] = useState<File | undefined>();
   const {
     mutate: createAsset,
-    data: createdAsset,
-    status: createStatus,
-    uploadProgress,
-  } = useCreateAsset();
-  const {
     data: asset,
+    status,
+    progress,
     error,
-    status: assetStatus,
-  } = useAsset({
-    assetId: createdAsset?.id,
-    refetchInterval: (asset) =>
-      asset?.status?.phase !== 'ready' ? 5000 : false,
-  });
+  } = useCreateAsset(
+    video
+      ? {
+          sources: [{ name: video.name, file: video }] as const,
+        }
+      : null,
+  );
   const { data: metrics } = useAssetMetrics({
-    assetId: createdAsset?.id,
+    assetId: asset?.[0].id,
     refetchInterval: 30000,
   });
 
@@ -79,20 +72,23 @@ export const Asset = () => {
 
   const isLoading = useMemo(
     () =>
-      createStatus === 'loading' ||
-      assetStatus === 'loading' ||
-      (asset && asset?.status?.phase !== 'ready'),
-    [createStatus, asset, assetStatus],
+      status === 'loading' ||
+      (asset?.[0] && asset[0].status?.phase !== 'ready'),
+    [status, asset],
   );
 
   const progressFormatted = useMemo(
     () =>
-      uploadProgress
-        ? `Uploading: ${Math.round(uploadProgress * 100)}%`
-        : asset?.status?.progress
-        ? `Processing: ${Math.round(asset?.status?.progress * 100)}%`
+      progress?.[0].phase === 'failed'
+        ? 'Failed to process video.'
+        : progress?.[0].phase === 'waiting'
+        ? 'Waiting'
+        : progress?.[0].phase === 'uploading'
+        ? `Uploading: ${Math.round(progress?.[0]?.progress * 100)}%`
+        : progress?.[0].phase === 'processing'
+        ? `Processing: ${Math.round(progress?.[0].progress * 100)}%`
         : null,
-    [uploadProgress, asset?.status?.progress],
+    [progress],
   );
 
   return (
@@ -153,9 +149,9 @@ export const Asset = () => {
         </Box>
       )}
 
-      {asset?.playbackId && (
+      {asset?.[0]?.playbackId && (
         <Box css={{ mt: '$2' }}>
-          <Player title={asset?.name} playbackId={asset?.playbackId} />
+          <Player title={asset[0].name} playbackId={asset[0].playbackId} />
         </Box>
       )}
 
@@ -177,29 +173,27 @@ export const Asset = () => {
           )}
           {progressFormatted && <Text size="2">{progressFormatted}</Text>}
         </Flex>
-        {asset?.id ? (
+        {asset?.[0].id ? (
           <Button
             onClick={() =>
-              router.push(`/examples/react/video-nft?id=${asset.id}`)
+              router.push(`/examples/react/video-nft?id=${asset[0].id}`)
             }
-            disabled={asset?.status?.phase !== 'ready'}
+            disabled={asset[0]?.status?.phase !== 'ready'}
             variant="primary"
             size="2"
           >
             {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}
-            Mint an NFT
+            Mint an NFT ↗
           </Button>
         ) : (
           <Button
             type="submit"
             css={{ display: 'flex', ai: 'center' }}
             onClick={() => {
-              if (video) {
-                createAsset({ name: video.name, file: video });
-              }
+              createAsset?.();
             }}
             size="2"
-            disabled={!video || isLoading}
+            disabled={isLoading || !createAsset}
             variant="primary"
           >
             {isLoading && <Spinner size={16} css={{ mr: '$1' }} />}

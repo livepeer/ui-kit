@@ -1,13 +1,16 @@
+import { PlayerObjectFit, PlayerProps } from '@livepeer/core-react/components';
+import { usePlaybackInfoOrImport } from '@livepeer/core-react/hooks';
 import {
   AudioSrc,
   Src,
   VideoSrc,
   addMediaMetrics,
   getMediaSourceType,
+  parseArweaveTxId,
+  parseCid,
 } from 'livepeer/media';
-import { ControlsOptions } from 'livepeer/media/controls';
-import { AspectRatio, ThemeConfig } from 'livepeer/styling';
 import { Asset } from 'livepeer/types';
+import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
 import { MediaControllerProvider, useTheme } from './context';
@@ -25,75 +28,8 @@ import {
 } from './controls';
 import { Title } from './controls/Title';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
-import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
-export type PlayerObjectFit = 'cover' | 'contain';
-
-export type PlayerProps = {
-  /** The source(s) of the media (**required** if `playbackId` is not provided) */
-  src?: string | string[] | null | undefined;
-  /** The playback ID for the media (**required** if `src` is not provided) */
-  playbackId?: string | null | undefined;
-
-  /** The title of the media */
-  title?: string;
-  /** Shows/hides the title at the top of the media */
-  showTitle?: boolean;
-
-  /** Whether the media will loop when finished. Defaults to false. */
-  loop?: boolean;
-
-  /**
-   * The aspect ratio of the media. Defaults to 16to9 (16 / 9).
-   * This significantly improves the cumulative layout shift and is required for the player.
-   *
-   * @see {@link https://web.dev/cls/}
-   * */
-  aspectRatio?: AspectRatio;
-  /**
-   * Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
-   * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility.
-   */
-  poster?: string | React.ReactNode;
-  /** Shows/hides the loading spinner */
-  showLoadingSpinner?: boolean;
-
-  /** Configuration for the event listeners */
-  controls?: ControlsOptions;
-  /**
-   * Play media automatically when the content loads (if this is specified, you must also specify muted,
-   * since this is required in browsers)
-   */
-  autoPlay?: boolean;
-  /** Mute media by default */
-  muted?: boolean;
-
-  /** Theme configuration for the player */
-  theme?: ThemeConfig;
-
-  /** The object-fit property for the video element. Defaults to cover (contain is usually used in full-screen applications) */
-  objectFit?: PlayerObjectFit;
-
-  /** Custom controls passed in to override the default controls */
-  children?: React.ReactNode;
-
-  /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
-  refetchPlaybackInfoInterval?: number;
-
-  /** Whether to show the picture in picture button */
-  showPipButton?: boolean;
-
-  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoUrlUpload?: boolean;
-
-  /** Callback called when the metrics plugin cannot be initialized properly */
-  onMetricsError?: (error: Error) => void;
-} & (
-  | {
-      src: string | string[] | null | undefined;
-    }
-  | { playbackId: string | null | undefined }
-);
+export type { PlayerObjectFit, PlayerProps };
 
 export function Player({
   autoPlay,
@@ -114,6 +50,7 @@ export function Player({
   showPipButton,
   autoUrlUpload = true,
   onMetricsError,
+  jwt,
 }: PlayerProps) {
   const [mediaElement, setMediaElement] =
     React.useState<HTMLMediaElement | null>(null);
@@ -129,8 +66,19 @@ export function Player({
     [setUploadStatus],
   );
 
+  // check if the src or playbackId are decentralized storage sources (does not handle src arrays)
+  const decentralizedSrcOrPlaybackId = React.useMemo(
+    () =>
+      playbackId
+        ? parseCid(playbackId) ?? parseArweaveTxId(playbackId)
+        : !Array.isArray(src)
+        ? parseCid(src) ?? parseArweaveTxId(src)
+        : null,
+    [playbackId, src],
+  );
+
   const playbackInfo = usePlaybackInfoOrImport({
-    src,
+    decentralizedSrcOrPlaybackId,
     playbackId,
     refetchPlaybackInfoInterval,
     autoUrlUpload,
@@ -150,18 +98,30 @@ export function Player({
   }, [playbackInfo]);
 
   const sourceMimeTyped = React.useMemo(() => {
-    const sourceOrPlaybackInfoSrc =
+    // cast all URLs to an array of strings
+    const sources =
       playbackUrls.length > 0
         ? playbackUrls
         : typeof src === 'string'
         ? [src]
         : src;
 
-    if (!sourceOrPlaybackInfoSrc) {
+    if (!sources) {
       return null;
     }
 
-    const mediaSourceTypes = sourceOrPlaybackInfoSrc
+    const authenticatedSources = sources.map((source) => {
+      // append the JWT to the query params
+      if (jwt) {
+        const url = new URL(source);
+        url.searchParams.append('jwt', jwt);
+        return url.toString();
+      }
+
+      return source;
+    });
+
+    const mediaSourceTypes = authenticatedSources
       .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
       .filter((s) => s) as Src[];
 
@@ -174,6 +134,12 @@ export function Player({
       return mediaSourceTypes[0];
     }
 
+    // if the player is auto uploading, we do not play back the detected input file
+    // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
+    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
+      return null;
+    }
+
     // we filter by the first source type in the array provided
     const mediaSourceFiltered =
       mediaSourceTypes?.[0]?.type === 'audio'
@@ -183,7 +149,7 @@ export function Player({
         : null;
 
     return mediaSourceFiltered;
-  }, [playbackUrls, src]);
+  }, [decentralizedSrcOrPlaybackId, playbackUrls, src, autoUrlUpload, jwt]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -217,6 +183,16 @@ export function Player({
   }, [onMetricsError, mediaElement, sourceMimeTyped]);
 
   const contextTheme = useTheme(theme);
+
+  const topLoadingText = React.useMemo(
+    () =>
+      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+        : uploadStatus?.phase === 'failed'
+        ? 'Upload Failed'
+        : null,
+    [uploadStatus],
+  );
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
@@ -259,7 +235,7 @@ export function Player({
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
               showLoadingSpinner={showLoadingSpinner}
-              uploadStatus={uploadStatus}
+              topLoadingText={topLoadingText}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

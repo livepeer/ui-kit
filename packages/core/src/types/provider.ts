@@ -1,3 +1,4 @@
+import { MirrorSizeArray } from '.';
 import { ReadStream } from 'fs';
 
 export type LivepeerProviderConfig = {
@@ -22,8 +23,11 @@ export interface LivepeerProvider {
   /** List sessions for a specific parent stream ID */
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
-  /** Create a new asset */
-  createAsset(args: CreateAssetArgs): Promise<Asset>;
+  /** Create a new asset(s) */
+  createAsset<TSource extends CreateAssetSourceType>(
+    args: CreateAssetArgs<TSource>,
+  ): Promise<MirrorSizeArray<TSource, Asset>>;
+
   /** Get an asset by ID */
   getAsset(args: GetAssetArgs): Promise<Asset>;
   /** Modify an asset */
@@ -63,6 +67,17 @@ export type CreateStreamArgs = {
      */
     targets: MultistreamTarget[];
   };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
+};
+
+export type PlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `public` indicates no access control will be applied (anyone
+   * with the `playbackId` can view without a JWT).
+   */
+  type: 'jwt' | 'public';
 };
 
 export type UpdateStreamArgs = {
@@ -79,6 +94,8 @@ export type UpdateStreamArgs = {
      */
     targets: (MultistreamTarget | MultistreamTargetRef)[];
   };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
 } & (
   | {
       suspend: boolean;
@@ -90,6 +107,9 @@ export type UpdateStreamArgs = {
       multistream: {
         targets: (MultistreamTarget | MultistreamTargetRef)[];
       };
+    }
+  | {
+      playbackPolicy?: PlaybackPolicy;
     }
 );
 
@@ -148,32 +168,68 @@ export type AssetIdOrString =
       assetId: string;
     };
 
-export type CreateAssetArgs = {
+export type CreateAssetProgressBase = {
+  /** Name of the asset */
+  name: string;
+  /**
+   * Progress from 0 to 1 **in the current phase**.
+   * This will reset to zero upon beginning the next phase.
+   */
+  progress: number;
+};
+
+export type CreateAssetFileProgress = CreateAssetProgressBase & {
+  /** Phase of the asset */
+  phase: 'uploading' | 'waiting' | 'processing' | 'ready' | 'failed';
+};
+
+export type CreateAssetUrlProgress = CreateAssetProgressBase & {
+  /** Phase of the asset */
+  phase: 'waiting' | 'processing' | 'ready' | 'failed';
+};
+
+export type CreateAssetProgress<TSource extends CreateAssetSourceType> = {
+  [K in keyof TSource]: TSource[K] extends CreateAssetSourceUrl
+    ? CreateAssetUrlProgress
+    : CreateAssetFileProgress;
+};
+
+export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
+};
 
+export type CreateAssetSourceUrl = CreateAssetSourceBase & {
   /** External URL to be imported */
-  url?: string;
+  url: string;
+};
 
-  /** Content to be uploaded */
-  file?: File | ReadStream;
-  /** Size of the upload file. Must provide this if the file is a ReadStream */
-  uploadSize?: number;
+export type CreateAssetSourceFile = CreateAssetSourceBase & {
+  /** Content to be uploaded or streamed */
+  file: File | ReadStream;
+};
 
+export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;
+
+export type CreateAssetSourceType =
+  | ReadonlyArray<CreateAssetSource>
+  | Array<CreateAssetSource>;
+
+export type CreateAssetArgs<TSource extends CreateAssetSourceType> = {
+  /** Source(s) to upload */
+  sources: TSource;
   /**
-   * Callback to receive progress (0-1 completion ratio) updates of the upload.
+   * Callback to receive progress of the asset creation.
+   * For file/URL uploads, it will poll the API for completion.
    */
-  onUploadProgress?: (progress: number) => void;
-} & (
-  | { file: File }
-  | {
-      file: ReadStream;
-      uploadSize: number;
-    }
-  | {
-      url: string;
-    }
-);
+  onProgress?: (progress: CreateAssetProgress<TSource>) => void;
+  /**
+   * Skips the internal polling mechanism and immediately returns after
+   * file upload is done. Will not receive onProgress updates on processing
+   * status.
+   */
+  noWait?: boolean;
+};
 
 export type Metadata = {
   /** Name of the Asset */
@@ -279,6 +335,8 @@ export type Stream = {
      */
     targets: MultistreamTargetRef[];
   };
+  /** Configuration for stream playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
 
   // Stream information
 

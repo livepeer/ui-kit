@@ -7,6 +7,10 @@ it('should expose correct exports', () => {
     [
       "deepMerge",
       "pick",
+      "b64Decode",
+      "b64Encode",
+      "b64UrlDecode",
+      "b64UrlEncode",
       "noop",
       "notEqual",
       "equal",
@@ -20,7 +24,6 @@ it('should expose correct exports', () => {
       "isFunction",
       "isArray",
       "isWindow",
-      "isReactNative",
       "warn",
     ]
   `);

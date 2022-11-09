@@ -1,3 +1,4 @@
+import { StudioLivepeerProvider, studioProvider } from '@livepeer/core-react';
 import { QueryClient } from '@tanstack/react-query';
 import {
   Queries,
@@ -10,10 +11,6 @@ import {
 } from '@testing-library/react';
 // import from @testing-library/react-hooks for React 17
 import { renderHook as defaultRenderHook } from '@testing-library/react-hooks';
-import {
-  StudioLivepeerProvider,
-  studioProvider,
-} from 'livepeer/providers/studio';
 
 import * as React from 'react';
 

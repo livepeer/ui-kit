@@ -1,0 +1,293 @@
+---
+title: 'Stream with Access Control'
+description: 'Learn how to add access control to a stream with livepeer.js'
+---
+
+import { Callout } from 'nextra-theme-docs';
+import { AccessControl } from '@components/examples';
+
+# Stream with Access Control
+
+Adding access control to a stream only takes a few lines of code. The example below uses [`useCreateStream`](/react/hooks/useCreateStream)
+and [`useStream`](/react/hooks/useStream) to create and watch a gated livestream.
+
+<AccessControl />
+
+## Step 1: Configuring Providers
+
+<Callout>
+  This example assumes you have chosen a component library with typical
+  components like `Button`, `TextField`, `Spinner`, etc. The
+  [`Player`](/react/Player) is the only visual component provided.
+</Callout>
+
+First step, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
+
+```tsx
+import {
+  LivepeerConfig,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
+import * as React from 'react';
+
+const livepeerClient = createReactClient({
+  provider: studioProvider({
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+  }),
+});
+
+// Pass client to React Context Provider
+function App() {
+  return (
+    <LivepeerConfig client={livepeerClient}>
+      <AccessControl />
+    </LivepeerConfig>
+  );
+}
+```
+
+## Step 2: Create a Gated Stream
+
+We then can create our gated stream, with the stream key returned once we create it (styling has been removed for simplicity):
+
+```tsx
+import { useCreateStream, useStream } from '@livepeer/react';
+
+import { useMemo, useState } from 'react';
+
+export const AccessControl = () => {
+  const [streamName, setStreamName] = useState<string>('');
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status,
+  } = useCreateStream(
+    streamName
+      ? {
+          name: streamName,
+          playbackPolicy: { type: 'jwt' },
+        }
+      : null,
+  );
+
+  const { data: stream } = useStream({
+    streamId: createdStream?.id,
+    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
+  });
+
+  const isLoading = useMemo(() => status === 'loading', [status]);
+
+  return (
+    <Box>
+      <TextField onChange={(e) => setStreamName(e.target.value)} />
+
+      <Button
+        onClick={() => {
+          createStream?.();
+        }}
+        disabled={isLoading || !createStream || Boolean(stream)}
+      >
+        Create Gated Stream
+      </Button>
+    </Box>
+  );
+};
+```
+
+## Step 3: Sign a JWT (Node.JS API Route)
+
+Next, we add an API route - since we are using Next.JS, we add a custom [Next.js API route](https://nextjs.org/docs/api-routes/introduction).
+We add a check in the API route for a special "secret" that must be passed in the POST body for the user to gain access to the stream.
+
+```typescript
+// use the signAccessJwt export from `livepeer` in Node.JS
+import { signAccessJwt } from 'livepeer/crypto';
+import { NextApiRequest, NextApiResponse } from 'next';
+
+import { ApiError } from '../../lib/error';
+
+export type CreateSignedPlaybackBody = {
+  playbackId: string;
+  secret: string;
+};
+
+export type CreateSignedPlaybackResponse = {
+  token: string;
+};
+
+const accessControlPrivateKey = process.env.ACCESS_CONTROL_PRIVATE_KEY;
+const accessControlPublicKey =
+  process.env.NEXT_PUBLIC_ACCESS_CONTROL_PUBLIC_KEY;
+
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse<CreateSignedPlaybackResponse | ApiError>,
+) => {
+  try {
+    const method = req.method;
+
+    if (method === 'POST') {
+      if (!accessControlPrivateKey || !accessControlPublicKey) {
+        return res
+          .status(500)
+          .json({ message: 'No private/public key configured.' });
+      }
+
+      const { playbackId, secret }: CreateSignedPlaybackBody = req.body;
+
+      if (!playbackId || !secret) {
+        return res.status(400).json({ message: 'Missing data in body.' });
+      }
+
+      // we check that the "supersecretkey" was passed in the body
+      // this could be a more complex check, like taking a signed payload,
+      // getting the address for that signature, and fetching if they own an NFT
+      //
+      // https://docs.ethers.io/v5/single-page/#/v5/api/utils/signing-key/-%23-SigningKey--other-functions
+      if (secret !== 'supersecretkey') {
+        return res.status(401).json({ message: 'Incorrect secret.' });
+      }
+
+      // we sign the JWT and return it to the user
+      const token = await signAccessJwt({
+        privateKey: accessControlPrivateKey,
+        publicKey: accessControlPublicKey,
+        issuer: 'https://livepeerjs.org',
+        // playback ID to include in the JWT
+        playbackId,
+        // expire the JWT in 1 hour
+        expiration: '1h',
+        // custom metadata to include
+        custom: {
+          userId: 'user-id-1',
+        },
+      });
+
+      return res.status(200).json({
+        token,
+      });
+    }
+
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end(`Method ${method} Not Allowed`);
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: (err as Error)?.message ?? 'Error' });
+  }
+};
+
+export default handler;
+```
+
+## Step 4: Stream Content
+
+Lastly, when the stream is created, we make a POST request to the `/api/create-signed-jwt` API route we created in the previous step
+(using [React Query](https://tanstack.com/query/v4/docs/overview) to manage the mutation state handling).
+We pass along the `playbackId` for the stream, which is used to create the JWT.
+
+Then, we pass the JWT to the Player using the [`jwt`](/react/Player#jwt) prop, which will use that JWT to prove access to the streaming content!
+
+```tsx
+import { Player, useCreateStream, useStream } from '@livepeer/react';
+
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
+
+import { ApiError } from '../../lib/error';
+import {
+  CreateSignedPlaybackBody,
+  CreateSignedPlaybackResponse,
+} from '../../pages/api/create-signed-jwt';
+
+export const AccessControl = () => {
+  const [streamName, setStreamName] = useState<string>('');
+  const {
+    mutate: createStream,
+    data: createdStream,
+    status,
+  } = useCreateStream(
+    streamName
+      ? {
+          name: streamName,
+          playbackPolicy: { type: 'jwt' },
+        }
+      : null,
+  );
+
+  const { data: stream } = useStream({
+    streamId: createdStream?.id,
+    refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
+  });
+
+  const { mutate: createJwt, data: createdJwt } = useMutation({
+    mutationFn: async () => {
+      if (!stream?.playbackId) {
+        throw new Error('No playback ID yet.');
+      }
+
+      const body: CreateSignedPlaybackBody = {
+        playbackId: stream.playbackId,
+        // we pass along a "secret key" to demonstrate how gating can work
+        secret: 'supersecretkey',
+      };
+
+      // we make a request to the Next.JS API route shown above
+      const response = await fetch('/api/create-signed-jwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      return response.json() as Promise<
+        CreateSignedPlaybackResponse | ApiError
+      >;
+    },
+  });
+
+  useEffect(() => {
+    if (stream?.playbackId) {
+      // when we have a playbackId for the stream, create a JWT
+      createJwt();
+    }
+  }, [stream?.playbackId, createJwt]);
+
+  const isLoading = useMemo(() => status === 'loading', [status]);
+
+  return (
+    <Box>
+      {!stream?.id ? (
+        <>
+          <TextField onChange={(e) => setStreamName(e.target.value)} />
+          <Flex>
+            <Button
+              onClick={() => {
+                createStream?.();
+              }}
+              disabled={isLoading || !createStream || Boolean(stream)}
+            >
+              Create Gated Stream
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <Player
+          title={stream?.name}
+          playbackId={stream?.playbackId}
+          autoPlay
+          muted
+          jwt={(createdJwt as CreateSignedPlaybackResponse)?.token}
+        />
+      )}
+    </Box>
+  );
+};
+```
+
+## Wrap Up
+
+That's it! Access control, added. You now have a solution for gating content!

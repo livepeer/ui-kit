@@ -13,10 +13,10 @@ import { useUpdateStream } from '@livepeer/react';
 
 ## Usage
 
-The following example shows how an stream can be updated with the `mutate` function, but could also use the asynchronous `mutateAsync`
-function.
+The following example shows how an stream can be updated to enable recording and
+require a JWT for playback (see the [Access Control example](/examples/react/access-control) for more details).
 
-```tsx {11, 18-21}
+```tsx {16-20, 28}
 import { useStream, useUpdateStream } from '@livepeer/react';
 import { useState } from 'react';
 
@@ -27,17 +27,24 @@ function App() {
     streamId,
     refetchInterval: 10000,
   });
-  const { mutate: updateStream, status, error } = useUpdateStream();
+  const {
+    mutate: updateStream,
+    status,
+    error,
+  } = useUpdateStream({
+    streamId,
+    record: true,
+    playbackPolicy: {
+      type: 'jwt',
+    },
+  });
 
   return (
     <div>
       <button
-        disabled={status === 'loading' || stream.record}
+        disabled={status === 'loading' || stream.record || !updateStream}
         onClick={() => {
-          updateStream({
-            streamId,
-            record: true,
-          });
+          updateStream?.();
         }}
       >
         Enable Recording
@@ -68,56 +75,104 @@ aggregated for simplicity.
   isLoading: boolean,
   isSuccess: boolean,
   status: 'idle' | 'loading' | 'success' | 'error',
-  mutate: (config: UpdateStreamArgs, options?: MutateOptions) => void,
-  mutateAsync: (config: UpdateStreamArgs, options?: MutateOptions) => Promise<Stream>,
+  mutate: () => void,
+  mutateAsync: () => Promise<Stream>,
   variables?: UpdateStreamArgs
 }
 ```
 
-The variables for the mutate function(s) are defined as:
-
-```tsx
-type UpdateStreamArgs = {
-  /** The unique identifier for the stream */
-  streamId: string;
-  /** Whether to immediately block ingest and playback of the stream */
-  suspend?: boolean;
-  /** Whether to create recordings of the livestream sessions as assets */
-  record?: boolean;
-  /** Configuration for multistreaming (AKA restream, simulcast) */
-  multistream?: {
-    /** Targets where this stream should be simultaneously streamed to. */
-    targets: (MultistreamTarget | MultistreamTargetRef)[];
-  };
-};
-
-type MultistreamTarget = {
-  profile: string;
-  videoOnly?: boolean;
-  spec: {
-    name?: string;
-    url: string;
-  };
-};
-```
-
-The multistream targets can be either a full `MultistreamTarget` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
-from the existing `Stream` object, in case multistream has already been configured for the given stream. It contains a vanity ID instead of the full
-`Spec` since the ingest URL contains user secrets like the stream key.
-
 ## Configuration
 
-### UseMutationOptions
+### streamId
 
-The `useUpdateStream` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
-`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+The stream ID to update - required.
 
 ```tsx {5}
 import { useUpdateStream } from '@livepeer/react';
 
 function App() {
+  const { mutate: createStream } = useUpdateStream({
+    streamId,
+    record: true,
+  });
+}
+```
+
+### suspend
+
+Whether to immediately block ingest and playback of the stream.
+
+### record
+
+Whether to create recordings of the stream sessions. Defaults to `false`.
+
+### multistream
+
+The configuration for multistreaming (AKA "restream" or "simulcast") - allows configuration of targets where this stream should be simultaneously streamed to.
+
+The multistream targets can be either a full `MultistreamTarget` like on create, or a `MultistreamTargetRef`. The `Ref` object comes directly
+from the existing `Stream` object, in case multistream has already been configured for the given stream. It contains a vanity ID instead of the full
+`Spec` since the ingest URL contains user secrets like the stream key.
+
+```tsx
+type MultistreamTarget = {
+  /**
+   * Name of transcoding profile that should be sent. Use "source" for pushing
+   * source stream data
+   */
+  profile: string;
+  /**
+   * If true, the stream audio will be muted and only silent video will be
+   * pushed to the target.
+   */
+  videoOnly?: boolean;
+  /**
+   * Unique ID of this multistream target. Used to dedup targets on update.
+   */
+  id?: string;
+  /**
+   * Inline spec for the multistream target object. Underlying target resource
+   * will be automatically created.
+   */
+  spec?: {
+    /** Name for the multistream target. Defaults to the URL hostname */
+    name?: string;
+    /** Livepeer-compatible multistream target URL (RTMP(s) or SRT) */
+    url: string;
+  };
+};
+```
+
+### playbackPolicy
+
+Configuration for stream playback access-control policy. Defaults to `public`.
+
+```tsx
+type PlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `public` indicates no access control will be applied (anyone
+   * with the `playbackId` can view without a JWT).
+   */
+  type: 'jwt' | 'public';
+};
+```
+
+For more details on the playback policy, see the [Access Control example](/examples/react/access-control).
+
+### mutationConfig
+
+The `mutationConfig` parameter allows for any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
+`cacheTime` or `retry`. These override any configs passed by default by the internal hook.
+
+```tsx {7}
+import { useUpdateStream } from '@livepeer/react';
+
+function App() {
   const { mutate: updateStream } = useUpdateStream({
-    retry: 5,
+    streamId,
+    record: true,
+    mutationConfig: { retry: 3 },
   });
 }
 ```

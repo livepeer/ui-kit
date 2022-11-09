@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text, TextField } from '@livepeer/design-system';
 import { useAsset, useUpdateAsset } from '@livepeer/react';
-import { ConnectKitButton } from 'connectkit';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useRouter } from 'next/router';
 import { Callout } from 'nextra-theme-docs';
 
@@ -8,11 +8,7 @@ import { useMemo, useState } from 'react';
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { Spinner } from '../core';
-
-const videoNftAbi = [
-  'event Mint(address indexed sender, address indexed owner, string tokenURI, uint256 tokenId)',
-  'function mint(address owner, string tokenURI) returns (uint256)',
-] as const;
+import { videoNftAbi } from './videoNftAbi';
 
 export const WagmiNft = () => {
   const { address } = useAccount();
@@ -36,13 +32,29 @@ export const WagmiNft = () => {
     refetchInterval: (asset) =>
       asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
   });
-  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset();
+  const { mutate: updateAsset, status: updateStatus } = useUpdateAsset(
+    asset
+      ? {
+          assetId: asset.id,
+          storage: {
+            ipfs: true,
+            metadata: {
+              name,
+              description,
+            },
+          },
+        }
+      : undefined,
+  );
 
   const { config } = usePrepareContractWrite({
-    addressOrName: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
-    contractInterface: videoNftAbi,
+    address: '0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643',
+    abi: videoNftAbi,
     functionName: 'mint',
-    args: [address, asset?.storage?.ipfs?.nftMetadata?.url],
+    args:
+      address && asset?.storage?.ipfs?.nftMetadata?.url
+        ? [address, asset?.storage?.ipfs?.nftMetadata?.url]
+        : undefined,
     enabled: Boolean(address && asset?.storage?.ipfs?.nftMetadata?.url),
   });
 
@@ -79,7 +91,7 @@ export const WagmiNft = () => {
     </Box>
   ) : (
     <Box css={{ my: '$4' }}>
-      <ConnectKitButton />
+      <ConnectButton />
       {address && (
         <>
           <Box
@@ -137,20 +149,11 @@ export const WagmiNft = () => {
               <Button
                 css={{ display: 'flex', ai: 'center' }}
                 onClick={() => {
-                  updateAsset({
-                    assetId: asset.id,
-                    storage: {
-                      ipfs: true,
-                      metadata: {
-                        name,
-                        description,
-                      },
-                    },
-                  });
+                  updateAsset?.();
                 }}
                 size="2"
                 disabled={
-                  !assetId ||
+                  !updateAsset ||
                   isLoading ||
                   Boolean(asset?.storage?.ipfs?.cid) ||
                   !name ||

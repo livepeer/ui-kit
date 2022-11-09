@@ -5,6 +5,7 @@ import { HttpError } from '../errors';
 import {
   Asset,
   CreateAssetArgs,
+  CreateAssetSourceType,
   CreateStreamArgs,
   GetAssetArgs,
   GetAssetMetricsArgs,
@@ -15,6 +16,7 @@ import {
   LivepeerProvider,
   LivepeerProviderConfig,
   Metrics,
+  MirrorSizeArray,
   PlaybackInfo,
   Stream,
   StreamSession,
@@ -84,10 +86,10 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     return response.json() as Promise<T>;
   }
 
-  async _update<P, T = any>(
+  async _update<P>(
     url: `/${string}`,
     options?: FetchOptions<P>,
-  ): Promise<T> {
+  ): Promise<void> {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'PATCH',
       ...options,
@@ -105,8 +107,6 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
         await response.json(),
       );
     }
-
-    return response.json() as Promise<T>;
   }
 
   abstract createStream(args: CreateStreamArgs): Promise<Stream>;
@@ -116,7 +116,9 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
   abstract getStreamSessions(
     args: GetStreamSessionsArgs,
   ): Promise<StreamSession[]>;
-  abstract createAsset(args: CreateAssetArgs): Promise<Asset>;
+  abstract createAsset<TSource extends CreateAssetSourceType>(
+    args: CreateAssetArgs<TSource>,
+  ): Promise<MirrorSizeArray<TSource, Asset>>;
   abstract getAsset(args: GetAssetArgs): Promise<Asset>;
   abstract updateAsset(args: UpdateAssetArgs): Promise<Asset>;
   abstract getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
