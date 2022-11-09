@@ -1,5 +1,24 @@
 # @livepeer/react
 
+## 1.5.0
+
+### Minor Changes
+
+- [#140](https://github.com/livepeer/livepeer.js/pull/140) [`2f1b286`](https://github.com/livepeer/livepeer.js/commit/2f1b286f65a2eda0b0ff0c2142ec8744d23a4dab) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** reworked mutations in `@livepeer/react` to use variables passed into the hook, for better a typing experience. See docs for examples.
+
+- [#102](https://github.com/livepeer/livepeer.js/pull/102) [`0ea4ec7`](https://github.com/livepeer/livepeer.js/commit/0ea4ec7fc7f2fa2e1504c7e976cbcf55d335981d) Thanks [@suhailkakar](https://github.com/suhailkakar)! - **Feature:** Add support for multiple files at once using useCreateAsset.
+
+  You can upload multiple assets at once by passing an array of files to the `mutate` function. In return you will get an array of uploaded assets.
+
+- [#140](https://github.com/livepeer/livepeer.js/pull/140) [`2f1b286`](https://github.com/livepeer/livepeer.js/commit/2f1b286f65a2eda0b0ff0c2142ec8744d23a4dab) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added auto-polling in `createAsset` to monitor the status of assets with a callback, instead of having to poll the API manually.
+
+### Patch Changes
+
+- [#141](https://github.com/livepeer/livepeer.js/pull/141) [`dc79b20`](https://github.com/livepeer/livepeer.js/commit/dc79b20f9f95a5082934be24b0a56ea590f2d086) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the prerendering query when `undefined` is return in `getStaticProps`.
+
+- Updated dependencies [[`0ea4ec7`](https://github.com/livepeer/livepeer.js/commit/0ea4ec7fc7f2fa2e1504c7e976cbcf55d335981d), [`dc79b20`](https://github.com/livepeer/livepeer.js/commit/dc79b20f9f95a5082934be24b0a56ea590f2d086)]:
+  - livepeer@1.4.0
+
 ## 1.4.0
 
 ### Minor Changes
