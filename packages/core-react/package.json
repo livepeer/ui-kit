@@ -96,6 +96,7 @@
     "@types/use-sync-external-store": "^0.0.3",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "wagmi": "^0.7.13"
   }
 }

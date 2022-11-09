@@ -369,6 +369,7 @@ importers:
       ethers: ^5.7.2
       livepeer: ^1.3.0
       react: ^18.2.0
+      react-dom: ^18.2.0
       use-sync-external-store: ^1.2.0
       wagmi: ^0.7.13
       zustand: ^4.1.3
@@ -376,20 +377,21 @@ importers:
       '@stitches/core': 1.2.8
       '@tanstack/query-core': 4.14.5
       '@tanstack/query-sync-storage-persister': 4.14.5_wjxuf6tbzatmieksaa64vrczsi
-      '@tanstack/react-query': 4.14.5_react@18.2.0
+      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.14.5_gopzi3zf5dpalt7thnadwdzoge
       livepeer: link:../core
       use-sync-external-store: 1.2.0_react@18.2.0
       zustand: 4.1.4_react@18.2.0
     devDependencies:
-      '@testing-library/react': 13.4.0_react@18.2.0
-      '@testing-library/react-hooks': 8.0.1_fan5qbzahqtxlm5dzefqlqx5ia
+      '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
+      '@testing-library/react-hooks': 8.0.1_2zx2umvpluuhvlq44va5bta2da
       '@types/react': 18.0.25
       '@types/react-dom': 18.0.8
       '@types/use-sync-external-store': 0.0.3
       ethers: 5.7.2
       react: 18.2.0
-      wagmi: 0.7.13_gokmfjqsr4kiuosff4ixthdd3e
+      react-dom: 18.2.0_react@18.2.0
+      wagmi: 0.7.13_fvcnbbvew7wdrbp745l3mhsbaq
 
   packages/react:
     specifiers:
@@ -5923,7 +5925,7 @@ packages:
       '@tanstack/react-query': 4.14.5
     dependencies:
       '@tanstack/query-persist-client-core': 4.14.5_wjxuf6tbzatmieksaa64vrczsi
-      '@tanstack/react-query': 4.14.5_react@18.2.0
+      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
     transitivePeerDependencies:
       - '@tanstack/query-core'
 
@@ -5942,22 +5944,6 @@ packages:
       '@tanstack/query-core': 4.14.5
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      use-sync-external-store: 1.2.0_react@18.2.0
-
-  /@tanstack/react-query/4.14.5_react@18.2.0:
-    resolution: {integrity: sha512-CuWl/SxSB0zHhHaTja8LNhy9Vdk+vk9IkW3Oiq3lo4gPnTguHmbUzfjEA1x3RfvPeHfPMuq/pYMSbV+CX4aDQA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.14.5
-      react: 18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
 
   /@testing-library/dom/8.18.1:
@@ -5997,28 +5983,6 @@ packages:
       react-error-boundary: 3.1.4_react@18.2.0
     dev: true
 
-  /@testing-library/react-hooks/8.0.1_fan5qbzahqtxlm5dzefqlqx5ia:
-    resolution: {integrity: sha512-Aqhl2IVmLt8IovEVarNDFuJDVWVvhnr9/GCU6UUnrYXwgDFF9h2L2o2P9KBni1AST5sT6riAyoukFLyjQUgD/g==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@types/react': ^16.9.0 || ^17.0.0
-      react: ^16.9.0 || ^17.0.0
-      react-dom: ^16.9.0 || ^17.0.0
-      react-test-renderer: ^16.9.0 || ^17.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react-dom:
-        optional: true
-      react-test-renderer:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.20.1
-      '@types/react': 18.0.25
-      react: 18.2.0
-      react-error-boundary: 3.1.4_react@18.2.0
-    dev: true
-
   /@testing-library/react/13.4.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-sXOGON+WNTh3MLE9rve97ftaZukN3oNf2KjDy7YTx6hcTO2uuLHuCGynMDhFwGw/jYf4OJ2Qk0i4i79qMNNkyw==}
     engines: {node: '>=12'}
@@ -6031,19 +5995,6 @@ packages:
       '@types/react-dom': 18.0.8
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: true
-
-  /@testing-library/react/13.4.0_react@18.2.0:
-    resolution: {integrity: sha512-sXOGON+WNTh3MLE9rve97ftaZukN3oNf2KjDy7YTx6hcTO2uuLHuCGynMDhFwGw/jYf4OJ2Qk0i4i79qMNNkyw==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@babel/runtime': 7.20.1
-      '@testing-library/dom': 8.18.1
-      '@types/react-dom': 18.0.8
-      react: 18.2.0
     dev: true
 
   /@tootallnate/once/2.0.0:
@@ -18129,7 +18080,7 @@ packages:
       xml-name-validator: 4.0.0
     dev: true
 
-  /wagmi/0.7.13_gokmfjqsr4kiuosff4ixthdd3e:
+  /wagmi/0.7.13_fvcnbbvew7wdrbp745l3mhsbaq:
     resolution: {integrity: sha512-CXPxWFSl4Ot2KyosC+ocGT4LJ1ZkQ60hUldx8LO1ioEitXVWctopgCvcj5rnXglUkNgtC0lN1XFDsmtJtc01QQ==}
     peerDependencies:
       ethers: '>=5.5.1'
@@ -18137,7 +18088,7 @@ packages:
     dependencies:
       '@coinbase/wallet-sdk': 3.5.4
       '@tanstack/query-sync-storage-persister': 4.14.5_wjxuf6tbzatmieksaa64vrczsi
-      '@tanstack/react-query': 4.14.5_react@18.2.0
+      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.14.5_gopzi3zf5dpalt7thnadwdzoge
       '@wagmi/core': 0.6.12_rx7revlxbsdh5kc76lr7vch4mq
       '@walletconnect/ethereum-provider': 1.8.0
