@@ -64,7 +64,7 @@
     "typechain": "^8.1.1",
     "typescript": "^4.8.4",
     "vite": "^3.2.3",
-    "vitest": "^0.25.1"
+    "vitest": "^0.24.3"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
