@@ -442,7 +442,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       meta: {
         live: studioPlaybackInfo?.['meta']?.['live']
           ? Boolean(studioPlaybackInfo?.['meta']['live'])
-          : undefined,
+          : false,
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           hrn: source?.['hrn'],
           type: source?.['type'],
