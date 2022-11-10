@@ -81,7 +81,7 @@ importers:
   docs:
     specifiers:
       '@livepeer/design-system': ^1.0.4
-      '@livepeer/react': ^1.5.0
+      '@livepeer/react': ^1.5.1
       '@next/bundle-analyzer': ^13.0.0
       '@preconstruct/next': ^4.0.0
       '@rainbow-me/rainbowkit': ^0.7.4
@@ -98,7 +98,7 @@ importers:
       ethers: ^5.7.2
       formidable: ^2.0.1
       hls.js: ^1.2.4
-      livepeer: ^1.4.0
+      livepeer: ^1.4.1
       next: 12.3.2
       next-themes: ^0.2.1
       nextra: 2.0.0-beta.41
@@ -145,7 +145,7 @@ importers:
 
   examples/_dev:
     specifiers:
-      '@livepeer/react': ^1.5.0
+      '@livepeer/react': ^1.5.1
       '@preconstruct/next': ^4.0.0
       '@rainbow-me/rainbowkit': ^0.7.4
       '@types/node': ^18.11.9
@@ -178,7 +178,7 @@ importers:
 
   examples/next:
     specifiers:
-      '@livepeer/react': ^1.5.0
+      '@livepeer/react': ^1.5.1
       '@preconstruct/next': ^4.0.0
       '@types/node': ^18.11.9
       '@types/react': ^18.0.23
@@ -215,7 +215,7 @@ importers:
       '@types/node': ^18.8.3
       cross-fetch: ^3.1.5
       graphql: ^16.6.0
-      livepeer: ^1.4.0
+      livepeer: ^1.4.1
       ts-node: ^10.9.1
       typescript: ^4.8.4
     dependencies:
@@ -237,7 +237,7 @@ importers:
   examples/svelte:
     specifiers:
       '@sveltejs/vite-plugin-svelte': ^1.1.0
-      livepeer: ^1.4.0
+      livepeer: ^1.4.1
       svelte: ^3.52.0
       vite: ^3.2.0
     dependencies:
@@ -290,7 +290,7 @@ importers:
       '@types/use-sync-external-store': ^0.0.3
       core-js: ^3.26.0
       ethers: ^5.7.2
-      livepeer: ^1.4.0
+      livepeer: ^1.4.1
       react: ^18.2.0
       react-dom: ^18.2.0
       react-native: ^0.70.4
