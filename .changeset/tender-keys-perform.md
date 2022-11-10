@@ -3,4 +3,4 @@
 '@livepeer/react': patch
 ---
 
-**Fix:** fixed controls to use storage from the client.
+**Fix:** fixed control state to use storage from the client.
