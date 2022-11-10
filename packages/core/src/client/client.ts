@@ -41,8 +41,7 @@ export class Client<
   constructor({
     provider,
     storage = createStorage({
-      storage:
-        typeof window !== 'undefined' ? window.localStorage : noopStorage,
+      storage: noopStorage,
     }),
   }: ClientConfig<TLivepeerProvider>) {
     // Create store
