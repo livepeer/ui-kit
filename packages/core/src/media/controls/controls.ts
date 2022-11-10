@@ -1,6 +1,8 @@
 import { persist } from 'zustand/middleware';
 import create, { StoreApi } from 'zustand/vanilla';
 
+import { ClientStorage, createStorage, noopStorage } from '../../storage';
+
 import { isAndroid, isIos, isMobile } from '../browser';
 
 import {
@@ -166,6 +168,7 @@ const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
 
 export const createControllerStore = <TElement extends HTMLMediaElement>(
   element: TElement | null,
+  storage?: ClientStorage,
 ) => {
   const store = create<
     MediaControllerState<TElement>,
@@ -299,6 +302,11 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
         partialize: ({ volume }) => ({
           volume,
         }),
+        getStorage: () =>
+          storage ??
+          createStorage({
+            storage: noopStorage,
+          }),
       },
     ),
   );

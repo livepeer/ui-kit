@@ -6,6 +6,8 @@ import {
 import * as React from 'react';
 import create from 'zustand';
 
+import { useClient } from '../../../context';
+
 import { MediaControllerContext } from './MediaControllerContext';
 
 export type MediaControllerProviderProps<TElement extends HTMLMediaElement> = {
@@ -32,9 +34,11 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
   element: TElement | null,
   options?: ControlsOptions,
 ) => {
+  const client = useClient();
+
   const useStore = React.useMemo(
-    () => create(createControllerStore<TElement>(element)),
-    [element],
+    () => create(createControllerStore<TElement>(element, client.storage)),
+    [element, client?.storage],
   );
 
   React.useEffect(() => {
