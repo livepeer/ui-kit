@@ -13,7 +13,7 @@ import { Asset } from 'livepeer/types';
 import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
-import { MediaControllerProvider, useTheme } from './context';
+import { MediaControllerProvider, useTheme } from '../../context';
 
 import {
   Container,

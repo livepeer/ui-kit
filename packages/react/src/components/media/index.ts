@@ -1,14 +1,4 @@
 export {
-  MediaControllerProvider,
-  ThemeProvider,
-  useMediaController,
-  useTheme,
-} from './context';
-export type {
-  MediaControllerProviderProps,
-  ThemeProviderProps,
-} from './context';
-export {
   BaseSlider,
   ControlsContainer,
   FullscreenButton,

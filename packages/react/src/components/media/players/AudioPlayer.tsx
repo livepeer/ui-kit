@@ -3,7 +3,7 @@ import { MediaControllerState } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
-import { useMediaController } from '../context';
+import { useMediaController } from '../../../context';
 import { HlsPlayerProps } from './HlsPlayer';
 
 export type AudioPlayerProps = Omit<

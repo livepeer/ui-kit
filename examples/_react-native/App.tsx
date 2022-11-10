@@ -1,5 +1,7 @@
 import React, { type PropsWithChildren } from 'react';
 import {
+  Platform,
+  PlatformColor,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -73,8 +75,9 @@ const App = () => {
           }}
         >
           <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+            <Text>
+              Edit to change this screen and then come back to see your edits.
+            </Text>
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
@@ -83,7 +86,7 @@ const App = () => {
             <DebugInstructions />
           </Section>
           <Section title="Learn More">
-            Read the docs to discover what to do next:
+            <Text>Read the docs to discover what to do next:</Text>
           </Section>
           <LearnMoreLinks />
         </View>
@@ -96,18 +99,26 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
+    ...Platform.select({
+      ios: {
+        color: PlatformColor('label'),
+        backgroundColor: PlatformColor('systemTealColor'),
+      },
+      android: {
+        color: PlatformColor('?android:attr/textColor'),
+        backgroundColor: PlatformColor('@android:color/holo_blue_bright'),
+      },
+      default: { color: 'black' },
+    }),
+  },
+  sectionDescription: {
+    fontSize: 18,
+    fontWeight: '400',
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
   },
 });
 

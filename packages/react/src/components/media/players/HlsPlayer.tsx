@@ -10,8 +10,8 @@ import { styling } from 'livepeer/styling';
 
 import * as React from 'react';
 
+import { useMediaController } from '../../../context';
 import { PlayerObjectFit } from '../Player';
-import { useMediaController } from '../context';
 import { VideoPlayer } from './VideoPlayer';
 
 export type HlsPlayerProps = {

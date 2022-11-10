@@ -1,0 +1,4 @@
+{
+  "main": "dist/livepeer-react-native-components.cjs.js",
+  "module": "dist/livepeer-react-native-components.esm.js"
+}

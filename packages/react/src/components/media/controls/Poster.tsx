@@ -2,7 +2,7 @@ import { MediaControllerState } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
-import { useMediaController } from '../context';
+import { useMediaController } from '../../../context';
 
 export type PosterProps = {
   title?: string;

@@ -3,8 +3,8 @@ import { styling } from 'livepeer/styling';
 
 import * as React from 'react';
 
+import { useMediaController } from '../../../context';
 import { PropsOf, useMemoizedIcon } from '../../system';
-import { useMediaController } from '../context';
 
 export type BaseSliderProps = Omit<
   PropsOf<'div'>,

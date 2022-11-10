@@ -2,8 +2,8 @@ import { MediaControllerState } from 'livepeer/media/controls';
 import { styling } from 'livepeer/styling';
 import * as React from 'react';
 
+import { useMediaController } from '../../../context';
 import { PropsOf } from '../../system';
-import { useMediaController } from '../context';
 
 export type TimeDisplayProps = Omit<PropsOf<'span'>, 'children'>;
 

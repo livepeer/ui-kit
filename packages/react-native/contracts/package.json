@@ -1,0 +1,4 @@
+{
+  "main": "dist/livepeer-react-native-contracts.cjs.js",
+  "module": "dist/livepeer-react-native-contracts.esm.js"
+}
