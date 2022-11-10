@@ -23,10 +23,12 @@ const getFormattedMinutesAndSeconds = (valueInSeconds: number | null) => {
     !isNaN(valueInSeconds) &&
     isFinite(valueInSeconds)
   ) {
-    const minutes = Math.floor(valueInSeconds / 60);
-    const seconds = Math.round(valueInSeconds % 60);
+    const roundedValue = Math.round(valueInSeconds);
 
-    return `${minutes.toFixed(0)}:${seconds.toFixed(0).padStart(2, '0')}`;
+    const minutes = Math.floor(roundedValue / 60);
+    const seconds = Math.floor(roundedValue % 60);
+
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
   return `0:00`;
