@@ -11,9 +11,7 @@ const Page = () => {
       <hr />
       <Asset />
       <hr />
-      <Link href="/player">
-        <a>Demo Player</a>
-      </Link>
+      <Link href="/player">Demo Player</Link>
     </>
   );
 };
