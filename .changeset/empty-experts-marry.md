@@ -1,5 +1,5 @@
 ---
-'@livepeer/react': minor
+'@livepeer/react': patch
 ---
 
 **Fix:** rounded the duration to 1:00 instead of 0:60.
