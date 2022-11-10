@@ -222,7 +222,14 @@ export const createControllerStore = <TElement extends HTMLMediaElement>(
             hasPlayed: true,
           })),
         onPause: () => set(() => ({ playing: false, hidden: false })),
-        togglePlay: () => set(({ playing }) => ({ playing: !playing })),
+        togglePlay: () => {
+          const { hidden, setHidden, device } = store.getState();
+          if (hidden && device.isMobile) {
+            setHidden(false);
+          } else {
+            set(({ playing }) => ({ playing: !playing }));
+          }
+        },
         onProgress: (time) => set(() => ({ progress: getFilteredNaN(time) })),
         requestSeek: (time) =>
           set(({ duration }) => ({
@@ -568,7 +575,10 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           options.autohide &&
           current._lastInteraction !== prev._lastInteraction
         ) {
-          store.getState().setHidden(false);
+          const { device } = store.getState();
+          if (!device.isMobile) {
+            store.getState().setHidden(false);
+          }
 
           await delay(options.autohide);
 
