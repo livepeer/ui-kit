@@ -1,5 +1,16 @@
 import { CID } from 'multiformats/cid';
 
+const getCidAndUrlIndicatorsFromPath = (url: string) => {
+  const regex = /ipfs\/(baf[a-z0-9]{56})\/?(.*)/;
+  const regexResult = regex.exec(url);
+  if (!regexResult) {
+    return null;
+  }
+  const cid = regexResult[1];
+  const urlIndicators = regexResult[2] ? `/${regexResult[2]}` : '';
+  return { cid, urlIndicators };
+};
+
 // IPFS CID (naive check for lack of URL indicators)
 const ipfsCidPattern = /^([^/?#]+)$/;
 
@@ -7,7 +18,6 @@ const ipfsCidPattern = /^([^/?#]+)$/;
 const ipfsProtocolPattern = /^(ipfs):\/\/([^/?#]+)(.*)$/;
 
 // Gateways
-const pathGatewayPattern = /^https?:\/\/[^/]+\/(ipfs)\/([^/?#]+)(.*)$/;
 const subdomainGatewayPattern = /^https?:\/\/([^/]+)\.(ipfs)\.[^/?#]+(.*)$/;
 
 /**
@@ -41,9 +51,8 @@ export const parseCid = (possibleIpfsString: string | null | undefined) => {
     return formatReturnCid(subdomainGatewayCid, subdomainGatewayUrlIndicators);
   }
 
-  const pathGatewayCid = possibleIpfsString.match(pathGatewayPattern)?.[2];
-  const pathGatewayUrlIndicators =
-    possibleIpfsString.match(pathGatewayPattern)?.[3];
+  const { cid: pathGatewayCid, urlIndicators: pathGatewayUrlIndicators } =
+    getCidAndUrlIndicatorsFromPath(possibleIpfsString) ?? {};
 
   if (isCid(pathGatewayCid)) {
     return formatReturnCid(pathGatewayCid, pathGatewayUrlIndicators);
