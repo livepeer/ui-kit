@@ -1,11 +1,15 @@
-import {
-  MediaControllerStore,
-  createControllerStore,
-} from 'livepeer/media/controls';
-
+import { MediaControllerStore, createControllerStore } from 'livepeer/media';
+import { getDeviceInfo } from 'livepeer/media/browser';
 import * as React from 'react';
 import create, { UseBoundStore } from 'zustand';
 
 export const MediaControllerContext = React.createContext<
   UseBoundStore<MediaControllerStore<HTMLMediaElement>>
->(create(createControllerStore(null)));
+>(
+  create(
+    createControllerStore<HTMLMediaElement>({
+      element: null,
+      device: getDeviceInfo(),
+    }),
+  ),
+);

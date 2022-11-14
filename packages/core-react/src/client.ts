@@ -1,4 +1,4 @@
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import {
@@ -42,7 +42,7 @@ export function createReactClient<TLivepeerProvider extends LivepeerProvider>({
 }: CreateReactClientConfig<TLivepeerProvider>): ReactClient<TLivepeerProvider> {
   const client = createClient<TLivepeerProvider>(config);
   const persister = config?.storage
-    ? createSyncStoragePersister({
+    ? createAsyncStoragePersister({
         key: 'livepeer.cache',
         storage: config?.storage,
         serialize,

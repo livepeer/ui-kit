@@ -1,4 +1,4 @@
-import { ThemeConfig, createPlayerTheme } from 'livepeer/styling';
+import { ThemeConfig, createPlayerTheme } from 'livepeer/media/browser/styling';
 import { deepMerge } from 'livepeer/utils';
 import * as React from 'react';
 

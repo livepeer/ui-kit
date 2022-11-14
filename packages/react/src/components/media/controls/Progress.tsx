@@ -1,4 +1,4 @@
-import { MediaControllerState } from 'livepeer/media/controls';
+import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';

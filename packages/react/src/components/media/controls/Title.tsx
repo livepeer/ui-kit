@@ -1,4 +1,4 @@
-import { styling } from 'livepeer/styling';
+import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { PropsOf } from '../../system';

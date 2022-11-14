@@ -1,19 +1,15 @@
+import { MediaControllerState, MediaControllerStore } from 'livepeer';
 import * as React from 'react';
-import Video from 'react-native-video';
 import { UseBoundStore } from 'zustand';
 
-import {
-  MediaControllerStore,
-  NativeMediaControllerState,
-} from '../components/media';
-
+import { MediaElement } from '../components/media/types';
 import { MediaControllerContext } from './MediaControllerContext';
 
 export const useMediaController = <
-  TElement extends Video,
-  TSlice = NativeMediaControllerState<TElement>,
+  TElement extends MediaElement,
+  TSlice = MediaControllerState<TElement>,
 >(
-  selector?: (s: NativeMediaControllerState<TElement>) => TSlice,
+  selector?: (s: MediaControllerState<TElement>) => TSlice,
 ) => {
   // typecast the context so that we can have video/audio-specific controller states
   const useMediaControllerInternal = React.useContext(
@@ -21,6 +17,6 @@ export const useMediaController = <
   ) as UseBoundStore<MediaControllerStore<TElement>>;
 
   return useMediaControllerInternal(
-    selector as (s: NativeMediaControllerState<TElement>) => TSlice,
+    selector as (s: MediaControllerState<TElement>) => TSlice,
   );
 };

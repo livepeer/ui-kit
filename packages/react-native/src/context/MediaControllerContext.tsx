@@ -1,12 +1,10 @@
+import { MediaControllerStore } from 'livepeer';
 import * as React from 'react';
-import Video from 'react-native-video';
 import create, { UseBoundStore } from 'zustand';
 
-import {
-  MediaControllerStore,
-  createControllerStore,
-} from '../components/media';
+import { createNativeControllerStore } from '../components/media';
+import { MediaElement } from '../components/media/types';
 
 export const MediaControllerContext = React.createContext<
-  UseBoundStore<MediaControllerStore<Video>>
->(create(createControllerStore(null)));
+  UseBoundStore<MediaControllerStore<MediaElement>>
+>(create(createNativeControllerStore<MediaElement>({ element: null })));

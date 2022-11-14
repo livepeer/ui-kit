@@ -7,6 +7,8 @@ it('should expose correct exports', () => {
     [
       "deepMerge",
       "pick",
+      "parseArweaveTxId",
+      "parseCid",
       "b64Decode",
       "b64Encode",
       "b64UrlDecode",

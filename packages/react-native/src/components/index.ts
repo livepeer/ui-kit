@@ -1,25 +1,2 @@
-export {
-  ControlsContainer,
-  FullscreenButton,
-  PictureInPictureButton,
-  PlayButton,
-  Player,
-  Poster,
-  Progress,
-  TimeDisplay,
-  Title,
-  Volume,
-} from './media';
-export type {
-  ControlsContainerProps,
-  FullscreenButtonProps,
-  PictureInPictureButtonProps,
-  PlayButtonProps,
-  PlayerObjectFit,
-  PlayerProps,
-  PosterProps,
-  ProgressProps,
-  TimeDisplayProps,
-  TitleProps,
-  VolumeProps,
-} from './media';
+export { Player } from './media';
+export type { PlayerObjectFit, PlayerProps } from './media';

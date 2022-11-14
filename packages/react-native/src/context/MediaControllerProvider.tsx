@@ -1,24 +1,20 @@
 import { useClient } from '@livepeer/core-react/context';
-
+import { ControlsOptions } from 'livepeer';
 import * as React from 'react';
-import Video from 'react-native-video';
 import create from 'zustand';
 
-import {
-  ControlsOptions,
-  addEventListeners,
-  createControllerStore,
-} from '../components/media';
+import { createNativeControllerStore } from '../components/media';
+import { MediaElement } from '../components/media/types';
 
 import { MediaControllerContext } from './MediaControllerContext';
 
-export type MediaControllerProviderProps<TElement extends Video> = {
+export type MediaControllerProviderProps<TElement extends MediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
   options?: ControlsOptions;
 };
 
-export const MediaControllerProvider = <TElement extends Video>({
+export const MediaControllerProvider = <TElement extends MediaElement>({
   element,
   children,
   options,
@@ -32,24 +28,30 @@ export const MediaControllerProvider = <TElement extends Video>({
   );
 };
 
-const useMediaControllerStore = <TElement extends Video>(
+const useMediaControllerStore = <TElement extends MediaElement>(
   element: TElement | null,
-  options?: ControlsOptions,
+  _options?: ControlsOptions,
 ) => {
   const client = useClient();
 
-  const useStore = React.useMemo(
-    () => create(createControllerStore<TElement>(element, client.storage)),
+  const store = React.useMemo(
+    () =>
+      create(
+        createNativeControllerStore<TElement>({
+          element,
+          storage: client.storage,
+        }),
+      ),
     [element, client?.storage],
   );
 
-  React.useEffect(() => {
-    const { destroy } = addEventListeners(useStore, options);
+  // React.useEffect(() => {
+  //   const { destroy } = addEventListeners(store, options);
 
-    return () => {
-      destroy?.();
-    };
-  }, [useStore, options]);
+  //   return () => {
+  //     destroy?.();
+  //   };
+  // }, [store, options]);
 
-  return useStore;
+  return store;
 };

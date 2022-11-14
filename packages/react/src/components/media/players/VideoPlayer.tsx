@@ -1,6 +1,6 @@
-import { VideoSrc, canPlayMediaNatively } from 'livepeer/media';
-import { MediaControllerState } from 'livepeer/media/controls';
-import { styling } from 'livepeer/styling';
+import { MediaControllerState, VideoSrc } from 'livepeer';
+import { canPlayMediaNatively } from 'livepeer/media/browser';
+import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
@@ -21,7 +21,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
     const { fullscreen } = useMediaController(mediaControllerSelector);
 
     const filteredSources = React.useMemo(() => {
-      return src?.filter((s) => s?.mime && canPlayMediaNatively(s.mime));
+      return src?.filter((s) => s?.mime && canPlayMediaNatively(s));
     }, [src]);
 
     return (

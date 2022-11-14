@@ -1,4 +1,4 @@
-import { ThemeConfig } from 'livepeer/styling';
+import { ThemeConfig } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { ThemeContext } from './ThemeContext';

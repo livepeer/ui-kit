@@ -5,12 +5,8 @@ import * as Exports from './';
 it('should expose correct exports', () => {
   expect(Object.keys(Exports)).toMatchInlineSnapshot(`
     [
-      "canPlayMediaNatively",
-      "parseArweaveTxId",
-      "parseCid",
-      "addMediaMetrics",
-      "MetricsStatus",
-      "PlaybackMonitor",
+      "addMediaMetricsToStore",
+      "createControllerStore",
       "getMediaSourceType",
     ]
   `);

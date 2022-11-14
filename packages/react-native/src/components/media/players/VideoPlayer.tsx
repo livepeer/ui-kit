@@ -1,56 +1,53 @@
-import { VideoSrc, canPlayMediaNatively } from 'livepeer/media';
-import * as React from 'react';
-import Video from 'react-native-video';
+import { ResizeMode, Video } from 'expo-av';
+import { VideoSrc } from 'livepeer/media';
 
-import { useMediaController } from '../../../context';
-import { NativeMediaControllerState } from '../state';
+import { forwardRef, useMemo } from 'react';
+import { StyleSheet } from 'react-native';
 
 import { HlsPlayerProps } from './HlsPlayer';
+import { canPlayMediaNatively } from './canPlayMediaNatively';
 
-export type VideoPlayerProps = Omit<HlsPlayerProps, 'hlsConfig' | 'src'> & {
+export type VideoPlayerProps = Omit<HlsPlayerProps, 'src'> & {
   src: VideoSrc[] | null;
 };
 
-const mediaControllerSelector = ({
-  fullscreen,
-}: NativeMediaControllerState<Video>) => ({
-  fullscreen,
-});
-
-export const VideoPlayer = React.forwardRef<Video, VideoPlayerProps>(
-  ({ src, autoPlay, title, loop, muted, poster, objectFit }, ref) => {
-    const { fullscreen } = useMediaController(mediaControllerSelector);
-
-    const filteredSources = React.useMemo(() => {
-      return src?.filter((s) => s?.mime && canPlayMediaNatively(s.mime));
+export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
+  ({ src, autoPlay, loop, muted, objectFit }, ref) => {
+    const filteredSources = useMemo(() => {
+      return src?.filter((s) => s?.mime && canPlayMediaNatively(s));
     }, [src]);
 
     return (
       <Video
-        className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : objectFit,
-        })}
-        loop={loop}
-        aria-label={title ?? 'Video player'}
-        role="video"
-        autoPlay={autoPlay}
-        width="100%"
-        height="100%"
-        ref={ref}
-        webkit-playsinline="true"
-        playsInline
-        muted={muted}
-        poster={poster}
-      >
-        {filteredSources?.map((source) => (
-          <source key={source.src} src={source.src} type={source.mime!} />
-        ))}
-        {
-          "Your browser doesn't support the HTML5 <code>video</code> tag, or the video format."
+        source={{ uri: filteredSources?.[0]?.src ?? '' }}
+        style={styles.videoWrapper}
+        videoStyle={styles.video}
+        isLooping={loop}
+        resizeMode={
+          objectFit === 'contain' ? ResizeMode.CONTAIN : ResizeMode.COVER
         }
-      </Video>
+        shouldPlay={autoPlay}
+        ref={ref}
+        isMuted={muted}
+      />
     );
   },
 );
 
 VideoPlayer.displayName = 'VideoPlayer';
+
+export const styles = StyleSheet.create({
+  video: {
+    height: '100%',
+    width: '100%',
+  },
+  videoWrapper: {
+    alignItems: 'center',
+    bottom: 0,
+    flex: 1,
+    justifyContent: 'space-between',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+});

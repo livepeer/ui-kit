@@ -175,9 +175,14 @@ module.exports = {
     // we temporarily disable imports until this is refactored
     'no-restricted-imports': [
       2,
-      'livepeer/media/controls',
-      'livepeer/media/hls',
-      'livepeer/styling',
+      {
+        patterns: [
+          {
+            group: ['livepeer/*/browser', 'livepeer/*/browser/*'],
+            message: 'cannot use browser imports in react native',
+          },
+        ],
+      },
     ],
   },
 };

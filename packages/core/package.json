@@ -46,25 +46,25 @@
       "module": "./media/dist/livepeer-media.esm.js",
       "default": "./media/dist/livepeer-media.cjs.js"
     },
-    "./media/controls": {
-      "module": "./media/controls/dist/livepeer-media-controls.esm.js",
-      "default": "./media/controls/dist/livepeer-media-controls.cjs.js"
+    "./media/browser": {
+      "module": "./media/browser/dist/livepeer-media-browser.esm.js",
+      "default": "./media/browser/dist/livepeer-media-browser.cjs.js"
     },
-    "./media/hls": {
-      "module": "./media/hls/dist/livepeer-media-hls.esm.js",
-      "default": "./media/hls/dist/livepeer-media-hls.cjs.js"
+    "./media/browser/hls": {
+      "module": "./media/browser/hls/dist/livepeer-media-browser-hls.esm.js",
+      "default": "./media/browser/hls/dist/livepeer-media-browser-hls.cjs.js"
     },
-    "./media/storage": {
-      "module": "./media/storage/dist/livepeer-media-storage.esm.js",
-      "default": "./media/storage/dist/livepeer-media-storage.cjs.js"
+    "./media/browser/styling": {
+      "module": "./media/browser/styling/dist/livepeer-media-browser-styling.esm.js",
+      "default": "./media/browser/styling/dist/livepeer-media-browser-styling.cjs.js"
+    },
+    "./media/core": {
+      "module": "./media/dist/livepeer-media-core.esm.js",
+      "default": "./media/dist/livepeer-media-core.cjs.js"
     },
     "./providers/studio": {
       "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
       "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
-    },
-    "./styling": {
-      "module": "./styling/dist/livepeer-styling.esm.js",
-      "default": "./styling/dist/livepeer-styling.cjs.js"
     },
     "./types": {
       "module": "./types/dist/livepeer-types.esm.js",
@@ -85,7 +85,6 @@
     "/errors",
     "/media",
     "/providers",
-    "/styling",
     "/types",
     "/utils",
     "/dist"
@@ -100,11 +99,11 @@
       "contracts/index.ts",
       "crypto/index.ts",
       "media/index.ts",
-      "media/controls/index.ts",
-      "media/hls/index.ts",
-      "media/storage/index.ts",
+      "media/browser/index.ts",
+      "media/browser/hls/index.ts",
+      "media/browser/styling/index.ts",
+      "media/core/index.ts",
       "providers/studio/index.ts",
-      "styling/index.ts",
       "types/index.ts",
       "utils/index.ts"
     ]

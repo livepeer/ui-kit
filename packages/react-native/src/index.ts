@@ -3,39 +3,10 @@ export {
   studioProvider,
   type StudioLivepeerProviderConfig,
 } from 'livepeer/providers/studio';
-// export {
-//   defaultTheme,
-//   getCssText,
-//   styling,
-//   type ThemeConfig,
-// } from 'livepeer/styling';
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
-export {
-  ControlsContainer,
-  FullscreenButton,
-  PictureInPictureButton,
-  PlayButton,
-  Player,
-  Poster,
-  Progress,
-  TimeDisplay,
-  Title,
-  Volume,
-} from './components';
-export type {
-  ControlsContainerProps,
-  FullscreenButtonProps,
-  PictureInPictureButtonProps,
-  PlayButtonProps,
-  PlayerObjectFit,
-  PlayerProps,
-  PosterProps,
-  ProgressProps,
-  TimeDisplayProps,
-  TitleProps,
-  VolumeProps,
-} from './components';
+export { Player } from './components';
+export type { PlayerObjectFit, PlayerProps } from './components';
 export {
   Context,
   LivepeerConfig,

@@ -47,7 +47,6 @@ export type {
   MultistreamTarget,
   MultistreamTargetRef,
   PlaybackInfo,
-  PlaybackRecord,
   Src,
   Storage,
   Stream,

@@ -1,6 +1,3 @@
 {
-  "extends": "../../tsconfig.native.json",
-  "compilerOptions": {
-    "lib": ["DOM", "es2019", "es2017"]
-  }
+  "extends": "../../.eslintrc.native.js"
 }

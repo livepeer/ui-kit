@@ -2,8 +2,9 @@ import { useClient } from '@livepeer/core-react/context';
 import {
   ControlsOptions,
   addEventListeners,
-  createControllerStore,
-} from 'livepeer/media/controls';
+  getDeviceInfo,
+} from 'livepeer/media/browser';
+import { createControllerStore } from 'livepeer/media/core';
 import * as React from 'react';
 import create from 'zustand';
 
@@ -35,18 +36,25 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
 ) => {
   const client = useClient();
 
-  const useStore = React.useMemo(
-    () => create(createControllerStore<TElement>(element, client.storage)),
+  const store = React.useMemo(
+    () =>
+      create(
+        createControllerStore<TElement>({
+          element: element ?? null,
+          device: getDeviceInfo(),
+          storage: client.storage,
+        }),
+      ),
     [element, client?.storage],
   );
 
   React.useEffect(() => {
-    const { destroy } = addEventListeners(useStore, options);
+    const { destroy } = addEventListeners(store, options);
 
     return () => {
       destroy?.();
     };
-  }, [useStore, options]);
+  }, [store, options]);
 
-  return useStore;
+  return store;
 };

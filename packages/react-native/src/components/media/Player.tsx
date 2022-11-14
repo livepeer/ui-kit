@@ -1,233 +1,116 @@
-import { PlayerObjectFit, PlayerProps } from '@livepeer/core-react/components';
-import { usePlaybackInfoOrImport } from '@livepeer/core-react/hooks';
 import {
-  AudioSrc,
-  Src,
-  VideoSrc,
-  getMediaSourceType,
-  parseArweaveTxId,
-  parseCid,
-} from 'livepeer/media';
-import { Asset } from 'livepeer/types';
-import { isNumber } from 'livepeer/utils';
+  PlayerObjectFit,
+  PlayerProps,
+  useSourceMimeTyped,
+} from '@livepeer/core-react/components';
+import { AudioSrc, VideoSrc } from 'livepeer/media';
+
 import * as React from 'react';
-import Video from 'react-native-video';
 
-import { MediaControllerProvider, useTheme } from './../../context';
+import { MediaControllerProvider } from '../../context';
 
-import {
-  Container,
-  ControlsContainer,
-  FullscreenButton,
-  PictureInPictureButton,
-  PlayButton,
-  Poster,
-  Progress,
-  TimeDisplay,
-  Volume,
-} from './controls';
-import { Title } from './controls/Title';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { MediaElement } from './types';
 
 export type { PlayerObjectFit, PlayerProps };
 
 export function Player({
   autoPlay,
-  children,
+  // children,
   controls,
   muted,
   playbackId,
   refetchPlaybackInfoInterval = 5000,
   src,
-  theme,
-  title,
+  // theme,
+  // title,
   poster,
   loop,
-  showLoadingSpinner = true,
-  showTitle = true,
-  aspectRatio = '16to9',
+  // showLoadingSpinner = true,
+  // showTitle = true,
+  // aspectRatio = '16to9',
   objectFit = 'cover',
-  showPipButton,
+  // showPipButton,
   autoUrlUpload = true,
   onMetricsError,
   jwt,
 }: PlayerProps) {
-  const [mediaElement, setMediaElement] = React.useState<Video | null>(null);
-
-  const [uploadStatus, setUploadStatus] = React.useState<
-    Asset['status'] | null
-  >(null);
-
-  const onAssetStatusChange = React.useCallback(
-    (status: Asset['status']) => {
-      setUploadStatus(status);
-    },
-    [setUploadStatus],
+  const [mediaElement, setMediaElement] = React.useState<MediaElement | null>(
+    null,
   );
 
-  // check if the src or playbackId are decentralized storage sources (does not handle src arrays)
-  const decentralizedSrcOrPlaybackId = React.useMemo(
-    () =>
-      playbackId
-        ? parseCid(playbackId) ?? parseArweaveTxId(playbackId)
-        : !Array.isArray(src)
-        ? parseCid(src) ?? parseArweaveTxId(src)
-        : null,
-    [playbackId, src],
-  );
-
-  const playbackInfo = usePlaybackInfoOrImport({
-    decentralizedSrcOrPlaybackId,
+  const { source } = useSourceMimeTyped({
+    src,
     playbackId,
+    jwt,
     refetchPlaybackInfoInterval,
     autoUrlUpload,
-    onAssetStatusChange,
   });
 
-  const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
+  // const hidePosterOnPlayed = React.useMemo(
+  //   () =>
+  //     Array.isArray(source)
+  //       ? source?.[0]?.type !== 'audio'
+  //         ? true
+  //         : undefined
+  //       : undefined,
+  //   [source],
+  // );
 
-  React.useEffect(() => {
-    const playbackInfoSources = playbackInfo?.meta?.source
-      ?.map((s) => s?.url)
-      ?.filter((s) => s);
-
-    if (playbackInfoSources) {
-      setPlaybackUrls(playbackInfoSources);
-    }
-  }, [playbackInfo]);
-
-  const sourceMimeTyped = React.useMemo(() => {
-    // cast all URLs to an array of strings
-    const sources =
-      playbackUrls.length > 0
-        ? playbackUrls
-        : typeof src === 'string'
-        ? [src]
-        : src;
-
-    if (!sources) {
-      return null;
-    }
-
-    const authenticatedSources = sources.map((source) => {
-      // append the JWT to the query params
-      if (jwt) {
-        const url = new URL(source);
-        url.searchParams.append('jwt', jwt);
-        return url.toString();
-      }
-
-      return source;
-    });
-
-    const mediaSourceTypes = authenticatedSources
-      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
-      .filter((s) => s) as Src[];
-
-    // if there are multiple Hls sources, we take only the first one
-    // otherwise we pass all sources to the video or audio player components
-    if (
-      mediaSourceTypes.every((s) => s.type === 'hls') &&
-      mediaSourceTypes?.[0]?.type === 'hls'
-    ) {
-      return mediaSourceTypes[0];
-    }
-
-    // if the player is auto uploading, we do not play back the detected input file
-    // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
-    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
-      return null;
-    }
-
-    // we filter by the first source type in the array provided
-    const mediaSourceFiltered =
-      mediaSourceTypes?.[0]?.type === 'audio'
-        ? (mediaSourceTypes.filter((s) => s.type === 'audio') as AudioSrc[])
-        : mediaSourceTypes?.[0]?.type === 'video'
-        ? (mediaSourceTypes.filter((s) => s.type === 'video') as VideoSrc[])
-        : null;
-
-    return mediaSourceFiltered;
-  }, [decentralizedSrcOrPlaybackId, playbackUrls, src, autoUrlUpload, jwt]);
-
-  const hidePosterOnPlayed = React.useMemo(
-    () =>
-      Array.isArray(sourceMimeTyped)
-        ? sourceMimeTyped?.[0]?.type !== 'audio'
-          ? true
-          : undefined
-        : undefined,
-    [sourceMimeTyped],
-  );
-
-  const playerRef = React.useCallback((element: Video | null) => {
+  const playerRef = React.useCallback((element: MediaElement | null) => {
     if (element) {
       setMediaElement(element);
     }
   }, []);
 
-  React.useEffect(() => {
-    const { destroy } = addMediaMetrics(
-      mediaElement,
-      Array.isArray(sourceMimeTyped)
-        ? sourceMimeTyped?.[0]?.src
-        : sourceMimeTyped?.src,
-      (e) => {
-        onMetricsError?.(e as Error);
-        console.error('Not able to report player metrics', e);
-      },
-    );
+  // const contextTheme = useTheme(theme);
 
-    return destroy;
-  }, [onMetricsError, mediaElement, sourceMimeTyped]);
-
-  const contextTheme = useTheme(theme);
-
-  const topLoadingText = React.useMemo(
-    () =>
-      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
-        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
-        : uploadStatus?.phase === 'failed'
-        ? 'Upload Failed'
-        : null,
-    [uploadStatus],
-  );
+  // const topLoadingText = React.useMemo(
+  //   () =>
+  //     uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+  //       ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+  //       : uploadStatus?.phase === 'failed'
+  //       ? 'Upload Failed'
+  //       : null,
+  //   [uploadStatus],
+  // );
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
-      <Container className={contextTheme} aspectRatio={aspectRatio}>
-        {sourceMimeTyped && !Array.isArray(sourceMimeTyped) ? (
-          <HlsPlayer
-            ref={playerRef}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={sourceMimeTyped}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-            objectFit={objectFit}
-          />
-        ) : sourceMimeTyped?.[0]?.type === 'audio' ? (
-          <AudioPlayer
-            ref={playerRef}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={sourceMimeTyped as AudioSrc[]}
-            loop={loop}
-            objectFit={objectFit}
-          />
-        ) : (
-          <VideoPlayer
-            ref={playerRef}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={sourceMimeTyped as VideoSrc[] | null}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-            objectFit={objectFit}
-          />
-        )}
+      {/* <Container className={contextTheme} aspectRatio={aspectRatio}> */}
+      {source && !Array.isArray(source) ? (
+        <HlsPlayer
+          ref={playerRef}
+          autoPlay={autoPlay}
+          muted={autoPlay ? true : muted}
+          src={source}
+          poster={typeof poster === 'string' ? poster : undefined}
+          loop={loop}
+          objectFit={objectFit}
+          onMetricsError={onMetricsError}
+        />
+      ) : source?.[0]?.type === 'audio' ? (
+        <AudioPlayer
+          ref={playerRef}
+          autoPlay={autoPlay}
+          muted={autoPlay ? true : muted}
+          src={source as AudioSrc[]}
+          loop={loop}
+          objectFit={objectFit}
+        />
+      ) : (
+        <VideoPlayer
+          ref={playerRef}
+          autoPlay={autoPlay}
+          muted={autoPlay ? true : muted}
+          src={source as VideoSrc[] | null}
+          poster={typeof poster === 'string' ? poster : undefined}
+          loop={loop}
+          objectFit={objectFit}
+        />
+      )}
 
-        {React.isValidElement(children) ? (
+      {/* {React.isValidElement(children) ? (
           children
         ) : (
           <>
@@ -253,8 +136,8 @@ export function Player({
               }
             />
           </>
-        )}
-      </Container>
+        )} */}
+      {/* </Container> */}
     </MediaControllerProvider>
   );
 }
