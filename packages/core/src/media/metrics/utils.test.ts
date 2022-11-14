@@ -15,6 +15,17 @@ describe('getMetricsReportingUrl', () => {
       );
     });
 
+    it('given a valid metrics url then it should return a reporting url', async () => {
+      const sourceUrl =
+        'https://asset-cdn.lp-playback.studio/hls/172159gos7h0pq17/index.m3u8';
+
+      const reportingUrl = await getMetricsReportingUrl(sourceUrl);
+
+      expect(reportingUrl).toContain(
+        '.lp-playback.studio/json_video+172159gos7h0pq17.js',
+      );
+    });
+
     it('given invalid urls then it should not return a reporting urls', async () => {
       const sourceUrls = [
         'https://livepeercdn.com/dash/172159gos7h0pq17/index.m3u8',
