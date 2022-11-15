@@ -1,11 +1,11 @@
 import { StoreApi } from 'zustand/vanilla';
 
+import { ControlsOptions as ControlsOptionsBase } from '../../core';
 import {
-  ControlsOptions as ControlsOptionsBase,
+  DEFAULT_VOLUME_LEVEL,
   MediaControllerState,
   MediaControllerStore,
-} from '../../core';
-import { DEFAULT_VOLUME_LEVEL } from '../../core/controller';
+} from '../../core/controller';
 
 import {
   addFullscreenEventListener,
@@ -22,8 +22,6 @@ import {
 } from './pictureInPicture';
 
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE = 'data-controller-initialized';
-
-export { type MediaControllerState, type MediaControllerStore };
 
 const allKeyTriggers = [
   'KeyF',

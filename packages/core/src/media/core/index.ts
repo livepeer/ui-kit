@@ -1,15 +1,11 @@
-export {
-  createControllerStore,
-  type ControlsOptions,
-  type DeviceInformation,
-  type ElementSize,
-  type MediaControllerState,
-  type MediaControllerStore,
-  type MediaSizing,
+export { createControllerStore } from './controller';
+export type {
+  ControlsOptions,
+  DeviceInformation,
+  ElementSize,
+  MediaControllerState,
+  MediaControllerStore,
+  MediaSizing,
 } from './controller';
-export {
-  addMediaMetricsToStore,
-  type MediaMetrics,
-  type MetricsStatus,
-  type PlaybackMonitor,
-} from './metrics';
+export { addMediaMetricsToStore } from './metrics';
+export type { MediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';

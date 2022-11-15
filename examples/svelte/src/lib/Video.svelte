@@ -5,7 +5,7 @@
     getMediaSourceType,
   } from 'livepeer';
   import { createClient } from 'livepeer/client';
-  import { createNewHls, isHlsSupported } from 'livepeer/media/hls';
+  import { createNewHls, isHlsSupported } from 'livepeer/media/browser/hls';
   import { studioProvider } from 'livepeer/providers/studio';
   import { onMount } from 'svelte';
 

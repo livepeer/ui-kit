@@ -1,6 +1,6 @@
-import { createControllerStore } from 'livepeer';
-import { ClientStorage } from 'livepeer/src/storage';
+import { MediaControllerState, Storage, createControllerStore } from 'livepeer';
 import { Platform } from 'react-native';
+import { StoreApi } from 'zustand';
 
 import { MediaElement } from '../types';
 
@@ -9,9 +9,9 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
   storage,
 }: {
   element: TElement | null;
-  storage?: ClientStorage;
-}) => {
-  return createControllerStore({
+  storage?: Storage;
+}): StoreApi<MediaControllerState<MediaElement>> => {
+  return createControllerStore<TElement>({
     element,
     device: {
       isMobile: true,

@@ -6,8 +6,6 @@ export {
 } from './controls';
 export type {
   ControlsOptions,
-  MediaControllerState,
-  MediaControllerStore,
   MediaMetrics,
   MetricsStatus,
   PlaybackMonitor,

@@ -27,5 +27,5 @@
     ]
   },
   "exclude": ["node_modules", "**/dist/**"],
-  "include": ["packages/**/*", "./global.d.ts"]
+  "include": ["packages/**/*", "browser.d.ts"]
 }
