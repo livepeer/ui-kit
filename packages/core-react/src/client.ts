@@ -8,7 +8,8 @@ import {
 } from 'livepeer/client';
 import { LivepeerProvider } from 'livepeer/types';
 
-import { deserialize, serialize } from './utils';
+import { deserialize } from './utils/deserialize';
+import { serialize } from './utils/serialize';
 
 export const defaultQueryClient = () =>
   new QueryClient({

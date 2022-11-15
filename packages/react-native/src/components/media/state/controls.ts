@@ -15,8 +15,8 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
     element,
     device: {
       isMobile: true,
-      isAndroid: Platform.OS === 'android',
-      isIos: Platform.OS === 'ios',
+      isAndroid: Platform?.OS === 'android',
+      isIos: Platform?.OS === 'ios',
     },
     storage,
   });

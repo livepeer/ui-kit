@@ -45,9 +45,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     bottom: 0,
     flex: 1,
+    height: '100%',
     justifyContent: 'space-between',
     left: 0,
     position: 'absolute',
     right: 0,
+    width: '100%',
   },
 });

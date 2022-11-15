@@ -7,7 +7,7 @@ import { AudioSrc, VideoSrc } from 'livepeer/media';
 
 import * as React from 'react';
 
-import { MediaControllerProvider } from '../../context';
+import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { MediaElement } from './types';

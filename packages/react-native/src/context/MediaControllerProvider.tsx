@@ -3,7 +3,8 @@ import { ControlsOptions } from 'livepeer';
 import * as React from 'react';
 import create from 'zustand';
 
-import { createNativeControllerStore } from '../components/media';
+import { createNativeControllerStore } from '../components/media/state/controls';
+
 import { MediaElement } from '../components/media/types';
 
 import { MediaControllerContext } from './MediaControllerContext';
