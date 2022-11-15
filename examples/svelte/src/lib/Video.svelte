@@ -2,8 +2,8 @@
   import {
     addMediaMetrics,
     canPlayMediaNatively,
-    getMediaSourceType,
-  } from 'livepeer';
+  } from 'livepeer/media/browser';
+  import { getMediaSourceType } from 'livepeer/media';
   import { createClient } from 'livepeer/client';
   import { createNewHls, isHlsSupported } from 'livepeer/media/browser/hls';
   import { studioProvider } from 'livepeer/providers/studio';

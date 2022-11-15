@@ -1,10 +1,10 @@
 import { useClient } from '@livepeer/core-react/context';
+import { createControllerStore } from 'livepeer/media';
 import {
   ControlsOptions,
   addEventListeners,
   getDeviceInfo,
 } from 'livepeer/media/browser';
-import { createControllerStore } from 'livepeer/media/core';
 import * as React from 'react';
 import create from 'zustand';
 
