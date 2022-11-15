@@ -1,5 +1,11 @@
 # livepeer
 
+## 1.4.2
+
+### Patch Changes
+
+- [`3487d98`](https://github.com/livepeer/livepeer.js/commit/3487d9820e86aa970db744548bb067c27c51cbf3) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed a bug with network timeout not triggering a `<Player />` reload when using hls.js.
+
 ## 1.4.1
 
 ### Patch Changes
