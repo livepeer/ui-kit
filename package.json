@@ -16,7 +16,7 @@
     "list-browsers": "pnpx browserslist && pnpx browserslist --coverage",
     "postinstall": "pnpm generate-types && preconstruct dev",
     "preinstall": "npx only-allow pnpm",
-    "prepare": "npx simple-git-hooks",
+    "prepare": "pnpx simple-git-hooks",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:run": "vitest run",
