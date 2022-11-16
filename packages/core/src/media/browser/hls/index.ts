@@ -2,13 +2,16 @@ import Hls, { ErrorData, ErrorTypes, Events, HlsConfig } from 'hls.js';
 
 import { isClient } from '../utils';
 
+// deprecated! - all errors trigger exponential backoff
+// keeping for documentation
+//
 // errors which trigger an exponential backoff
-const backoffRetryErrors = [
-  // custom error to indicate invalid JWT was provided
-  'Shutting down since this session is not allowed to view this stream',
-  // custom error to indicate stream could not be opened
-  'Stream open failed',
-] as const;
+// const backoffRetryErrors = [
+//   // custom error to indicate invalid JWT was provided
+//   'Shutting down since this session is not allowed to view this stream',
+//   // custom error to indicate stream could not be opened
+//   'Stream open failed',
+// ] as const;
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = 'data-hls-initialized';
 
@@ -94,18 +97,14 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Events.ERROR, async (_event, data) => {
     if (data.fatal) {
       callbacks?.onError?.(data);
-      const response = data?.response?.data?.toString() ?? '';
 
       switch (data.type) {
         case ErrorTypes.NETWORK_ERROR:
-          if (backoffRetryErrors.some((error) => response.includes(error))) {
-            await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-            hls?.recoverMediaError();
-          } else {
-            hls?.startLoad();
-          }
+          await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+          hls?.recoverMediaError();
           break;
         case ErrorTypes.MEDIA_ERROR:
+          await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
           hls?.recoverMediaError();
           break;
         default:
