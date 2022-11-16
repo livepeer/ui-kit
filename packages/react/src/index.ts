@@ -1,50 +1,55 @@
 export * from '@livepeer/core-react';
-export { isPictureInPictureSupported } from 'livepeer/media/controls';
-export {
-  studioProvider,
-  type StudioLivepeerProviderConfig,
-} from 'livepeer/providers/studio';
 export {
   defaultTheme,
   getCssText,
   styling,
   type ThemeConfig,
-} from 'livepeer/styling';
+} from 'livepeer/media/browser/styling';
+export {
+  studioProvider,
+  type StudioLivepeerProviderConfig,
+} from 'livepeer/providers/studio';
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
   ControlsContainer,
   FullscreenButton,
-  MediaControllerProvider,
   PictureInPictureButton,
   PlayButton,
   Player,
   Poster,
   Progress,
-  ThemeProvider,
   TimeDisplay,
   Title,
-  useMediaController,
-  useTheme,
   Volume,
 } from './components';
 export type {
   ControlsContainerProps,
   FullscreenButtonProps,
-  MediaControllerProviderProps,
   PictureInPictureButtonProps,
   PlayButtonProps,
   PlayerObjectFit,
   PlayerProps,
   PosterProps,
   ProgressProps,
-  ThemeProviderProps,
   TimeDisplayProps,
   TitleProps,
   VolumeProps,
 } from './components';
-export { Context, LivepeerConfig, useClient } from './context';
-export type { LivepeerConfigProps } from './context';
+export {
+  Context,
+  LivepeerConfig,
+  MediaControllerProvider,
+  ThemeProvider,
+  useClient,
+  useMediaController,
+  useTheme,
+} from './context';
+export type {
+  LivepeerConfigProps,
+  MediaControllerProviderProps,
+  ThemeProviderProps,
+} from './context';
 export {
   prefetchAsset,
   prefetchAssetMetrics,

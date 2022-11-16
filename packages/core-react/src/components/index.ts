@@ -1,1 +1,2 @@
-export type { PlayerObjectFit, PlayerProps } from './Player';
+export { useSourceMimeTyped } from './player';
+export type { PlayerObjectFit, PlayerProps } from './player';

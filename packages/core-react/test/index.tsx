@@ -20,9 +20,6 @@ import * as React from 'react';
 import { Client, createReactClient } from '../src/client';
 import { LivepeerConfig } from '../src/context';
 
-// set up React globally for tests
-global.React = React;
-
 export const provider = studioProvider({
   apiKey: process.env.STUDIO_API_KEY,
 });

@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/react",
-  "description": "React components & hooks for apps built with Livepeer.",
+  "description": "React components & hooks for web apps built with Livepeer.",
   "license": "MIT",
   "version": "1.5.0",
   "repository": {
@@ -34,8 +34,8 @@
   "sideEffects": false,
   "files": [
     "client",
-    "context",
     "/components",
+    "/context",
     "contracts",
     "hooks",
     "/dist"
@@ -44,8 +44,8 @@
     "entrypoints": [
       "index.ts",
       "client.ts",
-      "context.ts",
       "components/index.ts",
+      "context/index.ts",
       "contracts.ts",
       "hooks.ts"
     ]
@@ -71,7 +71,8 @@
     "@livepeer/core-react": "^1.0.0",
     "@stitches/react": "^1.2.8",
     "core-js": "^3.26.0",
-    "livepeer": "^1.4.0"
+    "livepeer": "^1.4.0",
+    "zustand": "^4.1.3"
   },
   "devDependencies": {
     "@tanstack/react-query": "4.14.5",

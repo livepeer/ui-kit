@@ -3,20 +3,20 @@ import { expect, it } from 'vitest';
 import * as Exports from './';
 
 it('should expose correct exports', () => {
-  expect(Object.keys(Exports)).toMatchInlineSnapshot(`
+  expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
       "createAsset",
-      "getAsset",
-      "updateAsset",
-      "getAssetMetrics",
-      "getPlaybackInfo",
-      "getLivepeerProvider",
-      "watchLivepeerProvider",
       "createStream",
+      "getAsset",
+      "getAssetMetrics",
+      "getLivepeerProvider",
+      "getPlaybackInfo",
       "getStream",
       "getStreamSession",
       "getStreamSessions",
+      "updateAsset",
       "updateStream",
+      "watchLivepeerProvider",
     ]
   `);
 });

@@ -1,17 +1,20 @@
-import { HlsSrc, canPlayMediaNatively } from 'livepeer/media';
-import { MediaControllerState } from 'livepeer/media/controls';
+import { HlsSrc } from 'livepeer';
+import {
+  addMediaMetricsToInitializedStore,
+  canPlayMediaNatively,
+} from 'livepeer/media/browser';
 import {
   HlsError,
   HlsVideoConfig,
   createNewHls,
   isHlsSupported,
-} from 'livepeer/media/hls';
-import { styling } from 'livepeer/styling';
+} from 'livepeer/media/browser/hls';
+import { styling } from 'livepeer/media/browser/styling';
 
 import * as React from 'react';
 
+import { MediaControllerContext } from '../../../context';
 import { PlayerObjectFit } from '../Player';
-import { useMediaController } from '../context';
 import { VideoPlayer } from './VideoPlayer';
 
 export type HlsPlayerProps = {
@@ -26,39 +29,51 @@ export type HlsPlayerProps = {
   muted?: boolean;
   poster?: string;
   jwt?: string;
+  onMetricsError?: (error: Error) => void;
 };
-
-const mediaControllerSelector = ({
-  _element,
-  fullscreen,
-  setLive,
-  onDurationChange,
-  onCanPlay,
-}: MediaControllerState<HTMLMediaElement>) => ({
-  element: _element,
-  fullscreen,
-  setLive,
-  onDurationChange,
-  onCanPlay,
-});
 
 export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
   (props, ref) => {
-    const { hlsConfig, src, autoPlay, title, loop, muted, poster, objectFit } =
-      props;
+    const {
+      hlsConfig,
+      src,
+      autoPlay,
+      title,
+      loop,
+      muted,
+      poster,
+      objectFit,
+      onMetricsError,
+    } = props;
 
-    const { element, fullscreen, setLive, onDurationChange, onCanPlay } =
-      useMediaController(mediaControllerSelector);
+    const store = React.useContext(MediaControllerContext);
+
+    React.useEffect(() => {
+      const { destroy } = addMediaMetricsToInitializedStore(
+        store,
+        src?.src,
+        (e) => {
+          onMetricsError?.(e as Error);
+          console.error('Not able to report player metrics', e);
+        },
+      );
+
+      return destroy;
+    }, [onMetricsError, store, src]);
 
     const [canUseHlsjs, canPlayAppleMpeg] = React.useMemo(
       () => [
         isHlsSupported(),
-        canPlayMediaNatively('application/vnd.apple.mpegurl'),
+        canPlayMediaNatively({
+          ...src,
+          mime: 'application/vnd.apple.mpegurl',
+        }),
       ],
-      [],
+      [src],
     );
 
     React.useEffect(() => {
+      const element = store.getState()._element;
       if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
         const onError = (error: HlsError) => {
           console.warn(error.response?.data.toString());
@@ -66,7 +81,12 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
         const { destroy } = createNewHls(
           src.src,
           element,
-          { onLive: setLive, onDuration: onDurationChange, onCanPlay, onError },
+          {
+            onLive: store.getState().setLive,
+            onDuration: store.getState().onDurationChange,
+            onCanPlay: store.getState().onCanPlay,
+            onError,
+          },
           {
             autoplay: autoPlay,
             ...hlsConfig,
@@ -77,24 +97,14 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
           destroy();
         };
       }
-    }, [
-      autoPlay,
-      hlsConfig,
-      src,
-      element,
-      canUseHlsjs,
-      canPlayAppleMpeg,
-      setLive,
-      onDurationChange,
-      onCanPlay,
-    ]);
+    }, [autoPlay, hlsConfig, src, store, canUseHlsjs, canPlayAppleMpeg]);
 
     // if Media Source is supported and if HLS is not supported by default in the user's browser, use HLS.js
     // fallback to using a regular video player
     return !canPlayAppleMpeg && canUseHlsjs ? (
       <video
         className={styling.media.video({
-          size: fullscreen ? 'fullscreen' : objectFit,
+          size: store.getState().fullscreen ? 'fullscreen' : objectFit,
         })}
         loop={loop}
         aria-label={title ?? 'Video player'}

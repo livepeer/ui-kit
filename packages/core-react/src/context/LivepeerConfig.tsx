@@ -4,8 +4,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import { ThemeConfig } from 'livepeer/media/browser/styling';
 
-import { ThemeConfig } from 'livepeer/styling';
 import { LivepeerProvider } from 'livepeer/types';
 import * as React from 'react';
 

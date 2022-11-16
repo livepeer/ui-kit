@@ -2,7 +2,7 @@ import { ApolloClient, HttpLink, InMemoryCache, from } from '@apollo/client';
 import { RetryLink } from '@apollo/client/link/retry';
 import fetch from 'cross-fetch';
 import { getMediaSourceType } from 'livepeer/media';
-import { parseArweaveTxId, parseCid } from 'livepeer/media/storage';
+import { parseArweaveTxId, parseCid } from 'livepeer/utils';
 
 import {
   ExplorePublicationRequest,

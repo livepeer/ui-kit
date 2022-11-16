@@ -1,9 +1,9 @@
-import { MediaControllerState } from 'livepeer/media/controls';
-import { styling } from 'livepeer/styling';
+import { MediaControllerState } from 'livepeer';
+import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
+import { useMediaController } from '../../../context';
 import { PropsOf, useConditionalIcon } from '../../system';
-import { useMediaController } from '../context';
 
 const DefaultPlayIcon = () => (
   <svg

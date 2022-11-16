@@ -20,18 +20,19 @@ export { clearClient, Client, createClient } from './client';
 export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
-export {
-  addMediaMetrics,
-  canPlayMediaNatively,
-  getMediaSourceType,
-  MetricsStatus,
-  PlaybackMonitor,
-} from './media';
+export { createControllerStore, getMediaSourceType } from './media';
 export type {
   AudioSrc,
+  ControlsOptions,
+  DeviceInformation,
+  ElementSize,
   HlsSrc,
-  PlaybackRecord,
-  RawMetrics,
+  MediaControllerState,
+  MediaControllerStore,
+  MediaMetrics,
+  MediaSizing,
+  MetricsStatus,
+  PlaybackMonitor,
   Src,
   VideoSrc,
 } from './media';

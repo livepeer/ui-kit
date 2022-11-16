@@ -27,7 +27,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
-        run: pnpm i
+        run: |
+          pnpm i --ignore-scripts
+          pnpm postinstall
 
       - name: Publish to npm
         uses: seek-oss/changesets-snapshot@v0

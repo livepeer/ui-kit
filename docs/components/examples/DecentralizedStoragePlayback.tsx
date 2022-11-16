@@ -1,6 +1,6 @@
 import { Box, Text, TextField } from '@livepeer/design-system';
 import { Player } from '@livepeer/react';
-import { parseArweaveTxId, parseCid } from 'livepeer/media';
+import { parseArweaveTxId, parseCid } from 'livepeer/utils';
 
 import { useMemo, useState } from 'react';
 
