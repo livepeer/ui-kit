@@ -159,6 +159,8 @@ jobs:
         run: |
           cd packages/react
           pnpm add -D react@17.0.2 react-dom@17.0.2 @testing-library/react@12.1.4
+          cd ../core-react
+          pnpm add -D react@17.0.2 react-dom@17.0.2 @testing-library/react@12.1.4
           cd ../..
           pnpm test:run react
         env:
