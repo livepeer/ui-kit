@@ -3,16 +3,16 @@ import { expect, it } from 'vitest';
 import * as Exports from '.';
 
 it('should expose correct exports', () => {
-  expect(Object.keys(Exports)).toMatchInlineSnapshot(`
+  expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
       "Context",
       "LivepeerConfig",
-      "ThemeProvider",
-      "useClient",
-      "useTheme",
       "MediaControllerContext",
       "MediaControllerProvider",
+      "ThemeProvider",
+      "useClient",
       "useMediaController",
+      "useTheme",
     ]
   `);
 });
