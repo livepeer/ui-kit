@@ -209,7 +209,7 @@ jobs:
   security-dependency-review:
     name: Security (Dependency Review)
     needs: build
-    if: github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/next'
     runs-on: ubuntu-latest
     permissions:
       contents: read
