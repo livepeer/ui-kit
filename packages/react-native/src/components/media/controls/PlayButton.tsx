@@ -13,22 +13,14 @@ import { PropsOf } from '../../system';
 import { MediaElement } from '../types';
 
 const DefaultPlayIcon = () => (
-  <ColoredSvg width="100%" height="100%" viewBox="0 0 36 36" fill="none">
-    <Path
-      d="M 12,26 18.5,22 18.5,14 12,10 z M 18.5,22 25,18 25,18 18.5,14 z"
-      fill="currentColor"
-    />
+  <ColoredSvg viewBox="0 0 36 36" fill="none">
+    <Path d="m12 26 6.5-4v-8L12 10zm6.5-4 6.5-4-6.5-4z" fill="currentColor" />
   </ColoredSvg>
 );
 
 const DefaultPauseIcon = () => (
-  <ColoredSvg width="100%" height="100%" viewBox="0 0 36 36" fill="none">
-    <Path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z"
-      fill="currentColor"
-    />
+  <ColoredSvg viewBox="0 0 36 36" fill="none">
+    <Path d="M12 26h4V10h-4zm9 0h4V10h-4z" fill="currentColor" />
   </ColoredSvg>
 );
 

@@ -13,9 +13,9 @@ export const {
     lg: '(width >= 1024px)',
   },
   theme: {
-    borderStyles: {
-      containerBorderStyle: 'hidden',
-    },
+    // borderStyles: {
+    //   containerBorderStyle: 'hidden',
+    // },
     borderWidths: {
       containerBorderWidth: 0,
       loadingWidth: 3,
@@ -32,12 +32,12 @@ export const {
       display: 'ui-sans-serif',
     },
     fontSizes: {
-      timeFontSize: '1.0rem',
-      timeFontSizeMd: '0.95rem',
-      timeFontSizeSm: '0.85rem',
-      titleFontSize: '1.1rem',
-      titleFontSizeMd: '1rem',
-      titleFontSizeSm: '0.9rem',
+      timeFontSize: 16,
+      timeFontSizeMd: 14,
+      timeFontSizeSm: 12,
+      titleFontSize: 16,
+      titleFontSizeMd: 14,
+      titleFontSizeSm: 12,
     },
     fontWeights: {
       titleFontWeight: 400,

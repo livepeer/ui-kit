@@ -13,8 +13,10 @@ import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 import { ControlsContainer, PlayButton } from './controls';
 import { Container } from './controls/Container';
 import { FullscreenButton } from './controls/FullscreenButton';
+import { Progress } from './controls/Progress';
 import { TimeDisplay } from './controls/TimeDisplay';
 import { Title } from './controls/Title';
+import { Volume } from './controls/Volume';
 
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { MediaElement } from './types';
@@ -129,9 +131,15 @@ export function Player({
               showLoadingSpinner={showLoadingSpinner}
               topLoadingText={topLoadingText}
               top={<>{title && showTitle && <Title content={title} />}</>}
+              middle={
+                <>
+                  <Progress />
+                </>
+              }
               left={
                 <>
                   <PlayButton />
+                  <Volume />
                   <TimeDisplay />
                 </>
               }

@@ -13,7 +13,6 @@ import {
   VideoSrc,
 } from 'livepeer/media';
 
-import { DEFAULT_VOLUME_LEVEL } from 'livepeer/src/media/core/controller';
 import React, {
   forwardRef,
   useCallback,
@@ -43,17 +42,17 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
       MediaControllerStore<MediaElement>
     >;
 
-    // useEffect(() => {
-    //   Audio.setAudioModeAsync({
-    //     allowsRecordingIOS: true,
-    //     playsInSilentModeIOS: true,
-    //     interruptionModeIOS: InterruptionModeIOS.DuckOthers,
-    //     interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-    //     staysActiveInBackground: true,
-    //     shouldDuckAndroid: true,
-    //     playThroughEarpieceAndroid: true,
-    //   });
-    // }, []);
+    useEffect(() => {
+      Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+        interruptionModeIOS: InterruptionModeIOS.DuckOthers,
+        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+        staysActiveInBackground: true,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: true,
+      });
+    }, []);
 
     const { hasPlayed, playing } = store();
 
@@ -83,20 +82,26 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
     const onPlaybackStatusUpdate = useCallback(
       async (status: AVPlaybackStatus) => {
         if (status.isLoaded) {
-          store.setState({
+          store.setState(({ buffered, duration }) => ({
             volume: status.volume,
             canPlay: true,
-            playing: status.isPlaying,
+            playing: status.shouldPlay,
             progress: status.positionMillis / 1000,
-            duration: (status.durationMillis ?? 0) / 1000,
-            muted: status.isMuted,
+            duration: status.durationMillis
+              ? status.durationMillis / 1000
+              : duration,
+            // muted: status.isMuted,
             playbackRate: status.rate,
-            buffered: (status.playableDurationMillis ?? 0) / 1000,
+            buffered: status.playableDurationMillis
+              ? status.playableDurationMillis / 1000
+              : buffered,
+
+            isVolumeChangeSupported: true,
 
             // double check this
             stalled: status.shouldPlay && !status.isPlaying,
             waiting: status.isBuffering,
-          });
+          }));
         } else {
           store.setState({
             loading: !status.error,
@@ -139,54 +144,6 @@ const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const _addEventListeners = <TElement extends MediaElement>(
-  store: MediaControllerStore<TElement>,
-  { autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
-) => {
-  const element = store?.getState()?._element;
-
-  // const initializedState = store.getState();
-
-  // restore the persisted values from store
-  if (element) {
-    // await element.setVolumeAsync(initializedState.volume);
-  }
-
-  // const onTouchUpdate = async () => {
-  //   store.getState()._updateLastInteraction();
-  // };
-
-  // let retryCount = 0;
-
-  // const onError = async (e: ErrorEvent) => {
-  //   store.getState().setError(e.message);
-  //   await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-  //   await element?.unloadAsync();
-  //   // TODO add error handling
-  // };
-
-  // const onWaiting = async () => {
-  //   store.getState().setWaiting(true);
-  // };
-
-  // const onStalled = async () => {
-  //   store.getState().setStalled(true);
-  // };
-
-  // add effects
-  const removeEffectsFromStore = addEffectsToStore(store, element, {
-    autohide,
-  });
-
-  return {
-    destroy: () => {
-      removeEffectsFromStore?.();
-
-      store?.destroy?.();
-    },
-  };
-};
-
 let previousPromise: Promise<any> | boolean | null;
 
 const addEffectsToStore = <TElement extends MediaElement>(
@@ -218,21 +175,19 @@ const addEffectsToStore = <TElement extends MediaElement>(
           }
         }
 
-        if (current.volume !== prev.volume) {
-          previousPromise = element.setVolumeAsync(current.volume);
-        }
-
         if (current.muted !== prev.muted) {
           previousPromise = element.setIsMutedAsync(current.muted);
-          if (current.volume === 0) {
-            previousPromise = element.setVolumeAsync(DEFAULT_VOLUME_LEVEL);
+          if (!current.muted) {
+            previousPromise = element.setVolumeAsync(1);
           }
         }
 
         if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
-          previousPromise = element.setPositionAsync(
-            current._requestedRangeToSeekTo,
-          );
+          console.log(`seeking to ${current._requestedRangeToSeekTo}`);
+          previousPromise = element.setStatusAsync({
+            progressUpdateIntervalMillis: 20,
+            positionMillis: current._requestedRangeToSeekTo * 1000, // convert to ms
+          });
         }
 
         // user has interacted with element
@@ -262,22 +217,57 @@ const addEffectsToStore = <TElement extends MediaElement>(
             previousPromise = element.dismissFullscreenPlayer();
           }
         }
-
-        // if (
-        //   current._requestedPictureInPictureLastTime !==
-        //   prev._requestedPictureInPictureLastTime
-        // ) {
-        //   const isPictureInPicture = isCurrentlyPictureInPicture(element);
-
-        //   if (!isPictureInPicture) {
-        //     previousPromise = element.pip
-        //   } else {
-        //     previousPromise = exitPictureInPicture(element);
-        //   }
-        // }
       }
     } catch (e) {
       console.warn(e);
     }
   });
 };
+
+// const _addEventListeners = <TElement extends MediaElement>(
+//   store: MediaControllerStore<TElement>,
+//   { autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
+// ) => {
+//   const element = store?.getState()?._element;
+
+//   // const initializedState = store.getState();
+
+//   // restore the persisted values from store
+//   if (element) {
+//     // await element.setVolumeAsync(initializedState.volume);
+//   }
+
+//   // const onTouchUpdate = async () => {
+//   //   store.getState()._updateLastInteraction();
+//   // };
+
+//   // let retryCount = 0;
+
+//   // const onError = async (e: ErrorEvent) => {
+//   //   store.getState().setError(e.message);
+//   //   await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+//   //   await element?.unloadAsync();
+//   //   // TODO add error handling
+//   // };
+
+//   // const onWaiting = async () => {
+//   //   store.getState().setWaiting(true);
+//   // };
+
+//   // const onStalled = async () => {
+//   //   store.getState().setStalled(true);
+//   // };
+
+//   // add effects
+//   const removeEffectsFromStore = addEffectsToStore(store, element, {
+//     autohide,
+//   });
+
+//   return {
+//     destroy: () => {
+//       removeEffectsFromStore?.();
+
+//       store?.destroy?.();
+//     },
+//   };
+// };

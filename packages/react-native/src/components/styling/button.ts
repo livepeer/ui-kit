@@ -1,4 +1,4 @@
-import Svg from 'react-native-svg';
+import { default as Svg } from 'react-native-svg';
 
 import { styled } from './stitches';
 

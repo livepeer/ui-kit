@@ -7,14 +7,15 @@
     "dev:android": "react-native run-android",
     "dev:ios": "react-native run-ios",
     "install:pod": "cd ios/ && pod install",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "postinstall": "pnpm install:pod"
   },
   "dependencies": {
-    "@livepeer/react-native": "^1.0.0",
     "expo": "^47.0.0",
     "expo-av": "~13.0.1",
     "react": "18.1.0",
-    "react-native": "0.70.5"
+    "react-native": "0.70.5",
+    "react-native-svg": "12.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -33,6 +34,7 @@
     "eslint": "^7.32.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "0.72.3",
+    "react-native-codegen": "^0.72.0",
     "react-test-renderer": "18.1.0",
     "typescript": "^4.8.3"
   },

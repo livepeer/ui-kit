@@ -12,18 +12,19 @@ import { styled } from './stitches';
 //   '100%': { height: '$trackInactive' },
 // });
 
-const container = styled(View, {
-  minHeight: '$trackContainerHeightSm',
+export const SliderContainer = styled(View, {
+  minHeight: 15,
 
   '@lg': {
-    minHeight: '$trackContainerHeight',
+    minHeight: 20,
   },
 
   '@media (hover: none)': {
-    minHeight: '$trackContainerHeightSm',
+    minHeight: 15,
   },
 
   display: 'flex',
+  flexDirection: 'row',
   alignItems: 'center',
   minWidth: 80,
 
@@ -34,7 +35,7 @@ const container = styled(View, {
   width: '100%',
 });
 
-const sharedTrack = styled(View, {
+const SharedTrack = styled(View, {
   variants: {
     size: {
       default: {
@@ -65,39 +66,42 @@ const sharedTrack = styled(View, {
   },
 });
 
-const left = styled(sharedTrack, {
+export const SliderLeft = styled(SharedTrack, {
   backgroundColor: '$accent',
 
   opacity: 0.95,
 });
 
-const middle = styled(sharedTrack, {
+export const SliderMiddle = styled(SharedTrack, {
   backgroundColor: '$accent',
 
   opacity: 0.55,
 });
 
-const right = styled(sharedTrack, {
+export const SliderRight = styled(SharedTrack, {
   backgroundColor: '$accent',
 
   opacity: 0.2,
 });
 
-const thumb = styled(View, {
-  width: '$thumb',
-  height: '$thumb',
+export const SliderThumb = styled(View, {
+  variants: {
+    size: {
+      default: {
+        width: 10,
+        height: 10,
+      },
+      active: {
+        width: '$thumb',
+        height: '$thumb',
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
 
   backgroundColor: '$icon',
 
   borderRadius: '100%',
 });
-
-export const slider = {
-  container,
-  thumb,
-  track: {
-    left,
-    middle,
-    right,
-  },
-};

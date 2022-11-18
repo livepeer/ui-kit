@@ -7,6 +7,7 @@ import {
   Background,
   BottomContainer,
   Gradient,
+  GradientImage,
   Left,
   LoadingText,
   Right,
@@ -96,7 +97,13 @@ export const ControlsContainer = React.forwardRef<
           <Gradient
             display={hidden ? 'hidden' : 'shown'}
             onTouchEnd={onPressBackground}
-          />
+          >
+            <GradientImage
+              source={{
+                uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADpCAYAAADlAl1mAAAAAXNSR0IArs4c6QAAAexJREFUOE9V0ftrzXEcx/H3x+43l9lmGGaz65ld2YUZG2YYKUlJUpKSpNZSkpSkJClJSVKSkj9Sj8/3nJ12fnie5/v9en/en+/3nIjik6rfNOU6YwfJqNGp0ctWGylSLavTqzNe72S9YYgGaYOysYJodKxJ2uSeZseaC4uUWpQt0lbWWlhEtFnVZv1O5RbSLkHGbifKiBR7XJnR7kS7dG+BSNlSh7TDvZ02d5rL6DLXxfYZriCiW69bbz+rIKUDyoyDW+hxB0RPpJQOCTIOb8cRZUavB+r1QCyOVpD6WJ97s/Wb67f5GINsMaA3YG6QDbIh7zZUWEQaNjesHHHRiB7EqLlRx0qsZKQkHdMb0zturopx5bhgwqoJJaRJNmnBlGBKj8W0YNq+GTbjFzrBqjipzJh1bNYxFnNsjs1bMF9YpFhgC3qnCkQkiNMMYlGwqDzDyoiIJc+35O85a66MFHFOmbHsjmVnM1Y884rgvLKClC4oIS5ux6pg1ZZLgow1v9pa2SIus4wrBVKkbFedhVhn67Zku2bBdcENr3CT3ZLe9oJ32F12T3DfCz7QewiP9B7b8kT5VPmMbVi6yZ7DCwtemnvFXrvoDXtr7p3gPXxQfhR8suqz8gv7Kv3mZb5Lf+j91PvFfsMf+Av//gMAXDGpZ05jKQAAAABJRU5ErkJggg==',
+              }}
+            />
+          </Gradient>
           <TopContainer display={hidden ? 'hidden' : 'shown'}>
             {top}
           </TopContainer>

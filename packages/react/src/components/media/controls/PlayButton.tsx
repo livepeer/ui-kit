@@ -23,8 +23,6 @@ const DefaultPlayIcon = () => (
 const DefaultPauseIcon = () => (
   <svg width="100%" height="100%" viewBox="0 0 36 36" fill="none">
     <path
-      // fillRule="evenodd"
-      // clipRule="evenodd"
       d="M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z"
       fill="currentColor"
     />
