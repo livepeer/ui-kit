@@ -28,7 +28,11 @@ export const usePlaybackInfoOrImport = ({
   autoUrlUpload,
   onAssetStatusChange,
 }: UsePlaybackInfoOrImportProps) => {
-  const { mutate: importAsset, data: importedAsset } = useCreateAsset(
+  const {
+    mutate: importAsset,
+    data: importedAsset,
+    status,
+  } = useCreateAsset(
     decentralizedSrcOrPlaybackId
       ? ({
           sources: [
@@ -64,13 +68,13 @@ export const usePlaybackInfoOrImport = ({
   React.useEffect(() => {
     if (
       autoUrlUpload &&
-      !importedAsset &&
       importAsset &&
+      status === 'idle' &&
       (playbackInfoError as HttpError)?.code === 404
     ) {
       importAsset();
     }
-  }, [autoUrlUpload, importedAsset, playbackInfoError, importAsset]);
+  }, [autoUrlUpload, playbackInfoError, importAsset, status]);
 
   return playbackInfo;
 };
