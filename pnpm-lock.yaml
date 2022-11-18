@@ -81,7 +81,7 @@ importers:
   docs:
     specifiers:
       '@livepeer/design-system': ^1.0.4
-      '@livepeer/react': ^1.5.2
+      '@livepeer/react': ^1.5.3
       '@next/bundle-analyzer': ^13.0.0
       '@preconstruct/next': ^4.0.0
       '@rainbow-me/rainbowkit': ^0.7.4
@@ -145,7 +145,7 @@ importers:
 
   examples/_dev:
     specifiers:
-      '@livepeer/react': ^1.5.2
+      '@livepeer/react': ^1.5.3
       '@preconstruct/next': ^4.0.0
       '@rainbow-me/rainbowkit': ^0.7.4
       '@types/node': ^18.11.9
@@ -178,7 +178,7 @@ importers:
 
   examples/next:
     specifiers:
-      '@livepeer/react': ^1.5.2
+      '@livepeer/react': ^1.5.3
       '@preconstruct/next': ^4.0.0
       '@types/node': ^18.11.9
       '@types/react': ^18.0.23
