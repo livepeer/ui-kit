@@ -1,9 +1,10 @@
 import {
+  PlayerProps as CorePlayerProps,
   PlayerObjectFit,
-  PlayerProps,
   useSourceMimeTyped,
 } from '@livepeer/core-react/components';
 import { AudioSrc, VideoSrc } from 'livepeer/media';
+import { ControlsOptions } from 'livepeer/media/browser';
 
 import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
@@ -23,6 +24,11 @@ import {
   Volume,
 } from './controls';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+
+type PlayerProps = CorePlayerProps & {
+  /** Configuration for the event listeners */
+  controls?: ControlsOptions;
+};
 
 export type { PlayerObjectFit, PlayerProps };
 

@@ -59,6 +59,9 @@ export type MediaControllerState<TElement> = {
   /** If the media is in picture in picture mode */
   pictureInPicture: boolean;
 
+  /** The last time that play/pause was requested */
+  _requestedPlayPauseLastTime: number;
+
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
 
@@ -95,7 +98,7 @@ export type MediaControllerState<TElement> = {
 
   onPlay: () => void;
   onPause: () => void;
-  togglePlay: () => void;
+  togglePlay: (force?: boolean) => void;
 
   onProgress: (time: number) => void;
   onDurationChange: (duration: number) => void;
@@ -192,6 +195,7 @@ export const createControllerStore = <TElement>({
         _requestedRangeToSeekTo: 0,
         _requestedFullscreenLastTime: Date.now(),
         _requestedPictureInPictureLastTime: Date.now(),
+        _requestedPlayPauseLastTime: Date.now(),
 
         setHidden: (hidden: boolean) =>
           set(({ playing }) => ({ hidden: playing ? hidden : false })),
@@ -207,7 +211,6 @@ export const createControllerStore = <TElement>({
         onPlay: () =>
           set(() => ({
             playing: true,
-            _lastInteraction: Date.now(),
             hasPlayed: true,
             stalled: false,
             waiting: false,
@@ -220,12 +223,15 @@ export const createControllerStore = <TElement>({
             stalled: false,
             waiting: false,
           })),
-        togglePlay: () => {
+        togglePlay: (force?: boolean) => {
           const { hidden, setHidden, device } = store.getState();
-          if (hidden && device.isMobile) {
+          if (!force && hidden && device.isMobile) {
             setHidden(false);
           } else {
-            set(({ playing }) => ({ playing: !playing }));
+            set(() => ({
+              _requestedPlayPauseLastTime: Date.now(),
+              _lastInteraction: Date.now(),
+            }));
           }
         },
         onProgress: (time) => set(() => ({ progress: getFilteredNaN(time) })),

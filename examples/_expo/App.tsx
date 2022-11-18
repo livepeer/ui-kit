@@ -6,7 +6,7 @@ import {
 } from '@livepeer/react-native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -17,13 +17,16 @@ const livepeerClient = createReactClient({
 export default function App() {
   return (
     <LivepeerConfig client={livepeerClient}>
+      <StatusBar style="auto" />
       <View style={styles.container}>
+        <Text style={styles.title}>A Great Video</Text>
         <Player
           autoPlay
           muted
+          objectFit="contain"
+          title="Part Two"
           playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
         />
-        <StatusBar style="auto" />
       </View>
     </LivepeerConfig>
   );
@@ -36,6 +39,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: white,
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: 120,
+  },
+  title: {
+    fontSize: 25,
+    marginBottom: 12,
   },
 });

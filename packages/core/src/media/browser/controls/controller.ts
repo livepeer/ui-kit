@@ -339,8 +339,11 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           }
         }
 
-        if (current.playing !== prev.playing) {
-          if (current.playing) {
+        if (
+          current._requestedPlayPauseLastTime !==
+          prev._requestedPlayPauseLastTime
+        ) {
+          if (element.paused) {
             previousPromise = element.play();
           } else {
             element.pause();

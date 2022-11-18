@@ -178,7 +178,11 @@ module.exports = {
       {
         patterns: [
           {
-            group: ['livepeer/*/browser', 'livepeer/*/browser/*'],
+            group: [
+              'livepeer/*/browser',
+              'livepeer/*/browser/*',
+              '@stitches/core',
+            ],
             message: 'cannot use browser imports in react native',
           },
         ],

@@ -1,5 +1,5 @@
 import { Video } from 'expo-av';
-import { HlsSrc } from 'livepeer';
+import { ControlsOptions, HlsSrc } from 'livepeer';
 import { addMediaMetricsToStore } from 'livepeer/media';
 
 import * as React from 'react';
@@ -11,7 +11,6 @@ import { VideoPlayer } from './VideoPlayer';
 export type HlsPlayerProps = {
   src: HlsSrc;
   objectFit: PlayerObjectFit;
-  controls?: boolean;
   width?: string | number;
   autoPlay?: boolean;
   loop?: boolean;
@@ -19,6 +18,7 @@ export type HlsPlayerProps = {
   muted?: boolean;
   poster?: string;
   jwt?: string;
+  options?: ControlsOptions;
   onMetricsError?: (error: Error) => void;
 };
 

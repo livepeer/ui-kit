@@ -4,13 +4,11 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { ThemeConfig } from 'livepeer/media/browser/styling';
 
 import { LivepeerProvider } from 'livepeer/types';
 import * as React from 'react';
 
 import { Client, ReactClient } from '../client';
-import { ThemeProvider } from './ThemeProvider';
 
 export const Context = React.createContext<
   Client<LivepeerProvider> | undefined
@@ -26,8 +24,6 @@ export type LivepeerConfigProps<
 > = {
   /** React-decorated Client instance */
   client: ReactClient<TLivepeerProvider>;
-  /** Theme used for React components */
-  theme?: ThemeConfig;
   /**
    * Dehydrated state passed from a server after SSR.
    *
@@ -39,7 +35,6 @@ export type LivepeerConfigProps<
 export function LivepeerConfig<TLivepeerProvider extends LivepeerProvider>({
   children,
   client,
-  theme,
   dehydratedState,
 }: React.PropsWithChildren<LivepeerConfigProps<TLivepeerProvider>>) {
   return (
@@ -52,7 +47,7 @@ export function LivepeerConfig<TLivepeerProvider extends LivepeerProvider>({
           options={{ context: QueryClientContext } as HydrateOptions}
           state={dehydratedState ?? undefined}
         >
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          {children}
         </Hydrate>
       </QueryClientProvider>
     </Context.Provider>
