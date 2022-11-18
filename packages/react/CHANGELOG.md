@@ -1,5 +1,11 @@
 # @livepeer/react
 
+## 1.5.3
+
+### Patch Changes
+
+- [#154](https://github.com/livepeer/livepeer.js/pull/154) [`86a30f0`](https://github.com/livepeer/livepeer.js/commit/86a30f0dd20526fff2c3aa5a4ddc754569d8f5e0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the `autoUrlUpload` in the Player to fix multiple requests when attempting to automatically upload an asset.
+
 ## 1.5.2
 
 ### Patch Changes
