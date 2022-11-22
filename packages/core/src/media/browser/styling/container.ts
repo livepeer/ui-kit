@@ -127,11 +127,7 @@ export const container = css(aspectRatioContainer, {
         zIndex: 2147483647,
       },
       default: {
-        '&:hover': {
-          boxShadow: '$containerShadowHover',
-        },
-
-        boxShadow: '$containerShadow',
+        boxShadow: 'rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px',
 
         borderStyle: '$containerBorderStyle',
         borderColor: '$containerBorderColor',

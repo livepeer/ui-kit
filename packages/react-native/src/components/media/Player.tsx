@@ -8,6 +8,8 @@ import { isNumber } from 'livepeer/utils';
 
 import * as React from 'react';
 
+import { useTheme } from '../../context';
+
 import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
 import { ControlsContainer, PlayButton } from './controls';
@@ -31,15 +33,14 @@ export function Player({
   playbackId,
   refetchPlaybackInfoInterval = 5000,
   src,
-  // theme,
+  theme,
   title,
   poster,
   loop,
-  showLoadingSpinner = true,
+  shouldShowLoadingSpinner = true,
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
-  // showPipButton,
   autoUrlUpload = true,
   onMetricsError,
   jwt,
@@ -66,7 +67,7 @@ export function Player({
     [source],
   );
 
-  // const contextTheme = React.useContext(ThemeContext);
+  const contextTheme = useTheme(theme);
 
   const playerRef = React.useCallback((element: MediaElement | null) => {
     if (element) {
@@ -86,7 +87,7 @@ export function Player({
 
   return (
     <MediaControllerProvider element={mediaElement}>
-      <Container aspectRatio={aspectRatio}>
+      <Container theme={contextTheme} aspectRatio={aspectRatio}>
         {source && !Array.isArray(source) ? (
           <HlsPlayer
             ref={playerRef}
@@ -128,8 +129,8 @@ export function Player({
           <>
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
-              showLoadingSpinner={showLoadingSpinner}
-              topLoadingText={topLoadingText}
+              shouldShowLoadingSpinner={shouldShowLoadingSpinner}
+              loadingText={topLoadingText}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={
                 <>

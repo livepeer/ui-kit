@@ -1,7 +1,8 @@
+import { ThemeConfig } from 'livepeer/media';
 import { deepMerge } from 'livepeer/utils';
 import * as React from 'react';
 
-import { ThemeConfig, createPlayerTheme } from '../components/styling/stitches';
+import { createPlayerTheme } from '../components/styling';
 
 import { ThemeContext } from './ThemeContext';
 
@@ -15,7 +16,9 @@ export const useTheme = (theme?: ThemeConfig) => {
         : contextTheme
       : theme;
 
-    return mergedTheme ? createPlayerTheme(mergedTheme) : undefined;
+    return mergedTheme
+      ? (createPlayerTheme(mergedTheme) as ThemeConfig)
+      : undefined;
   }, [theme, contextTheme]);
 
   return containerTheme;

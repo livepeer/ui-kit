@@ -5,6 +5,8 @@ import {
   InterruptionModeIOS,
   ResizeMode,
   Video,
+  VideoFullscreenUpdate,
+  VideoFullscreenUpdateEvent,
 } from 'expo-av';
 import {
   ControlsOptions,
@@ -80,9 +82,10 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
     }, [src]);
 
     const onPlaybackStatusUpdate = useCallback(
-      async (status: AVPlaybackStatus) => {
-        if (status.isLoaded) {
-          store.setState(({ buffered, duration }) => ({
+      async (status?: AVPlaybackStatus) => {
+        if (status?.isLoaded) {
+          store.setState(({ buffered, duration, hasPlayed }) => ({
+            hasPlayed: hasPlayed || status.positionMillis > 0,
             volume: status.volume,
             canPlay: true,
             playing: status.shouldPlay,
@@ -90,7 +93,6 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
             duration: status.durationMillis
               ? status.durationMillis / 1000
               : duration,
-            // muted: status.isMuted,
             playbackRate: status.rate,
             buffered: status.playableDurationMillis
               ? status.playableDurationMillis / 1000
@@ -98,17 +100,27 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
 
             isVolumeChangeSupported: true,
 
-            // double check this
             stalled: status.shouldPlay && !status.isPlaying,
             waiting: status.isBuffering,
           }));
-        } else {
+        } else if (status) {
           store.setState({
             loading: !status.error,
             error: status.error,
             canPlay: false,
           });
         }
+      },
+      [store],
+    );
+
+    const onFullscreenUpdate = useCallback(
+      async (status?: VideoFullscreenUpdateEvent) => {
+        store.setState(() => ({
+          fullscreen:
+            status?.fullscreenUpdate !==
+            VideoFullscreenUpdate.PLAYER_DID_DISMISS,
+        }));
       },
       [store],
     );
@@ -121,6 +133,7 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
         resizeMode={
           objectFit === 'contain' ? ResizeMode.CONTAIN : ResizeMode.COVER
         }
+        onFullscreenUpdate={onFullscreenUpdate}
         onPlaybackStatusUpdate={onPlaybackStatusUpdate}
         // onError={onError}
         shouldPlay={hasPlayed ? playing : autoPlay}
@@ -183,7 +196,6 @@ const addEffectsToStore = <TElement extends MediaElement>(
         }
 
         if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
-          console.log(`seeking to ${current._requestedRangeToSeekTo}`);
           previousPromise = element.setStatusAsync({
             progressUpdateIntervalMillis: 20,
             positionMillis: current._requestedRangeToSeekTo * 1000, // convert to ms
@@ -223,51 +235,3 @@ const addEffectsToStore = <TElement extends MediaElement>(
     }
   });
 };
-
-// const _addEventListeners = <TElement extends MediaElement>(
-//   store: MediaControllerStore<TElement>,
-//   { autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
-// ) => {
-//   const element = store?.getState()?._element;
-
-//   // const initializedState = store.getState();
-
-//   // restore the persisted values from store
-//   if (element) {
-//     // await element.setVolumeAsync(initializedState.volume);
-//   }
-
-//   // const onTouchUpdate = async () => {
-//   //   store.getState()._updateLastInteraction();
-//   // };
-
-//   // let retryCount = 0;
-
-//   // const onError = async (e: ErrorEvent) => {
-//   //   store.getState().setError(e.message);
-//   //   await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-//   //   await element?.unloadAsync();
-//   //   // TODO add error handling
-//   // };
-
-//   // const onWaiting = async () => {
-//   //   store.getState().setWaiting(true);
-//   // };
-
-//   // const onStalled = async () => {
-//   //   store.getState().setStalled(true);
-//   // };
-
-//   // add effects
-//   const removeEffectsFromStore = addEffectsToStore(store, element, {
-//     autohide,
-//   });
-
-//   return {
-//     destroy: () => {
-//       removeEffectsFromStore?.();
-
-//       store?.destroy?.();
-//     },
-//   };
-// };

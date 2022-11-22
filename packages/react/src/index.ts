@@ -3,8 +3,8 @@ export {
   defaultTheme,
   getCssText,
   styling,
-  type ThemeConfig,
 } from 'livepeer/media/browser/styling';
+export { type ThemeConfig } from 'livepeer/media';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,

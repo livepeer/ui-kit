@@ -9,4 +9,3 @@ export * from './volume';
 
 export type { AspectRatio } from './container';
 export { createPlayerTheme, defaultTheme, ThemeProvider } from './stitches';
-export type { ThemeConfig } from './stitches';

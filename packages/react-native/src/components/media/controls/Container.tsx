@@ -1,21 +1,29 @@
+import { ThemeConfig } from 'livepeer/media';
 import * as React from 'react';
 
-import { AspectRatio, Container as ContainerStyled } from '../../styling';
+import {
+  AspectRatio,
+  Container as ContainerStyled,
+  ThemeProvider,
+} from '../../styling';
 import { MediaElement } from '../types';
 
 export type ContainerProps = {
   aspectRatio: AspectRatio;
   children: React.ReactNode;
+  theme?: ThemeConfig;
 };
 
 export const Container = React.forwardRef<MediaElement, ContainerProps>(
   (props, ref) => {
-    const { children, aspectRatio } = props;
+    const { children, aspectRatio, theme } = props;
 
     return (
-      <ContainerStyled aspectRatio={aspectRatio} ref={ref}>
-        {children}
-      </ContainerStyled>
+      <ThemeProvider theme={theme}>
+        <ContainerStyled aspectRatio={aspectRatio} ref={ref}>
+          {children}
+        </ContainerStyled>
+      </ThemeProvider>
     );
   },
 );

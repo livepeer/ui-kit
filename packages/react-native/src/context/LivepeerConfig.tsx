@@ -5,10 +5,11 @@ import {
   QueryClientContext as CoreQueryClientContext,
   useClient as useClientCore,
 } from '@livepeer/core-react/context';
+import { ThemeConfig } from 'livepeer/media';
 import { LivepeerProvider } from 'livepeer/types';
 import * as React from 'react';
 
-import { ThemeConfig, ThemeProvider } from '../components/styling/stitches';
+import { ThemeProvider } from './ThemeProvider';
 
 export const Context = CoreContext;
 export const QueryClientContext = CoreQueryClientContext;

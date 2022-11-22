@@ -28,7 +28,7 @@ export const ControlsContainer = (props: ControlsContainerProps) => {
     left,
     right,
     poster,
-    showLoadingSpinner = true,
+    shouldShowLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
   } = props;
@@ -61,7 +61,7 @@ export const ControlsContainer = (props: ControlsContainerProps) => {
           onMouseUp={containerProps.onPress}
         />
       )}
-      {showLoadingSpinner && !isLoaded && (
+      {shouldShowLoadingSpinner && !isLoaded && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}

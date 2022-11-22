@@ -1,6 +1,5 @@
+import { ThemeConfig } from 'livepeer/media';
 import * as React from 'react';
-
-import { ThemeConfig } from '../components/styling/stitches';
 
 import { ThemeContext } from './ThemeContext';
 

@@ -36,7 +36,6 @@ export const BaseSlider = (props: BaseSliderProps) => {
   const onTouchStartOrMove = React.useCallback(
     async (e: GestureResponderEvent) => {
       await sliderProps?.onUpdate(e.nativeEvent.locationX);
-      // setIsDragging(true);
     },
     [sliderProps],
   );

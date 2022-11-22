@@ -1,5 +1,6 @@
 import { ControlsOptions } from 'livepeer';
-import { AspectRatio, ThemeConfig } from 'livepeer/media/browser/styling';
+import { ThemeConfig } from 'livepeer/media';
+import { AspectRatio } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 export type PlayerObjectFit = 'cover' | 'contain';
@@ -30,8 +31,8 @@ export type PlayerProps = {
    * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility.
    */
   poster?: string | React.ReactNode;
-  /** Shows/hides the loading spinner */
-  showLoadingSpinner?: boolean;
+  /** Enables/disables the loading spinner */
+  shouldShowLoadingSpinner?: boolean;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
@@ -54,9 +55,6 @@ export type PlayerProps = {
 
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
-
-  /** Whether to show the picture in picture button */
-  showPipButton?: boolean;
 
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   autoUrlUpload?: boolean;

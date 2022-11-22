@@ -26,6 +26,8 @@ import {
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 
 type PlayerProps = CorePlayerProps & {
+  /** Whether to show the picture in picture button (web only) */
+  showPipButton?: boolean;
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
 };
@@ -44,7 +46,7 @@ export function Player({
   title,
   poster,
   loop,
-  showLoadingSpinner = true,
+  shouldShowLoadingSpinner = true,
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
@@ -133,8 +135,8 @@ export function Player({
           <>
             <ControlsContainer
               hidePosterOnPlayed={hidePosterOnPlayed}
-              showLoadingSpinner={showLoadingSpinner}
-              topLoadingText={topLoadingText}
+              shouldShowLoadingSpinner={shouldShowLoadingSpinner}
+              loadingText={topLoadingText}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}

@@ -10,6 +10,7 @@ export {
   type MediaSizing,
   type MetricsStatus,
   type PlaybackMonitor,
+  type ThemeConfig,
 } from './core';
 export { getMediaSourceType } from './src';
 export type { AudioSrc, HlsSrc, Src, VideoSrc } from './src';

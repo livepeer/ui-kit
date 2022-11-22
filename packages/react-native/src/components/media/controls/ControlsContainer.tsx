@@ -41,7 +41,7 @@ export const ControlsContainer = (props: ControlsContainerProps) => {
     left,
     right,
     poster,
-    showLoadingSpinner = true,
+    shouldShowLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
   } = props;
@@ -67,7 +67,7 @@ export const ControlsContainer = (props: ControlsContainerProps) => {
       ) : (
         <Background display={'hidden'} onTouchEnd={containerProps.onPress} />
       )}
-      {showLoadingSpinner && !isLoaded && (
+      {shouldShowLoadingSpinner && !isLoaded && (
         <Background>
           {loadingText && <LoadingText>{loadingText}</LoadingText>}
 

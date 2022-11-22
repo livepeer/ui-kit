@@ -20,4 +20,3 @@ export const styling = {
 
 export type { AspectRatio } from './container';
 export { createPlayerTheme, defaultTheme, getCssText } from './stitches';
-export type { ThemeConfig } from './stitches';
