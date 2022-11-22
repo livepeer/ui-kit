@@ -1,5 +1,20 @@
 # @livepeer/react
 
+## 1.5.4
+
+### Patch Changes
+
+- [#158](https://github.com/livepeer/livepeer.js/pull/158) [`d89613e`](https://github.com/livepeer/livepeer.js/commit/d89613e34162247c4587c88f84e2410df97394ef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed a bug with the same file not being able to be uploaded twice by the same client - reverted changes to the Tus fingerprint.
+
+- Updated dependencies [[`d89613e`](https://github.com/livepeer/livepeer.js/commit/d89613e34162247c4587c88f84e2410df97394ef)]:
+  - livepeer@1.4.3
+
+## 1.5.3
+
+### Patch Changes
+
+- [#154](https://github.com/livepeer/livepeer.js/pull/154) [`86a30f0`](https://github.com/livepeer/livepeer.js/commit/86a30f0dd20526fff2c3aa5a4ddc754569d8f5e0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the `autoUrlUpload` in the Player to fix multiple requests when attempting to automatically upload an asset.
+
 ## 1.5.2
 
 ### Patch Changes
