@@ -1,9 +1,10 @@
+import { useFullscreenButton } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf, useConditionalIcon } from '../../system';
+import { PropsOf } from '../../system';
 
 const DefaultEnterFullscreenIcon = () => (
   <svg
@@ -93,52 +94,30 @@ export type FullscreenButtonProps = Omit<PropsOf<'button'>, 'children'> & {
     | Record<string, never>
   );
 
-export const FullscreenButton = React.forwardRef<
-  HTMLButtonElement,
-  FullscreenButtonProps
->((props, ref) => {
+export const FullscreenButton = (props: FullscreenButtonProps) => {
   const { fullscreen, pictureInPicture, requestToggleFullscreen } =
     useMediaController(mediaControllerSelector);
 
-  const { enterIcon, exitIcon, onClick, ...rest } = props;
-
-  const onClickComposed = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      await onClick?.(e);
-      await requestToggleFullscreen();
-    },
-    [onClick, requestToggleFullscreen],
-  );
-
-  const _children = useConditionalIcon(
+  const { title, buttonProps } = useFullscreenButton({
     fullscreen,
-    exitIcon,
-    <DefaultExitFullscreenIcon />,
-    enterIcon,
-    <DefaultEnterFullscreenIcon />,
-  );
+    pictureInPicture,
+    requestToggleFullscreen,
+    defaultEnterIcon: <DefaultEnterFullscreenIcon />,
+    defaultExitIcon: <DefaultExitFullscreenIcon />,
+    ...props,
+  });
 
-  const title = React.useMemo(
-    () => (fullscreen ? 'Exit full screen (f)' : 'Full screen (f)'),
-    [fullscreen],
-  );
-
-  if (pictureInPicture) {
+  if (!buttonProps) {
     return <></>;
   }
 
   return (
     <button
-      {...rest}
+      {...buttonProps}
       className={styling.iconButton()}
       title={title}
       aria-label={title}
-      ref={ref}
-      onClick={onClickComposed}
-    >
-      {_children}
-    </button>
+      onClick={buttonProps.onPress}
+    />
   );
-});
-
-FullscreenButton.displayName = 'FullscreenButton';
+};

@@ -1,6 +1,9 @@
+import {
+  ControlsContainerProps,
+  useControlsContainer,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
-import * as React from 'react';
 
 import { useMediaController } from '../../../context';
 
@@ -18,22 +21,7 @@ const mediaControllerSelector = ({
   buffered,
 });
 
-export type ControlsContainerProps = {
-  topLoadingText?: string | null;
-  showLoadingSpinner?: boolean;
-  hidePosterOnPlayed?: boolean;
-  poster?: React.ReactNode;
-
-  top?: React.ReactNode;
-  middle?: React.ReactNode;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-};
-
-export const ControlsContainer = React.forwardRef<
-  HTMLDivElement,
-  ControlsContainerProps
->((props, ref) => {
+export const ControlsContainer = (props: ControlsContainerProps) => {
   const {
     top,
     middle,
@@ -42,22 +30,17 @@ export const ControlsContainer = React.forwardRef<
     poster,
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
-    topLoadingText,
+    loadingText,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
     useMediaController(mediaControllerSelector);
 
-  const isLoaded = React.useMemo(
-    () => canPlay || buffered !== 0,
-    [canPlay, buffered],
-  );
-
-  const onClickBackground = React.useCallback(() => {
-    if (isLoaded) {
-      togglePlay();
-    }
-  }, [togglePlay, isLoaded]);
+  const { isLoaded, containerProps } = useControlsContainer({
+    togglePlay,
+    canPlay,
+    buffered,
+  });
 
   return (
     <>
@@ -66,7 +49,7 @@ export const ControlsContainer = React.forwardRef<
           className={styling.controlsContainer.background({
             display: hasPlayed && hidePosterOnPlayed ? 'hidden' : 'shown',
           })}
-          onMouseUp={onClickBackground}
+          onMouseUp={containerProps.onPress}
         >
           {poster}
         </div>
@@ -75,17 +58,17 @@ export const ControlsContainer = React.forwardRef<
           className={styling.controlsContainer.background({
             display: 'hidden',
           })}
-          onMouseUp={onClickBackground}
+          onMouseUp={containerProps.onPress}
         />
       )}
       {showLoadingSpinner && !isLoaded && (
         <div
           className={styling.controlsContainer.background()}
-          onMouseUp={onClickBackground}
+          onMouseUp={containerProps.onPress}
         >
-          {topLoadingText && (
+          {loadingText && (
             <div className={styling.controlsContainer.loadingText()}>
-              {topLoadingText}
+              {loadingText}
             </div>
           )}
 
@@ -99,7 +82,7 @@ export const ControlsContainer = React.forwardRef<
             className={styling.controlsContainer.gradient({
               display: hidden ? 'hidden' : 'shown',
             })}
-            onMouseUp={onClickBackground}
+            onMouseUp={containerProps.onPress}
           />
           <div
             className={styling.controlsContainer.top.container({
@@ -112,7 +95,6 @@ export const ControlsContainer = React.forwardRef<
             className={styling.controlsContainer.bottom.container({
               display: hidden ? 'hidden' : 'shown',
             })}
-            ref={ref}
           >
             <div
               className={styling.controlsContainer.bottom.middle.container()}
@@ -132,6 +114,4 @@ export const ControlsContainer = React.forwardRef<
       )}
     </>
   );
-});
-
-ControlsContainer.displayName = 'ControlsContainer';
+};

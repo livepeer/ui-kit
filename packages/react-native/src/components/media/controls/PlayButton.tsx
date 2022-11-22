@@ -1,15 +1,16 @@
-import { useConditionalIcon } from '@livepeer/core-react/hooks';
+import {
+  PlayButtonProps,
+  usePlayButton,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 
 import * as React from 'react';
-import { GestureResponderEvent } from 'react-native';
 
 import { Path } from 'react-native-svg';
 
 import { useMediaController } from '../../../context';
 import { IconButton } from '../../styling';
 import { ColoredSvg } from '../../styling/button';
-import { PropsOf } from '../../system';
 import { MediaElement } from '../types';
 
 const DefaultPlayIcon = () => (
@@ -24,25 +25,6 @@ const DefaultPauseIcon = () => (
   </ColoredSvg>
 );
 
-export type PlayButtonProps = Omit<PropsOf<typeof IconButton>, 'children'> & {
-  /**
-   * The play icon to be used for the button.
-   * @type React.ReactElement
-   */
-  playIcon?: React.ReactElement;
-  /**
-   * The pause icon to be used for the button.
-   * @type React.ReactElement
-   */
-  pauseIcon?: React.ReactElement;
-} & (
-    | {
-        playIcon: React.ReactElement;
-        pauseIcon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
-
 const mediaControllerSelector = ({
   togglePlay,
   playing,
@@ -51,42 +33,16 @@ const mediaControllerSelector = ({
   playing,
 });
 
-export const PlayButton = React.forwardRef<typeof IconButton, PlayButtonProps>(
-  (props, _ref) => {
-    const { togglePlay, playing } = useMediaController(mediaControllerSelector);
+export const PlayButton = (props: PlayButtonProps) => {
+  const { togglePlay, playing } = useMediaController(mediaControllerSelector);
 
-    const { playIcon, pauseIcon, onPress, ...rest } = props;
+  const { buttonProps, title } = usePlayButton({
+    togglePlay,
+    playing,
+    defaultPauseIcon: <DefaultPauseIcon />,
+    defaultPlayIcon: <DefaultPlayIcon />,
+    ...props,
+  });
 
-    const onPressComposed = async (e: GestureResponderEvent) => {
-      await onPress?.(e);
-      await togglePlay();
-    };
-
-    const _children = useConditionalIcon(
-      playing,
-      pauseIcon,
-      <DefaultPauseIcon />,
-      playIcon,
-      <DefaultPlayIcon />,
-    );
-
-    const title = React.useMemo(
-      () => (playing ? 'Pause (k)' : 'Play (k)'),
-      [playing],
-    );
-
-    return (
-      <IconButton
-        {...rest}
-        // className={styling.iconButton()}
-        // title={title}
-        // aria-label={title}
-        accessibilityLabel={title}
-        // ref={ref}
-        onPress={onPressComposed}
-      >
-        {_children}
-      </IconButton>
-    );
-  },
-);
+  return <IconButton {...buttonProps} accessibilityLabel={title} />;
+};

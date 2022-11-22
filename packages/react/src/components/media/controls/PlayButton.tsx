@@ -1,9 +1,11 @@
+import {
+  PlayButtonProps,
+  usePlayButton,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
-import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf, useConditionalIcon } from '../../system';
 
 const DefaultPlayIcon = () => (
   <svg
@@ -29,25 +31,6 @@ const DefaultPauseIcon = () => (
   </svg>
 );
 
-export type PlayButtonProps = Omit<PropsOf<'button'>, 'children'> & {
-  /**
-   * The play icon to be used for the button.
-   * @type React.ReactElement
-   */
-  playIcon?: React.ReactElement;
-  /**
-   * The pause icon to be used for the button.
-   * @type React.ReactElement
-   */
-  pauseIcon?: React.ReactElement;
-} & (
-    | {
-        playIcon: React.ReactElement;
-        pauseIcon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
-
 const mediaControllerSelector = ({
   togglePlay,
   playing,
@@ -56,43 +39,24 @@ const mediaControllerSelector = ({
   playing,
 });
 
-export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
-  (props, ref) => {
-    const { togglePlay, playing } = useMediaController(mediaControllerSelector);
+export const PlayButton = (props: PlayButtonProps) => {
+  const { togglePlay, playing } = useMediaController(mediaControllerSelector);
 
-    const { playIcon, pauseIcon, onClick, ...rest } = props;
+  const { buttonProps, title } = usePlayButton({
+    togglePlay,
+    playing,
+    defaultPauseIcon: <DefaultPauseIcon />,
+    defaultPlayIcon: <DefaultPlayIcon />,
+    ...props,
+  });
 
-    const onClickComposed = async (
-      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ) => {
-      await onClick?.(e);
-      await togglePlay();
-    };
-
-    const _children = useConditionalIcon(
-      playing,
-      pauseIcon,
-      <DefaultPauseIcon />,
-      playIcon,
-      <DefaultPlayIcon />,
-    );
-
-    const title = React.useMemo(
-      () => (playing ? 'Pause (k)' : 'Play (k)'),
-      [playing],
-    );
-
-    return (
-      <button
-        {...rest}
-        className={styling.iconButton()}
-        title={title}
-        aria-label={title}
-        ref={ref}
-        onClick={onClickComposed}
-      >
-        {_children}
-      </button>
-    );
-  },
-);
+  return (
+    <button
+      {...buttonProps}
+      className={styling.iconButton()}
+      title={title}
+      aria-label={title}
+      onClick={buttonProps.onPress}
+    />
+  );
+};

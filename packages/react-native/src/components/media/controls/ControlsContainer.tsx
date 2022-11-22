@@ -1,6 +1,9 @@
+import {
+  ControlsContainerProps,
+  useControlsContainer,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
-import { ViewComponent } from 'react-native';
 
 import { useMediaController } from '../../../context';
 import {
@@ -31,22 +34,7 @@ const mediaControllerSelector = ({
   buffered,
 });
 
-export type ControlsContainerProps = {
-  topLoadingText?: string | null;
-  showLoadingSpinner?: boolean;
-  hidePosterOnPlayed?: boolean;
-  poster?: React.ReactNode;
-
-  top?: React.ReactNode;
-  middle?: React.ReactNode;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-};
-
-export const ControlsContainer = React.forwardRef<
-  ViewComponent,
-  ControlsContainerProps
->((props, ref) => {
+export const ControlsContainer = (props: ControlsContainerProps) => {
   const {
     top,
     middle,
@@ -55,38 +43,33 @@ export const ControlsContainer = React.forwardRef<
     poster,
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
-    topLoadingText,
+    loadingText,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
     useMediaController(mediaControllerSelector);
 
-  const isLoaded = React.useMemo(
-    () => canPlay || buffered !== 0,
-    [canPlay, buffered],
-  );
-
-  const onPressBackground = React.useCallback(() => {
-    if (isLoaded) {
-      togglePlay();
-    }
-  }, [togglePlay, isLoaded]);
+  const { isLoaded, containerProps } = useControlsContainer({
+    togglePlay,
+    canPlay,
+    buffered,
+  });
 
   return (
     <>
       {poster ? (
         <Background
           display={hasPlayed && hidePosterOnPlayed ? 'hidden' : 'shown'}
-          onTouchEnd={onPressBackground}
+          onTouchEnd={containerProps.onPress}
         >
           {poster}
         </Background>
       ) : (
-        <Background display={'hidden'} onTouchEnd={onPressBackground} />
+        <Background display={'hidden'} onTouchEnd={containerProps.onPress} />
       )}
       {showLoadingSpinner && !isLoaded && (
         <Background>
-          {topLoadingText && <LoadingText>{topLoadingText}</LoadingText>}
+          {loadingText && <LoadingText>{loadingText}</LoadingText>}
 
           <Loading />
         </Background>
@@ -96,7 +79,7 @@ export const ControlsContainer = React.forwardRef<
         <>
           <Gradient
             display={hidden ? 'hidden' : 'shown'}
-            onTouchEnd={onPressBackground}
+            onTouchEnd={containerProps.onPress}
           >
             <GradientImage
               source={{
@@ -107,7 +90,7 @@ export const ControlsContainer = React.forwardRef<
           <TopContainer display={hidden ? 'hidden' : 'shown'}>
             {top}
           </TopContainer>
-          <BottomContainer display={hidden ? 'hidden' : 'shown'} ref={ref}>
+          <BottomContainer display={hidden ? 'hidden' : 'shown'}>
             <SpaceBetweenContainer>{middle}</SpaceBetweenContainer>
             <SpaceBetweenContainer>
               <Left>{left}</Left>
@@ -118,6 +101,4 @@ export const ControlsContainer = React.forwardRef<
       )}
     </>
   );
-});
-
-ControlsContainer.displayName = 'ControlsContainer';
+};

@@ -1,3 +1,4 @@
+import { useProgress } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
@@ -45,44 +46,13 @@ export const Progress = (props: ProgressProps) => {
     mediaControllerSelector,
   );
 
-  console.log({ progress, duration, buffered });
+  const { progressProps, title } = useProgress({
+    duration,
+    progress,
+    requestSeek,
+    buffered,
+    ...props,
+  });
 
-  const [min, max, current] = React.useMemo(
-    () =>
-      [
-        0,
-        duration && !isNaN(duration) ? duration : 0,
-        progress && !isNaN(progress) ? progress : 0,
-      ] as const,
-    [duration, progress],
-  );
-  const value = React.useMemo(() => current / (max - min), [min, max, current]);
-  const secondaryValue = React.useMemo(
-    () => buffered / (max - min),
-    [min, max, buffered],
-  );
-
-  const onChange = React.useCallback(
-    async (value: number) => {
-      const newSeek = value * (max - min);
-
-      await props?.onSeek?.(newSeek);
-      requestSeek(newSeek);
-    },
-    [max, min, requestSeek, props],
-  );
-
-  const durationMinutes = React.useMemo(
-    () => (duration / 60).toFixed(1),
-    [duration],
-  );
-
-  return (
-    <BaseSlider
-      ariaName={`progress of ${durationMinutes} minutes`}
-      value={value}
-      secondaryValue={secondaryValue}
-      onChange={onChange}
-    />
-  );
+  return <BaseSlider {...progressProps} ariaName={title} />;
 };

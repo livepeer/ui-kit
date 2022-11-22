@@ -1,2 +1,18 @@
-export { useSourceMimeTyped } from './player';
-export type { PlayerObjectFit, PlayerProps } from './player';
+export {
+  useBaseSlider,
+  useControlsContainer,
+  useFullscreenButton,
+  usePlayButton,
+  useProgress,
+  useSourceMimeTyped,
+  useTimeDisplay,
+  useVolume,
+  type BaseSliderProps,
+  type ControlsContainerProps,
+  type FullscreenButtonProps,
+  type PlayButtonProps,
+  type PlayerObjectFit,
+  type PlayerProps,
+  type ProgressProps,
+  type VolumeProps,
+} from './player';

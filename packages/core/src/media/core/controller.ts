@@ -22,7 +22,7 @@ export type ElementSize = {
   height: number;
 };
 
-export type MediaControllerState<TElement> = {
+export type MediaControllerState<TElement = void> = {
   /** If the media has loaded and can be played */
   canPlay: boolean;
   /** If the controls are currently hidden */

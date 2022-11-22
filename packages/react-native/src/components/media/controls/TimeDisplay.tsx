@@ -1,3 +1,4 @@
+import { useTimeDisplay } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
@@ -6,7 +7,7 @@ import { TimeContainer, TimeLiveIndicator, TimeText } from '../../styling';
 import { PropsOf } from '../../system';
 import { MediaElement } from '../types';
 
-export type TimeDisplayProps = Omit<PropsOf<'span'>, 'children'>;
+export type TimeDisplayProps = Omit<PropsOf<typeof TimeText>, 'children'>;
 
 const mediaControllerSelector = ({
   duration,
@@ -18,69 +19,26 @@ const mediaControllerSelector = ({
   live,
 });
 
-const getFormattedMinutesAndSeconds = (valueInSeconds: number | null) => {
-  if (
-    valueInSeconds !== null &&
-    !isNaN(valueInSeconds) &&
-    isFinite(valueInSeconds)
-  ) {
-    const roundedValue = Math.round(valueInSeconds);
+export const TimeDisplay = (props: TimeDisplayProps) => {
+  const { duration, progress, live } = useMediaController(
+    mediaControllerSelector,
+  );
 
-    const minutes = Math.floor(roundedValue / 60);
-    const seconds = Math.floor(roundedValue % 60);
+  const { title, live: isLive } = useTimeDisplay({
+    duration,
+    progress,
+    live,
+  });
 
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  }
-
-  return `0:00`;
+  return (
+    <>
+      <TimeText {...props}>{title}</TimeText>
+      {isLive && (
+        <TimeContainer accessibilityLabel="Live streaming media">
+          <TimeLiveIndicator />
+          <TimeText {...props}>LIVE</TimeText>
+        </TimeContainer>
+      )}
+    </>
+  );
 };
-
-export const TimeDisplay = React.forwardRef<typeof TimeText, TimeDisplayProps>(
-  (props, ref) => {
-    const { duration, progress, live } = useMediaController(
-      mediaControllerSelector,
-    );
-
-    const formattedProgress = React.useMemo(
-      () => getFormattedMinutesAndSeconds(progress ?? 0),
-      [progress],
-    );
-
-    const formattedDuration = React.useMemo(
-      () => getFormattedMinutesAndSeconds(duration ?? null),
-      [duration],
-    );
-
-    const formattedTime = React.useMemo(
-      () =>
-        live
-          ? formattedProgress
-          : `${formattedProgress} / ${formattedDuration}`,
-      [formattedProgress, formattedDuration, live],
-    );
-
-    return (
-      <>
-        <TimeText
-          // aria-label={'Playback time'}
-          ref={ref}
-          {...props}
-        >
-          {formattedTime}
-        </TimeText>
-        {live && (
-          <TimeContainer>
-            <TimeLiveIndicator />
-            <TimeText
-              // aria-label={'Live streaming media'}
-              ref={ref}
-              {...props}
-            >
-              LIVE
-            </TimeText>
-          </TimeContainer>
-        )}
-      </>
-    );
-  },
-);

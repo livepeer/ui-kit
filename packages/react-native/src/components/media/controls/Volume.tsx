@@ -1,14 +1,12 @@
-import { useConditionalIcon } from '@livepeer/core-react/hooks';
+import { VolumeProps, useVolume } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 
 import * as React from 'react';
-import { GestureResponderEvent } from 'react-native';
 import { Path } from 'react-native-svg';
 
 import { useMediaController } from '../../../context';
 import { VolumeContainer } from '../../styling';
 import { ColoredSvg, IconButton } from '../../styling/button';
-import { PropsOf } from '../../system';
 import { MediaElement } from '../types';
 
 const DefaultMutedIcon = () => (
@@ -35,78 +33,38 @@ const mediaControllerSelector = ({
   requestToggleMute,
   requestVolume,
   muted,
+  volume,
 }: MediaControllerState<MediaElement>) => ({
   isVolumeChangeSupported,
   requestToggleMute,
   requestVolume,
   muted,
+  volume,
 });
 
-export type VolumeProps = Omit<PropsOf<typeof IconButton>, 'children'> & {
-  /**
-   * The icon to be used for the button when unmuted.
-   * @type React.ReactElement
-   */
-  unmutedIcon?: React.ReactElement;
-  /**
-   * The icon to be used for the button when muted.
-   * @type React.ReactElement
-   */
-  mutedIcon?: React.ReactElement;
+export const Volume = (props: VolumeProps) => {
+  const {
+    volume,
+    requestToggleMute,
+    muted,
+    requestVolume,
+    isVolumeChangeSupported,
+  } = useMediaController(mediaControllerSelector);
+
+  const { buttonProps, title } = useVolume({
+    volume,
+    requestToggleMute,
+    muted,
+    requestVolume,
+    isVolumeChangeSupported,
+    defaultMutedIcon: <DefaultMutedIcon />,
+    defaultUnmutedIcon: <DefaultUnmutedIcon />,
+    ...props,
+  });
+
+  return (
+    <VolumeContainer>
+      <IconButton accessibilityLabel={title} {...buttonProps} />
+    </VolumeContainer>
+  );
 };
-
-export const Volume = React.forwardRef<typeof IconButton, VolumeProps>(
-  (props, ref) => {
-    const { requestToggleMute, muted } = useMediaController(
-      mediaControllerSelector,
-    );
-
-    const {
-      unmutedIcon,
-      mutedIcon,
-      onPress,
-
-      ...rest
-    } = props;
-
-    const onPressComposed = React.useCallback(
-      async (e: GestureResponderEvent) => {
-        await onPress?.(e);
-
-        requestToggleMute();
-      },
-      [onPress, requestToggleMute],
-    );
-
-    const _children = useConditionalIcon(
-      !muted,
-      unmutedIcon,
-      <DefaultUnmutedIcon />,
-      mutedIcon,
-      <DefaultMutedIcon />,
-    );
-
-    const title = React.useMemo(
-      () => (muted ? 'Unmute (m)' : 'Mute (m)'),
-      [muted],
-    );
-
-    return (
-      <VolumeContainer>
-        <IconButton
-          title={title}
-          // aria-label={title}
-          ref={ref}
-          onPress={onPressComposed}
-          {...rest}
-        >
-          {_children}
-        </IconButton>
-
-        {/* {isVolumeChangeSupported && showSlider && <VolumeProgress />} */}
-      </VolumeContainer>
-    );
-  },
-);
-
-Volume.displayName = 'Volume';

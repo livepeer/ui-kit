@@ -1,14 +1,15 @@
-import { useConditionalIcon } from '@livepeer/core-react/hooks';
+import {
+  FullscreenButtonProps,
+  useFullscreenButton,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 
 import * as React from 'react';
-import { GestureResponderEvent } from 'react-native';
 import { Path } from 'react-native-svg';
 
 import { useMediaController } from '../../../context';
 import { IconButton } from '../../styling';
 import { ColoredSvg } from '../../styling/button';
-import { PropsOf } from '../../system';
 import { MediaElement } from '../types';
 
 const DefaultEnterFullscreenIcon = () => (
@@ -39,75 +40,22 @@ const mediaControllerSelector = ({
   requestToggleFullscreen,
 });
 
-export type FullscreenButtonProps = Omit<
-  PropsOf<typeof IconButton>,
-  'children'
-> & {
-  /**
-   * The enter fullscreen icon to be used for the button.
-   * @type React.ReactElement
-   */
-  enterIcon?: React.ReactElement;
-  /**
-   * The exit fullscreen icon to be used for the button.
-   * @type React.ReactElement
-   */
-  exitIcon?: React.ReactElement;
-} & (
-    | {
-        enterIcon: React.ReactElement;
-        exitIcon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
-
-export const FullscreenButton = React.forwardRef<
-  typeof IconButton,
-  FullscreenButtonProps
->((props, ref) => {
+export const FullscreenButton = (props: FullscreenButtonProps) => {
   const { fullscreen, pictureInPicture, requestToggleFullscreen } =
     useMediaController(mediaControllerSelector);
 
-  const { enterIcon, exitIcon, onPress, ...rest } = props;
-
-  const onPressComposed = React.useCallback(
-    async (e: GestureResponderEvent) => {
-      await onPress?.(e);
-      await requestToggleFullscreen();
-    },
-    [onPress, requestToggleFullscreen],
-  );
-
-  const _children = useConditionalIcon(
+  const { title, buttonProps } = useFullscreenButton({
     fullscreen,
-    exitIcon,
-    <DefaultExitFullscreenIcon />,
-    enterIcon,
-    <DefaultEnterFullscreenIcon />,
-  );
+    pictureInPicture,
+    requestToggleFullscreen,
+    defaultEnterIcon: <DefaultEnterFullscreenIcon />,
+    defaultExitIcon: <DefaultExitFullscreenIcon />,
+    ...props,
+  });
 
-  const title = React.useMemo(
-    () => (fullscreen ? 'Exit full screen (f)' : 'Full screen (f)'),
-    [fullscreen],
-  );
-
-  if (pictureInPicture) {
+  if (!buttonProps) {
     return <></>;
   }
 
-  return (
-    <IconButton
-      {...rest}
-      // className={styling.iconButton()}
-      // title={title}
-      // aria-label={title}
-      accessibilityLabel={title}
-      ref={ref}
-      onPress={onPressComposed}
-    >
-      {_children}
-    </IconButton>
-  );
-});
-
-FullscreenButton.displayName = 'FullscreenButton';
+  return <IconButton {...buttonProps} accessibilityLabel={title} />;
+};

@@ -82,6 +82,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     element.volume = initializedState.volume;
   }
 
+  store.setState({ muted: element?.muted });
+
   const onCanPlay = () => store.getState().onCanPlay();
 
   const onPlay = () => {

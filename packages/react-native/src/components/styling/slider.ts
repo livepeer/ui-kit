@@ -103,5 +103,5 @@ export const SliderThumb = styled(View, {
 
   backgroundColor: '$icon',
 
-  borderRadius: '100%',
+  borderRadius: 100,
 });
