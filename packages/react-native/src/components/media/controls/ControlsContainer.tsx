@@ -3,6 +3,7 @@ import {
   useControlsContainer,
 } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
+import * as React from 'react';
 
 import { useMediaController } from '../../../context';
 import {

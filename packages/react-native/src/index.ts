@@ -1,16 +1,34 @@
 export * from '@livepeer/core-react';
+export { type ThemeConfig } from 'livepeer/media';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
 } from 'livepeer/providers/studio';
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
-export { Player } from './components';
-export type { PlayerObjectFit, PlayerProps } from './components';
+export {
+  ControlsContainer,
+  FullscreenButton,
+  PlayButton,
+  Player,
+  Progress,
+  TimeDisplay,
+  Title,
+  Volume,
+} from './components';
+export type {
+  ControlsContainerProps,
+  FullscreenButtonProps,
+  PlayButtonProps,
+  PlayerObjectFit,
+  PlayerProps,
+  ProgressProps,
+  TitleProps,
+  VolumeProps,
+} from './components';
 export {
   Context,
   LivepeerConfig,
-  MediaControllerContext,
   MediaControllerProvider,
   ThemeProvider,
   useClient,

@@ -15,17 +15,17 @@ export const IconButton = styled('Pressable', {
   minWidth: '$iconButtonSizeSm',
 
   '@lg': {
-    height: 42, // '$iconButtonSize',
-    width: 42, // '$iconButtonSize',
-    minHeight: 42, // '$iconButtonSize',
-    minWidth: 42, // '$iconButtonSize',
+    height: '$iconButtonSize',
+    width: '$iconButtonSize',
+    minHeight: '$iconButtonSize',
+    minWidth: '$iconButtonSize',
   },
 });
 
 export const ColoredSvg = styled(Svg, {
   color: 'rgba(255,255,255,1)',
-  '&:hover': {
-    color: '$iconHover',
-    // animation: !isMobile() ? `${scaleUp} 200ms` : undefined,
-  },
+  // '&:hover': {
+  //   // color: '$iconHover',
+  //   // animation: !isMobile() ? `${scaleUp} 200ms` : undefined,
+  // },
 });

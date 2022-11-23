@@ -108,14 +108,14 @@ export const LoadingText = styled(SharedContainer, {
   justifyContent: 'flex-start',
   position: 'absolute',
 
-  // fontSize: '$timeFontSizeSm',
+  fontSize: '$timeFontSizeSm',
 
-  // '@md': {
-  //   fontSize: '$timeFontSizeMd',
-  // },
-  // '@lg': {
-  //   fontSize: '$timeFontSize',
-  // },
+  '@md': {
+    fontSize: '$timeFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$timeFontSize',
+  },
 
   left: 0,
   right: 0,

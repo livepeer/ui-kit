@@ -19,10 +19,6 @@ export const SliderContainer = styled(View, {
     minHeight: 20,
   },
 
-  '@media (hover: none)': {
-    minHeight: 15,
-  },
-
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',

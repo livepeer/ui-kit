@@ -15,8 +15,8 @@ import {
   MediaControllerState,
   MediaControllerStore,
 } from 'livepeer/media';
+import * as React from 'react';
 
-import { forwardRef, useCallback, useContext, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { StoreApi, UseBoundStore } from 'zustand';
@@ -28,15 +28,15 @@ import { canPlayMediaNatively } from './canPlayMediaNatively';
 
 export type { VideoPlayerProps };
 
-export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
+export const VideoPlayer = React.forwardRef<Video, VideoPlayerProps>(
   ({ src, autoPlay, loop, muted, objectFit, options }, ref) => {
     // typecast the context so that we can have video/audio-specific controller states
-    const store = useContext(MediaControllerContext) as UseBoundStore<
+    const store = React.useContext(MediaControllerContext) as UseBoundStore<
       MediaControllerStore<MediaElement>
     >;
 
     // TODO make these configurable
-    useEffect(() => {
+    React.useEffect(() => {
       Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
@@ -56,7 +56,7 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
       // TODO add error handling
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
         store,
         store.getState()._element,
@@ -68,11 +68,11 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
       };
     }, [store, options?.autohide]);
 
-    const filteredSources = useMemo(() => {
+    const filteredSources = React.useMemo(() => {
       return src?.filter((s) => s?.mime && canPlayMediaNatively(s));
     }, [src]);
 
-    const onPlaybackStatusUpdate = useCallback(
+    const onPlaybackStatusUpdate = React.useCallback(
       async (status?: AVPlaybackStatus) => {
         if (status?.isLoaded) {
           store.setState(({ buffered, duration, hasPlayed }) => ({
@@ -105,7 +105,7 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
       [store],
     );
 
-    const onFullscreenUpdate = useCallback(
+    const onFullscreenUpdate = React.useCallback(
       async (status?: VideoFullscreenUpdateEvent) => {
         store.setState(() => ({
           fullscreen:

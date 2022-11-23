@@ -19,14 +19,14 @@ export const TimeLiveIndicator = styled(View, {
 export const TimeText = styled(text, {
   marginLeft: '$timeMarginX',
   marginRight: '$timeMarginX',
-  // fontVariant: 'tabular-nums',
+  fontVariant: ['tabular-nums'],
 
-  // fontSize: '$timeFontSizeSm',
+  fontSize: '$timeFontSizeSm',
 
-  // '@md': {
-  //   fontSize: '$timeFontSizeMd',
-  // },
-  // '@lg': {
-  //   fontSize: '$timeFontSize',
-  // },
+  '@md': {
+    fontSize: '$timeFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$timeFontSize',
+  },
 });

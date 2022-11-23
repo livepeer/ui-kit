@@ -3,6 +3,7 @@ import {
   useFullscreenButton,
 } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
+import * as React from 'react';
 
 import { Path } from 'react-native-svg';
 
