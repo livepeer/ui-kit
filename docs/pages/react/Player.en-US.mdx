@@ -110,7 +110,7 @@ function App() {
 
 The `playbackId` passed to the `Player` can be either a short playback ID
 which is created on asset/stream creation, or, for an asset, an IPFS CID. If
-the provided IPFS CID or IPFS/Arweave URL has not been uploaded yet, it will be auto-uploaded and
+the provided IPFS CID or IPFS/Arweave URL has not been uploaded yet, it can be auto-uploaded and
 played back - see [`autoUrlUpload`](#autourlupload) for more details.
 
 ```tsx {9}
@@ -134,7 +134,7 @@ The Player also supports an arbitrary `src` URL which can correspond to any comm
 See [caniuse video format](https://caniuse.com/?search=video%20format) for more details. Metrics reporting **will not** work
 with an arbitrary `src` that is not a recognized provider (e.g. not a Studio playback URL).
 
-If the `src` is an IPFS/Arweave URL, it will be auto-uploaded and played back - see [`autoUrlUpload`](#autourlupload) for
+If the `src` is an IPFS/Arweave URL, it can be auto-uploaded and played back - see [`autoUrlUpload`](#autourlupload) for
 more details.
 
 ```tsx {7}
@@ -481,7 +481,20 @@ function App() {
 
 ### autoUrlUpload
 
-Enables automatic upload and playback from decentralized storage providers. Currently supports IPFS CIDs and IPFS/Arweave URLs. Defaults to `false`.
+```tsx
+export type PlayerProps = {
+  ...
+  autoUrlUpload?:
+    | boolean
+    | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
+  ...
+};
+```
+
+Enables automatic upload and playback from decentralized storage providers. Currently supports IPFS CIDs and IPFS/Arweave URLs. Defaults to `true`.
+
+If `fallback` is specified, while the URL upload is being processed in the background, the video will start non-transcoded playback using the Cloudflare gateway for IPFS
+and the arweave.net gateway for Arweave. Once this finishes, the Player will switch to playing from the transcoded version.
 
 It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>` or `ar://<HASH>`)
 before presenting the content to the user - the first view with automatic URL upload can take a few minutes, then it will be permanently
@@ -492,7 +505,8 @@ cached and play back quickly.
   `https://<CID>.ipfs.dweb.link/` or `https://cloudflare-ipfs.com/ipfs/<CID>`, `ar://<HASH>`, `ar://<HASH>/asset.mp4`, `https://<SUBDOMAIN>.arweave.dev/<HASH>`
   or `https://arweave.net/<HASH>`, _including directories_) can be passed as the `src` or `playbackID` to the Player, and it will
   automatically detect if it is a decentralized storage identifier and attempt to fetch the playback info. If the API does not have an Asset with the corresponding ID,
-  the Player will automatically attempt to upload the content from IPFS/Arweave, and then play the transcoded content back. This may take a few minutes.
+  the Player will upload the content from IPFS/Arweave, and then play the transcoded content back. This may take a few minutes. If `fallback` is specified,
+  it will attempt playback instantly from the provided gateway or default gateway.
 </Callout>
 
 ```tsx {8}
@@ -503,7 +517,7 @@ function App() {
     <Player
       title="Agent 327: Operation Barbershop"
       playbackId="Qmc5rn4Hi8a5JJQdrVAKyeEpCNJnM8t5fhJnoobstVcSFB"
-      autoUrlUpload
+      autoUrlUpload={{ fallback: true, ipfsGateway: 'https://ipfs.fleek.co' }}
     />
   );
 }
@@ -512,10 +526,8 @@ function App() {
 <Player
   title="Agent 327: Operation Barbershop"
   playbackId="Qmc5rn4Hi8a5JJQdrVAKyeEpCNJnM8t5fhJnoobstVcSFB"
-  autoUrlUpload
+  autoUrlUpload={{ fallback: true, ipfsGateway: 'https://ipfs.fleek.co' }}
 />
-
-<Player title="Agent 327: Operation Barbershop" playbackId="6d7el73r1y12chxr" />
 
 ### theme
 

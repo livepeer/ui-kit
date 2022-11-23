@@ -13,11 +13,10 @@ Playing back transcoded video from IPFS or Arweave is easy with livepeer.js! The
 <Callout type="warning" emoji="⚠️">
   **This example illustrates how Livepeer can be used as a video processing and
   caching layer on top of content available on IPFS or the Arweave gateway for
-  optimized video playback.** As shown below, there are delays when content has
-  never been viewed - the first user will need to wait for the content to be
-  downloaded from the network and uploaded to the Livepeer player. We recommend,
-  whenever possible, to upload via `useCreateAsset` before displaying it in the
-  player.
+  optimized video playback.** We support fallback to play directly from
+  IPFS/Arweave while the video is being uploaded to Livepeer. However, we
+  recommend uploading via `useCreateAsset` before displaying it in the player
+  for best performance.
 </Callout>
 
 IPFS is a network of nodes that allow you to read content from the network using a content identifier unique to the data you’re requesting, ensuring you are able to securely and verifiably get exactly what you are asking for, regardless of where the data is physically stored. Arweave is a set of nodes that are incentivized to store data permanently; content stored on the network is pulled through an Arweave gateway.
@@ -46,7 +45,7 @@ const livepeerClient = createReactClient({
 function App() {
   return (
     <LivepeerConfig client={livepeerClient}>
-      <IpfsPlayback />
+      <DecentralizedStoragePlayback />
     </LivepeerConfig>
   );
 }
@@ -87,7 +86,16 @@ export const DecentralizedStoragePlayback = () => {
       </Box>
 
       {idParsed && (
-        <Player title={idParsed.id} src={url} autoPlay muted autoUrlUpload />
+        <Player
+          title={idParsed.id}
+          src={url}
+          autoPlay
+          muted
+          autoUrlUpload={{
+            fallback: true,
+            ipfsGateway: 'https://cloudflare-ipfs.com',
+          }}
+        />
       )}
     </>
   );
