@@ -1,6 +1,10 @@
 import { ControlsOptions } from 'livepeer';
-import { AspectRatio, ThemeConfig } from 'livepeer/media/browser/styling';
+import { AspectRatio, ThemeConfig } from 'livepeer/media';
+import { isNumber } from 'livepeer/utils';
+
 import * as React from 'react';
+
+import { useSourceMimeTyped } from './useSourceMimeTyped';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
@@ -30,8 +34,8 @@ export type PlayerProps = {
    * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility.
    */
   poster?: string | React.ReactNode;
-  /** Shows/hides the loading spinner */
-  showLoadingSpinner?: boolean;
+  /** Enables/disables the loading spinner */
+  shouldShowLoadingSpinner?: boolean;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
@@ -55,9 +59,6 @@ export type PlayerProps = {
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
 
-  /** Whether to show the picture in picture button */
-  showPipButton?: boolean;
-
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   autoUrlUpload?: boolean;
 
@@ -72,3 +73,98 @@ export type PlayerProps = {
     }
   | { playbackId: string | null | undefined }
 );
+
+export const usePlayer = <TElement,>({
+  autoPlay,
+  children,
+  controls,
+  muted,
+  playbackId,
+
+  src,
+  theme,
+  title,
+  poster,
+  loop,
+
+  onMetricsError,
+  jwt,
+
+  refetchPlaybackInfoInterval = 5000,
+  autoUrlUpload = true,
+
+  shouldShowLoadingSpinner = true,
+  showTitle = true,
+  aspectRatio = '16to9',
+  objectFit = 'cover',
+}: PlayerProps) => {
+  const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
+
+  const { source, uploadStatus } = useSourceMimeTyped({
+    src,
+    playbackId,
+    jwt,
+    refetchPlaybackInfoInterval,
+    autoUrlUpload,
+  });
+
+  const hidePosterOnPlayed = React.useMemo(
+    () =>
+      Array.isArray(source)
+        ? source?.[0]?.type !== 'audio'
+          ? true
+          : undefined
+        : undefined,
+    [source],
+  );
+
+  const playerRef = React.useCallback((element: TElement | null) => {
+    if (element) {
+      setMediaElement(element);
+    }
+  }, []);
+
+  const loadingText = React.useMemo(
+    () =>
+      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+        : uploadStatus?.phase === 'failed'
+        ? 'Upload Failed'
+        : null,
+    [uploadStatus],
+  );
+
+  return {
+    loadingText,
+    mediaElement,
+    source,
+    uploadStatus,
+    playerProps: {
+      ref: playerRef,
+    },
+    controlsContainerProps: {
+      hidePosterOnPlayed,
+      shouldShowLoadingSpinner,
+      loadingText,
+    },
+    props: {
+      autoPlay,
+      children,
+      controls,
+      muted,
+      playbackId,
+      src,
+      theme,
+      title,
+      poster,
+      loop,
+      onMetricsError,
+      jwt,
+      refetchPlaybackInfoInterval,
+      autoUrlUpload,
+      showTitle,
+      aspectRatio,
+      objectFit,
+    },
+  };
+};

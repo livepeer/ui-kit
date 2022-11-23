@@ -7,7 +7,7 @@ import {
   LivepeerProvider,
   MirrorSizeArray,
 } from 'livepeer/types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLivepeerProvider } from '../providers';
@@ -37,8 +37,12 @@ export function useCreateAsset<
     [{ entity: 'createAsset', livepeerProvider }],
   );
 
-  return {
-    ...internalQuery,
-    progress,
-  } as const;
+  return useMemo(
+    () =>
+      ({
+        ...internalQuery,
+        progress,
+      } as const),
+    [internalQuery, progress],
+  );
 }

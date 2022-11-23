@@ -1,7 +1,7 @@
 import {
   PlayerObjectFit,
   PlayerProps,
-  useSourceMimeTyped,
+  usePlayer,
 } from '@livepeer/core-react/components';
 import { AudioSrc, VideoSrc } from 'livepeer/media';
 
@@ -9,118 +9,91 @@ import * as React from 'react';
 
 import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
+import { ControlsContainer, PlayButton } from './controls';
+import { Container } from './controls/Container';
+import { FullscreenButton } from './controls/FullscreenButton';
+import { Progress } from './controls/Progress';
+import { TimeDisplay } from './controls/TimeDisplay';
+import { Title } from './controls/Title';
+import { Volume } from './controls/Volume';
+
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { MediaElement } from './types';
 
 export type { PlayerObjectFit, PlayerProps };
 
-export function Player({
-  autoPlay,
-  // children,
-  controls,
-  muted,
-  playbackId,
-  refetchPlaybackInfoInterval = 5000,
-  src,
-  // theme,
-  // title,
-  poster,
-  loop,
-  // showLoadingSpinner = true,
-  // showTitle = true,
-  // aspectRatio = '16to9',
-  objectFit = 'cover',
-  // showPipButton,
-  autoUrlUpload = true,
-  onMetricsError,
-  jwt,
-}: PlayerProps) {
-  const [mediaElement, setMediaElement] = React.useState<MediaElement | null>(
-    null,
-  );
-
-  const { source } = useSourceMimeTyped({
-    src,
-    playbackId,
-    jwt,
-    refetchPlaybackInfoInterval,
-    autoUrlUpload,
-  });
-
-  // const hidePosterOnPlayed = React.useMemo(
-  //   () =>
-  //     Array.isArray(source)
-  //       ? source?.[0]?.type !== 'audio'
-  //         ? true
-  //         : undefined
-  //       : undefined,
-  //   [source],
-  // );
-
-  const playerRef = React.useCallback((element: MediaElement | null) => {
-    if (element) {
-      setMediaElement(element);
-    }
-  }, []);
-
-  // const contextTheme = useTheme(theme);
-
-  // const topLoadingText = React.useMemo(
-  //   () =>
-  //     uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
-  //       ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
-  //       : uploadStatus?.phase === 'failed'
-  //       ? 'Upload Failed'
-  //       : null,
-  //   [uploadStatus],
-  // );
+export function Player(props: PlayerProps) {
+  const {
+    mediaElement,
+    playerProps,
+    controlsContainerProps,
+    source,
+    props: {
+      autoPlay,
+      children,
+      controls,
+      muted,
+      theme,
+      title,
+      poster,
+      loop,
+      onMetricsError,
+      showTitle,
+      aspectRatio,
+      objectFit,
+    },
+  } = usePlayer<MediaElement>(props);
 
   return (
-    <MediaControllerProvider element={mediaElement} options={controls}>
-      {/* <Container className={contextTheme} aspectRatio={aspectRatio}> */}
-      {source && !Array.isArray(source) ? (
-        <HlsPlayer
-          ref={playerRef}
-          autoPlay={autoPlay}
-          muted={autoPlay ? true : muted}
-          src={source}
-          poster={typeof poster === 'string' ? poster : undefined}
-          loop={loop}
-          objectFit={objectFit}
-          onMetricsError={onMetricsError}
-        />
-      ) : source?.[0]?.type === 'audio' ? (
-        <AudioPlayer
-          ref={playerRef}
-          autoPlay={autoPlay}
-          muted={autoPlay ? true : muted}
-          src={source as AudioSrc[]}
-          loop={loop}
-          objectFit={objectFit}
-        />
-      ) : (
-        <VideoPlayer
-          ref={playerRef}
-          autoPlay={autoPlay}
-          muted={autoPlay ? true : muted}
-          src={source as VideoSrc[] | null}
-          poster={typeof poster === 'string' ? poster : undefined}
-          loop={loop}
-          objectFit={objectFit}
-        />
-      )}
+    <MediaControllerProvider element={mediaElement}>
+      <Container theme={theme} aspectRatio={aspectRatio}>
+        {source && !Array.isArray(source) ? (
+          <HlsPlayer
+            {...playerProps}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={source}
+            poster={typeof poster === 'string' ? poster : undefined}
+            loop={loop}
+            objectFit={objectFit}
+            onMetricsError={onMetricsError}
+            options={controls}
+          />
+        ) : source?.[0]?.type === 'audio' ? (
+          <AudioPlayer
+            {...playerProps}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={source as AudioSrc[]}
+            loop={loop}
+            objectFit={objectFit}
+            options={controls}
+          />
+        ) : (
+          <VideoPlayer
+            {...playerProps}
+            autoPlay={autoPlay}
+            muted={autoPlay ? true : muted}
+            src={source as VideoSrc[] | null}
+            poster={typeof poster === 'string' ? poster : undefined}
+            loop={loop}
+            objectFit={objectFit}
+            options={controls}
+          />
+        )}
 
-      {/* {React.isValidElement(children) ? (
+        {React.isValidElement(children) ? (
           children
         ) : (
           <>
             <ControlsContainer
-              hidePosterOnPlayed={hidePosterOnPlayed}
-              showLoadingSpinner={showLoadingSpinner}
-              topLoadingText={topLoadingText}
-              poster={poster && <Poster content={poster} title={title} />}
+              {...controlsContainerProps}
               top={<>{title && showTitle && <Title content={title} />}</>}
-              middle={<Progress />}
+              middle={
+                <>
+                  <Progress />
+                </>
+              }
               left={
                 <>
                   <PlayButton />
@@ -130,14 +103,13 @@ export function Player({
               }
               right={
                 <>
-                  {showPipButton && <PictureInPictureButton />}
                   <FullscreenButton />
                 </>
               }
             />
           </>
-        )} */}
-      {/* </Container> */}
+        )}
+      </Container>
     </MediaControllerProvider>
   );
 }

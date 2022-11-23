@@ -84,8 +84,18 @@ const right = css(sharedTrack, {
 });
 
 const thumb = css('div', {
-  width: '$thumb',
-  height: '$thumb',
+  variants: {
+    size: {
+      default: { width: '$thumb', height: '$thumb' },
+      active: {
+        width: '$thumbActive',
+        height: '$thumbActive',
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
 
   backgroundColor: '$icon',
 

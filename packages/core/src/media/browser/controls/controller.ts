@@ -2,6 +2,7 @@ import { StoreApi } from 'zustand/vanilla';
 
 import { ControlsOptions as ControlsOptionsBase } from '../../core';
 import {
+  DEFAULT_AUTOHIDE_TIME,
   DEFAULT_VOLUME_LEVEL,
   MediaControllerState,
   MediaControllerStore,
@@ -33,8 +34,6 @@ const allKeyTriggers = [
   'ArrowLeft',
 ] as const;
 type KeyTrigger = typeof allKeyTriggers[number];
-
-const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
 
 // if volume change is unsupported, the element will always return 1
 // similar to https://github.com/videojs/video.js/pull/7514/files
@@ -81,6 +80,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   if (element && !element.muted && !element.defaultMuted) {
     element.volume = initializedState.volume;
   }
+
+  store.setState({ muted: element?.muted });
 
   const onCanPlay = () => store.getState().onCanPlay();
 
@@ -339,8 +340,11 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           }
         }
 
-        if (current.playing !== prev.playing) {
-          if (current.playing) {
+        if (
+          current._requestedPlayPauseLastTime !==
+          prev._requestedPlayPauseLastTime
+        ) {
+          if (element.paused) {
             previousPromise = element.play();
           } else {
             element.pause();

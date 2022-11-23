@@ -6,6 +6,8 @@ import { ClientStorage, createStorage, noopStorage } from '../../storage';
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
 export const DEFAULT_VOLUME_LEVEL = 0.2; // 0-1 for how loud the audio is
 
+export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
+
 export type DeviceInformation = {
   isMobile: boolean;
   isIos: boolean;
@@ -22,7 +24,7 @@ export type ElementSize = {
   height: number;
 };
 
-export type MediaControllerState<TElement> = {
+export type MediaControllerState<TElement = void> = {
   /** If the media has loaded and can be played */
   canPlay: boolean;
   /** If the controls are currently hidden */
@@ -58,6 +60,9 @@ export type MediaControllerState<TElement> = {
 
   /** If the media is in picture in picture mode */
   pictureInPicture: boolean;
+
+  /** The last time that play/pause was requested */
+  _requestedPlayPauseLastTime: number;
 
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
@@ -95,7 +100,7 @@ export type MediaControllerState<TElement> = {
 
   onPlay: () => void;
   onPause: () => void;
-  togglePlay: () => void;
+  togglePlay: (force?: boolean) => void;
 
   onProgress: (time: number) => void;
   onDurationChange: (duration: number) => void;
@@ -192,6 +197,7 @@ export const createControllerStore = <TElement>({
         _requestedRangeToSeekTo: 0,
         _requestedFullscreenLastTime: Date.now(),
         _requestedPictureInPictureLastTime: Date.now(),
+        _requestedPlayPauseLastTime: Date.now(),
 
         setHidden: (hidden: boolean) =>
           set(({ playing }) => ({ hidden: playing ? hidden : false })),
@@ -207,7 +213,6 @@ export const createControllerStore = <TElement>({
         onPlay: () =>
           set(() => ({
             playing: true,
-            _lastInteraction: Date.now(),
             hasPlayed: true,
             stalled: false,
             waiting: false,
@@ -220,12 +225,15 @@ export const createControllerStore = <TElement>({
             stalled: false,
             waiting: false,
           })),
-        togglePlay: () => {
+        togglePlay: (force?: boolean) => {
           const { hidden, setHidden, device } = store.getState();
-          if (hidden && device.isMobile) {
+          if (!force && hidden && device.isMobile) {
             setHidden(false);
           } else {
-            set(({ playing }) => ({ playing: !playing }));
+            set(() => ({
+              _requestedPlayPauseLastTime: Date.now(),
+              _lastInteraction: Date.now(),
+            }));
           }
         },
         onProgress: (time) => set(() => ({ progress: getFilteredNaN(time) })),

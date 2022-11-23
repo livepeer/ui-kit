@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
-		<!-- Added plist entry here -->
-		<key>NSMicrophoneUsageDescription</key>
-		<string>Allow $(PRODUCT_NAME) to access your microphone</string>
-		<!-- End of addition of plist entry -->
 		<key>CFBundleDevelopmentRegion</key>
 		<string>en</string>
 		<key>CFBundleDisplayName</key>
@@ -41,6 +37,10 @@
 		</dict>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string></string>
+		<!-- Added Player plist entry here -->
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Allow $(PRODUCT_NAME) to access your microphone</string>
+		<!-- End of plist entry -->
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIRequiredDeviceCapabilities</key>

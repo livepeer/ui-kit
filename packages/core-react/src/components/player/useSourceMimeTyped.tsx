@@ -6,7 +6,7 @@ import * as React from 'react';
 import { PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
-export type UseSourceMimTypedProps = {
+export type UseSourceMimeTypedProps = {
   src: PlayerProps['src'];
   playbackId: PlayerProps['playbackId'];
   refetchPlaybackInfoInterval: NonNullable<
@@ -22,7 +22,7 @@ export const useSourceMimeTyped = ({
   jwt,
   refetchPlaybackInfoInterval,
   autoUrlUpload,
-}: UseSourceMimTypedProps) => {
+}: UseSourceMimeTypedProps) => {
   const [uploadStatus, setUploadStatus] = React.useState<
     Asset['status'] | null
   >(null);

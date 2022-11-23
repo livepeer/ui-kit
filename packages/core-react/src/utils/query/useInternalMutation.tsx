@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { pick } from 'livepeer';
 import { HttpError } from 'livepeer/errors';
+import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';
 
@@ -77,22 +78,39 @@ export function useInternalMutation<
     useErrorBoundary: false,
   });
 
-  return {
-    data,
-    error,
-    isError,
-    isIdle,
-    isLoading,
-    isSuccess,
-    mutate: options
-      ? () => mutate({ ...options, config: undefined })
-      : undefined,
-    mutateAsync: () =>
-      options ? mutateAsync({ ...options, config: undefined }) : undefined,
-    variables,
-    status,
-    internal: {
+  return useMemo(
+    () =>
+      ({
+        data,
+        error,
+        isError,
+        isIdle,
+        isLoading,
+        isSuccess,
+        mutate: options
+          ? () => mutate({ ...options, config: undefined })
+          : undefined,
+        mutateAsync: () =>
+          options ? mutateAsync({ ...options, config: undefined }) : undefined,
+        variables,
+        status,
+        internal: {
+          reset,
+        },
+      } as const),
+    [
+      data,
+      error,
+      isError,
+      isIdle,
+      isLoading,
+      isSuccess,
+      mutate,
+      mutateAsync,
       reset,
-    },
-  } as const;
+      variables,
+      status,
+      options,
+    ],
+  );
 }

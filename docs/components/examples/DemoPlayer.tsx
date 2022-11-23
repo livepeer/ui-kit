@@ -32,7 +32,7 @@ export const DemoPlayer = () => {
         autohide: 3000,
       }}
       theme={{
-        borderStyles: { containerBorderStyle: 'hidden' },
+        borderWidths: { containerBorderWidth: '0px' },
         radii: { containerBorderRadius: '10px' },
       }}
     />

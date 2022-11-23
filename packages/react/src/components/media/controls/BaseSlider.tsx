@@ -1,53 +1,15 @@
+import {
+  BaseSliderProps,
+  useBaseSlider,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf, useMemoizedIcon } from '../../system';
 
-export type BaseSliderProps = Omit<
-  PropsOf<'div'>,
-  'children' | 'onChange' | 'color'
-> & {
-  /**
-   * The name of the slider (volume, time range, etc)
-   * @type string
-   */
-  ariaName: string;
-
-  /**
-   * The icon or element to be used for the slider thumb.
-   * @type React.ReactElement
-   */
-  thumbIcon?: React.ReactElement;
-
-  /**
-   * The color of the range background.
-   * @type string
-   */
-  rangeBackgroundColor?: string;
-
-  /**
-   * The slider value from 0 to 1.
-   */
-  value: number;
-
-  /**
-   * The secondary slider value from 0 to 1.
-   */
-  secondaryValue?: number;
-
-  /**
-   * The callback when the user interacts with the slider. Returns a number from 0 to 1.
-   */
-  onChange: (value: number) => void;
-
-  /**
-   * The callback when the user is done interacting with the slider.
-   */
-  onDone?: () => void;
-};
+const UPDATE_FREQUENCY_MS = 50;
 
 const mediaControllerSelector = ({
   device,
@@ -55,50 +17,79 @@ const mediaControllerSelector = ({
   device,
 });
 
-export const BaseSlider = (props: BaseSliderProps) => {
+export type { BaseSliderProps };
+
+export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   const { device } = useMediaController(mediaControllerSelector);
 
   const ref = React.useRef<HTMLDivElement | null>(null);
 
+  const [sliderLocation, setSliderLocation] = React.useState({
+    width: 0,
+    left: 0,
+  });
+
+  React.useLayoutEffect(() => {
+    setSliderLocation({
+      width: ref.current?.clientWidth ?? 0,
+      left: ref.current?.getBoundingClientRect().left ?? 0,
+    });
+  }, []);
+
   const [isActive, setIsActive] = React.useState(false);
+  const [lastUpdate, setLastUpdate] = React.useState(0);
+
+  const {
+    title,
+    value,
+    active,
+    handle,
+    sliderProps,
+    sliderLeftTrackProps,
+    sliderMiddleTrackProps,
+    sliderRightTrackProps,
+  } = useBaseSlider({
+    isActive: isActive || device?.isMobile,
+    sliderWidth: sliderLocation.width,
+    defaultThumbIcon: <Thumb />,
+    ...props,
+  });
+
   const [isDragging, setIsDragging] = React.useState(false);
-
-  const isActiveOrDragging = React.useMemo(
-    () => device?.isMobile || isActive || isDragging,
-    [device?.isMobile, isActive, isDragging],
-  );
-
-  const onUpdate = React.useCallback(
-    async (eventX: number) => {
-      const bounding = ref.current?.getBoundingClientRect();
-
-      if (bounding) {
-        const newValue = (eventX - bounding.left) / bounding.width;
-        const newBoundedValue = Math.min(Math.max(0, newValue), 1);
-
-        await props?.onChange?.(newBoundedValue);
-      }
-    },
-    [props],
-  );
 
   React.useEffect(() => {
     if (isDragging) {
       const onMouseMove = async (e: MouseEvent) => {
-        await onUpdate(e.clientX);
+        const shouldUpdate = Date.now() - lastUpdate > UPDATE_FREQUENCY_MS;
+
+        await sliderProps.onUpdate(
+          e.clientX - sliderLocation.left,
+          shouldUpdate,
+        );
+        if (shouldUpdate) {
+          setLastUpdate(Date.now());
+        }
       };
 
       const onTouchMove = async (e: TouchEvent) => {
+        const shouldUpdate = Date.now() - lastUpdate > UPDATE_FREQUENCY_MS;
+
         const clientX = e.touches?.item?.(0)?.clientX;
         if (clientX) {
-          await onUpdate(clientX);
+          await sliderProps.onUpdate(
+            clientX - sliderLocation.left,
+            shouldUpdate,
+          );
+          if (shouldUpdate) {
+            setLastUpdate(Date.now());
+          }
         }
       };
 
       const onMouseUp = async (e: MouseEvent) => {
         setIsDragging(false);
 
-        await onUpdate(e.clientX);
+        await sliderProps.onUpdate(e.clientX - sliderLocation.left, true);
         await props?.onDone?.();
       };
 
@@ -106,7 +97,7 @@ export const BaseSlider = (props: BaseSliderProps) => {
         setIsDragging(false);
         const clientX = e.touches?.item?.(0)?.clientX;
         if (clientX) {
-          await onUpdate(clientX);
+          await sliderProps.onUpdate(clientX - sliderLocation.left, true);
         }
 
         await props?.onDone?.();
@@ -126,36 +117,14 @@ export const BaseSlider = (props: BaseSliderProps) => {
         document?.removeEventListener('touchend', onTouchEnd);
       };
     }
-  }, [isDragging, onUpdate, props]);
-
-  const _handle = useMemoizedIcon(
-    props?.thumbIcon,
-    <div className={styling.slider.thumb()} />,
-  );
-
-  const [value, middleValue] = React.useMemo(
-    () => [
-      !isNaN(props.value) ? props.value : 0,
-      props.secondaryValue &&
-      !isNaN(props.value) &&
-      !isNaN(props.secondaryValue)
-        ? props.secondaryValue - props.value
-        : 0,
-    ],
-    [props.value, props.secondaryValue],
-  );
-
-  const rightValue = React.useMemo(
-    () => 1 - (value + middleValue),
-    [value, middleValue],
-  );
+  }, [isDragging, sliderProps, props, sliderLocation, lastUpdate]);
 
   const onPointerDown = React.useCallback(
     async (e: React.MouseEvent) => {
-      await onUpdate(e.clientX);
+      await sliderProps.onUpdate(e.clientX - sliderLocation.left);
       setIsDragging(true);
     },
-    [onUpdate],
+    [sliderProps, sliderLocation],
   );
 
   const onMouseEnter = React.useCallback(async () => {
@@ -166,8 +135,6 @@ export const BaseSlider = (props: BaseSliderProps) => {
     setIsActive(false);
   }, [setIsActive]);
 
-  const valueRounded = React.useMemo(() => Math.round(value * 100), [value]);
-
   return (
     <div
       ref={ref}
@@ -177,51 +144,50 @@ export const BaseSlider = (props: BaseSliderProps) => {
       role="slider"
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={valueRounded}
-      aria-valuetext={`${valueRounded}% ${props.ariaName}`}
+      aria-valuenow={value}
+      aria-valuetext={title}
       aria-orientation="horizontal"
       className={styling.slider.container()}
     >
-      {value > 0.001 && (
+      {sliderLeftTrackProps.shown && (
         <div
           className={styling.slider.track.left({
-            size: isActiveOrDragging ? 'active' : 'default',
-            rounded: value === 1 && !isActiveOrDragging ? 'full' : 'left',
-            css: { flex: value },
+            size: active ? 'active' : 'default',
+            rounded: sliderLeftTrackProps.rounded,
+            css: sliderLeftTrackProps.css,
           })}
         />
       )}
 
-      {isActiveOrDragging && _handle}
+      {handle}
 
-      {(middleValue ?? 0) > 0 && (
+      {sliderMiddleTrackProps.shown && (
         <div
           className={styling.slider.track.middle({
-            size: isActiveOrDragging ? 'active' : 'default',
-            rounded:
-              middleValue === 1
-                ? !isActiveOrDragging
-                  ? 'full'
-                  : 'right'
-                : value <= 0.001
-                ? 'left'
-                : rightValue === 0
-                ? 'right'
-                : 'none',
-            css: { flex: middleValue },
+            size: active ? 'active' : 'default',
+            rounded: sliderMiddleTrackProps.rounded,
+            css: sliderMiddleTrackProps.css,
           })}
         />
       )}
 
-      {(rightValue ?? 0) > 0 && (
+      {sliderRightTrackProps.shown && (
         <div
           className={styling.slider.track.right({
-            size: isActiveOrDragging ? 'active' : 'default',
-            rounded: value <= 0.001 && !isActiveOrDragging ? 'full' : 'right',
-            css: { flex: rightValue },
+            size: active ? 'active' : 'default',
+            rounded: sliderRightTrackProps.rounded,
+            css: sliderRightTrackProps.css,
           })}
         />
       )}
     </div>
   );
 };
+
+const Thumb = ({ size }: { size?: 'active' | 'default' }) => (
+  <div
+    className={styling.slider.thumb({
+      size,
+    })}
+  />
+);

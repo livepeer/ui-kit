@@ -1,4 +1,4 @@
-import { HlsSrc } from 'livepeer';
+import { HlsPlayerProps as HlsPlayerCoreProps } from '@livepeer/core-react/components';
 import {
   addMediaMetricsToInitializedStore,
   canPlayMediaNatively,
@@ -14,22 +14,10 @@ import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { MediaControllerContext } from '../../../context';
-import { PlayerObjectFit } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 
-export type HlsPlayerProps = {
-  src: HlsSrc;
-  objectFit: PlayerObjectFit;
+export type HlsPlayerProps = HlsPlayerCoreProps & {
   hlsConfig?: HlsVideoConfig;
-  controls?: boolean;
-  width?: string | number;
-  autoPlay?: boolean;
-  loop?: boolean;
-  title?: string;
-  muted?: boolean;
-  poster?: string;
-  jwt?: string;
-  onMetricsError?: (error: Error) => void;
 };
 
 export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(

@@ -457,5 +457,6 @@ function send(webSocket: WebSocket, metrics: Partial<RawMetrics>) {
   if (webSocket.readyState !== webSocket.OPEN) {
     return;
   }
+
   webSocket.send(JSON.stringify(metrics));
 }

@@ -1,23 +1,18 @@
-import { AudioSrc, MediaControllerState } from 'livepeer';
+import { AudioPlayerProps } from '@livepeer/core-react/components';
+import { MediaControllerState } from 'livepeer';
 import { canPlayMediaNatively } from 'livepeer/media/browser';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { HlsPlayerProps } from './HlsPlayer';
-
-export type AudioPlayerProps = Omit<
-  HlsPlayerProps,
-  'hlsConfig' | 'src' | 'poster'
-> & {
-  src: AudioSrc[];
-};
 
 const mediaControllerSelector = ({
   fullscreen,
 }: MediaControllerState<HTMLMediaElement>) => ({
   fullscreen,
 });
+
+export type { AudioPlayerProps };
 
 export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
   ({ src, autoPlay, title, loop, muted, objectFit }, ref) => {

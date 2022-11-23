@@ -61,7 +61,7 @@ const livepeerLightTheme: ThemeConfig = {
     display: 'Inter',
   },
   fontWeights: {
-    titleFontWeight: 800,
+    titleFontWeight: '800',
   },
   sizes: {
     loading: '80px',

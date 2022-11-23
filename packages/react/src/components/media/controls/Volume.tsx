@@ -1,9 +1,9 @@
+import { VolumeProps, useVolume } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf, useConditionalIcon } from '../../system';
 import { BaseSlider } from './BaseSlider';
 
 const DefaultMutedIcon = () => (
@@ -30,129 +30,54 @@ const mediaControllerSelector = ({
   requestToggleMute,
   requestVolume,
   muted,
+  volume,
 }: MediaControllerState<HTMLMediaElement>) => ({
   isVolumeChangeSupported,
   requestToggleMute,
   requestVolume,
   muted,
+  volume,
 });
 
-export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
-  /**
-   * Toggles showing the slider to change the volume level. Defaults to true.
-   * If false, the volume will toggle between 0% and 100%.
-   */
-  showSlider?: boolean;
-  /**
-   * The icon to be used for the button when unmuted.
-   * @type React.ReactElement
-   */
-  unmutedIcon?: React.ReactElement;
-  /**
-   * The icon to be used for the button when muted.
-   * @type React.ReactElement
-   */
-  mutedIcon?: React.ReactElement;
-};
+export type { VolumeProps };
 
-export const Volume = React.forwardRef<HTMLButtonElement, VolumeProps>(
-  (props, ref) => {
-    const { requestToggleMute, muted, requestVolume, isVolumeChangeSupported } =
-      useMediaController(mediaControllerSelector);
+export const Volume: React.FC<VolumeProps> = (props) => {
+  const {
+    volume,
+    requestToggleMute,
+    muted,
+    requestVolume,
+    isVolumeChangeSupported,
+  } = useMediaController(mediaControllerSelector);
 
-    const {
-      unmutedIcon,
-      mutedIcon,
-      onClick,
-      showSlider = true,
-      ...rest
-    } = props;
-
-    const onClickComposed = React.useCallback(
-      async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        await onClick?.(e);
-
-        if (!showSlider && isVolumeChangeSupported) {
-          if (muted) {
-            requestVolume(1);
-          } else {
-            requestVolume(0);
-          }
-        } else {
-          requestToggleMute();
-        }
-      },
-      [
-        onClick,
-        requestToggleMute,
-        requestVolume,
-        showSlider,
-        isVolumeChangeSupported,
-        muted,
-      ],
-    );
-
-    const _children = useConditionalIcon(
-      !muted,
-      unmutedIcon,
-      <DefaultUnmutedIcon />,
-      mutedIcon,
-      <DefaultMutedIcon />,
-    );
-
-    const title = React.useMemo(
-      () => (muted ? 'Unmute (m)' : 'Mute (m)'),
-      [muted],
-    );
-
-    return (
-      <div className={styling.volume.container()}>
-        <button
-          className={styling.iconButton()}
-          title={title}
-          aria-label={title}
-          ref={ref}
-          onClick={onClickComposed}
-          {...rest}
-        >
-          {_children}
-        </button>
-
-        {isVolumeChangeSupported && showSlider && <VolumeProgress />}
-      </div>
-    );
-  },
-);
-
-Volume.displayName = 'Volume';
-
-const mediaControllerSelectorProgress = ({
-  volume,
-  requestVolume,
-  muted,
-}: MediaControllerState<HTMLMediaElement>) => ({
-  volume,
-  requestVolume,
-  muted,
-});
-
-const VolumeProgress = () => {
-  const { volume, requestVolume, muted } = useMediaController(
-    mediaControllerSelectorProgress,
-  );
-
-  const onChange = React.useCallback(
-    async (value: number) => {
-      requestVolume(value);
-    },
-    [requestVolume],
-  );
+  const { progressProps, buttonProps, title } = useVolume({
+    volume,
+    requestToggleMute,
+    muted,
+    requestVolume,
+    isVolumeChangeSupported,
+    defaultMutedIcon: <DefaultMutedIcon />,
+    defaultUnmutedIcon: <DefaultUnmutedIcon />,
+    ...props,
+  });
 
   return (
-    <BaseSlider
-      ariaName="volume"
-      value={muted ? 0 : volume}
-      onChange={onChange}
-    />
+    <div className={styling.volume.container()}>
+      <button
+        className={styling.iconButton()}
+        title={title}
+        aria-label={title}
+        onClick={buttonProps.onPress}
+        {...buttonProps}
+      />
+
+      {progressProps.shown && (
+        <BaseSlider
+          ariaName="volume"
+          value={muted ? 0 : volume}
+          {...progressProps}
+        />
+      )}
+    </div>
   );
 };

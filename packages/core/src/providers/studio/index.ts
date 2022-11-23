@@ -31,7 +31,6 @@ import {
 } from '../../types';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
-import { fingerprint } from './fingerprint';
 import {
   StudioAsset,
   StudioAssetPatchPayload,
@@ -190,9 +189,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 ...((source as CreateAssetSourceFile) instanceof File
                   ? null
                   : { chunkSize: 5 * 1024 * 1024 }),
-                fingerprint: function (file: File & { exif?: any }) {
-                  return fingerprint(file);
-                },
+                // fingerprint: function (file: File & { exif?: any }) {
+                //   return fingerprint(file);
+                // },
                 onError: (error) => {
                   console.log('Failed because: ', error);
                 },

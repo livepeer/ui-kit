@@ -2,9 +2,10 @@
   package="com.livepeer">
 
   <uses-permission android:name="android.permission.INTERNET" />
-  <!-- Added manifest entry here -->
+
+  <!-- Added Player manifest entry here -->
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
-  <!-- End of addition of manifest entry -->
+  <!-- End of Player manifest entry -->
 
   <application
     android:name=".MainApplication"
