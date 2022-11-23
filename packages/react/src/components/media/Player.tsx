@@ -86,8 +86,15 @@ export type PlayerProps = {
   /** Whether to show the picture in picture button */
   showPipButton?: boolean;
 
-  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoUrlUpload?: boolean;
+  /**
+   * If a decentralized identifier (an IPFS CID/URL) should automatically be uploaded as an Asset if playback info does not exist.
+   * A custom gateway can also be specified, which is used to play back the asset directly from dStorage (only the domain needs to be passed, e.g. `https://ipfs.fleek.co`).
+   *
+   * Defaults to auto upload with fallback to play from dStorage until the asset is uploaded.
+   */
+  autoUrlUpload?:
+    | boolean
+    | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
 
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   jwt?: string;
@@ -100,6 +107,9 @@ export type PlayerProps = {
     }
   | { playbackId: string | null | undefined }
 );
+
+const defaultIpfsGateway = 'https://cloudflare-ipfs.com';
+const defaultArweaveGateway = 'https://arweave.net';
 
 export function Player({
   autoPlay,
@@ -118,7 +128,7 @@ export function Player({
   aspectRatio = '16to9',
   objectFit = 'cover',
   showPipButton,
-  autoUrlUpload = true,
+  autoUrlUpload = { fallback: true },
   onMetricsError,
   jwt,
 }: PlayerProps) {
@@ -204,10 +214,44 @@ export function Player({
       return mediaSourceTypes[0];
     }
 
-    // if the player is auto uploading, we do not play back the detected input file
+    // if the player is auto uploading, we do not play back the detected input file unless specified
     // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
-    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
-      return null;
+    if (decentralizedSrcOrPlaybackId) {
+      if (!autoUrlUpload) {
+        return null;
+      } else {
+        if (typeof autoUrlUpload !== 'boolean') {
+          if (decentralizedSrcOrPlaybackId.url.startsWith('ar://')) {
+            const { host } = new URL(
+              autoUrlUpload.arweaveGateway ?? defaultArweaveGateway,
+            );
+
+            const src: VideoSrc[] = [
+              {
+                type: 'video',
+                mime: 'video/mp4',
+                src: `https://${host}/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
+              },
+            ];
+
+            return src;
+          } else if (decentralizedSrcOrPlaybackId.url.startsWith('ipfs://')) {
+            const { host } = new URL(
+              autoUrlUpload.ipfsGateway ?? defaultIpfsGateway,
+            );
+
+            const src: VideoSrc[] = [
+              {
+                type: 'video',
+                mime: 'video/mp4',
+                src: `https://${host}/ipfs/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
+              },
+            ];
+
+            return src;
+          }
+        }
+      }
     }
 
     // we filter by the first source type in the array provided
