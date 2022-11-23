@@ -4,8 +4,6 @@ import {
 } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 
-import * as React from 'react';
-
 import { Path } from 'react-native-svg';
 
 import { useMediaController } from '../../../context';
@@ -32,6 +30,8 @@ const mediaControllerSelector = ({
   togglePlay,
   playing,
 });
+
+export type { PlayButtonProps };
 
 export const PlayButton = (props: PlayButtonProps) => {
   const { togglePlay, playing } = useMediaController(mediaControllerSelector);

@@ -16,6 +16,8 @@ const mediaControllerSelector = ({
   buffered,
 });
 
+export type { ProgressProps };
+
 export const Progress = (props: ProgressProps) => {
   const { duration, progress, requestSeek, buffered } = useMediaController(
     mediaControllerSelector,

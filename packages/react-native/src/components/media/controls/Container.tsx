@@ -1,11 +1,7 @@
-import { ThemeConfig } from 'livepeer/media';
+import { AspectRatio, ThemeConfig } from 'livepeer/media';
 import * as React from 'react';
 
-import {
-  AspectRatio,
-  Container as ContainerStyled,
-  ThemeProvider,
-} from '../../styling';
+import { Container as ContainerStyled, ThemeProvider } from '../../styling';
 import { MediaElement } from '../types';
 
 export type ContainerProps = {

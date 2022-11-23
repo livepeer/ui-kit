@@ -1,6 +1,8 @@
 export {
   addMediaMetricsToStore,
+  aspectRatios,
   createControllerStore,
+  type AspectRatio,
   type ControlsOptions,
   type DeviceInformation,
   type ElementSize,

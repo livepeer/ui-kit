@@ -1,3 +1,13 @@
+export const aspectRatios = [
+  { key: '16to9', value: '16 / 9', numeric: 16 / 9 },
+  { key: '1to1', value: '1 / 1', numeric: 1 / 1 },
+  { key: '9to16', value: '9 / 16', numeric: 9 / 16 },
+  { key: '4to5', value: '4 / 5', numeric: 4 / 5 },
+  { key: '21to9', value: '21 / 9', numeric: 21 / 9 },
+] as const;
+
+export type AspectRatio = typeof aspectRatios[number]['key'];
+
 export type ThemeConfig = Partial<{
   borderStyles: {
     containerBorderStyle?: string | number | boolean | undefined;

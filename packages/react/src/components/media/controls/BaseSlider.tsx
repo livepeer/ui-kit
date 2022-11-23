@@ -17,6 +17,8 @@ const mediaControllerSelector = ({
   device,
 });
 
+export type { BaseSliderProps };
+
 export const BaseSlider = (props: BaseSliderProps) => {
   const { device } = useMediaController(mediaControllerSelector);
 

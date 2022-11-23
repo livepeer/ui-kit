@@ -15,13 +15,7 @@ import {
   VideoSrc,
 } from 'livepeer/media';
 
-import React, {
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from 'react';
+import { forwardRef, useCallback, useContext, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { StoreApi, UseBoundStore } from 'zustand';

@@ -1,14 +1,5 @@
+import { aspectRatios } from '../../core';
 import { css } from './stitches';
-
-const aspectRatios = [
-  { key: '16to9', value: '16 / 9' },
-  { key: '1to1', value: '1 / 1' },
-  { key: '9to16', value: '9 / 16' },
-  { key: '4to5', value: '4 / 5' },
-  { key: '21to9', value: '21 / 9' },
-] as const;
-
-export type AspectRatio = typeof aspectRatios[number]['key'];
 
 const aspectRatioContainer = css('div', {
   variants: {

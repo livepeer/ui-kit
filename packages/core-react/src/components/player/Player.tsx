@@ -1,6 +1,6 @@
 import { ControlsOptions } from 'livepeer';
-import { ThemeConfig } from 'livepeer/media';
-import { AspectRatio } from 'livepeer/media/browser/styling';
+import { AspectRatio, ThemeConfig } from 'livepeer/media';
+
 import * as React from 'react';
 
 export type PlayerObjectFit = 'cover' | 'contain';

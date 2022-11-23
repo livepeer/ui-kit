@@ -39,6 +39,8 @@ const mediaControllerSelector = ({
   playing,
 });
 
+export type { PlayButtonProps };
+
 export const PlayButton = (props: PlayButtonProps) => {
   const { togglePlay, playing } = useMediaController(mediaControllerSelector);
 

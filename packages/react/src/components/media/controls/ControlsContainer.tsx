@@ -21,6 +21,8 @@ const mediaControllerSelector = ({
   buffered,
 });
 
+export type { ControlsContainerProps };
+
 export const ControlsContainer = (props: ControlsContainerProps) => {
   const {
     top,

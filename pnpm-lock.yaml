@@ -239,6 +239,7 @@ importers:
       react: 18.1.0
       react-native: 0.70.5
       react-native-codegen: ^0.72.0
+      react-native-gradle-plugin: ^0.71.9
       react-native-svg: 12.3.0
       react-test-renderer: 18.1.0
       typescript: ^4.8.3
@@ -267,6 +268,7 @@ importers:
       jest: 26.6.3
       metro-react-native-babel-preset: 0.72.3
       react-native-codegen: 0.72.0
+      react-native-gradle-plugin: 0.71.9
       react-test-renderer: 18.1.0_react@18.1.0
       typescript: 4.8.4
 
@@ -18142,6 +18144,10 @@ packages:
 
   /react-native-gradle-plugin/0.70.3:
     resolution: {integrity: sha512-oOanj84fJEXUg9FoEAQomA8ISG+DVIrTZ3qF7m69VQUJyOGYyDZmPqKcjvRku4KXlEH6hWO9i4ACLzNBh8gC0A==}
+
+  /react-native-gradle-plugin/0.71.9:
+    resolution: {integrity: sha512-hv/xt/aRzzlA7asGCIebvVBwjsxPMaXXGrKsk9W19CInUpShTFSBvBitViNfpw/hOQ7OHa6SxWpG2OZf5yZ21w==}
+    dev: true
 
   /react-native-svg/12.3.0_gtltrjvtlgj7ga36qzsxajwqwe:
     resolution: {integrity: sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==}
