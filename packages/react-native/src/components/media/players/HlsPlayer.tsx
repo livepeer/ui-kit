@@ -1,26 +1,13 @@
+import { HlsPlayerProps } from '@livepeer/core-react/components';
 import { Video } from 'expo-av';
-import { ControlsOptions, HlsSrc } from 'livepeer';
 import { addMediaMetricsToStore } from 'livepeer/media';
 
 import * as React from 'react';
 
 import { MediaControllerContext } from '../../../context';
-import { PlayerObjectFit } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 
-export type HlsPlayerProps = {
-  src: HlsSrc;
-  objectFit: PlayerObjectFit;
-  width?: string | number;
-  autoPlay?: boolean;
-  loop?: boolean;
-  title?: string;
-  muted?: boolean;
-  poster?: string;
-  jwt?: string;
-  options?: ControlsOptions;
-  onMetricsError?: (error: Error) => void;
-};
+export type { HlsPlayerProps };
 
 export const HlsPlayer = React.forwardRef<Video, HlsPlayerProps>(
   (props, ref) => {

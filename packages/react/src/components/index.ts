@@ -19,7 +19,6 @@ export type {
   PlayerProps,
   PosterProps,
   ProgressProps,
-  TimeDisplayProps,
   TitleProps,
   VolumeProps,
 } from './media';

@@ -18,7 +18,6 @@ export type {
   PlayButtonProps,
   PosterProps,
   ProgressProps,
-  TimeDisplayProps,
   TitleProps,
   VolumeProps,
 } from './controls';

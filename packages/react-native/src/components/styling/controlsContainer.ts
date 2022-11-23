@@ -23,7 +23,6 @@ const SharedContainer = styled(View, {
 
 export const Background = styled(SharedContainer, {
   position: 'absolute',
-  // display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   bottom: 0,
@@ -57,8 +56,6 @@ export const TopContainer = styled(SharedContainer, {
   marginLeft: '$controlsTopMarginX',
   marginRight: '$controlsTopMarginX',
 
-  // display: 'inline-flex',
-
   justifyContent: 'space-between',
   position: 'absolute',
 
@@ -75,7 +72,6 @@ export const BottomContainer = styled(SharedContainer, {
   marginLeft: '$controlsBottomMarginX',
   marginRight: '$controlsBottomMarginX',
 
-  // display: 'inline-flex',
   alignItems: 'center',
 
   position: 'absolute',
@@ -87,7 +83,7 @@ export const BottomContainer = styled(SharedContainer, {
 export const SpaceBetweenContainer = styled(View, {
   width: '100%',
   flexDirection: 'row',
-  // display: 'inline-flex',
+
   alignItems: 'center',
   justifyContent: 'space-between',
 });
@@ -108,7 +104,6 @@ export const LoadingText = styled(SharedContainer, {
   marginLeft: '$controlsTopMarginX',
   marginRight: '$controlsTopMarginX',
 
-  // display: 'inline-flex',
   alignItems: 'flex-start',
   justifyContent: 'flex-start',
   position: 'absolute',
@@ -126,25 +121,3 @@ export const LoadingText = styled(SharedContainer, {
   right: 0,
   bottom: 0,
 });
-
-// export const controlsContainer = {
-//   background,
-//   gradient,
-//   // loading,
-//   loadingText,
-
-//   top: {
-//     container: topContainer,
-//   },
-//   bottom: {
-//     container: bottomContainer,
-//     middle: {
-//       container: spaceBetweenContainer,
-//     },
-//     lower: {
-//       container: spaceBetweenContainer,
-//       left,
-//       right,
-//     },
-//   },
-// };

@@ -41,7 +41,7 @@ const mediaControllerSelector = ({
 
 export type { PlayButtonProps };
 
-export const PlayButton = (props: PlayButtonProps) => {
+export const PlayButton: React.FC<PlayButtonProps> = (props) => {
   const { togglePlay, playing } = useMediaController(mediaControllerSelector);
 
   const { buttonProps, title } = usePlayButton({

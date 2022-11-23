@@ -1,3 +1,4 @@
+import { VideoPlayerProps } from '@livepeer/core-react/components';
 import {
   AVPlaybackStatus,
   Audio,
@@ -10,9 +11,9 @@ import {
 } from 'expo-av';
 import {
   ControlsOptions,
+  DEFAULT_AUTOHIDE_TIME,
   MediaControllerState,
   MediaControllerStore,
-  VideoSrc,
 } from 'livepeer/media';
 
 import { forwardRef, useCallback, useContext, useEffect, useMemo } from 'react';
@@ -22,14 +23,10 @@ import { StoreApi, UseBoundStore } from 'zustand';
 
 import { MediaControllerContext } from '../../../context';
 import { MediaElement } from '../types';
-import { HlsPlayerProps } from './HlsPlayer';
+
 import { canPlayMediaNatively } from './canPlayMediaNatively';
 
-const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
-
-export type VideoPlayerProps = Omit<HlsPlayerProps, 'src'> & {
-  src: VideoSrc[] | null;
-};
+export type { VideoPlayerProps };
 
 export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
   ({ src, autoPlay, loop, muted, objectFit, options }, ref) => {
@@ -38,6 +35,7 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
       MediaControllerStore<MediaElement>
     >;
 
+    // TODO make these configurable
     useEffect(() => {
       Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -52,12 +50,11 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
 
     const { hasPlayed, playing } = store();
 
-    // const onError = async (e: string) => {
-    //   store.getState().setError(e);
-    //   // await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-    //   // await state._element?.unloadAsync();
-    //   // TODO add error handling
-    // };
+    const onError = async (_e: string) => {
+      // await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+      // await state._element?.unloadAsync();
+      // TODO add error handling
+    };
 
     useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
@@ -129,7 +126,7 @@ export const VideoPlayer = forwardRef<Video, VideoPlayerProps>(
         }
         onFullscreenUpdate={onFullscreenUpdate}
         onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-        // onError={onError}
+        onError={onError}
         shouldPlay={hasPlayed ? playing : autoPlay}
         ref={ref}
         isMuted={muted}

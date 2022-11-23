@@ -41,7 +41,9 @@ const mediaControllerSelector = ({
   volume,
 });
 
-export const Volume = (props: VolumeProps) => {
+export type { VolumeProps };
+
+export const Volume: React.FC<VolumeProps> = (props) => {
   const {
     volume,
     requestToggleMute,

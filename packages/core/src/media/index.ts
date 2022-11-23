@@ -2,6 +2,7 @@ export {
   addMediaMetricsToStore,
   aspectRatios,
   createControllerStore,
+  DEFAULT_AUTOHIDE_TIME,
   type AspectRatio,
   type ControlsOptions,
   type DeviceInformation,

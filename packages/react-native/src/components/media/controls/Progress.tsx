@@ -1,33 +1,10 @@
-import { useProgress } from '@livepeer/core-react/components';
+import { ProgressProps, useProgress } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf } from '../../system';
 import { MediaElement } from '../types';
 import { BaseSlider } from './BaseSlider';
-
-export type ProgressProps = Omit<
-  PropsOf<'input'>,
-  'children' | 'onChange' | 'color'
-> & {
-  /**
-   * The icon to be used for the progress thumb.
-   * @type React.ReactElement
-   */
-  thumbIcon?: React.ReactElement;
-
-  /**
-   * The color of the range background.
-   * @type string
-   */
-  rangeBackgroundColor?: string;
-
-  /**
-   * The callback when the user seeks with the progress component.
-   */
-  onSeek?: (progress: number) => void;
-};
 
 const mediaControllerSelector = ({
   duration,
@@ -41,7 +18,9 @@ const mediaControllerSelector = ({
   buffered,
 });
 
-export const Progress = (props: ProgressProps) => {
+export type { ProgressProps };
+
+export const Progress: React.FC<ProgressProps> = (props) => {
   const { duration, progress, requestSeek, buffered } = useMediaController(
     mediaControllerSelector,
   );

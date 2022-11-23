@@ -1,7 +1,10 @@
 import { ControlsOptions } from 'livepeer';
 import { AspectRatio, ThemeConfig } from 'livepeer/media';
+import { isNumber } from 'livepeer/utils';
 
 import * as React from 'react';
+
+import { useSourceMimeTyped } from './useSourceMimeTyped';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
@@ -70,3 +73,98 @@ export type PlayerProps = {
     }
   | { playbackId: string | null | undefined }
 );
+
+export const usePlayer = <TElement,>({
+  autoPlay,
+  children,
+  controls,
+  muted,
+  playbackId,
+
+  src,
+  theme,
+  title,
+  poster,
+  loop,
+
+  onMetricsError,
+  jwt,
+
+  refetchPlaybackInfoInterval = 5000,
+  autoUrlUpload = true,
+
+  shouldShowLoadingSpinner = true,
+  showTitle = true,
+  aspectRatio = '16to9',
+  objectFit = 'cover',
+}: PlayerProps) => {
+  const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
+
+  const { source, uploadStatus } = useSourceMimeTyped({
+    src,
+    playbackId,
+    jwt,
+    refetchPlaybackInfoInterval,
+    autoUrlUpload,
+  });
+
+  const hidePosterOnPlayed = React.useMemo(
+    () =>
+      Array.isArray(source)
+        ? source?.[0]?.type !== 'audio'
+          ? true
+          : undefined
+        : undefined,
+    [source],
+  );
+
+  const playerRef = React.useCallback((element: TElement | null) => {
+    if (element) {
+      setMediaElement(element);
+    }
+  }, []);
+
+  const loadingText = React.useMemo(
+    () =>
+      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
+        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+        : uploadStatus?.phase === 'failed'
+        ? 'Upload Failed'
+        : null,
+    [uploadStatus],
+  );
+
+  return {
+    loadingText,
+    mediaElement,
+    source,
+    uploadStatus,
+    playerProps: {
+      ref: playerRef,
+    },
+    controlsContainerProps: {
+      hidePosterOnPlayed,
+      shouldShowLoadingSpinner,
+      loadingText,
+    },
+    props: {
+      autoPlay,
+      children,
+      controls,
+      muted,
+      playbackId,
+      src,
+      theme,
+      title,
+      poster,
+      loop,
+      onMetricsError,
+      jwt,
+      refetchPlaybackInfoInterval,
+      autoUrlUpload,
+      showTitle,
+      aspectRatio,
+      objectFit,
+    },
+  };
+};

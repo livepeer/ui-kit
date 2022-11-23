@@ -3,7 +3,7 @@ import { createStitches } from 'stitches-native';
 
 const theme: ThemeConfig = {
   borderStyles: {
-    containerBorderStyle: 'hidden',
+    containerBorderStyle: 'solid',
   },
   borderWidths: {
     containerBorderWidth: 0,

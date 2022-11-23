@@ -1,4 +1,8 @@
-export { createControllerStore } from './controller';
+export {
+  createControllerStore,
+  DEFAULT_AUTOHIDE_TIME,
+  DEFAULT_VOLUME_LEVEL,
+} from './controller';
 export type {
   ControlsOptions,
   DeviceInformation,

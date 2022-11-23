@@ -13,7 +13,9 @@ import {
   SliderThumb,
 } from '../../styling';
 
-export const BaseSlider = (props: BaseSliderProps) => {
+export type { BaseSliderProps };
+
+export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   const ref = React.useRef<View | null>(null);
 
   const [sliderWidth, setSliderWidth] = React.useState(0);

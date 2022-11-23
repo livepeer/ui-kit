@@ -35,7 +35,7 @@ const mediaControllerSelector = ({
 
 export type { ControlsContainerProps };
 
-export const ControlsContainer = (props: ControlsContainerProps) => {
+export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
   const {
     top,
     middle,

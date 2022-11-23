@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { styled } from './stitches';
 
 export const Loading = styled(View, {
-  // display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   width: '100%',

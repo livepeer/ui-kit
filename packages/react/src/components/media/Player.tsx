@@ -1,15 +1,14 @@
 import {
   PlayerProps as CorePlayerProps,
   PlayerObjectFit,
-  useSourceMimeTyped,
+  usePlayer,
 } from '@livepeer/core-react/components';
 import { AudioSrc, VideoSrc } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/browser';
 
-import { isNumber } from 'livepeer/utils';
 import * as React from 'react';
 
-import { MediaControllerProvider, useTheme } from '../../context';
+import { MediaControllerProvider } from '../../context';
 
 import {
   Container,
@@ -34,72 +33,34 @@ type PlayerProps = CorePlayerProps & {
 
 export type { PlayerObjectFit, PlayerProps };
 
-export function Player({
-  autoPlay,
-  children,
-  controls,
-  muted,
-  playbackId,
-  refetchPlaybackInfoInterval = 5000,
-  src,
-  theme,
-  title,
-  poster,
-  loop,
-  shouldShowLoadingSpinner = true,
-  showTitle = true,
-  aspectRatio = '16to9',
-  objectFit = 'cover',
-  showPipButton,
-  autoUrlUpload = true,
-  onMetricsError,
-  jwt,
-}: PlayerProps) {
-  const [mediaElement, setMediaElement] =
-    React.useState<HTMLMediaElement | null>(null);
-
-  const { source, uploadStatus } = useSourceMimeTyped({
-    src,
-    playbackId,
-    jwt,
-    refetchPlaybackInfoInterval,
-    autoUrlUpload,
-  });
-
-  const hidePosterOnPlayed = React.useMemo(
-    () =>
-      Array.isArray(source)
-        ? source?.[0]?.type !== 'audio'
-          ? true
-          : undefined
-        : undefined,
-    [source],
-  );
-
-  const playerRef = React.useCallback((element: HTMLMediaElement | null) => {
-    if (element) {
-      setMediaElement(element);
-    }
-  }, []);
-
-  const contextTheme = useTheme(theme);
-
-  const topLoadingText = React.useMemo(
-    () =>
-      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
-        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
-        : uploadStatus?.phase === 'failed'
-        ? 'Upload Failed'
-        : null,
-    [uploadStatus],
-  );
+export function Player(props: PlayerProps) {
+  const {
+    mediaElement,
+    playerProps,
+    controlsContainerProps,
+    source,
+    props: {
+      autoPlay,
+      children,
+      controls,
+      muted,
+      theme,
+      title,
+      poster,
+      loop,
+      onMetricsError,
+      showTitle,
+      aspectRatio,
+      objectFit,
+    },
+  } = usePlayer<HTMLMediaElement>(props);
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
-      <Container className={contextTheme} aspectRatio={aspectRatio}>
+      <Container theme={theme} aspectRatio={aspectRatio}>
         {source && !Array.isArray(source) ? (
           <HlsPlayer
-            ref={playerRef}
+            {...playerProps}
             autoPlay={autoPlay}
             muted={autoPlay ? true : muted}
             src={source}
@@ -110,7 +71,7 @@ export function Player({
           />
         ) : source?.[0]?.type === 'audio' ? (
           <AudioPlayer
-            ref={playerRef}
+            {...playerProps}
             autoPlay={autoPlay}
             muted={autoPlay ? true : muted}
             src={source as AudioSrc[]}
@@ -119,7 +80,7 @@ export function Player({
           />
         ) : (
           <VideoPlayer
-            ref={playerRef}
+            {...playerProps}
             autoPlay={autoPlay}
             muted={autoPlay ? true : muted}
             src={source as VideoSrc[] | null}
@@ -134,9 +95,7 @@ export function Player({
         ) : (
           <>
             <ControlsContainer
-              hidePosterOnPlayed={hidePosterOnPlayed}
-              shouldShowLoadingSpinner={shouldShowLoadingSpinner}
-              loadingText={topLoadingText}
+              {...controlsContainerProps}
               poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && showTitle && <Title content={title} />}</>}
               middle={<Progress />}
@@ -149,7 +108,7 @@ export function Player({
               }
               right={
                 <>
-                  {showPipButton && <PictureInPictureButton />}
+                  {props.showPipButton && <PictureInPictureButton />}
                   <FullscreenButton />
                 </>
               }

@@ -1,10 +1,12 @@
-import { useFullscreenButton } from '@livepeer/core-react/components';
+import {
+  FullscreenButtonProps,
+  useFullscreenButton,
+} from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf } from '../../system';
 
 const DefaultEnterFullscreenIcon = () => (
   <svg
@@ -75,26 +77,9 @@ const mediaControllerSelector = ({
   requestToggleFullscreen,
 });
 
-export type FullscreenButtonProps = Omit<PropsOf<'button'>, 'children'> & {
-  /**
-   * The enter fullscreen icon to be used for the button.
-   * @type React.ReactElement
-   */
-  enterIcon?: React.ReactElement;
-  /**
-   * The exit fullscreen icon to be used for the button.
-   * @type React.ReactElement
-   */
-  exitIcon?: React.ReactElement;
-} & (
-    | {
-        enterIcon: React.ReactElement;
-        exitIcon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
+export type { FullscreenButtonProps };
 
-export const FullscreenButton = (props: FullscreenButtonProps) => {
+export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
   const { fullscreen, pictureInPicture, requestToggleFullscreen } =
     useMediaController(mediaControllerSelector);
 

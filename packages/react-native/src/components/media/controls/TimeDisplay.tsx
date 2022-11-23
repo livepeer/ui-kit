@@ -3,10 +3,8 @@ import { MediaControllerState } from 'livepeer';
 
 import { useMediaController } from '../../../context';
 import { TimeContainer, TimeLiveIndicator, TimeText } from '../../styling';
-import { PropsOf } from '../../system';
-import { MediaElement } from '../types';
 
-export type TimeDisplayProps = Omit<PropsOf<typeof TimeText>, 'children'>;
+import { MediaElement } from '../types';
 
 const mediaControllerSelector = ({
   duration,
@@ -18,7 +16,7 @@ const mediaControllerSelector = ({
   live,
 });
 
-export const TimeDisplay = (props: TimeDisplayProps) => {
+export const TimeDisplay: React.FC = () => {
   const { duration, progress, live } = useMediaController(
     mediaControllerSelector,
   );
@@ -31,11 +29,11 @@ export const TimeDisplay = (props: TimeDisplayProps) => {
 
   return (
     <>
-      <TimeText {...props}>{title}</TimeText>
+      <TimeText>{title}</TimeText>
       {isLive && (
         <TimeContainer accessibilityLabel="Live streaming media">
           <TimeLiveIndicator />
-          <TimeText {...props}>LIVE</TimeText>
+          <TimeText>LIVE</TimeText>
         </TimeContainer>
       )}
     </>

@@ -19,7 +19,7 @@ const mediaControllerSelector = ({
 
 export type { BaseSliderProps };
 
-export const BaseSlider = (props: BaseSliderProps) => {
+export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   const { device } = useMediaController(mediaControllerSelector);
 
   const ref = React.useRef<HTMLDivElement | null>(null);

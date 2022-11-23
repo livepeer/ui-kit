@@ -3,9 +3,6 @@ import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 
 import { useMediaController } from '../../../context';
-import { PropsOf } from '../../system';
-
-export type TimeDisplayProps = Omit<PropsOf<'span'>, 'children'>;
 
 const mediaControllerSelector = ({
   duration,
@@ -17,7 +14,7 @@ const mediaControllerSelector = ({
   live,
 });
 
-export const TimeDisplay = (props: TimeDisplayProps) => {
+export const TimeDisplay: React.FC = () => {
   const { duration, progress, live } = useMediaController(
     mediaControllerSelector,
   );
@@ -30,11 +27,7 @@ export const TimeDisplay = (props: TimeDisplayProps) => {
 
   return (
     <>
-      <span
-        className={styling.time.text()}
-        aria-label={'Playback time'}
-        {...props}
-      >
+      <span className={styling.time.text()} aria-label={'Playback time'}>
         {title}
       </span>
       {isLive && (
@@ -43,7 +36,6 @@ export const TimeDisplay = (props: TimeDisplayProps) => {
           <span
             className={styling.time.text()}
             aria-label={'Live streaming media'}
-            {...props}
           >
             LIVE
           </span>

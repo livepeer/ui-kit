@@ -1,10 +1,9 @@
-import { useVolume } from '@livepeer/core-react/components';
+import { VolumeProps, useVolume } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { PropsOf } from '../../system';
 import { BaseSlider } from './BaseSlider';
 
 const DefaultMutedIcon = () => (
@@ -40,25 +39,9 @@ const mediaControllerSelector = ({
   volume,
 });
 
-export type VolumeProps = Omit<PropsOf<'button'>, 'children'> & {
-  /**
-   * Toggles showing the slider to change the volume level. Defaults to true.
-   * If false, the volume will toggle between 0% and 100%.
-   */
-  showSlider?: boolean;
-  /**
-   * The icon to be used for the button when unmuted.
-   * @type React.ReactElement
-   */
-  unmutedIcon?: React.ReactElement;
-  /**
-   * The icon to be used for the button when muted.
-   * @type React.ReactElement
-   */
-  mutedIcon?: React.ReactElement;
-};
+export type { VolumeProps };
 
-export const Volume = (props: VolumeProps) => {
+export const Volume: React.FC<VolumeProps> = (props) => {
   const {
     volume,
     requestToggleMute,

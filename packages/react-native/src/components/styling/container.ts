@@ -40,13 +40,7 @@ export const Container = styled(aspectRatioContainer, {
     pointerEvents: 'none',
   },
 
-  // '&:hover': {
-  //   boxShadow: '$containerShadowHover',
-  // },
-
-  // boxShadow: '$containerShadow',
-
-  // borderStyle: '$containerBorderStyle',
+  borderStyle: '$containerBorderStyle',
   borderColor: '$containerBorderColor',
   borderRadius: '$containerBorderRadius',
   borderWidth: '$containerBorderWidth',

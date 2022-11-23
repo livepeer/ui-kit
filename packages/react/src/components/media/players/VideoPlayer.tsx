@@ -1,20 +1,18 @@
-import { MediaControllerState, VideoSrc } from 'livepeer';
+import { VideoPlayerProps } from '@livepeer/core-react/components';
+import { MediaControllerState } from 'livepeer';
 import { canPlayMediaNatively } from 'livepeer/media/browser';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { HlsPlayerProps } from './HlsPlayer';
-
-export type VideoPlayerProps = Omit<HlsPlayerProps, 'hlsConfig' | 'src'> & {
-  src: VideoSrc[] | null;
-};
 
 const mediaControllerSelector = ({
   fullscreen,
 }: MediaControllerState<HTMLMediaElement>) => ({
   fullscreen,
 });
+
+export type { VideoPlayerProps };
 
 export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
   ({ src, autoPlay, title, loop, muted, poster, objectFit }, ref) => {

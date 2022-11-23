@@ -39,7 +39,9 @@ const mediaControllerSelector = ({
   requestToggleFullscreen,
 });
 
-export const FullscreenButton = (props: FullscreenButtonProps) => {
+export type { FullscreenButtonProps };
+
+export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
   const { fullscreen, pictureInPicture, requestToggleFullscreen } =
     useMediaController(mediaControllerSelector);
 

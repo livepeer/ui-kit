@@ -43,10 +43,9 @@ const mediaControllerSelector = ({
   fullscreen,
 });
 
-export const PictureInPictureButton = React.forwardRef<
-  HTMLButtonElement,
-  PictureInPictureButtonProps
->((props, ref) => {
+export const PictureInPictureButton: React.FC<PictureInPictureButtonProps> = (
+  props,
+) => {
   const {
     requestTogglePictureInPicture,
     _element,
@@ -87,12 +86,9 @@ export const PictureInPictureButton = React.forwardRef<
       className={styling.iconButton()}
       title={title}
       aria-label={title}
-      ref={ref}
       onClick={onClickComposed}
     >
       {_children}
     </button>
   );
-});
-
-PictureInPictureButton.displayName = 'PictureInPictureButton';
+};

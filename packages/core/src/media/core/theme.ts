@@ -10,55 +10,55 @@ export type AspectRatio = typeof aspectRatios[number]['key'];
 
 export type ThemeConfig = Partial<{
   borderStyles: {
-    containerBorderStyle?: string | number | boolean | undefined;
+    containerBorderStyle?: 'solid' | 'dotted' | 'dashed' | undefined;
   };
   borderWidths: {
-    containerBorderWidth?: string | number | boolean | undefined;
-    loadingWidth?: string | number | boolean | undefined;
+    containerBorderWidth?: string | number | undefined;
+    loadingWidth?: string | number | undefined;
   };
   colors: {
-    accent?: string | number | boolean | undefined;
-    background?: string | number | boolean | undefined;
-    containerBorderColor?: string | number | boolean | undefined;
-    icon?: string | number | boolean | undefined;
-    iconHover?: string | number | boolean | undefined;
-    liveIndicator?: string | number | boolean | undefined;
+    accent?: string | undefined;
+    background?: string | undefined;
+    containerBorderColor?: string | undefined;
+    icon?: string | undefined;
+    iconHover?: string | undefined;
+    liveIndicator?: string | undefined;
   };
   fonts: {
-    display?: string | number | boolean | undefined;
+    display?: string | undefined;
   };
   fontSizes: {
-    timeFontSize?: string | number | boolean | undefined;
-    timeFontSizeMd?: string | number | boolean | undefined;
-    timeFontSizeSm?: string | number | boolean | undefined;
-    titleFontSize?: string | number | boolean | undefined;
-    titleFontSizeMd?: string | number | boolean | undefined;
-    titleFontSizeSm?: string | number | boolean | undefined;
+    timeFontSize?: string | number | undefined;
+    timeFontSizeMd?: string | number | undefined;
+    timeFontSizeSm?: string | number | undefined;
+    titleFontSize?: string | number | undefined;
+    titleFontSizeMd?: string | number | undefined;
+    titleFontSizeSm?: string | number | undefined;
   };
   fontWeights: {
-    titleFontWeight?: string | number | boolean | undefined;
+    titleFontWeight?: string | number | undefined;
   };
   sizes: {
-    iconButtonSize?: string | number | boolean | undefined;
-    iconButtonSizeSm?: string | number | boolean | undefined;
-    liveIndicatorSize?: string | number | boolean | undefined;
-    loading?: string | number | boolean | undefined;
-    thumb?: string | number | boolean | undefined;
-    thumbActive?: string | number | boolean | undefined;
-    trackActive?: string | number | boolean | undefined;
-    trackContainerHeight?: string | number | boolean | undefined;
-    trackContainerHeightSm?: string | number | boolean | undefined;
-    trackInactive?: string | number | boolean | undefined;
+    iconButtonSize?: string | number | undefined;
+    iconButtonSizeSm?: string | number | undefined;
+    liveIndicatorSize?: string | number | undefined;
+    loading?: string | number | undefined;
+    thumb?: string | number | undefined;
+    thumbActive?: string | number | undefined;
+    trackActive?: string | number | undefined;
+    trackContainerHeight?: string | number | undefined;
+    trackContainerHeightSm?: string | number | undefined;
+    trackInactive?: string | number | undefined;
   };
   space: {
-    controlsBottomMarginX?: string | number | boolean | undefined;
-    controlsBottomMarginY?: string | number | boolean | undefined;
-    controlsTopMarginX?: string | number | boolean | undefined;
-    controlsTopMarginY?: string | number | boolean | undefined;
-    timeMarginX?: string | number | boolean | undefined;
+    controlsBottomMarginX?: string | number | undefined;
+    controlsBottomMarginY?: string | number | undefined;
+    controlsTopMarginX?: string | number | undefined;
+    controlsTopMarginY?: string | number | undefined;
+    timeMarginX?: string | number | undefined;
   };
   radii: {
-    containerBorderRadius?: string | number | boolean | undefined;
-    slider?: string | number | boolean | undefined;
+    containerBorderRadius?: string | number | undefined;
+    slider?: string | number | undefined;
   };
 }>;

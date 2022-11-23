@@ -2,6 +2,7 @@ import { StoreApi } from 'zustand/vanilla';
 
 import { ControlsOptions as ControlsOptionsBase } from '../../core';
 import {
+  DEFAULT_AUTOHIDE_TIME,
   DEFAULT_VOLUME_LEVEL,
   MediaControllerState,
   MediaControllerStore,
@@ -33,8 +34,6 @@ const allKeyTriggers = [
   'ArrowLeft',
 ] as const;
 type KeyTrigger = typeof allKeyTriggers[number];
-
-const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
 
 // if volume change is unsupported, the element will always return 1
 // similar to https://github.com/videojs/video.js/pull/7514/files

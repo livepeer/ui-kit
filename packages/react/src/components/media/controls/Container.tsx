@@ -1,9 +1,10 @@
+import { ContainerProps } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
-import { AspectRatio } from 'livepeer/media';
+
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { useMediaController } from '../../../context';
+import { useMediaController, useTheme } from '../../../context';
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -11,38 +12,31 @@ const mediaControllerSelector = ({
   fullscreen,
 });
 
-export type ContainerProps = {
-  aspectRatio: AspectRatio;
-  children: React.ReactNode;
-  className?: string;
-};
+export type { ContainerProps };
 
-export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
-  (props, ref) => {
-    const { children, className, aspectRatio } = props;
+export const Container: React.FC<ContainerProps> = (props) => {
+  const { children, aspectRatio, theme } = props;
 
-    const { fullscreen } = useMediaController(mediaControllerSelector);
+  const className = useTheme(theme);
 
-    return (
+  const { fullscreen } = useMediaController(mediaControllerSelector);
+
+  return (
+    <div
+      style={{
+        display: 'contents',
+      }}
+      className={className}
+    >
       <div
-        style={{
-          display: 'contents',
-        }}
-        className={className}
+        className={styling.container({
+          aspectRatio,
+          size: fullscreen ? 'fullscreen' : 'default',
+        })}
+        tabIndex={0}
       >
-        <div
-          className={styling.container({
-            aspectRatio,
-            size: fullscreen ? 'fullscreen' : 'default',
-          })}
-          ref={ref}
-          tabIndex={0}
-        >
-          {children}
-        </div>
+        {children}
       </div>
-    );
-  },
-);
-
-Container.displayName = 'Container';
+    </div>
+  );
+};

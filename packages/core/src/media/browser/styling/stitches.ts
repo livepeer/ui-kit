@@ -4,7 +4,7 @@ import { ThemeConfig } from '../../core';
 
 const theme: ThemeConfig = {
   borderStyles: {
-    containerBorderStyle: 'hidden',
+    containerBorderStyle: undefined,
   },
   borderWidths: {
     containerBorderWidth: 0,
