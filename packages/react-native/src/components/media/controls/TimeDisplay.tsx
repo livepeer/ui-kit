@@ -30,11 +30,25 @@ export const TimeDisplay: React.FC = () => {
 
   return (
     <>
-      <TimeText>{title}</TimeText>
+      <TimeText
+        size={{
+          '@md': 'medium',
+          '@lg': 'large',
+        }}
+      >
+        {title}
+      </TimeText>
       {isLive && (
         <TimeContainer accessibilityLabel="Live streaming media">
           <TimeLiveIndicator />
-          <TimeText>LIVE</TimeText>
+          <TimeText
+            size={{
+              '@md': 'medium',
+              '@lg': 'large',
+            }}
+          >
+            LIVE
+          </TimeText>
         </TimeContainer>
       )}
     </>

@@ -3,11 +3,21 @@ import { text } from './text';
 
 export const Title = styled(text, {
   fontWeight: '$titleFontWeight',
-  fontSize: '$titleFontSizeSm',
-  '@md': {
-    fontSize: '$titleFontSizeMd',
+
+  variants: {
+    size: {
+      large: {
+        fontSize: '$titleFontSize',
+      },
+      medium: {
+        fontSize: '$titleFontSizeMd',
+      },
+      default: {
+        fontSize: '$titleFontSizeSm',
+      },
+    },
   },
-  '@lg': {
-    fontSize: '$titleFontSize',
+  defaultVariants: {
+    size: 'default',
   },
 });

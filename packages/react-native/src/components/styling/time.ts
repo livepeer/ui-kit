@@ -21,12 +21,20 @@ export const TimeText = styled(text, {
   marginRight: '$timeMarginX',
   fontVariant: ['tabular-nums'],
 
-  fontSize: '$timeFontSizeSm',
-
-  '@md': {
-    fontSize: '$timeFontSizeMd',
+  variants: {
+    size: {
+      large: {
+        fontSize: '$timeFontSize',
+      },
+      medium: {
+        fontSize: '$timeFontSizeMd',
+      },
+      default: {
+        fontSize: '$timeFontSizeSm',
+      },
+    },
   },
-  '@lg': {
-    fontSize: '$timeFontSize',
+  defaultVariants: {
+    size: 'default',
   },
 });

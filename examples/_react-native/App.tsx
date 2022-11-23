@@ -51,6 +51,7 @@ const App = () => {
             muted
             objectFit="contain"
             title="Part Two"
+            aspectRatio="1to1"
             playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
           />
 

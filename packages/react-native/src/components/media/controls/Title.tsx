@@ -8,5 +8,15 @@ export type { TitleProps };
 export const Title: React.FC<TitleProps> = (props) => {
   const { content } = props;
 
-  return <TitleStyled accessibilityLabel="Title">{content}</TitleStyled>;
+  return (
+    <TitleStyled
+      size={{
+        '@md': 'medium',
+        '@lg': 'large',
+      }}
+      accessibilityLabel="Title"
+    >
+      {content}
+    </TitleStyled>
+  );
 };

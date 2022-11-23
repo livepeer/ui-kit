@@ -15,7 +15,7 @@ export const defaultQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {
-        cacheTime: 1_000 * 60 * 60 * 24, // 24 hours
+        cacheTime: 1000 * 60 * 60 * 24, // 24 hours
         networkMode: 'offlineFirst',
         refetchOnWindowFocus: false,
         retry: 0,
