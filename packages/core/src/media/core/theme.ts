@@ -36,7 +36,19 @@ export type ThemeConfig = Partial<{
     titleFontSizeSm?: string | number | undefined;
   };
   fontWeights: {
-    titleFontWeight?: string | number | undefined;
+    titleFontWeight?:
+      | 'normal'
+      | 'bold'
+      | '100'
+      | '200'
+      | '300'
+      | '400'
+      | '500'
+      | '600'
+      | '700'
+      | '800'
+      | '900'
+      | undefined;
   };
   sizes: {
     iconButtonSize?: string | number | undefined;

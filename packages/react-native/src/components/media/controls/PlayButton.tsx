@@ -45,5 +45,13 @@ export const PlayButton: React.FC<PlayButtonProps> = (props) => {
     ...props,
   });
 
-  return <IconButton {...buttonProps} accessibilityLabel={title} />;
+  return (
+    <IconButton
+      size={{
+        '@lg': 'large',
+      }}
+      {...buttonProps}
+      accessibilityLabel={title}
+    />
+  );
 };

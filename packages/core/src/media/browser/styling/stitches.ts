@@ -30,7 +30,7 @@ const theme: ThemeConfig = {
     titleFontSizeSm: '0.9rem',
   },
   fontWeights: {
-    titleFontWeight: 400,
+    titleFontWeight: '400',
   },
   sizes: {
     iconButtonSize: '42px',

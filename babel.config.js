@@ -1,5 +1,8 @@
 module.exports = {
-  presets: ['@babel/preset-typescript', '@babel/preset-react'],
+  presets: [
+    '@babel/preset-typescript',
+    ['@babel/preset-react', { runtime: 'automatic' }],
+  ],
   overrides: [
     {
       include: ['./packages/core', './packages/react'],

@@ -59,5 +59,13 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
     return <></>;
   }
 
-  return <IconButton {...buttonProps} accessibilityLabel={title} />;
+  return (
+    <IconButton
+      size={{
+        '@lg': 'large',
+      }}
+      {...buttonProps}
+      accessibilityLabel={title}
+    />
+  );
 };

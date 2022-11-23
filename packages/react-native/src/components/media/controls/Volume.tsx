@@ -66,7 +66,13 @@ export const Volume: React.FC<VolumeProps> = (props) => {
 
   return (
     <VolumeContainer>
-      <IconButton accessibilityLabel={title} {...buttonProps} />
+      <IconButton
+        size={{
+          '@lg': 'large',
+        }}
+        accessibilityLabel={title}
+        {...buttonProps}
+      />
     </VolumeContainer>
   );
 };

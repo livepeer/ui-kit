@@ -1,6 +1,7 @@
 import { useTimeDisplay } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
+import * as React from 'react';
 
 import { useMediaController } from '../../../context';
 
