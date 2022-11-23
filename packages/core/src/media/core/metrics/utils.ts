@@ -65,6 +65,7 @@ export const getMetricsReportingUrl = async (
       }
     }
   } catch (error) {
+    console.error((error as Error)?.message);
     return null;
   }
 
