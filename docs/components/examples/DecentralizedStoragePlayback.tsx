@@ -36,7 +36,16 @@ export const DecentralizedStoragePlayback = () => {
 
       {idParsed && (
         <Box css={{ mt: '$2' }}>
-          <Player title={idParsed.id} src={url} autoPlay muted autoUrlUpload />
+          <Player
+            title={idParsed.id}
+            src={url}
+            autoPlay
+            muted
+            autoUrlUpload={{
+              fallback: true,
+              ipfsGateway: 'https://cloudflare-ipfs.com',
+            }}
+          />
         </Box>
       )}
     </Box>

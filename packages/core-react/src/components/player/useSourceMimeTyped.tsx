@@ -6,6 +6,9 @@ import * as React from 'react';
 import { PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
+const defaultIpfsGateway = 'https://cloudflare-ipfs.com';
+const defaultArweaveGateway = 'https://arweave.net';
+
 export type UseSourceMimeTypedProps = {
   src: PlayerProps['src'];
   playbackId: PlayerProps['playbackId'];
@@ -21,7 +24,7 @@ export const useSourceMimeTyped = ({
   playbackId,
   jwt,
   refetchPlaybackInfoInterval,
-  autoUrlUpload,
+  autoUrlUpload = { fallback: true },
 }: UseSourceMimeTypedProps) => {
   const [uploadStatus, setUploadStatus] = React.useState<
     Asset['status'] | null
@@ -102,10 +105,44 @@ export const useSourceMimeTyped = ({
       return mediaSourceTypes[0];
     }
 
-    // if the player is auto uploading, we do not play back the detected input file
+    // if the player is auto uploading, we do not play back the detected input file unless specified
     // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
-    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
-      return null;
+    if (decentralizedSrcOrPlaybackId) {
+      if (!autoUrlUpload) {
+        return null;
+      } else {
+        if (typeof autoUrlUpload !== 'boolean') {
+          if (decentralizedSrcOrPlaybackId.url.startsWith('ar://')) {
+            const { host } = new URL(
+              autoUrlUpload.arweaveGateway ?? defaultArweaveGateway,
+            );
+
+            const src: VideoSrc[] = [
+              {
+                type: 'video',
+                mime: 'video/mp4',
+                src: `https://${host}/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
+              },
+            ];
+
+            return src;
+          } else if (decentralizedSrcOrPlaybackId.url.startsWith('ipfs://')) {
+            const { host } = new URL(
+              autoUrlUpload.ipfsGateway ?? defaultIpfsGateway,
+            );
+
+            const src: VideoSrc[] = [
+              {
+                type: 'video',
+                mime: 'video/mp4',
+                src: `https://${host}/ipfs/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
+              },
+            ];
+
+            return src;
+          }
+        }
+      }
     }
 
     // we filter by the first source type in the array provided

@@ -11,7 +11,7 @@ export type UsePlaybackInfoOrImportProps = {
   decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;
   playbackId: PlayerProps['playbackId'];
   refetchPlaybackInfoInterval: number;
-  autoUrlUpload: boolean;
+  autoUrlUpload: boolean | { fallback: true; gateway?: string };
   onAssetStatusChange: (status: Asset['status']) => void;
 };
 

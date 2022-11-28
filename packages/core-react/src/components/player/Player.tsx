@@ -59,8 +59,15 @@ export type PlayerProps = {
   /** The refetch interval for the playback info hook (used with `playbackId` to query until there is a valid playback URL) */
   refetchPlaybackInfoInterval?: number;
 
-  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
-  autoUrlUpload?: boolean;
+  /**
+   * If a decentralized identifier (an IPFS CID/URL) should automatically be uploaded as an Asset if playback info does not exist.
+   * A custom gateway can also be specified, which is used to play back the asset directly from dStorage (only the domain needs to be passed, e.g. `https://ipfs.fleek.co`).
+   *
+   * Defaults to auto upload with fallback to play from dStorage until the asset is uploaded.
+   */
+  autoUrlUpload?:
+    | boolean
+    | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
 
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   jwt?: string;

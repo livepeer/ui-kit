@@ -9,6 +9,7 @@ export const AssetDemoPlayer = () => {
       <Player
         playbackId={playbackId}
         // src={'/audio-example.mp3'}
+        autoUrlUpload={{ fallback: true, ipfsGateway: 'dweb.link' }}
         loop
         autoPlay
         showPipButton

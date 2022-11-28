@@ -1,5 +1,21 @@
 # @livepeer/react
 
+## 1.5.5
+
+### Patch Changes
+
+- [#161](https://github.com/livepeer/livepeer.js/pull/161) [`bf67833`](https://github.com/livepeer/livepeer.js/commit/bf678330a3273064617104a08332f2a1e74250e6) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature**: added fallback to play directly from IPFS in the Player.
+
+  ```tsx
+  export type PlayerProps = {
+    ...
+    autoUrlUpload?:
+      | boolean
+      | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
+    ...
+  };
+  ```
+
 ## 1.5.4
 
 ### Patch Changes
