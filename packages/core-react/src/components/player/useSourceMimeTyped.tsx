@@ -6,7 +6,7 @@ import * as React from 'react';
 import { PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
-const defaultIpfsGateway = 'https://cloudflare-ipfs.com';
+const defaultIpfsGateway = 'https://w3s.link';
 const defaultArweaveGateway = 'https://arweave.net';
 
 export type UseSourceMimeTypedProps = {
