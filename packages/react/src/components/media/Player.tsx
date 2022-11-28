@@ -108,7 +108,7 @@ export type PlayerProps = {
   | { playbackId: string | null | undefined }
 );
 
-const defaultIpfsGateway = 'https://cloudflare-ipfs.com';
+const defaultIpfsGateway = 'https://w3s.link';
 const defaultArweaveGateway = 'https://arweave.net';
 
 export function Player({
