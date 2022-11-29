@@ -1,11 +1,12 @@
 import {
+  PlayerProps as CorePlayerProps,
   PlayerObjectFit,
-  PlayerProps,
   usePlayer,
 } from '@livepeer/core-react/components';
 import { AudioSrc, VideoSrc } from 'livepeer/media';
 
 import * as React from 'react';
+import { ImageProps } from 'react-native';
 
 import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
@@ -20,7 +21,11 @@ import { Volume } from './controls/Volume';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { MediaElement } from './types';
 
-export type { PlayerObjectFit, PlayerProps };
+export type { PlayerObjectFit };
+
+export type PosterSource = ImageProps['source'];
+
+export type PlayerProps = CorePlayerProps<PosterSource>;
 
 export function Player(props: PlayerProps) {
   const {
@@ -28,21 +33,8 @@ export function Player(props: PlayerProps) {
     playerProps,
     controlsContainerProps,
     source,
-    props: {
-      autoPlay,
-      children,
-      controls,
-      muted,
-      theme,
-      title,
-      poster,
-      loop,
-      onMetricsError,
-      showTitle,
-      aspectRatio,
-      objectFit,
-    },
-  } = usePlayer<MediaElement>(props);
+    props: { children, theme, title, onMetricsError, showTitle, aspectRatio },
+  } = usePlayer<MediaElement, PosterSource>(props);
 
   return (
     <MediaControllerProvider element={mediaElement}>
@@ -50,36 +42,13 @@ export function Player(props: PlayerProps) {
         {source && !Array.isArray(source) ? (
           <HlsPlayer
             {...playerProps}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
             src={source}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-            objectFit={objectFit}
             onMetricsError={onMetricsError}
-            options={controls}
           />
         ) : source?.[0]?.type === 'audio' ? (
-          <AudioPlayer
-            {...playerProps}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={source as AudioSrc[]}
-            loop={loop}
-            objectFit={objectFit}
-            options={controls}
-          />
+          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
         ) : (
-          <VideoPlayer
-            {...playerProps}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={source as VideoSrc[] | null}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-            objectFit={objectFit}
-            options={controls}
-          />
+          <VideoPlayer {...playerProps} src={source as VideoSrc[] | null} />
         )}
 
         {React.isValidElement(children) ? (

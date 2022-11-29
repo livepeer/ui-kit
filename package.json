@@ -85,5 +85,10 @@
   "engines": {
     "node": ">=16",
     "pnpm": ">=7"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "stitches-native@0.3.2": "patches/stitches-native@0.3.2.patch"
+    }
   }
 }

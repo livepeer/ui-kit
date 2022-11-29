@@ -1,5 +1,10 @@
 lockfileVersion: 5.4
 
+patchedDependencies:
+  stitches-native@0.3.2:
+    hash: qfexx24sgzv2v2w63h52w36ype
+    path: patches/stitches-native@0.3.2.patch
+
 importers:
 
   .:
@@ -466,7 +471,7 @@ importers:
       '@livepeer/core-react': link:../core-react
       livepeer: link:../core
       react-native-url-polyfill: 1.3.0_react-native@0.70.5
-      stitches-native: 0.3.2_4r3cdqp3lrtwebhzxhqucfs6yq
+      stitches-native: 0.3.2_qfexx24sgzv2v2w63h52w36ype_4r3cdqp3lrtwebhzxhqucfs6yq
       zustand: 4.1.4_react@18.2.0
     devDependencies:
       '@tanstack/react-query': 4.14.5_4r3cdqp3lrtwebhzxhqucfs6yq
@@ -19523,7 +19528,7 @@ packages:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
 
-  /stitches-native/0.3.2_4r3cdqp3lrtwebhzxhqucfs6yq:
+  /stitches-native/0.3.2_qfexx24sgzv2v2w63h52w36ype_4r3cdqp3lrtwebhzxhqucfs6yq:
     resolution: {integrity: sha512-JncXxHOAnGGauzjdgdFGtcIuIZ272v/LMAbgub7S6fq8SOEH6KiDmZWDM6cG3kqxX4lPnjepuR0lq7Pl8uf2yg==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -19534,6 +19539,7 @@ packages:
       react: 18.2.0
       react-native: 0.70.5_react@18.2.0
     dev: false
+    patched: true
 
   /stream-browserify/3.0.0:
     resolution: {integrity: sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==}

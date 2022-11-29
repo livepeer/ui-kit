@@ -5,3 +5,4 @@ export {
   useClient,
 } from './LivepeerConfig';
 export type { LivepeerConfigProps } from './LivepeerConfig';
+export { useTheme } from './useTheme';

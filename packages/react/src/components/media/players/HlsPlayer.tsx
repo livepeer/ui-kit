@@ -14,9 +14,10 @@ import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { MediaControllerContext } from '../../../context';
+import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 
-export type HlsPlayerProps = HlsPlayerCoreProps & {
+export type HlsPlayerProps = HlsPlayerCoreProps<PosterSource> & {
   hlsConfig?: HlsVideoConfig;
 };
 
@@ -104,7 +105,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
         playsInline
         autoPlay={autoPlay}
         muted={muted}
-        poster={poster}
+        poster={typeof poster === 'string' ? poster : undefined}
       />
     ) : (
       <VideoPlayer

@@ -1,4 +1,4 @@
-import { VideoPlayerProps } from '@livepeer/core-react/components';
+import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import {
   AVPlaybackStatus,
   Audio,
@@ -22,14 +22,17 @@ import { StyleSheet } from 'react-native';
 import { StoreApi, UseBoundStore } from 'zustand';
 
 import { MediaControllerContext } from '../../../context';
+import { PosterSource } from '../Player';
 import { MediaElement } from '../types';
 
 import { canPlayMediaNatively } from './canPlayMediaNatively';
 
-export type { VideoPlayerProps };
+const defaultProgressUpdateInterval = 20;
+
+export type VideoPlayerProps = VideoPlayerCoreProps<PosterSource>;
 
 export const VideoPlayer = React.forwardRef<Video, VideoPlayerProps>(
-  ({ src, autoPlay, loop, muted, objectFit, options }, ref) => {
+  ({ src, autoPlay, loop, muted, objectFit, options, poster }, ref) => {
     // typecast the context so that we can have video/audio-specific controller states
     const store = React.useContext(MediaControllerContext) as UseBoundStore<
       MediaControllerStore<MediaElement>
@@ -55,6 +58,10 @@ export const VideoPlayer = React.forwardRef<Video, VideoPlayerProps>(
       // await state._element?.unloadAsync();
       // TODO add error handling
     };
+
+    React.useEffect(() => {
+      store.setState({ muted: Boolean(muted) });
+    }, [muted, store]);
 
     React.useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
@@ -124,6 +131,14 @@ export const VideoPlayer = React.forwardRef<Video, VideoPlayerProps>(
         resizeMode={
           objectFit === 'contain' ? ResizeMode.CONTAIN : ResizeMode.COVER
         }
+        usePoster={Boolean(poster)}
+        posterSource={poster}
+        // eslint-disable-next-line react-native/no-inline-styles
+        posterStyle={{
+          resizeMode: objectFit === 'contain' ? 'contain' : 'cover',
+        }}
+        useNativeControls={false}
+        progressUpdateIntervalMillis={defaultProgressUpdateInterval}
         onFullscreenUpdate={onFullscreenUpdate}
         onPlaybackStatusUpdate={onPlaybackStatusUpdate}
         onError={onError}
@@ -188,7 +203,6 @@ const addEffectsToStore = <TElement extends MediaElement>(
 
         if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
           previousPromise = element.setStatusAsync({
-            progressUpdateIntervalMillis: 20,
             positionMillis: current._requestedRangeToSeekTo * 1000, // convert to ms
           });
         }

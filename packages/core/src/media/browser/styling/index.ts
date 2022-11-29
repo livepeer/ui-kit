@@ -18,4 +18,4 @@ export const styling = {
   volume,
 };
 
-export { createPlayerTheme, defaultTheme, getCssText } from './stitches';
+export { createTheme, defaultTheme, getCssText } from './stitches';

@@ -56,11 +56,11 @@ const theme: ThemeConfig = {
 };
 
 export const {
-  css,
   styled,
-  createTheme: createPlayerTheme,
+  createTheme,
   theme: defaultTheme,
-  ThemeProvider,
+  useTheme,
+  ThemeProvider: StitchesThemeProvider,
 } = createStitches({
   media: {
     sm: '(width < 640px)',

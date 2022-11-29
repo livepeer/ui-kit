@@ -24,7 +24,9 @@ import {
 } from './controls';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 
-type PlayerProps = CorePlayerProps & {
+export type PosterSource = string | React.ReactNode;
+
+type PlayerProps = CorePlayerProps<PosterSource> & {
   /** Whether to show the picture in picture button (web only) */
   showPipButton?: boolean;
   /** Configuration for the event listeners */
@@ -40,20 +42,16 @@ export function Player(props: PlayerProps) {
     controlsContainerProps,
     source,
     props: {
-      autoPlay,
       children,
       controls,
-      muted,
       theme,
       title,
       poster,
-      loop,
       onMetricsError,
       showTitle,
       aspectRatio,
-      objectFit,
     },
-  } = usePlayer<HTMLMediaElement>(props);
+  } = usePlayer<HTMLMediaElement, PosterSource>(props);
 
   return (
     <MediaControllerProvider element={mediaElement} options={controls}>
@@ -61,33 +59,13 @@ export function Player(props: PlayerProps) {
         {source && !Array.isArray(source) ? (
           <HlsPlayer
             {...playerProps}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
             src={source}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-            objectFit={objectFit}
             onMetricsError={onMetricsError}
           />
         ) : source?.[0]?.type === 'audio' ? (
-          <AudioPlayer
-            {...playerProps}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={source as AudioSrc[]}
-            loop={loop}
-            objectFit={objectFit}
-          />
+          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
         ) : (
-          <VideoPlayer
-            {...playerProps}
-            autoPlay={autoPlay}
-            muted={autoPlay ? true : muted}
-            src={source as VideoSrc[] | null}
-            poster={typeof poster === 'string' ? poster : undefined}
-            loop={loop}
-            objectFit={objectFit}
-          />
+          <VideoPlayer {...playerProps} src={source as VideoSrc[] | null} />
         )}
 
         {React.isValidElement(children) ? (

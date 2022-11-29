@@ -8,7 +8,7 @@ import { useSourceMimeTyped } from './useSourceMimeTyped';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
-export type PlayerProps = {
+export type PlayerProps<TPoster = string> = {
   /** The source(s) of the media (**required** if `playbackId` is not provided) */
   src?: string | string[] | null | undefined;
   /** The playback ID for the media (**required** if `src` is not provided) */
@@ -33,7 +33,7 @@ export type PlayerProps = {
    * Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
    * It is highly recommended to also pass in a `title` attribute as well, for ARIA compatibility.
    */
-  poster?: string | React.ReactNode;
+  poster?: TPoster;
   /** Enables/disables the loading spinner */
   shouldShowLoadingSpinner?: boolean;
 
@@ -81,7 +81,7 @@ export type PlayerProps = {
   | { playbackId: string | null | undefined }
 );
 
-export const usePlayer = <TElement,>({
+export const usePlayer = <TElement, TPoster>({
   autoPlay,
   children,
   controls,
@@ -104,7 +104,7 @@ export const usePlayer = <TElement,>({
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
-}: PlayerProps) => {
+}: PlayerProps<TPoster>) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
   const { source, uploadStatus } = useSourceMimeTyped({
@@ -148,6 +148,12 @@ export const usePlayer = <TElement,>({
     uploadStatus,
     playerProps: {
       ref: playerRef,
+      autoPlay,
+      muted: autoPlay ? true : muted,
+      poster: poster,
+      loop: loop,
+      objectFit: objectFit,
+      options: controls,
     },
     controlsContainerProps: {
       hidePosterOnPlayed,
@@ -158,7 +164,6 @@ export const usePlayer = <TElement,>({
       autoPlay,
       children,
       controls,
-      muted,
       playbackId,
       src,
       theme,
