@@ -30,7 +30,7 @@ export const SyncedTabs = (
   return (
     <Tabs
       {...rest}
-      onChange={(index: number) => setNewIndex(group, index)}
+      onChange={(index: number) => group && setNewIndex(group, index)}
       selectedIndex={store?.[group]}
     />
   );

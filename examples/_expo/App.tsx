@@ -30,9 +30,6 @@ export default function App() {
         <Player
           objectFit="contain"
           title="Part Two"
-          poster={{
-            uri: 'https://livepeerjs.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fblender-poster.6bbe6a8a.png&w=3840&q=75',
-          }}
           aspectRatio="1to1"
           playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
         />

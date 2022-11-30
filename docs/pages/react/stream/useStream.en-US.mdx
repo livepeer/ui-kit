@@ -3,24 +3,36 @@ title: 'useStream'
 description: 'React Hook for retrieving a stream.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+import { Callout } from 'nextra-theme-docs';
+
 # useStream
 
 Hook for retrieving a [Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts)
 based on a unique identifier.
 
-```tsx
-import { useStream } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useStream } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useStream } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following examples assume a stream was created via `useCreateStream` or directly via a provider's API/dashboard. If a falsy
 stream ID is provided, the query will be skipped.
 
 ```tsx
-import { useStream } from '@livepeer/react';
-
-function App() {
+function SomeComponent() {
   const { data: stream } = useStream(stream?.id);
 }
 ```
@@ -52,10 +64,8 @@ aggregated for simplicity.
 
 Stream identifier. Can also be a string passed as the only parameter.
 
-```tsx {5}
-import { useStream } from '@livepeer/react';
-
-function App() {
+```tsx {3}
+function SomeComponent() {
   const { data: stream } = useStream({
     streamId,
   });
@@ -67,10 +77,8 @@ function App() {
 The `useStream` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
 `refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
 
-```tsx {6}
-import { useStream } from '@livepeer/react';
-
-function App() {
+```tsx {4}
+function SomeComponent() {
   const { data: stream } = useStream({
     streamId,
     refetchInterval: (stream) => (!stream?.isActive ? 5000 : false),
@@ -79,6 +87,11 @@ function App() {
 ```
 
 ## SSR
+
+<Callout type="warning">
+  The following docs only apply to web-based use-cases - React Native has no
+  concept of SSR.
+</Callout>
 
 ### Next.js
 

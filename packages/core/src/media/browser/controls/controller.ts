@@ -95,9 +95,6 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   const onDurationChange = () =>
     store.getState().onDurationChange(element?.duration ?? 0);
 
-  const onTimeUpdate = () =>
-    store.getState().onProgress(element?.currentTime ?? 0);
-
   const onKeyUp = (e: KeyboardEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -148,7 +145,9 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     }
   };
 
-  const onProgress = () => {
+  const onTimeUpdate = () => {
+    store.getState().onProgress(element?.currentTime ?? 0);
+
     if (element && (element?.duration ?? 0) > 0) {
       const currentTime = element.currentTime;
 
@@ -164,8 +163,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
 
           return prev;
         },
-        // default to end of media
-        store?.getState?.()?.duration ?? 0,
+        // default to no buffering
+        0,
       );
 
       store.getState()._updateBuffered(buffered);
@@ -226,7 +225,6 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     element.addEventListener('pause', onPause);
     element.addEventListener('durationchange', onDurationChange);
     element.addEventListener('timeupdate', onTimeUpdate);
-    element.addEventListener('progress', onProgress);
     element.addEventListener('error', onError);
     element.addEventListener('waiting', onWaiting);
     element.addEventListener('stalled', onStalled);
@@ -292,12 +290,17 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       removeEnterPictureInPictureListener?.();
       removeExitPictureInPictureListener?.();
 
+      element?.removeEventListener?.('volumechange', onVolumeChange);
       element?.removeEventListener?.('canplay', onCanPlay);
       element?.removeEventListener?.('play', onPlay);
       element?.removeEventListener?.('pause', onPause);
       element?.removeEventListener?.('durationchange', onDurationChange);
       element?.removeEventListener?.('timeupdate', onTimeUpdate);
-      element?.removeEventListener?.('progress', onProgress);
+      element?.removeEventListener?.('error', onError);
+      element?.removeEventListener?.('waiting', onWaiting);
+      element?.removeEventListener?.('stalled', onStalled);
+      element?.removeEventListener?.('loadstart', onLoadStart);
+      element?.removeEventListener?.('resize', onResize);
 
       const parentElementOrElement = element?.parentElement ?? element;
 

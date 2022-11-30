@@ -1,4 +1,5 @@
-import { Asset, AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer';
+import { AudioSrc, Src, VideoSrc, getMediaSourceType } from 'livepeer';
+import { CreateAssetUrlProgress } from 'livepeer/types';
 import { parseArweaveTxId, parseCid } from 'livepeer/utils';
 
 import * as React from 'react';
@@ -26,12 +27,11 @@ export const useSourceMimeTyped = ({
   refetchPlaybackInfoInterval,
   autoUrlUpload = { fallback: true },
 }: UseSourceMimeTypedProps) => {
-  const [uploadStatus, setUploadStatus] = React.useState<
-    Asset['status'] | null
-  >(null);
+  const [uploadStatus, setUploadStatus] =
+    React.useState<CreateAssetUrlProgress | null>(null);
 
   const onAssetStatusChange = React.useCallback(
-    (status: Asset['status']) => {
+    (status: CreateAssetUrlProgress) => {
       setUploadStatus(status);
     },
     [setUploadStatus],

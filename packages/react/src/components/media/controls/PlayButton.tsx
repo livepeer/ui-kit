@@ -2,7 +2,7 @@ import {
   PlayButtonProps,
   usePlayButton,
 } from '@livepeer/core-react/components';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, omit } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 
 import { useMediaController } from '../../../context';
@@ -54,7 +54,7 @@ export const PlayButton: React.FC<PlayButtonProps> = (props) => {
 
   return (
     <button
-      {...buttonProps}
+      {...omit(buttonProps, 'onPress')}
       className={styling.iconButton()}
       title={title}
       aria-label={title}

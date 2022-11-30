@@ -29,11 +29,22 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
     left: 0,
   });
 
-  React.useLayoutEffect(() => {
-    setSliderLocation({
-      width: ref.current?.clientWidth ?? 0,
-      left: ref.current?.getBoundingClientRect().left ?? 0,
-    });
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const handleResize = () => {
+        const boundingRect = ref.current?.getBoundingClientRect();
+
+        setSliderLocation({
+          width: boundingRect?.width ?? 0,
+          left: boundingRect?.left ?? 0,
+        });
+      };
+
+      handleResize();
+
+      document.addEventListener('resize', handleResize);
+      return () => document.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   const [isActive, setIsActive] = React.useState(false);

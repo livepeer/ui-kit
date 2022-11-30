@@ -1,5 +1,5 @@
 import { VolumeProps, useVolume } from '@livepeer/core-react/components';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, omit } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
@@ -68,7 +68,7 @@ export const Volume: React.FC<VolumeProps> = (props) => {
         title={title}
         aria-label={title}
         onClick={buttonProps.onPress}
-        {...buttonProps}
+        {...omit(buttonProps, 'onPress')}
       />
 
       {progressProps.shown && (

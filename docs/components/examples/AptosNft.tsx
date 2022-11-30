@@ -156,7 +156,7 @@ export const AptosNft = () => {
   ]);
 
   return !assetId ? (
-    <Box css={{ my: '$4' }}>
+    <Box css={{ my: '$2' }}>
       <Callout type="error" emoji="⚠️">
         <p>
           This is an extension of the{' '}
@@ -169,7 +169,7 @@ export const AptosNft = () => {
       </Callout>
     </Box>
   ) : (
-    <Box css={{ my: '$4' }}>
+    <Box css={{ my: '$2' }}>
       <Button
         size="3"
         disabled={!isAptosDefined || Boolean(address)}

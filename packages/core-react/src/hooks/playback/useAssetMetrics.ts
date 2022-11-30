@@ -64,6 +64,6 @@ function getQueryParams<
     queryFn: async () =>
       getAssetMetrics<TLivepeerProvider>(args as GetAssetMetricsArgs),
     enabled: Boolean(args?.assetId),
-    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, ...usePickQueryKeys) : {}),
   };
 }

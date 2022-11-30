@@ -3,24 +3,36 @@ title: 'useStreamSessions'
 description: 'React Hook for retrieving the stream sessions associated with a stream ID.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+import { Callout } from 'nextra-theme-docs';
+
 # useStreamSessions
 
 Hook for retrieving [Stream Sessions](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts)
 based on the parent stream's unique identifier.
 
-```tsx
-import { useStreamSessions } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useStreamSessions } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useStreamSessions } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following examples assume a Stream was created via via `useCreateStream` or directly via a provider's API/dashboard. If a falsy
 stream ID is provided, the query will be skipped.
 
 ```tsx
-import { useStreamSessions } from '@livepeer/react';
-
-function App() {
+function SomeComponent() {
   const { data: streamSessions } = useStreamSessions(stream?.id);
 }
 ```
@@ -52,10 +64,8 @@ aggregated for simplicity.
 
 The stream identifier for the parent stream. Can also be a string passed as the only parameter.
 
-```tsx {5}
-import { useStreamSessions } from '@livepeer/react';
-
-function App() {
+```tsx {3}
+function SomeComponent() {
   const { data: streamSessions } = useStreamSessions({
     streamId,
   });
@@ -67,10 +77,8 @@ function App() {
 The `useStreamSessions` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
 `refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
 
-```tsx {6-7}
-import { useStreamSessions } from '@livepeer/react';
-
-function App() {
+```tsx {4-5}
+function SomeComponent() {
   const { data: streamSessions } = useStreamSessions({
     streamId,
     refetchInterval: (streamSessions) =>
@@ -80,6 +88,11 @@ function App() {
 ```
 
 ## SSR
+
+<Callout type="warning">
+  The following docs only apply to web-based use-cases - React Native has no
+  concept of SSR.
+</Callout>
 
 ### Next.js
 

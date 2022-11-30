@@ -65,7 +65,7 @@ export const useBaseSlider = (props: BaseSliderCoreProps) => {
   const onUpdate = React.useCallback(
     async (locationX: number, isComplete?: boolean) => {
       if (sliderWidth) {
-        const newValue = (locationX - 0) / sliderWidth;
+        const newValue = locationX / sliderWidth;
         const newBoundedValue = Math.min(Math.max(0, newValue), 1);
 
         if (isComplete) {
@@ -86,19 +86,20 @@ export const useBaseSlider = (props: BaseSliderCoreProps) => {
     }),
   );
 
-  const [value, middleValue] = React.useMemo(
-    () => [
-      localX !== null ? localX : !isNaN(props.value) ? props.value : 0,
+  const { value, middleValue } = React.useMemo(() => {
+    const value =
+      localX !== null ? localX : !isNaN(props.value) ? props.value : 0;
+    const middleValue =
       localX !== null
         ? 0
         : props.secondaryValue &&
           !isNaN(props.value) &&
           !isNaN(props.secondaryValue)
         ? props.secondaryValue - props.value
-        : 0,
-    ],
-    [localX, props.value, props.secondaryValue],
-  );
+        : 0;
+
+    return { value, middleValue: middleValue > 0 ? middleValue : 0 };
+  }, [localX, props.value, props.secondaryValue]);
 
   const rightValue = React.useMemo(
     () => 1 - (value + middleValue),

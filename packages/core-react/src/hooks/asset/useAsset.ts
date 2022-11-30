@@ -58,6 +58,6 @@ function getQueryParams<
     queryKey: queryKey(getAssetArgs, provider.getConfig()),
     queryFn: async () => getAsset<TLivepeerProvider>(getAssetArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.assetId),
-    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, ...usePickQueryKeys) : {}),
   };
 }

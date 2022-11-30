@@ -3,26 +3,36 @@ title: 'useUpdateStream'
 description: 'React Hook for updating an stream.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+
 # useUpdateStream
 
 Hook for updating an existing [Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/livepeer.ts).
 
-```tsx
-import { useUpdateStream } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useUpdateStream } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useUpdateStream } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following example shows how an stream can be updated to enable recording and
 require a JWT for playback (see the [Access Control example](/examples/react/access-control) for more details).
 
-```tsx {16-20, 28}
-import { useStream, useUpdateStream } from '@livepeer/react';
-import { useState } from 'react';
-
+```tsx {13-17, 25}
 const streamId = 'abcff74a-bb19-45af-8e63-b961efa1899e';
 
-function App() {
+function SomeComponent() {
   const { data: stream } = useStream({
     streamId,
     refetchInterval: 10000,
@@ -87,10 +97,8 @@ aggregated for simplicity.
 
 The stream ID to update - required.
 
-```tsx {5}
-import { useUpdateStream } from '@livepeer/react';
-
-function App() {
+```tsx {3}
+function SomeComponent() {
   const { mutate: createStream } = useUpdateStream({
     streamId,
     record: true,
@@ -165,10 +173,8 @@ For more details on the playback policy, see the [Access Control example](/examp
 The `mutationConfig` parameter allows for any [React Query](https://tanstack.com/query/v4/docs/reference/useMutation) `useMutation` options, such as
 `cacheTime` or `retry`. These override any configs passed by default by the internal hook.
 
-```tsx {7}
-import { useUpdateStream } from '@livepeer/react';
-
-function App() {
+```tsx {5}
+function SomeComponent() {
   const { mutate: updateStream } = useUpdateStream({
     streamId,
     record: true,

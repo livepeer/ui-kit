@@ -3,23 +3,35 @@ title: 'usePlaybackInfo'
 description: 'React Hook for retrieving playback details for a playback ID.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+import { Callout } from 'nextra-theme-docs';
+
 # usePlaybackInfo
 
 Hook for retrieving playback information related to a playback ID. Used internally in the [`Player`](/react/Player)
 to fetch the playback URL for a playback ID.
 
-```tsx
-import { usePlaybackInfo } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { usePlaybackInfo } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { usePlaybackInfo } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following examples assume a playback ID has been created for an Asset or Stream.
 
 ```tsx
-import { usePlaybackInfo } from '@livepeer/react';
-
-function App() {
+function SomeComponent() {
   const { data: playbackInfo } = usePlaybackInfo(playbackId);
 }
 ```
@@ -53,10 +65,8 @@ aggregated for simplicity.
 
 Playback identifier. Can also be a string passed as the only parameter.
 
-```tsx {5}
-import { usePlaybackInfo } from '@livepeer/react';
-
-function App() {
+```tsx {3}
+function SomeComponent() {
   const { data: playbackInfo } = usePlaybackInfo({
     playbackId,
   });
@@ -68,10 +78,8 @@ function App() {
 The `usePlaybackInfo` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
 `refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
 
-```tsx {6}
-import { usePlaybackInfo } from '@livepeer/react';
-
-function App() {
+```tsx {4}
+function SomeComponent() {
   const { data: playbackInfo } = usePlaybackInfo({
     playbackId,
     refetchInterval: 30000,
@@ -80,6 +88,11 @@ function App() {
 ```
 
 ## SSR
+
+<Callout type="warning">
+  The following docs only apply to web-based use-cases - React Native has no
+  concept of SSR.
+</Callout>
 
 ### Next.js
 

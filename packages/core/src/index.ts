@@ -69,5 +69,6 @@ export {
   b64UrlDecode,
   b64UrlEncode,
   deepMerge,
+  omit,
   pick,
 } from './utils';

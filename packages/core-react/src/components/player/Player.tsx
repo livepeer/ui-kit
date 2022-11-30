@@ -142,7 +142,6 @@ export const usePlayer = <TElement, TPoster>({
   );
 
   return {
-    loadingText,
     mediaElement,
     source,
     uploadStatus,

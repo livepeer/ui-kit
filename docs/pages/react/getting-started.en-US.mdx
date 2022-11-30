@@ -4,36 +4,43 @@ description: 'Get started building with livepeer.js!'
 ---
 
 import { Callout, Tabs, Tab } from 'nextra-theme-docs';
+import { SyncedTab, SyncedTabs } from '@components/core';
 
 # Getting Started
 
 <Callout>
-  These docs are written for a React developer building on livepeer.js. For
-  Node.js or alternative frameworks, you can use the vanilla JS library.
+  These docs are written for a React or React Native developer building on
+  livepeer.js. For Node.js or alternative frameworks, you can use the vanilla JS
+  library (docs coming soon).
 </Callout>
 
 ## Installation
 
-Install `@livepeer/react` using your favorite package manager.
+Install `livepeer.js` using your favorite package manager.
 
-<Tabs items={['npm', 'pnpm', 'yarn']}>
-  <Tab>
-```bash
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+```bash filename="React"
 npm i @livepeer/react
 ```
-  </Tab>
-  <Tab>
-```bash
-pnpm i @livepeer/react
-```
-  </Tab>
-  <Tab>
-```bash
-yarn add @livepeer/react
-```
-  </Tab>
-</Tabs>
 
+  </SyncedTab>
+  <SyncedTab>
+
+React Native also requires some peer dependencies (used in the `Player` component).
+We rely on `expo` for pod installation/linking. You must ensure that the [correct version of `react-native-svg`](https://github.com/software-mansion/react-native-svg#supported-react-native-versions)
+is installed.
+
+If you're installing this in a [bare React Native app](https://docs.expo.dev/introduction/managed-vs-bare/#bare-workflow),
+you should also follow the [extra `expo-av` installation instructions](https://github.com/expo/expo/tree/sdk-47/packages/expo-av).
+
+```bash filename="React Native"
+npm i @livepeer/react-native expo-av react-native-svg
+```
+
+  </SyncedTab>
+
+</SyncedTabs>
 
 ## Quick Start
 
@@ -41,13 +48,28 @@ yarn add @livepeer/react
 
 First, create a livepeer `Client` instance using [`createReactClient`](/react/client), and pass a provider to it.
 
-```tsx
-import { createReactClient, studioProvider } from '@livepeer/react';
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { createReactClient, studioProvider } from '@livepeer/react';
 
-const client = createReactClient({
-  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
-});
-```
+    const client = createReactClient({
+      provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+    });
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { createReactClient, studioProvider } from '@livepeer/react-native';
+
+    const client = createReactClient({
+      provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+    });
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 Note: If you choose to use Studio as a provider, you will need to configure an API key for the
 `studioProvider` which is [CORS-protected API key](/react/providers/studio#apikey).
@@ -56,42 +78,91 @@ Note: If you choose to use Studio as a provider, you will need to configure an A
 
 ### 2. Wrap app with `LivepeerConfig`
 
-Next, wrap the app with the [`LivepeerConfig`](/react/LivepeerConfig) component, passing the `client` to it. This
-is typically included in `_app.js` for Next.js or `App.js` with Create React App, so that the `LivepeerConfig` React Context
-is available across every component.
+Next, wrap the app with the [`LivepeerConfig`](/react/LivepeerConfig) component, passing the `client` to it.
 
-```tsx
-import {
-  LivepeerConfig,
-  createReactClient,
-  studioProvider,
-} from '@livepeer/react';
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
 
-const client = createReactClient({
-  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
-});
+    This is added to `_app.js` for Next.js or `App.js` with Create React App, so that the
+    `LivepeerConfig` React Context is available across every component.
 
-function App() {
-  return (
-    <LivepeerConfig client={client}>
-      <SomeComponents />
-    </LivepeerConfig>
-  );
-}
-```
+    ```tsx filename="React"
+    import {
+      LivepeerConfig,
+      createReactClient,
+      studioProvider,
+    } from '@livepeer/react';
+
+    const client = createReactClient({
+      provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+    });
+
+    function App() {
+      return (
+        <LivepeerConfig client={client}>
+          <SomeComponent />
+        </LivepeerConfig>
+      );
+    }
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+
+    This is added to `App.js`, so that the `LivepeerConfig` React Context is available across every component.
+
+    ```tsx filename="React Native"
+    import {
+      LivepeerConfig,
+      createReactClient,
+      studioProvider,
+    } from '@livepeer/react-native';
+
+    const client = createReactClient({
+      provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+    });
+
+    function App() {
+      return (
+        <LivepeerConfig client={client}>
+          <SomeComponent />
+        </LivepeerConfig>
+      );
+    }
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 ### 3. Enjoy!
 
 Use hooks! Every component inside the `LivepeerConfig` is now set up to use the livepeer hooks.
 
-```tsx
-import { useLivepeerProvider } from '@livepeer/react';
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useAsset } from '@livepeer/react';
 
-function Livepeer() {
-  const livepeerProvider = useLivepeerProvider();
+    function SomeComponent() {
+      const asset = useAsset({ assetId: 'd8e8b87d-6774-4083-a2d7-4e85872d18cd' });
 
-  return <div>Using {livepeerProvider.getConfig().name}</div>;
-}
-```
+      return <div>Asset: {asset.name}</div>;
+    }
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useAsset } from '@livepeer/react-native';
+
+    function SomeComponent() {
+      const asset = useAsset({ assetId: 'd8e8b87d-6774-4083-a2d7-4e85872d18cd' });
+
+      return <div>Asset: {asset.name}</div>;
+    }
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 Want to learn more? Continue reading the documentation for more details.

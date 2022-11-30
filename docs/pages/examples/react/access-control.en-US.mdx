@@ -23,7 +23,7 @@ and [`useStream`](/react/hooks/useStream) to create and watch a gated livestream
 
 First step, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
-```tsx
+```tsx filename="App.tsx"
 import {
   LivepeerConfig,
   createReactClient,
@@ -51,7 +51,7 @@ function App() {
 
 We then can create our gated stream, with the stream key returned once we create it (styling has been removed for simplicity):
 
-```tsx
+```tsx filename="AccessControl.tsx"
 import { useCreateStream, useStream } from '@livepeer/react';
 
 import { useMemo, useState } from 'react';
@@ -100,7 +100,7 @@ export const AccessControl = () => {
 Next, we add an API route - since we are using Next.JS, we add a custom [Next.js API route](https://nextjs.org/docs/api-routes/introduction).
 We add a check in the API route for a special "secret" that must be passed in the POST body for the user to gain access to the stream.
 
-```typescript
+```typescript filename="/api/sign-jwt.ts"
 // use the signAccessJwt export from `livepeer` in Node.JS
 import { signAccessJwt } from 'livepeer/crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -190,7 +190,7 @@ We pass along the `playbackId` for the stream, which is used to create the JWT.
 
 Then, we pass the JWT to the Player using the [`jwt`](/react/Player#jwt) prop, which will use that JWT to prove access to the streaming content!
 
-```tsx
+```tsx filename="AccessControl.tsx"
 import { Player, useCreateStream, useStream } from '@livepeer/react';
 
 import { useMutation } from '@tanstack/react-query';

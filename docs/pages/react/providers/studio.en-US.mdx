@@ -3,21 +3,33 @@ title: 'Studio'
 description: 'Official Livepeer provider for Studio.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
 import { Callout } from 'nextra-theme-docs';
 
 # Studio
 
 The `studioProvider` configures the client with [Livepeer Studio](https://livepeer.studio).
 
-```tsx
-import { studioProvider } from '@livepeer/react';
-```
-
 ## Usage
 
-```tsx
-import { createReactClient, studioProvider } from '@livepeer/react';
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { studioProvider } from '@livepeer/react';
+    ```
 
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { studioProvider } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
+
+The `studioProvider` can then be instantiated with an API key.
+
+```tsx App.js
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });

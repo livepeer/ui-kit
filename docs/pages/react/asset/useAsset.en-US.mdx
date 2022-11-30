@@ -3,24 +3,36 @@ title: 'useAsset'
 description: 'React Hook for retrieving an asset.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+import { Callout } from 'nextra-theme-docs';
+
 # useAsset
 
 Hook for retrieving an [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts)
 based on a unique identifier.
 
-```tsx
-import { useAsset } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useAsset } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useAsset } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following examples assume an Asset was created via `useCreateAsset` or directly via a provider's API/dashboard. If a falsy
 asset ID is provided, the query will be skipped.
 
 ```tsx
-import { useAsset } from '@livepeer/react';
-
-function App() {
+function Component() {
   const { data: asset } = useAsset(asset?.id);
 }
 ```
@@ -52,10 +64,8 @@ aggregated for simplicity.
 
 Asset identifier. Can also be a string passed as the only parameter.
 
-```tsx {5}
-import { useAsset } from '@livepeer/react';
-
-function App() {
+```tsx {3}
+function SomeComponent() {
   const { data: asset } = useAsset({
     assetId,
   });
@@ -67,10 +77,8 @@ function App() {
 The `useAsset` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
 `refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
 
-```tsx {6}
-import { useAsset } from '@livepeer/react';
-
-function App() {
+```tsx {4}
+function SomeComponent() {
   const { data: asset } = useAsset({
     assetId,
     refetchInterval: (asset) => (!asset?.playbackUrl ? 5000 : false),
@@ -79,6 +87,11 @@ function App() {
 ```
 
 ## SSR
+
+<Callout type="warning">
+  The following docs only apply to web-based use-cases - React Native has no
+  concept of SSR.
+</Callout>
 
 ### Next.js
 
