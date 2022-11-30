@@ -61,18 +61,6 @@ it('should expose correct exports', () => {
       "mainnetChainId",
       "rinkebyAddress",
       "testnetChainId",
-      "useBondingManager",
-      "useController",
-      "useL1Migrator",
-      "useL2Migrator",
-      "useLivepeerToken",
-      "useLivepeerTokenFaucet",
-      "useMerkleSnapshot",
-      "useMinter",
-      "usePollCreator",
-      "useRoundsManager",
-      "useServiceRegistry",
-      "useTicketBroker",
     ]
   `);
 });

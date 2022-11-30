@@ -37,6 +37,7 @@ We first add the required dependencies using `npm` (or your preferred package ma
     ```bash
     npm i @rainbow-me/rainbowkit
     ```
+
   </SyncedTab>
   <SyncedTab>
     ```bash
@@ -49,7 +50,6 @@ We first add the required dependencies using `npm` (or your preferred package ma
 
 <SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
-    <span />
 
     We create both a new livepeer.js client (using a [CORS-protected API key](/react/providers/studio#apikey))
     and a `wagmi` client which is configured to interact with our demo NFT contract on the
@@ -57,7 +57,7 @@ We first add the required dependencies using `npm` (or your preferred package ma
     _This could be replaced with any [EIP-721](https://eips.ethereum.org/EIPS/eip-721) or [EIP-1155](https://eips.ethereum.org/EIPS/eip-1155)
     contract on an EVM-compatible chain._
 
-    ```tsx {13}
+    ```tsx filename="App.tsx"
     import {
       LivepeerConfig,
       createReactClient,
@@ -85,15 +85,15 @@ We first add the required dependencies using `npm` (or your preferred package ma
       );
     }
     ```
+
   </SyncedTab>
   <SyncedTab>
-    <span />
 
     We create both a new livepeer.js client (using a [CORS-protected API key](/react/providers/studio#apikey))
     and a React `Context` which contains an `AptosClient` to interact with our demo NFT collection on
     [Aptos Devnet](https://explorer.aptoslabs.com/?network=Devnet).
 
-    ```tsx
+    ```tsx filename="App.tsx"
     import {
       LivepeerConfig,
       createReactClient,
@@ -126,6 +126,7 @@ We first add the required dependencies using `npm` (or your preferred package ma
       );
     }
     ```
+
   </SyncedTab>
 </SyncedTabs>
 
@@ -138,13 +139,12 @@ We first add the required dependencies using `npm` (or your preferred package ma
 
 <SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
-    <span />
 
     Now that our providers are set up, we add a connect button which "logs in" a user using their wallet. We use
     RainbowKit for the wallet connection flow. It integrates easily with `wagmi` hooks, as well as WalletConnect and Metamask
     to support a number of popular wallets.
 
-    ```tsx
+    ```tsx filename="WagmiNft.tsx"
     import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useAccount } from 'wagmi';
 
@@ -158,15 +158,15 @@ We first add the required dependencies using `npm` (or your preferred package ma
       );
     };
     ```
+
   </SyncedTab>
   <SyncedTab>
-    <span />
 
     Now that our providers are set up, we add a connect button which "logs in" a user using their wallet. We recommend using
     [Petra Wallet](https://petra.app/) - it has a similar interface to Metamask and helps facilitate interactions with
     the [devnet faucet](https://aptos.dev/reference/glossary/#faucet).
 
-    ```tsx
+    ```tsx filename="AptosNft.tsx"
     import { useCallback, useMemo, useState } from 'react';
 
     // we type the global aptos as `any` - it's recommended to narrow these types
@@ -211,6 +211,7 @@ We first add the required dependencies using `npm` (or your preferred package ma
       );
     };
     ```
+
   </SyncedTab>
 </SyncedTabs>
 
@@ -228,7 +229,7 @@ IPFS which points to that Asset's CID.
       used for this page, which uses the query string to get the Asset ID).
     </Callout>
 
-    ```tsx
+    ```tsx filename="WagmiNft.tsx"
     import { useAsset, useUpdateAsset } from '@livepeer/react';
     import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useMemo } from 'react';
@@ -266,6 +267,7 @@ IPFS which points to that Asset's CID.
       );
     };
     ```
+
   </SyncedTab>
   <SyncedTab>
     <Callout>
@@ -274,7 +276,7 @@ IPFS which points to that Asset's CID.
       used for this page, which uses the query string to get the Asset ID).
     </Callout>
 
-    ```tsx
+    ```tsx filename="AptosNft.tsx"
     import { useUpdateAsset } from '@livepeer/react';
 
     import { useCallback, useContext, useMemo, useState } from 'react';
@@ -340,14 +342,15 @@ IPFS which points to that Asset's CID.
       );
     };
     ```
+
   </SyncedTab>
 </SyncedTabs>
 
 Here is an [example](https://ipfs.livepeer.studio/ipfs/bafkreibjmojxcnydouibk2c3ci4q6tt7ygevtoxoya3lrlqwbfyj5v4uqa) of
-the ERC-721 compatible metadata which will be created in IPFS. 
+the ERC-721 compatible metadata which will be created in IPFS.
 The metadata can also be customized to override any of these default fields!
 
-```json
+```json filename="Example IPFS JSON"
 {
   "name": "Spinning Earth",
   "description": "The Earth is spinning in this amazing video, and the camera is still.",
@@ -368,14 +371,13 @@ so the user can see the blockchain confirmation.
 
 <SyncedTabs group="chain" items={['wagmi', 'aptos']}>
   <SyncedTab>
-    <span />
 
     In this example, we rely on [`usePrepareContractWrite`](https://wagmi.sh/docs/hooks/useContractWrite) to write to our demo
     [Polygon Mumbai NFT contract](https://mumbai.polygonscan.com/address/0xA4E1d8FE768d471B048F9d73ff90ED8fcCC03643). This could be
     replaced by `ethers` or another library, but `wagmi` hooks make it easy
     to read/write with React.
 
-    ```tsx
+    ```tsx filename="WagmiNft.tsx"
     import { useAsset, useUpdateAsset } from '@livepeer/react';
     import { ConnectButton } from '@rainbow-me/rainbowkit';
     import { useRouter } from 'next/router';
@@ -481,6 +483,7 @@ so the user can see the blockchain confirmation.
       );
     };
     ```
+
   </SyncedTab>
   <SyncedTab>
     <Callout>
@@ -490,7 +493,7 @@ so the user can see the blockchain confirmation.
       "offer" it to the recipient. The recipient can then accept this offer and transfer the token to their wallet.
     </Callout>
 
-    ```typescript
+    ```typescript filename="/api/create-aptos-nft.ts"
     import { AptosAccount, AptosClient, HexString, TokenClient } from 'aptos';
 
     import { NextApiRequest, NextApiResponse } from 'next';
@@ -627,7 +630,7 @@ so the user can see the blockchain confirmation.
     and use the response to "accept" the offer (which uses the function
     `0x3::token_transfers::claim_script`).
 
-    ```tsx
+    ```tsx filename="AptosNft.tsx"
     import { useAsset, useUpdateAsset } from '@livepeer/react';
     import { Types } from 'aptos';
 
@@ -807,5 +810,6 @@ so the user can see the blockchain confirmation.
       );
     };
     ```
+
   </SyncedTab>
 </SyncedTabs>

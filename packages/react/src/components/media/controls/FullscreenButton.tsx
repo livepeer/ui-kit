@@ -2,7 +2,7 @@ import {
   FullscreenButtonProps,
   useFullscreenButton,
 } from '@livepeer/core-react/components';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState, omit } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
@@ -98,7 +98,7 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
 
   return (
     <button
-      {...buttonProps}
+      {...omit(buttonProps, 'onPress')}
       className={styling.iconButton()}
       title={title}
       aria-label={title}

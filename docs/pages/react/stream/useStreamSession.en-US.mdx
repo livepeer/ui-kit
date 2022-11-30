@@ -3,24 +3,36 @@ title: 'useStreamSession'
 description: 'React Hook for retrieving a stream session.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+import { Callout } from 'nextra-theme-docs';
+
 # useStreamSession
 
 Hook for retrieving a [Stream Session](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts)
 based on a unique identifier.
 
-```tsx
-import { useStreamSession } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useStreamSession } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useStreamSession } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following examples assume a stream session was created via streaming to an existing Stream. If a falsy
 stream session ID is provided, the query will be skipped.
 
 ```tsx
-import { useStreamSession } from '@livepeer/react';
-
-function App() {
+function SomeComponent() {
   const { data: streamSession } = useStreamSession(streamSession?.id);
 }
 ```
@@ -52,10 +64,8 @@ aggregated for simplicity.
 
 Stream session identifier. Can also be a string passed as the only parameter.
 
-```tsx {5}
-import { useStreamSession } from '@livepeer/react';
-
-function App() {
+```tsx {3}
+function SomeComponent() {
   const { data: streamSession } = useStreamSession({
     streamSessionId,
   });
@@ -67,10 +77,8 @@ function App() {
 The `useStreamSession` hook also supports any [React Query](https://tanstack.com/query/v4/docs/reference/useQuery) `useQuery` options, such as
 `refetchInterval` or `enabled`. These override any configs passed by default by the internal hook.
 
-```tsx {6-7}
-import { useStreamSession } from '@livepeer/react';
-
-function App() {
+```tsx {4-5}
+function SomeComponent() {
   const { data: streamSession } = useStreamSession({
     streamSessionId,
     refetchInterval: (streamSession) =>
@@ -80,6 +88,11 @@ function App() {
 ```
 
 ## SSR
+
+<Callout type="warning">
+  The following docs only apply to web-based use-cases - React Native has no
+  concept of SSR.
+</Callout>
 
 ### Next.js
 

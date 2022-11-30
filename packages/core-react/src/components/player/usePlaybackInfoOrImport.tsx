@@ -1,9 +1,10 @@
-import { Asset, HttpError } from 'livepeer';
+import { HttpError } from 'livepeer';
+import { CreateAssetUrlProgress } from 'livepeer/types';
 import { parseCid } from 'livepeer/utils';
 
 import * as React from 'react';
 
-import { useAsset, useCreateAsset, usePlaybackInfo } from '../../hooks';
+import { useCreateAsset, usePlaybackInfo } from '../../hooks';
 
 import { PlayerProps } from './Player';
 
@@ -12,7 +13,7 @@ export type UsePlaybackInfoOrImportProps = {
   playbackId: PlayerProps['playbackId'];
   refetchPlaybackInfoInterval: number;
   autoUrlUpload: boolean | { fallback: true; gateway?: string };
-  onAssetStatusChange: (status: Asset['status']) => void;
+  onAssetStatusChange: (status: CreateAssetUrlProgress) => void;
 };
 
 /**
@@ -31,8 +32,8 @@ export const usePlaybackInfoOrImport = ({
 }: UsePlaybackInfoOrImportProps) => {
   const {
     mutate: importAsset,
-    data: importedAsset,
     status,
+    progress,
   } = useCreateAsset(
     decentralizedSrcOrPlaybackId
       ? ({
@@ -46,23 +47,22 @@ export const usePlaybackInfoOrImport = ({
       : null,
   );
 
-  const { data: asset } = useAsset({
-    assetId: importedAsset?.[0]?.id,
-    refetchInterval: (asset) =>
-      asset?.status?.phase !== 'ready' ? refetchPlaybackInfoInterval : false,
-  });
-
   React.useEffect(() => {
-    if (asset?.status) {
-      onAssetStatusChange(asset.status);
+    if (progress?.[0]) {
+      onAssetStatusChange(progress[0]);
     }
-  }, [asset?.status, onAssetStatusChange]);
+  }, [progress, onAssetStatusChange]);
 
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
     // attempt to fetch if the source is from decentralized storage, or a playback ID is provided
     playbackId: decentralizedSrcOrPlaybackId?.id ?? playbackId ?? undefined,
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
   });
+
+  const playbackInfoErrorCode = React.useMemo(
+    () => (playbackInfoError as HttpError)?.code,
+    [playbackInfoError],
+  );
 
   // trigger an import if the playback info had a 404 error and the asset is an IPFS source
   // also must be enabled
@@ -71,11 +71,11 @@ export const usePlaybackInfoOrImport = ({
       autoUrlUpload &&
       importAsset &&
       status === 'idle' &&
-      (playbackInfoError as HttpError)?.code === 404
+      playbackInfoErrorCode === 404
     ) {
       importAsset();
     }
-  }, [autoUrlUpload, playbackInfoError, importAsset, status]);
+  }, [autoUrlUpload, playbackInfoErrorCode, importAsset, status]);
 
   return playbackInfo;
 };

@@ -51,6 +51,10 @@ const config: DocsThemeConfig = {
   nextThemes: {
     defaultTheme: 'dark',
   },
+  primaryHue: {
+    dark: 162,
+    light: 212,
+  },
   banner: {
     key: 'livepeerjs-launch',
     text: (

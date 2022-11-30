@@ -1,22 +1,9 @@
+import { useTheme as useThemeCore } from '@livepeer/core-react/context';
 import { ThemeConfig } from 'livepeer/media';
-import { createPlayerTheme } from 'livepeer/media/browser/styling';
-import { deepMerge } from 'livepeer/utils';
-import * as React from 'react';
+import { createTheme } from 'livepeer/media/browser/styling';
 
 import { ThemeContext } from './ThemeContext';
 
 export const useTheme = (theme?: ThemeConfig) => {
-  const contextTheme = React.useContext(ThemeContext);
-
-  const containerTheme = React.useMemo(() => {
-    const mergedTheme = contextTheme
-      ? theme
-        ? (deepMerge(contextTheme as object, theme as object) as ThemeConfig)
-        : contextTheme
-      : theme;
-
-    return mergedTheme ? createPlayerTheme(mergedTheme) : undefined;
-  }, [theme, contextTheme]);
-
-  return containerTheme;
+  return useThemeCore(ThemeContext, createTheme, theme);
 };

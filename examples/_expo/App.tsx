@@ -1,12 +1,19 @@
 import {
   LivepeerConfig,
   Player,
+  ThemeConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react-native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
+
+const theme: ThemeConfig = {
+  colors: {
+    accent: '#ef44ef',
+  },
+};
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
@@ -16,13 +23,11 @@ const livepeerClient = createReactClient({
 
 export default function App() {
   return (
-    <LivepeerConfig client={livepeerClient}>
+    <LivepeerConfig theme={theme} client={livepeerClient}>
       <StatusBar style="auto" />
       <ScrollView style={styles.container}>
         <Text style={styles.title}>A Great Video</Text>
         <Player
-          autoPlay
-          muted
           objectFit="contain"
           title="Part Two"
           aspectRatio="1to1"

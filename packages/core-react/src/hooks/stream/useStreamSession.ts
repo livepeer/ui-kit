@@ -66,6 +66,6 @@ function getQueryParams<
     queryFn: async () =>
       getStreamSession<TLivepeerProvider>(getStreamSessionArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamSessionId),
-    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, ...usePickQueryKeys) : {}),
   };
 }

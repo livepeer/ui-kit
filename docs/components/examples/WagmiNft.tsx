@@ -77,7 +77,7 @@ export const WagmiNft = () => {
   );
 
   return !assetId ? (
-    <Box css={{ my: '$4' }}>
+    <Box css={{ my: '$2' }}>
       <Callout type="error" emoji="⚠️">
         <p>
           This is an extension of the{' '}
@@ -90,7 +90,7 @@ export const WagmiNft = () => {
       </Callout>
     </Box>
   ) : (
-    <Box css={{ my: '$4' }}>
+    <Box css={{ my: '$2' }}>
       <ConnectButton />
       {address && (
         <>

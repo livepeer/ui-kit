@@ -29,6 +29,7 @@ it('should expose correct exports', () => {
       "getStreamSession",
       "getStreamSessions",
       "noopStorage",
+      "omit",
       "pick",
       "updateAsset",
       "updateStream",

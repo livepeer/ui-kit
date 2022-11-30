@@ -3,38 +3,82 @@ title: 'Application Binary Interface'
 description: 'All Livepeer ABIs available via import.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+
 # Application Binary Interface (ABI)
 
 All Livepeer ABIs are available via import.
 
 ## Protocol
 
-```tsx
-import {
-  BondingManagerABI,
-  ControllerABI,
-  LivepeerTokenABI,
-  LivepeerTokenFaucetABI,
-  MerkleSnapshotABI,
-  MinterABI,
-  PollABI,
-  PollCreatorABI,
-  RoundsManagerABI,
-  ServiceRegistryABI,
-  TicketBrokerABI,
-} from '@livepeer/react';
-```
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import {
+      BondingManagerABI,
+      ControllerABI,
+      LivepeerTokenABI,
+      LivepeerTokenFaucetABI,
+      MerkleSnapshotABI,
+      MinterABI,
+      PollABI,
+      PollCreatorABI,
+      RoundsManagerABI,
+      ServiceRegistryABI,
+      TicketBrokerABI,
+    } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import {
+      BondingManagerABI,
+      ControllerABI,
+      LivepeerTokenABI,
+      LivepeerTokenFaucetABI,
+      MerkleSnapshotABI,
+      MinterABI,
+      PollABI,
+      PollCreatorABI,
+      RoundsManagerABI,
+      ServiceRegistryABI,
+      TicketBrokerABI,
+    } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 ## Bridging
 
-```tsx
-import {
-  ArbRetryableTxABI,
-  InboxABI,
-  L1BondingManagerABI,
-  L1MigratorABI,
-  L2LPTGatewayABI,
-  L2MigratorABI,
-  NodeInterfaceABI,
-} from '@livepeer/react';
-```
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import {
+      ArbRetryableTxABI,
+      InboxABI,
+      L1BondingManagerABI,
+      L1MigratorABI,
+      L2LPTGatewayABI,
+      L2MigratorABI,
+      NodeInterfaceABI,
+    } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import {
+      ArbRetryableTxABI,
+      InboxABI,
+      L1BondingManagerABI,
+      L1MigratorABI,
+      L2LPTGatewayABI,
+      L2MigratorABI,
+      NodeInterfaceABI,
+    } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>

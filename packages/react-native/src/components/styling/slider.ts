@@ -2,16 +2,6 @@ import { View } from 'react-native';
 
 import { styled } from './stitches';
 
-// export const expand = keyframes({
-//   '0%': { height: '$trackInactive' },
-//   '100%': { height: '$trackActive' },
-// });
-
-// export const contract = keyframes({
-//   '0%': { height: '$trackActive' },
-//   '100%': { height: '$trackInactive' },
-// });
-
 export const SliderContainer = styled(View, {
   minHeight: 15,
 

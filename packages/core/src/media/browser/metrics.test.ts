@@ -31,7 +31,6 @@ describe('addMediaMetrics', () => {
           "pause",
           "durationchange",
           "timeupdate",
-          "progress",
           "error",
           "waiting",
           "stalled",

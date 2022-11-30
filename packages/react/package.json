@@ -53,8 +53,7 @@
   "peerDependencies": {
     "ethers": ">=5.5.1",
     "react": ">=17.0.0",
-    "react-dom": ">=17.0.0",
-    "wagmi": ">=0.7.0"
+    "react-dom": ">=17.0.0"
   },
   "peerDependenciesMeta": {
     "ethers": {
@@ -62,28 +61,24 @@
     },
     "react-dom": {
       "optional": true
-    },
-    "wagmi": {
-      "optional": true
     }
   },
   "dependencies": {
     "@livepeer/core-react": "^1.0.0",
     "@stitches/react": "^1.2.8",
-    "core-js": "^3.26.0",
+    "core-js": "^3.26.1",
     "livepeer": "^1.4.3",
     "zustand": "^4.1.3"
   },
   "devDependencies": {
-    "@tanstack/react-query": "4.14.5",
+    "@tanstack/react-query": "4.18.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/react": "^18.0.23",
-    "@types/react-dom": "^18.0.7",
+    "@types/react-dom": "^18.0.9",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "wagmi": "^0.7.13"
+    "react-dom": "^18.2.0"
   },
   "keywords": [
     "dapps",

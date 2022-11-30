@@ -23,7 +23,7 @@ and [`useStream`](/react/stream/useStream) to create and watch a livestream.
 
 Same as before, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
-```tsx
+```tsx filename="App.tsx"
 import {
   LivepeerConfig,
   createReactClient,
@@ -51,7 +51,7 @@ function App() {
 
 We then can create our stream, with the stream key returned once we create it (styling has been removed for simplicity):
 
-```tsx
+```tsx filename="Stream.tsx"
 import { useCreateStream } from '@livepeer/react';
 
 import { useState } from 'react';
@@ -96,7 +96,7 @@ Lastly, when the stream is created, we display the streaming content using the [
   key.
 </Callout>
 
-```tsx
+```tsx filename="Stream.tsx"
 import { Player, useCreateStream } from '@livepeer/react';
 
 import { useMemo, useState } from 'react';

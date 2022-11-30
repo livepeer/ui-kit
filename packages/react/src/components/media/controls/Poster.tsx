@@ -13,7 +13,7 @@ const mediaControllerSelector = ({
 
 export type { PosterProps };
 
-export const Poster: React.FC<PosterProps> = (props, ref) => {
+export const Poster: React.FC<PosterProps> = (props) => {
   const { fullscreen } = useMediaController(mediaControllerSelector);
 
   const { content, title } = props;
@@ -25,7 +25,6 @@ export const Poster: React.FC<PosterProps> = (props, ref) => {
       })}
       aria-label={title}
       alt={title}
-      ref={ref}
       src={content}
     />
   ) : React.isValidElement(content) ? (

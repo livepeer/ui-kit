@@ -8,11 +8,12 @@ import { addMediaMetricsToStore } from 'livepeer/media';
 import * as React from 'react';
 
 import { MediaControllerContext } from '../../../context';
+import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 
 export type { HlsPlayerProps };
 
-export const HlsPlayer = React.forwardRef<Video, HlsPlayerProps>(
+export const HlsPlayer = React.forwardRef<Video, HlsPlayerProps<PosterSource>>(
   (props, ref) => {
     const { src, onMetricsError } = props;
 

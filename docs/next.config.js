@@ -6,6 +6,7 @@ const withNextra = require('nextra')({
   },
   unstable_staticImage: true,
   unstable_contentDump: true,
+  unstable_defaultShowCopyCode: true,
 });
 
 /** @type {import('next').NextConfig} */

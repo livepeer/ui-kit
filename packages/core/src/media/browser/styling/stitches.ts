@@ -59,7 +59,7 @@ const theme: ThemeConfig = {
 
 export const {
   css,
-  createTheme: createPlayerTheme,
+  createTheme,
   theme: defaultTheme,
   getCssText,
 } = createStitches({

@@ -41,10 +41,7 @@ export const DecentralizedStoragePlayback = () => {
             src={url}
             autoPlay
             muted
-            autoUrlUpload={{
-              fallback: true,
-              ipfsGateway: 'https://cloudflare-ipfs.com',
-            }}
+            autoUrlUpload={{ fallback: true, ipfsGateway: 'https://w3s.link' }}
           />
         </Box>
       )}

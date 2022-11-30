@@ -5,7 +5,7 @@ import * as Exports from '.';
 it('should expose correct exports', () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
-      "createPlayerTheme",
+      "createTheme",
       "defaultTheme",
       "getCssText",
       "styling",

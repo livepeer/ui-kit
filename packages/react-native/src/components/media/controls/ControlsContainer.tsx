@@ -18,6 +18,7 @@ import {
   TopContainer,
 } from '../../styling';
 import { Loading } from '../../styling/loading';
+import { useTheme } from '../../styling/stitches';
 import { MediaElement } from '../types';
 
 const mediaControllerSelector = ({
@@ -57,6 +58,8 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     buffered,
   });
 
+  const theme = useTheme();
+
   return (
     <>
       {poster ? (
@@ -73,7 +76,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         <Background>
           {loadingText && <LoadingText>{loadingText}</LoadingText>}
 
-          <Loading />
+          <Loading size="small" color={theme.colors?.accent} />
         </Background>
       )}
 

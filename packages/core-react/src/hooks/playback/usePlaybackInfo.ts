@@ -64,6 +64,6 @@ function getQueryParams<
     queryFn: async () =>
       getPlaybackInfo<TLivepeerProvider>(args as GetPlaybackInfoArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.playbackId),
-    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, ...usePickQueryKeys) : {}),
   };
 }

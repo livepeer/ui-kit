@@ -18,3 +18,4 @@ export type {
   TitleProps,
   VolumeProps,
 } from './media';
+export { createTheme } from './styling';

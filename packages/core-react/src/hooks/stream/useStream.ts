@@ -59,6 +59,6 @@ function getQueryParams<
     queryKey: queryKey(getStreamArgs, provider.getConfig()),
     queryFn: async () => getStream<TLivepeerProvider>(getStreamArgs),
     enabled: Boolean(typeof args === 'string' ? args : args?.streamId),
-    ...(typeof args === 'object' ? pick(args, usePickQueryKeys) : {}),
+    ...(typeof args === 'object' ? pick(args, ...usePickQueryKeys) : {}),
   };
 }

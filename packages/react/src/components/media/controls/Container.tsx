@@ -17,7 +17,8 @@ export type { ContainerProps };
 export const Container: React.FC<ContainerProps> = (props) => {
   const { children, aspectRatio, theme } = props;
 
-  const className = useTheme(theme);
+  // cast response from useTheme to string
+  const className = useTheme(theme) as string;
 
   const { fullscreen } = useMediaController(mediaControllerSelector);
 

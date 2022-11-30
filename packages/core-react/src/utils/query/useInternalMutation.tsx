@@ -73,7 +73,7 @@ export function useInternalMutation<
     context: QueryClientContext,
     mutationKey: mutationKey,
     ...(typeof options?.mutationConfig === 'object'
-      ? pick(options.mutationConfig, useInternalMutationKeys)
+      ? pick(options.mutationConfig, ...useInternalMutationKeys)
       : {}),
     useErrorBoundary: false,
   });

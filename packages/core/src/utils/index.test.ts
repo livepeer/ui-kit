@@ -23,6 +23,7 @@ it('should expose correct exports', () => {
       "isWindow",
       "noop",
       "notEqual",
+      "omit",
       "parseArweaveTxId",
       "parseCid",
       "pick",
