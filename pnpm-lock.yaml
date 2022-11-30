@@ -373,6 +373,7 @@ importers:
       '@types/ms': ^0.7.31
       core-js: ^3.26.1
       cross-fetch: ^3.1.5
+      ethers: ^5.7.2
       hls.js: ^1.2.8
       jose: ^4.11.1
       ms: ^3.0.0-canary.1
@@ -391,6 +392,7 @@ importers:
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@types/ms': 0.7.31
+      ethers: 5.7.2
       jose: 4.11.1
 
   packages/core-react:
