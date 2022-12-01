@@ -27,7 +27,7 @@ export type PosterSource = ImageProps['source'];
 
 export type PlayerProps = CorePlayerProps<PosterSource>;
 
-export function Player(props: PlayerProps) {
+export function PlayerInternal(props: PlayerProps) {
   const {
     mediaElement,
     playerProps,
@@ -82,3 +82,5 @@ export function Player(props: PlayerProps) {
     </MediaControllerProvider>
   );
 }
+
+export const Player = React.memo(PlayerInternal);
