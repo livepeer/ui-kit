@@ -2,7 +2,7 @@
   "name": "@livepeer/core-react",
   "description": "React components & hooks for apps built with Livepeer.",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "repository": {
     "type": "git",
