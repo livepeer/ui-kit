@@ -15,5 +15,10 @@
     "@livepeer/react": "1.5.6",
     "@livepeer/react-native": "0.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "gold-suns-knock",
+    "old-geckos-dance",
+    "red-garlics-kneel",
+    "smooth-humans-cry"
+  ]
 }
