@@ -562,6 +562,10 @@ If `fallback` is specified, while the URL upload is being processed in the backg
 (defaulting to `w3s.link` for IPFS and `arweave.net` for Arweave). Once this finishes, the Player will switch to playing from the transcoded version
 from the Livepeer provider.
 
+It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>` or `ar://<HASH>`)
+before presenting the content to the user - the first view with automatic URL upload can take a few minutes, then it will be permanently
+cached and play back quickly.
+
 <Callout>
   An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or
   IPFS/Arweave URL (including directories) can be passed as the `src` or

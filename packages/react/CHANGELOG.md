@@ -1,5 +1,11 @@
 # @livepeer/react
 
+## 1.5.6
+
+### Patch Changes
+
+- [#164](https://github.com/livepeer/livepeer.js/pull/164) [`25858bc`](https://github.com/livepeer/livepeer.js/commit/25858bce3d65777f3d4b9a915eae0f80b76974fa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated to use `w3s.link` as the default IPFS gateway for immediate playback from IPFS in the Player.
+
 ## 1.5.5
 
 ### Patch Changes
