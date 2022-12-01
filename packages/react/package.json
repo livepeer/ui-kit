@@ -64,7 +64,7 @@
     }
   },
   "dependencies": {
-    "@livepeer/core-react": "^1.0.0",
+    "@livepeer/core-react": "^0.0.1",
     "@stitches/react": "^1.2.8",
     "core-js": "^3.26.1",
     "livepeer": "^1.4.3",
