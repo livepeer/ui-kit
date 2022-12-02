@@ -235,4 +235,4 @@ jobs:
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Dependency Review
-        uses: actions/dependency-review-action@v2
+        uses: actions/dependency-review-action@v3
