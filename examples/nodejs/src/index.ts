@@ -7,9 +7,15 @@ import * as fs from 'fs';
 
 const BATCH_SIZE = 10;
 
+if (!process.env.STUDIO_API_KEY) {
+  throw new Error('process.env.STUDIO_API_KEY is not defined');
+}
+
 // create the livepeer.js client
 const { provider } = createClient({
-  provider: studioProvider(),
+  provider: studioProvider({
+    apiKey: process.env.STUDIO_API_KEY,
+  }),
 });
 
 type MediaResult = {

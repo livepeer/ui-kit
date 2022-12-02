@@ -12,7 +12,11 @@
   let videoSrc = '';
   let video;
 
-  const { provider } = createClient({ provider: studioProvider() });
+  const { provider } = createClient({
+    provider: studioProvider({
+      apiKey: process.env.VITE_PUBLIC_STUDIO_API_KEY ?? '',
+    }),
+  });
 
   async function fetchPlaybackInfo() {
     const playbackInfo = await provider.getPlaybackInfo({
