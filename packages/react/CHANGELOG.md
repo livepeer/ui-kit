@@ -1,5 +1,17 @@
 # @livepeer/react
 
+## 2.0.0-next.1
+
+### Major Changes
+
+- [#172](https://github.com/livepeer/livepeer.js/pull/172) [`f2b5ed2`](https://github.com/livepeer/livepeer.js/commit/f2b5ed28bdbaf327609a845745637da0e010696c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** removed the default API key in the SDK for Studio with sunset plan of Jan 6th, 2023, to discourage spam use.
+
+### Patch Changes
+
+- Updated dependencies [[`f2b5ed2`](https://github.com/livepeer/livepeer.js/commit/f2b5ed28bdbaf327609a845745637da0e010696c)]:
+  - livepeer@2.0.0-next.1
+  - @livepeer/core-react@1.0.0-next.1
+
 ## 1.6.0-next.0
 
 ### Minor Changes
