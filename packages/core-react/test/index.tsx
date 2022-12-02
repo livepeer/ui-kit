@@ -21,7 +21,7 @@ import { Client, createReactClient } from '../src/client';
 import { LivepeerConfig } from '../src/context';
 
 export const provider = studioProvider({
-  apiKey: process.env.STUDIO_API_KEY,
+  apiKey: process.env.STUDIO_API_KEY ?? '',
 });
 
 export const queryClient = new QueryClient({

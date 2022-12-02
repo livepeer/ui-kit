@@ -7,7 +7,7 @@ export const prefetchPlayerStaticProps = async (playbackId: string) => {
     },
     {
       provider: studioProvider({
-        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
       }),
     },
   );
