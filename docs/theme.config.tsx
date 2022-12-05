@@ -140,6 +140,19 @@ const config: DocsThemeConfig = {
         <meta name="og:title" content={`${title} – livepeer.js`} />
         <meta name="og:image" content={image} />
         <meta name="apple-mobile-web-app-title" content="livepeer.js" />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-YNF68V1ND1"
+        ></script>
+        <script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-YNF68V1ND1');
+          `}
+        </script>
       </>
     );
   },
