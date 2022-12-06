@@ -3,7 +3,6 @@
   "description": "React components & hooks for apps built with Livepeer.",
   "license": "MIT",
   "version": "1.0.0-next.1",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
