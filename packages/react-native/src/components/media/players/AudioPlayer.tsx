@@ -4,12 +4,13 @@ import * as React from 'react';
 import { Text } from 'react-native';
 
 import { PosterSource } from '../Player';
+import { MediaElement } from '../types';
 
 export type { AudioPlayerProps };
 
 export const AudioPlayer = React.forwardRef<
   Video,
-  AudioPlayerProps<PosterSource>
+  AudioPlayerProps<MediaElement, PosterSource>
 >(() => {
   return <Text>Not implemented yet.</Text>;
 });

@@ -29,9 +29,9 @@ import { canPlayMediaNatively } from './canPlayMediaNatively';
 
 const defaultProgressUpdateInterval = 20;
 
-export type VideoPlayerProps = VideoPlayerCoreProps<PosterSource>;
+export type VideoPlayerProps = VideoPlayerCoreProps<MediaElement, PosterSource>;
 
-export const VideoPlayer = React.forwardRef<Video, VideoPlayerProps>(
+export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
   ({ src, autoPlay, loop, muted, objectFit, options, poster }, ref) => {
     // typecast the context so that we can have video/audio-specific controller states
     const store = React.useContext(MediaControllerContext) as UseBoundStore<

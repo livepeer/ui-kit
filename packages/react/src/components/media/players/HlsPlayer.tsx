@@ -17,7 +17,10 @@ import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 
-export type HlsPlayerProps = HlsPlayerCoreProps<PosterSource> & {
+export type HlsPlayerProps = HlsPlayerCoreProps<
+  HTMLVideoElement,
+  PosterSource
+> & {
   hlsConfig?: HlsVideoConfig;
 };
 

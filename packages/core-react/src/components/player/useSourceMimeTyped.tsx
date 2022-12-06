@@ -10,23 +10,23 @@ import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 const defaultIpfsGateway = 'https://w3s.link';
 const defaultArweaveGateway = 'https://arweave.net';
 
-export type UseSourceMimeTypedProps = {
-  src: PlayerProps['src'];
-  playbackId: PlayerProps['playbackId'];
+export type UseSourceMimeTypedProps<TElement, TPoster> = {
+  src: PlayerProps<TElement, TPoster>['src'];
+  playbackId: PlayerProps<TElement, TPoster>['playbackId'];
   refetchPlaybackInfoInterval: NonNullable<
-    PlayerProps['refetchPlaybackInfoInterval']
+    PlayerProps<TElement, TPoster>['refetchPlaybackInfoInterval']
   >;
-  autoUrlUpload: NonNullable<PlayerProps['autoUrlUpload']>;
-  jwt: PlayerProps['jwt'];
+  autoUrlUpload: NonNullable<PlayerProps<TElement, TPoster>['autoUrlUpload']>;
+  jwt: PlayerProps<TElement, TPoster>['jwt'];
 };
 
-export const useSourceMimeTyped = ({
+export const useSourceMimeTyped = <TElement, TPoster>({
   src,
   playbackId,
   jwt,
   refetchPlaybackInfoInterval,
   autoUrlUpload = { fallback: true },
-}: UseSourceMimeTypedProps) => {
+}: UseSourceMimeTypedProps<TElement, TPoster>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
 

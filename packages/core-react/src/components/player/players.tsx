@@ -2,7 +2,7 @@ import { AudioSrc, ControlsOptions, HlsSrc, VideoSrc } from 'livepeer';
 
 import { PlayerObjectFit, PlayerProps } from './Player';
 
-export type HlsPlayerProps<TPoster> = {
+export type HlsPlayerProps<TElement, TPoster> = {
   src: HlsSrc;
   objectFit: PlayerObjectFit;
   width?: string | number;
@@ -10,19 +10,22 @@ export type HlsPlayerProps<TPoster> = {
   loop?: boolean;
   title?: string;
   muted?: boolean;
-  poster?: PlayerProps<TPoster>['poster'];
+  poster?: PlayerProps<TElement, TPoster>['poster'];
   jwt?: string;
   options?: ControlsOptions;
   onMetricsError?: (error: Error) => void;
 };
 
-export type AudioPlayerProps<TPoster> = Omit<
-  HlsPlayerProps<TPoster>,
+export type AudioPlayerProps<TElement, TPoster> = Omit<
+  HlsPlayerProps<TElement, TPoster>,
   'src' | 'poster'
 > & {
   src: AudioSrc[];
 };
 
-export type VideoPlayerProps<TPoster> = Omit<HlsPlayerProps<TPoster>, 'src'> & {
+export type VideoPlayerProps<TElement, TPoster> = Omit<
+  HlsPlayerProps<TElement, TPoster>,
+  'src'
+> & {
   src: VideoSrc[] | null;
 };

@@ -17,7 +17,7 @@ export type { AudioPlayerProps };
 
 export const AudioPlayer = React.forwardRef<
   HTMLAudioElement,
-  AudioPlayerProps<PosterSource>
+  AudioPlayerProps<HTMLAudioElement, PosterSource>
 >(({ src, autoPlay, title, loop, muted, objectFit }, ref) => {
   const { fullscreen } = useMediaController(mediaControllerSelector);
 

@@ -8,9 +8,9 @@ import { useCreateAsset, usePlaybackInfo } from '../../hooks';
 
 import { PlayerProps } from './Player';
 
-export type UsePlaybackInfoOrImportProps = {
+export type UsePlaybackInfoOrImportProps<TElement, TPoster> = {
   decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;
-  playbackId: PlayerProps['playbackId'];
+  playbackId: PlayerProps<TElement, TPoster>['playbackId'];
   refetchPlaybackInfoInterval: number;
   autoUrlUpload: boolean | { fallback: true; gateway?: string };
   onAssetStatusChange: (status: CreateAssetUrlProgress) => void;
@@ -23,13 +23,13 @@ export type UsePlaybackInfoOrImportProps = {
  * @param src Source URL for the media.
  * @param playbackId Playback ID of the media.
  */
-export const usePlaybackInfoOrImport = ({
+export const usePlaybackInfoOrImport = <TElement, TPoster>({
   decentralizedSrcOrPlaybackId,
   playbackId,
   refetchPlaybackInfoInterval,
   autoUrlUpload,
   onAssetStatusChange,
-}: UsePlaybackInfoOrImportProps) => {
+}: UsePlaybackInfoOrImportProps<TElement, TPoster>) => {
   const {
     mutate: importAsset,
     status,

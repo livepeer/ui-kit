@@ -17,7 +17,7 @@ export type { VideoPlayerProps };
 
 export const VideoPlayer = React.forwardRef<
   HTMLVideoElement,
-  VideoPlayerProps<PosterSource>
+  VideoPlayerProps<HTMLVideoElement, PosterSource>
 >(({ src, autoPlay, title, loop, muted, poster, objectFit }, ref) => {
   const { fullscreen } = useMediaController(mediaControllerSelector);
 
