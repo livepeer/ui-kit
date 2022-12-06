@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.0.0-next.3
+
+### Patch Changes
+
+- [#179](https://github.com/livepeer/livepeer.js/pull/179) [`a04136e`](https://github.com/livepeer/livepeer.js/commit/a04136efd4d315e6122b6a307c21ee400564cbbb) Thanks [@github-actions](https://github.com/apps/github-actions)! - **Chore:** updated `@livepeer/core-react` package.
+
+- Updated dependencies [[`a04136e`](https://github.com/livepeer/livepeer.js/commit/a04136efd4d315e6122b6a307c21ee400564cbbb)]:
+  - @livepeer/core-react@1.0.0-next.3
+
 ## 1.0.0-next.2
 
 ### Patch Changes
