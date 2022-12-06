@@ -1,9 +1,12 @@
 import { Player } from '@livepeer/react';
+import { useRef } from 'react';
 
 const playbackId = '6d7el73r1y12chxr';
 // const streamId = '2c61917e-4f05-449a-ab7d-1b3c85f78993';
 
 export const AssetDemoPlayer = () => {
+  const mediaElementRef = useRef<HTMLMediaElement>();
+
   return (
     <>
       <Player
@@ -14,6 +17,7 @@ export const AssetDemoPlayer = () => {
         autoPlay
         showPipButton
         muted
+        mediaElementRef={mediaElementRef}
         theme={{
           fonts: {
             display: 'Inter',

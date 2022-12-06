@@ -76,7 +76,7 @@ export type PlayerProps<TElement, TPoster> = {
   onMetricsError?: (error: Error) => void;
 
   /** Ref passed to the underlying media element */
-  mediaElementRef?: React.MutableRefObject<TElement>;
+  mediaElementRef?: React.MutableRefObject<TElement | null | undefined>;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -129,18 +129,16 @@ export const usePlayer = <TElement, TPoster>({
     [source],
   );
 
-  const playerRef = React.useCallback(
-    (element: TElement | null) => {
-      if (element) {
-        setMediaElement(element);
+  const playerRef = React.useCallback((element: TElement | null) => {
+    if (element) {
+      setMediaElement(element);
 
-        if (mediaElementRef) {
-          mediaElementRef.current = element;
-        }
+      if (mediaElementRef) {
+        mediaElementRef.current = element;
       }
-    },
-    [mediaElementRef],
-  );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadingText = React.useMemo(
     () =>

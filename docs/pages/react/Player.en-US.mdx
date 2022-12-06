@@ -672,6 +672,52 @@ for more details on how the `ControlsContainer` component is used.
   </SyncedTab>
 </SyncedTabs>
 
+### mediaElementRef
+
+Sets the React `ref` passed to the underlying media element. Useful when integrating with third party tools, or when access to the underlying video element is needed (usually it isn't!).
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
+```tsx filename="React"
+import { useRef } from 'react';
+
+function PlayerComponent() {
+  const mediaElementRef = useRef<HTMLMediaElement>();
+
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      mediaElementRef={mediaElementRef}
+    />
+  );
+}
+```
+
+  </SyncedTab>
+  <SyncedTab>
+
+```tsx filename="React Native"
+import { Video } from 'expo-av';
+import { useRef } from 'react';
+
+function PlayerComponent() {
+  const mediaElementRef = useRef<Video>();
+
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      mediaElementRef={mediaElementRef}
+    />
+  );
+}
+```
+
+  </SyncedTab>
+</SyncedTabs>
+
 ## SSR
 
 <Callout type="warning">

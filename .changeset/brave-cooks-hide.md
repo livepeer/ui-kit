@@ -3,4 +3,4 @@
 '@livepeer/react-native': patch
 ---
 
-**Fix:** added forwardRef to Player for compatibility with external libraries.
+**Fix:** added `mediaElementRef` to Player for compatibility with external libraries.
