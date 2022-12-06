@@ -27,60 +27,71 @@ export type PosterSource = ImageProps['source'];
 
 export type PlayerProps = CorePlayerProps<PosterSource>;
 
-export function PlayerInternal(props: PlayerProps) {
-  const {
-    mediaElement,
-    playerProps,
-    controlsContainerProps,
-    source,
-    props: { children, theme, title, onMetricsError, showTitle, aspectRatio },
-  } = usePlayer<MediaElement, PosterSource>(props);
+export const PlayerInternal = React.forwardRef<MediaElement, PlayerProps>(
+  (props, ref) => {
+    const {
+      mediaElement,
+      playerProps,
+      controlsContainerProps,
+      source,
+      props: { children, theme, title, onMetricsError, showTitle, aspectRatio },
+    } = usePlayer<MediaElement, PosterSource>(props);
 
-  return (
-    <MediaControllerProvider element={mediaElement}>
-      <Container theme={theme} aspectRatio={aspectRatio}>
-        {source && !Array.isArray(source) ? (
-          <HlsPlayer
-            {...playerProps}
-            src={source}
-            onMetricsError={onMetricsError}
-          />
-        ) : source?.[0]?.type === 'audio' ? (
-          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
-        ) : (
-          <VideoPlayer {...playerProps} src={source as VideoSrc[] | null} />
-        )}
-
-        {React.isValidElement(children) ? (
-          children
-        ) : (
-          <>
-            <ControlsContainer
-              {...controlsContainerProps}
-              top={<>{title && showTitle && <Title content={title} />}</>}
-              middle={
-                <>
-                  <Progress />
-                </>
-              }
-              left={
-                <>
-                  <PlayButton />
-                  <Volume />
-                  <TimeDisplay />
-                </>
-              }
-              right={
-                <>
-                  <FullscreenButton />
-                </>
-              }
+    return (
+      <MediaControllerProvider element={mediaElement}>
+        <Container theme={theme} aspectRatio={aspectRatio}>
+          {source && !Array.isArray(source) ? (
+            <HlsPlayer
+              {...playerProps}
+              src={source}
+              onMetricsError={onMetricsError}
+              ref={ref}
             />
-          </>
-        )}
-      </Container>
-    </MediaControllerProvider>
-  );
-}
+          ) : source?.[0]?.type === 'audio' ? (
+            <AudioPlayer
+              {...playerProps}
+              src={source as AudioSrc[]}
+              ref={ref}
+            />
+          ) : (
+            <VideoPlayer
+              {...playerProps}
+              src={source as VideoSrc[] | null}
+              ref={ref}
+            />
+          )}
+
+          {React.isValidElement(children) ? (
+            children
+          ) : (
+            <>
+              <ControlsContainer
+                {...controlsContainerProps}
+                top={<>{title && showTitle && <Title content={title} />}</>}
+                middle={
+                  <>
+                    <Progress />
+                  </>
+                }
+                left={
+                  <>
+                    <PlayButton />
+                    <Volume />
+                    <TimeDisplay />
+                  </>
+                }
+                right={
+                  <>
+                    <FullscreenButton />
+                  </>
+                }
+              />
+            </>
+          )}
+        </Container>
+      </MediaControllerProvider>
+    );
+  },
+);
 
 export const Player = React.memo(PlayerInternal);

@@ -11,7 +11,7 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 
 const theme: ThemeConfig = {
   colors: {
-    accent: '#ef44ef',
+    accent: '#00a55f',
   },
 };
 
@@ -26,17 +26,13 @@ export default function App() {
     <LivepeerConfig theme={theme} client={livepeerClient}>
       <StatusBar style="auto" />
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>A Great Video</Text>
+        <Text style={styles.title}>Agent 327</Text>
         <Player
           objectFit="contain"
-          title="Part Two"
-          aspectRatio="1to1"
-          playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
+          title="Operation Barbershop"
+          aspectRatio="16to9"
+          playbackId="6d7el73r1y12chxr"
         />
-        <Text style={styles.title}>This is just</Text>
-        <Text style={styles.title}>some filler content to test</Text>
-        <Text style={styles.title}>the player in a scroll view</Text>
-        <Text style={styles.title}>successfully</Text>
       </ScrollView>
     </LivepeerConfig>
   );
@@ -49,7 +45,8 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     backgroundColor: white,
     flex: 1,
-    marginTop: 20,
+    marginHorizontal: 8,
+    marginTop: 70,
   },
   title: {
     fontSize: 25,
