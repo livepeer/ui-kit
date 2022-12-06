@@ -1,5 +1,11 @@
 # @livepeer/core-react
 
+## 1.0.0-next.2
+
+### Patch Changes
+
+- [`9feaf08`](https://github.com/livepeer/livepeer.js/commit/9feaf08f3c087d9fea9bfc5b10139c3dfdcebe54) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** publish `@livepeer/core-react` package.
+
 ## 1.0.0-next.1
 
 ### Major Changes
