@@ -16,6 +16,7 @@
     "@livepeer/react-native": "0.0.1"
   },
   "changesets": [
+    "beige-beds-travel",
     "blue-laws-know",
     "brave-cooks-hide",
     "gold-suns-knock",
