@@ -8,7 +8,7 @@ import { useSourceMimeTyped } from './useSourceMimeTyped';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
-export type PlayerProps<TPoster = string> = {
+export type PlayerProps<TElement, TPoster> = {
   /** The source(s) of the media (**required** if `playbackId` is not provided) */
   src?: string | string[] | null | undefined;
   /** The playback ID for the media (**required** if `src` is not provided) */
@@ -74,6 +74,9 @@ export type PlayerProps<TPoster = string> = {
 
   /** Callback called when the metrics plugin cannot be initialized properly */
   onMetricsError?: (error: Error) => void;
+
+  /** Ref passed to the underlying media element */
+  mediaElementRef?: React.MutableRefObject<TElement>;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -104,7 +107,8 @@ export const usePlayer = <TElement, TPoster>({
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
-}: PlayerProps<TPoster>) => {
+  mediaElementRef,
+}: PlayerProps<TElement, TPoster>) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
   const { source, uploadStatus } = useSourceMimeTyped({
@@ -125,11 +129,18 @@ export const usePlayer = <TElement, TPoster>({
     [source],
   );
 
-  const playerRef = React.useCallback((element: TElement | null) => {
-    if (element) {
-      setMediaElement(element);
-    }
-  }, []);
+  const playerRef = React.useCallback(
+    (element: TElement | null) => {
+      if (element) {
+        setMediaElement(element);
+
+        if (mediaElementRef) {
+          mediaElementRef.current = element;
+        }
+      }
+    },
+    [mediaElementRef],
+  );
 
   const loadingText = React.useMemo(
     () =>
