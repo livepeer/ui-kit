@@ -1,5 +1,14 @@
 # @livepeer/react
 
+## 2.0.0-next.4
+
+### Patch Changes
+
+- [`e656367`](https://github.com/livepeer/livepeer.js/commit/e6563674369549a5335a511009165698748bc67e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed core-react to use callback refs to ensure that the consuming code gets the updated ref on mount.
+
+- Updated dependencies [[`e656367`](https://github.com/livepeer/livepeer.js/commit/e6563674369549a5335a511009165698748bc67e)]:
+  - @livepeer/core-react@1.0.0-next.4
+
 ## 2.0.0-next.3
 
 ### Patch Changes
