@@ -16,6 +16,7 @@
     "@livepeer/react-native": "0.0.1"
   },
   "changesets": [
+    "brave-cooks-hide",
     "gold-suns-knock",
     "old-geckos-dance",
     "quiet-clocks-help",
