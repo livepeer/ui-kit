@@ -674,16 +674,20 @@ for more details on how the `ControlsContainer` component is used.
 
 ### mediaElementRef
 
-Sets the React `ref` passed to the underlying media element. Useful when integrating with third party tools, or when access to the underlying video element is needed (usually it isn't!).
+Sets the React [callback `ref`](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) passed to the underlying media element.
+Useful when integrating with third party tools, or when access to the underlying video element is needed (usually it isn't!).
+Simple refs are not supported - only callback refs (which will be called when the underlying media element is set/updated on initial render).
 
 <SyncedTabs group="lang" items={['React', 'React Native']}>
   <SyncedTab>
 
 ```tsx filename="React"
-import { useRef } from 'react';
+import { useCallback } from 'react';
 
 function PlayerComponent() {
-  const mediaElementRef = useRef<HTMLMediaElement>();
+  const mediaElementRef = useCallback((ref: HTMLMediaElement) => {
+    console.log(ref.duration);
+  }, []);
 
   return (
     <Player
@@ -700,10 +704,12 @@ function PlayerComponent() {
 
 ```tsx filename="React Native"
 import { Video } from 'expo-av';
-import { useRef } from 'react';
+import { useCallback } from 'react';
 
 function PlayerComponent() {
-  const mediaElementRef = useRef<Video>();
+  const mediaElementRef = useCallback(async (ref: Video) => {
+    await ref.setVolumeAsync(0.5);
+  }, []);
 
   return (
     <Player

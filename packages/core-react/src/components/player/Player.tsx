@@ -75,8 +75,8 @@ export type PlayerProps<TElement, TPoster> = {
   /** Callback called when the metrics plugin cannot be initialized properly */
   onMetricsError?: (error: Error) => void;
 
-  /** Ref passed to the underlying media element */
-  mediaElementRef?: React.MutableRefObject<TElement | null | undefined>;
+  /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
+  mediaElementRef?: React.RefCallback<TElement | null | undefined>;
 } & (
   | {
       src: string | string[] | null | undefined;
@@ -129,16 +129,15 @@ export const usePlayer = <TElement, TPoster>({
     [source],
   );
 
-  const playerRef = React.useCallback((element: TElement | null) => {
-    if (element) {
-      setMediaElement(element);
-
-      if (mediaElementRef) {
-        mediaElementRef.current = element;
+  const playerRef = React.useCallback(
+    (element: TElement | null) => {
+      if (element) {
+        setMediaElement(element);
+        mediaElementRef?.(element);
       }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    },
+    [mediaElementRef],
+  );
 
   const loadingText = React.useMemo(
     () =>

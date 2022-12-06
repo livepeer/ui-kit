@@ -1,11 +1,13 @@
 import { Player } from '@livepeer/react';
-import { useRef } from 'react';
+import { useCallback } from 'react';
 
 const playbackId = '6d7el73r1y12chxr';
 // const streamId = '2c61917e-4f05-449a-ab7d-1b3c85f78993';
 
 export const AssetDemoPlayer = () => {
-  const mediaElementRef = useRef<HTMLMediaElement>();
+  const mediaElementRef = useCallback((ref: HTMLMediaElement) => {
+    console.log(ref.duration);
+  }, []);
 
   return (
     <>
