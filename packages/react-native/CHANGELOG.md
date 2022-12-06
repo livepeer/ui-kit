@@ -1,5 +1,11 @@
 # @livepeer/react-native
 
+## 1.0.0-next.2
+
+### Patch Changes
+
+- [#177](https://github.com/livepeer/livepeer.js/pull/177) [`8b0d1b3`](https://github.com/livepeer/livepeer.js/commit/8b0d1b33ff8e769ed6dd57d02b27bad475b4340a) Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** added `mediaElementRef` to Player for compatibility with external libraries.
+
 ## 1.0.0-next.1
 
 ### Patch Changes
