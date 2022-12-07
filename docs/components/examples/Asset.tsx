@@ -55,7 +55,7 @@ export const Asset = () => {
     isDragReject,
   } = useDropzone({
     accept: {
-      'video/*': ['*.mp4'],
+      'video/*': ['.mp4'],
     },
     maxFiles: 1,
     onDrop,
