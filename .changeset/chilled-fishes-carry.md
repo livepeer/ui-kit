@@ -1,5 +1,5 @@
 ---
-'@livepeer/core': minor
+'@livepeer/core': major
 '@livepeer/core-react': minor
 '@livepeer/react': minor
 '@livepeer/react-native': minor
