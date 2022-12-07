@@ -1,4 +1,4 @@
-import { ThemeConfig } from 'livepeer/media';
+import { ThemeConfig } from '@livepeer/core-react';
 import { createStitches } from 'stitches-native';
 
 const theme: ThemeConfig = {

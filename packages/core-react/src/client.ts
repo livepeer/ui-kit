@@ -1,12 +1,12 @@
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
-import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import {
   ClientConfig,
   Client as CoreClient,
   createClient,
-} from 'livepeer/client';
-import { LivepeerProvider } from 'livepeer/types';
+} from '@livepeer/core/client';
+import { LivepeerProvider } from '@livepeer/core/types';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
 
 import { deserialize } from './utils/deserialize';
 import { serialize } from './utils/serialize';

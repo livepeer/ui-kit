@@ -1,12 +1,12 @@
-import { getAssetMetrics } from 'livepeer/actions';
-import { ClientConfig, createClient } from 'livepeer/client';
+import { getAssetMetrics } from '@livepeer/core/actions';
+import { ClientConfig, createClient } from '@livepeer/core/client';
 import {
   GetAssetMetricsArgs,
   LivepeerProvider,
   LivepeerProviderConfig,
   Metrics,
-} from 'livepeer/types';
-import { pick } from 'livepeer/utils';
+} from '@livepeer/core/types';
+import { pick } from '@livepeer/core/utils';
 
 import {
   PrefetchQueryOptions,

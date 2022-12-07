@@ -1,10 +1,10 @@
+import { HttpError, pick } from '@livepeer/core';
 import {
   MutationFunction,
   UseMutationOptions,
   useMutation,
 } from '@tanstack/react-query';
-import { pick } from 'livepeer';
-import { HttpError } from 'livepeer/errors';
+
 import { useMemo } from 'react';
 
 import { QueryClientContext } from '../../context';

@@ -1,6 +1,6 @@
-import { HttpError } from 'livepeer';
-import { CreateAssetUrlProgress } from 'livepeer/types';
-import { parseCid } from 'livepeer/utils';
+import { HttpError } from '@livepeer/core';
+import { CreateAssetUrlProgress } from '@livepeer/core/types';
+import { parseCid } from '@livepeer/core/utils';
 
 import * as React from 'react';
 

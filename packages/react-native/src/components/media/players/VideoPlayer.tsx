@@ -1,3 +1,9 @@
+import {
+  ControlsOptions,
+  DEFAULT_AUTOHIDE_TIME,
+  MediaControllerState,
+  MediaControllerStore,
+} from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import {
   AVPlaybackStatus,
@@ -9,12 +15,6 @@ import {
   VideoFullscreenUpdate,
   VideoFullscreenUpdateEvent,
 } from 'expo-av';
-import {
-  ControlsOptions,
-  DEFAULT_AUTOHIDE_TIME,
-  MediaControllerState,
-  MediaControllerStore,
-} from 'livepeer/media';
 import * as React from 'react';
 
 import { StyleSheet } from 'react-native';

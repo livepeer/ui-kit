@@ -1,3 +1,4 @@
+import { LivepeerProvider } from '@livepeer/core/types';
 import {
   Hydrate,
   HydrateOptions,
@@ -5,7 +6,6 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
-import { LivepeerProvider } from 'livepeer/types';
 import * as React from 'react';
 
 import { Client, ReactClient } from '../client';

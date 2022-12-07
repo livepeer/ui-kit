@@ -1,6 +1,6 @@
-import { ControlsOptions } from 'livepeer';
-import { AspectRatio, ThemeConfig } from 'livepeer/media';
-import { isNumber } from 'livepeer/utils';
+import { ControlsOptions } from '@livepeer/core';
+import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
+import { isNumber } from '@livepeer/core/utils';
 
 import * as React from 'react';
 

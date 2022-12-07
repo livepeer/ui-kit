@@ -1,9 +1,9 @@
 // polyfill for URL
 import 'react-native-url-polyfill/auto';
 
+import { addMediaMetricsToStore } from '@livepeer/core-react';
 import { HlsPlayerProps } from '@livepeer/core-react/components';
 import { Video } from 'expo-av';
-import { addMediaMetricsToStore } from 'livepeer/media';
 
 import * as React from 'react';
 

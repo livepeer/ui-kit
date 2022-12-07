@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The `@livepeer/core-react` is used as a dependency in `@livepeer/react` and `@livepeer/react-native` - it should not be installed directly. For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
+The `@livepeer/core-react` package is used as a dependency in `@livepeer/react` and `@livepeer/react-native` - it should not be installed directly. For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
 
 ## Community
 

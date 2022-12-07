@@ -1,5 +1,9 @@
-import { updateStream } from 'livepeer/actions';
-import { LivepeerProvider, Stream, UpdateStreamArgs } from 'livepeer/types';
+import { updateStream } from '@livepeer/core/actions';
+import {
+  LivepeerProvider,
+  Stream,
+  UpdateStreamArgs,
+} from '@livepeer/core/types';
 
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLivepeerProvider } from '../providers';

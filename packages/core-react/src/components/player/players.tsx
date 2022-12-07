@@ -1,4 +1,4 @@
-import { AudioSrc, ControlsOptions, HlsSrc, VideoSrc } from 'livepeer';
+import { AudioSrc, ControlsOptions, HlsSrc, VideoSrc } from '@livepeer/core';
 
 import { PlayerObjectFit, PlayerProps } from './Player';
 

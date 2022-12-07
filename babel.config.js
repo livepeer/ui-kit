@@ -5,7 +5,7 @@ module.exports = {
   ],
   overrides: [
     {
-      include: ['./packages/core', './packages/react'],
+      include: ['./packages/core-web', './packages/react'],
       presets: [
         [
           '@babel/preset-env',

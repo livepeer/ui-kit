@@ -1,74 +1,62 @@
 {
-  "name": "livepeer",
-  "description": "Livepeer's vanilla JS library.",
+  "name": "@livepeer/core",
+  "description": "Livepeer's core vanilla JS library.",
   "license": "MIT",
-  "version": "2.0.0-next.1",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
     "directory": "packages/core"
   },
   "homepage": "https://livepeerjs.org",
-  "main": "dist/livepeer.cjs.js",
-  "module": "dist/livepeer.esm.js",
-  "types": "dist/livepeer.cjs.d.ts",
+  "main": "dist/livepeer-core.cjs.js",
+  "module": "dist/livepeer-core.esm.js",
+  "types": "dist/livepeer-core.cjs.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "module": "./dist/livepeer.esm.js",
-      "default": "./dist/livepeer.cjs.js"
+      "module": "./dist/livepeer-core.esm.js",
+      "default": "./dist/livepeer-core.cjs.js"
     },
     "./actions": {
-      "module": "./actions/dist/livepeer-actions.esm.js",
-      "default": "./actions/dist/livepeer-actions.cjs.js"
+      "module": "./actions/dist/livepeer-core-actions.esm.js",
+      "default": "./actions/dist/livepeer-core-actions.cjs.js"
     },
     "./client": {
-      "module": "./client/dist/livepeer-client.esm.js",
-      "default": "./client/dist/livepeer-client.cjs.js"
+      "module": "./client/dist/livepeer-core-client.esm.js",
+      "default": "./client/dist/livepeer-core-client.cjs.js"
     },
     "./constants": {
-      "module": "./constants/dist/livepeer-constants.esm.js",
-      "default": "./constants/dist/livepeer-constants.cjs.js"
+      "module": "./constants/dist/livepeer-core-constants.esm.js",
+      "default": "./constants/dist/livepeer-core-constants.cjs.js"
     },
     "./contracts": {
-      "module": "./contracts/dist/livepeer-contracts.esm.js",
-      "default": "./contracts/dist/livepeer-contracts.cjs.js"
+      "module": "./contracts/dist/livepeer-core-contracts.esm.js",
+      "default": "./contracts/dist/livepeer-core-contracts.cjs.js"
     },
     "./crypto": {
-      "module": "./crypto/dist/livepeer-crypto.esm.js",
-      "default": "./crypto/dist/livepeer-crypto.cjs.js"
+      "module": "./crypto/dist/livepeer-core-crypto.esm.js",
+      "default": "./crypto/dist/livepeer-core-crypto.cjs.js"
     },
     "./errors": {
-      "module": "./errors/dist/livepeer-errors.esm.js",
-      "default": "./errors/dist/livepeer-errors.cjs.js"
+      "module": "./errors/dist/livepeer-core-errors.esm.js",
+      "default": "./errors/dist/livepeer-core-errors.cjs.js"
     },
     "./media": {
-      "module": "./media/dist/livepeer-media.esm.js",
-      "default": "./media/dist/livepeer-media.cjs.js"
-    },
-    "./media/browser": {
-      "module": "./media/browser/dist/livepeer-media-browser.esm.js",
-      "default": "./media/browser/dist/livepeer-media-browser.cjs.js"
-    },
-    "./media/browser/hls": {
-      "module": "./media/browser/hls/dist/livepeer-media-browser-hls.esm.js",
-      "default": "./media/browser/hls/dist/livepeer-media-browser-hls.cjs.js"
-    },
-    "./media/browser/styling": {
-      "module": "./media/browser/styling/dist/livepeer-media-browser-styling.esm.js",
-      "default": "./media/browser/styling/dist/livepeer-media-browser-styling.cjs.js"
+      "module": "./media/dist/livepeer-core-media.esm.js",
+      "default": "./media/dist/livepeer-core-media.cjs.js"
     },
     "./providers/studio": {
-      "module": "./providers/studio/dist/livepeer-providers-studio.esm.js",
-      "default": "./providers/studio/dist/livepeer-providers-studio.cjs.js"
+      "module": "./providers/studio/dist/livepeer-core-providers-studio.esm.js",
+      "default": "./providers/studio/dist/livepeer-core-providers-studio.cjs.js"
     },
     "./types": {
-      "module": "./types/dist/livepeer-types.esm.js",
-      "default": "./types/dist/livepeer-types.cjs.js"
+      "module": "./types/dist/livepeer-core-types.esm.js",
+      "default": "./types/dist/livepeer-core-types.cjs.js"
     },
     "./utils": {
-      "module": "./utils/dist/livepeer-utils.esm.js",
-      "default": "./utils/dist/livepeer-utils.cjs.js"
+      "module": "./utils/dist/livepeer-core-utils.esm.js",
+      "default": "./utils/dist/livepeer-core-utils.cjs.js"
     }
   },
   "sideEffects": false,
@@ -95,9 +83,6 @@
       "contracts/index.ts",
       "crypto/index.ts",
       "media/index.ts",
-      "media/browser/index.ts",
-      "media/browser/hls/index.ts",
-      "media/browser/styling/index.ts",
       "providers/studio/index.ts",
       "types/index.ts",
       "utils/index.ts"
@@ -116,8 +101,6 @@
     }
   },
   "dependencies": {
-    "@stitches/core": "^1.2.8",
-    "core-js": "^3.26.1",
     "cross-fetch": "^3.1.5",
     "hls.js": "^1.2.8",
     "ms": "^3.0.0-canary.1",

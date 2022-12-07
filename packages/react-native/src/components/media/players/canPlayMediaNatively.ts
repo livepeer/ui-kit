@@ -1,4 +1,4 @@
-import { Src } from 'livepeer/media';
+import { Src } from '@livepeer/core-react';
 import { Platform } from 'react-native';
 
 /**

@@ -1,4 +1,4 @@
-import { aspectRatios } from 'livepeer/media';
+import { aspectRatios } from '@livepeer/core-react';
 import { View } from 'react-native';
 
 import { styled } from './stitches';

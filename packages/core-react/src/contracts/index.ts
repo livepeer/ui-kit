@@ -55,7 +55,7 @@ export {
   testnetChainId,
   TicketBrokerABI,
   TicketBrokerFactory,
-} from 'livepeer/contracts';
+} from '@livepeer/core/contracts';
 export type {
   ArbRetryableTx,
   BondingManager,
@@ -88,4 +88,4 @@ export type {
   TestnetLivepeerChain,
   TestnetLivepeerChainId,
   TicketBroker,
-} from 'livepeer/contracts';
+} from '@livepeer/core/contracts';

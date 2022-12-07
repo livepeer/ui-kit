@@ -1,9 +1,9 @@
+import { AudioSrc, VideoSrc } from '@livepeer/core-react';
 import {
   PlayerProps as CorePlayerProps,
   PlayerObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
-import { AudioSrc, VideoSrc } from 'livepeer/media';
 
 import * as React from 'react';
 import { ImageProps } from 'react-native';
