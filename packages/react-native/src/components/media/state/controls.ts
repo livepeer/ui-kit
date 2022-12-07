@@ -1,4 +1,8 @@
-import { MediaControllerState, Storage, createControllerStore } from 'livepeer';
+import {
+  MediaControllerState,
+  Storage,
+  createControllerStore,
+} from '@livepeer/core-react';
 import { Platform } from 'react-native';
 import { StoreApi } from 'zustand';
 

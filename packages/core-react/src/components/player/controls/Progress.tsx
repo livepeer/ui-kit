@@ -1,4 +1,4 @@
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState } from '@livepeer/core';
 
 import * as React from 'react';
 

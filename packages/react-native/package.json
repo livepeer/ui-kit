@@ -60,17 +60,16 @@
   "peerDependenciesMeta": {},
   "dependencies": {
     "@livepeer/core-react": "^1.0.0-next.4",
-    "livepeer": "^2.0.0-next.1",
     "react-native-url-polyfill": "^1.3.0",
-    "stitches-native": "^0.3.2",
-    "zustand": "^4.1.3"
+    "stitches-native": "^0.4.0",
+    "zustand": "^4.1.5"
   },
   "devDependencies": {
-    "@tanstack/react-query": "4.18.0",
+    "@tanstack/react-query": "4.19.1",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/react-native": "^11.5.0",
-    "@types/react": "^18.0.23",
-    "@types/react-native": "^0.70.7",
+    "@types/react": "^18.0.26",
+    "@types/react-native": "^0.70.8",
     "expo": "^47.0.6",
     "expo-av": "13.0.1",
     "react": "^18.2.0",

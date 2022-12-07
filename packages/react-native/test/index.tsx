@@ -84,4 +84,3 @@ export const render = (ui: React.ReactElement, options?: RenderOptions) =>
   defaultRender(ui, { wrapper, ...options });
 
 export { act, cleanup, fireEvent, screen } from '@testing-library/react-native';
-export { getSampleVideo, getSigners } from 'livepeer/test';

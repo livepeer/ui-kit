@@ -1,5 +1,9 @@
-import { createStream } from 'livepeer/actions';
-import { CreateStreamArgs, LivepeerProvider, Stream } from 'livepeer/types';
+import { createStream } from '@livepeer/core/actions';
+import {
+  CreateStreamArgs,
+  LivepeerProvider,
+  Stream,
+} from '@livepeer/core/types';
 
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLivepeerProvider } from '../providers';

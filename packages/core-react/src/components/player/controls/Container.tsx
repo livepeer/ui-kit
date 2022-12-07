@@ -1,4 +1,4 @@
-import { AspectRatio, ThemeConfig } from 'livepeer/media';
+import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 
 export type ContainerProps = {
   aspectRatio: AspectRatio;

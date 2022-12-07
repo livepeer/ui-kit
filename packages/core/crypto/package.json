@@ -1,4 +1,4 @@
 {
-  "main": "dist/livepeer-crypto.cjs.js",
-  "module": "dist/livepeer-crypto.esm.js"
+  "main": "dist/livepeer-core-crypto.cjs.js",
+  "module": "dist/livepeer-core-crypto.esm.js"
 }

@@ -1,4 +1,4 @@
-import { createAsset } from 'livepeer/actions';
+import { createAsset } from '@livepeer/core/actions';
 import {
   Asset,
   CreateAssetArgs,
@@ -6,7 +6,7 @@ import {
   CreateAssetSourceType,
   LivepeerProvider,
   MirrorSizeArray,
-} from 'livepeer/types';
+} from '@livepeer/core/types';
 import { useMemo, useState } from 'react';
 
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';

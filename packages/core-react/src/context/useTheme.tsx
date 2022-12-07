@@ -1,5 +1,5 @@
-import { ThemeConfig } from 'livepeer/media';
-import { deepMerge } from 'livepeer/utils';
+import { ThemeConfig } from '@livepeer/core/media';
+import { deepMerge } from '@livepeer/core/utils';
 import * as React from 'react';
 
 export const useTheme = (

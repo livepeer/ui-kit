@@ -1,5 +1,5 @@
-import { LivepeerProvider, PlaybackInfo } from 'livepeer';
-import { ClientConfig } from 'livepeer/client';
+import { LivepeerProvider, PlaybackInfo } from '@livepeer/core';
+import { ClientConfig } from '@livepeer/core/client';
 import { ReactNode } from 'react';
 
 import { PlayerProps } from '../../components';

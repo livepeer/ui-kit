@@ -1,5 +1,5 @@
-import { updateAsset } from 'livepeer/actions';
-import { Asset, LivepeerProvider, UpdateAssetArgs } from 'livepeer/types';
+import { updateAsset } from '@livepeer/core/actions';
+import { Asset, LivepeerProvider, UpdateAssetArgs } from '@livepeer/core/types';
 
 import { UseInternalMutationOptions, useInternalMutation } from '../../utils';
 import { useLivepeerProvider } from '../providers';
