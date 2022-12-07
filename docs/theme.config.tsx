@@ -86,7 +86,7 @@ const config: DocsThemeConfig = {
       </div>
     );
   },
-  getNextSeoProps() {
+  useNextSeoProps() {
     return {
       titleTemplate: `%s - livepeer.js`,
     };
