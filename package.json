@@ -37,16 +37,16 @@
     "@changesets/cli": "^2.25.2",
     "@preconstruct/cli": "^2.2.2",
     "@react-native-community/eslint-plugin": "^1.3.0",
-    "@tsconfig/react-native": "^2.0.2",
+    "@tsconfig/react-native": "^2.0.3",
     "@types/eslint": "^8.4.8",
-    "@types/node": "18.11.9",
+    "@types/node": "18.11.11",
     "@types/prettier": "^2.7.1",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "@vitest/coverage-c8": "^0.25.3",
-    "@vitest/ui": "^0.25.3",
+    "@typescript-eslint/eslint-plugin": "^5.45.1",
+    "@typescript-eslint/parser": "^5.45.1",
+    "@vitest/coverage-c8": "^0.25.5",
+    "@vitest/ui": "^0.25.5",
     "c8": "^7.12.0",
-    "eslint": "8.28.0",
+    "eslint": "8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-compat": "^4.0.2",
@@ -58,12 +58,12 @@
     "eslint-plugin-react-native": "^4.0.0",
     "eslint-plugin-testing-library": "^5.9.1",
     "jsdom": "^20.0.3",
-    "lint-staged": "^13.0.4",
-    "prettier": "^2.8.0",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1",
     "simple-git-hooks": "^2.8.1",
     "typescript": "^4.9.3",
-    "vite": "^3.2.4",
-    "vitest": "^0.25.3"
+    "vite": "^3.2.5",
+    "vitest": "^0.25.5"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
@@ -80,10 +80,5 @@
   "engines": {
     "node": ">=16",
     "pnpm": ">=7"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "stitches-native@0.3.2": "patches/stitches-native@0.3.2.patch"
-    }
   }
 }
