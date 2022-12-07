@@ -99,4 +99,4 @@ export const render = <
 ) => defaultRender(ui, { wrapper, ...options });
 
 export { act, cleanup, fireEvent, screen } from '@testing-library/react';
-export { getSampleVideo, getSigners } from '../../core/test';
+export { getSampleVideo } from '../../core/test';

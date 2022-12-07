@@ -16,4 +16,4 @@ export {
   resetDateNow,
   waitForWebsocketOpen,
 } from './mocks';
-export { getSampleVideo, getSigners } from './utils';
+export { getSampleVideo } from './utils';
