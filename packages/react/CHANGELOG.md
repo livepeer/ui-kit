@@ -1,5 +1,11 @@
 # @livepeer/react
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- [#184](https://github.com/livepeer/livepeer.js/pull/184) [`c3fb3bb`](https://github.com/livepeer/livepeer.js/commit/c3fb3bbf909b5a9864f6d86dc8b4622e2f1f4c55) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed bug with resize window breaking the progress slider in the Player.
+
 ## 2.0.0-next.5
 
 ### Minor Changes
