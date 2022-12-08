@@ -30,7 +30,7 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   });
 
   React.useEffect(() => {
-    if (typeof document !== 'undefined') {
+    if (typeof window !== 'undefined') {
       const handleResize = () => {
         const boundingRect = ref.current?.getBoundingClientRect();
 
@@ -42,8 +42,8 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
 
       handleResize();
 
-      document.addEventListener('resize', handleResize);
-      return () => document.removeEventListener('resize', handleResize);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
