@@ -144,7 +144,7 @@ Use hooks! Every component inside the `LivepeerConfig` is now set up to use the 
     import { useAsset } from '@livepeer/react';
 
     function SomeComponent() {
-      const asset = useAsset({ assetId: 'd8e8b87d-6774-4083-a2d7-4e85872d18cd' });
+      const { data: asset } = useAsset({ assetId: 'd8e8b87d-6774-4083-a2d7-4e85872d18cd' });
 
       return <div>Asset: {asset.name}</div>;
     }
@@ -153,12 +153,13 @@ Use hooks! Every component inside the `LivepeerConfig` is now set up to use the 
   </SyncedTab>
   <SyncedTab>
     ```tsx filename="React Native"
+    import { Text } from 'react-native';
     import { useAsset } from '@livepeer/react-native';
 
     function SomeComponent() {
-      const asset = useAsset({ assetId: 'd8e8b87d-6774-4083-a2d7-4e85872d18cd' });
+      const { data: asset } = useAsset({ assetId: 'd8e8b87d-6774-4083-a2d7-4e85872d18cd' });
 
-      return <div>Asset: {asset.name}</div>;
+      return <Text>Asset: {asset.name}</Text>;
     }
     ```
 
