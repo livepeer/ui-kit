@@ -1,21 +1,34 @@
 import { ThemeConfig } from '@livepeer/core/media';
 import { createStitches } from '@stitches/core';
 
-const theme: ThemeConfig = {
+const accent = '#00a55f';
+const icon = 'rgba(255,255,255,1)';
+
+const theme: Required<{
+  [key in keyof ThemeConfig]: Required<ThemeConfig[key]>;
+}> = {
   borderStyles: {
-    containerBorderStyle: undefined,
+    containerBorderStyle: 'solid',
   },
   borderWidths: {
     containerBorderWidth: 0,
     loadingWidth: '3px',
   },
   colors: {
-    accent: '#00a55f',
+    accent,
     background: '#000000',
     containerBorderColor: 'transparent',
-    icon: 'rgba(255,255,255,1)',
+    icon,
     iconHover: 'rgba(255,255,255,0.8)',
     liveIndicator: '#e5484d',
+    progressLeft: accent,
+    progressMiddle: accent,
+    progressRight: accent,
+    progressThumb: icon,
+    volumeLeft: accent,
+    volumeMiddle: accent,
+    volumeRight: accent,
+    volumeThumb: icon,
   },
   fonts: {
     display: 'ui-sans-serif',

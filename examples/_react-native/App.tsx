@@ -1,6 +1,7 @@
 import {
   LivepeerConfig,
   Player,
+  ThemeConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react-native';
@@ -20,6 +21,13 @@ import {
   LearnMoreLinks,
 } from 'react-native/Libraries/NewAppScreen';
 
+const theme: ThemeConfig = {
+  colors: {
+    accent: 'blue',
+    progressLeft: 'red',
+  },
+};
+
 const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
@@ -34,7 +42,7 @@ const App = () => {
   };
 
   return (
-    <LivepeerConfig client={livepeerClient}>
+    <LivepeerConfig theme={theme} client={livepeerClient}>
       <SafeAreaView style={backgroundStyle}>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}

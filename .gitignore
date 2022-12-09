@@ -11,6 +11,10 @@ logs
 *.log
 pnpm-debug.log*
 build/
+
+# Sentry
+.sentryclirc
+
 # local env files
 .env
 .envrc

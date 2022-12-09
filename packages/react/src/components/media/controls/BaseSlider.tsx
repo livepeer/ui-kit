@@ -2,6 +2,7 @@ import {
   BaseSliderProps,
   useBaseSlider,
 } from '@livepeer/core-react/components';
+import { CSS } from '@stitches/react';
 import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 
@@ -195,10 +196,6 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   );
 };
 
-const Thumb = ({ size }: { size?: 'active' | 'default' }) => (
-  <div
-    className={styling.slider.thumb({
-      size,
-    })}
-  />
+const Thumb = ({ size, css }: { size?: 'active' | 'default'; css?: CSS }) => (
+  <div className={styling.slider.thumb({ css, size })} />
 );
