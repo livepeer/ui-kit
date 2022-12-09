@@ -11,8 +11,6 @@ export const useTheme = (
 ) => {
   const contextTheme = React.useContext(ThemeContext);
 
-  console.log(contextTheme);
-
   const containerTheme = React.useMemo(() => {
     const mergedTheme = contextTheme
       ? theme
