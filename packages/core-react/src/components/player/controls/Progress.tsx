@@ -63,6 +63,15 @@ export const useProgress = (props: ProgressCoreProps) => {
 
   return {
     title: `progress of ${durationMinutes} minutes`,
-    progressProps: { onChange, value, secondaryValue, ...rest },
+    progressProps: {
+      onChange,
+      value,
+      secondaryValue,
+      leftCss: { backgroundColor: '$progressLeft' },
+      middleCss: { backgroundColor: '$progressMiddle' },
+      rightCss: { backgroundColor: '$progressRight' },
+      thumbCss: { backgroundColor: '$progressThumb' },
+      ...rest,
+    },
   };
 };

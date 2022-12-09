@@ -1,7 +1,12 @@
 import { ThemeConfig } from '@livepeer/core-react';
 import { createStitches } from 'stitches-native';
 
-const theme: ThemeConfig = {
+const accent = '#00a55f';
+const icon = 'rgba(255,255,255,1)';
+
+const theme: Required<{
+  [key in keyof ThemeConfig]: Required<ThemeConfig[key]>;
+}> = {
   borderStyles: {
     containerBorderStyle: 'solid',
   },
@@ -10,12 +15,20 @@ const theme: ThemeConfig = {
     loadingWidth: 3,
   },
   colors: {
-    accent: '#00a55f',
+    accent,
     background: '#000000',
     containerBorderColor: 'transparent',
-    icon: 'rgba(255,255,255,1)',
+    icon,
     iconHover: 'rgba(255,255,255,0.8)',
     liveIndicator: '#e5484d',
+    progressLeft: accent,
+    progressMiddle: accent,
+    progressRight: accent,
+    progressThumb: icon,
+    volumeLeft: accent,
+    volumeMiddle: accent,
+    volumeRight: accent,
+    volumeThumb: icon,
   },
   fonts: {
     display: 'ui-sans-serif',
@@ -37,6 +50,7 @@ const theme: ThemeConfig = {
     liveIndicatorSize: 5,
     loading: 64,
     thumb: 12,
+    thumbActive: 14,
     trackActive: 5,
     trackContainerHeight: 15,
     trackContainerHeightSm: 20,

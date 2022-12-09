@@ -91,6 +91,10 @@ export const useVolume = (props: VolumeCoreProps) => {
     progressProps: {
       shown: isVolumeChangeSupported && showSlider,
       onChange,
+      leftCss: { backgroundColor: '$volumeLeft' },
+      middleCss: { backgroundColor: '$volumeMiddle' },
+      rightCss: { backgroundColor: '$volumeRight' },
+      thumbCss: { backgroundColor: '$volumeThumb' },
     },
   };
 };

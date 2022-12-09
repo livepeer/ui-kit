@@ -5,14 +5,15 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react-native';
-import { Video } from 'expo-av';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 
 const theme: ThemeConfig = {
   colors: {
-    accent: '#00a55f',
+    accent: 'blue',
+    progressLeft: 'red',
+    progressThumb: 'green',
   },
 };
 
@@ -23,10 +24,6 @@ const livepeerClient = createReactClient({
 });
 
 export default function App() {
-  const mediaElementRef = useCallback(async (ref: Video) => {
-    await ref.setVolumeAsync(0.5);
-  }, []);
-
   return (
     <LivepeerConfig theme={theme} client={livepeerClient}>
       <StatusBar style="auto" />
@@ -37,7 +34,9 @@ export default function App() {
           title="Operation Barbershop"
           aspectRatio="16to9"
           playbackId="6d7el73r1y12chxr"
-          mediaElementRef={mediaElementRef}
+          mediaElementRef={async (ref) => {
+            await ref?.setVolumeAsync(0.5);
+          }}
         />
       </ScrollView>
     </LivepeerConfig>

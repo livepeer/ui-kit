@@ -20,9 +20,21 @@ export type ThemeConfig = Partial<{
     accent?: string | undefined;
     background?: string | undefined;
     containerBorderColor?: string | undefined;
+
     icon?: string | undefined;
     iconHover?: string | undefined;
+
     liveIndicator?: string | undefined;
+
+    progressLeft?: string | undefined;
+    progressMiddle?: string | undefined;
+    progressRight?: string | undefined;
+    progressThumb?: string | undefined;
+
+    volumeLeft?: string | undefined;
+    volumeMiddle?: string | undefined;
+    volumeRight?: string | undefined;
+    volumeThumb?: string | undefined;
   };
   fonts: {
     display?: string | undefined;
@@ -31,6 +43,7 @@ export type ThemeConfig = Partial<{
     timeFontSize?: string | number | undefined;
     timeFontSizeMd?: string | number | undefined;
     timeFontSizeSm?: string | number | undefined;
+
     titleFontSize?: string | number | undefined;
     titleFontSizeMd?: string | number | undefined;
     titleFontSizeSm?: string | number | undefined;
@@ -53,10 +66,13 @@ export type ThemeConfig = Partial<{
   sizes: {
     iconButtonSize?: string | number | undefined;
     iconButtonSizeSm?: string | number | undefined;
+
     liveIndicatorSize?: string | number | undefined;
     loading?: string | number | undefined;
+
     thumb?: string | number | undefined;
     thumbActive?: string | number | undefined;
+
     trackActive?: string | number | undefined;
     trackContainerHeight?: string | number | undefined;
     trackContainerHeightSm?: string | number | undefined;
@@ -67,6 +83,7 @@ export type ThemeConfig = Partial<{
     controlsBottomMarginY?: string | number | undefined;
     controlsTopMarginX?: string | number | undefined;
     controlsTopMarginY?: string | number | undefined;
+
     timeMarginX?: string | number | undefined;
   };
   radii: {

@@ -23,6 +23,8 @@ const container = css('div', {
     minHeight: '$trackContainerHeightSm',
   },
 
+  position: 'relative',
+
   display: 'flex',
   alignItems: 'center',
   minWidth: 80,

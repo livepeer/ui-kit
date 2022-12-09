@@ -703,19 +703,16 @@ function PlayerComponent() {
   <SyncedTab>
 
 ```tsx filename="React Native"
-import { Video } from 'expo-av';
 import { useCallback } from 'react';
 
 function PlayerComponent() {
-  const mediaElementRef = useCallback(async (ref: Video) => {
-    await ref.setVolumeAsync(0.5);
-  }, []);
-
   return (
     <Player
       title="Agent 327: Operation Barbershop"
       playbackId="6d7el73r1y12chxr"
-      mediaElementRef={mediaElementRef}
+      mediaElementRef={async (ref) => {
+        await ref?.setVolumeAsync(0.5);
+      }}
     />
   );
 }
