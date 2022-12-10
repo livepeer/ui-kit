@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.0.0-next.1
+
+### Patch Changes
+
+- [#187](https://github.com/livepeer/livepeer.js/pull/187) [`44adf29`](https://github.com/livepeer/livepeer.js/commit/44adf2940ae3621038d87f1444b18398a57d399e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added further theming overrides to progress and volume sliders.
+
 ## 1.0.0-next.0
 
 ### Major Changes
