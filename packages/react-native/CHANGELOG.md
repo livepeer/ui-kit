@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.0.0-next.8
+
+### Patch Changes
+
+- [`3cada35`](https://github.com/livepeer/livepeer.js/commit/3cada350006426a006c6722f28623e25a1fda2b4) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed dStorage fallback to only use IPFS when `playbackId` does not exist.
+
+- Updated dependencies [[`3cada35`](https://github.com/livepeer/livepeer.js/commit/3cada350006426a006c6722f28623e25a1fda2b4)]:
+  - @livepeer/core-react@1.0.0-next.8
+
 ## 1.0.0-next.7
 
 ### Patch Changes

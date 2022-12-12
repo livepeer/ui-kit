@@ -18,6 +18,7 @@ build/
 # local env files
 .env
 .envrc
+
 # svelte
 dist-ssr
 
