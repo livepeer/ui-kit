@@ -1,5 +1,11 @@
 # livepeer
 
+## 2.0.0-next.4
+
+### Patch Changes
+
+- [#189](https://github.com/livepeer/livepeer.js/pull/189) [`0f6bb63`](https://github.com/livepeer/livepeer.js/commit/0f6bb636f96ded681f9d02947f4ff022bab2a7cd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed regression with IPFS auto-playback and mime type checking in browser.
+
 ## 2.0.0-next.3
 
 ### Patch Changes

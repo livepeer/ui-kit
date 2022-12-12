@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.0.0-next.8
+
+### Patch Changes
+
+- [#189](https://github.com/livepeer/livepeer.js/pull/189) [`0f6bb63`](https://github.com/livepeer/livepeer.js/commit/0f6bb636f96ded681f9d02947f4ff022bab2a7cd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed regression with IPFS auto-playback and mime type checking in browser.
+
+- Updated dependencies [[`0f6bb63`](https://github.com/livepeer/livepeer.js/commit/0f6bb636f96ded681f9d02947f4ff022bab2a7cd)]:
+  - @livepeer/core-react@1.0.0-next.7
+  - livepeer@2.0.0-next.4
+
 ## 2.0.0-next.7
 
 ### Patch Changes
