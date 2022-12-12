@@ -116,10 +116,6 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         : src;
 
     if (!sources) {
-      if (dStoragePlaybackUrl) {
-        return [dStoragePlaybackUrl];
-      }
-
       return null;
     }
 
@@ -156,7 +152,15 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         : null;
 
     return mediaSourceFiltered;
-  }, [dStoragePlaybackUrl, playbackUrls, src, jwt]);
+  }, [playbackUrls, src, jwt]);
 
-  return { source: sourceMimeTyped, uploadStatus } as const;
+  const sourceMimeTypedWithFallback = React.useMemo(() => {
+    if (!sourceMimeTyped && dStoragePlaybackUrl) {
+      return [dStoragePlaybackUrl];
+    }
+
+    return sourceMimeTyped;
+  }, [sourceMimeTyped, dStoragePlaybackUrl]);
+
+  return { source: sourceMimeTypedWithFallback, uploadStatus } as const;
 };

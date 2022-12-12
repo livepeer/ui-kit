@@ -1,7 +1,8 @@
 import { Player } from '@livepeer/react';
 import { useCallback } from 'react';
 
-const playbackId = 'ar://JIuxwuF79WrYNKN9_B99SxVEcKIpdibF2kWRwHBUeQg';
+const playbackId =
+  'ipfs://bafybeifavmtea3u5ulvrkdzc2wnjwjl35jefqiyhgruxu2cjd4kumymqm4';
 // const streamId = '2c61917e-4f05-449a-ab7d-1b3c85f78993';
 
 export const AssetDemoPlayer = () => {
@@ -12,9 +13,12 @@ export const AssetDemoPlayer = () => {
   return (
     <>
       <Player
-        playbackId={playbackId}
+        src={playbackId}
         // src={'/audio-example.mp3'}
-        autoUrlUpload={{ fallback: true, ipfsGateway: 'https://dweb.link' }}
+        autoUrlUpload={{
+          fallback: true,
+          ipfsGateway: 'https://lens.infura-ipfs.io/',
+        }}
         loop
         autoPlay
         showPipButton
