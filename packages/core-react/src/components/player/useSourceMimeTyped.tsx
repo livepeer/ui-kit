@@ -69,42 +69,6 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   }, [playbackInfo]);
 
   const sourceMimeTyped = React.useMemo(() => {
-    // cast all URLs to an array of strings
-    const sources =
-      playbackUrls.length > 0
-        ? playbackUrls
-        : typeof src === 'string'
-        ? [src]
-        : src;
-
-    if (!sources) {
-      return null;
-    }
-
-    const authenticatedSources = sources.map((source) => {
-      // append the JWT to the query params
-      if (jwt) {
-        const url = new URL(source);
-        url.searchParams.append('jwt', jwt);
-        return url.toString();
-      }
-
-      return source;
-    });
-
-    const mediaSourceTypes = authenticatedSources
-      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
-      .filter((s) => s) as Src[];
-
-    // if there are multiple Hls sources, we take only the first one
-    // otherwise we pass all sources to the video or audio player components
-    if (
-      mediaSourceTypes.every((s) => s.type === 'hls') &&
-      mediaSourceTypes?.[0]?.type === 'hls'
-    ) {
-      return mediaSourceTypes[0];
-    }
-
     // if the player is auto uploading, we do not play back the detected input file unless specified
     // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
     if (decentralizedSrcOrPlaybackId) {
@@ -143,6 +107,42 @@ export const useSourceMimeTyped = <TElement, TPoster>({
           }
         }
       }
+    }
+
+    // cast all URLs to an array of strings
+    const sources =
+      playbackUrls.length > 0
+        ? playbackUrls
+        : typeof src === 'string'
+        ? [src]
+        : src;
+
+    if (!sources) {
+      return null;
+    }
+
+    const authenticatedSources = sources.map((source) => {
+      // append the JWT to the query params
+      if (jwt) {
+        const url = new URL(source);
+        url.searchParams.append('jwt', jwt);
+        return url.toString();
+      }
+
+      return source;
+    });
+
+    const mediaSourceTypes = authenticatedSources
+      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
+      .filter((s) => s) as Src[];
+
+    // if there are multiple Hls sources, we take only the first one
+    // otherwise we pass all sources to the video or audio player components
+    if (
+      mediaSourceTypes.every((s) => s.type === 'hls') &&
+      mediaSourceTypes?.[0]?.type === 'hls'
+    ) {
+      return mediaSourceTypes[0];
     }
 
     // we filter by the first source type in the array provided

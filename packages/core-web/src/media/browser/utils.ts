@@ -64,14 +64,14 @@ export const canAutoplay = (
  * Checks if the native HTML5 video player can play the mime type.
  */
 export const canPlayMediaNatively = (src: Src): boolean => {
-  if (isClient()) {
+  if (isClient() && src?.mime) {
     // TODO fix this to better support audio mime types
     if (src?.type?.includes('audio')) {
       const audio = document.createElement('audio');
-      return audio.canPlayType(src?.type).length > 0;
+      return audio.canPlayType(src.mime).length > 0;
     } else {
       const video = document.createElement('video');
-      return video.canPlayType(src?.type).length > 0;
+      return video.canPlayType(src.mime).length > 0;
     }
   }
 
