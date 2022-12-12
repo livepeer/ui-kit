@@ -68,47 +68,45 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     }
   }, [playbackInfo]);
 
-  const sourceMimeTyped = React.useMemo(() => {
+  const dStoragePlaybackUrl = React.useMemo(() => {
     // if the player is auto uploading, we do not play back the detected input file unless specified
     // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
-    if (decentralizedSrcOrPlaybackId) {
-      if (!autoUrlUpload) {
-        return null;
-      } else {
-        if (typeof autoUrlUpload !== 'boolean') {
-          if (decentralizedSrcOrPlaybackId.url.startsWith('ar://')) {
-            const { host } = new URL(
-              autoUrlUpload.arweaveGateway ?? defaultArweaveGateway,
-            );
+    if (
+      decentralizedSrcOrPlaybackId &&
+      autoUrlUpload &&
+      typeof autoUrlUpload !== 'boolean'
+    ) {
+      if (decentralizedSrcOrPlaybackId.url.startsWith('ar://')) {
+        const { host } = new URL(
+          autoUrlUpload.arweaveGateway ?? defaultArweaveGateway,
+        );
 
-            const src: VideoSrc[] = [
-              {
-                type: 'video',
-                mime: 'video/mp4',
-                src: `https://${host}/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
-              },
-            ];
+        const src: VideoSrc = {
+          type: 'video',
+          mime: 'video/mp4',
+          src: `https://${host}/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
+        };
 
-            return src;
-          } else if (decentralizedSrcOrPlaybackId.url.startsWith('ipfs://')) {
-            const { host } = new URL(
-              autoUrlUpload.ipfsGateway ?? defaultIpfsGateway,
-            );
+        return src;
+      } else if (decentralizedSrcOrPlaybackId.url.startsWith('ipfs://')) {
+        const { host } = new URL(
+          autoUrlUpload.ipfsGateway ?? defaultIpfsGateway,
+        );
 
-            const src: VideoSrc[] = [
-              {
-                type: 'video',
-                mime: 'video/mp4',
-                src: `https://${host}/ipfs/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
-              },
-            ];
+        const src: VideoSrc = {
+          type: 'video',
+          mime: 'video/mp4',
+          src: `https://${host}/ipfs/${decentralizedSrcOrPlaybackId.id}` as VideoSrc['src'],
+        };
 
-            return src;
-          }
-        }
+        return src;
       }
     }
 
+    return null;
+  }, [autoUrlUpload, decentralizedSrcOrPlaybackId]);
+
+  const sourceMimeTyped = React.useMemo(() => {
     // cast all URLs to an array of strings
     const sources =
       playbackUrls.length > 0
@@ -118,6 +116,10 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         : src;
 
     if (!sources) {
+      if (dStoragePlaybackUrl) {
+        return [dStoragePlaybackUrl];
+      }
+
       return null;
     }
 
@@ -154,7 +156,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         : null;
 
     return mediaSourceFiltered;
-  }, [decentralizedSrcOrPlaybackId, playbackUrls, src, autoUrlUpload, jwt]);
+  }, [dStoragePlaybackUrl, playbackUrls, src, jwt]);
 
   return { source: sourceMimeTyped, uploadStatus } as const;
 };
