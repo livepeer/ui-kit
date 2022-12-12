@@ -1,5 +1,14 @@
 # @livepeer/react
 
+## 2.0.0-next.10
+
+### Patch Changes
+
+- [`d4b4264`](https://github.com/livepeer/livepeer.js/commit/d4b42644fdbf8d4d50e74798bdc0df6e2ceee9b4) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed IPFS auto-playback with `src`.
+
+- Updated dependencies [[`d4b4264`](https://github.com/livepeer/livepeer.js/commit/d4b42644fdbf8d4d50e74798bdc0df6e2ceee9b4)]:
+  - @livepeer/core-react@1.0.0-next.9
+
 ## 2.0.0-next.9
 
 ### Patch Changes
