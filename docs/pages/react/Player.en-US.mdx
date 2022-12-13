@@ -236,7 +236,7 @@ function PlayerComponent() {
 ### title
 
 The `title` for the content. This is highly recommended, since it is used for [accessibility labels](https://web.dev/semantics-aria/)
-in the Player. If you do not want to show the title visually, see [`showTitle`](#showTitle).
+in the Player. If you do not want to show the title visually, see [`showTitle`](#showtitle).
 
 ```tsx filename="React & React Native" {4}
 function PlayerComponent() {
@@ -560,7 +560,7 @@ Enables automatic upload and playback from decentralized storage providers. Curr
 
 If `fallback` is specified, while the URL upload is being processed in the background, the video will start non-transcoded playback immediately
 (defaulting to `w3s.link` for IPFS and `arweave.net` for Arweave). Once this finishes, the Player will switch to playing from the transcoded version
-from the Livepeer provider.
+from the Livepeer provider. To show/hide the indicator of current upload progress, see [`showUploadingIndicator`](#showuploadingindicator).
 
 It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>` or `ar://<HASH>`)
 before presenting the content to the user - the first view with automatic URL upload can take a few minutes, then it will be permanently
@@ -597,6 +597,23 @@ function PlayerComponent() {
   playbackId="ipfs://QmNmNBQE3RqdkN3KpeBVxpGDHUe8c9Bh5YNerERNoo98rB/4038.mp4"
   autoUrlUpload={{ fallback: true, ipfsGateway: 'https://w3s.link' }}
 />
+
+### showUploadingIndicator
+
+Shows/hides the uploading indication for `autoUrlUpload`. Defaults to `true` - only used with `autoUrlUpload`.
+
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      autoUrlUpload={{ fallback: true }}
+      showUploadingIndicator={false}
+    />
+  );
+}
+```
 
 ### theme
 
