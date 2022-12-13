@@ -35,7 +35,9 @@ export type PlayerProps<TElement, TPoster> = {
    */
   poster?: TPoster;
   /** Enables/disables the loading spinner */
-  shouldShowLoadingSpinner?: boolean;
+  showLoadingSpinner?: boolean;
+  /** Enables/disables the dStorage uploading indicator (text and progress percentage) */
+  showUploadingIndicator?: boolean;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
@@ -103,7 +105,8 @@ export const usePlayer = <TElement, TPoster>({
   refetchPlaybackInfoInterval = 5000,
   autoUrlUpload = true,
 
-  shouldShowLoadingSpinner = true,
+  showLoadingSpinner = true,
+  showUploadingIndicator = true,
   showTitle = true,
   aspectRatio = '16to9',
   objectFit = 'cover',
@@ -141,12 +144,15 @@ export const usePlayer = <TElement, TPoster>({
 
   const loadingText = React.useMemo(
     () =>
-      uploadStatus?.phase === 'processing' && isNumber(uploadStatus?.progress)
-        ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
-        : uploadStatus?.phase === 'failed'
-        ? 'Upload Failed'
+      showUploadingIndicator
+        ? uploadStatus?.phase === 'processing' &&
+          isNumber(uploadStatus?.progress)
+          ? `Processing: ${(Number(uploadStatus?.progress) * 100).toFixed(0)}%`
+          : uploadStatus?.phase === 'failed'
+          ? 'Upload Failed'
+          : null
         : null,
-    [uploadStatus],
+    [uploadStatus, showUploadingIndicator],
   );
 
   return {
@@ -164,8 +170,9 @@ export const usePlayer = <TElement, TPoster>({
     },
     controlsContainerProps: {
       hidePosterOnPlayed,
-      shouldShowLoadingSpinner,
+      showLoadingSpinner,
       loadingText,
+      showUploadingIndicator,
     },
     props: {
       autoPlay,
