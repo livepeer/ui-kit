@@ -3,7 +3,7 @@ import * as React from 'react';
 
 export type ControlsContainerProps = {
   loadingText?: string | null;
-  shouldShowLoadingSpinner?: boolean;
+  showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
 

@@ -31,7 +31,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     left,
     right,
     poster,
-    shouldShowLoadingSpinner = true,
+    showLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
   } = props;
@@ -64,7 +64,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           onMouseUp={containerProps.onPress}
         />
       )}
-      {shouldShowLoadingSpinner && !isLoaded && (
+      {showLoadingSpinner && !isLoaded && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
