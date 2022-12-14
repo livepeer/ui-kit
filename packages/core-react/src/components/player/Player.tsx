@@ -109,7 +109,7 @@ export const usePlayer = <TElement, TPoster>({
   showUploadingIndicator = true,
   showTitle = true,
   aspectRatio = '16to9',
-  objectFit = 'cover',
+  objectFit = 'contain',
   mediaElementRef,
 }: PlayerProps<TElement, TPoster>) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
