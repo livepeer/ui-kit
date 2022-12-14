@@ -26,6 +26,8 @@ export type ThemeConfig = Partial<{
 
     liveIndicator?: string | undefined;
 
+    loading?: string | undefined;
+
     progressLeft?: string | undefined;
     progressMiddle?: string | undefined;
     progressRight?: string | undefined;

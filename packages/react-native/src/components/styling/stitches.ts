@@ -21,6 +21,7 @@ const theme: Required<{
     icon,
     iconHover: 'rgba(255,255,255,0.8)',
     liveIndicator: '#e5484d',
+    loading: accent,
     progressLeft: accent,
     progressMiddle: accent,
     progressRight: accent,
