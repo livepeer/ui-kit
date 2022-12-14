@@ -26,7 +26,7 @@ export const loading = css('div', {
     borderRadius: '50%',
     borderWidth: '$loadingWidth',
     borderStyle: 'solid',
-    borderColor: '$accent transparent $accent transparent',
+    borderColor: '$loading transparent $loading transparent',
     animation: `${rotate} 1.4s ease-in-out infinite`,
   },
 });

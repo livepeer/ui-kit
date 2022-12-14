@@ -76,7 +76,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         <Background>
           {loadingText && <LoadingText>{loadingText}</LoadingText>}
 
-          <Loading size="small" color={theme.colors?.accent} />
+          <Loading size="small" color={theme.colors?.loading} />
         </Background>
       )}
 

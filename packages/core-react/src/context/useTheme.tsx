@@ -42,6 +42,9 @@ export const useTheme = (
                 mergedTheme.colors?.progressThumb ?? mergedTheme.colors?.icon,
               volumeThumb:
                 mergedTheme.colors?.volumeThumb ?? mergedTheme.colors?.icon,
+
+              loading:
+                mergedTheme.colors?.loading ?? mergedTheme.colors?.accent,
             },
           },
           mergedTheme,
