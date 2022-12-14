@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.0.0-next.2
+
+### Patch Changes
+
+- [#195](https://github.com/livepeer/livepeer.js/pull/195) [`e866579`](https://github.com/livepeer/livepeer.js/commit/e86657964e2dd9d141d7d06023207ae88d5c4169) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `loading` color override to ThemeConfig.
+
 ## 1.0.0-next.1
 
 ### Patch Changes
