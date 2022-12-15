@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.0.0-next.12
+
+### Patch Changes
+
+- [#197](https://github.com/livepeer/livepeer.js/pull/197) [`748ddfa`](https://github.com/livepeer/livepeer.js/commit/748ddfa8ffc458c0a91e536a74a1933e57909745) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed the default `objectFit` for the Player to be `contain` instead of `cover`.
+
+- Updated dependencies [[`748ddfa`](https://github.com/livepeer/livepeer.js/commit/748ddfa8ffc458c0a91e536a74a1933e57909745)]:
+  - @livepeer/core-react@1.0.0-next.12
+
 ## 1.0.0-next.11
 
 ### Patch Changes
