@@ -36,6 +36,13 @@ describe('addMediaMetrics', () => {
           "stalled",
           "loadstart",
           "resize",
+          "keyup",
+          "mouseenter",
+          "mouseleave",
+          "mousemove",
+          "touchstart",
+          "touchend",
+          "touchmove",
         ]
       `,
       );
