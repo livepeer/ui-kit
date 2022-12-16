@@ -1,4 +1,4 @@
 {
-  "main": "dist/livepeer-errors.cjs.js",
-  "module": "dist/livepeer-errors.esm.js"
+  "main": "dist/livepeer-core-errors.cjs.js",
+  "module": "dist/livepeer-core-errors.esm.js"
 }

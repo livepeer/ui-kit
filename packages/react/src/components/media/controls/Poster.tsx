@@ -1,13 +1,9 @@
-import { MediaControllerState } from 'livepeer/media/controls';
-import { styling } from 'livepeer/styling';
+import { PosterProps } from '@livepeer/core-react/components';
+import { MediaControllerState } from 'livepeer';
+import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { useMediaController } from '../context';
-
-export type PosterProps = {
-  title?: string;
-  content: string | React.ReactNode;
-};
+import { useMediaController } from '../../../context';
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -15,30 +11,29 @@ const mediaControllerSelector = ({
   fullscreen,
 });
 
-export const Poster = React.forwardRef<HTMLImageElement, PosterProps>(
-  (props, ref) => {
-    const { fullscreen } = useMediaController(mediaControllerSelector);
+export type { PosterProps };
 
-    const { content, title } = props;
+export const Poster: React.FC<PosterProps> = (props) => {
+  const { fullscreen } = useMediaController(mediaControllerSelector);
 
-    return typeof content === 'string' ? (
-      <img
-        className={styling.media.poster({
-          size: fullscreen ? 'fullscreen' : 'default',
-        })}
-        aria-label={title}
-        alt={title}
-        ref={ref}
-        src={content}
-      />
-    ) : React.isValidElement(content) ? (
-      React.cloneElement(content as React.ReactElement, {
-        className: styling.media.poster({
-          size: fullscreen ? 'fullscreen' : 'default',
-        }),
-      })
-    ) : (
-      <></>
-    );
-  },
-);
+  const { content, title } = props;
+
+  return typeof content === 'string' ? (
+    <img
+      className={styling.media.poster({
+        size: fullscreen ? 'fullscreen' : 'default',
+      })}
+      aria-label={title}
+      alt={title}
+      src={content}
+    />
+  ) : React.isValidElement(content) ? (
+    React.cloneElement(content as React.ReactElement, {
+      className: styling.media.poster({
+        size: fullscreen ? 'fullscreen' : 'default',
+      }),
+    })
+  ) : (
+    <></>
+  );
+};

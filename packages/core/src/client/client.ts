@@ -1,7 +1,7 @@
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { Mutate, StoreApi, default as create } from 'zustand/vanilla';
 
-import { ClientStorage, createStorage, noopStorage } from '../storage';
+import { ClientStorage, createStorage } from '../storage';
 import { LivepeerProvider } from '../types';
 
 export type ClientConfig<
@@ -40,9 +40,7 @@ export class Client<
 
   constructor({
     provider,
-    storage = createStorage({
-      storage: noopStorage,
-    }),
+    storage = createStorage({}),
   }: ClientConfig<TLivepeerProvider>) {
     // Create store
     this.store = create<

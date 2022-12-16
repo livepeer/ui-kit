@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import * as Exports from './';
 
 it('should expose correct exports', () => {
-  expect(Object.keys(Exports)).toMatchInlineSnapshot(`
+  expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
       "ArbRetryableTxABI",
       "BondingManagerABI",
@@ -30,37 +30,6 @@ it('should expose correct exports', () => {
       "mainnetChainId",
       "rinkebyAddress",
       "testnetChainId",
-      "getBondingManager",
-      "getContractAddressFromController",
-      "getController",
-      "getL1Migrator",
-      "getL2Migrator",
-      "getLivepeerToken",
-      "getLivepeerTokenFaucet",
-      "getMerkleSnapshot",
-      "getMinter",
-      "getPollCreator",
-      "getRoundsManager",
-      "getServiceRegistry",
-      "getTicketBroker",
-      "ArbRetryableTxFactory",
-      "BondingManagerFactory",
-      "ControllerFactory",
-      "InboxFactory",
-      "L1BondingManagerFactory",
-      "L1MigratorFactory",
-      "L2LPTGatewayFactory",
-      "L2MigratorFactory",
-      "LivepeerTokenFactory",
-      "LivepeerTokenFaucetFactory",
-      "MerkleSnapshotFactory",
-      "MinterFactory",
-      "NodeInterfaceFactory",
-      "PollCreatorFactory",
-      "PollFactory",
-      "RoundsManagerFactory",
-      "ServiceRegistryFactory",
-      "TicketBrokerFactory",
     ]
   `);
 });

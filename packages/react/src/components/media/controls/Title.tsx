@@ -1,25 +1,15 @@
-import { styling } from 'livepeer/styling';
+import { TitleProps } from '@livepeer/core-react/components';
+import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { PropsOf } from '../../system';
+export type { TitleProps };
 
-export type TitleProps = Omit<PropsOf<'span'>, 'children'> & {
-  content: React.ReactNode;
+export const Title: React.FC<TitleProps> = (props) => {
+  const { content } = props;
+
+  return (
+    <span className={styling.title()} aria-label={'Title'}>
+      {content}
+    </span>
+  );
 };
-
-export const Title = React.forwardRef<HTMLSpanElement, TitleProps>(
-  (props, ref) => {
-    const { content, ...rest } = props;
-
-    return (
-      <span
-        className={styling.title()}
-        aria-label={'Title'}
-        ref={ref}
-        {...rest}
-      >
-        {content}
-      </span>
-    );
-  },
-);

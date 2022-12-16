@@ -23,7 +23,7 @@ to create and view a video asset.
 
 First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey):
 
-```tsx
+```tsx filename="App.tsx"
 import {
   LivepeerConfig,
   createReactClient,
@@ -52,7 +52,7 @@ function App() {
 Now that our providers are set up, we set up file uploads with [React Dropzone](https://react-dropzone.js.org/),
 a library for easily creating HTML5-compliant drag and drop zones for files (you can use another solution for file uploads):
 
-```tsx
+```tsx filename="CreateAndViewAsset.tsx"
 import { useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useState } from 'react';
@@ -139,7 +139,7 @@ export const CreateAndViewAsset = () => {
 Lastly, when the video is uploaded, we wait for `useCreateAsset` to poll the API until the asset has been processed and
 has a `playbackId`. Then, we show the video using the [`Player`](/react/Player).
 
-```tsx
+```tsx filename="CreateAndViewAsset.tsx"
 import { Player, useAssetMetrics, useCreateAsset } from '@livepeer/react';
 
 import { useCallback, useMemo, useState } from 'react';

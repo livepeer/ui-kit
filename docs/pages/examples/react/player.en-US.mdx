@@ -20,7 +20,7 @@ the player.
 First, we create a new livepeer.js client with the Studio provider and a [CORS-protected API key](/react/providers/studio#apikey),
 as well as a theme to use for all livepeer.js React components.
 
-```tsx
+```tsx filename="App.tsx"
 import {
   LivepeerConfig,
   ThemeConfig,
@@ -63,7 +63,7 @@ be a simple image URL.
 
 We also override some of the custom styling to match the flow of our app!
 
-```tsx
+```tsx filename="DemoPlayer.tsx"
 import { Player } from '@livepeer/react';
 
 import Image from 'next/image';

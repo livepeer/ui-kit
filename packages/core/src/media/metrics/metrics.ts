@@ -1,6 +1,7 @@
+import { MediaControllerStore } from '../controller';
 import { getMetricsReportingUrl } from './utils';
 
-export type RawMetrics = {
+type RawMetrics = {
   firstPlayback: number;
 
   nWaiting: number;
@@ -28,21 +29,21 @@ export type RawMetrics = {
   duration: number | null;
 };
 
-export type PlaybackRecord = {
+type PlaybackRecord = {
   clockTime: number;
   mediaTime: number;
   score: number;
 };
 
-export class PlaybackMonitor<TElement extends HTMLMediaElement> {
+export class PlaybackMonitor<TElement> {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
   averagingSteps = 20;
-  element: TElement;
+  store: MediaControllerStore<TElement>;
 
-  constructor(element: TElement) {
-    this.element = element;
+  constructor(store: MediaControllerStore<TElement>) {
+    this.store = store;
   }
 
   init() {
@@ -81,7 +82,7 @@ export class PlaybackMonitor<TElement extends HTMLMediaElement> {
 
       const currentValue = {
         clockTime: Date.now() * 1e-3,
-        mediaTime: this.element.currentTime,
+        mediaTime: this.store.getState().progress,
         score: latestPlaybackRecord
           ? this.valueToScore(latestPlaybackRecord)
           : 0,
@@ -119,22 +120,20 @@ export class PlaybackMonitor<TElement extends HTMLMediaElement> {
     // calculate the moving average
     // if this returns > 1, the media played faster than the clock
     // if this returns < 0, the media time went backwards
-    const rate = this?.element?.playbackRate ? this.element.playbackRate : 1;
+    const rate = this?.store?.getState?.()?.playbackRate ?? 1;
 
     return (
-      (b?.mediaTime ?? this.element.currentTime - a.mediaTime) /
+      (b?.mediaTime ?? this.store.getState().progress - a.mediaTime) /
       (b?.clockTime ?? Date.now() * 1e-3 - a.clockTime) /
       rate
     );
   }
 }
 
-export class MetricsStatus<
-  TElement extends HTMLMediaElement | HTMLVideoElement,
-> {
+export class MetricsStatus<TElement> {
   retryCount = 0;
   connected = false;
-  element: TElement;
+  store: MediaControllerStore<TElement>;
 
   currentMetrics: RawMetrics;
   previousMetrics: RawMetrics | null = null;
@@ -146,8 +145,8 @@ export class MetricsStatus<
   timeUnpaused = 0;
   unpausedSince = 0;
 
-  constructor(element: TElement) {
-    this.element = element;
+  constructor(store: MediaControllerStore<TElement>) {
+    this.store = store;
     this.currentMetrics = {
       firstPlayback: 0,
       nWaiting: 0,
@@ -167,30 +166,30 @@ export class MetricsStatus<
       duration: null,
     };
 
-    element.addEventListener('waiting', () => {
-      this.timeWaiting = this._getTimeWaiting(); // in case we get waiting several times in a row
-      this.waitingSince = Date.now();
-    });
-    element.addEventListener('stalled', () => {
-      this.timeStalled = this._getTimeStalled(); // in case we get stalled several times in a row
-      this.stalledSince = Date.now();
-    });
-
-    for (const event of ['playing', 'pause'] as const) {
-      element.addEventListener(event, () => {
+    store.subscribe((state, prevState) => {
+      if (state.playing !== prevState.playing) {
         this.timeWaiting = this._getTimeWaiting();
         this.timeStalled = this._getTimeStalled();
         this.waitingSince = 0;
         this.stalledSince = 0;
-      });
-    }
-    element.addEventListener('playing', () => {
-      this.timeUnpaused = this._getTimeUnpaused(); // in case we get playing several times in a row
-      this.unpausedSince = Date.now();
-    });
-    element.addEventListener('pause', () => {
-      this.timeUnpaused = this._getTimeUnpaused();
-      this.unpausedSince = 0;
+
+        if (state.playing) {
+          this.timeUnpaused = this._getTimeUnpaused(); // in case we get playing several times in a row
+          this.unpausedSince = Date.now();
+        } else {
+          this.timeUnpaused = this._getTimeUnpaused();
+          this.unpausedSince = 0;
+        }
+      }
+
+      if (state.stalled !== prevState.stalled && state.stalled) {
+        this.timeStalled = this._getTimeStalled(); // in case we get stalled several times in a row
+        this.stalledSince = Date.now();
+      }
+      if (state.waiting !== prevState.waiting && state.waiting) {
+        this.timeWaiting = this._getTimeWaiting(); // in case we get waiting several times in a row
+        this.waitingSince = Date.now();
+      }
     });
   }
 
@@ -240,15 +239,11 @@ export class MetricsStatus<
   getMetrics() {
     const currentMetrics: RawMetrics = {
       ...this.currentMetrics,
-      playerHeight: this.element ? this.element.clientHeight : null,
-      playerWidth: this.element ? this.element.clientWidth : null,
-      videoWidth: (this.element as HTMLVideoElement)?.videoWidth
-        ? (this.element as HTMLVideoElement)?.videoWidth
-        : null,
-      videoHeight: (this.element as HTMLVideoElement)?.videoHeight
-        ? (this.element as HTMLVideoElement)?.videoHeight
-        : null,
-      duration: this.element.duration,
+      playerHeight: this.store.getState().size?.container?.height ?? null,
+      playerWidth: this.store.getState().size?.container?.width ?? null,
+      videoWidth: this.store.getState().size?.media?.width ?? null,
+      videoHeight: this.store.getState().size?.media?.height ?? null,
+      duration: this.store.getState().duration,
 
       timeWaiting: this._getTimeWaiting(),
       timeStalled: this._getTimeStalled(),
@@ -266,22 +261,21 @@ export class MetricsStatus<
 }
 
 const bootMs = Date.now(); // used for firstPlayback value
-const VIDEO_METRICS_INITIALIZED_ATTRIBUTE = 'data-metrics-initialized';
 
-type MediaMetrics<TElement extends HTMLMediaElement> = {
+export type MediaMetrics<TElement> = {
   metrics: MetricsStatus<TElement> | null;
   destroy: () => void;
 };
 
 /**
- * Gather playback metrics from a generic HTML5 video/audio element and
+ * Gather playback metrics from a media store and
  * report them to a websocket. Automatically handles a redirect to get the
  * metrics endpoint.
  *
- * @param element Element to capture playback metrics from
+ * @param store Element to capture playback metrics from
  */
-export function addMediaMetrics<TElement extends HTMLMediaElement>(
-  element: TElement | undefined | null,
+export function addMediaMetricsToStore<TElement>(
+  store: MediaControllerStore<TElement> | undefined | null,
   sourceUrl: string | undefined | null,
   onError?: (error: unknown) => void,
 ): MediaMetrics<TElement> {
@@ -292,27 +286,16 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
     },
   };
 
-  if (!element || !sourceUrl) {
+  if (!store || !sourceUrl) {
     return defaultResponse;
   }
 
-  // do not attach twice (to the same websocket)
-  if (element.hasAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE)) {
+  if (!WebSocket) {
+    console.log('Environment does not support WebSocket');
     return defaultResponse;
   }
 
-  element.setAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE, 'true');
-
-  if (!window.WebSocket) {
-    console.log('Browser does not support WebSocket');
-    return defaultResponse;
-  }
-  if (!('play' in element) || !('currentTime' in element)) {
-    console.log('Element provided is not a media element');
-    return defaultResponse;
-  }
-
-  const metricsStatus = new MetricsStatus(element);
+  const metricsStatus = new MetricsStatus(store);
 
   try {
     const createNewWebSocket = async (numRetries = 0) => {
@@ -367,61 +350,60 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
     //  basics         //
     /////////////////////
 
-    const firstPlay = () => {
-      metricsStatus.setFirstPlayback();
-      element.removeEventListener('playing', firstPlay);
-    };
-    element.addEventListener('playing', firstPlay);
+    store.subscribe((state, prevState) => {
+      if (
+        state.playing !== prevState.playing &&
+        metricsStatus.getFirstPlayback() === 0
+      ) {
+        metricsStatus.setFirstPlayback();
+      }
 
-    element.addEventListener('waiting', () => {
-      metricsStatus.incrementWaiting();
-    });
-    element.addEventListener('stalled', () => {
-      metricsStatus.incrementStalled();
-    });
-    element.addEventListener('error', () => {
-      metricsStatus.addError(
-        element?.error?.message ? element.error.message : 'unknown',
-      );
+      if (state.stalled !== prevState.stalled && state.stalled) {
+        metricsStatus.incrementStalled();
+      }
+      if (state.waiting !== prevState.waiting && state.waiting) {
+        metricsStatus.incrementWaiting();
+      }
+      if (state.error !== prevState.error && state.error) {
+        metricsStatus.addError(state.error ?? 'unknown');
+      }
     });
 
     /////////////////////
     //  playbackScore  //
     /////////////////////
 
-    const monitor = new PlaybackMonitor(element);
+    const monitor = new PlaybackMonitor(store);
 
-    // enable
-    for (const eventName of ['loadstart', 'play', 'playing'] as const) {
-      element.addEventListener(eventName, function () {
+    store.subscribe((state, prevState) => {
+      // enable
+      if (
+        (state.playing !== prevState.playing && state.playing) ||
+        (state.loading !== prevState.loading && state.loading)
+      ) {
         monitor.init();
-      });
-    }
+      }
 
-    // disable
-    for (const eventName of [
-      'loadeddata',
-      'pause',
-      'abort',
-      'emptied',
-      'ended',
-    ] as const) {
-      element.addEventListener(eventName, function () {
-        monitor.destroy();
-      });
-    }
-
-    // reset
-    for (const eventName of [
-      'seeking',
-      'seeked',
-      /*"canplay","playing",*/
-      'ratechange',
-    ] as const) {
-      element.addEventListener(eventName, function () {
+      // TODO add rate change here similar to
+      // for (const eventName of ['seeking', 'seeked', 'ratechange'] as const) {
+      //   element.addEventListener(eventName, function () {
+      //     monitor.reset();
+      //   });
+      // }
+      if (state._requestedRangeToSeekTo !== prevState._requestedRangeToSeekTo) {
         monitor.reset();
-      });
-    }
+      }
+
+      // TODO ensure that these events are handled
+      //   'loadeddata',
+      //   'pause',
+      //   'abort',
+      //   'emptied',
+      //   'ended',
+      if (state.playing !== prevState.playing && !state.playing) {
+        monitor.destroy();
+      }
+    });
 
     const report = () => {
       if (!enabled || !ws) {
@@ -461,7 +443,6 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
         clearTimeout(timeOut);
       }
       ws?.close(3077);
-      element.removeAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE);
     };
 
     return { metrics: metricsStatus, destroy };
@@ -476,5 +457,6 @@ function send(webSocket: WebSocket, metrics: Partial<RawMetrics>) {
   if (webSocket.readyState !== webSocket.OPEN) {
     return;
   }
+
   webSocket.send(JSON.stringify(metrics));
 }

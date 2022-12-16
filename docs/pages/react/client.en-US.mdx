@@ -3,20 +3,33 @@ title: 'Client'
 description: 'The livepeer Client is a framework agnostic client that manages wallet connection state and configuration, such as: auto-connection, connectors, and ethers providers.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+
 # Client
 
 The livepeer `Client` is a framework agnostic client that manages state and connection to a Livepeer provider. The `createReactClient` function
 wraps the `Client` with a React-specific caching layer for faster queries.
 
-```tsx
-import { createReactClient } from '@livepeer/react';
-```
-
 ## Usage
 
-```tsx
-import { createReactClient, studioProvider } from '@livepeer/react';
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { createReactClient } from '@livepeer/react';
+    ```
 
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { createReactClient } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
+
+The client can be created using `createReactClient`.
+
+```tsx filename="App.js"
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
@@ -28,9 +41,7 @@ const client = createReactClient({
 
 Livepeer provider interface for connecting to the network.
 
-```tsx {5}
-import { createReactClient, studioProvider } from '@livepeer/react';
-
+```tsx
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
 });
@@ -38,26 +49,40 @@ const client = createReactClient({
 
 ### storage (optional)
 
-The default strategy to persist and cache data. Used for both state management and query caching.
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+The strategy to persist and cache data. Used for both state management and query caching.
 Defaults to `window.localStorage`.
 
-```ts {6}
-import { createReactClient, studioProvider } from '@livepeer/react';
+    ```tsx filename="React"
+    const client = createReactClient({
+      provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+    });
+    ```
 
-const client = createReactClient({
-  provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
-  storage: createStorage({ storage: window.localStorage }),
-});
-```
+  </SyncedTab>
+  <SyncedTab>
+The strategy to persist and cache data. Used for both state management and query caching.
+Defaults to no storage.
+
+    ```tsx filename="React Native"
+    import AsyncStorage from '@react-native-async-storage/async-storage';
+
+    const client = createReactClient({
+      provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
+      storage: createStorage({ storage: AsyncStorage }),
+    });
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 ### queryClient (optional)
 
 The react-query [QueryClient](https://tanstack.com/query/v4/docs/reference/QueryClient) used to cache/deduplicate queries. Defaults
 to caching for 24 hours and no retries.
 
-```ts {6-13}
-import { createReactClient, studioProvider } from '@livepeer/react';
-
+```ts
 const client = createReactClient({
   provider: studioProvider({ apiKey: 'yourStudioApiKey' }),
   queryClient: new QueryClient({

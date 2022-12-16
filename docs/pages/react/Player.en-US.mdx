@@ -3,6 +3,7 @@ title: 'Player'
 description: 'The Player component provides an easy way to display video or audio.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
 import { Callout } from 'nextra-theme-docs';
 import {
   DocsDemoPlayer as Player,
@@ -15,61 +16,88 @@ import {
 
 The `Player` component provides an easy way to display video or audio.
 
-```ts
-import { Player } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
+    ```tsx filename="React"
+    import { Player } from '@livepeer/react';
+    ```
 
 The following example assumes a stream or asset was created via `useCreateAsset` or `useCreateStream`, and the `playbackId`
 was passed to the viewer.
 
-<br />
+    ```tsx filename="React"
+    import { Player } from '@livepeer/react';
+    import Image from 'next/image';
 
-<SimplePlayer />
+    import blenderPoster from '../../../public/images/blender-poster.png';
 
-```tsx
-import { Player } from '@livepeer/react';
-import Image from 'next/image';
+    const PosterImage = () => {
+      return (
+        <Image
+          src={blenderPoster}
+          layout="fill"
+          objectFit="cover"
+          priority
+          placeholder="blur"
+        />
+      );
+    };
 
-import blenderPoster from '../../../public/images/blender-poster.png';
-
-const PosterImage = () => {
-  return (
-    <Image
-      src={blenderPoster}
-      layout="fill"
-      objectFit="cover"
-      priority
-      placeholder="blur"
-    />
-  );
-};
-
-export const SimplePlayer = () => {
-  return (
-    <Player
-      title="Agent 327: Operation Barbershop"
-      playbackId="6d7el73r1y12chxr"
-      poster={<PosterImage />}
-      showPipButton
-    />
-  );
-};
-```
+    function PlayerComponent() {
+      return (
+        <Player
+          title="Agent 327: Operation Barbershop"
+          playbackId="6d7el73r1y12chxr"
+          poster={<PosterImage />}
+          showPipButton
+          objectFit="cover"
+        />
+      );
+    };
+    ```
 
 Here we also introduce a custom `PosterImage` React component, which is described in
 more detail below in [`poster`](#poster) configuration.
 
+<br />
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { Player } from '@livepeer/react-native';
+    ```
+
+The following example assumes a stream or asset was created via `useCreateAsset` or `useCreateStream`, and the `playbackId`
+was passed to the viewer.
+
+    ```tsx filename="React Native"
+    import { Player } from '@livepeer/react-native';
+
+    import blenderPoster from './assets/images/blender-poster.png';
+
+    function PlayerComponent() {
+      return (
+        <Player
+          title="Agent 327: Operation Barbershop"
+          playbackId="6d7el73r1y12chxr"
+          poster={blenderPoster}
+        />
+      );
+    };
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
+
+<SimplePlayer />
+
 ## Compatibility
 
-<Callout emoji="🌐">
-  We aim to support
-  [~93%](https://browsersl.ist/#q=last+2+versions%2C%3E+0.2%25%2Cnot+dead) of
-  browsers tracked on [caniuse](https://caniuse.com/). We use
-  [browserslist](https://browsersl.ist/) to track compatibility and
-  [core-js](https://github.com/zloirock/core-js) for polyfills.
-</Callout>
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
 
 | Browser            | Version |
 | ------------------ | ------- |
@@ -85,20 +113,49 @@ more detail below in [`poster`](#poster) configuration.
 | Firefox Android    | 104+    |
 | Opera Mini         | all     |
 
+<Callout emoji="🌐">
+  We aim to support
+  [~93%](https://browsersl.ist/#q=last+2+versions%2C%3E+0.2%25%2Cnot+dead) of
+  browsers tracked on [caniuse](https://caniuse.com/). We use
+  [browserslist](https://browsersl.ist/) to track compatibility and
+  [core-js](https://github.com/zloirock/core-js) for polyfills.
+</Callout>
+
+  </SyncedTab>
+  <SyncedTab>
+
+| Framework    | Version |
+| ------------ | ------- |
+| React Native | 0.64.0+ |
+| Expo         | 43+     |
+| React        | 17+     |
+
+<Callout emoji="🌐">
+  We aim to support the latest versions of React Native and Expo. If you are
+  using an older version of Expo or React Native, we highly recommend upgrading
+  to ensure compatibility.
+</Callout>
+
+  </SyncedTab>
+</SyncedTabs>
+
 ## Configuration
 
 ### playbackId or src
 
 A `playbackId` for an [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts) or
 [Stream](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts), or `src`, a media source URL. One of these is
-required. If a playback ID is provided, it will automatically retrieve the playback URL corresponding to the playback ID.
+required.
 
 #### playbackId
 
-```tsx {7}
-import { Player } from '@livepeer/react';
+<Callout>
+  If a playback ID is provided, the playback URL corresponding to the playback
+  ID will be automatically fetched.
+</Callout>
 
-function App() {
+```tsx filename="React & React Native" {5}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -113,12 +170,10 @@ which is created on asset/stream creation, or, for an asset, an IPFS CID. If
 the provided IPFS CID or IPFS/Arweave URL has not been uploaded yet, it can be auto-uploaded and
 played back - see [`autoUrlUpload`](#autourlupload) for more details.
 
-```tsx {9}
-import { Player } from '@livepeer/react';
-
-function App() {
-  // only after the asset has been persisted to IPFS
-  // equivalent to the above example
+```tsx filename="React & React Native" {7}
+// only after the asset has been persisted to IPFS
+// equivalent to the above example
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -130,41 +185,36 @@ function App() {
 
 #### src
 
+<Callout type="error">
+  Using an arbitrary `src` that is not from a provider will not be transcoded
+  (unless [`autoUrlUpload`](#autourlupload) is used), and will take up
+  significant network bandwidth. It's highly recommended to upload media to a
+  provider, and serve content to viewers with a `playbackId`.
+</Callout>
+
 The Player also supports an arbitrary `src` URL which can correspond to any common video or audio which most browsers support.
-See [caniuse video format](https://caniuse.com/?search=video%20format) for more details. Metrics reporting **will not** work
-with an arbitrary `src` that is not a recognized provider (e.g. not a Studio playback URL).
+See [caniuse video format](https://caniuse.com/?search=video%20format) for more details on browser support.
+
+<Callout type="warning">
+  Metrics reporting **will not work** with an arbitrary `src` (e.g. not a Studio
+  playback URL).
+</Callout>
 
 If the `src` is an IPFS/Arweave URL, it can be auto-uploaded and played back - see [`autoUrlUpload`](#autourlupload) for
 more details.
 
-```tsx {7}
-import { Player } from '@livepeer/react';
-
+```tsx filename="React & React Native"
 const src =
   'https://ipfs.livepeer.studio/ipfs/QmURv3J5BGsz23GaCUm7oXncm2M9SCj8RQDuFPGzAFSJw8';
 
-function App() {
+function PlayerComponent() {
   return <Player src={src} />;
 }
 ```
 
-<Callout type="warning" emoji="⚠️">
-  Using an arbitrary `src` that is not from a provider will not be transcoded,
-  and will take up significant network bandwidth. It's highly recommended to
-  upload media to a provider, and serve content to viewers with a `playbackId`
-  (which will serve transcoded content).
-</Callout>
-
-For example, try viewing/seeking the video below while [simulating a slower network
-connection](https://awik.io/simulate-slow-internet-connection-chrome-developer-tools/)
-in your browser - it will be _painfully_ slow. Then, check out the [transcoded
-version above](#usage) with the exact same network speed.
-
-<Player src="https://ipfs.livepeer.studio/ipfs/QmPHSco6gGRL9WZTjsYeAvqTJkCTNe4VyCbX5SWYaK4h8L/agent-327.mp4" />
-
 ### jwt
 
-The JSON Web Token (JWT) used to access the content. This is used to gate content based on a playback policy.
+The JSON Web Token (JWT) used to access the media. This is used to gate content based on a playback policy.
 See the [Access Control example](/examples/react/access-control) for more details.
 
 <Callout type="warning" emoji="⚠️">
@@ -172,10 +222,8 @@ See the [Access Control example](/examples/react/access-control) for more detail
   Asset playback is coming soon!
 </Callout>
 
-```tsx {8}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -189,12 +237,10 @@ function App() {
 ### title
 
 The `title` for the content. This is highly recommended, since it is used for [accessibility labels](https://web.dev/semantics-aria/)
-in the Player. If you do not want to show the title visually, see [`showTitle`](#showTitle).
+in the Player. If you do not want to show the title visually, see [`showTitle`](#showtitle).
 
-```tsx {6}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {4}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -210,10 +256,8 @@ function App() {
 
 Enables/disables the title component.
 
-```tsx {8}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -232,13 +276,11 @@ function App() {
 
 ### aspectRatio
 
-Sets the aspect ratio for the content. Highly recommended for a great viewing experience (see why we want to prevent
+Sets the aspect ratio for the content. Highly recommended for a great viewing experience (for more information, see
 [Cumulative Layout Shift](https://web.dev/cls/)). Defaults to `16to9`.
 
-```tsx {8}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -259,10 +301,8 @@ function App() {
 
 Sets whether the content will loop when finished. Defaults to `false`.
 
-```tsx {8}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -281,21 +321,20 @@ function App() {
 
 ### poster
 
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
 Sets the poster image. This can be either a string for an image URL, or a React component.
-
-<Callout>
-  It is recommended to use an optimized React image component for this, as
-  opposed to passing a simple URL.
-</Callout>
-
-#### Simple
 
 The `poster` can be a simple image URL, and it will be rendered with a regular `img` HTML tag.
 
-```tsx {8}
-import { Player } from '@livepeer/react';
+<Callout type="error">
+  It is recommended to use an optimized React image component for this (see
+  below), as opposed to passing a simple URL.
+</Callout>
 
-function App() {
+```tsx filename="React" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -312,17 +351,15 @@ function App() {
   poster="/images/blender-poster.png"
 />
 
-#### Advanced
-
 If the poster is a React component, it will be rendered with similar CSS attributes to the `img` above. In the below example,
 we show the use of [Next.js Image](https://nextjs.org/docs/basic-features/image-optimization) to render an optimized
 image, which will automatically handle slow network conditions/different device sizes.
 
-```tsx {8-13,22}
+```tsx filename="React"
 import { Player } from '@livepeer/react';
 import Image from 'next/image';
 
-import blenderPoster from '../../../public/images/blender-poster.png';
+import blenderPoster from './images/blender-poster.png';
 
 const PosterImage = () => {
   return (
@@ -335,7 +372,7 @@ const PosterImage = () => {
   );
 };
 
-function App() {
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -348,14 +385,46 @@ function App() {
 
 <ImagePosterPlayer />
 
+  </SyncedTab>
+  <SyncedTab>
+
+Sets the poster image. This can be either a remote URL or a local file resource.
+
+<Callout type="warning">
+  It is recommended to use a local file resource, as opposed to passing a remote
+  URL. Since this image is used during a loading state, it will ensure a smooth
+  experience for users.
+</Callout>
+
+```tsx filename="React Native" {8}
+import posterImage from './images/blender-poster.png';
+
+function PlayerComponent() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      poster={posterImage}
+    />
+  );
+}
+```
+
+<Player
+  title="Agent 327: Operation Barbershop"
+  playbackId="6d7el73r1y12chxr"
+  poster="/images/blender-poster.png"
+/>
+
+  </SyncedTab>
+</SyncedTabs>
+
 ### showLoadingSpinner
 
 Shows/hides the loading spinner for the media content. Defaults to `true`.
 
-```tsx {8}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -368,12 +437,10 @@ function App() {
 
 ### controls
 
-Configures the timeout for autohiding controls, and if keyboard hotkeys for controlling video are enabled.
+Configures the timeout for autohiding controls, and (only on web) if keyboard hotkeys for controlling video are enabled.
 
-```tsx {8}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -392,14 +459,11 @@ function App() {
 
 ### autoPlay and muted
 
-Sets the video to autoplay when the content comes into focus on the webpage. If `autoPlay` is specified, `muted` must also
-be present. This is [enforced in many modern browsers](https://developer.chrome.com/blog/autoplay/) and is a requirement for
-the Player.
+Sets the video to autoplay when the content comes into focus on the webpage. If `autoPlay` is specified, `muted` will
+be forced to be `true`. This is [enforced in many modern browsers](https://developer.chrome.com/blog/autoplay/).
 
-```tsx {8-9}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6-7}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -420,14 +484,12 @@ function App() {
 
 ### objectFit
 
-Sets the video's [object fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) property. Defaults to `cover` -
+Sets the video's [object fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) property. Defaults to `cover`.
 `contain` is usually used in full-screen applications or when the `aspectRatio` does not match the content (or there is no
-guarantee the `aspectRatio` matches).
+guarantee the `aspectRatio` matches the content being served).
 
-```tsx {9}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {7}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -448,6 +510,9 @@ function App() {
 
 ### showPipButton
 
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
 Shows the Picture-in-Picture button to the left of the fullscreen button. Defaults to `false`.
 See [children](#children) for an example on how to use the underlying `<PictureInPictureButton />`.
 
@@ -459,10 +524,10 @@ See [children](#children) for an example on how to use the underlying `<PictureI
   [caniuse](https://caniuse.com/picture-in-picture).
 </Callout>
 
-```tsx {8}
+```tsx filename="React" {8}
 import { Player } from '@livepeer/react';
 
-function App() {
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -479,46 +544,50 @@ function App() {
   showPipButton
 />
 
-### autoUrlUpload
+  </SyncedTab>
+  <SyncedTab>
 
-```tsx
-export type PlayerProps = {
-  ...
-  autoUrlUpload?:
-    | boolean
-    | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
-  ...
-};
-```
+<Callout type="error">
+  Picture-in-Picture is not supported in React Native, due to lack of support in
+  `expo-av`.
+</Callout>
+
+  </SyncedTab>
+</SyncedTabs>
+
+### autoUrlUpload
 
 Enables automatic upload and playback from decentralized storage providers. Currently supports IPFS CIDs and IPFS/Arweave URLs. Defaults to `true`.
 
 If `fallback` is specified, while the URL upload is being processed in the background, the video will start non-transcoded playback immediately
 (defaulting to `w3s.link` for IPFS and `arweave.net` for Arweave). Once this finishes, the Player will switch to playing from the transcoded version
-from the Livepeer provider.
+from the Livepeer provider. To show/hide the indicator of current upload progress, see [`showUploadingIndicator`](#showuploadingindicator).
 
 It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset` (with the format `ipfs://<CID>` or `ar://<HASH>`)
 before presenting the content to the user - the first view with automatic URL upload can take a few minutes, then it will be permanently
 cached and play back quickly.
 
 <Callout>
-  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or IPFS/Arweave URL (such as `ipfs://<CID>`, `ipfs://<CID>/asset.mp4`,
-  `https://<CID>.ipfs.dweb.link/` or `https://cloudflare-ipfs.com/ipfs/<CID>`, `ar://<HASH>`, `ar://<HASH>/asset.mp4`, `https://<SUBDOMAIN>.arweave.dev/<HASH>`
-  or `https://arweave.net/<HASH>`, _including directories_) can be passed as the `src` or `playbackID` to the Player, and it will
-  automatically detect if it is a decentralized storage identifier and attempt to fetch the playback info. If the API does not have an Asset with the corresponding ID,
-  the Player will upload the content from IPFS/Arweave, and then play the transcoded content back. This may take a few minutes. If `fallback` is specified,
-  it will attempt playback instantly from the provided gateway or default gateway.
+  An IPFS [v0 or v1 CID](https://docs.ipfs.tech/concepts/content-addressing/) or
+  IPFS/Arweave URL (including directories) can be passed as the `src` or
+  `playbackID` to the Player, and it will automatically detect if it is a
+  dStorage identifier and attempt to play from a cached version. If the API does
+  not have a cached version with the corresponding ID, the Player will upload
+  the content using IPFS/Arweave, and then start playing the transcoded content
+  back. This may take a few minutes. If `fallback` is specified, it will attempt
+  to play back instantly from the provided gateway or default gateway.
 </Callout>
 
-```tsx {8}
-import { Player } from '@livepeer/react';
+It is highly recommended for the best playback experience to upload from an Arweave/IPFS URL using `useCreateAsset`
+before presenting the content to the user.
 
-function App() {
+```tsx filename="React & React Native" {6}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
-      playbackId="Qmc5rn4Hi8a5JJQdrVAKyeEpCNJnM8t5fhJnoobstVcSFB"
-      autoUrlUpload={{ fallback: true, ipfsGateway: 'https://ipfs.fleek.co' }}
+      src="ipfs://QmNmNBQE3RqdkN3KpeBVxpGDHUe8c9Bh5YNerERNoo98rB/4038.mp4"
+      autoUrlUpload={{ fallback: true, ipfsGateway: 'https://w3s.link' }}
     />
   );
 }
@@ -526,19 +595,34 @@ function App() {
 
 <Player
   title="Agent 327: Operation Barbershop"
-  playbackId="Qmc5rn4Hi8a5JJQdrVAKyeEpCNJnM8t5fhJnoobstVcSFB"
-  autoUrlUpload={{ fallback: true, ipfsGateway: 'https://ipfs.fleek.co' }}
+  playbackId="ipfs://QmNmNBQE3RqdkN3KpeBVxpGDHUe8c9Bh5YNerERNoo98rB/4038.mp4"
+  autoUrlUpload={{ fallback: true, ipfsGateway: 'https://w3s.link' }}
 />
+
+### showUploadingIndicator
+
+Shows/hides the uploading indication for `autoUrlUpload`. Defaults to `true` - only used with `autoUrlUpload`.
+
+```tsx filename="React & React Native" {7}
+function PlayerComponent() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      autoUrlUpload={{ fallback: true }}
+      showUploadingIndicator={false}
+    />
+  );
+}
+```
 
 ### theme
 
 Sets the Player-specific theme overrides. It is recommended to use [`LivepeerConfig`](/react/LivepeerConfig) for
 any global app styles, and the `theme` prop to override those styles on a per-Player basis.
 
-```tsx {8-24}
-import { Player } from '@livepeer/react';
-
-function App() {
+```tsx filename="React & React Native" {6-22}
+function PlayerComponent() {
   return (
     <Player
       title="Agent 327: Operation Barbershop"
@@ -589,61 +673,78 @@ function App() {
 
 ### children
 
-Overrides the custom controls for the Player. The below example removes the fullscreen button, adds a PiP button, and the volume
-slider (so volume is only 0% or 100%). See the
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
+Overrides the custom controls for the Player. See the
 [`Player` default controls](https://github.com/livepeer/livepeer.js/blob/main/packages/react/src/components/media/Player.tsx)
 for more details on how the `ControlsContainer` component is used.
 
-```tsx {29-41}
-import {
-  ControlsContainer,
-  PictureInPictureButton,
-  PlayButton,
-  Player,
-  Poster,
-  Progress,
-  TimeDisplay,
-  Title,
-  Volume,
-} from '@livepeer/react';
+  </SyncedTab>
+  <SyncedTab>
 
-import Image from 'next/image';
+Overrides the custom controls for the Player. See the
+[React Native `Player` default controls](https://github.com/livepeer/livepeer.js/blob/main/packages/react-native/src/components/media/Player.tsx)
+for more details on how the `ControlsContainer` component is used.
 
-import blenderPoster from '../../../public/images/blender-poster-2.png';
+  </SyncedTab>
+</SyncedTabs>
 
-const PosterImage = () => {
-  return <Image src={blenderPoster} layout="fill" objectFit="cover" />;
-};
+### mediaElementRef
 
-const title = 'Agent 327: Operation Barbershop';
+Sets the React [callback `ref`](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) passed to the underlying media element.
+Useful when integrating with third party tools, or when access to the underlying video element is needed (usually it isn't!).
+Simple refs are not supported - only callback refs (which will be called when the underlying media element is set/updated on initial render).
 
-export const CustomControlsPlayer = () => {
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
+```tsx filename="React"
+import { useCallback } from 'react';
+
+function PlayerComponent() {
+  const mediaElementRef = useCallback((ref: HTMLMediaElement) => {
+    console.log(ref.duration);
+  }, []);
+
   return (
     <Player
-      title={title}
-      playbackId="bafybeida3w2w7fch2fy6rfvfttqamlcyxgd3ddbf4u25n7fxzvyvcaegxy"
-    >
-      <ControlsContainer
-        poster={<Poster content={<PosterImage />} title={title} />}
-        top={<Title content={title} />}
-        middle={<Progress />}
-        left={
-          <>
-            <PlayButton />
-            <Volume showSlider={false} />
-            <TimeDisplay />
-          </>
-        }
-        right={<PictureInPictureButton />}
-      />
-    </Player>
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      mediaElementRef={mediaElementRef}
+    />
   );
-};
+}
 ```
 
-<CustomControlsPlayer />
+  </SyncedTab>
+  <SyncedTab>
+
+```tsx filename="React Native"
+import { useCallback } from 'react';
+
+function PlayerComponent() {
+  return (
+    <Player
+      title="Agent 327: Operation Barbershop"
+      playbackId="6d7el73r1y12chxr"
+      mediaElementRef={async (ref) => {
+        await ref?.setVolumeAsync(0.5);
+      }}
+    />
+  );
+}
+```
+
+  </SyncedTab>
+</SyncedTabs>
 
 ## SSR
+
+<Callout type="warning">
+  The following docs only apply to web-based use-cases - React Native has no
+  concept of SSR.
+</Callout>
 
 ### Next.js
 
@@ -653,8 +754,7 @@ which makes it easy to prefetch the data used internally for the Player during s
 First, you add a [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching/get-static-props) function to the page which
 you want to prefetch data on. The props should match the Player props to ensure that the correct data is prefetched.
 
-```tsx
-// pages/demo.tsx
+```tsx filename="pages/demo.js"
 import { prefetchPlayer, studioProvider } from '@livepeer/react';
 
 export const getStaticProps = async () => {
@@ -675,8 +775,7 @@ export const getStaticProps = async () => {
 We need to update the `_app.tsx` to pass the `dehydratedState` in `pageProps` to the LivepeerConfig. We also move the
 `livepeerClient` into a useMemo hook so that a new client is created on each request.
 
-```tsx
-// pages/_app.tsx
+```tsx filename="App.js"
 import {
   LivepeerConfig,
   createReactClient,
@@ -717,7 +816,7 @@ That's it! You now have data prefetching on the server, which is passed to the b
 The process is very similar for other frameworks, with the exception that there is a `clearClient` boolean which should be used
 to ensure that the client cache is not reused across users.
 
-```tsx {7}
+```tsx filename="server.js" {7}
 import { prefetchPlayer, studioProvider } from '@livepeer/react';
 
 export const handleRequest = async (req, res) => {

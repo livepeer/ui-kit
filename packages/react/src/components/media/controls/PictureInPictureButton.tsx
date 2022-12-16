@@ -1,12 +1,10 @@
-import {
-  MediaControllerState,
-  isPictureInPictureSupported,
-} from 'livepeer/media/controls';
-import { styling } from 'livepeer/styling';
+import { MediaControllerState } from 'livepeer';
+import { isPictureInPictureSupported } from 'livepeer/media/browser';
+import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
+import { useMediaController } from '../../../context';
 import { PropsOf } from '../../system';
-import { useMediaController } from '../context';
 
 const DefaultPictureInPictureIcon = () => (
   <svg
@@ -45,10 +43,9 @@ const mediaControllerSelector = ({
   fullscreen,
 });
 
-export const PictureInPictureButton = React.forwardRef<
-  HTMLButtonElement,
-  PictureInPictureButtonProps
->((props, ref) => {
+export const PictureInPictureButton: React.FC<PictureInPictureButtonProps> = (
+  props,
+) => {
   const {
     requestTogglePictureInPicture,
     _element,
@@ -89,12 +86,9 @@ export const PictureInPictureButton = React.forwardRef<
       className={styling.iconButton()}
       title={title}
       aria-label={title}
-      ref={ref}
       onClick={onClickComposed}
     >
       {_children}
     </button>
   );
-});
-
-PictureInPictureButton.displayName = 'PictureInPictureButton';
+};

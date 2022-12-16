@@ -1,4 +1,0 @@
-{
-  "main": "dist/livepeer-styling.cjs.js",
-  "module": "dist/livepeer-styling.esm.js"
-}

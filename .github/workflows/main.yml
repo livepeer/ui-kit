@@ -46,7 +46,9 @@ jobs:
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: pnpm i
+        run: |
+          pnpm i --ignore-scripts
+          pnpm postinstall
       - name: Link Dependencies
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
         run: pnpm dev
@@ -157,6 +159,8 @@ jobs:
         run: |
           cd packages/react
           pnpm add -D react@17.0.2 react-dom@17.0.2 @testing-library/react@12.1.4
+          cd ../core-react
+          pnpm add -D react@17.0.2 react-dom@17.0.2 @testing-library/react@12.1.4
           cd ../..
           pnpm test:run react
         env:
@@ -205,7 +209,7 @@ jobs:
   security-dependency-review:
     name: Security (Dependency Review)
     needs: build
-    if: github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/next'
     runs-on: ubuntu-latest
     permissions:
       contents: read

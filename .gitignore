@@ -10,6 +10,10 @@ tsconfig.tsbuildinfo
 logs
 *.log
 pnpm-debug.log*
+build/
+
+# Sentry
+.sentryclirc
 
 # local env files
 .env
@@ -17,7 +21,6 @@ pnpm-debug.log*
 
 # svelte
 dist-ssr
-
 # editor directories and files
 .idea
 .DS_Store

@@ -1,9 +1,11 @@
-import { MediaControllerState } from 'livepeer/media/controls';
-import { styling } from 'livepeer/styling';
-import * as React from 'react';
+import {
+  PlayButtonProps,
+  usePlayButton,
+} from '@livepeer/core-react/components';
+import { MediaControllerState, omit } from 'livepeer';
+import { styling } from 'livepeer/media/browser/styling';
 
-import { PropsOf, useConditionalIcon } from '../../system';
-import { useMediaController } from '../context';
+import { useMediaController } from '../../../context';
 
 const DefaultPlayIcon = () => (
   <svg
@@ -23,32 +25,11 @@ const DefaultPlayIcon = () => (
 const DefaultPauseIcon = () => (
   <svg width="100%" height="100%" viewBox="0 0 36 36" fill="none">
     <path
-      // fillRule="evenodd"
-      // clipRule="evenodd"
       d="M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z"
       fill="currentColor"
     />
   </svg>
 );
-
-export type PlayButtonProps = Omit<PropsOf<'button'>, 'children'> & {
-  /**
-   * The play icon to be used for the button.
-   * @type React.ReactElement
-   */
-  playIcon?: React.ReactElement;
-  /**
-   * The pause icon to be used for the button.
-   * @type React.ReactElement
-   */
-  pauseIcon?: React.ReactElement;
-} & (
-    | {
-        playIcon: React.ReactElement;
-        pauseIcon: React.ReactElement;
-      }
-    | Record<string, never>
-  );
 
 const mediaControllerSelector = ({
   togglePlay,
@@ -58,43 +39,26 @@ const mediaControllerSelector = ({
   playing,
 });
 
-export const PlayButton = React.forwardRef<HTMLButtonElement, PlayButtonProps>(
-  (props, ref) => {
-    const { togglePlay, playing } = useMediaController(mediaControllerSelector);
+export type { PlayButtonProps };
 
-    const { playIcon, pauseIcon, onClick, ...rest } = props;
+export const PlayButton: React.FC<PlayButtonProps> = (props) => {
+  const { togglePlay, playing } = useMediaController(mediaControllerSelector);
 
-    const onClickComposed = async (
-      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ) => {
-      await onClick?.(e);
-      await togglePlay();
-    };
+  const { buttonProps, title } = usePlayButton({
+    togglePlay,
+    playing,
+    defaultPauseIcon: <DefaultPauseIcon />,
+    defaultPlayIcon: <DefaultPlayIcon />,
+    ...props,
+  });
 
-    const _children = useConditionalIcon(
-      playing,
-      pauseIcon,
-      <DefaultPauseIcon />,
-      playIcon,
-      <DefaultPlayIcon />,
-    );
-
-    const title = React.useMemo(
-      () => (playing ? 'Pause (k)' : 'Play (k)'),
-      [playing],
-    );
-
-    return (
-      <button
-        {...rest}
-        className={styling.iconButton()}
-        title={title}
-        aria-label={title}
-        ref={ref}
-        onClick={onClickComposed}
-      >
-        {_children}
-      </button>
-    );
-  },
-);
+  return (
+    <button
+      {...omit(buttonProps, 'onPress')}
+      className={styling.iconButton()}
+      title={title}
+      aria-label={title}
+      onClick={buttonProps.onPress}
+    />
+  );
+};

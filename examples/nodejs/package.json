@@ -9,20 +9,20 @@
     "dev:create-dataset": "ts-node src/create-dataset/index.ts"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.13.11",
+    "@graphql-codegen/cli": "^2.15.0",
     "@graphql-codegen/fragment-matcher": "^3.3.1",
-    "@graphql-codegen/typed-document-node": "^2.3.6",
-    "@graphql-codegen/typescript": "^2.8.1",
-    "@graphql-codegen/typescript-operations": "^2.5.6",
+    "@graphql-codegen/typed-document-node": "^2.3.8",
+    "@graphql-codegen/typescript": "^2.8.3",
+    "@graphql-codegen/typescript-operations": "^2.5.8",
     "@graphql-typed-document-node/core": "^3.1.1",
-    "@types/node": "^18.8.3",
+    "@types/node": "^18.11.11",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.1",
+    "@apollo/client": "^3.7.2",
     "cross-fetch": "^3.1.5",
     "graphql": "^16.6.0",
-    "livepeer": "^1.4.3"
+    "livepeer": "^2.0.0-next.5"
   }
 }

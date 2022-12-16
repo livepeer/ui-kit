@@ -1,2 +1,6 @@
-export { addMediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';
-export type { PlaybackRecord, RawMetrics } from './metrics';
+export {
+  addMediaMetricsToStore,
+  type MediaMetrics,
+  type MetricsStatus,
+  type PlaybackMonitor,
+} from './metrics';

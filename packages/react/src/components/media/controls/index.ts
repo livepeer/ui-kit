@@ -15,6 +15,6 @@ export {
 export { PlayButton, type PlayButtonProps } from './PlayButton';
 export { Poster, type PosterProps } from './Poster';
 export { Progress, type ProgressProps } from './Progress';
-export { TimeDisplay, type TimeDisplayProps } from './TimeDisplay';
+export { TimeDisplay } from './TimeDisplay';
 export { Title, type TitleProps } from './Title';
 export { Volume, type VolumeProps } from './Volume';

@@ -14,7 +14,7 @@ const App = ({
   const livepeerClient = useMemo(() => {
     return createReactClient({
       provider: studioProvider({
-        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY,
+        apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
       }),
     });
   }, []);

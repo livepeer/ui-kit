@@ -3,25 +3,35 @@ title: 'useUpdateAsset'
 description: 'React Hook for updating an asset.'
 ---
 
+import { SyncedTab, SyncedTabs } from '@components/core';
+
 # useUpdateAsset
 
 Hook for updating an existing [Asset](https://github.com/livepeer/livepeer.js/blob/main/packages/core/src/types/provider.ts).
 
-```tsx
-import { useUpdateAsset } from '@livepeer/react';
-```
-
 ## Usage
+
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+    ```tsx filename="React"
+    import { useUpdateAsset } from '@livepeer/react';
+    ```
+
+  </SyncedTab>
+  <SyncedTab>
+    ```tsx filename="React Native"
+    import { useUpdateAsset } from '@livepeer/react-native';
+    ```
+
+  </SyncedTab>
+</SyncedTabs>
 
 The following example shows how an asset can be updated.
 
-```tsx {15-18, 25}
-import { useAsset, useUpdateAsset } from '@livepeer/react';
-import { useState } from 'react';
-
+```tsx {12-15, 22}
 const assetId = '7ce29561-91ae-42cf-b9c0-6e46dbc1cc2d';
 
-function App() {
+function SomeComponent() {
   const { data: asset } = useAsset({
     assetId,
     refetchInterval: 10000,
@@ -86,7 +96,7 @@ The asset ID to update - required.
 ```tsx {5}
 import { useUpdateAsset } from '@livepeer/react';
 
-function App() {
+function SomeComponent() {
   const { mutate: updateAsset } = useUpdateAsset({
     assetId,
     name: 'New Name',
@@ -166,7 +176,7 @@ The `mutationConfig` parameter allows for any [React Query](https://tanstack.com
 ```tsx {7}
 import { useUpdateAsset } from '@livepeer/react';
 
-function App() {
+function SomeComponent() {
   const { mutate: updateAsset } = useUpdateAsset({
     assetId,
     name: 'New Name',

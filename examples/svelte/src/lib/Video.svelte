@@ -2,17 +2,21 @@
   import {
     addMediaMetrics,
     canPlayMediaNatively,
-    getMediaSourceType,
-  } from 'livepeer';
+  } from 'livepeer/media/browser';
+  import { getMediaSourceType } from 'livepeer/media';
   import { createClient } from 'livepeer/client';
-  import { createNewHls, isHlsSupported } from 'livepeer/media/hls';
+  import { createNewHls, isHlsSupported } from 'livepeer/media/browser/hls';
   import { studioProvider } from 'livepeer/providers/studio';
   import { onMount } from 'svelte';
 
   let videoSrc = '';
   let video;
 
-  const { provider } = createClient({ provider: studioProvider() });
+  const { provider } = createClient({
+    provider: studioProvider({
+      apiKey: process.env.VITE_PUBLIC_STUDIO_API_KEY ?? '',
+    }),
+  });
 
   async function fetchPlaybackInfo() {
     const playbackInfo = await provider.getPlaybackInfo({

@@ -1,46 +1,53 @@
-type BaseStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+interface BaseStorage {
+  getItem: (name: string) => string | null | Promise<string | null>;
+  setItem: (name: string, value: string) => void | Promise<void>;
+  removeItem: (name: string) => void | Promise<void>;
+}
 
 export type ClientStorage = {
-  getItem: <T>(key: string, defaultState?: T | null) => T | null;
-  setItem: <T>(key: string, value: T | null) => void;
-  removeItem: (key: string) => void;
+  getItem: <T>(key: string, defaultState?: T | null) => Promise<T | null>;
+  setItem: <T>(key: string, value: T | null) => Promise<void>;
+  removeItem: (key: string) => Promise<void>;
 };
 
 export const noopStorage: BaseStorage = {
   getItem: (_key) => '',
-  setItem: (_key, _value) => null,
-  removeItem: (_key) => null,
+  setItem: (_key, _value) => {
+    //
+  },
+  removeItem: (_key) => {
+    //
+  },
 };
 
 export function createStorage({
-  storage,
+  storage = noopStorage,
   key: prefix = 'livepeer',
 }: {
-  storage: BaseStorage;
+  storage?: BaseStorage;
   key?: string;
 }): ClientStorage {
   return {
-    ...storage,
-    getItem: (key, defaultState = null) => {
-      const value = storage.getItem(`${prefix}.${key}`);
+    getItem: async (key, defaultState = null) => {
       try {
+        const value = await storage.getItem(`${prefix}.${key}`);
         return value ? JSON.parse(value) : defaultState;
       } catch (error) {
         console.warn(error);
         return defaultState;
       }
     },
-    setItem: (key, value) => {
+    setItem: async (key, value) => {
       if (value === null) {
-        storage.removeItem(`${prefix}.${key}`);
+        await storage.removeItem(`${prefix}.${key}`);
       } else {
         try {
-          storage.setItem(`${prefix}.${key}`, JSON.stringify(value));
+          await storage.setItem(`${prefix}.${key}`, JSON.stringify(value));
         } catch (err) {
           console.error(err);
         }
       }
     },
-    removeItem: (key) => storage.removeItem(`${prefix}.${key}`),
+    removeItem: async (key) => storage.removeItem(`${prefix}.${key}`),
   };
 }

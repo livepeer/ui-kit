@@ -459,17 +459,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 }
 
-const definedProps = (obj: object = {}) =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([_, v]) => typeof v !== 'undefined'),
-  );
-
 export function studioProvider(
-  config?: Partial<StudioLivepeerProviderConfig>,
+  config: Partial<Omit<StudioLivepeerProviderConfig, 'apiKey'>> &
+    Pick<StudioLivepeerProviderConfig, 'apiKey'>,
 ): LivepeerProviderFn<StudioLivepeerProvider> {
   return () =>
     new StudioLivepeerProvider({
       ...defaultStudioConfig,
-      ...definedProps(config),
+      ...config,
     });
 }

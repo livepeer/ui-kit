@@ -7,14 +7,16 @@ import {
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AptosClient } from 'aptos';
-import { useRouter } from 'next/router';
+
 import { useTheme } from 'nextra-theme-docs';
-import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
+import { ReactNode, createContext, useMemo } from 'react';
 import { WagmiConfig, chain, configureChains, createClient } from 'wagmi';
 
 import { infuraProvider } from 'wagmi/providers/infura';
 
 import { publicProvider } from 'wagmi/providers/public';
+
+import { useLocalStorage } from '../../hooks';
 
 import { provider as livepeerProvider } from '../../lib/provider';
 import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
@@ -26,7 +28,7 @@ export const AptosContext = createContext<AptosClient | null>(null);
 const { chains, provider } = configureChains(
   [chain.polygonMumbai],
   [
-    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY ?? '' }),
     publicProvider(),
   ],
 );
@@ -61,7 +63,7 @@ const livepeerLightTheme: ThemeConfig = {
     display: 'Inter',
   },
   fontWeights: {
-    titleFontWeight: 800,
+    titleFontWeight: '800',
   },
   sizes: {
     loading: '80px',
@@ -104,49 +106,27 @@ const queryClient = new QueryClient();
 
 export function Providers({ children, dehydratedState }: Props) {
   const { theme } = useTheme();
-  const router = useRouter();
 
   const livepeerTheme = useMemo(
     () => (theme === 'light' ? livepeerLightTheme : livepeerDarkTheme),
     [theme],
   );
 
-  const [syncedTabsStore, setSyncedTabsStore] = useState<
+  const [storedValue, setStoredValue] = useLocalStorage<
     SyncedTabsState['store']
-  >({});
-
-  useEffect(() => {
-    if (Object.keys(router.query).length > 0) {
-      setSyncedTabsStore(
-        Object.keys(router?.query)?.reduce(
-          (prev, curr) => ({
-            ...prev,
-            [curr]: Number(router?.query?.[curr] ?? 0),
-          }),
-          {},
-        ),
-      );
-    }
-  }, [router.query]);
+  >(`tabs`, {});
 
   const syncedTabsState: SyncedTabsState = useMemo(
     () => ({
-      store: syncedTabsStore,
-      setNewIndex: (key, index) => {
-        router.push(
-          {
-            pathname: router.pathname,
-            query: {
-              ...(router.query ? router.query : {}),
-              [key]: index,
-            },
-          },
-          undefined,
-          { scroll: false },
-        );
+      store: storedValue,
+      setNewIndex: (key, value) => {
+        setStoredValue({
+          ...storedValue,
+          [key]: Number(value ?? 0),
+        });
       },
     }),
-    [router, syncedTabsStore],
+    [storedValue, setStoredValue],
   );
 
   const aptosClient = useMemo(

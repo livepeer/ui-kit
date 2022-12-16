@@ -1,3 +1,4 @@
+import { StudioLivepeerProvider, studioProvider } from '@livepeer/core-react';
 import { QueryClient } from '@tanstack/react-query';
 import {
   Queries,
@@ -10,21 +11,14 @@ import {
 } from '@testing-library/react';
 // import from @testing-library/react-hooks for React 17
 import { renderHook as defaultRenderHook } from '@testing-library/react-hooks';
-import {
-  StudioLivepeerProvider,
-  studioProvider,
-} from 'livepeer/providers/studio';
 
 import * as React from 'react';
 
 import { LivepeerConfig } from '../src';
 import { Client, createReactClient } from '../src/client';
 
-// set up React globally for tests
-global.React = React;
-
 export const provider = studioProvider({
-  apiKey: process.env.STUDIO_API_KEY,
+  apiKey: process.env.STUDIO_API_KEY ?? '',
 });
 
 export const queryClient = new QueryClient({
@@ -102,4 +96,4 @@ export const render = <
 ) => defaultRender(ui, { wrapper, ...options });
 
 export { act, cleanup, fireEvent, screen } from '@testing-library/react';
-export { getSampleVideo, getSigners } from '../../core/test';
+export { getSampleVideo } from '../../core/test';

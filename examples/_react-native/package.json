@@ -1,0 +1,54 @@
+{
+  "name": "example-dev-react-native",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "react-native start",
+    "dev:android": "react-native run-android",
+    "dev:ios": "react-native run-ios",
+    "install:pod": "cd ios/ && pod install",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "postinstall": "pnpm install:pod"
+  },
+  "dependencies": {
+    "@livepeer/react-native": "^1.0.0-next.12",
+    "expo": "^47.0.0",
+    "expo-av": "~13.0.1",
+    "react": "18.1.0",
+    "react-native": "0.70.5",
+    "react-native-svg": "12.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/runtime": "^7.20.6",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@rnx-kit/metro-config": "^1.3.3",
+    "@rnx-kit/metro-resolver-symlinks": "^0.1.23",
+    "@tsconfig/react-native": "^2.0.3",
+    "@types/jest": "^29.2.4",
+    "@types/react": "^18.0.26",
+    "@types/react-native": "^0.70.8",
+    "@types/react-test-renderer": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.1",
+    "@typescript-eslint/parser": "^5.45.1",
+    "babel-jest": "^29.3.1",
+    "eslint": "^8.29.0",
+    "jest": "^29.3.1",
+    "metro-react-native-babel-preset": "0.73.4",
+    "react-native-codegen": "^0.72.0",
+    "react-native-gradle-plugin": "^0.71.10",
+    "react-test-renderer": "18.2.0",
+    "typescript": "^4.9.3"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
