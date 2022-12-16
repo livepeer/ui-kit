@@ -46,7 +46,7 @@ const config = {
         permanent: false,
       },
       {
-        source: '/*',
+        source: '/:slug*',
         destination: `${newLivepeerDocs}/reference/livepeer-js`,
         permanent: false,
       },
