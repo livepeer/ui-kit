@@ -55,6 +55,7 @@ export type {
   Metrics,
   MultistreamTarget,
   MultistreamTargetRef,
+  NativeFile,
   PlaybackInfo,
   Stream,
   StreamSession,
