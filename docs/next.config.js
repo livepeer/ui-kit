@@ -11,6 +11,8 @@ const withNextra = require('nextra')({
   defaultShowCopyCode: true,
 });
 
+const newLivepeerDocs = 'https://docs.livepeer.org';
+
 /** @type {import('next').NextConfig} */
 const config = {
   sentry: {
@@ -30,6 +32,25 @@ const config = {
   typescript: {
     // Disable type checking since eslint handles this
     ignoreBuildErrors: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/react/:slug*',
+        destination: `${newLivepeerDocs}/reference/livepeer-js/:slug*`,
+        permanent: false,
+      },
+      {
+        source: '/examples/react/:slug*',
+        destination: `${newLivepeerDocs}/guides/developing`,
+        permanent: false,
+      },
+      {
+        source: '/*',
+        destination: `${newLivepeerDocs}/reference/livepeer-js`,
+        permanent: false,
+      },
+    ];
   },
 };
 
