@@ -123,11 +123,15 @@ until the asset succeeds or fails to be processed by the provider.
 
 ### sources
 
-The `sources` used for the asset creation can be an array of either a URL or a local File/ReadStream. _It is highly recommended to use
+The `sources` used for the asset creation can be an array of either a URL or a local File/ReadStream/object with a `uri` string.
+_It is highly recommended to use
 [const assertions](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions)
 to infer types properly from the `sources` parameter - please see below for an example._
 
-```tsx {5}
+<SyncedTabs group="lang" items={['React', 'React Native']}>
+  <SyncedTab>
+
+```tsx {5} filename="React"
 import { useCreateAsset } from '@livepeer/react';
 
 function SomeComponent() {
@@ -136,6 +140,24 @@ function SomeComponent() {
   });
 }
 ```
+
+  </SyncedTab>
+  <SyncedTab>
+
+```tsx filename="React Native"
+import { useCreateAsset } from '@livepeer/react';
+
+function SomeComponent() {
+  // get the URI from a file picker
+  // then pass the URI into the source
+  const { mutate: createAsset, status } = useCreateAsset({
+    sources: [{ name: video.name, file: { uri } }] as const,
+  });
+}
+```
+
+  </SyncedTab>
+</SyncedTabs>
 
 <Callout>
   The `useCreateAsset` hook uses [tus](https://github.com/tus/tus-js-client) for
@@ -154,11 +176,16 @@ type CreateAssetSourceUrl = {
   url: string;
 };
 
+/** React Native file type */
+type NativeFile = File & {
+  uri: string;
+};
+
 type CreateAssetSourceFile = {
   /** Name for the new asset */
   name: string;
   /** Content to be uploaded or streamed */
-  file: File | ReadStream;
+  file: File | ReadStream | NativeFile;
 };
 
 /** Source(s) to upload - can be a file or URL source */

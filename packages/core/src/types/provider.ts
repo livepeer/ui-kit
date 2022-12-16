@@ -204,9 +204,13 @@ export type CreateAssetSourceUrl = CreateAssetSourceBase & {
   url: string;
 };
 
+export type NativeFile = File & {
+  uri: string;
+};
+
 export type CreateAssetSourceFile = CreateAssetSourceBase & {
   /** Content to be uploaded or streamed */
-  file: File | ReadStream;
+  file: File | ReadStream | NativeFile;
 };
 
 export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;

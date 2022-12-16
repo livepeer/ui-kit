@@ -1,10 +1,6 @@
 import { useClient } from '@livepeer/core-react/context';
-import { createControllerStore } from 'livepeer/media';
-import {
-  ControlsOptions,
-  addEventListeners,
-  getDeviceInfo,
-} from 'livepeer/media/browser';
+import { ControlsOptions, createControllerStore } from 'livepeer/media';
+import { addEventListeners, getDeviceInfo } from 'livepeer/media/browser';
 import * as React from 'react';
 import create from 'zustand';
 
@@ -13,15 +9,15 @@ import { MediaControllerContext } from './MediaControllerContext';
 export type MediaControllerProviderProps<TElement extends HTMLMediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
-  options?: ControlsOptions;
+  opts: ControlsOptions;
 };
 
 export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   element,
   children,
-  options,
+  opts,
 }: MediaControllerProviderProps<TElement>) => {
-  const useMediaController = useMediaControllerStore(element, options);
+  const useMediaController = useMediaControllerStore(element, opts);
 
   return (
     <MediaControllerContext.Provider value={useMediaController}>
@@ -32,7 +28,7 @@ export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
 
 const useMediaControllerStore = <TElement extends HTMLMediaElement>(
   element: TElement | null,
-  options?: ControlsOptions,
+  opts?: ControlsOptions,
 ) => {
   const client = useClient();
 
@@ -43,18 +39,19 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
           element: element ?? null,
           device: getDeviceInfo(),
           storage: client.storage,
+          opts: opts ?? {},
         }),
       ),
-    [element, client?.storage],
+    [element, client?.storage, opts],
   );
 
   React.useEffect(() => {
-    const { destroy } = addEventListeners(store, options);
+    const { destroy } = addEventListeners(store, opts);
 
     return () => {
       destroy?.();
     };
-  }, [store, options]);
+  }, [store, opts]);
 
   return store;
 };

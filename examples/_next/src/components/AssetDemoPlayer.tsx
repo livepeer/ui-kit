@@ -20,10 +20,13 @@ export const AssetDemoPlayer = () => {
           ipfsGateway: 'https://lens.infura-ipfs.io/',
         }}
         loop
-        autoPlay
+        // autoPlay
         showPipButton
-        muted
+        // muted
         mediaElementRef={mediaElementRef}
+        controls={{
+          defaultVolume: 0.7,
+        }}
         theme={{
           fonts: {
             display: 'Inter',

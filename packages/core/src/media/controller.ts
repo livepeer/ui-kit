@@ -1,7 +1,7 @@
 import { persist } from 'zustand/middleware';
 import create, { StoreApi } from 'zustand/vanilla';
 
-import { ClientStorage, createStorage, noopStorage } from '../storage';
+import { ClientStorage } from '../storage';
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
 export const DEFAULT_VOLUME_LEVEL = 0.2; // 0-1 for how loud the audio is
@@ -154,10 +154,12 @@ export const createControllerStore = <TElement>({
   element,
   device,
   storage,
+  opts,
 }: {
   element: TElement | null;
   device: DeviceInformation;
-  storage?: ClientStorage;
+  storage: ClientStorage;
+  opts: ControlsOptions;
 }) => {
   const store = create<
     MediaControllerState<TElement>,
@@ -188,7 +190,7 @@ export const createControllerStore = <TElement>({
 
         buffered: 0,
 
-        volume: DEFAULT_VOLUME_LEVEL,
+        volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
         muted: true,
         isVolumeChangeSupported: false,
 
@@ -307,15 +309,12 @@ export const createControllerStore = <TElement>({
       {
         name: 'livepeer-player',
         version: 1,
-        // since these values are persisted across media, only persist volume
-        partialize: ({ volume }) => ({
+        // since these values are persisted across media, only persist volume and playbackRate
+        partialize: ({ volume, playbackRate }) => ({
           volume,
+          playbackRate,
         }),
-        getStorage: () =>
-          storage ??
-          createStorage({
-            storage: noopStorage,
-          }),
+        getStorage: () => storage,
       },
     ),
   );
@@ -326,4 +325,6 @@ export const createControllerStore = <TElement>({
 export type ControlsOptions = {
   /** Auto-hide controls after a set amount of time (in milliseconds). Defaults to 3000. Set to 0 for no hiding. */
   autohide?: number;
+  /** Sets the default volume. Must be between 0 and 1. */
+  defaultVolume?: number;
 };
