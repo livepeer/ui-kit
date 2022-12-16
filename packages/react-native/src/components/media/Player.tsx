@@ -33,11 +33,19 @@ export const PlayerInternal = (props: PlayerProps) => {
     playerProps,
     controlsContainerProps,
     source,
-    props: { children, theme, title, onMetricsError, showTitle, aspectRatio },
+    props: {
+      controls,
+      children,
+      theme,
+      title,
+      onMetricsError,
+      showTitle,
+      aspectRatio,
+    },
   } = usePlayer<MediaElement, PosterSource>(props);
 
   return (
-    <MediaControllerProvider element={mediaElement}>
+    <MediaControllerProvider element={mediaElement} opts={controls ?? {}}>
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && !Array.isArray(source) ? (
           <HlsPlayer

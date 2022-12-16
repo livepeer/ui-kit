@@ -45,7 +45,7 @@ export function createReactClient<TLivepeerProvider extends LivepeerProvider>({
   const persister = config?.storage
     ? createAsyncStoragePersister({
         key: 'livepeer.cache',
-        storage: config?.storage,
+        storage: config.storage,
         serialize,
         deserialize,
       })

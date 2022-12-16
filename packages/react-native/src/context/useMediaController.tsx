@@ -1,9 +1,5 @@
-import {
-  MediaControllerState,
-  MediaControllerStore,
-} from '@livepeer/core-react';
+import { MediaControllerState } from '@livepeer/core-react';
 import * as React from 'react';
-import { UseBoundStore } from 'zustand';
 
 import { MediaElement } from '../components/media/types';
 import { MediaControllerContext } from './MediaControllerContext';
@@ -14,12 +10,9 @@ export const useMediaController = <
 >(
   selector?: (s: MediaControllerState<TElement>) => TSlice,
 ) => {
-  // typecast the context so that we can have video/audio-specific controller states
-  const useMediaControllerInternal = React.useContext(
-    MediaControllerContext,
-  ) as UseBoundStore<MediaControllerStore<TElement>>;
+  const useMediaControllerInternal = React.useContext(MediaControllerContext);
 
   return useMediaControllerInternal(
-    selector as (s: MediaControllerState<TElement>) => TSlice,
+    selector as (s: MediaControllerState<MediaElement>) => TSlice,
   );
 };

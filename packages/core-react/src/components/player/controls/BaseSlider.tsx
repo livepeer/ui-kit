@@ -132,7 +132,7 @@ export const useBaseSlider = (props: BaseSliderCoreProps) => {
         ...thumbCss,
         zIndex: 1,
         position: 'absolute',
-        left: value * sliderWidth - 8,
+        left: value * (sliderWidth * 0.9),
       },
       size: isActiveOrDragging ? 'active' : 'default',
     }),
