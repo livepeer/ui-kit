@@ -42,7 +42,7 @@ const config = {
       },
       {
         source: '/examples/react/:slug*',
-        destination: `${newLivepeerDocs}/guides/developing/:slug*`,
+        destination: `${newLivepeerDocs}/guides/developing`,
         permanent: false,
       },
       {
