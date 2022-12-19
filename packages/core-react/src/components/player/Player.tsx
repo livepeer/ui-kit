@@ -114,7 +114,7 @@ export const usePlayer = <TElement, TPoster>({
 }: PlayerProps<TElement, TPoster>) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
-  const { source, uploadStatus } = useSourceMimeTyped({
+  const { source, uploadStatus, playbackDisplayError } = useSourceMimeTyped({
     src,
     playbackId,
     jwt,
@@ -173,6 +173,7 @@ export const usePlayer = <TElement, TPoster>({
       showLoadingSpinner,
       loadingText,
       showUploadingIndicator,
+      playbackDisplayError,
     },
     props: {
       autoPlay,
