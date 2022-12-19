@@ -1,6 +1,18 @@
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
+export const OfflineStreamPlaybackDisplayError: React.FC = () => (
+  <div className={styling.controlsContainer.error.background()}>
+    <OfflineIcon />
+    <div className={styling.controlsContainer.error.title()}>
+      Stream is offline
+    </div>
+    <div className={styling.controlsContainer.error.text()}>
+      Playback will start automatically once stream has started.
+    </div>
+  </div>
+);
+
 const OfflineIcon = () => (
   <svg
     width="324"
@@ -120,19 +132,4 @@ const OfflineIcon = () => (
       fill="#434545"
     />
   </svg>
-);
-
-export const OfflineStreamPlaybackDisplayError: React.FC = () => (
-  <div className={styling.controlsContainer.error.background()}>
-    {/* <div className={styling.controlsContainer.error.icon()}> */}
-    <div>
-      <OfflineIcon />
-    </div>
-    <div className={styling.controlsContainer.error.title()}>
-      Stream is offline
-    </div>
-    <div className={styling.controlsContainer.error.text()}>
-      Playback will start automatically once stream has started.
-    </div>
-  </div>
 );

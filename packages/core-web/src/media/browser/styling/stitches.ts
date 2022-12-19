@@ -2,6 +2,7 @@ import { ThemeConfig } from '@livepeer/core/media';
 import { createStitches } from '@stitches/core';
 
 const accent = '#00a55f';
+const muted = '#B7B7B7';
 const icon = 'rgba(255,255,255,1)';
 
 const theme: Required<{
@@ -30,6 +31,7 @@ const theme: Required<{
     volumeMiddle: accent,
     volumeRight: accent,
     volumeThumb: icon,
+    errorText: muted,
   },
   fonts: {
     display: 'ui-sans-serif',
@@ -41,9 +43,12 @@ const theme: Required<{
     titleFontSize: '1.1rem',
     titleFontSizeMd: '1rem',
     titleFontSizeSm: '0.9rem',
+    errorTitleFontSize: '2.5rem',
+    errorTextFontSize: '0.95rem',
   },
   fontWeights: {
     titleFontWeight: '400',
+    errorTitleFontWeight: '700',
   },
   sizes: {
     iconButtonSize: '42px',
