@@ -30,6 +30,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# versioning file
-packages/core/src/providers/version.ts
