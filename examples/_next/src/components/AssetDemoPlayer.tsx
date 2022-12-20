@@ -25,8 +25,11 @@ export const AssetDemoPlayer = () => {
         loop
         autoPlay
         showPipButton
-        muted
+        // muted
         mediaElementRef={mediaElementRef}
+        controls={{
+          defaultVolume: 0.7,
+        }}
         theme={{
           fonts: {
             display: 'Inter',

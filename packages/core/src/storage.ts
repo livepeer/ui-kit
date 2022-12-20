@@ -21,14 +21,13 @@ export const noopStorage: BaseStorage = {
 };
 
 export function createStorage({
-  storage,
+  storage = noopStorage,
   key: prefix = 'livepeer',
 }: {
-  storage: BaseStorage;
+  storage?: BaseStorage;
   key?: string;
 }): ClientStorage {
   return {
-    ...storage,
     getItem: async (key, defaultState = null) => {
       try {
         const value = await storage.getItem(`${prefix}.${key}`);

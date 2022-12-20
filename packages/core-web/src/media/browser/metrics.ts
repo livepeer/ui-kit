@@ -1,3 +1,4 @@
+import { ControlsOptions, createStorage } from '@livepeer/core';
 import { createControllerStore } from '@livepeer/core/media';
 
 import {
@@ -22,16 +23,22 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
   element: TElement | undefined | null,
   sourceUrl: string | undefined | null,
   onError?: (error: unknown) => void,
+  opts?: ControlsOptions,
 ): MediaMetrics<TElement> {
   const store = createControllerStore<TElement>({
     element: element ?? null,
     device: getDeviceInfo(),
+    storage: createStorage(
+      typeof window !== 'undefined'
+        ? {
+            storage: window.localStorage,
+          }
+        : {},
+    ),
+    opts: opts ?? {},
   });
 
-  const { destroy: destroyListeners } = addEventListeners(store, {
-    hotkeys: false,
-    autohide: 0,
-  });
+  const { destroy: destroyListeners } = addEventListeners(store, opts);
 
   const { metrics, destroy: destroyMetrics } =
     addMediaMetricsToInitializedStore(store, sourceUrl, onError);
