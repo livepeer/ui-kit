@@ -8,7 +8,7 @@ import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { OfflineStreamError } from './PlaybackDisplayError';
+import { OfflineStreamError, PrivateStreamError } from './PlaybackDisplayError';
 
 const mediaControllerSelector = ({
   hidden,
@@ -53,7 +53,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
       case PlaybackDisplayErrorType.OfflineStream:
         return <OfflineStreamError />;
       case PlaybackDisplayErrorType.PrivateStream:
-        return <div>PrivateStreamPlaybackDisplayError</div>;
+        return <PrivateStreamError />;
       default:
         return <></>;
     }
