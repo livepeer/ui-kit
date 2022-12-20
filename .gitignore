@@ -21,6 +21,7 @@ build/
 
 # svelte
 dist-ssr
+
 # editor directories and files
 .idea
 .DS_Store
