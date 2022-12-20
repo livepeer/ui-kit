@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.0.0-next.15
+
+### Patch Changes
+
+- [#213](https://github.com/livepeer/livepeer.js/pull/213) [`7f5202d`](https://github.com/livepeer/livepeer.js/commit/7f5202dec42b14dd77546823c8e3c9dd7fe3983b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed player to display hours correctly and added version headers to API requests for debugging errors.
+
+- Updated dependencies [[`7f5202d`](https://github.com/livepeer/livepeer.js/commit/7f5202dec42b14dd77546823c8e3c9dd7fe3983b)]:
+  - @livepeer/core-react@1.0.0-next.14
+  - livepeer@2.0.0-next.7
+
 ## 2.0.0-next.14
 
 ### Patch Changes
