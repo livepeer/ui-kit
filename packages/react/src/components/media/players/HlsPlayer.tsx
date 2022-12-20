@@ -16,6 +16,7 @@ import * as React from 'react';
 import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
+import { isAccessControlError } from './utils';
 
 export type HlsPlayerProps = HlsPlayerCoreProps<
   HTMLVideoElement,
@@ -69,9 +70,11 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       const element = store.getState()._element;
       if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
         const onError = (error: HlsError) => {
-          const errorMessage = error.response?.data.toString();
-          onAccessControlError?.(new Error(errorMessage));
-          console.warn(errorMessage);
+          const cleanError = new Error(error.response?.data.toString());
+          if (isAccessControlError(cleanError)) {
+            onAccessControlError?.(cleanError);
+          }
+          console.warn(cleanError.message);
         };
         const { destroy } = createNewHls(
           src.src,
