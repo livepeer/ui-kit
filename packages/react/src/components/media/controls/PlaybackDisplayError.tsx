@@ -1,7 +1,7 @@
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-export const OfflineStreamPlaybackDisplayError: React.FC = () => (
+export const OfflineStreamError: React.FC = () => (
   <div className={styling.controlsContainer.error.background()}>
     <OfflineIcon />
     <div className={styling.controlsContainer.error.title()}>

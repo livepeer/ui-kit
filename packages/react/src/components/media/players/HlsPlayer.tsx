@@ -36,6 +36,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       poster,
       objectFit,
       onMetricsError,
+      onAccessControlError,
     } = props;
 
     const store = React.useContext(MediaControllerContext);
@@ -68,7 +69,9 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       const element = store.getState()._element;
       if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
         const onError = (error: HlsError) => {
-          console.warn(error.response?.data.toString());
+          const errorMessage = error.response?.data.toString();
+          onAccessControlError?.(new Error(errorMessage));
+          console.warn(errorMessage);
         };
         const { destroy } = createNewHls(
           src.src,
@@ -89,7 +92,15 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
           destroy();
         };
       }
-    }, [autoPlay, hlsConfig, src, store, canUseHlsjs, canPlayAppleMpeg]);
+    }, [
+      autoPlay,
+      hlsConfig,
+      src,
+      store,
+      canUseHlsjs,
+      canPlayAppleMpeg,
+      onAccessControlError,
+    ]);
 
     // if Media Source is supported and if HLS is not supported by default in the user's browser, use HLS.js
     // fallback to using a regular video player

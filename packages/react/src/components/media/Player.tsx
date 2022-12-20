@@ -48,6 +48,7 @@ export const PlayerInternal = (props: PlayerProps) => {
       title,
       poster,
       onMetricsError,
+      onAccessControlError,
       showTitle,
       aspectRatio,
     },
@@ -61,6 +62,7 @@ export const PlayerInternal = (props: PlayerProps) => {
             {...playerProps}
             src={source}
             onMetricsError={onMetricsError}
+            onAccessControlError={onAccessControlError}
           />
         ) : source?.[0]?.type === 'audio' ? (
           <AudioPlayer {...playerProps} src={source as AudioSrc[]} />

@@ -21,5 +21,5 @@ export {
   type TitleProps,
   type VideoPlayerProps,
   type VolumeProps,
-  PlaybackDisplayError,
+  PlaybackDisplayErrorType,
 } from './player';

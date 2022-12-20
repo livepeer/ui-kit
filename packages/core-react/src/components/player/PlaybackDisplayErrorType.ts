@@ -1,4 +1,4 @@
-export enum PlaybackDisplayError {
+export enum PlaybackDisplayErrorType {
   OfflineStream = 'offlineStream',
   PrivateStream = 'privateStream',
 }

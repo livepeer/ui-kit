@@ -23,4 +23,4 @@ export type {
   HlsPlayerProps,
   VideoPlayerProps,
 } from './players';
-export { PlaybackDisplayError } from './PlaybackDisplayError';
+export { PlaybackDisplayErrorType } from './PlaybackDisplayErrorType';

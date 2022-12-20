@@ -1,6 +1,6 @@
 import {
   ControlsContainerProps,
-  PlaybackDisplayError,
+  PlaybackDisplayErrorType,
   useControlsContainer,
 } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
@@ -8,7 +8,7 @@ import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { OfflineStreamPlaybackDisplayError } from './PlaybackDisplayError';
+import { OfflineStreamError } from './PlaybackDisplayError';
 
 const mediaControllerSelector = ({
   hidden,
@@ -36,7 +36,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
-    playbackDisplayError,
+    playbackDisplayErrorType,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -49,15 +49,15 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
   });
 
   const playbackDisplayErrorComponent = React.useMemo(() => {
-    switch (playbackDisplayError) {
-      case PlaybackDisplayError.OfflineStream:
-        return <OfflineStreamPlaybackDisplayError />;
-      case PlaybackDisplayError.PrivateStream:
+    switch (playbackDisplayErrorType) {
+      case PlaybackDisplayErrorType.OfflineStream:
+        return <OfflineStreamError />;
+      case PlaybackDisplayErrorType.PrivateStream:
         return <div>PrivateStreamPlaybackDisplayError</div>;
       default:
         return <></>;
     }
-  }, [playbackDisplayError]);
+  }, [playbackDisplayErrorType]);
 
   return (
     <>
@@ -79,7 +79,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         />
       )}
 
-      {showLoadingSpinner && !isLoaded && !playbackDisplayError && (
+      {showLoadingSpinner && !isLoaded && !playbackDisplayErrorType && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
@@ -94,7 +94,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </div>
       )}
 
-      {playbackDisplayError && (
+      {playbackDisplayErrorType && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}

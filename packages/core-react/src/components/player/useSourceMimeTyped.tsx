@@ -3,7 +3,6 @@ import { CreateAssetUrlProgress } from '@livepeer/core/types';
 import { parseArweaveTxId, parseCid } from '@livepeer/core/utils';
 import * as React from 'react';
 
-import { PlaybackDisplayError } from './PlaybackDisplayError';
 import { PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
@@ -56,15 +55,11 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     onAssetStatusChange,
   });
 
-  const [playbackDisplayError, setPlaybackDisplayError] =
-    React.useState<PlaybackDisplayError | null>(null);
+  const [isStreamOffline, setIsStreamOffline] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const value =
-      playbackInfo?.type === 'live' && !playbackInfo?.meta?.live
-        ? PlaybackDisplayError.OfflineStream
-        : null;
-    setPlaybackDisplayError(value);
+    const value = playbackInfo?.type === 'live' && !playbackInfo?.meta?.live;
+    setIsStreamOffline(value);
   }, [playbackInfo]);
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
@@ -176,6 +171,6 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   return {
     source: sourceMimeTypedWithFallback,
     uploadStatus,
-    playbackDisplayError,
+    isStreamOffline,
   } as const;
 };
