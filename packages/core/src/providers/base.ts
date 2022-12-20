@@ -24,6 +24,8 @@ import {
   UpdateStreamArgs,
 } from '../types';
 
+import * as versions from './version';
+
 export type FetchOptions<P = object> = RequestInit & {
   json?: P;
 };
@@ -48,6 +50,12 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     const response = await this._fetch(`${this._config.baseUrl}${url}`, {
       method: 'GET',
       ...options,
+      headers: {
+        ...options?.headers,
+        'x-core-sdk-version': versions.core,
+        'x-react-sdk-version': versions.react,
+        'x-react-native-sdk-version': versions.reactNative,
+      },
     });
 
     if (!response.ok) {
@@ -72,6 +80,9 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
       headers: {
         ...(options?.json ? { 'content-type': 'application/json' } : {}),
         ...options?.headers,
+        'x-core-sdk-version': versions.core,
+        'x-react-sdk-version': versions.react,
+        'x-react-native-sdk-version': versions.reactNative,
       },
     });
 
@@ -97,6 +108,9 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
       headers: {
         ...(options?.json ? { 'content-type': 'application/json' } : {}),
         ...options?.headers,
+        'x-core-sdk-version': versions.core,
+        'x-react-sdk-version': versions.react,
+        'x-react-native-sdk-version': versions.reactNative,
       },
     });
 
