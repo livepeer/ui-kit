@@ -9,7 +9,7 @@ const playbackId = '0b3a57ekt0n6ie08'; // gated stream
 
 export const AssetDemoPlayer = () => {
   const mediaElementRef = useCallback((ref: HTMLMediaElement) => {
-    console.log(ref.duration);
+    console.log('Media duration', ref.duration);
   }, []);
 
   return (
