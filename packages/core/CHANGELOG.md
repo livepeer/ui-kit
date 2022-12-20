@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.0.0-next.3
+
+### Patch Changes
+
+- [#204](https://github.com/livepeer/livepeer.js/pull/204) [`9ce1fa4`](https://github.com/livepeer/livepeer.js/commit/9ce1fa460985d4301c06df88698e7e3e746c4d52) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature**: added native file URI uploading for React Native, default volume config for the Player, and fixed the slider thumb to not extend past the left boundary.
+
 ## 1.0.0-next.2
 
 ### Patch Changes
