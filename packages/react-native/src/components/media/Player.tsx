@@ -44,7 +44,10 @@ export const PlayerInternal = (props: PlayerProps) => {
       showTitle,
       aspectRatio,
     },
-  } = usePlayer<MediaElement, PosterSource>(props);
+  } = usePlayer<MediaElement, PosterSource>(props, {
+    // TODO fix to track when an element is shown on screen
+    _isCurrentlyShown: true,
+  });
 
   return (
     <MediaControllerProvider element={mediaElement} opts={controls ?? {}}>

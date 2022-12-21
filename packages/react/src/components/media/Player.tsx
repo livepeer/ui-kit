@@ -9,6 +9,7 @@ import { ControlsOptions } from 'livepeer/media/browser';
 import * as React from 'react';
 
 import { MediaControllerProvider } from '../../context';
+import { useIsElementShown } from '../useIsElementShown';
 
 import {
   Container,
@@ -36,6 +37,8 @@ type PlayerProps = CorePlayerProps<HTMLMediaElement, PosterSource> & {
 export type { PlayerObjectFit, PlayerProps };
 
 export const PlayerInternal = (props: PlayerProps) => {
+  const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
+
   const {
     mediaElement,
     playerProps,
@@ -51,7 +54,15 @@ export const PlayerInternal = (props: PlayerProps) => {
       showTitle,
       aspectRatio,
     },
-  } = usePlayer<HTMLMediaElement, PosterSource>(props);
+  } = usePlayer<HTMLMediaElement, PosterSource>(props, {
+    _isCurrentlyShown: isCurrentlyShown,
+  });
+
+  const _isCurrentlyShown = useIsElementShown(mediaElement);
+
+  React.useEffect(() => {
+    setIsCurrentlyShown(_isCurrentlyShown);
+  }, [_isCurrentlyShown]);
 
   return (
     <MediaControllerProvider element={mediaElement} opts={controls ?? {}}>

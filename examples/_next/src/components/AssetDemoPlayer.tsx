@@ -12,6 +12,8 @@ export const AssetDemoPlayer = () => {
 
   return (
     <>
+      Added scrolling to test priority...
+      <div style={{ height: 2000 }} />
       <Player
         src={playbackId}
         // src={'/audio-example.mp3'}
@@ -19,6 +21,7 @@ export const AssetDemoPlayer = () => {
           fallback: true,
           ipfsGateway: 'https://lens.infura-ipfs.io/',
         }}
+        // priority
         loop
         // autoPlay
         showPipButton
