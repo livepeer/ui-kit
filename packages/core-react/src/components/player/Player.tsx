@@ -145,8 +145,6 @@ export const usePlayer = <TElement, TPoster>(
     [priority, _isCurrentlyShown],
   );
 
-  console.log({ sourceShouldBeLoaded, src });
-
   const hidePosterOnPlayed = React.useMemo(
     () =>
       Array.isArray(source)
