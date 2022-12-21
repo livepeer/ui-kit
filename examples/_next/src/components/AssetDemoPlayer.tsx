@@ -31,13 +31,20 @@ export const AssetDemoPlayer = () => {
           fonts: {
             display: 'Inter',
           },
-          radii: { containerBorderRadius: '30px' },
-          space: {
-            controlsTopMarginX: '20px',
-            controlsTopMarginY: '15px',
-            controlsBottomMarginX: '15px',
-            controlsBottomMarginY: '10px',
+          colors: {
+            accent: '#72DDF7',
+            progressLeft: '#F7AEF8',
+            progressMiddle: '#F7AEF8',
+            progressRight: '#F7AEF8',
+            progressThumb: '#F4F4ED',
           },
+          // radii: { containerBorderRadius: '30px' },
+          // space: {
+          //   controlsTopMarginX: '20px',
+          //   controlsTopMarginY: '15px',
+          //   controlsBottomMarginX: '15px',
+          //   controlsBottomMarginY: '10px',
+          // },
         }}
       />
     </>

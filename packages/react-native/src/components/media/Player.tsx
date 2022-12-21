@@ -19,13 +19,15 @@ import { Title } from './controls/Title';
 import { Volume } from './controls/Volume';
 
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { VideoCustomizationProps } from './players/VideoPlayer';
 import { MediaElement } from './types';
 
 export type { PlayerObjectFit };
 
 export type PosterSource = ImageProps['source'];
 
-export type PlayerProps = CorePlayerProps<MediaElement, PosterSource>;
+export type PlayerProps = CorePlayerProps<MediaElement, PosterSource> &
+  VideoCustomizationProps;
 
 export const PlayerInternal = (props: PlayerProps) => {
   const {
@@ -52,11 +54,16 @@ export const PlayerInternal = (props: PlayerProps) => {
             {...playerProps}
             src={source}
             onMetricsError={onMetricsError}
+            audioMode={props.audioMode}
           />
         ) : source?.[0]?.type === 'audio' ? (
           <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
         ) : (
-          <VideoPlayer {...playerProps} src={source as VideoSrc[] | null} />
+          <VideoPlayer
+            {...playerProps}
+            src={source as VideoSrc[] | null}
+            audioMode={props.audioMode}
+          />
         )}
 
         {React.isValidElement(children) ? (
