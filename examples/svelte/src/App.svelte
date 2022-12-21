@@ -1,11 +1,11 @@
 <script>
-  import svelteLogo from './assets/svelte.svg'
-  import Video from './lib/Video.svelte'
+  import svelteLogo from './assets/svelte.svg';
+  import Video from './lib/Video.svelte';
 </script>
 
 <main>
   <div>
-    <a href="https://svelte.dev" target="_blank"> 
+    <a href="https://svelte.dev" target="_blank">
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a>
   </div>
@@ -16,7 +16,8 @@
   </div>
 
   <p>
-    Check out <a href="https://livepeerjs.org" target="_blank">livepeer.js</a> to learn more!
+    Check out <a href="https://docs.livepeer.org" target="_blank">livepeer.js</a
+    > to learn more!
   </p>
 </main>
 

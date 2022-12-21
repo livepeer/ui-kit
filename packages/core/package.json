@@ -8,7 +8,7 @@
     "url": "https://github.com/livepeer/livepeer.js.git",
     "directory": "packages/core"
   },
-  "homepage": "https://livepeerjs.org",
+  "homepage": "https://docs.livepeer.org",
   "main": "dist/livepeer-core.cjs.js",
   "module": "dist/livepeer-core.esm.js",
   "types": "dist/livepeer-core.cjs.d.ts",
