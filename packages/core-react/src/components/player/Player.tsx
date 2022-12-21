@@ -58,7 +58,7 @@ export type PlayerProps<TElement, TPoster> = {
    * When true, the media will be considered high priority and preload. Lazy loading is automatically disabled for media using `priority`.
    * You should use the priority property on any media detected as the Largest Contentful Paint (LCP) element. It may be appropriate to have multiple, as different content may be the LCP element for different viewport sizes.
    *
-   * Should only be used when the image is visible above the fold. Defaults to false.
+   * Should only be used when the media is visible above the fold. Defaults to false.
    */
   priority?: boolean;
 
