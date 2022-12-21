@@ -1,7 +1,6 @@
 import { AudioSrc, Src, VideoSrc, getMediaSourceType } from '@livepeer/core';
 import { CreateAssetUrlProgress } from '@livepeer/core/types';
 import { parseArweaveTxId, parseCid } from '@livepeer/core/utils';
-
 import * as React from 'react';
 
 import { PlayerProps } from './Player';
@@ -55,6 +54,13 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     autoUrlUpload,
     onAssetStatusChange,
   });
+
+  const [isStreamOffline, setIsStreamOffline] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const value = playbackInfo?.type === 'live' && !playbackInfo?.meta?.live;
+    setIsStreamOffline(value);
+  }, [playbackInfo]);
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
@@ -162,5 +168,9 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     return sourceMimeTyped;
   }, [sourceMimeTyped, dStoragePlaybackUrl]);
 
-  return { source: sourceMimeTypedWithFallback, uploadStatus } as const;
+  return {
+    source: sourceMimeTypedWithFallback,
+    uploadStatus,
+    isStreamOffline,
+  } as const;
 };

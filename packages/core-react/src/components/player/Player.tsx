@@ -4,6 +4,8 @@ import { isNumber } from '@livepeer/core/utils';
 
 import * as React from 'react';
 
+import { PlaybackDisplayErrorType } from './PlaybackDisplayErrorType';
+
 import { useSourceMimeTyped } from './useSourceMimeTyped';
 
 export type PlayerObjectFit = 'cover' | 'contain';
@@ -77,6 +79,9 @@ export type PlayerProps<TElement, TPoster> = {
   /** Callback called when the metrics plugin cannot be initialized properly */
   onMetricsError?: (error: Error) => void;
 
+  /** Callback called when the access control errors */
+  onAccessControlError?: (error: Error) => void;
+
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
 } & (
@@ -100,6 +105,7 @@ export const usePlayer = <TElement, TPoster>({
   loop,
 
   onMetricsError,
+  onAccessControlError,
   jwt,
 
   refetchPlaybackInfoInterval = 5000,
@@ -114,13 +120,36 @@ export const usePlayer = <TElement, TPoster>({
 }: PlayerProps<TElement, TPoster>) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
-  const { source, uploadStatus } = useSourceMimeTyped({
+  const { source, uploadStatus, isStreamOffline } = useSourceMimeTyped({
     src,
     playbackId,
     jwt,
     refetchPlaybackInfoInterval,
     autoUrlUpload,
   });
+
+  const [accessControlError, setAccessControlError] = React.useState<Error>();
+
+  const accessControlErrorCallback = React.useCallback(
+    (error: Error) => {
+      setAccessControlError(error);
+      onAccessControlError?.(error);
+    },
+    [onAccessControlError],
+  );
+
+  const [playbackDisplayErrorType, setPlaybackDisplayErrorType] =
+    React.useState<PlaybackDisplayErrorType>();
+
+  React.useEffect(() => {
+    if (accessControlError) {
+      setPlaybackDisplayErrorType(PlaybackDisplayErrorType.PrivateStream);
+    } else if (isStreamOffline) {
+      setPlaybackDisplayErrorType(PlaybackDisplayErrorType.OfflineStream);
+    } else {
+      setPlaybackDisplayErrorType(undefined);
+    }
+  }, [accessControlError, isStreamOffline]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -173,6 +202,7 @@ export const usePlayer = <TElement, TPoster>({
       showLoadingSpinner,
       loadingText,
       showUploadingIndicator,
+      playbackDisplayErrorType,
     },
     props: {
       autoPlay,
@@ -185,6 +215,7 @@ export const usePlayer = <TElement, TPoster>({
       poster,
       loop,
       onMetricsError,
+      onAccessControlError: accessControlErrorCallback,
       jwt,
       refetchPlaybackInfoInterval,
       autoUrlUpload,
