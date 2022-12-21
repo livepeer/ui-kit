@@ -8,6 +8,11 @@ import { useSourceMimeTyped } from './useSourceMimeTyped';
 
 export type PlayerObjectFit = 'cover' | 'contain';
 
+export type InternalPlayerProps = {
+  /** If the element is currently shown on the DOM/screen. Should not be exposed externally to users. */
+  _isCurrentlyShown: boolean;
+};
+
 export type PlayerProps<TElement, TPoster> = {
   /** The source(s) of the media (**required** if `playbackId` is not provided) */
   src?: string | string[] | null | undefined;
@@ -49,6 +54,14 @@ export type PlayerProps<TElement, TPoster> = {
   /** Mute media by default */
   muted?: boolean;
 
+  /**
+   * When true, the media will be considered high priority and preload. Lazy loading is automatically disabled for media using `priority`.
+   * You should use the priority property on any media detected as the Largest Contentful Paint (LCP) element. It may be appropriate to have multiple, as different content may be the LCP element for different viewport sizes.
+   *
+   * Should only be used when the media is visible above the fold. Defaults to false.
+   */
+  priority?: boolean;
+
   /** Theme configuration for the player */
   theme?: ThemeConfig;
 
@@ -86,32 +99,36 @@ export type PlayerProps<TElement, TPoster> = {
   | { playbackId: string | null | undefined }
 );
 
-export const usePlayer = <TElement, TPoster>({
-  autoPlay,
-  children,
-  controls,
-  muted,
-  playbackId,
+export const usePlayer = <TElement, TPoster>(
+  {
+    autoPlay,
+    children,
+    controls,
+    muted,
+    playbackId,
 
-  src,
-  theme,
-  title,
-  poster,
-  loop,
+    src,
+    theme,
+    title,
+    poster,
+    loop,
 
-  onMetricsError,
-  jwt,
+    onMetricsError,
+    jwt,
 
-  refetchPlaybackInfoInterval = 5000,
-  autoUrlUpload = true,
+    refetchPlaybackInfoInterval = 5000,
+    autoUrlUpload = true,
 
-  showLoadingSpinner = true,
-  showUploadingIndicator = true,
-  showTitle = true,
-  aspectRatio = '16to9',
-  objectFit = 'contain',
-  mediaElementRef,
-}: PlayerProps<TElement, TPoster>) => {
+    showLoadingSpinner = true,
+    showUploadingIndicator = true,
+    showTitle = true,
+    priority,
+    aspectRatio = '16to9',
+    objectFit = 'contain',
+    mediaElementRef,
+  }: PlayerProps<TElement, TPoster>,
+  { _isCurrentlyShown }: InternalPlayerProps,
+) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
   const { source, uploadStatus } = useSourceMimeTyped({
@@ -121,6 +138,12 @@ export const usePlayer = <TElement, TPoster>({
     refetchPlaybackInfoInterval,
     autoUrlUpload,
   });
+
+  // if the source is not priority or currently shown on the screen, then do not load
+  const sourceShouldBeLoaded = React.useMemo(
+    () => priority || _isCurrentlyShown,
+    [priority, _isCurrentlyShown],
+  );
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -157,7 +180,7 @@ export const usePlayer = <TElement, TPoster>({
 
   return {
     mediaElement,
-    source,
+    source: sourceShouldBeLoaded ? source : null,
     uploadStatus,
     playerProps: {
       ref: playerRef,

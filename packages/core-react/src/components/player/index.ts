@@ -17,7 +17,11 @@ export {
   type VolumeProps,
 } from './controls';
 export { usePlayer } from './Player';
-export type { PlayerObjectFit, PlayerProps } from './Player';
+export type {
+  InternalPlayerProps,
+  PlayerObjectFit,
+  PlayerProps,
+} from './Player';
 export type {
   AudioPlayerProps,
   HlsPlayerProps,

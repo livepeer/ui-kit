@@ -131,12 +131,10 @@ export const useBaseSlider = (props: BaseSliderCoreProps) => {
       css: {
         ...thumbCss,
         zIndex: 1,
-        position: 'absolute',
-        left: value * (sliderWidth * 0.9),
       },
       size: isActiveOrDragging ? 'active' : 'default',
     }),
-    [thumbCss, value, sliderWidth, isActiveOrDragging],
+    [thumbCss, isActiveOrDragging],
   );
 
   const handle = useMemoizedIcon(
