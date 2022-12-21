@@ -8,7 +8,7 @@
     "url": "https://github.com/livepeer/livepeer.js.git",
     "directory": "packages/expo-broadcast"
   },
-  "homepage": "https://livepeerjs.org",
+  "homepage": "https://docs.livepeer.org",
   "main": "dist/expo-broadcast.cjs.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

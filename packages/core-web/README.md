@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The `livepeer` package contains vanilla JS data fetching and Livepeer provider/protocol interactions for the livepeer ecosystem. For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
+The `livepeer` package contains vanilla JS data fetching and Livepeer provider/protocol interactions for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
 
 ## Installation
 
