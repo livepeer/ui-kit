@@ -70,7 +70,7 @@ const theme: Required<{
     timeMarginX: '8px',
   },
   radii: {
-    containerBorderRadius: '5px',
+    containerBorderRadius: '0px',
     slider: '3px',
   },
 };
