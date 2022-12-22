@@ -130,6 +130,7 @@ export const usePlayer = <TElement, TPoster>(
   { _isCurrentlyShown }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
 
   const { source, uploadStatus } = useSourceMimeTyped({
     src,
@@ -139,11 +140,12 @@ export const usePlayer = <TElement, TPoster>(
     autoUrlUpload,
   });
 
-  // if the source is not priority or currently shown on the screen, then do not load
-  const sourceShouldBeLoaded = React.useMemo(
-    () => priority || _isCurrentlyShown,
-    [priority, _isCurrentlyShown],
-  );
+  // if the source is priority or currently shown on the screen, then load
+  React.useEffect(() => {
+    if (!loaded && (priority || _isCurrentlyShown)) {
+      setLoaded(true);
+    }
+  }, [priority, _isCurrentlyShown, loaded]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -180,7 +182,7 @@ export const usePlayer = <TElement, TPoster>(
 
   return {
     mediaElement,
-    source: sourceShouldBeLoaded ? source : null,
+    source: loaded ? source : null,
     uploadStatus,
     playerProps: {
       ref: playerRef,
