@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.0.0-next.16
+
+### Patch Changes
+
+- [`85dc1f7`](https://github.com/livepeer/livepeer.js/commit/85dc1f7faa35ad36c7209b17a081b62ceefba798) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed `priority` boolean to not reset when video is not shown on screen.
+
+- Updated dependencies [[`85dc1f7`](https://github.com/livepeer/livepeer.js/commit/85dc1f7faa35ad36c7209b17a081b62ceefba798)]:
+  - @livepeer/core-react@1.0.0-next.16
+
 ## 1.0.0-next.15
 
 ### Patch Changes
