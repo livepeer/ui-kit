@@ -65,9 +65,17 @@ export const PlayerInternal = (props: PlayerProps) => {
             onAccessControlError={onAccessControlError}
           />
         ) : source?.[0]?.type === 'audio' ? (
-          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
+          <AudioPlayer
+            {...playerProps}
+            src={source as AudioSrc[]}
+            // onAccessControlError={onAccessControlError} // TODO: Add access control error handling for audio
+          />
         ) : (
-          <VideoPlayer {...playerProps} src={source as VideoSrc[] | null} />
+          <VideoPlayer
+            {...playerProps}
+            src={source as VideoSrc[] | null}
+            onAccessControlError={onAccessControlError}
+          />
         )}
 
         {React.isValidElement(children) ? (
