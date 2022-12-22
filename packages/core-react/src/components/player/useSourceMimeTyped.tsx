@@ -55,12 +55,10 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     onAssetStatusChange,
   });
 
-  const [isStreamOffline, setIsStreamOffline] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    const value = playbackInfo?.type === 'live' && !playbackInfo?.meta?.live;
-    setIsStreamOffline(value);
-  }, [playbackInfo]);
+  const isStreamOffline = React.useMemo(
+    () => playbackInfo?.type === 'live' && !playbackInfo?.meta?.live,
+    [playbackInfo],
+  );
 
   const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
 
