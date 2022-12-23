@@ -23,8 +23,11 @@ import {
 
 const theme: ThemeConfig = {
   colors: {
-    accent: 'blue',
-    progressLeft: 'red',
+    accent: '#72DDF7',
+    progressLeft: '#F7AEF8',
+    progressMiddle: '#F7AEF8',
+    progressRight: '#F7AEF8',
+    progressThumb: '#F4F4ED',
   },
 };
 

@@ -16,7 +16,7 @@ const commonOptions = {
     'LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZzlkeWpDWVI4RWl0UzBqUUoKQkNxbUJqMXdxVFhWeVZ6L3NCQmQ3WkxVcUIyaFJBTkNBQVRKQVpKVjN3Z3F5RkMwNk1qajNIc1NVbks0Z0RyZQpFMjFNNU8xWFRjNFM0dHdJbkwxV29zRi9JLzAzblhQQU5lVEV3dmk0dWpnL0FHNzg5VEk2UFJPMAotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg==',
   publicKey:
     'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFeVFHU1ZkOElLc2hRdE9qSTQ5eDdFbEp5dUlBNgozaE50VE9UdFYwM09FdUxjQ0p5OVZxTEJmeVA5TjUxendEWGt4TUw0dUxvNFB3QnUvUFV5T2owVHRBPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==',
-  issuer: 'https://livepeerjs.org',
+  issuer: 'https://docs.livepeer.org',
 } as const;
 
 const verifyJwt = async (jws: string) => {
@@ -46,7 +46,7 @@ describe('signAccessJwt', () => {
     `);
     expect(decoded.payload.action).toEqual('pull');
     expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
-    expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
+    expect(decoded.payload.iss).toEqual('https://docs.livepeer.org');
     expect(decoded.payload.sub).toEqual('abcd1234');
     expect(decoded.payload.video).toEqual('none');
   });
@@ -83,7 +83,7 @@ describe('signAccessJwt', () => {
     `);
     expect(decoded.payload.action).toEqual('pull');
     expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
-    expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
+    expect(decoded.payload.iss).toEqual('https://docs.livepeer.org');
     expect(decoded.payload.sub).toEqual('d7aer9qx8act4lfd');
     expect(decoded.payload.video).toEqual('none');
   });
@@ -106,7 +106,7 @@ describe('signAccessJwt', () => {
     `);
     expect(decoded.payload.action).toEqual('pull');
     expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
-    expect(decoded.payload.iss).toEqual('https://livepeerjs.org');
+    expect(decoded.payload.iss).toEqual('https://docs.livepeer.org');
     expect(decoded.payload.sub).toEqual('d7aer9qx8act4lfd');
     expect(decoded.payload.video).toEqual('none');
   });

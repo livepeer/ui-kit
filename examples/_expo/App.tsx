@@ -11,9 +11,11 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 
 const theme: ThemeConfig = {
   colors: {
-    accent: 'blue',
-    progressLeft: 'red',
-    progressThumb: 'green',
+    accent: '#72DDF7',
+    progressLeft: '#F7AEF8',
+    progressMiddle: '#F7AEF8',
+    progressRight: '#F7AEF8',
+    progressThumb: '#F4F4ED',
   },
 };
 

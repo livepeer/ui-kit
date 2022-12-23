@@ -30,7 +30,7 @@
 
 ## Documentation
 
-For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
+For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
 
 ## Community
 

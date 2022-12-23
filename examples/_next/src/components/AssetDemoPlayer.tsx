@@ -14,6 +14,8 @@ export const AssetDemoPlayer = () => {
 
   return (
     <>
+      Added scrolling to test priority...
+      <div style={{ height: 2000 }} />
       <Player
         playbackId={playbackId}
         // src={playbackId}
@@ -22,6 +24,7 @@ export const AssetDemoPlayer = () => {
           fallback: true,
           ipfsGateway: 'https://lens.infura-ipfs.io/',
         }}
+        // priority
         loop
         autoPlay
         showPipButton
@@ -34,13 +37,20 @@ export const AssetDemoPlayer = () => {
           fonts: {
             display: 'Inter',
           },
-          radii: { containerBorderRadius: '30px' },
-          space: {
-            controlsTopMarginX: '20px',
-            controlsTopMarginY: '15px',
-            controlsBottomMarginX: '15px',
-            controlsBottomMarginY: '10px',
+          colors: {
+            accent: '#72DDF7',
+            progressLeft: '#F7AEF8',
+            progressMiddle: '#F7AEF8',
+            progressRight: '#F7AEF8',
+            progressThumb: '#F4F4ED',
           },
+          // radii: { containerBorderRadius: '30px' },
+          // space: {
+          //   controlsTopMarginX: '20px',
+          //   controlsTopMarginY: '15px',
+          //   controlsBottomMarginX: '15px',
+          //   controlsBottomMarginY: '10px',
+          // },
         }}
       />
     </>

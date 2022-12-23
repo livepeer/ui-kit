@@ -48,7 +48,7 @@ const handler = async (
       const token = await signAccessJwt({
         privateKey: accessControlPrivateKey,
         publicKey: accessControlPublicKey,
-        issuer: 'https://livepeerjs.org',
+        issuer: 'https://docs.livepeer.org',
         // playback ID to include in the JWT
         playbackId,
         // expire the JWT in 1 hour

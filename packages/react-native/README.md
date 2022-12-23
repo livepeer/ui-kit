@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The `@livepeer/react-native` package contains React Native-specific hooks/components for the livepeer ecosystem. For full documentation and examples, visit [livepeerjs.org](https://livepeerjs.org).
+The `@livepeer/react-native` package contains React Native-specific hooks/components for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
 
 ## Installation
 

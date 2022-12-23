@@ -8,6 +8,7 @@ import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/c
 import {
   AVPlaybackStatus,
   Audio,
+  AudioMode,
   InterruptionModeAndroid,
   InterruptionModeIOS,
   ResizeMode,
@@ -29,18 +30,29 @@ import { canPlayMediaNatively } from './canPlayMediaNatively';
 
 const defaultProgressUpdateInterval = 20;
 
-export type VideoPlayerProps = VideoPlayerCoreProps<MediaElement, PosterSource>;
+export type VideoPlayerProps = VideoPlayerCoreProps<
+  MediaElement,
+  PosterSource
+> &
+  VideoCustomizationProps;
+
+export type VideoCustomizationProps = {
+  audioMode?: Partial<AudioMode>;
+};
 
 export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
-  ({ src, autoPlay, loop, muted, objectFit, options, poster }, ref) => {
+  (
+    { src, autoPlay, loop, muted, objectFit, options, poster, audioMode },
+    ref,
+  ) => {
     // typecast the context so that we can have video/audio-specific controller states
     const store = React.useContext(MediaControllerContext) as UseBoundStore<
       MediaControllerStore<MediaElement>
     >;
 
-    // TODO make these configurable
     React.useEffect(() => {
       Audio.setAudioModeAsync({
+        ...audioMode,
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
         interruptionModeIOS: InterruptionModeIOS.DuckOthers,
@@ -49,7 +61,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         shouldDuckAndroid: true,
         playThroughEarpieceAndroid: true,
       });
-    }, []);
+    }, [audioMode]);
 
     const { hasPlayed, playing } = store();
 
@@ -86,7 +98,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
             hasPlayed: hasPlayed || status.positionMillis > 0,
             volume: status.volume,
             canPlay: true,
-            playing: status.shouldPlay,
+            playing: status.isPlaying,
             progress: status.positionMillis / 1000,
             duration: status.durationMillis
               ? status.durationMillis / 1000

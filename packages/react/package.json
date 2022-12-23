@@ -2,13 +2,13 @@
   "name": "@livepeer/react",
   "description": "React components & hooks for web apps built with Livepeer.",
   "license": "MIT",
-  "version": "2.0.0-next.15",
+  "version": "2.0.0-next.17",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
     "directory": "packages/react"
   },
-  "homepage": "https://livepeerjs.org",
+  "homepage": "https://docs.livepeer.org",
   "main": "dist/livepeer-react.cjs.js",
   "module": "dist/livepeer-react.esm.js",
   "types": "dist/livepeer-react.cjs.d.ts",
@@ -60,7 +60,7 @@
     }
   },
   "dependencies": {
-    "@livepeer/core-react": "^1.0.0-next.14",
+    "@livepeer/core-react": "^1.0.0-next.16",
     "@stitches/react": "^1.2.8",
     "core-js": "^3.26.1",
     "livepeer": "2.0.0-next.7",
