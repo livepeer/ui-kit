@@ -62,6 +62,7 @@ export {
   useCreateAsset,
   useCreateStream,
   useLivepeerProvider,
+  usePlaybackInfo,
   useStream,
   useStreamSession,
   useStreamSessions,
