@@ -44,7 +44,11 @@ const theme: Required<{
     titleFontSizeMd: '1rem',
     titleFontSizeSm: '0.9rem',
     errorTitleFontSize: '2.5rem',
+    errorTitleFontSizeMd: '2.0rem',
+    errorTitleFontSizeSm: '1.3rem',
     errorTextFontSize: '0.95rem',
+    errorTextFontSizeMd: '0.85rem',
+    errorTextFontSizeSm: '0.75rem',
   },
   fontWeights: {
     titleFontWeight: '400',

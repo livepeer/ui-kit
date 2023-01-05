@@ -5,25 +5,40 @@ const errorBackground = css('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  maxWidth: '340px',
+  maxWidth: '220px',
+
+  '@md': {
+    maxWidth: '340px',
+  },
 });
 
 const errorTitle = css(text, {
   fontWeight: '$errorTitleFontWeight',
-  fontSize: '$errorTitleFontSize',
-  margin: '0.5rem 0 0.2rem 0',
+  margin: '0.5rem 0 0.5rem 0',
+  fontSize: '$errorTitleFontSizeSm',
 
   '@md': {
+    fontSize: '$errorTitleFontSizeMd',
     margin: '2rem 0 0.5rem 0',
+  },
+  '@lg': {
+    fontSize: '$errorTitleFontSize',
   },
 });
 
 const errorText = css(text, {
   fontWeight: '$titleFontWeight',
-  fontSize: '$errorTextFontSize',
   color: '$errorText',
   textAlign: 'center',
   width: '90%',
+  fontSize: '$errorTextFontSizeSm',
+
+  '@md': {
+    fontSize: '$errorTextFontSizeMd',
+  },
+  '@lg': {
+    fontSize: '$errorTextFontSize',
+  },
 });
 
 export const error = {
