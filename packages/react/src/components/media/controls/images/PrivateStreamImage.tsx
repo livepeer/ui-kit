@@ -1,11 +1,5 @@
 const PrivateStreamImage = () => (
-  <svg
-    width="324"
-    height="142"
-    viewBox="0 0 324 142"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg viewBox="0 0 324 142" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle
       cx="162"
       cy="76"

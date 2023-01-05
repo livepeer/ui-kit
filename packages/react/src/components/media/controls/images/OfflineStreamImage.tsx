@@ -1,11 +1,5 @@
 const OfflineStreamImage = () => (
-  <svg
-    width="324"
-    height="140"
-    viewBox="0 0 324 140"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg viewBox="0 0 324 140" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

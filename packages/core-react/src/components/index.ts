@@ -1,4 +1,5 @@
 export {
+  PlaybackDisplayErrorType,
   useBaseSlider,
   useControlsContainer,
   useFullscreenButton,
@@ -22,5 +23,4 @@ export {
   type TitleProps,
   type VideoPlayerProps,
   type VolumeProps,
-  PlaybackDisplayErrorType,
 } from './player';

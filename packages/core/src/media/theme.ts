@@ -65,7 +65,12 @@ export type ThemeConfig = Partial<{
     titleFontSizeSm?: string | number | undefined;
 
     errorTitleFontSize?: string | number | undefined;
+    errorTitleFontSizeMd?: string | number | undefined;
+    errorTitleFontSizeSm?: string | number | undefined;
+
     errorTextFontSize?: string | number | undefined;
+    errorTextFontSizeMd?: string | number | undefined;
+    errorTextFontSizeSm?: string | number | undefined;
   };
   fontWeights: {
     titleFontWeight?: FontWeights | undefined;
