@@ -73,7 +73,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
 
     React.useEffect(() => {
       store.setState({ muted: Boolean(muted) });
-    }, [muted, store]);
+    }, [muted]);
 
     React.useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
@@ -96,7 +96,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         if (status?.isLoaded) {
           store.setState(({ buffered, duration, hasPlayed }) => ({
             hasPlayed: hasPlayed || status.positionMillis > 0,
-            volume: status.volume,
+            volume: 1,
             canPlay: true,
             playing: status.isPlaying,
             progress: status.positionMillis / 1000,
