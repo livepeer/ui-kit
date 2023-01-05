@@ -16,4 +16,4 @@ export type { MediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';
 export { getMediaSourceType } from './src';
 export type { AudioSrc, HlsSrc, Src, VideoSrc } from './src';
 export { aspectRatios } from './theme';
-export type { AspectRatio, ThemeConfig } from './theme';
+export type { AspectRatio, FontWeights, ThemeConfig } from './theme';

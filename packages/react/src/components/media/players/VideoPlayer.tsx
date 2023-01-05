@@ -6,6 +6,7 @@ import * as React from 'react';
 
 import { useMediaController } from '../../../context';
 import { PosterSource } from '../Player';
+import { isAccessControlError } from './utils';
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -18,42 +19,92 @@ export type { VideoPlayerProps };
 export const VideoPlayer = React.forwardRef<
   HTMLVideoElement,
   VideoPlayerProps<HTMLVideoElement, PosterSource>
->(({ src, autoPlay, title, loop, muted, poster, objectFit }, ref) => {
-  const { fullscreen } = useMediaController(mediaControllerSelector);
+>(
+  (
+    {
+      src,
+      autoPlay,
+      title,
+      loop,
+      muted,
+      poster,
+      objectFit,
+      onAccessControlError,
+    },
+    ref,
+  ) => {
+    const { fullscreen } = useMediaController(mediaControllerSelector);
 
-  const [filteredSources, setFilteredSources] = React.useState<
-    VideoSrc[] | undefined
-  >();
+    const [filteredSources, setFilteredSources] = React.useState<
+      VideoSrc[] | undefined
+    >();
 
-  React.useEffect(() => {
-    setFilteredSources(src?.filter((s) => s?.mime && canPlayMediaNatively(s)));
-  }, [src]);
+    React.useEffect(() => {
+      setFilteredSources(
+        src?.filter((s) => s?.mime && canPlayMediaNatively(s)),
+      );
+    }, [src]);
 
-  return (
-    <video
-      className={styling.media.video({
-        size: fullscreen ? 'fullscreen' : objectFit,
-      })}
-      loop={loop}
-      aria-label={title ?? 'Video player'}
-      role="video"
-      autoPlay={autoPlay}
-      width="100%"
-      height="100%"
-      ref={ref}
-      webkit-playsinline="true"
-      playsInline
-      muted={muted}
-      poster={typeof poster === 'string' ? poster : undefined}
-    >
-      {filteredSources?.map((source) => (
-        <source key={source.src} src={source.src} type={source.mime!} />
-      ))}
-      {
-        "Your browser doesn't support the HTML5 <code>video</code> tag, or the video format."
-      }
-    </video>
-  );
-});
+    const handleError = React.useCallback(
+      (error: Error) => {
+        if (isAccessControlError(error)) {
+          onAccessControlError?.(error);
+        }
+        console.warn(error.message);
+      },
+      [onAccessControlError],
+    );
+
+    const onVideoError = React.useCallback(
+      (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+        // TODO: handleError(...)
+        console.log('video error', event);
+        handleError(new Error('Generic video error'));
+      },
+      [handleError],
+    );
+
+    const onSourceError = React.useCallback(
+      (event: React.SyntheticEvent<HTMLSourceElement, Event>) => {
+        // TODO: handleError(...)
+        console.log('source error', event);
+        handleError(new Error('Generic source error'));
+      },
+      [handleError],
+    );
+
+    return (
+      <video
+        className={styling.media.video({
+          size: fullscreen ? 'fullscreen' : objectFit,
+        })}
+        loop={loop}
+        aria-label={title ?? 'Video player'}
+        role="video"
+        autoPlay={autoPlay}
+        width="100%"
+        height="100%"
+        ref={ref}
+        webkit-playsinline="true"
+        playsInline
+        muted={muted}
+        poster={typeof poster === 'string' ? poster : undefined}
+        onError={onVideoError}
+      >
+        {filteredSources?.map((source) => (
+          <source
+            key={source.src}
+            src={source.src}
+            type={source.mime!}
+            onError={onSourceError}
+          />
+        ))}
+        {
+          "Your browser doesn't support the HTML5 <code>video</code> tag, or the video format."
+        }
+      </video>
+    );
+  },
+);
 
 VideoPlayer.displayName = 'VideoPlayer';
