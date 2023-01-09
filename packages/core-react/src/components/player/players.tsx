@@ -14,7 +14,6 @@ export type HlsPlayerProps<TElement, TPoster> = {
   jwt?: string;
   options?: ControlsOptions;
   onMetricsError?: (error: Error) => void;
-  onAccessControlError?: (error: Error) => void;
 };
 
 export type AudioPlayerProps<TElement, TPoster> = Omit<

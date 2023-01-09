@@ -16,7 +16,6 @@ export {
   type TitleProps,
   type VolumeProps,
 } from './controls';
-export { PlaybackDisplayErrorType } from './PlaybackDisplayErrorType';
 export { usePlayer } from './Player';
 export type {
   InternalPlayerProps,

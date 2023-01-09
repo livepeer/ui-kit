@@ -7,18 +7,6 @@ export const aspectRatios = [
 ] as const;
 
 export type AspectRatio = typeof aspectRatios[number]['key'];
-export type FontWeights =
-  | 'normal'
-  | 'bold'
-  | '100'
-  | '200'
-  | '300'
-  | '400'
-  | '500'
-  | '600'
-  | '700'
-  | '800'
-  | '900';
 
 export type ThemeConfig = Partial<{
   borderStyles: {
@@ -49,8 +37,6 @@ export type ThemeConfig = Partial<{
     volumeMiddle?: string | undefined;
     volumeRight?: string | undefined;
     volumeThumb?: string | undefined;
-
-    errorText?: string | undefined;
   };
   fonts: {
     display?: string | undefined;
@@ -63,18 +49,21 @@ export type ThemeConfig = Partial<{
     titleFontSize?: string | number | undefined;
     titleFontSizeMd?: string | number | undefined;
     titleFontSizeSm?: string | number | undefined;
-
-    errorTitleFontSize?: string | number | undefined;
-    errorTitleFontSizeMd?: string | number | undefined;
-    errorTitleFontSizeSm?: string | number | undefined;
-
-    errorTextFontSize?: string | number | undefined;
-    errorTextFontSizeMd?: string | number | undefined;
-    errorTextFontSizeSm?: string | number | undefined;
   };
   fontWeights: {
-    titleFontWeight?: FontWeights | undefined;
-    errorTitleFontWeight?: FontWeights | undefined;
+    titleFontWeight?:
+      | 'normal'
+      | 'bold'
+      | '100'
+      | '200'
+      | '300'
+      | '400'
+      | '500'
+      | '600'
+      | '700'
+      | '800'
+      | '900'
+      | undefined;
   };
   sizes: {
     iconButtonSize?: string | number | undefined;

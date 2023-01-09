@@ -1,6 +1,5 @@
 import {
   ControlsContainerProps,
-  PlaybackDisplayErrorType,
   useControlsContainer,
 } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
@@ -8,7 +7,6 @@ import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';
-import { OfflineStreamError, PrivateStreamError } from './PlaybackDisplayError';
 
 const mediaControllerSelector = ({
   hidden,
@@ -36,7 +34,6 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
-    playbackDisplayErrorType,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -47,17 +44,6 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     canPlay,
     buffered,
   });
-
-  const playbackDisplayErrorComponent = React.useMemo(() => {
-    switch (playbackDisplayErrorType) {
-      case PlaybackDisplayErrorType.OfflineStream:
-        return <OfflineStreamError />;
-      case PlaybackDisplayErrorType.PrivateStream:
-        return <PrivateStreamError />;
-      default:
-        return <></>;
-    }
-  }, [playbackDisplayErrorType]);
 
   return (
     <>
@@ -78,8 +64,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           onMouseUp={containerProps.onPress}
         />
       )}
-
-      {showLoadingSpinner && !isLoaded && !playbackDisplayErrorType && (
+      {showLoadingSpinner && !isLoaded && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
@@ -91,15 +76,6 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           )}
 
           <div className={styling.controlsContainer.loading()} />
-        </div>
-      )}
-
-      {playbackDisplayErrorType && (
-        <div
-          className={styling.controlsContainer.background()}
-          onMouseUp={containerProps.onPress}
-        >
-          {playbackDisplayErrorComponent}
         </div>
       )}
 
