@@ -1,6 +1,6 @@
 {
   "name": "expo-broadcast",
-  "version": "0.0.1-next.0",
+  "version": "0.0.1",
   "description": "Expo universal module for Video and Audio broadcasting",
   "license": "MIT",
   "repository": {
