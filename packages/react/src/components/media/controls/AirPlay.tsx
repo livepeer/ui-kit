@@ -48,7 +48,7 @@ export const AirPlayButton: React.FC<AirPlayButtonProps> = (props) => {
       await onClick?.(e);
       await requestAirPlay();
     },
-    [onClick],
+    [onClick, requestAirPlay],
   );
 
   const title = 'AirPlay';
