@@ -1,5 +1,16 @@
 # @livepeer/core-react
 
+## 1.1.0
+
+### Minor Changes
+
+- [#240](https://github.com/livepeer/livepeer.js/pull/240) [`c4cb597`](https://github.com/livepeer/livepeer.js/commit/c4cb59762a31c865bb8ada9a4176caa614f6be7a) Thanks [@clacladev](https://github.com/clacladev)! - **Fix:** added clearer Player error handling instead of an infinite loading spinner. The Player now shows error states for gated streams which do not have a proper JWT and streams which are currently offline.
+
+### Patch Changes
+
+- Updated dependencies [[`c4cb597`](https://github.com/livepeer/livepeer.js/commit/c4cb59762a31c865bb8ada9a4176caa614f6be7a)]:
+  - @livepeer/core@1.1.0
+
 ## 1.0.0
 
 ### Major Changes
