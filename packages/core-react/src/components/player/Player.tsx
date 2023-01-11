@@ -89,6 +89,9 @@ export type PlayerProps<TElement, TPoster> = {
   /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
   jwt?: string;
 
+  /** Callback called when the stream status changes (live or offline) */
+  onStreamStatusChange?: (isLive: boolean) => void;
+
   /** Callback called when the metrics plugin cannot be initialized properly */
   onMetricsError?: (error: Error) => void;
 
@@ -118,6 +121,7 @@ export const usePlayer = <TElement, TPoster>(
     poster,
     loop,
 
+    onStreamStatusChange,
     onMetricsError,
     onAccessControlError,
     jwt,
@@ -138,13 +142,23 @@ export const usePlayer = <TElement, TPoster>(
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
   const [loaded, setLoaded] = React.useState(false);
 
-  const { source, uploadStatus, isStreamOffline } = useSourceMimeTyped({
+  const { source, uploadStatus } = useSourceMimeTyped({
     src,
     playbackId,
     jwt,
     refetchPlaybackInfoInterval,
     autoUrlUpload,
   });
+
+  const [isStreamOffline, setIsStreamOffline] = React.useState(false);
+
+  const onStreamStatusChangeCallback = React.useCallback(
+    (isLive: boolean) => {
+      setIsStreamOffline(!isLive);
+      onStreamStatusChange?.(isLive);
+    },
+    [onStreamStatusChange],
+  );
 
   const [accessControlError, setAccessControlError] = React.useState<Error>();
 
@@ -160,10 +174,10 @@ export const usePlayer = <TElement, TPoster>(
     React.useState<PlaybackDisplayErrorType>();
 
   React.useEffect(() => {
-    if (accessControlError) {
-      setPlaybackDisplayErrorType(PlaybackDisplayErrorType.PrivateStream);
-    } else if (isStreamOffline) {
+    if (isStreamOffline) {
       setPlaybackDisplayErrorType(PlaybackDisplayErrorType.OfflineStream);
+    } else if (accessControlError) {
+      setPlaybackDisplayErrorType(PlaybackDisplayErrorType.PrivateStream);
     } else {
       setPlaybackDisplayErrorType(undefined);
     }
@@ -239,6 +253,7 @@ export const usePlayer = <TElement, TPoster>(
       title,
       poster,
       loop,
+      onStreamStatusChange: onStreamStatusChangeCallback,
       onMetricsError,
       onAccessControlError: accessControlErrorCallback,
       jwt,

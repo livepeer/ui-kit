@@ -16,7 +16,7 @@ import * as React from 'react';
 import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
-import { isAccessControlError } from './utils';
+import { isAccessControlError, isStreamOfflineError } from './utils';
 
 export type HlsPlayerProps = HlsPlayerCoreProps<
   HTMLVideoElement,
@@ -36,6 +36,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       muted,
       poster,
       objectFit,
+      onStreamStatusChange,
       onMetricsError,
       onAccessControlError,
     } = props;
@@ -69,18 +70,26 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
     React.useEffect(() => {
       const element = store.getState()._element;
       if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
+        const onLive = (fullscreen: boolean) => {
+          onStreamStatusChange?.(true);
+          store.getState().setLive(fullscreen);
+        };
+
         const onError = (error: HlsError) => {
           const cleanError = new Error(error.response?.data.toString());
-          if (isAccessControlError(cleanError)) {
+          if (isStreamOfflineError(cleanError)) {
+            onStreamStatusChange?.(false);
+          } else if (isAccessControlError(cleanError)) {
             onAccessControlError?.(cleanError);
           }
           console.warn(cleanError.message);
         };
+
         const { destroy } = createNewHls(
           src.src,
           element,
           {
-            onLive: store.getState().setLive,
+            onLive,
             onDuration: store.getState().onDurationChange,
             onCanPlay: store.getState().onCanPlay,
             onError,
@@ -102,6 +111,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       store,
       canUseHlsjs,
       canPlayAppleMpeg,
+      onStreamStatusChange,
       onAccessControlError,
     ]);
 

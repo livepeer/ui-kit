@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 
 // const playbackId = 'ipfs://bafybeifavmtea3u5ulvrkdzc2wnjwjl35jefqiyhgruxu2cjd4kumymqm4'; // ipfs asset
 // const playbackId = 'd29f52w8s55dw8gw'; // asset
-// const playbackId = '1dd6omrqq7htwgig'; // public stream
-const playbackId = '0b3a57ekt0n6ie08'; // gated stream
+const playbackId = '1dd6omrqq7htwgig'; // public stream
+// const playbackId = '0b3a57ekt0n6ie08'; // gated stream
 // const playbackId = '740c7a3g4ipyur5g'; // gated stream
 
 export const AssetDemoPlayer = () => {

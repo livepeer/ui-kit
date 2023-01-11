@@ -13,6 +13,7 @@ export type HlsPlayerProps<TElement, TPoster> = {
   poster?: PlayerProps<TElement, TPoster>['poster'];
   jwt?: string;
   options?: ControlsOptions;
+  onStreamStatusChange?: (isLive: boolean) => void;
   onMetricsError?: (error: Error) => void;
   onAccessControlError?: (error: Error) => void;
 };
