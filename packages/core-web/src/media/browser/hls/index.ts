@@ -95,22 +95,20 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   let retryCount = 0;
 
   hls.on(Events.ERROR, async (_event, data) => {
-    if (data.fatal) {
-      callbacks?.onError?.(data);
+    const { type, details, fatal } = data;
+    const isFatalNetworkError = type === ErrorTypes.NETWORK_ERROR && fatal;
+    const isFatalMediaError = type === ErrorTypes.MEDIA_ERROR && fatal;
+    const isManifestParsingError =
+      ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
 
-      switch (data.type) {
-        case ErrorTypes.NETWORK_ERROR:
-          await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-          hls?.recoverMediaError();
-          break;
-        case ErrorTypes.MEDIA_ERROR:
-          await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-          hls?.recoverMediaError();
-          break;
-        default:
-          onDestroy();
-          break;
-      }
+    if (!fatal && !isManifestParsingError) return;
+    callbacks?.onError?.(data);
+
+    if (isFatalNetworkError || isFatalMediaError || isManifestParsingError) {
+      await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+      hls?.recoverMediaError();
+    } else {
+      onDestroy();
     }
   });
 

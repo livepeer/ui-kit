@@ -1,7 +1,7 @@
 import { keyframes } from '@stitches/core';
 
 import { isMobile } from '../utils';
-
+import { error } from './error';
 import { loading } from './loading';
 import { css } from './stitches';
 
@@ -141,6 +141,7 @@ export const controlsContainer = {
   gradient,
   loading,
   loadingText,
+  error,
 
   top: {
     container: topContainer,

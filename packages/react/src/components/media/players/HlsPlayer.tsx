@@ -16,6 +16,7 @@ import * as React from 'react';
 import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
+import { isAccessControlError, isStreamOfflineError } from './utils';
 
 export type HlsPlayerProps = HlsPlayerCoreProps<
   HTMLVideoElement,
@@ -35,7 +36,9 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       muted,
       poster,
       objectFit,
+      onStreamStatusChange,
       onMetricsError,
+      onAccessControlError,
     } = props;
 
     const store = React.useContext(MediaControllerContext);
@@ -67,14 +70,26 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
     React.useEffect(() => {
       const element = store.getState()._element;
       if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
-        const onError = (error: HlsError) => {
-          console.warn(error.response?.data.toString());
+        const onLive = (fullscreen: boolean) => {
+          onStreamStatusChange?.(true);
+          store.getState().setLive(fullscreen);
         };
+
+        const onError = (error: HlsError) => {
+          const cleanError = new Error(error.response?.data.toString());
+          if (isStreamOfflineError(cleanError)) {
+            onStreamStatusChange?.(false);
+          } else if (isAccessControlError(cleanError)) {
+            onAccessControlError?.(cleanError);
+          }
+          console.warn(cleanError.message);
+        };
+
         const { destroy } = createNewHls(
           src.src,
           element,
           {
-            onLive: store.getState().setLive,
+            onLive,
             onDuration: store.getState().onDurationChange,
             onCanPlay: store.getState().onCanPlay,
             onError,
@@ -89,7 +104,16 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
           destroy();
         };
       }
-    }, [autoPlay, hlsConfig, src, store, canUseHlsjs, canPlayAppleMpeg]);
+    }, [
+      autoPlay,
+      hlsConfig,
+      src,
+      store,
+      canUseHlsjs,
+      canPlayAppleMpeg,
+      onStreamStatusChange,
+      onAccessControlError,
+    ]);
 
     // if Media Source is supported and if HLS is not supported by default in the user's browser, use HLS.js
     // fallback to using a regular video player

@@ -50,7 +50,9 @@ export const PlayerInternal = (props: PlayerProps) => {
       theme,
       title,
       poster,
+      onStreamStatusChange,
       onMetricsError,
+      onAccessControlError,
       showTitle,
       aspectRatio,
     },
@@ -71,12 +73,24 @@ export const PlayerInternal = (props: PlayerProps) => {
           <HlsPlayer
             {...playerProps}
             src={source}
+            onStreamStatusChange={onStreamStatusChange}
             onMetricsError={onMetricsError}
+            onAccessControlError={onAccessControlError}
           />
         ) : source?.[0]?.type === 'audio' ? (
-          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
+          <AudioPlayer
+            {...playerProps}
+            src={source as AudioSrc[]}
+            // onStreamStatusChange={onStreamStatusChange} // TODO: Add stream status change handling for audio
+            // onAccessControlError={onAccessControlError} // TODO: Add access control error handling for audio
+          />
         ) : (
-          <VideoPlayer {...playerProps} src={source as VideoSrc[] | null} />
+          <VideoPlayer
+            {...playerProps}
+            src={source as VideoSrc[] | null}
+            onStreamStatusChange={onStreamStatusChange}
+            onAccessControlError={onAccessControlError}
+          />
         )}
 
         {React.isValidElement(children) ? (

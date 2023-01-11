@@ -1,4 +1,5 @@
 export {
+  PlaybackDisplayErrorType,
   useBaseSlider,
   useControlsContainer,
   useFullscreenButton,
