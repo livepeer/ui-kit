@@ -72,6 +72,7 @@ it('should expose correct exports', () => {
       "useCreateStream",
       "useLivepeerProvider",
       "useMediaController",
+      "usePlaybackInfo",
       "useStream",
       "useStreamSession",
       "useStreamSessions",
