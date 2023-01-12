@@ -16,5 +16,7 @@
     "@livepeer/react": "2.1.0",
     "@livepeer/react-native": "1.1.0"
   },
-  "changesets": []
+  "changesets": [
+    "kind-poems-sparkle"
+  ]
 }
