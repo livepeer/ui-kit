@@ -1,0 +1,20 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "docs": "0.0.1",
+    "example-dev-expo": "0.0.1",
+    "example-dev-next": "0.0.1",
+    "example-dev-react-native": "0.0.1",
+    "example-next": "0.0.1",
+    "example-nodejs": "0.0.1",
+    "example-svelte": "0.0.1",
+    "@livepeer/core": "1.1.0",
+    "@livepeer/core-react": "1.1.0",
+    "livepeer": "2.1.0",
+    "expo-broadcast": "0.0.1",
+    "@livepeer/react": "2.1.0",
+    "@livepeer/react-native": "1.1.0"
+  },
+  "changesets": []
+}
