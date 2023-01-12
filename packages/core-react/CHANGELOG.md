@@ -1,5 +1,11 @@
 # @livepeer/core-react
 
+## 1.1.1-next.0
+
+### Patch Changes
+
+- [#243](https://github.com/livepeer/livepeer.js/pull/243) [`89de148`](https://github.com/livepeer/livepeer.js/commit/89de148ea4e9037c0375142db89b9ffea46e96d2) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved to using HLS.js on Safari (when supported) instead of the native video player.
+
 ## 1.1.0
 
 ### Minor Changes
