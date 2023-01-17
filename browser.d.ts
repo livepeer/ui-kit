@@ -101,6 +101,16 @@ declare global {
     webkitSetPresentationMode?(mode: WebKitPresentationMode): Promise<void>;
   }
 
+  interface HTMLMediaElement extends HTMLMediaElement {
+    /**
+     * Displays the playback target picker - Airplay
+     *
+     * @see {@link https://developer.apple.com/documentation/webkitjs/htmlmediaelement/1632172-webkitshowplaybacktargetpicker}
+     */
+
+    webkitShowPlaybackTargetPicker: () => void;
+  }
+
   interface Document extends Document {
     /** Exits fullscreen mode. Used in old Safari. */
     webkitExitFullscreen?(): void;

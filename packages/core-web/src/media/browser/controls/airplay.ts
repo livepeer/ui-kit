@@ -1,14 +1,10 @@
-interface AirPlayHTMLMediaElement extends HTMLMediaElement {
-  webkitShowPlaybackTargetPicker: () => void;
-}
-
 interface AirPlayAvailabilityChangedEvent extends Event {
   availability: 'available' | 'unavailable';
 }
 
 export const requestAirPlay = (element: HTMLMediaElement) => {
   if (element) {
-    (element as AirPlayHTMLMediaElement).webkitShowPlaybackTargetPicker();
+    element.webkitShowPlaybackTargetPicker();
   }
 };
 export const isAirPlaySupported = async (
