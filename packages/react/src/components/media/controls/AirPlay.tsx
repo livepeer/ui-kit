@@ -61,7 +61,7 @@ export const AirPlayButton: React.FC<AirPlayButtonProps> = (props) => {
 
   React.useEffect(() => {
     checkIfAPSupported();
-  }, [_element]);
+  }, [_element, checkIfAPSupported]);
 
   // do not show button if it is not supported
   if (!isAPSupported) {
