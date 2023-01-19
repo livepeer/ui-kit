@@ -34,6 +34,10 @@ const fetchPlaybackInfo = cache(async (playbackId: string) => {
   return provider.getPlaybackInfo({ playbackId });
 });
 
+// Once this issue is fixed, this can be removed
+// https://github.com/vercel/next.js/issues/43077#issuecomment-1383742153
+export const dynamic = 'force-dynamic';
+
 export default async function Page({
   searchParams,
 }: {
