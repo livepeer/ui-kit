@@ -1,5 +1,12 @@
 # @livepeer/react-native
 
+## 1.1.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`89de148`](https://github.com/livepeer/livepeer.js/commit/89de148ea4e9037c0375142db89b9ffea46e96d2)]:
+  - @livepeer/core-react@1.1.1-next.0
+
 ## 1.1.0
 
 ### Minor Changes

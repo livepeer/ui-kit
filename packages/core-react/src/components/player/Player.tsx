@@ -235,6 +235,7 @@ export const usePlayer = <TElement, TPoster>(
       loop: loop,
       objectFit: objectFit,
       options: controls,
+      priority: priority,
     },
     controlsContainerProps: {
       hidePosterOnPlayed,
