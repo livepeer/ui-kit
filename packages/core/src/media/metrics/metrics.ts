@@ -1,5 +1,5 @@
-import { MediaControllerStore } from '../controller';
 import { getMetricsReportingUrl } from './utils';
+import { MediaControllerStore } from '../controller';
 
 type RawMetrics = {
   firstPlayback: number;

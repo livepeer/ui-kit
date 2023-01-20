@@ -16,10 +16,10 @@ import { infuraProvider } from 'wagmi/providers/infura';
 
 import { publicProvider } from 'wagmi/providers/public';
 
+import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
 import { useLocalStorage } from '../../hooks';
 
 import { provider as livepeerProvider } from '../../lib/provider';
-import { SyncedTabsContext, SyncedTabsState } from './SyncedTabs';
 
 import '@rainbow-me/rainbowkit/styles.css';
 

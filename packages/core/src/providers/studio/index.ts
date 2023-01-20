@@ -1,5 +1,14 @@
 import * as tus from 'tus-js-client';
 
+import {
+  StudioAsset,
+  StudioAssetPatchPayload,
+  StudioCreateStreamArgs,
+  StudioPlaybackInfo,
+  StudioStream,
+  StudioStreamSession,
+  StudioViewsMetrics,
+} from './types';
 import { defaultStudioConfig } from '../../constants';
 
 import {
@@ -31,15 +40,6 @@ import {
 } from '../../types';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
-import {
-  StudioAsset,
-  StudioAssetPatchPayload,
-  StudioCreateStreamArgs,
-  StudioPlaybackInfo,
-  StudioStream,
-  StudioStreamSession,
-  StudioViewsMetrics,
-} from './types';
 
 export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
   apiKey: string;

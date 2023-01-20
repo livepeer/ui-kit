@@ -4,9 +4,8 @@ import { parseCid } from '@livepeer/core/utils';
 
 import * as React from 'react';
 
-import { useCreateAsset, usePlaybackInfo } from '../../hooks';
-
 import { PlayerProps } from './Player';
+import { useCreateAsset, usePlaybackInfo } from '../../hooks';
 
 export type UsePlaybackInfoOrImportProps<TElement, TPoster> = {
   decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { provider, renderHook } from '../../../test';
 import { prefetchStreamSession, useStreamSession } from './useStreamSession';
+import { provider, renderHook } from '../../../test';
 
 // stream session ID which was generated previously for tests
 const streamSessionId = 'd7aeaae0-ab35-486c-a164-171594c0c65f';

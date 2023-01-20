@@ -1,5 +1,5 @@
-import { b64UrlDecode } from '../utils';
 import { getSubtleCrypto } from './getSubtleCrypto';
+import { b64UrlDecode } from '../utils';
 
 export const importPKCS8 = async (pkcs8: string): Promise<CryptoKey> => {
   if (

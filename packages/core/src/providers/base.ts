@@ -1,5 +1,6 @@
 import fetch from 'cross-fetch';
 
+import * as versions from './version';
 import { HttpError } from '../errors';
 
 import {
@@ -23,8 +24,6 @@ import {
   UpdateAssetArgs,
   UpdateStreamArgs,
 } from '../types';
-
-import * as versions from './version';
 
 export type FetchOptions<P = object> = RequestInit & {
   json?: P;

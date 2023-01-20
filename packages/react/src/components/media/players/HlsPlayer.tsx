@@ -10,10 +10,10 @@ import { styling } from 'livepeer/media/browser/styling';
 
 import * as React from 'react';
 
-import { MediaControllerContext } from '../../../context';
-import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 import { isAccessControlError, isStreamOfflineError } from './utils';
+import { MediaControllerContext } from '../../../context';
+import { PosterSource } from '../Player';
 
 export type HlsPlayerProps = HlsPlayerCoreProps<
   HTMLVideoElement,

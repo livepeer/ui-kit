@@ -1,8 +1,8 @@
 import { MediaControllerState } from '@livepeer/core-react';
 import * as React from 'react';
 
-import { MediaElement } from '../components/media/types';
 import { MediaControllerContext } from './MediaControllerContext';
+import { MediaElement } from '../components/media/types';
 
 export const useMediaController = <
   TElement extends MediaElement,

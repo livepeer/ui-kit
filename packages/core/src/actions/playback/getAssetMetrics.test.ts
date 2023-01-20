@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { setupClient } from '../../../test';
 import { getAssetMetrics } from './getAssetMetrics';
+import { setupClient } from '../../../test';
 
 const assetId = '373d4737-6e23-4b39-b37c-bcd4e72735e2';
 
