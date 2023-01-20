@@ -32,7 +32,7 @@ export type UseInternalMutationOptions<
       mutationConfig?: Partial<
         Pick<
           UseMutationOptions<TData, TError, TVariables, TContext>,
-          typeof useInternalMutationKeys[number]
+          (typeof useInternalMutationKeys)[number]
         >
       >;
     })

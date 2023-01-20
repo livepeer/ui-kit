@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { act, getSampleVideo, renderHook } from '../../../test';
 import { useCreateAsset } from './useCreateAsset';
+import { act, getSampleVideo, renderHook } from '../../../test';
 
 const assetName = 'livepeer.js tests :: new asset';
 

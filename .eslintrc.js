@@ -10,7 +10,7 @@ module.exports = {
     },
     allowImportExportEverywhere: true,
   },
-  plugins: ['@typescript-eslint', 'import', 'compat'],
+  plugins: ['@typescript-eslint', 'react', 'import', 'compat'],
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
@@ -56,6 +56,7 @@ module.exports = {
         ignoreMemberSort: false,
       },
     ],
+    'prettier/prettier': 'error',
   },
   overrides: [
     {

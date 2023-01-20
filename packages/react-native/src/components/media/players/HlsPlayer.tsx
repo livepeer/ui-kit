@@ -7,10 +7,10 @@ import { Video } from 'expo-av';
 
 import * as React from 'react';
 
+import { VideoCustomizationProps, VideoPlayer } from './VideoPlayer';
 import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { MediaElement } from '../types';
-import { VideoCustomizationProps, VideoPlayer } from './VideoPlayer';
 
 export type HlsPlayerProps = CoreHlsPlayerProps<MediaElement, PosterSource> &
   VideoCustomizationProps;

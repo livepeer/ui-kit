@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { provider, renderHook } from '../../../test';
 import { prefetchStream, useStream } from './useStream';
+import { provider, renderHook } from '../../../test';
 
 // stream ID which was generated previously for tests
 const streamId = 'd7ae985a-7a27-4c18-a00c-22a5b5ea7e10';

@@ -7,8 +7,8 @@ import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { useMediaController } from '../../../context';
 import { OfflineStreamError, PrivateStreamError } from './PlaybackDisplayError';
+import { useMediaController } from '../../../context';
 
 const mediaControllerSelector = ({
   hidden,

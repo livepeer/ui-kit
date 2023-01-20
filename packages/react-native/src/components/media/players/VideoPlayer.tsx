@@ -22,11 +22,10 @@ import { StyleSheet } from 'react-native';
 
 import { StoreApi, UseBoundStore } from 'zustand';
 
+import { canPlayMediaNatively } from './canPlayMediaNatively';
 import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { MediaElement } from '../types';
-
-import { canPlayMediaNatively } from './canPlayMediaNatively';
 
 const defaultProgressUpdateInterval = 20;
 

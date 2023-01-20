@@ -2,9 +2,9 @@ import { MediaControllerState } from '@livepeer/core-react';
 import { ProgressProps, useProgress } from '@livepeer/core-react/components';
 import * as React from 'react';
 
+import { BaseSlider } from './BaseSlider';
 import { useMediaController } from '../../../context';
 import { MediaElement } from '../types';
-import { BaseSlider } from './BaseSlider';
 
 const mediaControllerSelector = ({
   duration,

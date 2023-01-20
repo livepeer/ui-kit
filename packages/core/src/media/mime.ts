@@ -1,5 +1,5 @@
 export type MimeType = keyof typeof mime;
-export type MimeValue = typeof mime[MimeType][number];
+export type MimeValue = (typeof mime)[MimeType][number];
 
 export const getMimeType = (ending: string): MimeType | null => {
   for (const value of Object.keys(mime) as MimeType[]) {

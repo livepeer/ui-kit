@@ -1,9 +1,15 @@
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -28,7 +34,12 @@ export type ActiveMarket = {
   transactionInfo: TransactionInfo;
 };
 
-export type ActiveMarketProperties = LilNounsAuction | NounsAuction | NounsBuilderAuction | V2Auction | V3ReserveAuction;
+export type ActiveMarketProperties =
+  | LilNounsAuction
+  | NounsAuction
+  | NounsBuilderAuction
+  | V2Auction
+  | V3ReserveAuction;
 
 export type ActiveMarketQueryInput = {
   collectionAddress?: InputMaybe<Scalars['String']>;
@@ -41,7 +52,7 @@ export enum ActiveMarketType {
   ActiveNounsAuction = 'ACTIVE_NOUNS_AUCTION',
   ActiveNounsBuilderAuction = 'ACTIVE_NOUNS_BUILDER_AUCTION',
   ActiveV2Auction = 'ACTIVE_V2_AUCTION',
-  ActiveV3ReserveAuction = 'ACTIVE_V3_RESERVE_AUCTION'
+  ActiveV3ReserveAuction = 'ACTIVE_V3_RESERVE_AUCTION',
 }
 
 export type AggregateAttribute = {
@@ -72,31 +83,26 @@ export type AggregateStat = {
   salesVolume: SalesVolume;
 };
 
-
 export type AggregateStatFloorPriceArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
   where: CollectionAddressAndAttributesInput;
 };
-
 
 export type AggregateStatNftCountArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
   where: CollectionAddressOwnerAddressAttributesInput;
 };
 
-
 export type AggregateStatOwnerCountArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
   where: CollectionAddressAndAttributesInput;
 };
-
 
 export type AggregateStatOwnersByCountArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
   pagination?: InputMaybe<PaginationInput>;
   where: OwnersByCountQueryInput;
 };
-
 
 export type AggregateStatSalesVolumeArgs = {
   filter?: InputMaybe<SalesVolumeFilter>;
@@ -116,7 +122,7 @@ export type ApprovalEvent = {
 
 export enum ApprovalEventType {
   Approval = 'APPROVAL',
-  ApprovalForAll = 'APPROVAL_FOR_ALL'
+  ApprovalForAll = 'APPROVAL_FOR_ALL',
 }
 
 export type AttributeFilter = {
@@ -133,7 +139,7 @@ export type AudioEncodingTypes = {
 export enum Chain {
   Goerli = 'GOERLI',
   Mainnet = 'MAINNET',
-  Rinkeby = 'RINKEBY'
+  Rinkeby = 'RINKEBY',
 }
 
 export type Collection = {
@@ -181,7 +187,7 @@ export type CollectionConnection = {
 export enum CollectionSortKey {
   Created = 'CREATED',
   Name = 'NAME',
-  None = 'NONE'
+  None = 'NONE',
 }
 
 export type CollectionSortKeySortInput = {
@@ -223,10 +229,23 @@ export type EventConnection = {
   pageInfo: PageInfo;
 };
 
-export type EventProperties = ApprovalEvent | LilNounsAuctionEvent | MintEvent | NounsAuctionEvent | Sale | SeaportEvent | TransferEvent | V1MarketEvent | V1MediaEvent | V2AuctionEvent | V3AskEvent | V3ModuleManagerEvent | V3ReserveAuctionEvent;
+export type EventProperties =
+  | ApprovalEvent
+  | LilNounsAuctionEvent
+  | MintEvent
+  | NounsAuctionEvent
+  | Sale
+  | SeaportEvent
+  | TransferEvent
+  | V1MarketEvent
+  | V1MediaEvent
+  | V2AuctionEvent
+  | V3AskEvent
+  | V3ModuleManagerEvent
+  | V3ReserveAuctionEvent;
 
 export enum EventSortKey {
-  Created = 'CREATED'
+  Created = 'CREATED',
 }
 
 export type EventSortKeySortInput = {
@@ -247,7 +266,7 @@ export enum EventType {
   V2AuctionEvent = 'V2_AUCTION_EVENT',
   V3AskEvent = 'V3_ASK_EVENT',
   V3ModuleManagerEvent = 'V3_MODULE_MANAGER_EVENT',
-  V3ReserveAuctionEvent = 'V3_RESERVE_AUCTION_EVENT'
+  V3ReserveAuctionEvent = 'V3_RESERVE_AUCTION_EVENT',
 }
 
 export type EventsQueryFilter = {
@@ -272,7 +291,12 @@ export type ImageEncodingTypes = {
   thumbnail?: Maybe<Scalars['String']>;
 };
 
-export type ImageEncodingTypesVideoEncodingTypesAudioEncodingTypesUnsupportedEncodingTypes = AudioEncodingTypes | ImageEncodingTypes | UnsupportedEncodingTypes | VideoEncodingTypes;
+export type ImageEncodingTypesVideoEncodingTypesAudioEncodingTypesUnsupportedEncodingTypes =
+
+    | AudioEncodingTypes
+    | ImageEncodingTypes
+    | UnsupportedEncodingTypes
+    | VideoEncodingTypes;
 
 export type LilNounsAuction = {
   __typename?: 'LilNounsAuction';
@@ -319,7 +343,14 @@ export type LilNounsAuctionEvent = {
   tokenId: Scalars['String'];
 };
 
-export type LilNounsAuctionEventProperties = LilNounsAuctionBidEventProperties | LilNounsAuctionCreatedEventProperties | LilNounsAuctionExtendedEventProperties | LilNounsAuctionMinBidIncrementPercentageUpdatedEventProperties | LilNounsAuctionReservePriceUpdatedEventProperties | LilNounsAuctionSettledEventProperties | LilNounsAuctionTimeBufferUpdatedEventProperties;
+export type LilNounsAuctionEventProperties =
+  | LilNounsAuctionBidEventProperties
+  | LilNounsAuctionCreatedEventProperties
+  | LilNounsAuctionExtendedEventProperties
+  | LilNounsAuctionMinBidIncrementPercentageUpdatedEventProperties
+  | LilNounsAuctionReservePriceUpdatedEventProperties
+  | LilNounsAuctionSettledEventProperties
+  | LilNounsAuctionTimeBufferUpdatedEventProperties;
 
 export enum LilNounsAuctionEventType {
   LilNounsAuctionHouseAuctionBidEvent = 'LIL_NOUNS_AUCTION_HOUSE_AUCTION_BID_EVENT',
@@ -328,7 +359,7 @@ export enum LilNounsAuctionEventType {
   LilNounsAuctionHouseAuctionMinBidIncrementPercentageUpdated = 'LIL_NOUNS_AUCTION_HOUSE_AUCTION_MIN_BID_INCREMENT_PERCENTAGE_UPDATED',
   LilNounsAuctionHouseAuctionReservePriceUpdatedEvent = 'LIL_NOUNS_AUCTION_HOUSE_AUCTION_RESERVE_PRICE_UPDATED_EVENT',
   LilNounsAuctionHouseAuctionSettledEvent = 'LIL_NOUNS_AUCTION_HOUSE_AUCTION_SETTLED_EVENT',
-  LilNounsAuctionHouseAuctionTimeBufferUpdatedEvent = 'LIL_NOUNS_AUCTION_HOUSE_AUCTION_TIME_BUFFER_UPDATED_EVENT'
+  LilNounsAuctionHouseAuctionTimeBufferUpdatedEvent = 'LIL_NOUNS_AUCTION_HOUSE_AUCTION_TIME_BUFFER_UPDATED_EVENT',
 }
 
 export type LilNounsAuctionExtendedEventProperties = {
@@ -376,17 +407,26 @@ export type Market = {
 export enum MarketCategory {
   Ask = 'ASK',
   Auction = 'AUCTION',
-  Offer = 'OFFER'
+  Offer = 'OFFER',
 }
 
-export type MarketProperties = LilNounsAuction | NounsAuction | NounsBuilderAuction | V1Ask | V1BidShare | V1Offer | V2Auction | V3Ask | V3ReserveAuction;
+export type MarketProperties =
+  | LilNounsAuction
+  | NounsAuction
+  | NounsBuilderAuction
+  | V1Ask
+  | V1BidShare
+  | V1Offer
+  | V2Auction
+  | V3Ask
+  | V3ReserveAuction;
 
 export enum MarketSortKey {
   ChainTokenPrice = 'CHAIN_TOKEN_PRICE',
   Created = 'CREATED',
   NativePrice = 'NATIVE_PRICE',
   None = 'NONE',
-  TimedSaleEnding = 'TIMED_SALE_ENDING'
+  TimedSaleEnding = 'TIMED_SALE_ENDING',
 }
 
 export type MarketSortKeySortInput = {
@@ -398,7 +438,7 @@ export enum MarketStatus {
   Active = 'ACTIVE',
   Canceled = 'CANCELED',
   Completed = 'COMPLETED',
-  Invalid = 'INVALID'
+  Invalid = 'INVALID',
 }
 
 export enum MarketType {
@@ -410,7 +450,7 @@ export enum MarketType {
   V1Offer = 'V1_OFFER',
   V2Auction = 'V2_AUCTION',
   V3Ask = 'V3_ASK',
-  V3ReserveAuction = 'V3_RESERVE_AUCTION'
+  V3ReserveAuction = 'V3_RESERVE_AUCTION',
 }
 
 export type MarketTypeFilter = {
@@ -447,7 +487,7 @@ export enum MediaType {
   Html = 'HTML',
   Image = 'IMAGE',
   Text = 'TEXT',
-  Video = 'VIDEO'
+  Video = 'VIDEO',
 }
 
 export type Mint = {
@@ -482,7 +522,7 @@ export enum MintSortKey {
   None = 'NONE',
   Price = 'PRICE',
   Time = 'TIME',
-  TokenId = 'TOKEN_ID'
+  TokenId = 'TOKEN_ID',
 }
 
 export type MintSortKeySortInput = {
@@ -496,7 +536,6 @@ export type MintWithTokenAndMarkets = {
   mint: Mint;
   token?: Maybe<Token>;
 };
-
 
 export type MintWithTokenAndMarketsMarketsArgs = {
   filter?: InputMaybe<MarketsQueryFilter>;
@@ -523,7 +562,7 @@ export type MintsQueryInput = {
 };
 
 export enum Network {
-  Ethereum = 'ETHEREUM'
+  Ethereum = 'ETHEREUM',
 }
 
 export type NetworkInfo = {
@@ -545,12 +584,10 @@ export type Nouns = {
   nounsMarkets: NounsBuilderAuctionConnection;
 };
 
-
 export type NounsNounsActiveMarketArgs = {
   network?: InputMaybe<NetworkInput>;
   where: NounsActiveMarketQueryInput;
 };
-
 
 export type NounsNounsDaosArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
@@ -559,7 +596,6 @@ export type NounsNounsDaosArgs = {
   where?: InputMaybe<NounsQueryInput>;
 };
 
-
 export type NounsNounsEventsArgs = {
   filter?: InputMaybe<NounsEventsQueryFilter>;
   networks?: InputMaybe<Array<NetworkInput>>;
@@ -567,7 +603,6 @@ export type NounsNounsEventsArgs = {
   sort?: InputMaybe<EventSortKeySortInput>;
   where?: InputMaybe<NounsEventsQueryInput>;
 };
-
 
 export type NounsNounsMarketsArgs = {
   filter?: InputMaybe<NounsMarketsQueryFilter>;
@@ -626,7 +661,14 @@ export type NounsAuctionEvent = {
   tokenId: Scalars['String'];
 };
 
-export type NounsAuctionEventProperties = NounsAuctionBidEventProperties | NounsAuctionCreatedEventProperties | NounsAuctionExtendedEventProperties | NounsAuctionMinBidIncrementPercentageUpdatedEventProperties | NounsAuctionReservePriceUpdatedEventProperties | NounsAuctionSettledEventProperties | NounsAuctionTimeBufferUpdatedEventProperties;
+export type NounsAuctionEventProperties =
+  | NounsAuctionBidEventProperties
+  | NounsAuctionCreatedEventProperties
+  | NounsAuctionExtendedEventProperties
+  | NounsAuctionMinBidIncrementPercentageUpdatedEventProperties
+  | NounsAuctionReservePriceUpdatedEventProperties
+  | NounsAuctionSettledEventProperties
+  | NounsAuctionTimeBufferUpdatedEventProperties;
 
 export enum NounsAuctionEventType {
   NounsAuctionHouseAuctionBidEvent = 'NOUNS_AUCTION_HOUSE_AUCTION_BID_EVENT',
@@ -635,7 +677,7 @@ export enum NounsAuctionEventType {
   NounsAuctionHouseAuctionMinBidIncrementPercentageUpdated = 'NOUNS_AUCTION_HOUSE_AUCTION_MIN_BID_INCREMENT_PERCENTAGE_UPDATED',
   NounsAuctionHouseAuctionReservePriceUpdatedEvent = 'NOUNS_AUCTION_HOUSE_AUCTION_RESERVE_PRICE_UPDATED_EVENT',
   NounsAuctionHouseAuctionSettledEvent = 'NOUNS_AUCTION_HOUSE_AUCTION_SETTLED_EVENT',
-  NounsAuctionHouseAuctionTimeBufferUpdatedEvent = 'NOUNS_AUCTION_HOUSE_AUCTION_TIME_BUFFER_UPDATED_EVENT'
+  NounsAuctionHouseAuctionTimeBufferUpdatedEvent = 'NOUNS_AUCTION_HOUSE_AUCTION_TIME_BUFFER_UPDATED_EVENT',
 }
 
 export type NounsAuctionExtendedEventProperties = {
@@ -744,7 +786,14 @@ export type NounsBuilderAuctionEvent = {
   treasury: Scalars['String'];
 };
 
-export type NounsBuilderAuctionEventProperties = NounsBuilderAuctionAuctionBidEventProperties | NounsBuilderAuctionAuctionCreatedEventProperties | NounsBuilderAuctionAuctionSettledEventProperties | NounsBuilderAuctionDurationUpdatedEventProperties | NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties | NounsBuilderAuctionReservePriceUpdatedEventProperties | NounsBuilderAuctionTimeBufferUpdatedEventProperties;
+export type NounsBuilderAuctionEventProperties =
+  | NounsBuilderAuctionAuctionBidEventProperties
+  | NounsBuilderAuctionAuctionCreatedEventProperties
+  | NounsBuilderAuctionAuctionSettledEventProperties
+  | NounsBuilderAuctionDurationUpdatedEventProperties
+  | NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties
+  | NounsBuilderAuctionReservePriceUpdatedEventProperties
+  | NounsBuilderAuctionTimeBufferUpdatedEventProperties;
 
 export enum NounsBuilderAuctionEventType {
   NounsBuilderAuctionAuctionBidEvent = 'NOUNS_BUILDER_AUCTION_AUCTION_BID_EVENT',
@@ -753,13 +802,14 @@ export enum NounsBuilderAuctionEventType {
   NounsBuilderAuctionDurationUpdatedEvent = 'NOUNS_BUILDER_AUCTION_DURATION_UPDATED_EVENT',
   NounsBuilderAuctionMinBidIncrementPercentageUpdatedEvent = 'NOUNS_BUILDER_AUCTION_MIN_BID_INCREMENT_PERCENTAGE_UPDATED_EVENT',
   NounsBuilderAuctionReservePriceUpdatedEvent = 'NOUNS_BUILDER_AUCTION_RESERVE_PRICE_UPDATED_EVENT',
-  NounsBuilderAuctionTimeBufferUpdatedEvent = 'NOUNS_BUILDER_AUCTION_TIME_BUFFER_UPDATED_EVENT'
+  NounsBuilderAuctionTimeBufferUpdatedEvent = 'NOUNS_BUILDER_AUCTION_TIME_BUFFER_UPDATED_EVENT',
 }
 
-export type NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties = {
-  __typename?: 'NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties';
-  minBidIncrementPercentage: Scalars['String'];
-};
+export type NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties =
+  {
+    __typename?: 'NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties';
+    minBidIncrementPercentage: Scalars['String'];
+  };
 
 export type NounsBuilderAuctionReservePriceUpdatedEventProperties = {
   __typename?: 'NounsBuilderAuctionReservePriceUpdatedEventProperties';
@@ -785,7 +835,18 @@ export type NounsBuilderGovernorEvent = {
   treasury: Scalars['String'];
 };
 
-export type NounsBuilderGovernorEventProperties = NounsBuilderGovernorProposalCanceledEventProperties | NounsBuilderGovernorProposalCreatedEventProperties | NounsBuilderGovernorProposalExecutedEventProperties | NounsBuilderGovernorProposalQueuedEventProperties | NounsBuilderGovernorProposalThresholdBpsUpdatedEventProperties | NounsBuilderGovernorProposalVetoedEventProperties | NounsBuilderGovernorQuorumVotesBpsUpdated | NounsBuilderGovernorVetoerUpdatedEventProperties | NounsBuilderGovernorVoteCastEventProperties | NounsBuilderGovernorVotingDelayUpdatedEventProperties | NounsBuilderGovernorVotingPeriodUpdatedEventProperties;
+export type NounsBuilderGovernorEventProperties =
+  | NounsBuilderGovernorProposalCanceledEventProperties
+  | NounsBuilderGovernorProposalCreatedEventProperties
+  | NounsBuilderGovernorProposalExecutedEventProperties
+  | NounsBuilderGovernorProposalQueuedEventProperties
+  | NounsBuilderGovernorProposalThresholdBpsUpdatedEventProperties
+  | NounsBuilderGovernorProposalVetoedEventProperties
+  | NounsBuilderGovernorQuorumVotesBpsUpdated
+  | NounsBuilderGovernorVetoerUpdatedEventProperties
+  | NounsBuilderGovernorVoteCastEventProperties
+  | NounsBuilderGovernorVotingDelayUpdatedEventProperties
+  | NounsBuilderGovernorVotingPeriodUpdatedEventProperties;
 
 export enum NounsBuilderGovernorEventType {
   NounsBuilderGovernorProposalCanceledEvent = 'NOUNS_BUILDER_GOVERNOR_PROPOSAL_CANCELED_EVENT',
@@ -798,7 +859,7 @@ export enum NounsBuilderGovernorEventType {
   NounsBuilderGovernorVotingDelayUpdatedEvent = 'NOUNS_BUILDER_GOVERNOR_VOTING_DELAY_UPDATED_EVENT',
   NounsBuilderGovernorVotingPeriodUpdatedEvent = 'NOUNS_BUILDER_GOVERNOR_VOTING_PERIOD_UPDATED_EVENT',
   NounsBuilderProposalThresholdBpsUpdated = 'NOUNS_BUILDER_PROPOSAL_THRESHOLD_BPS_UPDATED',
-  NounsBuilderQuorumVotesBpsUpdated = 'NOUNS_BUILDER_QUORUM_VOTES_BPS_UPDATED'
+  NounsBuilderQuorumVotesBpsUpdated = 'NOUNS_BUILDER_QUORUM_VOTES_BPS_UPDATED',
 }
 
 export type NounsBuilderGovernorProposalCanceledEventProperties = {
@@ -900,7 +961,7 @@ export type NounsBuilderManagerEvent = {
 };
 
 export enum NounsBuilderManagerEventType {
-  NounsBuilderManagerDaoDeployedEvent = 'NOUNS_BUILDER_MANAGER_DAO_DEPLOYED_EVENT'
+  NounsBuilderManagerDaoDeployedEvent = 'NOUNS_BUILDER_MANAGER_DAO_DEPLOYED_EVENT',
 }
 
 export type NounsDao = {
@@ -939,14 +1000,19 @@ export type NounsEventConnection = {
   pageInfo: PageInfo;
 };
 
-export type NounsEventProperties = LilNounsAuctionEvent | NounsAuctionEvent | NounsBuilderAuctionEvent | NounsBuilderGovernorEvent | NounsBuilderManagerEvent;
+export type NounsEventProperties =
+  | LilNounsAuctionEvent
+  | NounsAuctionEvent
+  | NounsBuilderAuctionEvent
+  | NounsBuilderGovernorEvent
+  | NounsBuilderManagerEvent;
 
 export enum NounsEventType {
   LilNounsAuctionEvent = 'LIL_NOUNS_AUCTION_EVENT',
   NounsAuctionEvent = 'NOUNS_AUCTION_EVENT',
   NounsBuilderAuctionEvent = 'NOUNS_BUILDER_AUCTION_EVENT',
   NounsBuilderGovernorEvent = 'NOUNS_BUILDER_GOVERNOR_EVENT',
-  NounsBuilderManagerEvent = 'NOUNS_BUILDER_MANAGER_EVENT'
+  NounsBuilderManagerEvent = 'NOUNS_BUILDER_MANAGER_EVENT',
 }
 
 export type NounsEventsQueryFilter = {
@@ -966,7 +1032,7 @@ export type NounsEventsQueryInput = {
 export enum NounsMarketType {
   LilNounsAuction = 'LIL_NOUNS_AUCTION',
   NounsAuction = 'NOUNS_AUCTION',
-  NounsBuilderAuction = 'NOUNS_BUILDER_AUCTION'
+  NounsBuilderAuction = 'NOUNS_BUILDER_AUCTION',
 }
 
 export type NounsMarketsQueryFilter = {
@@ -986,7 +1052,7 @@ export type NounsQueryInput = {
 
 export enum NounsSortKey {
   Created = 'CREATED',
-  None = 'NONE'
+  None = 'NONE',
 }
 
 export type NounsSortKeySortInput = {
@@ -1014,7 +1080,7 @@ export enum OffchainOrderSortKey {
   EndTime = 'END_TIME',
   NativePrice = 'NATIVE_PRICE',
   None = 'NONE',
-  UsdcPrice = 'USDC_PRICE'
+  UsdcPrice = 'USDC_PRICE',
 }
 
 export type OffchainOrderSortKeySortInput = {
@@ -1131,12 +1197,10 @@ export type RootQuery = {
   tokens: TokenWithMarketsSummaryConnection;
 };
 
-
 export type RootQueryAggregateAttributesArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
   where: AggregateAttributesQueryInput;
 };
-
 
 export type RootQueryCollectionsArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
@@ -1144,7 +1208,6 @@ export type RootQueryCollectionsArgs = {
   sort?: InputMaybe<CollectionSortKeySortInput>;
   where?: InputMaybe<CollectionsQueryInput>;
 };
-
 
 export type RootQueryEventsArgs = {
   filter?: InputMaybe<EventsQueryFilter>;
@@ -1154,12 +1217,10 @@ export type RootQueryEventsArgs = {
   where?: InputMaybe<EventsQueryInput>;
 };
 
-
 export type RootQueryMarketArgs = {
   network?: InputMaybe<NetworkInput>;
   where: ActiveMarketQueryInput;
 };
-
 
 export type RootQueryMarketsArgs = {
   filter?: InputMaybe<MarketsQueryFilter>;
@@ -1169,7 +1230,6 @@ export type RootQueryMarketsArgs = {
   where?: InputMaybe<MarketsQueryInput>;
 };
 
-
 export type RootQueryMintsArgs = {
   filter?: InputMaybe<MintsQueryFilter>;
   networks?: InputMaybe<Array<NetworkInput>>;
@@ -1177,7 +1237,6 @@ export type RootQueryMintsArgs = {
   sort?: InputMaybe<MintSortKeySortInput>;
   where?: InputMaybe<MintsQueryInput>;
 };
-
 
 export type RootQueryOffchainOrdersArgs = {
   filter?: InputMaybe<OffchainOrdersQueryFilter>;
@@ -1187,7 +1246,6 @@ export type RootQueryOffchainOrdersArgs = {
   where?: InputMaybe<OffchainOrdersQueryInput>;
 };
 
-
 export type RootQuerySalesArgs = {
   filter?: InputMaybe<SalesQueryFilter>;
   networks?: InputMaybe<Array<NetworkInput>>;
@@ -1196,19 +1254,16 @@ export type RootQuerySalesArgs = {
   where?: InputMaybe<SalesQueryInput>;
 };
 
-
 export type RootQuerySearchArgs = {
   filter?: InputMaybe<SearchFilter>;
   pagination: SearchPaginationInput;
   query: SearchQueryInput;
 };
 
-
 export type RootQueryTokenArgs = {
   network?: InputMaybe<NetworkInput>;
   token: TokenInput;
 };
-
 
 export type RootQueryTokensArgs = {
   filter?: InputMaybe<TokensQueryFilter>;
@@ -1235,7 +1290,7 @@ export enum SaleSortKey {
   ChainTokenPrice = 'CHAIN_TOKEN_PRICE',
   NativePrice = 'NATIVE_PRICE',
   None = 'NONE',
-  Time = 'TIME'
+  Time = 'TIME',
 }
 
 export type SaleSortKeySortInput = {
@@ -1258,7 +1313,7 @@ export enum SaleType {
   ZeroxSale = 'ZEROX_SALE',
   ZoraV2AuctionSale = 'ZORA_V2_AUCTION_SALE',
   ZoraV3AskSale = 'ZORA_V3_ASK_SALE',
-  ZoraV3ReserveAuctionSale = 'ZORA_V3_RESERVE_AUCTION_SALE'
+  ZoraV3ReserveAuctionSale = 'ZORA_V3_RESERVE_AUCTION_SALE',
 }
 
 export type SaleWithToken = {
@@ -1313,13 +1368,15 @@ export type SeaportEvent = {
   zone?: Maybe<Scalars['String']>;
 };
 
-export type SeaportEventProperties = SeaportCounterIncrementedProperties | SeaportOrderFulfilledProperties;
+export type SeaportEventProperties =
+  | SeaportCounterIncrementedProperties
+  | SeaportOrderFulfilledProperties;
 
 export enum SeaportEventType {
   SeaportCounterIncrementedEvent = 'SEAPORT_COUNTER_INCREMENTED_EVENT',
   SeaportOrderCancelledEvent = 'SEAPORT_ORDER_CANCELLED_EVENT',
   SeaportOrderFulfilledEvent = 'SEAPORT_ORDER_FULFILLED_EVENT',
-  SeaportOrderValidatedEvent = 'SEAPORT_ORDER_VALIDATED_EVENT'
+  SeaportOrderValidatedEvent = 'SEAPORT_ORDER_VALIDATED_EVENT',
 }
 
 export type SeaportOrder = {
@@ -1394,12 +1451,12 @@ export type SearchResultConnection = {
 
 export enum SearchableEntity {
   Collection = 'COLLECTION',
-  Token = 'TOKEN'
+  Token = 'TOKEN',
 }
 
 export enum SortDirection {
   Asc = 'ASC',
-  Desc = 'DESC'
+  Desc = 'DESC',
 }
 
 export type SpentItem = {
@@ -1488,12 +1545,12 @@ export enum TokenSortKey {
   None = 'NONE',
   TimedSaleEnding = 'TIMED_SALE_ENDING',
   TokenId = 'TOKEN_ID',
-  Transferred = 'TRANSFERRED'
+  Transferred = 'TRANSFERRED',
 }
 
 export enum TokenStandard {
   Erc721 = 'ERC721',
-  Erc1155 = 'ERC1155'
+  Erc1155 = 'ERC1155',
 }
 
 export type TokenWithFullMarketHistory = {
@@ -1504,20 +1561,17 @@ export type TokenWithFullMarketHistory = {
   token: Token;
 };
 
-
 export type TokenWithFullMarketHistoryEventsArgs = {
   filter?: InputMaybe<EventsQueryFilter>;
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<EventSortKeySortInput>;
 };
 
-
 export type TokenWithFullMarketHistoryMarketsArgs = {
   filter?: InputMaybe<MarketsQueryFilter>;
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<MarketSortKeySortInput>;
 };
-
 
 export type TokenWithFullMarketHistorySalesArgs = {
   filter?: InputMaybe<SalesQueryFilter>;
@@ -1533,13 +1587,11 @@ export type TokenWithMarketsSummary = {
   token: Token;
 };
 
-
 export type TokenWithMarketsSummaryEventsArgs = {
   filter?: InputMaybe<EventsQueryFilter>;
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<EventSortKeySortInput>;
 };
-
 
 export type TokenWithMarketsSummarySalesArgs = {
   filter?: InputMaybe<SalesQueryFilter>;
@@ -1639,7 +1691,13 @@ export type V1MarketEvent = {
   v1MarketEventType: V1MarketEventType;
 };
 
-export type V1MarketEventProperties = V1MarketAskCreatedEventProperties | V1MarketAskRemovedEventProperties | V1MarketBidShareUpdatedEventProperties | V1MarketOfferCreatedEventProperties | V1MarketOfferFinalizedEventProperties | V1MarketOfferRemovedEventProperties;
+export type V1MarketEventProperties =
+  | V1MarketAskCreatedEventProperties
+  | V1MarketAskRemovedEventProperties
+  | V1MarketBidShareUpdatedEventProperties
+  | V1MarketOfferCreatedEventProperties
+  | V1MarketOfferFinalizedEventProperties
+  | V1MarketOfferRemovedEventProperties;
 
 export enum V1MarketEventType {
   V1MarketAskCreated = 'V1_MARKET_ASK_CREATED',
@@ -1647,7 +1705,7 @@ export enum V1MarketEventType {
   V1MarketBidCreated = 'V1_MARKET_BID_CREATED',
   V1MarketBidFinalized = 'V1_MARKET_BID_FINALIZED',
   V1MarketBidRemoved = 'V1_MARKET_BID_REMOVED',
-  V1MarketBidShareUpdated = 'V1_MARKET_BID_SHARE_UPDATED'
+  V1MarketBidShareUpdated = 'V1_MARKET_BID_SHARE_UPDATED',
 }
 
 export type V1MarketOfferCreatedEventProperties = {
@@ -1692,7 +1750,7 @@ export type V1MediaEvent = {
 
 export enum V1MediaEventType {
   V1MediaTokenMetadataUriUpdatedEvent = 'V1_MEDIA_TOKEN_METADATA_URI_UPDATED_EVENT',
-  V1MediaTokenUriUpdatedEvent = 'V1_MEDIA_TOKEN_URI_UPDATED_EVENT'
+  V1MediaTokenUriUpdatedEvent = 'V1_MEDIA_TOKEN_URI_UPDATED_EVENT',
 }
 
 export type V1Offer = {
@@ -1785,7 +1843,14 @@ export type V2AuctionEvent = {
   v2AuctionEventType: V2AuctionEventType;
 };
 
-export type V2AuctionEventProperties = V2AuctionApprovalUpdatedEventProperties | V2AuctionBidEventProperties | V2AuctionCanceledEventProperties | V2AuctionCreatedEventProperties | V2AuctionDurationExtendedEventProperties | V2AuctionEndedEventProperties | V2AuctionReservePriceUpdatedEventProperties;
+export type V2AuctionEventProperties =
+  | V2AuctionApprovalUpdatedEventProperties
+  | V2AuctionBidEventProperties
+  | V2AuctionCanceledEventProperties
+  | V2AuctionCreatedEventProperties
+  | V2AuctionDurationExtendedEventProperties
+  | V2AuctionEndedEventProperties
+  | V2AuctionReservePriceUpdatedEventProperties;
 
 export enum V2AuctionEventType {
   V2AuctionApprovalUpdated = 'V2_AUCTION_APPROVAL_UPDATED',
@@ -1794,7 +1859,7 @@ export enum V2AuctionEventType {
   V2AuctionCreated = 'V2_AUCTION_CREATED',
   V2AuctionDurationExtended = 'V2_AUCTION_DURATION_EXTENDED',
   V2AuctionEnded = 'V2_AUCTION_ENDED',
-  V2AuctionReservePriceUpdated = 'V2_AUCTION_RESERVE_PRICE_UPDATED'
+  V2AuctionReservePriceUpdated = 'V2_AUCTION_RESERVE_PRICE_UPDATED',
 }
 
 export type V2AuctionReservePriceUpdatedEventProperties = {
@@ -1847,7 +1912,12 @@ export type V3AskEvent = {
   v3AskEventType: V3AskEventType;
 };
 
-export type V3AskEventProperties = V3AskCanceledEventProperties | V3AskCreatedEventProperties | V3AskFilledEventProperties | V3AskPriceUpdatedEventProperties | V3PrivateAskEventProperties;
+export type V3AskEventProperties =
+  | V3AskCanceledEventProperties
+  | V3AskCreatedEventProperties
+  | V3AskFilledEventProperties
+  | V3AskPriceUpdatedEventProperties
+  | V3PrivateAskEventProperties;
 
 export enum V3AskEventType {
   V3AskCanceled = 'V3_ASK_CANCELED',
@@ -1857,7 +1927,7 @@ export enum V3AskEventType {
   V3PrivateAskCanceled = 'V3_PRIVATE_ASK_CANCELED',
   V3PrivateAskCreated = 'V3_PRIVATE_ASK_CREATED',
   V3PrivateAskFilled = 'V3_PRIVATE_ASK_FILLED',
-  V3PrivateAskPriceUpdated = 'V3_PRIVATE_ASK_PRICE_UPDATED'
+  V3PrivateAskPriceUpdated = 'V3_PRIVATE_ASK_PRICE_UPDATED',
 }
 
 export type V3AskFilledEventProperties = {
@@ -1892,7 +1962,7 @@ export type V3ModuleManagerEvent = {
 };
 
 export enum V3ModuleManagerEventType {
-  V3ModuleManagerApproved = 'V3_MODULE_MANAGER_APPROVED'
+  V3ModuleManagerApproved = 'V3_MODULE_MANAGER_APPROVED',
 }
 
 export type V3PrivateAskEventProperties = {
@@ -1957,14 +2027,19 @@ export type V3ReserveAuctionEvent = {
   tokenId: Scalars['String'];
 };
 
-export type V3ReserveAuctionEventProperties = V3ReserveAuctionV1AuctionBidProperties | V3ReserveAuctionV1AuctionCanceledProperties | V3ReserveAuctionV1AuctionCreatedProperties | V3ReserveAuctionV1AuctionEndedProperties | V3ReserveAuctionV1AuctionReservePriceUpdatedProperties;
+export type V3ReserveAuctionEventProperties =
+  | V3ReserveAuctionV1AuctionBidProperties
+  | V3ReserveAuctionV1AuctionCanceledProperties
+  | V3ReserveAuctionV1AuctionCreatedProperties
+  | V3ReserveAuctionV1AuctionEndedProperties
+  | V3ReserveAuctionV1AuctionReservePriceUpdatedProperties;
 
 export enum V3ReserveAuctionEventType {
   V3ReserveAuctionBid = 'V3_RESERVE_AUCTION_BID',
   V3ReserveAuctionCanceled = 'V3_RESERVE_AUCTION_CANCELED',
   V3ReserveAuctionCreated = 'V3_RESERVE_AUCTION_CREATED',
   V3ReserveAuctionEnded = 'V3_RESERVE_AUCTION_ENDED',
-  V3ReserveAuctionReservePriceUpdated = 'V3_RESERVE_AUCTION_RESERVE_PRICE_UPDATED'
+  V3ReserveAuctionReservePriceUpdated = 'V3_RESERVE_AUCTION_RESERVE_PRICE_UPDATED',
 }
 
 export type V3ReserveAuctionV1AuctionBidProperties = {
@@ -2009,145 +2084,425 @@ export type VideoNftsQueryVariables = Exact<{
   filter: TokensQueryFilter;
 }>;
 
-
-export type VideoNftsQuery = { __typename?: 'RootQuery', tokens: { __typename?: 'TokenWithMarketsSummaryConnection', nodes: Array<{ __typename?: 'TokenWithMarketsSummary', token: { __typename?: 'Token', collectionAddress: string, tokenId: string, name?: string | null, owner?: string | null, metadata?: any | null, image?: { __typename?: 'TokenContentMedia', url?: string | null, mimeType?: string | null, size?: string | null, mediaEncoding?: { __typename?: 'AudioEncodingTypes' } | { __typename?: 'ImageEncodingTypes' } | { __typename?: 'UnsupportedEncodingTypes' } | { __typename: 'VideoEncodingTypes', original: string, large?: string | null, poster?: string | null, preview?: string | null, thumbnail?: string | null } | null } | null } }>, pageInfo: { __typename?: 'PageInfo', limit: number, endCursor?: string | null, hasNextPage: boolean } } };
-
-
-export const VideoNftsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"VideoNfts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TokensQueryFilter"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"networks"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"network"},"value":{"kind":"EnumValue","value":"ETHEREUM"}},{"kind":"ObjectField","name":{"kind":"Name","value":"chain"},"value":{"kind":"EnumValue","value":"MAINNET"}}]}]}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collectionAddress"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"image"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"mediaEncoding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VideoEncodingTypes"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"original"}},{"kind":"Field","name":{"kind":"Name","value":"large"}},{"kind":"Field","name":{"kind":"Name","value":"poster"}},{"kind":"Field","name":{"kind":"Name","value":"preview"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]}}]} as unknown as DocumentNode<VideoNftsQuery, VideoNftsQueryVariables>;
-
-      export interface PossibleTypesResultData {
-        possibleTypes: {
-          [key: string]: string[]
-        }
-      }
-      const result: PossibleTypesResultData = {
-  "possibleTypes": {
-    "ActiveMarketProperties": [
-      "LilNounsAuction",
-      "NounsAuction",
-      "NounsBuilderAuction",
-      "V2Auction",
-      "V3ReserveAuction"
-    ],
-    "EventProperties": [
-      "ApprovalEvent",
-      "LilNounsAuctionEvent",
-      "MintEvent",
-      "NounsAuctionEvent",
-      "Sale",
-      "SeaportEvent",
-      "TransferEvent",
-      "V1MarketEvent",
-      "V1MediaEvent",
-      "V2AuctionEvent",
-      "V3AskEvent",
-      "V3ModuleManagerEvent",
-      "V3ReserveAuctionEvent"
-    ],
-    "ImageEncodingTypesVideoEncodingTypesAudioEncodingTypesUnsupportedEncodingTypes": [
-      "AudioEncodingTypes",
-      "ImageEncodingTypes",
-      "UnsupportedEncodingTypes",
-      "VideoEncodingTypes"
-    ],
-    "LilNounsAuctionEventProperties": [
-      "LilNounsAuctionBidEventProperties",
-      "LilNounsAuctionCreatedEventProperties",
-      "LilNounsAuctionExtendedEventProperties",
-      "LilNounsAuctionMinBidIncrementPercentageUpdatedEventProperties",
-      "LilNounsAuctionReservePriceUpdatedEventProperties",
-      "LilNounsAuctionSettledEventProperties",
-      "LilNounsAuctionTimeBufferUpdatedEventProperties"
-    ],
-    "MarketProperties": [
-      "LilNounsAuction",
-      "NounsAuction",
-      "NounsBuilderAuction",
-      "V1Ask",
-      "V1BidShare",
-      "V1Offer",
-      "V2Auction",
-      "V3Ask",
-      "V3ReserveAuction"
-    ],
-    "NounsAuctionEventProperties": [
-      "NounsAuctionBidEventProperties",
-      "NounsAuctionCreatedEventProperties",
-      "NounsAuctionExtendedEventProperties",
-      "NounsAuctionMinBidIncrementPercentageUpdatedEventProperties",
-      "NounsAuctionReservePriceUpdatedEventProperties",
-      "NounsAuctionSettledEventProperties",
-      "NounsAuctionTimeBufferUpdatedEventProperties"
-    ],
-    "NounsBuilderAuctionEventProperties": [
-      "NounsBuilderAuctionAuctionBidEventProperties",
-      "NounsBuilderAuctionAuctionCreatedEventProperties",
-      "NounsBuilderAuctionAuctionSettledEventProperties",
-      "NounsBuilderAuctionDurationUpdatedEventProperties",
-      "NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties",
-      "NounsBuilderAuctionReservePriceUpdatedEventProperties",
-      "NounsBuilderAuctionTimeBufferUpdatedEventProperties"
-    ],
-    "NounsBuilderGovernorEventProperties": [
-      "NounsBuilderGovernorProposalCanceledEventProperties",
-      "NounsBuilderGovernorProposalCreatedEventProperties",
-      "NounsBuilderGovernorProposalExecutedEventProperties",
-      "NounsBuilderGovernorProposalQueuedEventProperties",
-      "NounsBuilderGovernorProposalThresholdBpsUpdatedEventProperties",
-      "NounsBuilderGovernorProposalVetoedEventProperties",
-      "NounsBuilderGovernorQuorumVotesBpsUpdated",
-      "NounsBuilderGovernorVetoerUpdatedEventProperties",
-      "NounsBuilderGovernorVoteCastEventProperties",
-      "NounsBuilderGovernorVotingDelayUpdatedEventProperties",
-      "NounsBuilderGovernorVotingPeriodUpdatedEventProperties"
-    ],
-    "NounsEventProperties": [
-      "LilNounsAuctionEvent",
-      "NounsAuctionEvent",
-      "NounsBuilderAuctionEvent",
-      "NounsBuilderGovernorEvent",
-      "NounsBuilderManagerEvent"
-    ],
-    "SeaportEventProperties": [
-      "SeaportCounterIncrementedProperties",
-      "SeaportOrderFulfilledProperties"
-    ],
-    "TokenCollection": [
-      "Collection",
-      "Token"
-    ],
-    "V1MarketEventProperties": [
-      "V1MarketAskCreatedEventProperties",
-      "V1MarketAskRemovedEventProperties",
-      "V1MarketBidShareUpdatedEventProperties",
-      "V1MarketOfferCreatedEventProperties",
-      "V1MarketOfferFinalizedEventProperties",
-      "V1MarketOfferRemovedEventProperties"
-    ],
-    "V2AuctionEventProperties": [
-      "V2AuctionApprovalUpdatedEventProperties",
-      "V2AuctionBidEventProperties",
-      "V2AuctionCanceledEventProperties",
-      "V2AuctionCreatedEventProperties",
-      "V2AuctionDurationExtendedEventProperties",
-      "V2AuctionEndedEventProperties",
-      "V2AuctionReservePriceUpdatedEventProperties"
-    ],
-    "V3AskEventProperties": [
-      "V3AskCanceledEventProperties",
-      "V3AskCreatedEventProperties",
-      "V3AskFilledEventProperties",
-      "V3AskPriceUpdatedEventProperties",
-      "V3PrivateAskEventProperties"
-    ],
-    "V3ReserveAuctionEventProperties": [
-      "V3ReserveAuctionV1AuctionBidProperties",
-      "V3ReserveAuctionV1AuctionCanceledProperties",
-      "V3ReserveAuctionV1AuctionCreatedProperties",
-      "V3ReserveAuctionV1AuctionEndedProperties",
-      "V3ReserveAuctionV1AuctionReservePriceUpdatedProperties"
-    ]
-  }
+export type VideoNftsQuery = {
+  __typename?: 'RootQuery';
+  tokens: {
+    __typename?: 'TokenWithMarketsSummaryConnection';
+    nodes: Array<{
+      __typename?: 'TokenWithMarketsSummary';
+      token: {
+        __typename?: 'Token';
+        collectionAddress: string;
+        tokenId: string;
+        name?: string | null;
+        owner?: string | null;
+        metadata?: any | null;
+        image?: {
+          __typename?: 'TokenContentMedia';
+          url?: string | null;
+          mimeType?: string | null;
+          size?: string | null;
+          mediaEncoding?:
+            | { __typename?: 'AudioEncodingTypes' }
+            | { __typename?: 'ImageEncodingTypes' }
+            | { __typename?: 'UnsupportedEncodingTypes' }
+            | {
+                __typename: 'VideoEncodingTypes';
+                original: string;
+                large?: string | null;
+                poster?: string | null;
+                preview?: string | null;
+                thumbnail?: string | null;
+              }
+            | null;
+        } | null;
+      };
+    }>;
+    pageInfo: {
+      __typename?: 'PageInfo';
+      limit: number;
+      endCursor?: string | null;
+      hasNextPage: boolean;
+    };
+  };
 };
-      export default result;
-    
+
+export const VideoNftsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'VideoNfts' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'pagination' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'PaginationInput' },
+            },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'filter' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'TokensQueryFilter' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'tokens' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'networks' },
+                value: {
+                  kind: 'ListValue',
+                  values: [
+                    {
+                      kind: 'ObjectValue',
+                      fields: [
+                        {
+                          kind: 'ObjectField',
+                          name: { kind: 'Name', value: 'network' },
+                          value: { kind: 'EnumValue', value: 'ETHEREUM' },
+                        },
+                        {
+                          kind: 'ObjectField',
+                          name: { kind: 'Name', value: 'chain' },
+                          value: { kind: 'EnumValue', value: 'MAINNET' },
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'pagination' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'pagination' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'filter' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'filter' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'nodes' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'token' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: {
+                                kind: 'Name',
+                                value: 'collectionAddress',
+                              },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'tokenId' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'name' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'owner' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'metadata' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'image' },
+                              selectionSet: {
+                                kind: 'SelectionSet',
+                                selections: [
+                                  {
+                                    kind: 'Field',
+                                    name: { kind: 'Name', value: 'url' },
+                                  },
+                                  {
+                                    kind: 'Field',
+                                    name: { kind: 'Name', value: 'mimeType' },
+                                  },
+                                  {
+                                    kind: 'Field',
+                                    name: { kind: 'Name', value: 'size' },
+                                  },
+                                  {
+                                    kind: 'Field',
+                                    name: {
+                                      kind: 'Name',
+                                      value: 'mediaEncoding',
+                                    },
+                                    selectionSet: {
+                                      kind: 'SelectionSet',
+                                      selections: [
+                                        {
+                                          kind: 'InlineFragment',
+                                          typeCondition: {
+                                            kind: 'NamedType',
+                                            name: {
+                                              kind: 'Name',
+                                              value: 'VideoEncodingTypes',
+                                            },
+                                          },
+                                          selectionSet: {
+                                            kind: 'SelectionSet',
+                                            selections: [
+                                              {
+                                                kind: 'Field',
+                                                name: {
+                                                  kind: 'Name',
+                                                  value: '__typename',
+                                                },
+                                              },
+                                              {
+                                                kind: 'Field',
+                                                name: {
+                                                  kind: 'Name',
+                                                  value: 'original',
+                                                },
+                                              },
+                                              {
+                                                kind: 'Field',
+                                                name: {
+                                                  kind: 'Name',
+                                                  value: 'large',
+                                                },
+                                              },
+                                              {
+                                                kind: 'Field',
+                                                name: {
+                                                  kind: 'Name',
+                                                  value: 'poster',
+                                                },
+                                              },
+                                              {
+                                                kind: 'Field',
+                                                name: {
+                                                  kind: 'Name',
+                                                  value: 'preview',
+                                                },
+                                              },
+                                              {
+                                                kind: 'Field',
+                                                name: {
+                                                  kind: 'Name',
+                                                  value: 'thumbnail',
+                                                },
+                                              },
+                                            ],
+                                          },
+                                        },
+                                      ],
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'pageInfo' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'limit' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'endCursor' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'hasNextPage' },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<VideoNftsQuery, VideoNftsQueryVariables>;
+
+export interface PossibleTypesResultData {
+  possibleTypes: {
+    [key: string]: string[];
+  };
+}
+const result: PossibleTypesResultData = {
+  possibleTypes: {
+    ActiveMarketProperties: [
+      'LilNounsAuction',
+      'NounsAuction',
+      'NounsBuilderAuction',
+      'V2Auction',
+      'V3ReserveAuction',
+    ],
+    EventProperties: [
+      'ApprovalEvent',
+      'LilNounsAuctionEvent',
+      'MintEvent',
+      'NounsAuctionEvent',
+      'Sale',
+      'SeaportEvent',
+      'TransferEvent',
+      'V1MarketEvent',
+      'V1MediaEvent',
+      'V2AuctionEvent',
+      'V3AskEvent',
+      'V3ModuleManagerEvent',
+      'V3ReserveAuctionEvent',
+    ],
+    ImageEncodingTypesVideoEncodingTypesAudioEncodingTypesUnsupportedEncodingTypes:
+      [
+        'AudioEncodingTypes',
+        'ImageEncodingTypes',
+        'UnsupportedEncodingTypes',
+        'VideoEncodingTypes',
+      ],
+    LilNounsAuctionEventProperties: [
+      'LilNounsAuctionBidEventProperties',
+      'LilNounsAuctionCreatedEventProperties',
+      'LilNounsAuctionExtendedEventProperties',
+      'LilNounsAuctionMinBidIncrementPercentageUpdatedEventProperties',
+      'LilNounsAuctionReservePriceUpdatedEventProperties',
+      'LilNounsAuctionSettledEventProperties',
+      'LilNounsAuctionTimeBufferUpdatedEventProperties',
+    ],
+    MarketProperties: [
+      'LilNounsAuction',
+      'NounsAuction',
+      'NounsBuilderAuction',
+      'V1Ask',
+      'V1BidShare',
+      'V1Offer',
+      'V2Auction',
+      'V3Ask',
+      'V3ReserveAuction',
+    ],
+    NounsAuctionEventProperties: [
+      'NounsAuctionBidEventProperties',
+      'NounsAuctionCreatedEventProperties',
+      'NounsAuctionExtendedEventProperties',
+      'NounsAuctionMinBidIncrementPercentageUpdatedEventProperties',
+      'NounsAuctionReservePriceUpdatedEventProperties',
+      'NounsAuctionSettledEventProperties',
+      'NounsAuctionTimeBufferUpdatedEventProperties',
+    ],
+    NounsBuilderAuctionEventProperties: [
+      'NounsBuilderAuctionAuctionBidEventProperties',
+      'NounsBuilderAuctionAuctionCreatedEventProperties',
+      'NounsBuilderAuctionAuctionSettledEventProperties',
+      'NounsBuilderAuctionDurationUpdatedEventProperties',
+      'NounsBuilderAuctionMinBidIncrementPercentageUpdatedEventProperties',
+      'NounsBuilderAuctionReservePriceUpdatedEventProperties',
+      'NounsBuilderAuctionTimeBufferUpdatedEventProperties',
+    ],
+    NounsBuilderGovernorEventProperties: [
+      'NounsBuilderGovernorProposalCanceledEventProperties',
+      'NounsBuilderGovernorProposalCreatedEventProperties',
+      'NounsBuilderGovernorProposalExecutedEventProperties',
+      'NounsBuilderGovernorProposalQueuedEventProperties',
+      'NounsBuilderGovernorProposalThresholdBpsUpdatedEventProperties',
+      'NounsBuilderGovernorProposalVetoedEventProperties',
+      'NounsBuilderGovernorQuorumVotesBpsUpdated',
+      'NounsBuilderGovernorVetoerUpdatedEventProperties',
+      'NounsBuilderGovernorVoteCastEventProperties',
+      'NounsBuilderGovernorVotingDelayUpdatedEventProperties',
+      'NounsBuilderGovernorVotingPeriodUpdatedEventProperties',
+    ],
+    NounsEventProperties: [
+      'LilNounsAuctionEvent',
+      'NounsAuctionEvent',
+      'NounsBuilderAuctionEvent',
+      'NounsBuilderGovernorEvent',
+      'NounsBuilderManagerEvent',
+    ],
+    SeaportEventProperties: [
+      'SeaportCounterIncrementedProperties',
+      'SeaportOrderFulfilledProperties',
+    ],
+    TokenCollection: ['Collection', 'Token'],
+    V1MarketEventProperties: [
+      'V1MarketAskCreatedEventProperties',
+      'V1MarketAskRemovedEventProperties',
+      'V1MarketBidShareUpdatedEventProperties',
+      'V1MarketOfferCreatedEventProperties',
+      'V1MarketOfferFinalizedEventProperties',
+      'V1MarketOfferRemovedEventProperties',
+    ],
+    V2AuctionEventProperties: [
+      'V2AuctionApprovalUpdatedEventProperties',
+      'V2AuctionBidEventProperties',
+      'V2AuctionCanceledEventProperties',
+      'V2AuctionCreatedEventProperties',
+      'V2AuctionDurationExtendedEventProperties',
+      'V2AuctionEndedEventProperties',
+      'V2AuctionReservePriceUpdatedEventProperties',
+    ],
+    V3AskEventProperties: [
+      'V3AskCanceledEventProperties',
+      'V3AskCreatedEventProperties',
+      'V3AskFilledEventProperties',
+      'V3AskPriceUpdatedEventProperties',
+      'V3PrivateAskEventProperties',
+    ],
+    V3ReserveAuctionEventProperties: [
+      'V3ReserveAuctionV1AuctionBidProperties',
+      'V3ReserveAuctionV1AuctionCanceledProperties',
+      'V3ReserveAuctionV1AuctionCreatedProperties',
+      'V3ReserveAuctionV1AuctionEndedProperties',
+      'V3ReserveAuctionV1AuctionReservePriceUpdatedProperties',
+    ],
+  },
+};
+export default result;

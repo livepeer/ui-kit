@@ -4,11 +4,10 @@ import { useClient } from '@livepeer/core-react/context';
 import * as React from 'react';
 import create from 'zustand';
 
+import { MediaControllerContext } from './MediaControllerContext';
 import { createNativeControllerStore } from '../components/media/state/controls';
 
 import { MediaElement } from '../components/media/types';
-
-import { MediaControllerContext } from './MediaControllerContext';
 
 export type MediaControllerProviderProps<TElement extends MediaElement> = {
   element: TElement | null;

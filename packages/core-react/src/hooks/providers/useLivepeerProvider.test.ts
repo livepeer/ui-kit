@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderHook } from '../../../test';
 import { useLivepeerProvider } from './useLivepeerProvider';
+import { renderHook } from '../../../test';
 
 describe('useProvider', () => {
   it('mounts', () => {

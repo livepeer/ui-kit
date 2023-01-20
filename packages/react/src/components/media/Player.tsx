@@ -8,9 +8,6 @@ import { ControlsOptions } from 'livepeer/media/browser';
 
 import * as React from 'react';
 
-import { MediaControllerProvider } from '../../context';
-import { useIsElementShown } from '../useIsElementShown';
-
 import {
   Container,
   ControlsContainer,
@@ -24,6 +21,8 @@ import {
   Volume,
 } from './controls';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { MediaControllerProvider } from '../../context';
+import { useIsElementShown } from '../useIsElementShown';
 
 export type PosterSource = string | React.ReactNode;
 

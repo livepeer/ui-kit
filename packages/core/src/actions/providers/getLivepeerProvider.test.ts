@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { setupClient } from '../../../test';
 import { getLivepeerProvider } from './getLivepeerProvider';
+import { setupClient } from '../../../test';
 
 describe('getProvider', () => {
   it('default', async () => {
