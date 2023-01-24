@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@livepeer/react": "^2.1.1",
+    "@livepeer/react": "^2.1.2",
     "@rainbow-me/rainbowkit": "^0.8.0",
     "ethers": "^5.7.2",
     "next": "^13.0.5",
