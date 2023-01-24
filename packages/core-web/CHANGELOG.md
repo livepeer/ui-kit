@@ -1,5 +1,14 @@
 # livepeer
 
+## 2.1.2
+
+### Patch Changes
+
+- [`a8a2c58`](https://github.com/livepeer/livepeer.js/commit/a8a2c582da2eb49ef33fca27587129ce1c1bfaa6) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** downgraded packages due to versioning conflicts and upgraded `zustand`.
+
+- Updated dependencies [[`a8a2c58`](https://github.com/livepeer/livepeer.js/commit/a8a2c582da2eb49ef33fca27587129ce1c1bfaa6)]:
+  - @livepeer/core@1.1.2
+
 ## 2.1.1
 
 ### Patch Changes
