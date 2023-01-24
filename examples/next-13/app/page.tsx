@@ -31,7 +31,14 @@ const { provider } = createClient({
 });
 
 const fetchPlaybackInfo = cache(async (playbackId: string) => {
-  return provider.getPlaybackInfo({ playbackId });
+  try {
+    const playbackInfo = await provider.getPlaybackInfo({ playbackId });
+
+    return playbackInfo;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 });
 
 // Once this issue is fixed, this can be removed
