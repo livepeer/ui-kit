@@ -31,7 +31,7 @@ export default (props: PlayerProps) => {
       debug: false,
       data: {
         env_key: '8oj27fenun6v4ffvrgn6ehc7m',
-        player_name: 'Livepeer.TV Player',
+        player_name: 'Livepeer.TV Player v2',
         player_env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'development',
       },
     });
