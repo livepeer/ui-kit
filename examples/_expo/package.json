@@ -22,8 +22,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",
-    "@types/react": "~18.0.26",
-    "@types/react-native": "~0.70.8",
+    "@types/react": "~18.0.27",
+    "@types/react-native": "~0.71.0",
     "babel-preset-expo": "~9.2.1"
   }
 }

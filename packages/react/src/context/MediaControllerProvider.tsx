@@ -2,7 +2,6 @@ import { useClient } from '@livepeer/core-react/context';
 import { ControlsOptions, createControllerStore } from 'livepeer/media';
 import { addEventListeners, getDeviceInfo } from 'livepeer/media/browser';
 import * as React from 'react';
-import create from 'zustand';
 
 import { MediaControllerContext } from './MediaControllerContext';
 
@@ -17,10 +16,10 @@ export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   children,
   opts,
 }: MediaControllerProviderProps<TElement>) => {
-  const useMediaController = useMediaControllerStore(element, opts);
+  const mediaController = useMediaControllerStore(element, opts);
 
   return (
-    <MediaControllerContext.Provider value={useMediaController}>
+    <MediaControllerContext.Provider value={mediaController}>
       {children}
     </MediaControllerContext.Provider>
   );
@@ -34,14 +33,13 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
 
   const store = React.useMemo(
     () =>
-      create(
-        createControllerStore<TElement>({
-          element: element ?? null,
-          device: getDeviceInfo(),
-          storage: client.storage,
-          opts: opts ?? {},
-        }),
-      ),
+      createControllerStore<TElement>({
+        element: element ?? null,
+        device: getDeviceInfo(),
+        storage: client.storage,
+        opts: opts ?? {},
+      }),
+
     [element, client?.storage, opts],
   );
 

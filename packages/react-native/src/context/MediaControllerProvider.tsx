@@ -2,7 +2,6 @@ import { ControlsOptions } from '@livepeer/core-react';
 import { useClient } from '@livepeer/core-react/context';
 
 import * as React from 'react';
-import create from 'zustand';
 
 import { MediaControllerContext } from './MediaControllerContext';
 import { createNativeControllerStore } from '../components/media/state/controls';
@@ -20,10 +19,10 @@ export const MediaControllerProvider = <TElement extends MediaElement>({
   children,
   opts,
 }: MediaControllerProviderProps<TElement>) => {
-  const useMediaController = useMediaControllerStore(element, opts);
+  const mediaController = useMediaControllerStore(element, opts);
 
   return (
-    <MediaControllerContext.Provider value={useMediaController}>
+    <MediaControllerContext.Provider value={mediaController}>
       {children}
     </MediaControllerContext.Provider>
   );
@@ -37,13 +36,11 @@ const useMediaControllerStore = <TElement extends MediaElement>(
 
   const store = React.useMemo(
     () =>
-      create(
-        createNativeControllerStore<TElement>({
-          element,
-          storage: client.storage,
-          opts,
-        }),
-      ),
+      createNativeControllerStore<TElement>({
+        element,
+        storage: client.storage,
+        opts,
+      }),
     [element, client?.storage, opts],
   );
 

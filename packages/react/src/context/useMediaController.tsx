@@ -1,17 +1,15 @@
 import { MediaControllerState } from 'livepeer/media';
 import * as React from 'react';
+import { useStore } from 'zustand';
 
 import { MediaControllerContext } from './MediaControllerContext';
 
 export const useMediaController = <
-  TElement extends HTMLMediaElement,
-  TSlice = MediaControllerState<TElement>,
+  TSlice = MediaControllerState<HTMLMediaElement>,
 >(
-  selector?: (s: MediaControllerState<TElement>) => TSlice,
+  selector: (s: MediaControllerState<HTMLMediaElement>) => TSlice,
 ) => {
-  const useMediaControllerInternal = React.useContext(MediaControllerContext);
+  const mediaController = React.useContext(MediaControllerContext);
 
-  return useMediaControllerInternal(
-    selector as (s: MediaControllerState<HTMLMediaElement>) => TSlice,
-  );
+  return useStore(mediaController, selector);
 };

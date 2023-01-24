@@ -101,11 +101,11 @@
     "ms": "^3.0.0-canary.1",
     "multiformats": "9.9.0",
     "tus-js-client": "^3.0.1",
-    "zustand": "^4.1.5"
+    "zustand": "^4.3.2"
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
-    "jose": "^4.11.1"
+    "jose": "^4.11.2"
   },
   "keywords": [
     "eth",

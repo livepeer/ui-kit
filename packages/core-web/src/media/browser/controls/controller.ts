@@ -32,7 +32,7 @@ const allKeyTriggers = [
   'ArrowRight',
   'ArrowLeft',
 ] as const;
-type KeyTrigger = (typeof allKeyTriggers)[number];
+type KeyTrigger = typeof allKeyTriggers[number];
 
 // if volume change is unsupported, the element will always return 1
 // similar to https://github.com/videojs/video.js/pull/7514/files
@@ -314,8 +314,6 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       parentElementOrElement?.addEventListener?.('touchmove', onTouchUpdate);
 
       removeEffectsFromStore?.();
-
-      store?.destroy?.();
 
       element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
     },

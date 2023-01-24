@@ -1,5 +1,5 @@
-import { persist } from 'zustand/middleware';
-import create, { StoreApi } from 'zustand/vanilla';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { StoreApi, createStore } from 'zustand/vanilla';
 
 import { ClientStorage } from '../storage';
 
@@ -161,7 +161,7 @@ export const createControllerStore = <TElement>({
   storage: ClientStorage;
   opts: ControlsOptions;
 }) => {
-  const store = create<
+  const store = createStore<
     MediaControllerState<TElement>,
     [['zustand/persist', Partial<MediaControllerState<TElement>>]]
   >(
@@ -314,7 +314,7 @@ export const createControllerStore = <TElement>({
           volume,
           playbackRate,
         }),
-        getStorage: () => storage,
+        storage: createJSONStorage(() => storage),
       },
     ),
   );

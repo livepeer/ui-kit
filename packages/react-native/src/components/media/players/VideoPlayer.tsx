@@ -2,7 +2,6 @@ import {
   ControlsOptions,
   DEFAULT_AUTOHIDE_TIME,
   MediaControllerState,
-  MediaControllerStore,
 } from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import {
@@ -20,7 +19,7 @@ import * as React from 'react';
 
 import { StyleSheet } from 'react-native';
 
-import { StoreApi, UseBoundStore } from 'zustand';
+import { StoreApi, useStore } from 'zustand';
 
 import { canPlayMediaNatively } from './canPlayMediaNatively';
 import { MediaControllerContext } from '../../../context';
@@ -45,9 +44,8 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     ref,
   ) => {
     // typecast the context so that we can have video/audio-specific controller states
-    const store = React.useContext(MediaControllerContext) as UseBoundStore<
-      MediaControllerStore<MediaElement>
-    >;
+    const context = React.useContext(MediaControllerContext);
+    const store = useStore(context);
 
     React.useEffect(() => {
       Audio.setAudioModeAsync({
@@ -62,7 +60,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       });
     }, [audioMode]);
 
-    const { hasPlayed, playing } = store();
+    const { hasPlayed, playing, muted: isMuted } = store;
 
     const onError = async (_e: string) => {
       // await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
@@ -71,20 +69,20 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     };
 
     React.useEffect(() => {
-      store.setState({ muted: Boolean(muted) });
+      context.setState({ muted: Boolean(muted) });
     }, [muted]);
 
     React.useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
-        store,
-        store.getState()._element,
+        context,
+        context.getState()._element,
         { autohide: options?.autohide ?? DEFAULT_AUTOHIDE_TIME },
       );
 
       return () => {
         removeEffectsFromStore?.();
       };
-    }, [store, options?.autohide]);
+    }, [context, options?.autohide]);
 
     const filteredSources = React.useMemo(() => {
       return src?.filter((s) => s?.mime && canPlayMediaNatively(s));
@@ -93,7 +91,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     const onPlaybackStatusUpdate = React.useCallback(
       async (status?: AVPlaybackStatus) => {
         if (status?.isLoaded) {
-          store.setState(({ buffered, duration, hasPlayed }) => ({
+          context.setState(({ buffered, duration, hasPlayed }) => ({
             hasPlayed: hasPlayed || status.positionMillis > 0,
             volume: 1,
             canPlay: true,
@@ -113,25 +111,25 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
             waiting: status.isBuffering,
           }));
         } else if (status) {
-          store.setState({
+          context.setState({
             loading: !status.error,
             error: status.error,
             canPlay: false,
           });
         }
       },
-      [store],
+      [context],
     );
 
     const onFullscreenUpdate = React.useCallback(
       async (status?: VideoFullscreenUpdateEvent) => {
-        store.setState(() => ({
+        context.setState(() => ({
           fullscreen:
             status?.fullscreenUpdate !==
             VideoFullscreenUpdate.PLAYER_DID_DISMISS,
         }));
       },
-      [store],
+      [context],
     );
 
     return (
@@ -155,7 +153,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         onError={onError}
         shouldPlay={hasPlayed ? playing : autoPlay}
         ref={ref}
-        isMuted={muted}
+        isMuted={isMuted}
       />
     );
   },

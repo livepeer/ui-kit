@@ -1,18 +1,17 @@
 import { MediaControllerState } from '@livepeer/core-react';
 import * as React from 'react';
 
+import { useStore } from 'zustand';
+
 import { MediaControllerContext } from './MediaControllerContext';
 import { MediaElement } from '../components/media/types';
 
 export const useMediaController = <
-  TElement extends MediaElement,
-  TSlice = MediaControllerState<TElement>,
+  TSlice = MediaControllerState<MediaElement>,
 >(
-  selector?: (s: MediaControllerState<TElement>) => TSlice,
+  selector: (s: MediaControllerState<MediaElement>) => TSlice,
 ) => {
-  const useMediaControllerInternal = React.useContext(MediaControllerContext);
+  const mediaController = React.useContext(MediaControllerContext);
 
-  return useMediaControllerInternal(
-    selector as (s: MediaControllerState<MediaElement>) => TSlice,
-  );
+  return useStore(mediaController, selector);
 };
