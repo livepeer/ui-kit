@@ -6,7 +6,7 @@ export const aspectRatios = [
   { key: '21to9', value: '21 / 9', numeric: 21 / 9 },
 ] as const;
 
-export type AspectRatio = (typeof aspectRatios)[number]['key'];
+export type AspectRatio = typeof aspectRatios[number]['key'];
 export type FontWeights =
   | 'normal'
   | 'bold'

@@ -42,7 +42,7 @@ export type UsePickQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Pick<
   UseQueryOptions<TQueryFnData, InternalQueryError, TData, TQueryKey>,
-  (typeof usePickQueryKeys)[number]
+  typeof usePickQueryKeys[number]
 >;
 
 export function useInternalQuery<

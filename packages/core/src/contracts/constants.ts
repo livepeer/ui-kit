@@ -31,20 +31,20 @@ export const allChainId = {
 
 export type TestnetLivepeerChain = keyof typeof testnetChainId;
 export type TestnetLivepeerChainId =
-  (typeof testnetChainId)[TestnetLivepeerChain];
+  typeof testnetChainId[TestnetLivepeerChain];
 
 export type MainnetLivepeerChain = keyof typeof mainnetChainId;
 export type MainnetLivepeerChainId =
-  (typeof mainnetChainId)[MainnetLivepeerChain];
+  typeof mainnetChainId[MainnetLivepeerChain];
 
 export type L1LivepeerChain = keyof typeof l1ChainId;
-export type L1LivepeerChainId = (typeof l1ChainId)[L1LivepeerChain];
+export type L1LivepeerChainId = typeof l1ChainId[L1LivepeerChain];
 
 export type L2LivepeerChain = keyof typeof l2ChainId;
-export type L2LivepeerChainId = (typeof l2ChainId)[L2LivepeerChain];
+export type L2LivepeerChainId = typeof l2ChainId[L2LivepeerChain];
 
 export type LivepeerChain = keyof typeof allChainId;
-export type LivepeerChainId = (typeof allChainId)[LivepeerChain];
+export type LivepeerChainId = typeof allChainId[LivepeerChain];
 
 export type LivepeerAddressMetadata = {
   chainId: LivepeerChainId;
