@@ -186,7 +186,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 metadata: {
                   id: assetId,
                 },
-                ...(typeof File !== 'undefined' && source instanceof File)
+                ...(typeof File !== 'undefined' && source instanceof File
                   ? null
                   : { chunkSize: 5 * 1024 * 1024 }),
                 // fingerprint: function (file: File & { exif?: any }) {
