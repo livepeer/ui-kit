@@ -6,4 +6,8 @@ export const getDeviceInfo = (): DeviceInformation => ({
   isAndroid: isAndroid(),
   isIos: isIos(),
   isMobile: isMobile(),
+  userAgent:
+    typeof navigator !== 'undefined'
+      ? navigator.userAgent
+      : 'Node.js or unknown',
 });

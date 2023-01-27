@@ -1,7 +1,11 @@
+// polyfill for URL
+import 'react-native-url-polyfill/auto';
+
 import {
   ControlsOptions,
   DEFAULT_AUTOHIDE_TIME,
   MediaControllerState,
+  addMediaMetricsToStore,
 } from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import {
@@ -40,7 +44,16 @@ export type VideoCustomizationProps = {
 
 export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
   (
-    { src, autoPlay, loop, muted, objectFit, options, poster, audioMode },
+    {
+      src,
+      autoPlay,
+      loop,
+      objectFit,
+      options,
+      poster,
+      audioMode,
+      onMetricsError,
+    },
     ref,
   ) => {
     // typecast the context so that we can have video/audio-specific controller states
@@ -60,17 +73,13 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       });
     }, [audioMode]);
 
-    const { hasPlayed, playing, muted: isMuted } = store;
+    const { hasPlayed, playing, muted } = store;
 
     const onError = async (_e: string) => {
       // await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
       // await state._element?.unloadAsync();
       // TODO add error handling
     };
-
-    React.useEffect(() => {
-      context.setState({ muted: Boolean(muted) });
-    }, [muted]);
 
     React.useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
@@ -87,6 +96,19 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     const filteredSources = React.useMemo(() => {
       return src?.filter((s) => s?.mime && canPlayMediaNatively(s));
     }, [src]);
+
+    React.useEffect(() => {
+      const { destroy } = addMediaMetricsToStore(
+        context,
+        filteredSources?.[0]?.src,
+        (e) => {
+          onMetricsError?.(e as Error);
+          console.error('Not able to report player metrics', e);
+        },
+      );
+
+      return destroy;
+    }, [onMetricsError, context, filteredSources]);
 
     const onPlaybackStatusUpdate = React.useCallback(
       async (status?: AVPlaybackStatus) => {
@@ -153,7 +175,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         onError={onError}
         shouldPlay={hasPlayed ? playing : autoPlay}
         ref={ref}
-        isMuted={isMuted}
+        isMuted={muted}
       />
     );
   },

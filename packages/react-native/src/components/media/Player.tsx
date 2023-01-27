@@ -49,7 +49,11 @@ export const PlayerInternal = (props: PlayerProps) => {
   });
 
   return (
-    <MediaControllerProvider element={mediaElement} opts={controls ?? {}}>
+    <MediaControllerProvider
+      element={mediaElement}
+      opts={controls ?? {}}
+      playerProps={props}
+    >
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && !Array.isArray(source) ? (
           <HlsPlayer
