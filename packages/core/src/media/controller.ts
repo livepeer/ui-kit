@@ -12,6 +12,7 @@ export type DeviceInformation = {
   isMobile: boolean;
   isIos: boolean;
   isAndroid: boolean;
+  userAgent: string;
 };
 
 export type MediaSizing = {
@@ -38,6 +39,11 @@ export type MediaControllerState<TElement = void> = {
   muted: boolean;
   /** If media supports changing the volume */
   isVolumeChangeSupported: boolean;
+
+  /** If autoplay was passed in to Player */
+  autoplay: boolean;
+  /** If priority was passed in to Player */
+  priority: boolean;
 
   /** If the media is current playing or paused */
   playing: boolean;
@@ -154,11 +160,13 @@ export const createControllerStore = <TElement>({
   element,
   device,
   storage,
+  playerProps,
   opts,
 }: {
   element: TElement | null;
   device: DeviceInformation;
   storage: ClientStorage;
+  playerProps: PlayerPropsOptions;
   opts: ControlsOptions;
 }) => {
   const store = createStore<
@@ -172,6 +180,10 @@ export const createControllerStore = <TElement>({
         canPlay: false,
         hidden: false,
         live: false,
+
+        autoplay: Boolean(playerProps.autoPlay),
+        muted: Boolean(playerProps.muted),
+        priority: Boolean(playerProps.priority),
 
         hasPlayed: false,
         playing: false,
@@ -191,7 +203,6 @@ export const createControllerStore = <TElement>({
         buffered: 0,
 
         volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
-        muted: true,
         isVolumeChangeSupported: false,
 
         _lastInteraction: Date.now(),
@@ -238,7 +249,12 @@ export const createControllerStore = <TElement>({
             }));
           }
         },
-        onProgress: (time) => set(() => ({ progress: getFilteredNaN(time) })),
+        onProgress: (time) =>
+          set(() => ({
+            progress: getFilteredNaN(time),
+            waiting: false,
+            stalled: false,
+          })),
         requestSeek: (time) =>
           set(({ duration }) => ({
             _requestedRangeToSeekTo: getBoundedSeek(time, duration),
@@ -327,4 +343,10 @@ export type ControlsOptions = {
   autohide?: number;
   /** Sets the default volume. Must be between 0 and 1. */
   defaultVolume?: number;
+};
+
+export type PlayerPropsOptions = {
+  autoPlay?: boolean;
+  muted?: boolean;
+  priority?: boolean;
 };

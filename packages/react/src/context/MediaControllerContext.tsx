@@ -10,6 +10,7 @@ export const MediaControllerContext = React.createContext<
     element: null,
     device: getDeviceInfo(),
     storage: createStorage({}),
+    playerProps: {},
     opts: {},
   }),
 );

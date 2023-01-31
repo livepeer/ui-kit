@@ -33,6 +33,7 @@ export type {
   MediaSizing,
   MetricsStatus,
   PlaybackMonitor,
+  PlayerPropsOptions,
   Src,
   VideoSrc,
 } from './media';

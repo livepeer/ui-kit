@@ -15,7 +15,7 @@ export const AssetDemoPlayer = () => {
   return (
     <>
       {/* Added scrolling to test priority... */}
-      {/* <div style={{ height: 2000 }} /> */}
+      <div style={{ height: 2000 }} />
       <Player
         playbackId={playbackId}
         // src={playbackId}

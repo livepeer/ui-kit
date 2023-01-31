@@ -4,6 +4,7 @@ import { useClient } from '@livepeer/core-react/context';
 import * as React from 'react';
 
 import { MediaControllerContext } from './MediaControllerContext';
+import { PlayerProps } from '../components';
 import { createNativeControllerStore } from '../components/media/state/controls';
 
 import { MediaElement } from '../components/media/types';
@@ -12,14 +13,16 @@ export type MediaControllerProviderProps<TElement extends MediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
   opts: ControlsOptions;
+  playerProps: PlayerProps;
 };
 
 export const MediaControllerProvider = <TElement extends MediaElement>({
   element,
   children,
   opts,
+  playerProps,
 }: MediaControllerProviderProps<TElement>) => {
-  const mediaController = useMediaControllerStore(element, opts);
+  const mediaController = useMediaControllerStore(element, opts, playerProps);
 
   return (
     <MediaControllerContext.Provider value={mediaController}>
@@ -31,6 +34,7 @@ export const MediaControllerProvider = <TElement extends MediaElement>({
 const useMediaControllerStore = <TElement extends MediaElement>(
   element: TElement | null,
   opts: ControlsOptions,
+  playerProps: PlayerProps,
 ) => {
   const client = useClient();
 
@@ -40,8 +44,9 @@ const useMediaControllerStore = <TElement extends MediaElement>(
         element,
         storage: client.storage,
         opts,
+        playerProps,
       }),
-    [element, client?.storage, opts],
+    [element, client?.storage, opts, playerProps],
   );
 
   return store;

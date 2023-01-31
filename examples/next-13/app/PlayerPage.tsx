@@ -59,6 +59,9 @@ export default (props: PlayerProps) => {
             containerBorderRadius: '0px',
           },
         }}
+        controls={{
+          defaultVolume: 0.7,
+        }}
         mediaElementRef={mediaElementRef}
       />
     </div>

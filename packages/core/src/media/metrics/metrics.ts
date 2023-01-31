@@ -2,6 +2,7 @@ import { getMetricsReportingUrl } from './utils';
 import { MediaControllerStore } from '../controller';
 
 type RawMetrics = {
+  ttff: number;
   firstPlayback: number;
 
   nWaiting: number;
@@ -22,11 +23,14 @@ type RawMetrics = {
 
   playbackScore: number | null;
 
-  player: 'generic';
+  player: 'livepeer-js';
 
   pageUrl: string;
   sourceUrl: string;
   duration: number | null;
+
+  autoplay: boolean;
+  userAgent: string;
 };
 
 type PlaybackRecord = {
@@ -130,7 +134,33 @@ export class PlaybackMonitor<TElement> {
   }
 }
 
+class Timer {
+  totalTime = 0;
+
+  countStarts = 0;
+  startTime = 0;
+
+  start() {
+    this.startTime = Date.now();
+    this.countStarts++;
+  }
+  stop() {
+    this.totalTime += this.startTime > 0 ? Date.now() - this.startTime : 0;
+    this.startTime = 0;
+  }
+  getTotalTime() {
+    this.totalTime += this.startTime > 0 ? Date.now() - this.startTime : 0;
+    this.startTime = this.startTime > 0 ? Date.now() : 0;
+
+    return this.totalTime;
+  }
+  getCountStarts() {
+    return this.countStarts;
+  }
+}
+
 export class MetricsStatus<TElement> {
+  requestedPlayTime = 0;
   retryCount = 0;
   connected = false;
   store: MediaControllerStore<TElement>;
@@ -138,14 +168,13 @@ export class MetricsStatus<TElement> {
   currentMetrics: RawMetrics;
   previousMetrics: RawMetrics | null = null;
 
-  timeWaiting = 0;
-  waitingSince = 0;
-  timeStalled = 0;
-  stalledSince = 0;
-  timeUnpaused = 0;
-  unpausedSince = 0;
+  timeWaiting = new Timer();
+  timeStalled = new Timer();
+  timeUnpaused = new Timer();
 
   constructor(store: MediaControllerStore<TElement>) {
+    this.requestedPlayTime = store.getState().autoplay ? Date.now() : 0;
+
     this.store = store;
     this.currentMetrics = {
       firstPlayback: 0,
@@ -159,68 +188,59 @@ export class MetricsStatus<TElement> {
       videoWidth: null,
       playerHeight: null,
       playerWidth: null,
-      player: 'generic',
+      player: 'livepeer-js',
       pageUrl: '',
       sourceUrl: '',
       playbackScore: null,
       duration: null,
+      autoplay: store.getState().autoplay,
+      userAgent: store.getState().device.userAgent,
+      ttff: 0,
     };
 
     store.subscribe((state, prevState) => {
-      if (state.playing !== prevState.playing) {
-        this.timeWaiting = this._getTimeWaiting();
-        this.timeStalled = this._getTimeStalled();
-        this.waitingSince = 0;
-        this.stalledSince = 0;
+      if (
+        state._requestedPlayPauseLastTime !==
+          prevState._requestedPlayPauseLastTime &&
+        this.requestedPlayTime === 0
+      ) {
+        this.requestedPlayTime = state._requestedPlayPauseLastTime;
+      }
 
+      if (state.playing !== prevState.playing) {
         if (state.playing) {
-          this.timeUnpaused = this._getTimeUnpaused(); // in case we get playing several times in a row
-          this.unpausedSince = Date.now();
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
+
+          this.timeUnpaused.start();
         } else {
-          this.timeUnpaused = this._getTimeUnpaused();
-          this.unpausedSince = 0;
+          this.timeUnpaused.stop();
         }
       }
 
+      if (
+        state.progress !== prevState.progress &&
+        !this.timeUnpaused.startTime
+      ) {
+        this.timeStalled.stop();
+        this.timeWaiting.stop();
+        this.timeUnpaused.start();
+      }
+
       if (state.stalled !== prevState.stalled && state.stalled) {
-        this.timeStalled = this._getTimeStalled(); // in case we get stalled several times in a row
-        this.stalledSince = Date.now();
+        this.timeStalled.start();
+        this.timeUnpaused.stop();
       }
       if (state.waiting !== prevState.waiting && state.waiting) {
-        this.timeWaiting = this._getTimeWaiting(); // in case we get waiting several times in a row
-        this.waitingSince = Date.now();
+        this.timeWaiting.start();
+        this.timeUnpaused.stop();
       }
     });
-  }
-
-  _getTimeWaiting(): number {
-    return (
-      this.timeWaiting +
-      (this.waitingSince ? Date.now() - this.waitingSince : 0)
-    );
-  }
-  _getTimeStalled(): number {
-    return (
-      this.timeStalled +
-      (this.stalledSince ? Date.now() - this.stalledSince : 0)
-    );
-  }
-  _getTimeUnpaused(): number {
-    return (
-      this.timeUnpaused +
-      (this.unpausedSince ? Date.now() - this.unpausedSince : 0)
-    );
   }
 
   addError(error: string) {
     this.currentMetrics.nError++;
     this.currentMetrics.lastError = error;
-  }
-  incrementStalled() {
-    this.currentMetrics.nStalled++;
-  }
-  incrementWaiting() {
-    this.currentMetrics.nWaiting++;
   }
 
   getFirstPlayback() {
@@ -228,6 +248,17 @@ export class MetricsStatus<TElement> {
   }
   setFirstPlayback() {
     this.currentMetrics.firstPlayback = Date.now() - bootMs;
+  }
+  getTtff() {
+    return this.currentMetrics.ttff;
+  }
+  setTtff() {
+    const ttffCalculated = Date.now() - this.requestedPlayTime;
+
+    // filter out erroneous values
+    if (ttffCalculated < 120000) {
+      this.currentMetrics.ttff = ttffCalculated;
+    }
   }
   setPlaybackScore(playbackScore: number) {
     this.currentMetrics.playbackScore = playbackScore;
@@ -245,9 +276,12 @@ export class MetricsStatus<TElement> {
       videoHeight: this.store.getState().size?.media?.height ?? null,
       duration: this.store.getState().duration,
 
-      timeWaiting: this._getTimeWaiting(),
-      timeStalled: this._getTimeStalled(),
-      timeUnpaused: this._getTimeUnpaused(),
+      nWaiting: this.timeWaiting.getCountStarts(),
+      nStalled: this.timeStalled.getCountStarts(),
+
+      timeWaiting: this.timeWaiting.getTotalTime(),
+      timeStalled: this.timeStalled.getTotalTime(),
+      timeUnpaused: this.timeUnpaused.getTotalTime(),
     };
 
     const previousMetrics = this.previousMetrics;
@@ -358,12 +392,17 @@ export function addMediaMetricsToStore<TElement>(
         metricsStatus.setFirstPlayback();
       }
 
-      if (state.stalled !== prevState.stalled && state.stalled) {
-        metricsStatus.incrementStalled();
+      // 1. When a video is above the fold and set to autoplay, ttff is from when the player is added to the HTML of the page to when the first
+      // progress update
+      // 2. When a video is below the fold and set to autoplay, from when lazy loading is triggered and the first progress update
+      // 3. When a video is below the fold and not set to autoplay, from when lazy loading is triggered and the first progress update
+      if (
+        state.progress !== prevState.progress &&
+        metricsStatus.getTtff() === 0
+      ) {
+        metricsStatus.setTtff();
       }
-      if (state.waiting !== prevState.waiting && state.waiting) {
-        metricsStatus.incrementWaiting();
-      }
+
       if (state.error !== prevState.error && state.error) {
         metricsStatus.addError(state.error ?? 'unknown');
       }

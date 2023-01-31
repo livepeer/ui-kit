@@ -1,4 +1,8 @@
-import { ControlsOptions, createStorage } from '@livepeer/core';
+import {
+  ControlsOptions,
+  PlayerPropsOptions,
+  createStorage,
+} from '@livepeer/core';
 import { createControllerStore } from '@livepeer/core/media';
 
 import {
@@ -23,7 +27,7 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
   element: TElement | undefined | null,
   sourceUrl: string | undefined | null,
   onError?: (error: unknown) => void,
-  opts?: ControlsOptions,
+  opts?: ControlsOptions & PlayerPropsOptions,
 ): MediaMetrics<TElement> {
   const store = createControllerStore<TElement>({
     element: element ?? null,
@@ -35,6 +39,11 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
           }
         : {},
     ),
+    playerProps: opts ?? {
+      autoPlay: Boolean(element?.autoplay),
+      muted: Boolean(element?.muted),
+      priority: false,
+    },
     opts: opts ?? {},
   });
 
