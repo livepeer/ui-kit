@@ -39,7 +39,11 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
           }
         : {},
     ),
-    playerProps: opts ?? {},
+    playerProps: opts ?? {
+      autoPlay: Boolean(element?.autoplay),
+      muted: Boolean(element?.muted),
+      priority: false,
+    },
     opts: opts ?? {},
   });
 
