@@ -73,7 +73,7 @@ export const PlayerInternal = (props: PlayerProps) => {
         )}
 
         {React.isValidElement(children) ? (
-          children
+          React.cloneElement(children, controlsContainerProps)
         ) : (
           <>
             <ControlsContainer

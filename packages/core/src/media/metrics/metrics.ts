@@ -253,7 +253,12 @@ export class MetricsStatus<TElement> {
     return this.currentMetrics.ttff;
   }
   setTtff() {
-    this.currentMetrics.ttff = Date.now() - this.requestedPlayTime;
+    const ttffCalculated = Date.now() - this.requestedPlayTime;
+
+    // filter out erroneous values
+    if (ttffCalculated < 120000) {
+      this.currentMetrics.ttff = ttffCalculated;
+    }
   }
   setPlaybackScore(playbackScore: number) {
     this.currentMetrics.playbackScore = playbackScore;
@@ -396,7 +401,6 @@ export function addMediaMetricsToStore<TElement>(
         metricsStatus.getTtff() === 0
       ) {
         metricsStatus.setTtff();
-        console.log(`TTFF was ${metricsStatus.getTtff()}`);
       }
 
       if (state.error !== prevState.error && state.error) {
