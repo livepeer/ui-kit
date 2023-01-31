@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.1.3
+
+### Patch Changes
+
+- [#255](https://github.com/livepeer/livepeer.js/pull/255) [`0e5cbc9`](https://github.com/livepeer/livepeer.js/commit/0e5cbc98116332260178de3aa188db53b9f5f22c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed Node.js issue with `File` not being defined globally.
+
 ## 1.1.2
 
 ### Patch Changes
