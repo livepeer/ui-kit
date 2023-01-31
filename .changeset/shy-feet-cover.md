@@ -6,4 +6,4 @@
 '@livepeer/core-react': patch
 ---
 
-**Fix:** fixed Node.js issue with `File` not being defined globally.
+**Feature:** added Time to First Frame, Autoplay, and User Agent to metrics reporting. Fixed bugs with play time metrics reporting.
