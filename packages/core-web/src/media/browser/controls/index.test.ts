@@ -8,7 +8,6 @@ it('should expose correct exports', () => {
       "addEventListeners",
       "addMediaMetricsToInitializedStore",
       "getDeviceInfo",
-      "isAirPlaySupported",
       "isPictureInPictureSupported",
     ]
   `);
