@@ -1,8 +1,5 @@
 import { HlsPlayerProps as HlsPlayerCoreProps } from '@livepeer/core-react/components';
-import {
-  addMediaMetricsToInitializedStore,
-  canPlayMediaNatively,
-} from 'livepeer/media/browser';
+import { addMediaMetricsToInitializedStore } from 'livepeer/media/browser';
 import {
   HlsError,
   HlsVideoConfig,
@@ -13,10 +10,10 @@ import { styling } from 'livepeer/media/browser/styling';
 
 import * as React from 'react';
 
-import { MediaControllerContext } from '../../../context';
-import { PosterSource } from '../Player';
 import { VideoPlayer } from './VideoPlayer';
 import { isAccessControlError, isStreamOfflineError } from './utils';
+import { MediaControllerContext } from '../../../context';
+import { PosterSource } from '../Player';
 
 export type HlsPlayerProps = HlsPlayerCoreProps<
   HTMLVideoElement,
@@ -39,6 +36,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       onStreamStatusChange,
       onMetricsError,
       onAccessControlError,
+      priority,
     } = props;
 
     const store = React.useContext(MediaControllerContext);
@@ -56,20 +54,11 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       return destroy;
     }, [onMetricsError, store, src]);
 
-    const [canUseHlsjs, canPlayAppleMpeg] = React.useMemo(
-      () => [
-        isHlsSupported(),
-        canPlayMediaNatively({
-          ...src,
-          mime: 'application/vnd.apple.mpegurl',
-        }),
-      ],
-      [src],
-    );
+    const canUseHlsjs = React.useMemo(() => isHlsSupported(), []);
 
     React.useEffect(() => {
       const element = store.getState()._element;
-      if (element && canUseHlsjs && !canPlayAppleMpeg && src.src) {
+      if (element && canUseHlsjs && src.src) {
         const onLive = (fullscreen: boolean) => {
           onStreamStatusChange?.(true);
           store.getState().setLive(fullscreen);
@@ -110,14 +99,12 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
       src,
       store,
       canUseHlsjs,
-      canPlayAppleMpeg,
       onStreamStatusChange,
       onAccessControlError,
     ]);
 
-    // if Media Source is supported and if HLS is not supported by default in the user's browser, use HLS.js
-    // fallback to using a regular video player
-    return !canPlayAppleMpeg && canUseHlsjs ? (
+    // use HLS.js if Media Source is supported, fallback to using a regular video player
+    return canUseHlsjs ? (
       <video
         className={styling.media.video({
           size: store.getState().fullscreen ? 'fullscreen' : objectFit,
@@ -133,6 +120,7 @@ export const HlsPlayer = React.forwardRef<HTMLVideoElement, HlsPlayerProps>(
         autoPlay={autoPlay}
         muted={muted}
         poster={typeof poster === 'string' ? poster : undefined}
+        preload={priority ? 'auto' : 'metadata'}
       />
     ) : (
       <VideoPlayer

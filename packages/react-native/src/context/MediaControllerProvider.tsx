@@ -2,29 +2,30 @@ import { ControlsOptions } from '@livepeer/core-react';
 import { useClient } from '@livepeer/core-react/context';
 
 import * as React from 'react';
-import create from 'zustand';
 
+import { MediaControllerContext } from './MediaControllerContext';
+import { PlayerProps } from '../components';
 import { createNativeControllerStore } from '../components/media/state/controls';
 
 import { MediaElement } from '../components/media/types';
-
-import { MediaControllerContext } from './MediaControllerContext';
 
 export type MediaControllerProviderProps<TElement extends MediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
   opts: ControlsOptions;
+  playerProps: PlayerProps;
 };
 
 export const MediaControllerProvider = <TElement extends MediaElement>({
   element,
   children,
   opts,
+  playerProps,
 }: MediaControllerProviderProps<TElement>) => {
-  const useMediaController = useMediaControllerStore(element, opts);
+  const mediaController = useMediaControllerStore(element, opts, playerProps);
 
   return (
-    <MediaControllerContext.Provider value={useMediaController}>
+    <MediaControllerContext.Provider value={mediaController}>
       {children}
     </MediaControllerContext.Provider>
   );
@@ -33,19 +34,19 @@ export const MediaControllerProvider = <TElement extends MediaElement>({
 const useMediaControllerStore = <TElement extends MediaElement>(
   element: TElement | null,
   opts: ControlsOptions,
+  playerProps: PlayerProps,
 ) => {
   const client = useClient();
 
   const store = React.useMemo(
     () =>
-      create(
-        createNativeControllerStore<TElement>({
-          element,
-          storage: client.storage,
-          opts,
-        }),
-      ),
-    [element, client?.storage, opts],
+      createNativeControllerStore<TElement>({
+        element,
+        storage: client.storage,
+        opts,
+        playerProps,
+      }),
+    [element, client?.storage, opts, playerProps],
   );
 
   return store;

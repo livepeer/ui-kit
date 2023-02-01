@@ -8,8 +8,6 @@ import {
 import * as React from 'react';
 import { ImageProps } from 'react-native';
 
-import { MediaControllerProvider } from '../../context/MediaControllerProvider';
-
 import { ControlsContainer, PlayButton } from './controls';
 import { Container } from './controls/Container';
 import { FullscreenButton } from './controls/FullscreenButton';
@@ -21,6 +19,7 @@ import { Volume } from './controls/Volume';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
 import { VideoCustomizationProps } from './players/VideoPlayer';
 import { MediaElement } from './types';
+import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
 export type { PlayerObjectFit };
 
@@ -50,7 +49,11 @@ export const PlayerInternal = (props: PlayerProps) => {
   });
 
   return (
-    <MediaControllerProvider element={mediaElement} opts={controls ?? {}}>
+    <MediaControllerProvider
+      element={mediaElement}
+      opts={controls ?? {}}
+      playerProps={props}
+    >
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && !Array.isArray(source) ? (
           <HlsPlayer
@@ -70,7 +73,7 @@ export const PlayerInternal = (props: PlayerProps) => {
         )}
 
         {React.isValidElement(children) ? (
-          children
+          React.cloneElement(children, controlsContainerProps)
         ) : (
           <>
             <ControlsContainer

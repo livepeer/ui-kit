@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { provider, renderHook } from '../../../test';
 import { prefetchPlaybackInfo, usePlaybackInfo } from './usePlaybackInfo';
+import { provider, renderHook } from '../../../test';
 
 const playbackId = 'a4e8o6mykgkvtxav';
 

@@ -2,9 +2,8 @@ import { HttpError } from '@livepeer/core';
 import { QueryKey, UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { QueryClientContext } from '../../context';
-
 import { Status } from './types';
+import { QueryClientContext } from '../../context';
 
 export type InternalQueryError = HttpError | Error;
 

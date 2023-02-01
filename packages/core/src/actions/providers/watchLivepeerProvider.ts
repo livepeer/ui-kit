@@ -1,10 +1,9 @@
-import { getClient } from '../../client';
-import { LivepeerProvider } from '../../types';
-
 import {
   GetLivepeerProviderResult,
   getLivepeerProvider,
 } from './getLivepeerProvider';
+import { getClient } from '../../client';
+import { LivepeerProvider } from '../../types';
 
 export type WatchLivepeerProviderCallback<
   TLivepeerProvider extends LivepeerProvider = LivepeerProvider,

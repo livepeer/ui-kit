@@ -30,6 +30,7 @@ describe('useClient', () => {
               "log": [Function],
               "warn": [Function],
             },
+            "mountCount": 1,
             "mutationCache": MutationCache {
               "config": {},
               "listeners": [],

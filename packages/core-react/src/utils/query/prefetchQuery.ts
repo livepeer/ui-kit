@@ -5,8 +5,8 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
-import { defaultQueryClient } from '../../client';
 import { InternalQueryError } from './useInternalQuery';
+import { defaultQueryClient } from '../../client';
 
 export type PrefetchQueryOptions = {
   clearClient?: boolean;

@@ -4,12 +4,12 @@ import {
 } from './packages/core/package.json';
 import {
   name as reactName,
-  version as reactNativeVersion,
-} from './packages/react-native/package.json';
-import {
-  name as reactNativeName,
   version as reactVersion,
 } from './packages/react/package.json';
+import {
+  name as reactNativeName,
+  version as reactNativeVersion,
+} from './packages/react-native/package.json';
 import fs from 'fs';
 
 fs.writeFileSync(

@@ -2,7 +2,7 @@
   "name": "livepeer",
   "description": "Livepeer's vanilla JS library.",
   "license": "MIT",
-  "version": "2.0.0",
+  "version": "2.1.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -110,19 +110,19 @@
     }
   },
   "dependencies": {
-    "@livepeer/core": "^1.0.0",
+    "@livepeer/core": "^1.1.4",
     "@stitches/core": "^1.2.8",
-    "core-js": "^3.26.1",
+    "core-js": "^3.27.2",
     "cross-fetch": "^3.1.5",
-    "hls.js": "^1.2.8",
+    "hls.js": "^1.3.1",
     "ms": "^3.0.0-canary.1",
     "multiformats": "9.9.0",
     "tus-js-client": "^3.0.1",
-    "zustand": "^4.1.5"
+    "zustand": "^4.3.2"
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
-    "jose": "^4.11.1"
+    "jose": "^4.11.2"
   },
   "keywords": [
     "eth",

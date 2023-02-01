@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { provider, renderHook } from '../../../test';
 import { prefetchAssetMetrics, useAssetMetrics } from './useAssetMetrics';
+import { provider, renderHook } from '../../../test';
 
 // asset ID which was generated previously for tests
 const assetId = 'd8e8b87d-6774-4083-a2d7-4e85872d18cd';

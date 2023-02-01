@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { act, renderHook } from '../../../test';
 import { useCreateStream } from './useCreateStream';
+import { act, renderHook } from '../../../test';
 
 const streamName = 'livepeer.js tests :: new stream';
 

@@ -328,8 +328,6 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
 
       removeEffectsFromStore?.();
 
-      store?.destroy?.();
-
       element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
     },
   };

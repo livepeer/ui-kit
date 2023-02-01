@@ -51,9 +51,14 @@ export function addMediaMetricsToInitializedStore<
 
   element.setAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE, 'true');
 
-  const { metrics } = addMediaMetricsToStore(store, sourceUrl, onError);
+  const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(
+    store,
+    sourceUrl,
+    onError,
+  );
 
   const destroy = () => {
+    destroyMetrics();
     element.removeAttribute(VIDEO_METRICS_INITIALIZED_ATTRIBUTE);
   };
 

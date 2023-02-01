@@ -11,8 +11,8 @@ import {
 
 import Image from 'next/image';
 
-import blenderPoster from '../../../public/images/blender-poster-2.png';
 import { DocsDemoPlayer } from './DocsDemoPlayer';
+import blenderPoster from '../../../public/images/blender-poster-2.png';
 
 const PosterImage = () => {
   return <Image src={blenderPoster} layout="fill" objectFit="cover" />;

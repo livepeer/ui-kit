@@ -1,5 +1,14 @@
 import * as tus from 'tus-js-client';
 
+import {
+  StudioAsset,
+  StudioAssetPatchPayload,
+  StudioCreateStreamArgs,
+  StudioPlaybackInfo,
+  StudioStream,
+  StudioStreamSession,
+  StudioViewsMetrics,
+} from './types';
 import { defaultStudioConfig } from '../../constants';
 
 import {
@@ -31,15 +40,6 @@ import {
 } from '../../types';
 
 import { BaseLivepeerProvider, LivepeerProviderFn } from '../base';
-import {
-  StudioAsset,
-  StudioAssetPatchPayload,
-  StudioCreateStreamArgs,
-  StudioPlaybackInfo,
-  StudioStream,
-  StudioStreamSession,
-  StudioViewsMetrics,
-} from './types';
 
 export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
   apiKey: string;
@@ -186,7 +186,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 metadata: {
                   id: assetId,
                 },
-                ...((source as CreateAssetSourceFile) instanceof File
+                ...(typeof File !== 'undefined' && source instanceof File
                   ? null
                   : { chunkSize: 5 * 1024 * 1024 }),
                 // fingerprint: function (file: File & { exif?: any }) {

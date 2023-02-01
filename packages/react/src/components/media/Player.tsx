@@ -8,9 +8,6 @@ import { ControlsOptions } from 'livepeer/media/browser';
 
 import * as React from 'react';
 
-import { MediaControllerProvider } from '../../context';
-import { useIsElementShown } from '../useIsElementShown';
-
 import {
   AirPlayButton,
   Container,
@@ -25,6 +22,8 @@ import {
   Volume,
 } from './controls';
 import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { MediaControllerProvider } from '../../context';
+import { useIsElementShown } from '../useIsElementShown';
 
 export type PosterSource = string | React.ReactNode;
 
@@ -72,7 +71,11 @@ export const PlayerInternal = (props: PlayerProps) => {
   }, [_isCurrentlyShown]);
 
   return (
-    <MediaControllerProvider element={mediaElement} opts={controls ?? {}}>
+    <MediaControllerProvider
+      element={mediaElement}
+      opts={controls ?? {}}
+      playerProps={props}
+    >
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && !Array.isArray(source) ? (
           <HlsPlayer

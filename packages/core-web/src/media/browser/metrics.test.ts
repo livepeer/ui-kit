@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { MockedVideoElement, resetDateNow, setupClient } from '../../../test';
 import { addMediaMetrics } from './metrics';
+import { MockedVideoElement, resetDateNow, setupClient } from '../../../test';
 
 const playbackUrl =
   'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
@@ -55,8 +55,14 @@ describe('addMediaMetrics', () => {
 
       const metricsSnapshot = metrics?.getMetrics();
 
+      expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
+
+      if (metricsSnapshot?.current?.userAgent)
+        metricsSnapshot.current.userAgent = 'UA';
+
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
+          "autoplay": false,
           "duration": 0,
           "firstPlayback": 0,
           "nError": 0,
@@ -64,13 +70,15 @@ describe('addMediaMetrics', () => {
           "nWaiting": 0,
           "pageUrl": "",
           "playbackScore": null,
-          "player": "generic",
+          "player": "livepeer-js",
           "playerHeight": null,
           "playerWidth": null,
           "sourceUrl": "",
           "timeStalled": 0,
           "timeUnpaused": 0,
           "timeWaiting": 0,
+          "ttff": 0,
+          "userAgent": "UA",
           "videoHeight": null,
           "videoWidth": null,
         }
@@ -86,26 +94,34 @@ describe('addMediaMetrics', () => {
 
       const metricsSnapshot = metrics?.getMetrics();
 
+      expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
+
+      if (metricsSnapshot?.current?.userAgent)
+        metricsSnapshot.current.userAgent = 'UA';
+
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-        {
-          "duration": 0,
-          "firstPlayback": 0,
-          "nError": 0,
-          "nStalled": 0,
-          "nWaiting": 0,
-          "pageUrl": "",
-          "playbackScore": null,
-          "player": "generic",
-          "playerHeight": null,
-          "playerWidth": null,
-          "sourceUrl": "",
-          "timeStalled": 0,
-          "timeUnpaused": 0,
-          "timeWaiting": 0,
-          "videoHeight": null,
-          "videoWidth": null,
-        }
-      `);
+      {
+        "autoplay": false,
+        "duration": 0,
+        "firstPlayback": 0,
+        "nError": 0,
+        "nStalled": 0,
+        "nWaiting": 0,
+        "pageUrl": "",
+        "playbackScore": null,
+        "player": "livepeer-js",
+        "playerHeight": null,
+        "playerWidth": null,
+        "sourceUrl": "",
+        "timeStalled": 0,
+        "timeUnpaused": 0,
+        "timeWaiting": 0,
+        "ttff": 0,
+        "userAgent": "UA",
+        "videoHeight": null,
+        "videoWidth": null,
+      }
+    `);
     });
 
     it('should update time waiting and waiting count', async () => {
@@ -117,26 +133,34 @@ describe('addMediaMetrics', () => {
 
       const metricsSnapshot = metrics?.getMetrics();
 
+      expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
+
+      if (metricsSnapshot?.current?.userAgent)
+        metricsSnapshot.current.userAgent = 'UA';
+
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-        {
-          "duration": 0,
-          "firstPlayback": 0,
-          "nError": 0,
-          "nStalled": 0,
-          "nWaiting": 1,
-          "pageUrl": "",
-          "playbackScore": null,
-          "player": "generic",
-          "playerHeight": null,
-          "playerWidth": null,
-          "sourceUrl": "",
-          "timeStalled": 0,
-          "timeUnpaused": 0,
-          "timeWaiting": 1000,
-          "videoHeight": null,
-          "videoWidth": null,
-        }
-      `);
+          {
+            "autoplay": false,
+            "duration": 0,
+            "firstPlayback": 0,
+            "nError": 0,
+            "nStalled": 0,
+            "nWaiting": 1,
+            "pageUrl": "",
+            "playbackScore": null,
+            "player": "livepeer-js",
+            "playerHeight": null,
+            "playerWidth": null,
+            "sourceUrl": "",
+            "timeStalled": 0,
+            "timeUnpaused": 0,
+            "timeWaiting": 1000,
+            "ttff": 0,
+            "userAgent": "UA",
+            "videoHeight": null,
+            "videoWidth": null,
+          }
+        `);
     });
 
     it('should update time stalled and stalled count', async () => {
@@ -150,26 +174,34 @@ describe('addMediaMetrics', () => {
 
       const metricsSnapshot = metrics?.getMetrics();
 
+      expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
+
+      if (metricsSnapshot?.current?.userAgent)
+        metricsSnapshot.current.userAgent = 'UA';
+
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-        {
-          "duration": 0,
-          "firstPlayback": 0,
-          "nError": 0,
-          "nStalled": 1,
-          "nWaiting": 0,
-          "pageUrl": "",
-          "playbackScore": null,
-          "player": "generic",
-          "playerHeight": null,
-          "playerWidth": null,
-          "sourceUrl": "",
-          "timeStalled": 1000,
-          "timeUnpaused": 0,
-          "timeWaiting": 0,
-          "videoHeight": null,
-          "videoWidth": null,
-        }
-      `);
+                    {
+                      "autoplay": false,
+                      "duration": 0,
+                      "firstPlayback": 0,
+                      "nError": 0,
+                      "nStalled": 1,
+                      "nWaiting": 0,
+                      "pageUrl": "",
+                      "playbackScore": null,
+                      "player": "livepeer-js",
+                      "playerHeight": null,
+                      "playerWidth": null,
+                      "sourceUrl": "",
+                      "timeStalled": 1000,
+                      "timeUnpaused": 0,
+                      "timeWaiting": 0,
+                      "ttff": 0,
+                      "userAgent": "UA",
+                      "videoHeight": null,
+                      "videoWidth": null,
+                    }
+                  `);
     });
   });
 });

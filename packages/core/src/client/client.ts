@@ -1,5 +1,9 @@
-import { persist, subscribeWithSelector } from 'zustand/middleware';
-import { Mutate, StoreApi, default as create } from 'zustand/vanilla';
+import {
+  createJSONStorage,
+  persist,
+  subscribeWithSelector,
+} from 'zustand/middleware';
+import { Mutate, StoreApi, createStore } from 'zustand/vanilla';
 
 import { ClientStorage, createStorage } from '../storage';
 import { LivepeerProvider } from '../types';
@@ -43,7 +47,7 @@ export class Client<
     storage = createStorage({}),
   }: ClientConfig<TLivepeerProvider>) {
     // Create store
-    this.store = create<
+    this.store = createStore<
       State<TLivepeerProvider>,
       [
         ['zustand/subscribeWithSelector', never],
@@ -57,7 +61,7 @@ export class Client<
           }),
           {
             name: storeKey,
-            getStorage: () => storage,
+            storage: createJSONStorage(() => storage),
             // for now, we don't store any state in local storage
             partialize: (_state) => ({}),
             version: 1,

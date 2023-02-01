@@ -1,11 +1,11 @@
 import ms, { StringValue } from 'ms';
 
+import { signEcdsaSha256 } from './ecdsa';
+import { importPKCS8 } from './pkcs8';
 import { getStream } from '../actions';
 import { ClientConfig, createClient } from '../client';
 import { LivepeerProvider } from '../types';
 import { b64Decode, b64UrlEncode } from '../utils';
-import { signEcdsaSha256 } from './ecdsa';
-import { importPKCS8 } from './pkcs8';
 
 export type JWTPayload = {
   /**

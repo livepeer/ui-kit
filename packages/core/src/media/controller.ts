@@ -1,5 +1,5 @@
-import { persist } from 'zustand/middleware';
-import create, { StoreApi } from 'zustand/vanilla';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { StoreApi, createStore } from 'zustand/vanilla';
 
 import { ClientStorage } from '../storage';
 
@@ -12,6 +12,7 @@ export type DeviceInformation = {
   isMobile: boolean;
   isIos: boolean;
   isAndroid: boolean;
+  userAgent: string;
 };
 
 export type MediaSizing = {
@@ -41,6 +42,11 @@ export type MediaControllerState<TElement = void> = {
 
   /** If airplay is supported */
   isAirPlaySupported: boolean;
+
+  /** If autoplay was passed in to Player */
+  autoplay: boolean;
+  /** If priority was passed in to Player */
+  priority: boolean;
 
   /** If the media is current playing or paused */
   playing: boolean;
@@ -161,14 +167,16 @@ export const createControllerStore = <TElement>({
   element,
   device,
   storage,
+  playerProps,
   opts,
 }: {
   element: TElement | null;
   device: DeviceInformation;
   storage: ClientStorage;
+  playerProps: PlayerPropsOptions;
   opts: ControlsOptions;
 }) => {
-  const store = create<
+  const store = createStore<
     MediaControllerState<TElement>,
     [['zustand/persist', Partial<MediaControllerState<TElement>>]]
   >(
@@ -179,6 +187,10 @@ export const createControllerStore = <TElement>({
         canPlay: false,
         hidden: false,
         live: false,
+
+        autoplay: Boolean(playerProps.autoPlay),
+        muted: Boolean(playerProps.muted),
+        priority: Boolean(playerProps.priority),
 
         hasPlayed: false,
         playing: false,
@@ -198,7 +210,6 @@ export const createControllerStore = <TElement>({
         buffered: 0,
 
         volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
-        muted: true,
         isVolumeChangeSupported: false,
         isAirPlaySupported: false,
 
@@ -247,7 +258,12 @@ export const createControllerStore = <TElement>({
             }));
           }
         },
-        onProgress: (time) => set(() => ({ progress: getFilteredNaN(time) })),
+        onProgress: (time) =>
+          set(() => ({
+            progress: getFilteredNaN(time),
+            waiting: false,
+            stalled: false,
+          })),
         requestSeek: (time) =>
           set(({ duration }) => ({
             _requestedRangeToSeekTo: getBoundedSeek(time, duration),
@@ -331,7 +347,7 @@ export const createControllerStore = <TElement>({
           volume,
           playbackRate,
         }),
-        getStorage: () => storage,
+        storage: createJSONStorage(() => storage),
       },
     ),
   );
@@ -344,4 +360,10 @@ export type ControlsOptions = {
   autohide?: number;
   /** Sets the default volume. Must be between 0 and 1. */
   defaultVolume?: number;
+};
+
+export type PlayerPropsOptions = {
+  autoPlay?: boolean;
+  muted?: boolean;
+  priority?: boolean;
 };

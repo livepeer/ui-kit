@@ -1,8 +1,7 @@
 import { keyframes } from '@stitches/core';
 
-import { isMobile } from '../utils';
-
 import { css } from './stitches';
+import { isMobile } from '../utils';
 
 export const scaleUp = keyframes({
   '0%': { transform: 'scale(1)' },
