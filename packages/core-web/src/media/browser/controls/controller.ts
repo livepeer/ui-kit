@@ -213,6 +213,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     });
   };
 
+  const onAirPlayAvailabilityChanged = (e: any) => {
+    store.getState().setIsAirPlaySupported(e.availability === 'available');
+  };
+
   if (element) {
     onResize();
   }
@@ -221,6 +225,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     element.addEventListener('volumechange', onVolumeChange);
 
     element.addEventListener('canplay', onCanPlay);
+    element.addEventListener(
+      'webkitplaybacktargetavailabilitychanged',
+      onAirPlayAvailabilityChanged,
+    );
     element.addEventListener('play', onPlay);
     element.addEventListener('pause', onPause);
     element.addEventListener('durationchange', onDurationChange);
@@ -292,6 +300,10 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
 
       element?.removeEventListener?.('volumechange', onVolumeChange);
       element?.removeEventListener?.('canplay', onCanPlay);
+      element?.removeEventListener?.(
+        'webkitplaybacktargetavailabilitychanged',
+        onAirPlayAvailabilityChanged,
+      );
       element?.removeEventListener?.('play', onPlay);
       element?.removeEventListener?.('pause', onPause);
       element?.removeEventListener?.('durationchange', onDurationChange);

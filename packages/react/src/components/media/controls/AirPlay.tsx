@@ -1,5 +1,4 @@
 import { MediaControllerState } from 'livepeer';
-import { isAirPlaySupported } from 'livepeer/media/browser';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
@@ -33,15 +32,16 @@ export type AirPlayButtonProps = Omit<PropsOf<'button'>, 'children'> & {
 const mediaControllerSelector = ({
   requestAirPlay,
   _element,
+  isAirPlaySupported,
 }: MediaControllerState<HTMLMediaElement>) => ({
   requestAirPlay,
   _element,
+  isAirPlaySupported,
 });
 export const AirPlayButton: React.FC<AirPlayButtonProps> = (props) => {
-  const { requestAirPlay, _element } = useMediaController(
+  const { requestAirPlay, isAirPlaySupported } = useMediaController(
     mediaControllerSelector,
   );
-  const [isAPSupported, setIsAPSupported] = React.useState(false);
   const { icon, onClick, ...rest } = props;
   const onClickComposed = React.useCallback(
     async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -54,17 +54,7 @@ export const AirPlayButton: React.FC<AirPlayButtonProps> = (props) => {
   const title = 'AirPlay';
   const _children = icon ? icon : <DefaultAirPlayIcon />;
 
-  const checkIfAPSupported = async () => {
-    const result = await isAirPlaySupported(_element);
-    setIsAPSupported(result);
-  };
-
-  React.useEffect(() => {
-    checkIfAPSupported();
-  }, [_element, checkIfAPSupported]);
-
-  // do not show button if it is not supported
-  if (!isAPSupported) {
+  if (!isAirPlaySupported) {
     return <></>;
   }
 

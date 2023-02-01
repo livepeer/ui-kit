@@ -39,6 +39,9 @@ export type MediaControllerState<TElement = void> = {
   /** If media supports changing the volume */
   isVolumeChangeSupported: boolean;
 
+  /** If airplay is supported */
+  isAirPlaySupported: boolean;
+
   /** If the media is current playing or paused */
   playing: boolean;
   /** If the media has been played yet */
@@ -129,6 +132,7 @@ export type MediaControllerState<TElement = void> = {
   requestVolume: (volume: number) => void;
   requestToggleMute: () => void;
   setIsVolumeChangeSupported: (supported: boolean) => void;
+  setIsAirPlaySupported: (supported: boolean) => void;
 
   setWaiting: (waiting: boolean) => void;
   setError: (error: string) => void;
@@ -196,6 +200,7 @@ export const createControllerStore = <TElement>({
         volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
         muted: true,
         isVolumeChangeSupported: false,
+        isAirPlaySupported: false,
 
         _lastInteraction: Date.now(),
 
@@ -312,6 +317,10 @@ export const createControllerStore = <TElement>({
         setIsVolumeChangeSupported: (supported) =>
           set(() => ({
             isVolumeChangeSupported: supported,
+          })),
+        setIsAirPlaySupported: (supported) =>
+          set(() => ({
+            isAirPlaySupported: supported,
           })),
       }),
       {
