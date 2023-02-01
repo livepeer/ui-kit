@@ -27,6 +27,7 @@ describe('addMediaMetrics', () => {
         [
           "volumechange",
           "canplay",
+          "webkitplaybacktargetavailabilitychanged",
           "play",
           "pause",
           "durationchange",
