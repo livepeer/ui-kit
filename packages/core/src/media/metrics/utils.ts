@@ -46,7 +46,7 @@ export const getMetricsReportingUrl = async (
         : tld === 'fun'
         ? 'fun:20443'
         : tld === 'monster'
-        ? 'monster:10443'
+        ? 'monster'
         : null;
 
     // if not a known TLD, then do not return a URL
