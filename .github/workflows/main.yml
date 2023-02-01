@@ -39,7 +39,6 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
             examples/*/node_modules
             packages/*/node_modules
             packages/**/dist
@@ -76,7 +75,6 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
             examples/*/node_modules
             packages/*/node_modules
             packages/**/dist
@@ -109,7 +107,6 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
             examples/*/node_modules
             packages/*/node_modules
             packages/**/dist
@@ -143,7 +140,6 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
             examples/*/node_modules
             packages/*/node_modules
             packages/**/dist
@@ -180,7 +176,6 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
             examples/*/node_modules
             packages/*/node_modules
             packages/**/dist
@@ -220,7 +215,6 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
             examples/*/node_modules
             packages/*/node_modules
             packages/**/dist

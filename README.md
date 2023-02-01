@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/public/logos/logo-dark.svg">
-    <img alt="livepeer logo" src="./docs/public/logos/logo-light.svg" width="auto" height="150">
+    <source media="(prefers-color-scheme: dark)" srcset=".github/content/logo-dark.svg">
+    <img alt="livepeer logo" src=".github/content/logo-light.svg" width="auto" height="150">
   </picture>
 </p>
 

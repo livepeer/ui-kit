@@ -21,15 +21,14 @@ This guide is intended to help you get started with contributing. By following t
 3. [Installing dependencies](#installing-dependencies)
 4. [Starting the development playground](#starting-the-development-playground)
 5. [Running the test suite](#running-the-test-suite)
-6. [Writing documentation](#writing-documentation)
-7. [Submitting a pull request](#submitting-a-pull-request)
+6. [Submitting a pull request](#submitting-a-pull-request)
 
 ## Advanced guide
 
 This guide covers more advanced topics. Pick the topics based on your needs.
 
-8. [Versioning](#versioning)
-9. [Testing against React 17](#testing-against-react-17)
+7. [Versioning](#versioning)
+8. [Testing against React 17](#testing-against-react-17)
 
 <br>
 
@@ -118,21 +117,6 @@ STUDIO_API_KEY=<apiKey>
 - `pnpm test:run` — performs single run without watch mode
 
 When adding new features or fixing bugs, it's important to add test cases to cover the new/updated behavior. If snapshot tests fail, you can run the `test:update` command to update the snapshots, or when the tests are running in `pnpm test`, press the `u` button.
-
-<div align="right">
-  <a href="#basic-guide">&uarr; back to top</a></b>
-</div>
-
-## Writing documentation
-
-Documentation is crucial to helping developers of all experience levels use livepeer.js. livepeer.js uses [Nextra](https://github.com/shuding/nextra) and [MDX](https://mdxjs.com) for the documentation site (located at [`docs`](../docs)). To start the site in dev mode, run:
-
-```bash
-cd docs/
-pnpm dev
-```
-
-Try to keep documentation brief and use plain language so folks of all experience levels can understand. If you think something is unclear or could be explained better, you are welcome to open a pull request.
 
 <div align="right">
   <a href="#basic-guide">&uarr; back to top</a></b>

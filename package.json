@@ -2,12 +2,10 @@
   "name": "root",
   "scripts": {
     "build": "pnpm run generate-version && preconstruct build",
-    "build:docs": "pnpm build && pnpm --filter docs build",
     "build:examples": "pnpm build && pnpm --filter \"example-*\" build",
     "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "dev": "preconstruct dev",
-    "dev:docs": "pnpm dev && pnpm --filter docs dev",
     "generate-version": "tsm generate-version.ts",
     "lint": "eslint . --cache",
     "lint:fix": "pnpm lint --fix",
