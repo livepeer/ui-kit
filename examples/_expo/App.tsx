@@ -12,7 +12,7 @@ import {
   launchImageLibraryAsync,
 } from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
 const theme: ThemeConfig = {
@@ -72,6 +72,12 @@ const VideoPlayer = () => {
         }
       : null,
   );
+
+  useEffect(() => {
+    if (status === 'success') {
+      setVideo(null);
+    }
+  }, [status]);
 
   return (
     <>
