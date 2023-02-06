@@ -22,7 +22,7 @@ export const AudioPlayer = React.forwardRef<
   const { fullscreen } = useMediaController(mediaControllerSelector);
 
   const filteredSources = React.useMemo(() => {
-    return src.filter((s) => s?.mime && canPlayMediaNatively(s));
+    return src?.filter((s) => s?.mime && canPlayMediaNatively(s)) ?? [];
   }, [src]);
 
   return (

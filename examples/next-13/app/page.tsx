@@ -69,7 +69,8 @@ export default async function Page({
 
   return (
     <PlayerPage
-      src={!url ? playbackInfo?.meta?.source?.[0]?.url : url}
+      src={!playbackInfo ? url : null}
+      playbackInfo={playbackInfo ? playbackInfo : null}
       muted={isTrue(muted)}
       autoPlay={isTrue(autoplay)}
       loop={isTrue(loop)}

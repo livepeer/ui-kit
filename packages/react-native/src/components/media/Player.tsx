@@ -6,7 +6,7 @@ import {
 } from '@livepeer/core-react/components';
 
 import * as React from 'react';
-import { ImageProps } from 'react-native';
+import { Dimensions, ImageProps } from 'react-native';
 
 import { ControlsContainer, PlayButton } from './controls';
 import { Container } from './controls/Container';
@@ -16,7 +16,7 @@ import { TimeDisplay } from './controls/TimeDisplay';
 import { Title } from './controls/Title';
 import { Volume } from './controls/Volume';
 
-import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { AudioPlayer, VideoPlayer } from './players';
 import { VideoCustomizationProps } from './players/VideoPlayer';
 import { MediaElement } from './types';
 import { MediaControllerProvider } from '../../context/MediaControllerProvider';
@@ -28,24 +28,28 @@ export type PosterSource = ImageProps['source'];
 export type PlayerProps = CorePlayerProps<MediaElement, PosterSource> &
   VideoCustomizationProps;
 
+const screenDimensions = Dimensions.get('screen');
+
 export const PlayerInternal = (props: PlayerProps) => {
+  const [dimensions, setDimensions] = React.useState(screenDimensions);
+
+  React.useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ screen }) => {
+      setDimensions(screen);
+    });
+    return () => subscription?.remove();
+  }, []);
+
   const {
     mediaElement,
     playerProps,
     controlsContainerProps,
     source,
-    props: {
-      controls,
-      children,
-      theme,
-      title,
-      onMetricsError,
-      showTitle,
-      aspectRatio,
-    },
+    props: { controls, children, theme, title, showTitle, aspectRatio },
   } = usePlayer<MediaElement, PosterSource>(props, {
     // TODO fix to track when an element is shown on screen
     _isCurrentlyShown: true,
+    _screenWidth: dimensions?.width ? dimensions.width : null,
   });
 
   return (
@@ -55,14 +59,7 @@ export const PlayerInternal = (props: PlayerProps) => {
       playerProps={props}
     >
       <Container theme={theme} aspectRatio={aspectRatio}>
-        {source && !Array.isArray(source) ? (
-          <HlsPlayer
-            {...playerProps}
-            src={source}
-            onMetricsError={onMetricsError}
-            audioMode={props.audioMode}
-          />
-        ) : source?.[0]?.type === 'audio' ? (
+        {source && source?.[0]?.type === 'audio' ? (
           <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
         ) : (
           <VideoPlayer

@@ -4,10 +4,16 @@ import {
   ThemeConfig,
   createReactClient,
   studioProvider,
+  useCreateAsset,
 } from '@livepeer/react-native';
+import {
+  ImagePickerAsset,
+  MediaTypeOptions,
+  launchImageLibraryAsync,
+} from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import React, { useState } from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 const theme: ThemeConfig = {
   colors: {
@@ -21,7 +27,8 @@ const theme: ThemeConfig = {
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
-    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
+    baseUrl: 'https://livepeer.monster/api',
+    apiKey: '13954d57-b34e-40be-98c7-22db6e4f144e',
   }),
 });
 
@@ -29,34 +36,76 @@ export default function App() {
   return (
     <LivepeerConfig theme={theme} client={livepeerClient}>
       <StatusBar style="auto" />
-      <ScrollView style={styles.container}>
-        <Text style={styles.title}>Agent 327</Text>
-        <Player
-          objectFit="contain"
-          title="Operation Barbershop"
-          aspectRatio="16to9"
-          playbackId="6d7el73r1y12chxr"
-          mediaElementRef={async (ref) => {
-            await ref?.setVolumeAsync(0.5);
-          }}
-        />
-      </ScrollView>
+      <View style={styles.player}>
+        <VideoPlayer />
+      </View>
     </LivepeerConfig>
   );
 }
 
-const white = '#fff';
+const VideoPlayer = () => {
+  const [video, setVideo] = useState<ImagePickerAsset | null>(null);
+
+  const pickImage = async () => {
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Videos,
+      allowsEditing: true,
+    });
+
+    if (result?.assets?.[0]) {
+      setVideo(result?.assets?.[0]);
+    }
+  };
+
+  const {
+    mutate: createAsset,
+    data: assets,
+    progress,
+    status,
+    error,
+  } = useCreateAsset(
+    // we use a `const` assertion here to provide better Typescript types
+    // for the returned data
+    video
+      ? {
+          sources: [{ name: video.fileName ?? 'video', file: video }] as const,
+        }
+      : null,
+  );
+
+  return (
+    <>
+      <Button
+        title={!createAsset ? 'Pick a video from camera roll' : 'Begin upload'}
+        onPress={!createAsset ? pickImage : createAsset}
+        disabled={status === 'loading'}
+      />
+      {progress?.[0] && (
+        <Text style={styles.text}>
+          Upload: {progress?.[0]?.phase} -{' '}
+          {(progress?.[0]?.progress * 100).toFixed()}%
+        </Text>
+      )}
+      {error && <Text style={styles.text}>Error: {error.message}</Text>}
+      {assets?.[0]?.playbackId && (
+        <Player
+          title={assets?.[0]?.name}
+          aspectRatio="16to9"
+          playbackId={assets?.[0]?.playbackId}
+          autoPlay
+        />
+      )}
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    // alignItems: 'center',
-    backgroundColor: white,
-    flex: 1,
-    marginHorizontal: 8,
+  player: {
+    alignContent: 'center',
     marginTop: 70,
+    textAlign: 'center',
   },
-  title: {
-    fontSize: 25,
-    marginBottom: 12,
+  text: {
+    textAlign: 'center',
   },
 });

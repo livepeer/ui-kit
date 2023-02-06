@@ -23,8 +23,4 @@ export type {
   PlayerObjectFit,
   PlayerProps,
 } from './Player';
-export type {
-  AudioPlayerProps,
-  HlsPlayerProps,
-  VideoPlayerProps,
-} from './players';
+export type { AudioPlayerProps, VideoPlayerProps } from './players';

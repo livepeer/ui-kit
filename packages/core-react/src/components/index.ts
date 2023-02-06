@@ -13,7 +13,6 @@ export {
   type ContainerProps,
   type ControlsContainerProps,
   type FullscreenButtonProps,
-  type HlsPlayerProps,
   type InternalPlayerProps,
   type PlayButtonProps,
   type PlayerObjectFit,

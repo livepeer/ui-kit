@@ -3,7 +3,7 @@ import {
   PlayerObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
-import { AudioSrc, VideoSrc } from 'livepeer/media';
+import { AudioSrc, HlsSrc, VideoSrc } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/browser';
 
 import * as React from 'react';
@@ -20,7 +20,7 @@ import {
   Title,
   Volume,
 } from './controls';
-import { AudioPlayer, HlsPlayer, VideoPlayer } from './players';
+import { AudioPlayer, VideoPlayer } from './players';
 import { MediaControllerProvider } from '../../context';
 import { useIsElementShown } from '../useIsElementShown';
 
@@ -38,25 +38,22 @@ export type { PlayerObjectFit, PlayerProps };
 export const PlayerInternal = (props: PlayerProps) => {
   const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
 
+  const isClientSide = typeof window !== 'undefined';
+
+  const screenWidth = React.useMemo(
+    () => (isClientSide ? window.innerWidth : null),
+    [isClientSide],
+  );
+
   const {
     mediaElement,
     playerProps,
     controlsContainerProps,
     source,
-    props: {
-      children,
-      controls,
-      theme,
-      title,
-      poster,
-      onStreamStatusChange,
-      onMetricsError,
-      onAccessControlError,
-      showTitle,
-      aspectRatio,
-    },
+    props: { children, controls, theme, title, poster, showTitle, aspectRatio },
   } = usePlayer<HTMLMediaElement, PosterSource>(props, {
     _isCurrentlyShown: isCurrentlyShown,
+    _screenWidth: screenWidth,
   });
 
   const _isCurrentlyShown = useIsElementShown(mediaElement);
@@ -72,32 +69,17 @@ export const PlayerInternal = (props: PlayerProps) => {
       playerProps={props}
     >
       <Container theme={theme} aspectRatio={aspectRatio}>
-        {source && !Array.isArray(source) ? (
-          <HlsPlayer
-            {...playerProps}
-            src={source}
-            onStreamStatusChange={onStreamStatusChange}
-            onMetricsError={onMetricsError}
-            onAccessControlError={onAccessControlError}
-          />
-        ) : source?.[0]?.type === 'audio' ? (
-          <AudioPlayer
-            {...playerProps}
-            src={source as AudioSrc[]}
-            // onStreamStatusChange={onStreamStatusChange} // TODO: Add stream status change handling for audio
-            // onAccessControlError={onAccessControlError} // TODO: Add access control error handling for audio
-          />
+        {source && source?.[0]?.type === 'audio' ? (
+          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
         ) : (
           <VideoPlayer
             {...playerProps}
-            src={source as VideoSrc[] | null}
-            onStreamStatusChange={onStreamStatusChange}
-            onAccessControlError={onAccessControlError}
+            src={source as (VideoSrc | HlsSrc)[] | null}
           />
         )}
 
         {React.isValidElement(children) ? (
-          children
+          React.cloneElement(children, controlsContainerProps)
         ) : (
           <>
             <ControlsContainer

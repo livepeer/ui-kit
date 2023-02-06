@@ -14,6 +14,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
+    baseUrl: 'https://livepeer.monster/api',
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
   }),
 });
