@@ -101,6 +101,9 @@ const VideoPlayer = () => {
           autoPlay
         />
       )}
+      {assets?.[0]?.playbackUrl && (
+        <Text style={styles.text}>URL: {assets?.[0]?.playbackUrl}</Text>
+      )}
     </>
   );
 };
