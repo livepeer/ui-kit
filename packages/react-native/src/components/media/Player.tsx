@@ -52,6 +52,8 @@ export const PlayerInternal = (props: PlayerProps) => {
     _screenWidth: dimensions?.width ? dimensions.width : null,
   });
 
+  const temporaryTitle = source?.[0]?.src ?? title;
+
   return (
     <MediaControllerProvider
       element={mediaElement}
@@ -75,7 +77,13 @@ export const PlayerInternal = (props: PlayerProps) => {
           <>
             <ControlsContainer
               {...controlsContainerProps}
-              top={<>{title && showTitle && <Title content={title} />}</>}
+              top={
+                <>
+                  {temporaryTitle && showTitle && (
+                    <Title content={temporaryTitle} />
+                  )}
+                </>
+              }
               middle={
                 <>
                   <Progress />

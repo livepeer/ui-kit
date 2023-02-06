@@ -99,10 +99,8 @@ const VideoPlayer = () => {
           aspectRatio="16to9"
           playbackId={assets?.[0]?.playbackId}
           autoPlay
+          loop
         />
-      )}
-      {assets?.[0]?.playbackUrl && (
-        <Text style={styles.text}>URL: {assets?.[0]?.playbackUrl}</Text>
       )}
     </>
   );
