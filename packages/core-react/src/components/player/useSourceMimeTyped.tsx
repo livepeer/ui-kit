@@ -24,6 +24,7 @@ export type UseSourceMimeTypedProps<TElement, TPoster> = {
   autoUrlUpload: NonNullable<PlayerProps<TElement, TPoster>['autoUrlUpload']>;
   jwt: PlayerProps<TElement, TPoster>['jwt'];
   screenWidth: InternalPlayerProps['_screenWidth'];
+  playbackInfo: PlayerProps<TElement, TPoster>['playbackInfo'];
 };
 
 type PlaybackUrlWithInfo = {
@@ -37,6 +38,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   jwt,
   refetchPlaybackInfoInterval,
   autoUrlUpload = { fallback: true },
+  playbackInfo,
 }: UseSourceMimeTypedProps<TElement, TPoster>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
@@ -59,7 +61,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     [playbackId, src],
   );
 
-  const playbackInfo = usePlaybackInfoOrImport({
+  const resolvedPlaybackInfo = usePlaybackInfoOrImport({
     decentralizedSrcOrPlaybackId,
     playbackId,
     refetchPlaybackInfoInterval,
@@ -73,7 +75,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
 
   React.useEffect(() => {
     const playbackInfoSources: PlaybackUrlWithInfo[] | null =
-      playbackInfo?.meta?.source?.map((s) => ({
+      (playbackInfo ?? resolvedPlaybackInfo)?.meta?.source?.map((s) => ({
         url: s?.url,
         rendition: s?.rendition === '360p' ? '360p' : null,
       })) ?? null;
@@ -81,7 +83,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     if (playbackInfoSources) {
       setPlaybackUrls(playbackInfoSources);
     }
-  }, [playbackInfo]);
+  }, [playbackInfo, resolvedPlaybackInfo]);
 
   const dStoragePlaybackUrl = React.useMemo(() => {
     // if the player is auto uploading, we do not play back the detected input file unless specified

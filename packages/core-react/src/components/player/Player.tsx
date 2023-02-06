@@ -120,6 +120,7 @@ export const usePlayer = <TElement, TPoster>(
     playbackId,
 
     src,
+    playbackInfo,
     theme,
     title,
     poster,
@@ -153,6 +154,7 @@ export const usePlayer = <TElement, TPoster>(
     refetchPlaybackInfoInterval,
     autoUrlUpload,
     screenWidth: _screenWidth,
+    playbackInfo,
   });
 
   const [isStreamOffline, setIsStreamOffline] = React.useState(false);
