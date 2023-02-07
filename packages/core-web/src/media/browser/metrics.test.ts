@@ -62,17 +62,19 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "autoplay": false,
+          "autoplay": "preload-metadata",
           "duration": 0,
           "firstPlayback": 0,
           "nError": 0,
           "nStalled": 0,
           "nWaiting": 0,
-          "pageUrl": "",
+          "pageUrl": "http://localhost:3000/",
           "playbackScore": null,
           "player": "livepeer-js",
           "playerHeight": null,
           "playerWidth": null,
+          "preloadTime": 0,
+          "protocol": "application/vnd.apple.mpegurl",
           "sourceUrl": "",
           "timeStalled": 0,
           "timeUnpaused": 0,
@@ -101,17 +103,19 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
       {
-        "autoplay": false,
+        "autoplay": "preload-metadata",
         "duration": 0,
         "firstPlayback": 0,
         "nError": 0,
         "nStalled": 0,
         "nWaiting": 0,
-        "pageUrl": "",
+        "pageUrl": "http://localhost:3000/",
         "playbackScore": null,
         "player": "livepeer-js",
         "playerHeight": null,
         "playerWidth": null,
+        "preloadTime": 0,
+        "protocol": "application/vnd.apple.mpegurl",
         "sourceUrl": "",
         "timeStalled": 0,
         "timeUnpaused": 0,
@@ -140,17 +144,19 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
           {
-            "autoplay": false,
+            "autoplay": "preload-metadata",
             "duration": 0,
             "firstPlayback": 0,
             "nError": 0,
             "nStalled": 0,
             "nWaiting": 1,
-            "pageUrl": "",
+            "pageUrl": "http://localhost:3000/",
             "playbackScore": null,
             "player": "livepeer-js",
             "playerHeight": null,
             "playerWidth": null,
+            "preloadTime": 0,
+            "protocol": "application/vnd.apple.mpegurl",
             "sourceUrl": "",
             "timeStalled": 0,
             "timeUnpaused": 0,
@@ -180,28 +186,30 @@ describe('addMediaMetrics', () => {
         metricsSnapshot.current.userAgent = 'UA';
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-                    {
-                      "autoplay": false,
-                      "duration": 0,
-                      "firstPlayback": 0,
-                      "nError": 0,
-                      "nStalled": 1,
-                      "nWaiting": 0,
-                      "pageUrl": "",
-                      "playbackScore": null,
-                      "player": "livepeer-js",
-                      "playerHeight": null,
-                      "playerWidth": null,
-                      "sourceUrl": "",
-                      "timeStalled": 1000,
-                      "timeUnpaused": 0,
-                      "timeWaiting": 0,
-                      "ttff": 0,
-                      "userAgent": "UA",
-                      "videoHeight": null,
-                      "videoWidth": null,
-                    }
-                  `);
+                  {
+                    "autoplay": "preload-metadata",
+                    "duration": 0,
+                    "firstPlayback": 0,
+                    "nError": 0,
+                    "nStalled": 1,
+                    "nWaiting": 0,
+                    "pageUrl": "http://localhost:3000/",
+                    "playbackScore": null,
+                    "player": "livepeer-js",
+                    "playerHeight": null,
+                    "playerWidth": null,
+                    "preloadTime": 0,
+                    "protocol": "application/vnd.apple.mpegurl",
+                    "sourceUrl": "",
+                    "timeStalled": 1000,
+                    "timeUnpaused": 0,
+                    "timeWaiting": 0,
+                    "ttff": 0,
+                    "userAgent": "UA",
+                    "videoHeight": null,
+                    "videoWidth": null,
+                  }
+                `);
     });
   });
 });

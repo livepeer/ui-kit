@@ -42,7 +42,16 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
         device: getDeviceInfo(),
         storage: client.storage,
         opts: opts,
-        playerProps: playerProps,
+        playerProps: {
+          ...playerProps,
+          src: null,
+          preload:
+            element?.preload === 'auto'
+              ? 'full'
+              : element?.preload === 'metadata'
+              ? 'metadata'
+              : 'none',
+        },
       }),
 
     [element, client?.storage, opts, playerProps],

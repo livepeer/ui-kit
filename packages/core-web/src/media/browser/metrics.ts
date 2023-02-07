@@ -43,6 +43,9 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
       autoPlay: Boolean(element?.autoplay),
       muted: Boolean(element?.muted),
       priority: false,
+      src: null,
+      preload:
+        element?.preload || Boolean(element?.autoplay) ? 'full' : 'metadata',
     },
     opts: opts ?? {},
   });

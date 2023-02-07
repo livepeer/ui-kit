@@ -28,8 +28,8 @@ describe('getMetricsReportingUrl', () => {
 
     it('given invalid urls then it should not return a reporting urls', async () => {
       const sourceUrls = [
-        'https://livepeercdn.com/dash/172159gos7h0pq17/index.m3u8',
-        'https://livepeercdn.com/hls/172159gos7h0pq17/master.m3u8',
+        'https://livecdn.com/dash/172159gos7h0pq17/index.m3u8',
+        'https://livecdn.com/hls/172159gos7h0pq17/master.m3u8',
       ];
 
       const reportingUrls = await Promise.all(
@@ -54,8 +54,8 @@ describe('getMetricsReportingUrl', () => {
 
     it('given invalid urls then it should not return a reporting urls', async () => {
       const sourceUrls = [
-        'https://livepeercdn.com/static/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8',
-        'https://livepeercdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/master.m3u8',
+        'https://livecdn.com/static/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8',
+        'https://livecdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/master.m3u8',
       ];
 
       const reportingUrls = await Promise.all(
