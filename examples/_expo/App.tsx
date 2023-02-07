@@ -27,8 +27,7 @@ const theme: ThemeConfig = {
 
 const livepeerClient = createReactClient({
   provider: studioProvider({
-    baseUrl: 'https://livepeer.monster/api',
-    apiKey: '13954d57-b34e-40be-98c7-22db6e4f144e',
+    apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
   }),
 });
 
