@@ -31,15 +31,6 @@ export type PlayerProps = CorePlayerProps<MediaElement, PosterSource> &
 const screenDimensions = Dimensions.get('screen');
 
 export const PlayerInternal = (props: PlayerProps) => {
-  const [dimensions, setDimensions] = React.useState(screenDimensions);
-
-  React.useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({ screen }) => {
-      setDimensions(screen);
-    });
-    return () => subscription?.remove();
-  }, []);
-
   const {
     mediaElement,
     playerProps,
@@ -49,7 +40,7 @@ export const PlayerInternal = (props: PlayerProps) => {
   } = usePlayer<MediaElement, PosterSource>(props, {
     // TODO fix to track when an element is shown on screen
     _isCurrentlyShown: true,
-    _screenWidth: dimensions?.width ? dimensions.width : null,
+    _screenWidth: screenDimensions?.width ?? null,
   });
 
   return (
