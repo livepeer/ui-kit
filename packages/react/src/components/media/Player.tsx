@@ -38,11 +38,12 @@ export type { PlayerObjectFit, PlayerProps };
 export const PlayerInternal = (props: PlayerProps) => {
   const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
 
-  const isClientSide = typeof window !== 'undefined';
-
   const screenWidth = React.useMemo(
-    () => (isClientSide ? window.innerWidth : null),
-    [isClientSide],
+    () =>
+      typeof window !== 'undefined'
+        ? (window?.screen?.availWidth || window?.innerWidth) ?? null
+        : null,
+    [],
   );
 
   const {
