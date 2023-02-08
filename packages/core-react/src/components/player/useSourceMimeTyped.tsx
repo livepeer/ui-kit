@@ -29,8 +29,10 @@ export type UseSourceMimeTypedProps<TElement, TPoster> = {
 
 type PlaybackUrlWithInfo = {
   url: string;
-  rendition: '360p' | null; // TODO
+  screenWidthDelta: number | null;
 };
+
+const SCREEN_WIDTH_MULTIPLIER = 2.5;
 
 export const useSourceMimeTyped = <TElement, TPoster>({
   src,
@@ -39,6 +41,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   refetchPlaybackInfoInterval,
   autoUrlUpload = { fallback: true },
   playbackInfo,
+  screenWidth,
 }: UseSourceMimeTypedProps<TElement, TPoster>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
@@ -74,16 +77,28 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   );
 
   React.useEffect(() => {
+    const screenWidthWithDefault =
+      (screenWidth ?? 1280) * SCREEN_WIDTH_MULTIPLIER;
+
     const playbackInfoSources: PlaybackUrlWithInfo[] | null =
       (playbackInfo ?? resolvedPlaybackInfo)?.meta?.source?.map((s) => ({
         url: s?.url,
-        rendition: s?.rendition === '360p' ? '360p' : null,
+        screenWidthDelta:
+          s?.url.includes('static360p') || s?.url.includes('low-bitrate')
+            ? Math.abs(screenWidthWithDefault - 480)
+            : s?.url.includes('static720p')
+            ? Math.abs(screenWidthWithDefault - 1280)
+            : s?.url.includes('static1080p')
+            ? Math.abs(screenWidthWithDefault - 1920)
+            : s?.url.includes('static2160p')
+            ? Math.abs(screenWidthWithDefault - 3840)
+            : null,
       })) ?? null;
 
     if (playbackInfoSources) {
       setPlaybackUrls(playbackInfoSources);
     }
-  }, [playbackInfo, resolvedPlaybackInfo]);
+  }, [playbackInfo, resolvedPlaybackInfo, screenWidth]);
 
   const dStoragePlaybackUrl = React.useMemo(() => {
     // if the player is auto uploading, we do not play back the detected input file unless specified
@@ -176,21 +191,26 @@ export const useSourceMimeTyped = <TElement, TPoster>({
       sourceMimeTyped?.[0]?.type === 'video' ||
       sourceMimeTyped?.[0]?.type === 'hls'
     ) {
-      // const screenWidthWithDefault = screenWidth ?? 1280;
       const previousSources = [...sourceMimeTyped] as (HlsSrc | VideoSrc)[];
 
       return previousSources.sort((a, b) => {
-        // TODO add sorting logic for size/screenWidth
-        // if (screenWidthWithDefault > 1280) {
-        //   return a.type === 'video' && b.type === 'hls' ? -1 : 1;
-        // }
+        if (a.type === 'video' && b.type === 'video') {
+          const aOriginal = playbackUrls.find((u) => u.url === a.src);
+          const bOriginal = playbackUrls.find((u) => u.url === b.src);
+
+          // we sort the sources by the delta between the video width and the
+          // screen size (multiplied by a multiplier above)
+          return bOriginal?.screenWidthDelta && aOriginal?.screenWidthDelta
+            ? aOriginal.screenWidthDelta - bOriginal.screenWidthDelta
+            : 1;
+        }
 
         return a.type === 'video' && b.type === 'hls' ? -1 : 1;
       });
     }
 
     return sourceMimeTyped;
-  }, [sourceMimeTyped, dStoragePlaybackUrl]);
+  }, [sourceMimeTyped, dStoragePlaybackUrl, playbackUrls]);
 
   return {
     source: sourceMimeTypedSorted,
