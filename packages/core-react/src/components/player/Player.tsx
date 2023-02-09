@@ -1,4 +1,4 @@
-import { ControlsOptions, PlaybackInfo } from '@livepeer/core';
+import { ControlsOptions, PlaybackInfo, Src } from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
 
@@ -102,6 +102,9 @@ export type PlayerProps<TElement, TPoster> = {
   /** Callback called when the access control errors */
   onAccessControlError?: (error: Error) => void;
 
+  /** Callback called when the media sources are changed */
+  onSourceUpdated?: (sources: Src[]) => void;
+
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
 } & (
@@ -129,6 +132,7 @@ export const usePlayer = <TElement, TPoster>(
     onStreamStatusChange,
     onMetricsError,
     onAccessControlError,
+    onSourceUpdated,
     jwt,
 
     refetchPlaybackInfoInterval = 5000,
@@ -157,6 +161,12 @@ export const usePlayer = <TElement, TPoster>(
     screenWidth: _screenWidth,
     playbackInfo,
   });
+
+  React.useEffect(() => {
+    if (source) {
+      onSourceUpdated?.(source);
+    }
+  }, [source, onSourceUpdated]);
 
   const [isStreamOffline, setIsStreamOffline] = React.useState(false);
 

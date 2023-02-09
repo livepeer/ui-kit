@@ -5,8 +5,8 @@ import { ViewToken, ViewabilityConfig } from 'react-native';
 import { PlayerProps } from '../components';
 
 export type UsePlayerListOptions<
-  TSourceArray extends ReadonlyArray<TSource>,
   TSource extends object,
+  TSourceArray extends ReadonlyArray<TSource> = ReadonlyArray<TSource>,
 > = {
   data: TSourceArray;
 
@@ -17,9 +17,9 @@ export type UsePlayerListOptions<
   initialNumToRender?: number;
 };
 
-type UsePlayerListReturn<
-  TSourceArray extends ReadonlyArray<TSource>,
+export type UsePlayerListReturn<
   TSource extends object,
+  TSourceArray extends ReadonlyArray<TSource> = ReadonlyArray<TSource>,
 > = {
   listProps: {
     data: MirrorSizeArray<
@@ -49,16 +49,16 @@ type IndexStatus = {
 };
 
 export function usePlayerList<
-  TSourceArray extends ReadonlyArray<TSource>,
   TSource extends object,
+  TSourceArray extends ReadonlyArray<TSource> = ReadonlyArray<TSource>,
 >({
   data,
   itemVisibleMinimumViewTime = 100,
-  itemVisiblePercentThreshold = 80,
+  itemVisiblePercentThreshold = 60,
   itemPreload = 3,
-}: UsePlayerListOptions<TSourceArray, TSource>): UsePlayerListReturn<
-  TSourceArray,
-  TSource
+}: UsePlayerListOptions<TSource, TSourceArray>): UsePlayerListReturn<
+  TSource,
+  TSourceArray
 > {
   const [indices, setIndices] = useState<IndexStatus[]>([]);
 
@@ -94,7 +94,7 @@ export function usePlayerList<
           priority: Boolean(indices?.[index]?.shouldPreload),
           _isCurrentlyShown: Boolean(indices?.[index]?.viewable),
         },
-      })) as UsePlayerListReturn<TSourceArray, TSource>['listProps']['data'],
+      })) as UsePlayerListReturn<TSource, TSourceArray>['listProps']['data'],
     [data, indices],
   );
 

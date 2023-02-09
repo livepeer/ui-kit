@@ -59,4 +59,6 @@ export {
   useStreamSessions,
   useUpdateAsset,
   useUpdateStream,
+  type UsePlayerListOptions,
+  type UsePlayerListReturn,
 } from './hooks';
