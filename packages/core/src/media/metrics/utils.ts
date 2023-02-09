@@ -1,7 +1,6 @@
 import fetch from 'cross-fetch';
 
 const LP_DOMAINS = ['livepeer', 'livepeercdn', 'lp-playback'];
-const PLAYLIST_NAME = 'index.m3u8';
 const ASSET_URL_PART_VALUE = 'hls';
 const RECORDING_URL_PART_VALUE = 'recordings';
 
@@ -15,15 +14,14 @@ export const getMetricsReportingUrl = async (
     const parsedUrl = new URL(src);
 
     const parts = parsedUrl.pathname.split('/');
-    const playlistPartIndex = parts.indexOf(PLAYLIST_NAME);
 
     const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
     const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
 
     // Check if the url is valid
     const playbackId =
-      (includesAssetUrl || includesRecording) && playlistPartIndex !== -1
-        ? parts?.[playlistPartIndex - 1] ?? null
+      includesRecording || includesAssetUrl
+        ? parts?.[(parts?.length ?? 0) - 2] ?? null
         : null;
 
     const splitHost = parsedUrl.host.split('.');

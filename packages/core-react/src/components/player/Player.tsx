@@ -1,4 +1,4 @@
-import { ControlsOptions } from '@livepeer/core';
+import { ControlsOptions, PlaybackInfo } from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
 
@@ -13,13 +13,17 @@ export type PlayerObjectFit = 'cover' | 'contain';
 export type InternalPlayerProps = {
   /** If the element is currently shown on the DOM/screen. Should not be exposed externally to users. */
   _isCurrentlyShown: boolean;
+  /** The current screen width. This is null if the screen size cannot be determined (SSR). */
+  _screenWidth: number | null;
 };
 
 export type PlayerProps<TElement, TPoster> = {
-  /** The source(s) of the media (**required** if `playbackId` is not provided) */
+  /** The source(s) of the media (**required** if `playbackId` or `playbackInfo` is not provided) */
   src?: string | string[] | null | undefined;
-  /** The playback ID for the media (**required** if `src` is not provided) */
+  /** The playback ID for the media (**required** if `src` or `playbackInfo` is not provided) */
   playbackId?: string | null | undefined;
+  /** The playback ID for the media (**required** if `src` or `playbackId` is not provided) */
+  playbackInfo?: PlaybackInfo | null | undefined;
 
   /** The title of the media */
   title?: string;
@@ -116,6 +120,7 @@ export const usePlayer = <TElement, TPoster>(
     playbackId,
 
     src,
+    playbackInfo,
     theme,
     title,
     poster,
@@ -137,7 +142,7 @@ export const usePlayer = <TElement, TPoster>(
     objectFit = 'contain',
     mediaElementRef,
   }: PlayerProps<TElement, TPoster>,
-  { _isCurrentlyShown }: InternalPlayerProps,
+  { _isCurrentlyShown, _screenWidth }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
   const [loaded, setLoaded] = React.useState(false);
@@ -148,6 +153,8 @@ export const usePlayer = <TElement, TPoster>(
     jwt,
     refetchPlaybackInfoInterval,
     autoUrlUpload,
+    screenWidth: _screenWidth,
+    playbackInfo,
   });
 
   const [isStreamOffline, setIsStreamOffline] = React.useState(false);
@@ -236,6 +243,9 @@ export const usePlayer = <TElement, TPoster>(
       objectFit: objectFit,
       options: controls,
       priority: priority,
+      onStreamStatusChange: onStreamStatusChangeCallback,
+      onMetricsError,
+      onAccessControlError: accessControlErrorCallback,
     },
     controlsContainerProps: {
       hidePosterOnPlayed,
@@ -254,9 +264,6 @@ export const usePlayer = <TElement, TPoster>(
       title,
       poster,
       loop,
-      onStreamStatusChange: onStreamStatusChangeCallback,
-      onMetricsError,
-      onAccessControlError: accessControlErrorCallback,
       jwt,
       refetchPlaybackInfoInterval,
       autoUrlUpload,

@@ -24,6 +24,7 @@ describe('usePlaybackInfo', () => {
           "source": [
             {
               "hrn": "HLS (TS)",
+              "rendition": undefined,
               "type": "html5/application/vnd.apple.mpegurl",
               "url": "https://livepeercdn.studio/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8",
             },

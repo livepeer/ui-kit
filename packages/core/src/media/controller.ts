@@ -1,6 +1,7 @@
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { StoreApi, createStore } from 'zustand/vanilla';
 
+import { Src } from './src';
 import { ClientStorage } from '../storage';
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
@@ -40,10 +41,14 @@ export type MediaControllerState<TElement = void> = {
   /** If media supports changing the volume */
   isVolumeChangeSupported: boolean;
 
+  /** The Source that was passed in to Player */
+  src: Src | null;
   /** If autoplay was passed in to Player */
   autoplay: boolean;
   /** If priority was passed in to Player */
   priority: boolean;
+  /** The preload option passed in to Player */
+  preload: 'full' | 'metadata' | 'none';
 
   /** If the media is current playing or paused */
   playing: boolean;
@@ -181,9 +186,11 @@ export const createControllerStore = <TElement>({
         hidden: false,
         live: false,
 
+        src: playerProps.src ?? null,
         autoplay: Boolean(playerProps.autoPlay),
         muted: Boolean(playerProps.muted),
         priority: Boolean(playerProps.priority),
+        preload: playerProps.preload ?? 'none',
 
         hasPlayed: false,
         playing: false,
@@ -349,4 +356,6 @@ export type PlayerPropsOptions = {
   autoPlay?: boolean;
   muted?: boolean;
   priority?: boolean;
+  src?: Src | null;
+  preload?: 'full' | 'metadata' | 'none';
 };

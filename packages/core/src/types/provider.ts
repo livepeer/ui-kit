@@ -204,8 +204,10 @@ export type CreateAssetSourceUrl = CreateAssetSourceBase & {
   url: string;
 };
 
-export type NativeFile = File & {
+export type NativeFile = {
   uri: string;
+  name: string;
+  exif?: string | null;
 };
 
 export type CreateAssetSourceFile = CreateAssetSourceBase & {
@@ -545,16 +547,15 @@ export type GetPlaybackInfoArgs =
       playbackId: string;
     };
 
-// TODO: create a description of the fields
-// Type copied from https://github.com/livepeer/player/blob/be5eebb47efdaa997ee4dcce818dc72cbf7ff627/src/index.ts#L27
 export type PlaybackInfo = {
-  type: string;
+  type: 'live' | 'vod' | 'recording';
   meta: {
     live?: boolean;
     source: {
-      hrn: string;
-      type: string;
+      hrn: 'HLS (TS)' | 'MP4';
+      type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';
       url: string;
+      rendition?: string;
     }[];
   };
 };

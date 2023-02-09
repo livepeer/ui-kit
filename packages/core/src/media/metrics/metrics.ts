@@ -1,7 +1,10 @@
 import { getMetricsReportingUrl } from './utils';
 import { MediaControllerStore } from '../controller';
+import { MimeType } from '../mime';
+import { getMediaSourceType } from '../src';
 
 type RawMetrics = {
+  preloadTime: number;
   ttff: number;
   firstPlayback: number;
 
@@ -25,11 +28,13 @@ type RawMetrics = {
 
   player: 'livepeer-js';
 
+  protocol: MimeType | 'unknown';
+
   pageUrl: string;
   sourceUrl: string;
   duration: number | null;
 
-  autoplay: boolean;
+  autoplay: 'autoplay' | 'preload-full' | 'preload-metadata' | 'standard';
   userAgent: string;
 };
 
@@ -160,6 +165,7 @@ class Timer {
 }
 
 export class MetricsStatus<TElement> {
+  preloadTime = 0;
   requestedPlayTime = 0;
   retryCount = 0;
   connected = false;
@@ -173,29 +179,47 @@ export class MetricsStatus<TElement> {
   timeUnpaused = new Timer();
 
   constructor(store: MediaControllerStore<TElement>) {
-    this.requestedPlayTime = store.getState().autoplay ? Date.now() : 0;
+    const currentState = store.getState();
+
+    if (currentState.autoplay) {
+      this.requestedPlayTime = Date.now();
+      this.preloadTime = this.requestedPlayTime - bootMs;
+    } else {
+      this.requestedPlayTime = 0;
+    }
 
     this.store = store;
+
     this.currentMetrics = {
+      autoplay:
+        currentState.priority && currentState.autoplay
+          ? 'autoplay'
+          : currentState.preload === 'full'
+          ? 'preload-full'
+          : currentState.preload === 'metadata'
+          ? 'preload-metadata'
+          : 'standard',
+      duration: null,
       firstPlayback: 0,
-      nWaiting: 0,
-      timeWaiting: 0,
-      nStalled: 0,
-      timeStalled: 0,
-      timeUnpaused: 0,
       nError: 0,
-      videoHeight: null,
-      videoWidth: null,
+      nStalled: 0,
+      nWaiting: 0,
+      pageUrl:
+        typeof window !== 'undefined' ? window?.location?.href ?? '' : '',
+      playbackScore: null,
+      player: 'livepeer-js',
       playerHeight: null,
       playerWidth: null,
-      player: 'livepeer-js',
-      pageUrl: '',
+      preloadTime: 0,
+      protocol: currentState?.src?.mime ?? 'unknown',
       sourceUrl: '',
-      playbackScore: null,
-      duration: null,
-      autoplay: store.getState().autoplay,
-      userAgent: store.getState().device.userAgent,
+      timeStalled: 0,
+      timeUnpaused: 0,
+      timeWaiting: 0,
       ttff: 0,
+      userAgent: currentState.device.userAgent,
+      videoHeight: null,
+      videoWidth: null,
     };
 
     store.subscribe((state, prevState) => {
@@ -205,6 +229,10 @@ export class MetricsStatus<TElement> {
         this.requestedPlayTime === 0
       ) {
         this.requestedPlayTime = state._requestedPlayPauseLastTime;
+
+        if (this.preloadTime === 0) {
+          this.preloadTime = Date.now() - bootMs;
+        }
       }
 
       if (state.playing !== prevState.playing) {
@@ -282,6 +310,8 @@ export class MetricsStatus<TElement> {
       timeWaiting: this.timeWaiting.getTotalTime(),
       timeStalled: this.timeStalled.getTotalTime(),
       timeUnpaused: this.timeUnpaused.getTotalTime(),
+
+      preloadTime: this.preloadTime,
     };
 
     const previousMetrics = this.previousMetrics;
@@ -328,6 +358,9 @@ export function addMediaMetricsToStore<TElement>(
     console.log('Environment does not support WebSocket');
     return defaultResponse;
   }
+
+  // set the src from the source URL
+  store.setState({ src: getMediaSourceType(sourceUrl) });
 
   const metricsStatus = new MetricsStatus(store);
 

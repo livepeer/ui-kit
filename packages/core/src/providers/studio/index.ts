@@ -180,13 +180,14 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
           await new Promise<void>((resolve, reject) => {
             const upload = new tus.Upload(
-              (source as CreateAssetSourceFile).file,
+              (source as CreateAssetSourceFile).file as File,
               {
                 endpoint: tusEndpoint,
                 metadata: {
                   id: assetId,
                 },
-                ...(typeof File !== 'undefined' && source instanceof File
+                ...(typeof File !== 'undefined' &&
+                (source as CreateAssetSourceFile)?.file instanceof File
                   ? null
                   : { chunkSize: 5 * 1024 * 1024 }),
                 // fingerprint: function (file: File & { exif?: any }) {
@@ -446,6 +447,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           hrn: source?.['hrn'],
           type: source?.['type'],
           url: source?.['url'],
+          rendition: source?.['rendition'],
         })),
       },
     };

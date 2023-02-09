@@ -2,8 +2,8 @@ import { AudioSrc, ControlsOptions, HlsSrc, VideoSrc } from '@livepeer/core';
 
 import { PlayerObjectFit, PlayerProps } from './Player';
 
-export type HlsPlayerProps<TElement, TPoster> = {
-  src: HlsSrc;
+export type VideoPlayerProps<TElement, TPoster> = {
+  src: (HlsSrc | VideoSrc)[] | null;
   objectFit: PlayerObjectFit;
   width?: string | number;
   autoPlay?: boolean;
@@ -20,15 +20,8 @@ export type HlsPlayerProps<TElement, TPoster> = {
 };
 
 export type AudioPlayerProps<TElement, TPoster> = Omit<
-  HlsPlayerProps<TElement, TPoster>,
+  VideoPlayerProps<TElement, TPoster>,
   'src' | 'poster'
 > & {
-  src: AudioSrc[];
-};
-
-export type VideoPlayerProps<TElement, TPoster> = Omit<
-  HlsPlayerProps<TElement, TPoster>,
-  'src'
-> & {
-  src: VideoSrc[] | null;
+  src: AudioSrc[] | null;
 };

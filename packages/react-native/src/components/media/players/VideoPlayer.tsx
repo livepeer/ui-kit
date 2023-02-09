@@ -56,7 +56,6 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     },
     ref,
   ) => {
-    // typecast the context so that we can have video/audio-specific controller states
     const context = React.useContext(MediaControllerContext);
     const store = useStore(context);
 
@@ -156,7 +155,11 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
 
     return (
       <Video
-        source={{ uri: filteredSources?.[0]?.src ?? '' }}
+        source={
+          filteredSources?.[0]?.src
+            ? { uri: filteredSources[0].src }
+            : undefined
+        }
         style={styles.videoWrapper}
         isLooping={loop}
         resizeMode={
@@ -219,7 +222,11 @@ const addEffectsToStore = <TElement extends MediaElement>(
           prev._requestedPlayPauseLastTime
         ) {
           if (!current.playing) {
-            previousPromise = element.playAsync();
+            if (current.progress >= 1) {
+              previousPromise = element.playFromPositionAsync(0);
+            } else {
+              previousPromise = element.playAsync();
+            }
           } else {
             previousPromise = element.pauseAsync();
           }

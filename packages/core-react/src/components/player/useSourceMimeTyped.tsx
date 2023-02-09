@@ -1,9 +1,15 @@
-import { AudioSrc, Src, VideoSrc, getMediaSourceType } from '@livepeer/core';
+import {
+  AudioSrc,
+  HlsSrc,
+  Src,
+  VideoSrc,
+  getMediaSourceType,
+} from '@livepeer/core';
 import { CreateAssetUrlProgress } from '@livepeer/core/types';
 import { parseArweaveTxId, parseCid } from '@livepeer/core/utils';
 import * as React from 'react';
 
-import { PlayerProps } from './Player';
+import { InternalPlayerProps, PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
 
 const defaultIpfsGateway = 'https://w3s.link';
@@ -17,7 +23,16 @@ export type UseSourceMimeTypedProps<TElement, TPoster> = {
   >;
   autoUrlUpload: NonNullable<PlayerProps<TElement, TPoster>['autoUrlUpload']>;
   jwt: PlayerProps<TElement, TPoster>['jwt'];
+  screenWidth: InternalPlayerProps['_screenWidth'];
+  playbackInfo: PlayerProps<TElement, TPoster>['playbackInfo'];
 };
+
+type PlaybackUrlWithInfo = {
+  url: string;
+  screenWidthDelta: number | null;
+};
+
+const SCREEN_WIDTH_MULTIPLIER = 2.5;
 
 export const useSourceMimeTyped = <TElement, TPoster>({
   src,
@@ -25,6 +40,8 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   jwt,
   refetchPlaybackInfoInterval,
   autoUrlUpload = { fallback: true },
+  playbackInfo,
+  screenWidth,
 }: UseSourceMimeTypedProps<TElement, TPoster>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
@@ -47,7 +64,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     [playbackId, src],
   );
 
-  const playbackInfo = usePlaybackInfoOrImport({
+  const resolvedPlaybackInfo = usePlaybackInfoOrImport({
     decentralizedSrcOrPlaybackId,
     playbackId,
     refetchPlaybackInfoInterval,
@@ -55,17 +72,33 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     onAssetStatusChange,
   });
 
-  const [playbackUrls, setPlaybackUrls] = React.useState<string[]>([]);
+  const [playbackUrls, setPlaybackUrls] = React.useState<PlaybackUrlWithInfo[]>(
+    [],
+  );
 
   React.useEffect(() => {
-    const playbackInfoSources = playbackInfo?.meta?.source
-      ?.map((s) => s?.url)
-      ?.filter((s) => s);
+    const screenWidthWithDefault =
+      (screenWidth ?? 1280) * SCREEN_WIDTH_MULTIPLIER;
+
+    const playbackInfoSources: PlaybackUrlWithInfo[] | null =
+      (playbackInfo ?? resolvedPlaybackInfo)?.meta?.source?.map((s) => ({
+        url: s?.url,
+        screenWidthDelta:
+          s?.url.includes('static360p') || s?.url.includes('low-bitrate')
+            ? Math.abs(screenWidthWithDefault - 480)
+            : s?.url.includes('static720p')
+            ? Math.abs(screenWidthWithDefault - 1280)
+            : s?.url.includes('static1080p')
+            ? Math.abs(screenWidthWithDefault - 1920)
+            : s?.url.includes('static2160p')
+            ? Math.abs(screenWidthWithDefault - 3840)
+            : null,
+      })) ?? null;
 
     if (playbackInfoSources) {
       setPlaybackUrls(playbackInfoSources);
     }
-  }, [playbackInfo]);
+  }, [playbackInfo, resolvedPlaybackInfo, screenWidth]);
 
   const dStoragePlaybackUrl = React.useMemo(() => {
     // if the player is auto uploading, we do not play back the detected input file unless specified
@@ -109,7 +142,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     // cast all URLs to an array of strings
     const sources =
       playbackUrls.length > 0
-        ? playbackUrls
+        ? playbackUrls.map((p) => p.url)
         : typeof src === 'string'
         ? [src]
         : src;
@@ -130,39 +163,57 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     });
 
     const mediaSourceTypes = authenticatedSources
-      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : s))
+      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : null))
       .filter((s) => s) as Src[];
 
-    // if there are multiple Hls sources, we take only the first one
-    // otherwise we pass all sources to the video or audio player components
-    if (
-      mediaSourceTypes.every((s) => s.type === 'hls') &&
-      mediaSourceTypes?.[0]?.type === 'hls'
-    ) {
-      return mediaSourceTypes[0];
-    }
-
-    // we filter by the first source type in the array provided
+    // we filter by either audio or video/hls
     const mediaSourceFiltered =
       mediaSourceTypes?.[0]?.type === 'audio'
         ? (mediaSourceTypes.filter((s) => s.type === 'audio') as AudioSrc[])
-        : mediaSourceTypes?.[0]?.type === 'video'
-        ? (mediaSourceTypes.filter((s) => s.type === 'video') as VideoSrc[])
+        : mediaSourceTypes?.[0]?.type === 'video' ||
+          mediaSourceTypes?.[0]?.type === 'hls'
+        ? (mediaSourceTypes.filter(
+            (s) => s.type === 'video' || s.type === 'hls',
+          ) as (VideoSrc | HlsSrc)[])
         : null;
 
     return mediaSourceFiltered;
   }, [playbackUrls, src, jwt]);
 
-  const sourceMimeTypedWithFallback = React.useMemo(() => {
+  const sourceMimeTypedSorted = React.useMemo(() => {
+    // if there is no source mime type and the Player has dstorage fallback enabled,
+    // we attempt to play from the dstorage URL directly
     if (!sourceMimeTyped && dStoragePlaybackUrl) {
       return [dStoragePlaybackUrl];
     }
 
+    if (
+      sourceMimeTyped?.[0]?.type === 'video' ||
+      sourceMimeTyped?.[0]?.type === 'hls'
+    ) {
+      const previousSources = [...sourceMimeTyped] as (HlsSrc | VideoSrc)[];
+
+      return previousSources.sort((a, b) => {
+        if (a.type === 'video' && b.type === 'video') {
+          const aOriginal = playbackUrls.find((u) => u.url === a.src);
+          const bOriginal = playbackUrls.find((u) => u.url === b.src);
+
+          // we sort the sources by the delta between the video width and the
+          // screen size (multiplied by a multiplier above)
+          return bOriginal?.screenWidthDelta && aOriginal?.screenWidthDelta
+            ? aOriginal.screenWidthDelta - bOriginal.screenWidthDelta
+            : 1;
+        }
+
+        return a.type === 'video' && b.type === 'hls' ? -1 : 1;
+      });
+    }
+
     return sourceMimeTyped;
-  }, [sourceMimeTyped, dStoragePlaybackUrl]);
+  }, [sourceMimeTyped, dStoragePlaybackUrl, playbackUrls]);
 
   return {
-    source: sourceMimeTypedWithFallback,
+    source: sourceMimeTypedSorted,
     uploadStatus,
   } as const;
 };
