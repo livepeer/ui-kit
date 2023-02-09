@@ -37,7 +37,7 @@
     "/components",
     "/context",
     "contracts",
-    "hooks",
+    "/hooks",
     "/dist"
   ],
   "preconstruct": {
@@ -47,7 +47,7 @@
       "components/index.ts",
       "context/index.ts",
       "contracts.ts",
-      "hooks.ts"
+      "hooks/index.ts"
     ]
   },
   "peerDependencies": {
