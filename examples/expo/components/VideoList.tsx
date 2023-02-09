@@ -43,10 +43,9 @@ export const VideoList: React.FC<VideoListProps> = ({ videos }) => {
             autoPlay
             loop
             title={item.title}
-            showLoadingSpinner={false}
           >
             <>
-              <ControlsContainer />
+              <ControlsContainer showLoadingSpinner={false} />
               <View style={styles.topContainer}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Volume />

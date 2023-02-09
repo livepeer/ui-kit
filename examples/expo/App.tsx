@@ -27,16 +27,24 @@ export type VideoEntry = {
 
 const defaultVideoEntries: VideoEntry[] = [
   {
-    title: 'Awesome Waterfalls',
-    playbackId: '8a16cdy2noaf9ae5',
+    title: 'Fountain',
+    playbackId: '6119i9hncfr7gopr',
   },
   {
-    title: 'Earth Spinning',
-    playbackId: '5233qergn3d44xrj',
+    title: 'Happy Dog',
+    playbackId: '8cf0gfaqtuajakyf',
   },
   {
     title: 'Agent 327',
     playbackId: '3b5ag07g7yn833rk',
+  },
+  {
+    title: 'Earth Spinning',
+    playbackId: '6d192kmvhcc9o7l3',
+  },
+  {
+    title: 'Awesome Waterfalls',
+    playbackId: '6119i9hncfr7gopr',
   },
 ];
 
