@@ -35,7 +35,6 @@ type UsePlayerListReturn<
     }) => void;
 
     viewabilityConfig: ViewabilityConfig;
-    initialNumToRender: number;
   };
 };
 
@@ -57,7 +56,6 @@ export function usePlayerList<
   itemVisibleMinimumViewTime = 100,
   itemVisiblePercentThreshold = 80,
   itemPreload = 3,
-  initialNumToRender = 3,
 }: UsePlayerListOptions<TSourceArray, TSource>): UsePlayerListReturn<
   TSourceArray,
   TSource
@@ -113,7 +111,6 @@ export function usePlayerList<
       onViewableItemsChanged,
       viewabilityConfig,
       data: dataMerged,
-      initialNumToRender,
     },
   } as const;
 }
