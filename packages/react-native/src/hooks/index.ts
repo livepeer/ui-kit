@@ -19,3 +19,8 @@ export {
   useUpdateStream,
   type PrefetchQueryOptions,
 } from '@livepeer/core-react/hooks';
+export {
+  usePlayerList,
+  type UsePlayerListOptions,
+  type UsePlayerListReturn,
+} from './usePlayerList';

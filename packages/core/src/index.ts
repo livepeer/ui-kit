@@ -54,6 +54,7 @@ export type {
   LivepeerProvider,
   LivepeerProviderConfig,
   Metrics,
+  MirrorSizeArray,
   MultistreamTarget,
   MultistreamTargetRef,
   NativeFile,

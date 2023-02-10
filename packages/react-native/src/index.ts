@@ -1,8 +1,8 @@
 export * from '@livepeer/core-react';
-export { type ThemeConfig } from '@livepeer/core-react';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
+  type ThemeConfig,
 } from '@livepeer/core-react';
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
@@ -53,9 +53,12 @@ export {
   useCreateAsset,
   useCreateStream,
   useLivepeerProvider,
+  usePlayerList,
   useStream,
   useStreamSession,
   useStreamSessions,
   useUpdateAsset,
   useUpdateStream,
+  type UsePlayerListOptions,
+  type UsePlayerListReturn,
 } from './hooks';

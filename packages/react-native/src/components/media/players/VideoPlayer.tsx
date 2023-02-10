@@ -53,6 +53,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       poster,
       audioMode,
       onMetricsError,
+      isCurrentlyShown,
     },
     ref,
   ) => {
@@ -72,7 +73,12 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       });
     }, [audioMode]);
 
-    const { hasPlayed, playing, muted } = store;
+    const { muted } = store;
+
+    const shouldPlay = React.useMemo(
+      () => (autoPlay ? isCurrentlyShown : false),
+      [autoPlay, isCurrentlyShown],
+    );
 
     const onError = async (_e: string) => {
       // await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
@@ -176,7 +182,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         onFullscreenUpdate={onFullscreenUpdate}
         onPlaybackStatusUpdate={onPlaybackStatusUpdate}
         onError={onError}
-        shouldPlay={hasPlayed ? playing : autoPlay}
+        shouldPlay={shouldPlay}
         ref={ref}
         isMuted={muted}
       />
@@ -222,7 +228,7 @@ const addEffectsToStore = <TElement extends MediaElement>(
           prev._requestedPlayPauseLastTime
         ) {
           if (!current.playing) {
-            if (current.progress >= 1) {
+            if (current.progress >= current.duration) {
               previousPromise = element.playFromPositionAsync(0);
             } else {
               previousPromise = element.playAsync();

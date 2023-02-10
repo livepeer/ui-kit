@@ -104,7 +104,10 @@ export type StudioPlaybackInfo = {
       hrn: 'HLS (TS)' | 'MP4';
       type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';
       url: string;
-      rendition?: string;
+      size?: number;
+      width?: number;
+      height?: number;
+      bitrate?: number;
     }[];
   };
 };

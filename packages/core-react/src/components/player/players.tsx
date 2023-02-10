@@ -13,6 +13,7 @@ export type VideoPlayerProps<TElement, TPoster> = {
   priority?: boolean;
   poster?: PlayerProps<TElement, TPoster>['poster'];
   jwt?: string;
+  isCurrentlyShown?: PlayerProps<TElement, TPoster>['_isCurrentlyShown'];
   options?: ControlsOptions;
   onStreamStatusChange?: (isLive: boolean) => void;
   onMetricsError?: (error: Error) => void;

@@ -1,4 +1,4 @@
-import { ControlsOptions, PlaybackInfo } from '@livepeer/core';
+import { ControlsOptions, PlaybackInfo, Src } from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
 
@@ -11,8 +11,6 @@ import { useSourceMimeTyped } from './useSourceMimeTyped';
 export type PlayerObjectFit = 'cover' | 'contain';
 
 export type InternalPlayerProps = {
-  /** If the element is currently shown on the DOM/screen. Should not be exposed externally to users. */
-  _isCurrentlyShown: boolean;
   /** The current screen width. This is null if the screen size cannot be determined (SSR). */
   _screenWidth: number | null;
 };
@@ -38,7 +36,7 @@ export type PlayerProps<TElement, TPoster> = {
    * This significantly improves the cumulative layout shift and is required for the player.
    *
    * @see {@link https://web.dev/cls/}
-   * */
+   */
   aspectRatio?: AspectRatio;
   /**
    * Poster image to show when the content is either loading (when autoplaying) or hasn't started yet (without autoplay).
@@ -67,6 +65,8 @@ export type PlayerProps<TElement, TPoster> = {
    * Should only be used when the media is visible above the fold. Defaults to false.
    */
   priority?: boolean;
+  /** If the element is currently shown on the DOM/screen. This should typically not be used by SDK users. */
+  _isCurrentlyShown?: boolean;
 
   /** Theme configuration for the player */
   theme?: ThemeConfig;
@@ -102,6 +102,9 @@ export type PlayerProps<TElement, TPoster> = {
   /** Callback called when the access control errors */
   onAccessControlError?: (error: Error) => void;
 
+  /** Callback called when the media sources are changed */
+  onSourceUpdated?: (sources: Src[]) => void;
+
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
 } & (
@@ -129,6 +132,7 @@ export const usePlayer = <TElement, TPoster>(
     onStreamStatusChange,
     onMetricsError,
     onAccessControlError,
+    onSourceUpdated,
     jwt,
 
     refetchPlaybackInfoInterval = 5000,
@@ -141,8 +145,9 @@ export const usePlayer = <TElement, TPoster>(
     aspectRatio = '16to9',
     objectFit = 'contain',
     mediaElementRef,
+    _isCurrentlyShown,
   }: PlayerProps<TElement, TPoster>,
-  { _isCurrentlyShown, _screenWidth }: InternalPlayerProps,
+  { _screenWidth }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
   const [loaded, setLoaded] = React.useState(false);
@@ -156,6 +161,12 @@ export const usePlayer = <TElement, TPoster>(
     screenWidth: _screenWidth,
     playbackInfo,
   });
+
+  React.useEffect(() => {
+    if (source) {
+      onSourceUpdated?.(source);
+    }
+  }, [source, onSourceUpdated]);
 
   const [isStreamOffline, setIsStreamOffline] = React.useState(false);
 
@@ -246,6 +257,7 @@ export const usePlayer = <TElement, TPoster>(
       onStreamStatusChange: onStreamStatusChangeCallback,
       onMetricsError,
       onAccessControlError: accessControlErrorCallback,
+      isCurrentlyShown: _isCurrentlyShown,
     },
     controlsContainerProps: {
       hidePosterOnPlayed,

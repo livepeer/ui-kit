@@ -550,12 +550,15 @@ export type GetPlaybackInfoArgs =
 export type PlaybackInfo = {
   type: 'live' | 'vod' | 'recording';
   meta: {
-    live?: boolean;
+    live: boolean;
     source: {
       hrn: 'HLS (TS)' | 'MP4';
       type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';
       url: string;
-      rendition?: string;
+      size?: number;
+      width?: number;
+      height?: number;
+      bitrate?: number;
     }[];
   };
 };
