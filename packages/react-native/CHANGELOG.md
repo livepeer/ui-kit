@@ -1,5 +1,26 @@
 # @livepeer/react-native
 
+## 1.2.0
+
+### Minor Changes
+
+- [#268](https://github.com/livepeer/livepeer.js/pull/268) [`a59f1d9`](https://github.com/livepeer/livepeer.js/commit/a59f1d9aed403125cb365c6246364d0a24b3a1b0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `usePlayerList` hook which provides helpers for [`FlatList`](https://reactnative.dev/docs/0.62/flatlist) and [`FlashList`](https://shopify.github.io/flash-list/docs/) to make it simple to render the `Player` in a list. It automatically handles preloading, auto play/pause when visible, and gives sane defaults for the typical list-based use-cases.
+
+- [#267](https://github.com/livepeer/livepeer.js/pull/267) [`85e4c05`](https://github.com/livepeer/livepeer.js/commit/85e4c0563802d737bda5d2b76cd36e069da1c61c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added MP4 rendition prioritization to the React and React Native Player.
+
+  This is for support of MP4 renditions returned from `playbackInfo` from the Studio provider. If an MP4 rendition exists for an Asset, it will be prioritized over HLS, since this has been introduced as a performance improvement over HLS for short-form video.
+
+  The MP4 renditions will be chosen with the following algorithm: the device screen width and multiplied by a static multiplier (currently set to x2.5). This value is then compared to the rendition widths, and the renditions are prioritized based on the distance between these values. This results in a choice of a rendition which is close to the screen size without visual quality issues. For instance, a device with a 1280 pixel width would compute `1280px * 2.5 = 3200px`, and then sort the MP4 renditions by which are closest to this value.
+
+### Patch Changes
+
+- [#267](https://github.com/livepeer/livepeer.js/pull/267) [`85e4c05`](https://github.com/livepeer/livepeer.js/commit/85e4c0563802d737bda5d2b76cd36e069da1c61c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed types for React Native to integrate easier with [ImagePicker](https://docs.expo.dev/versions/latest/sdk/imagepicker/) from Expo.
+
+- [#267](https://github.com/livepeer/livepeer.js/pull/267) [`85e4c05`](https://github.com/livepeer/livepeer.js/commit/85e4c0563802d737bda5d2b76cd36e069da1c61c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `pageUrl`, `protocol`, `preloadTime`, and `autoplay` to metrics to track performance of video load under specific conditions.
+
+- Updated dependencies [[`85e4c05`](https://github.com/livepeer/livepeer.js/commit/85e4c0563802d737bda5d2b76cd36e069da1c61c), [`85e4c05`](https://github.com/livepeer/livepeer.js/commit/85e4c0563802d737bda5d2b76cd36e069da1c61c)]:
+  - @livepeer/core-react@1.2.0
+
 ## 1.1.5
 
 ### Patch Changes
