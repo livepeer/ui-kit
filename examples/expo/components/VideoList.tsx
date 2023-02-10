@@ -20,7 +20,12 @@ export type VideoListProps = {
 const videoHeight = Dimensions.get('window').height - 200;
 
 export const VideoList: React.FC<VideoListProps> = ({ videos }) => {
-  const { listProps } = usePlayerList({ data: videos, itemPreload: 2 });
+  const { listProps } = usePlayerList({
+    data: videos,
+    itemVisibleMinimumViewTime: 100,
+    itemVisiblePercentThreshold: 60,
+    itemPreload: 2,
+  });
 
   return (
     <FlatList
@@ -47,7 +52,7 @@ const ListItem = ({
   const [sourceInformation, setSourceInformation] = useState('');
 
   const onSourceUpdated = useCallback((sources: Src[]) => {
-    if (sources?.[0]?.type) {
+    if (sources?.[0]?.mime) {
       setSourceInformation(`${sources?.[0]?.mime}`);
     }
   }, []);
