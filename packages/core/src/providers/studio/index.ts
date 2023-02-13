@@ -45,6 +45,8 @@ export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
   apiKey: string;
 };
 
+const DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024;
+
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
   readonly _defaultHeaders: { Authorization?: `Bearer ${string}` };
 
@@ -138,7 +140,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   async createAsset<TSource extends CreateAssetSourceType>(
     args: CreateAssetArgs<TSource>,
   ): Promise<MirrorSizeArray<TSource, Asset>> {
-    const { sources, onProgress, noWait } = args;
+    const { sources, onProgress, noWait, chunkSize } = args;
 
     let progress = sources.map((source) => ({
       name: source.name,
@@ -186,10 +188,16 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 metadata: {
                   id: assetId,
                 },
-                ...(typeof File !== 'undefined' &&
-                (source as CreateAssetSourceFile)?.file instanceof File
+                ...(chunkSize
+                  ? { chunkSize }
+                  : (typeof File !== 'undefined' &&
+                      (source as CreateAssetSourceFile)?.file instanceof
+                        File) ||
+                    (typeof navigator !== 'undefined' &&
+                      typeof navigator.product === 'string' &&
+                      navigator.product.toLowerCase() === 'reactnative')
                   ? null
-                  : { chunkSize: 5 * 1024 * 1024 }),
+                  : { chunkSize: DEFAULT_CHUNK_SIZE }),
                 // fingerprint: function (file: File & { exif?: any }) {
                 //   return fingerprint(file);
                 // },
@@ -296,6 +304,8 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
               };
 
               onProgress?.(progress);
+            } else {
+              throw new Error('Asset phase was undefined.');
             }
           } catch (e) {
             // hits the max error limit and throws the error

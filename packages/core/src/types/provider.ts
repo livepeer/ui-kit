@@ -235,6 +235,12 @@ export type CreateAssetArgs<TSource extends CreateAssetSourceType> = {
    * status.
    */
   noWait?: boolean;
+  /**
+   * Sets the chunk size, which indicates the maximum size of the upload PATCH request
+   * body in bytes. Defaults to 5 MB for streams or apps using React Native, and infinity
+   * for others.
+   */
+  chunkSize?: number;
 };
 
 export type Metadata = {

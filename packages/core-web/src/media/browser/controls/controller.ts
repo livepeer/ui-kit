@@ -48,19 +48,17 @@ const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
   return new Promise<boolean>((resolve) => {
     const prevVolume = element?.volume ?? DEFAULT_VOLUME_LEVEL;
 
-    const newVolume = prevVolume - 0.01;
+    const newVolume = 0.345;
 
     // set new value and test
-    element.volume = getBoundedVolume(newVolume);
+    element.volume = newVolume;
 
-    window.setTimeout(() => {
-      const isSupported = element.volume !== 1;
+    const isSupported = element.volume !== 1;
 
-      // reset to old value
-      element.volume = getBoundedVolume(prevVolume);
+    // reset to old value
+    element.volume = getBoundedVolume(prevVolume);
 
-      resolve(isSupported);
-    });
+    resolve(isSupported);
   });
 };
 
