@@ -82,7 +82,9 @@ export function usePlayerList<
       minimumViewTime: itemVisibleMinimumViewTime,
       itemVisiblePercentThreshold: itemVisiblePercentThreshold,
     }),
-    [itemVisibleMinimumViewTime, itemVisiblePercentThreshold],
+    // we don't trigger re-render for deps since this is thrown into a ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const viewabilityConfigCallbackPairs = useRef([
@@ -110,8 +112,6 @@ export function usePlayerList<
       }) as UsePlayerListReturn<TSource, TSourceArray>['listProps']['data'],
     [data, indices, itemPreload],
   );
-
-  console.log(dataMerged);
 
   return {
     listProps: {
