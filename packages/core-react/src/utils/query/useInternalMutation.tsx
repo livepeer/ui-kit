@@ -78,6 +78,10 @@ export function useInternalMutation<
     useErrorBoundary: false,
   });
 
+  // useEffect(() => {
+  //   reset();
+  // }, [data, reset]);
+
   return useMemo(
     () =>
       ({

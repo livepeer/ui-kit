@@ -1,58 +1,83 @@
-import { Player } from '@livepeer/react';
-import { useCallback } from 'react';
+import { Player, Src, useCreateAsset } from '@livepeer/react';
+import { useCallback, useState } from 'react';
 
 // const playbackId = 'ipfs://bafybeifavmtea3u5ulvrkdzc2wnjwjl35jefqiyhgruxu2cjd4kumymqm4'; // ipfs asset
-const playbackId = '499fa78eu8g59m26'; // asset
+// const playbackId = '499fa78eu8g59m26'; // asset
 // const playbackId = '1dd6omrqq7htwgig'; // public stream
 // const playbackId = '0b3a57ekt0n6ie08'; // gated stream
 // const playbackId = '740c7a3g4ipyur5g'; // gated stream
 
 export const AssetDemoPlayer = () => {
-  const mediaElementRef = useCallback((ref: HTMLMediaElement) => {
-    console.log('Media duration', ref.duration);
-  }, []);
+  const [videos, setVideos] = useState<File[]>([]);
+  const [sources, setSources] = useState<Set<string>>(new Set());
+
+  const {
+    mutate: createAsset,
+    data: assets,
+    progress,
+    error,
+  } = useCreateAsset({
+    sources: videos.map((video) => ({
+      name: video.name ?? 'Cool Video',
+      file: video,
+    })),
+  });
+
+  const onSourceUpdated = useCallback(
+    (sources: Src[]) =>
+      setSources((prev) => new Set([...prev, sources?.[0]?.src])),
+    [],
+  );
 
   return (
     <>
-      {/* Added scrolling to test priority... */}
-      <div style={{ height: 2000 }} />
-      <Player
-        playbackId={playbackId}
-        // src={playbackId}
-        // src={'/audio-example.mp3'}
-        autoUrlUpload={{
-          fallback: true,
-          ipfsGateway: 'https://lens.infura-ipfs.io/',
-        }}
-        // priority
-        loop
-        autoPlay
-        showPipButton
-        // muted
-        mediaElementRef={mediaElementRef}
-        controls={{
-          defaultVolume: 0.7,
-        }}
-        theme={{
-          fonts: {
-            display: 'Inter',
-          },
-          colors: {
-            accent: '#72DDF7',
-            progressLeft: '#F7AEF8',
-            progressMiddle: '#F7AEF8',
-            progressRight: '#F7AEF8',
-            progressThumb: '#F4F4ED',
-          },
-          // radii: { containerBorderRadius: '30px' },
-          // space: {
-          //   controlsTopMarginX: '20px',
-          //   controlsTopMarginY: '15px',
-          //   controlsBottomMarginX: '15px',
-          //   controlsBottomMarginY: '10px',
-          // },
-        }}
-      />
+      <div style={{ marginBottom: 30 }}>
+        <label>
+          Videos:{' '}
+          <input
+            type="file"
+            name="videos"
+            accept="video/mp4,video/x-m4v,video/*"
+            onChange={(e) => setVideos([...(e.target.files ?? [])])}
+            title="Choose file(s)"
+            multiple
+          />
+        </label>
+
+        {createAsset && videos.length > 0 && (
+          <button onClick={() => createAsset()}>Upload</button>
+        )}
+        {progress &&
+          progress.map((p) => (
+            <p key={p.name}>
+              {p.name}: {p.phase} - {Math.floor(p.progress * 100)}
+            </p>
+          ))}
+        {error && <p>{error.message}</p>}
+      </div>
+      {sources && [...sources].map((s) => <p key={s}>{s}</p>)}
+      {assets?.map((a) => (
+        <Player
+          key={a.id}
+          playbackId={a.playbackId}
+          loop
+          autoPlay
+          showPipButton
+          onSourceUpdated={onSourceUpdated}
+          theme={{
+            fonts: {
+              display: 'Inter',
+            },
+            colors: {
+              accent: '#72DDF7',
+              progressLeft: '#F7AEF8',
+              progressMiddle: '#F7AEF8',
+              progressRight: '#F7AEF8',
+              progressThumb: '#F4F4ED',
+            },
+          }}
+        />
+      ))}
     </>
   );
 };

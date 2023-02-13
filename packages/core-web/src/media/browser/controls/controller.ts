@@ -34,6 +34,12 @@ const allKeyTriggers = [
 ] as const;
 type KeyTrigger = typeof allKeyTriggers[number];
 
+const getBoundedVolume = (value: number) =>
+  Math.min(
+    Math.max(0, value && !isNaN(value) && isFinite(value) ? value : 0),
+    1,
+  );
+
 // if volume change is unsupported, the element will always return 1
 // similar to https://github.com/videojs/video.js/pull/7514/files
 const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
@@ -45,13 +51,13 @@ const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
     const newVolume = prevVolume - 0.01;
 
     // set new value and test
-    element.volume = newVolume;
+    element.volume = getBoundedVolume(newVolume);
 
     window.setTimeout(() => {
       const isSupported = element.volume !== 1;
 
       // reset to old value
-      element.volume = prevVolume;
+      element.volume = getBoundedVolume(prevVolume);
 
       resolve(isSupported);
     });
