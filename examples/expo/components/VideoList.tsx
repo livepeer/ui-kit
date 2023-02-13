@@ -53,7 +53,14 @@ const ListItem = ({
 
   const onSourceUpdated = useCallback((sources: Src[]) => {
     if (sources?.[0]?.mime) {
-      setSourceInformation(`${sources?.[0]?.mime}`);
+      setSourceInformation(
+        sources
+          .map(
+            (source) =>
+              `${source?.src.slice(source?.src.lastIndexOf('/') + 1)}`,
+          )
+          .join(', '),
+      );
     }
   }, []);
 
@@ -125,6 +132,8 @@ const styles = StyleSheet.create({
     color: titleColor,
     fontSize: 12,
     fontWeight: '400',
+    marginTop: 4,
+    maxWidth: Dimensions.get('window').width - 80,
   },
   title: {
     color: titleColor,

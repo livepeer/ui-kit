@@ -1,6 +1,10 @@
 import { MirrorSizeArray } from '@livepeer/core-react';
-import { useCallback, useMemo, useState } from 'react';
-import { ViewToken, ViewabilityConfig } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ViewToken,
+  ViewabilityConfig,
+  ViewabilityConfigCallbackPairs,
+} from 'react-native';
 
 import { PlayerProps } from '../components';
 
@@ -29,12 +33,7 @@ export type UsePlayerListReturn<
       }
     >;
 
-    onViewableItemsChanged: (info: {
-      viewableItems: Array<ViewToken>;
-      changed: Array<ViewToken>;
-    }) => void;
-
-    viewabilityConfig: ViewabilityConfig;
+    viewabilityConfigCallbackPairs: ViewabilityConfigCallbackPairs;
   };
 };
 
@@ -44,8 +43,7 @@ type PlayerListOverriddenProps = {
 };
 
 type IndexStatus = {
-  viewable: boolean;
-  shouldPreload: boolean;
+  viewableIndices: number[];
 };
 
 export function usePlayerList<
@@ -60,7 +58,7 @@ export function usePlayerList<
   TSource,
   TSourceArray
 > {
-  const [indices, setIndices] = useState<IndexStatus[]>([]);
+  const [indices, setIndices] = useState<IndexStatus>({ viewableIndices: [] });
 
   const onViewableItemsChanged = useCallback(
     (params: {
@@ -68,34 +66,15 @@ export function usePlayerList<
       changed: Array<ViewToken>;
     }) => {
       if (params?.viewableItems) {
-        const newIndices = data.map((_d, index) => ({
-          viewable: params.viewableItems.some(
-            (viewableItem) => viewableItem.index === index,
-          ),
-          shouldPreload: params.viewableItems.some(
-            (viewableItem) =>
-              Math.abs(
-                (viewableItem.index ?? Number.MAX_SAFE_INTEGER) - index,
-              ) <= itemPreload,
-          ),
-        }));
+        const viewableIndices = params.viewableItems
+          .map((viewableItem) => viewableItem.index)
+          .filter((i) => i !== null)
+          .map((i) => i!);
 
-        setIndices(newIndices);
+        setIndices({ viewableIndices });
       }
     },
-    [data, itemPreload],
-  );
-
-  const dataMerged = useMemo(
-    () =>
-      data.map((item, index) => ({
-        ...item,
-        playerProps: {
-          priority: Boolean(indices?.[index]?.shouldPreload),
-          _isCurrentlyShown: Boolean(indices?.[index]?.viewable),
-        },
-      })) as UsePlayerListReturn<TSource, TSourceArray>['listProps']['data'],
-    [data, indices],
+    [],
   );
 
   const viewabilityConfig: ViewabilityConfig = useMemo(
@@ -103,13 +82,40 @@ export function usePlayerList<
       minimumViewTime: itemVisibleMinimumViewTime,
       itemVisiblePercentThreshold: itemVisiblePercentThreshold,
     }),
-    [itemVisibleMinimumViewTime, itemVisiblePercentThreshold],
+    // we don't trigger re-render for deps since this is thrown into a ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const viewabilityConfigCallbackPairs = useRef([
+    { onViewableItemsChanged, viewabilityConfig },
+  ]);
+
+  const dataMerged = useMemo(
+    () =>
+      data.map((item, index) => {
+        const isViewable = indices.viewableIndices.some(
+          (viewableIndex) => viewableIndex === index,
+        );
+
+        const isWithinPreloadOfViewableItem = indices.viewableIndices.some(
+          (viewableIndex) => Math.abs(viewableIndex - index) <= itemPreload,
+        );
+
+        return {
+          ...item,
+          playerProps: {
+            priority: isWithinPreloadOfViewableItem,
+            _isCurrentlyShown: isViewable,
+          },
+        };
+      }) as UsePlayerListReturn<TSource, TSourceArray>['listProps']['data'],
+    [data, indices, itemPreload],
   );
 
   return {
     listProps: {
-      onViewableItemsChanged,
-      viewabilityConfig,
+      viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current,
       data: dataMerged,
     },
   } as const;

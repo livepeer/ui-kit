@@ -35,6 +35,7 @@ export const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload }) => {
     progress,
     status,
     error,
+    internal: { reset },
   } = useCreateAsset(
     // we use a `const` assertion here to provide better Typescript types
     // for the returned data
@@ -48,14 +49,15 @@ export const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload }) => {
   );
 
   useEffect(() => {
-    if (assets?.[0]?.playbackId) {
+    if (progress?.[0].phase === 'ready' && assets?.[0]?.playbackId) {
       onUpload({
         title: assets[0].name,
         playbackId: assets[0].playbackId,
       });
       setVideo(null);
+      reset();
     }
-  }, [status, assets, onUpload]);
+  }, [progress, assets, onUpload, reset]);
 
   return (
     <>
@@ -80,7 +82,7 @@ export const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload }) => {
   );
 };
 
-const textColor = 'green';
+const textColor = '#909090';
 
 const styles = StyleSheet.create({
   text: {
