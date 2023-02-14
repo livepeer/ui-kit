@@ -21,6 +21,7 @@ describe('usePlaybackInfo', () => {
       {
         "meta": {
           "live": false,
+          "playbackPolicy": null,
           "source": [
             {
               "hrn": "HLS (TS)",

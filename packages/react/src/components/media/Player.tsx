@@ -6,6 +6,7 @@ import {
 import { AudioSrc, HlsSrc, VideoSrc } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/browser';
 
+import { HlsVideoConfig } from 'livepeer/media/browser/hls';
 import * as React from 'react';
 
 import {
@@ -31,6 +32,14 @@ type PlayerProps = CorePlayerProps<HTMLMediaElement, PosterSource> & {
   showPipButton?: boolean;
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
+  /** Configuration for the HLS.js instance used for HLS playback */
+  hlsConfig?: HlsVideoConfig;
+  /**
+   * Whether to include credentials in cross-origin requests made from the Player.
+   * This is typically used to have the Player include cookies for requests made to Livepeer
+   * domains, for access control policies.
+   */
+  allowCrossOriginCredentials?: boolean;
 };
 
 export type { PlayerObjectFit, PlayerProps };
@@ -76,10 +85,16 @@ export const PlayerInternal = (props: PlayerProps) => {
     >
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && source?.[0]?.type === 'audio' ? (
-          <AudioPlayer {...playerProps} src={source as AudioSrc[]} />
+          <AudioPlayer
+            {...playerProps}
+            src={source as AudioSrc[]}
+            allowCrossOriginCredentials={props.allowCrossOriginCredentials}
+          />
         ) : (
           <VideoPlayer
             {...playerProps}
+            hlsConfig={props.hlsConfig}
+            allowCrossOriginCredentials={props.allowCrossOriginCredentials}
             src={source as (VideoSrc | HlsSrc)[] | null}
           />
         )}
