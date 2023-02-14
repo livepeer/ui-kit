@@ -28,6 +28,7 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   PosterSource
 > & {
   hlsConfig?: HlsVideoConfig;
+  allowCrossOriginCredentials?: boolean;
 };
 
 export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
@@ -47,6 +48,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
       onMetricsError,
       onAccessControlError,
       priority,
+      allowCrossOriginCredentials,
     } = props;
 
     const canUseHlsjs = React.useMemo(() => isHlsSupported(), []);
@@ -118,6 +120,9 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
           },
           {
             autoplay: autoPlay,
+            xhrSetup(xhr, _url) {
+              xhr.withCredentials = Boolean(allowCrossOriginCredentials);
+            },
             ...hlsConfig,
           },
         );
@@ -134,6 +139,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
       shouldUseHlsjs,
       onStreamStatusChange,
       onAccessControlError,
+      allowCrossOriginCredentials,
     ]);
 
     // use HLS.js if Media Source is supported, then fallback to using a regular HTML video player
@@ -154,6 +160,9 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
         muted={muted}
         poster={typeof poster === 'string' ? poster : undefined}
         preload={priority ? 'auto' : 'metadata'}
+        crossOrigin={
+          allowCrossOriginCredentials ? 'use-credentials' : 'anonymous'
+        }
       />
     ) : (
       <HtmlVideoPlayer
