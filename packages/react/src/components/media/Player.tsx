@@ -6,6 +6,7 @@ import {
 import { AudioSrc, HlsSrc, VideoSrc } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/browser';
 
+import { HlsVideoConfig } from 'livepeer/media/browser/hls';
 import * as React from 'react';
 
 import {
@@ -31,6 +32,8 @@ type PlayerProps = CorePlayerProps<HTMLMediaElement, PosterSource> & {
   showPipButton?: boolean;
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
+  /** Configuration for the HLS.js instance used for HLS playback */
+  hlsConfig?: HlsVideoConfig;
 };
 
 export type { PlayerObjectFit, PlayerProps };
@@ -80,6 +83,7 @@ export const PlayerInternal = (props: PlayerProps) => {
         ) : (
           <VideoPlayer
             {...playerProps}
+            hlsConfig={props.hlsConfig}
             src={source as (VideoSrc | HlsSrc)[] | null}
           />
         )}
