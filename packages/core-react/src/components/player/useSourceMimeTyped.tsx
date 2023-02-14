@@ -181,8 +181,6 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     return mediaSourceFiltered;
   }, [playbackUrls, src, jwt]);
 
-  console.log({ playbackUrls });
-
   const sourceMimeTypedSorted = React.useMemo(() => {
     // if there is no source mime type and the Player has dstorage fallback enabled,
     // we attempt to play from the dstorage URL directly
