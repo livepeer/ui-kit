@@ -83,16 +83,17 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     const playbackInfoSources: PlaybackUrlWithInfo[] | null =
       (playbackInfo ?? resolvedPlaybackInfo)?.meta?.source?.map((s) => ({
         url: s?.url,
-        screenWidthDelta:
-          s?.url.includes('static360p') || s?.url.includes('low-bitrate')
-            ? Math.abs(screenWidthWithDefault - 480)
-            : s?.url.includes('static720p')
-            ? Math.abs(screenWidthWithDefault - 1280)
-            : s?.url.includes('static1080p')
-            ? Math.abs(screenWidthWithDefault - 1920)
-            : s?.url.includes('static2160p')
-            ? Math.abs(screenWidthWithDefault - 3840)
-            : null,
+        screenWidthDelta: s?.width
+          ? Math.abs(screenWidthWithDefault - s.width)
+          : s?.url.includes('static360p') || s?.url.includes('low-bitrate')
+          ? Math.abs(screenWidthWithDefault - 480)
+          : s?.url.includes('static720p')
+          ? Math.abs(screenWidthWithDefault - 1280)
+          : s?.url.includes('static1080p')
+          ? Math.abs(screenWidthWithDefault - 1920)
+          : s?.url.includes('static2160p')
+          ? Math.abs(screenWidthWithDefault - 3840)
+          : null,
       })) ?? null;
 
     if (playbackInfoSources) {
@@ -179,6 +180,8 @@ export const useSourceMimeTyped = <TElement, TPoster>({
 
     return mediaSourceFiltered;
   }, [playbackUrls, src, jwt]);
+
+  console.log({ playbackUrls });
 
   const sourceMimeTypedSorted = React.useMemo(() => {
     // if there is no source mime type and the Player has dstorage fallback enabled,
