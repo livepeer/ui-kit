@@ -18,7 +18,6 @@ export type UsePlayerListOptions<
   itemVisiblePercentThreshold?: number;
 
   itemPreload?: number;
-  initialNumToRender?: number;
 };
 
 export type UsePlayerListReturn<
