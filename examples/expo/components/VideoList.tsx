@@ -29,7 +29,8 @@ export const VideoList: React.FC<VideoListProps> = ({ videos }) => {
 
   return (
     <FlatList
-      {...listProps}
+      data={listProps.data}
+      viewabilityConfigCallbackPairs={listProps.viewabilityConfigCallbackPairs}
       style={styles.videoList}
       snapToAlignment="start"
       decelerationRate="fast"
