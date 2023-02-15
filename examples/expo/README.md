@@ -18,10 +18,10 @@ pnpm dev
 
 The VideoUpload button launches a image library picker (which only allows videos to be selected), then allows the user to upload the asset to the Livepeer network to be transcoded. The `useCreateAsset` automatically polls the API in the background to check on the upload & transcode status:
 
-![VideoUpload](https://asset-cdn.lp-playback.monster/hls/7cdce5azhi7axgha/static2072p0.mp4)
+https://user-images.githubusercontent.com/32714304/219115764-eb16167e-5993-4038-b070-02b12019626b.mov
 
 ### VideoList
 
 The [`VideoList`](./components/VideoList.tsx) component uses `usePlayerList` to preload and display videos in a [`FlatList`](https://reactnative.dev/docs/flatlist)-compatible list, by using [`viewabilityConfigCallbackPairs`](https://reactnative.dev/docs/flatlist#viewabilityconfigcallbackpairs) to trigger preloading on upcoming videos, and automatically play/pause video when it is shown/hidden from the list:
 
-![VideoList](https://asset-cdn.lp-playback.monster/hls/1ad6mwopt0ov750q/static2072p0.mp4)
+https://user-images.githubusercontent.com/32714304/219115209-2a395f05-5bc5-45c4-9d60-d484da269ddb.mov
