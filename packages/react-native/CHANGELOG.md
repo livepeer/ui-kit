@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.2.2
+
+### Patch Changes
+
+- [`99ceff1`](https://github.com/livepeer/livepeer.js/commit/99ceff19bdb22b033ba84944b903c1494dd0eb28) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed sorting of sources to use the width generated from the playback info endpoint.
+
+- Updated dependencies [[`99ceff1`](https://github.com/livepeer/livepeer.js/commit/99ceff19bdb22b033ba84944b903c1494dd0eb28)]:
+  - @livepeer/core-react@1.2.2
+
 ## 1.2.1
 
 ### Patch Changes
