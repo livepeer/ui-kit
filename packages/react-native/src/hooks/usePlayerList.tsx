@@ -13,11 +13,12 @@ export type UsePlayerListOptions<
   TSourceArray extends ReadonlyArray<TSource> = ReadonlyArray<TSource>,
 > = {
   data: TSourceArray;
-
-  itemVisibleMinimumViewTime?: number;
-  itemVisiblePercentThreshold?: number;
-
   itemPreload?: number;
+
+  itemVisibleMinimumViewTime?: number | null;
+  itemVisiblePercentThreshold?: number | null;
+  itemVisibleViewAreaCoveragePercentThreshold?: number | null;
+  itemVisibleWaitForInteraction?: boolean | null;
 };
 
 export type UsePlayerListReturn<
@@ -50,9 +51,12 @@ export function usePlayerList<
   TSourceArray extends ReadonlyArray<TSource> = ReadonlyArray<TSource>,
 >({
   data,
+  itemPreload = 3,
+
   itemVisibleMinimumViewTime = 100,
   itemVisiblePercentThreshold = 60,
-  itemPreload = 3,
+  itemVisibleWaitForInteraction,
+  itemVisibleViewAreaCoveragePercentThreshold,
 }: UsePlayerListOptions<TSource, TSourceArray>): UsePlayerListReturn<
   TSource,
   TSourceArray
@@ -78,8 +82,11 @@ export function usePlayerList<
 
   const viewabilityConfig: ViewabilityConfig = useMemo(
     () => ({
-      minimumViewTime: itemVisibleMinimumViewTime,
-      itemVisiblePercentThreshold: itemVisiblePercentThreshold,
+      minimumViewTime: itemVisibleMinimumViewTime ?? undefined,
+      itemVisiblePercentThreshold: itemVisiblePercentThreshold ?? undefined,
+      viewAreaCoveragePercentThreshold:
+        itemVisibleViewAreaCoveragePercentThreshold ?? undefined,
+      waitForInteraction: itemVisibleWaitForInteraction ?? undefined,
     }),
     // we don't trigger re-render for deps since this is thrown into a ref
     // eslint-disable-next-line react-hooks/exhaustive-deps
