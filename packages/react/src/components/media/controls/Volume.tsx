@@ -64,6 +64,11 @@ export const Volume: React.FC<VolumeProps> = (props) => {
   return (
     <div className={styling.volume.container()}>
       <button
+        style={{
+          width: props.size,
+          height: props.size,
+          ...props.style,
+        }}
         className={styling.iconButton()}
         title={title}
         aria-label={title}

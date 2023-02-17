@@ -14,6 +14,7 @@ export type ControlsContainerProps = {
   middle?: React.ReactNode;
   left?: React.ReactNode;
   right?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 type ControlsContainerStateSlice = Pick<

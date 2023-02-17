@@ -61,6 +61,11 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
 
   return (
     <IconButton
+      style={{
+        width: props.size,
+        height: props.size,
+        ...props.style,
+      }}
       size={{
         '@lg': 'large',
       }}

@@ -24,6 +24,14 @@ export type FullscreenButtonProps = {
    * @type React.ReactElement
    */
   exitIcon?: React.ReactElement;
+  /**
+   * The size of the icon.
+   */
+  size?: number | string;
+  /**
+   * The styling overrides for the icon.
+   */
+  style?: React.CSSProperties;
 };
 
 type FullscreenButtonCoreProps = {

@@ -47,6 +47,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
+    children,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -102,6 +103,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
               <Right>{right}</Right>
             </SpaceBetweenContainer>
           </BottomContainer>
+          <Background>{children}</Background>
         </>
       )}
     </>

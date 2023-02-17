@@ -22,13 +22,21 @@ const DefaultPictureInPictureIcon = () => (
 
 export type PictureInPictureButtonProps = Omit<
   PropsOf<'button'>,
-  'children'
+  'children' | 'onClick'
 > & {
+  /**
+   * The callback to trigger any logic on click/press.
+   */
+  onPress?: () => void;
   /**
    * The picture in picture icon to be used for the button.
    * @type React.ReactElement
    */
   icon?: React.ReactElement;
+  /**
+   * The size of the icon.
+   */
+  size?: number | string;
 };
 
 const mediaControllerSelector = ({
@@ -53,15 +61,12 @@ export const PictureInPictureButton: React.FC<PictureInPictureButtonProps> = (
     fullscreen,
   } = useMediaController(mediaControllerSelector);
 
-  const { icon, onClick, ...rest } = props;
+  const { icon, onPress, ...rest } = props;
 
-  const onClickComposed = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      await onClick?.(e);
-      await requestTogglePictureInPicture();
-    },
-    [onClick, requestTogglePictureInPicture],
-  );
+  const onPressComposed = React.useCallback(async () => {
+    await onPress?.();
+    await requestTogglePictureInPicture();
+  }, [onPress, requestTogglePictureInPicture]);
 
   const isPiPSupported = React.useMemo(
     () => isPictureInPictureSupported(_element),
@@ -82,11 +87,15 @@ export const PictureInPictureButton: React.FC<PictureInPictureButtonProps> = (
 
   return (
     <button
-      {...rest}
+      style={{
+        width: props.size,
+        height: props.size,
+      }}
       className={styling.iconButton()}
       title={title}
       aria-label={title}
-      onClick={onClickComposed}
+      onClick={onPressComposed}
+      {...rest}
     >
       {_children}
     </button>

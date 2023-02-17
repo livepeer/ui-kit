@@ -67,6 +67,11 @@ export const Volume: React.FC<VolumeProps> = (props) => {
   return (
     <VolumeContainer>
       <IconButton
+        style={{
+          width: props.size,
+          height: props.size,
+          ...props.style,
+        }}
         size={{
           '@lg': 'large',
         }}
