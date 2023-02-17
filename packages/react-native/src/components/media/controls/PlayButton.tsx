@@ -47,6 +47,11 @@ export const PlayButton: React.FC<PlayButtonProps> = (props) => {
 
   return (
     <IconButton
+      style={{
+        width: props.size,
+        height: props.size,
+        ...props.style,
+      }}
       size={{
         '@lg': 'large',
       }}

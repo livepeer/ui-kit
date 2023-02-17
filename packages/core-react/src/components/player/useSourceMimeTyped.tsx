@@ -206,7 +206,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
             : 1;
         }
 
-        return a.type === 'video' && b.type === 'hls' ? -1 : 1;
+        return a.type === 'video' && b.type === 'hls' ? 1 : -1;
       });
     }
 

@@ -32,6 +32,14 @@ export type VolumeProps = {
    * @type React.ReactElement
    */
   mutedIcon?: React.ReactElement;
+  /**
+   * The size of the icon.
+   */
+  size?: number | string;
+  /**
+   * The styling overrides for the icon.
+   */
+  style?: React.CSSProperties;
 };
 
 type VolumeCoreProps = {

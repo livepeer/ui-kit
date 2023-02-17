@@ -1,6 +1,8 @@
-import { Player, prefetchPlayer } from '@livepeer/react';
+import { prefetchPlayer } from '@livepeer/react';
 import type { GetStaticPropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
+
+import { Player } from '../../components/player/Player';
 
 import { provider } from '../../utils';
 
@@ -32,6 +34,8 @@ export const getStaticProps = async (props: GetStaticPropsContext<Path>) => {
 const PlayerPage: NextPage = () => {
   const { query } = useRouter();
 
+  const playbackId = query.id ? String(query.id) : null;
+
   return (
     <div
       style={{
@@ -46,17 +50,11 @@ const PlayerPage: NextPage = () => {
         backgroundColor: '#000',
       }}
     >
-      <Player
-        objectFit="contain"
-        playbackId={query.id ? String(query.id) : null}
-        muted
-        // autoPlay
-        theme={{
-          radii: {
-            containerBorderRadius: '0px',
-          },
-        }}
-      />
+      {playbackId ? (
+        <Player playbackId={playbackId} />
+      ) : (
+        'No playback ID provided!'
+      )}
     </div>
   );
 };

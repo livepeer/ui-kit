@@ -24,6 +24,14 @@ export type PlayButtonProps = {
    * @type React.ReactElement
    */
   pauseIcon?: React.ReactElement;
+  /**
+   * The size of the icon.
+   */
+  size?: number | string;
+  /**
+   * The styling overrides for the icon.
+   */
+  style?: React.CSSProperties;
 };
 
 type PlayButtonCoreProps = {

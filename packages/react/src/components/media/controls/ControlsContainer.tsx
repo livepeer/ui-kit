@@ -37,6 +37,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     hidePosterOnPlayed = true,
     loadingText,
     playbackDisplayErrorType,
+    children,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -136,6 +137,13 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
                 {right}
               </div>
             </div>
+          </div>
+          <div
+            className={styling.controlsContainer.background({
+              display: hidden ? 'hidden' : 'shown',
+            })}
+          >
+            {children}
           </div>
         </>
       )}
