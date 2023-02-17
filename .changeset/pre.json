@@ -17,5 +17,7 @@
     "@livepeer/react": "2.2.3",
     "@livepeer/react-native": "1.2.3"
   },
-  "changesets": []
+  "changesets": [
+    "hungry-kings-greet"
+  ]
 }
