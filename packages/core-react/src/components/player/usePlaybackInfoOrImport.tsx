@@ -55,6 +55,7 @@ export const usePlaybackInfoOrImport = <TElement, TPoster>({
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
     // attempt to fetch if the source is from decentralized storage, or a playback ID is provided
     playbackId: decentralizedSrcOrPlaybackId?.id ?? playbackId ?? undefined,
+    staleTime: 1_000 * 60 * 60 * 24, // 24 hours
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
   });
 
