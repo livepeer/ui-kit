@@ -26,4 +26,13 @@ config.cacheStores = [
   }),
 ];
 
+config.resolver.sourceExts = ['js', 'json', 'jsx', 'ts', 'tsx', 'cjs'];
+
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: false,
+  },
+});
+
 module.exports = config;

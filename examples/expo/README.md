@@ -2,7 +2,9 @@
 
 This example demonstrates how livepeer.js can be used in a social media mobile application, **with automatic short-form video optimization to allow near-instant media playback**. It uses [Preconstruct](https://github.com/preconstruct/preconstruct) to set up local links between packages.
 
-To get started, in the root of livepeer.js, run:
+To get started, first generate an API key for Livepeer Studio and replace `ADD_YOUR_API_KEY_HERE` in [App.tsx](App.tsx).
+
+Then, in the root of livepeer.js, run:
 
 ```bash
 pnpm i # this may fail due to missing Podfile dependencies, can be ignored
