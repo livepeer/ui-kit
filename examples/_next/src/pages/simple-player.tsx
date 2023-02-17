@@ -3,7 +3,7 @@ import { Player } from '@livepeer/react';
 const Page = () => {
   return (
     <>
-      <Player playbackId="7cdce5azhi7axgha" loop />
+      <Player playbackId="cc13p5jdxyyawul8" loop />
     </>
   );
 };
