@@ -36,10 +36,6 @@ export type VolumeProps = {
    * The size of the icon.
    */
   size?: number | string;
-  /**
-   * The styling overrides for the icon.
-   */
-  style?: React.CSSProperties;
 };
 
 type VolumeCoreProps = {

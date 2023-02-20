@@ -1,4 +1,4 @@
-import { MediaControllerState } from '@livepeer/core-react';
+import { MediaControllerState, omit } from '@livepeer/core-react';
 import { VolumeProps, useVolume } from '@livepeer/core-react/components';
 import * as React from 'react';
 
@@ -70,13 +70,12 @@ export const Volume: React.FC<VolumeProps> = (props) => {
         style={{
           width: props.size,
           height: props.size,
-          ...props.style,
         }}
         size={{
           '@lg': 'large',
         }}
         accessibilityLabel={title}
-        {...buttonProps}
+        {...omit(buttonProps, 'size')}
       />
     </VolumeContainer>
   );
