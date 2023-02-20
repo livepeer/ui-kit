@@ -138,13 +138,15 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
               </div>
             </div>
           </div>
-          <div
-            className={styling.controlsContainer.background({
-              display: hidden ? 'hidden' : 'shown',
-            })}
-          >
-            {children}
-          </div>
+          {children && (
+            <div
+              className={styling.controlsContainer.background({
+                display: hidden ? 'hidden' : 'shown',
+              })}
+            >
+              {children}
+            </div>
+          )}
         </>
       )}
     </>
