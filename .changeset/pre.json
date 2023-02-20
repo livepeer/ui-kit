@@ -18,6 +18,8 @@
     "@livepeer/react-native": "1.2.3"
   },
   "changesets": [
-    "hungry-kings-greet"
+    "angry-ducks-wave",
+    "hungry-kings-greet",
+    "purple-rockets-jam"
   ]
 }

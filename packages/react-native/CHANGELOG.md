@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.2.4-next.1
+
+### Patch Changes
+
+- [#279](https://github.com/livepeer/livepeer.js/pull/279) [`1db99c7`](https://github.com/livepeer/livepeer.js/commit/1db99c782fd1f367d303668c18acdca1c10cda5b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** tuned the button APIs to be easier to customize for custom controls.
+
+- Updated dependencies [[`1db99c7`](https://github.com/livepeer/livepeer.js/commit/1db99c782fd1f367d303668c18acdca1c10cda5b)]:
+  - @livepeer/core-react@1.2.4-next.1
+
 ## 1.2.4-next.0
 
 ### Patch Changes
