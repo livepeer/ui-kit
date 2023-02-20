@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@livepeer/react": "^2.2.4-next.0",
+    "@livepeer/react": "^2.2.4-next.1",
     "@next/font": "13.1.2",
     "@sentry/nextjs": "^7.24.2",
     "@types/node": "18.11.18",
