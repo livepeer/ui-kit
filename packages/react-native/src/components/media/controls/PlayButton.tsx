@@ -1,4 +1,4 @@
-import { MediaControllerState } from '@livepeer/core-react';
+import { MediaControllerState, omit } from '@livepeer/core-react';
 import {
   PlayButtonProps,
   usePlayButton,
@@ -50,12 +50,11 @@ export const PlayButton: React.FC<PlayButtonProps> = (props) => {
       style={{
         width: props.size,
         height: props.size,
-        ...props.style,
       }}
       size={{
         '@lg': 'large',
       }}
-      {...buttonProps}
+      {...omit(buttonProps, 'size')}
       accessibilityLabel={title}
     />
   );
