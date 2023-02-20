@@ -13,9 +13,11 @@ export function createReactClient<TLivepeerProvider extends LivepeerProvider>({
   return createCoreReactClient({
     storage:
       typeof window !== 'undefined'
-        ? createStorage({
-            storage: window.localStorage,
-          })
+        ? config.storage
+          ? config.storage
+          : createStorage({
+              storage: window.localStorage,
+            })
         : undefined,
     ...config,
   });
