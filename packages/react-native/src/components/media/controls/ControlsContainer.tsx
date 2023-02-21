@@ -103,7 +103,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
               <Right>{right}</Right>
             </SpaceBetweenContainer>
           </BottomContainer>
-          <Background>{children}</Background>
+          {children && <Background>{children}</Background>}
         </>
       )}
     </>
