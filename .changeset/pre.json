@@ -1,5 +1,5 @@
 {
-  "mode": "pre",
+  "mode": "exit",
   "tag": "next",
   "initialVersions": {
     "example-dev-expo": "0.0.1",
@@ -17,9 +17,5 @@
     "@livepeer/react": "2.2.3",
     "@livepeer/react-native": "1.2.3"
   },
-  "changesets": [
-    "angry-ducks-wave",
-    "hungry-kings-greet",
-    "purple-rockets-jam"
-  ]
+  "changesets": ["angry-ducks-wave", "hungry-kings-greet", "purple-rockets-jam"]
 }
