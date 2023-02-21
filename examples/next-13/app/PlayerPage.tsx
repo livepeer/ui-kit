@@ -54,6 +54,7 @@ export default (props: PlayerProps) => {
         {...props}
         src={props?.src}
         showPipButton
+        priority
         theme={{
           radii: {
             containerBorderRadius: '0px',
