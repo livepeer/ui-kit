@@ -47,6 +47,20 @@ export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
 
 const DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024;
 
+// added polyfill for older versions of React Native
+// https://github.com/facebook/react-native/issues/30236
+const allSettled = async <T>(
+  promises: Promise<T>[],
+): Promise<PromiseSettledResult<T>[]> => {
+  return Promise.all(
+    promises.map((promise) =>
+      promise
+        .then((value) => ({ status: 'fulfilled', value } as const))
+        .catch((reason) => ({ status: 'rejected', reason } as const)),
+    ),
+  );
+};
+
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
   readonly _defaultHeaders: { Authorization?: `Bearer ${string}` };
 
@@ -149,113 +163,118 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     })) as CreateAssetProgress<TSource>;
 
     // upload all assets and do not throw for failed
-    const pendingAssetIds = await Promise.allSettled(
-      sources.map(async (source, index) => {
-        if ((source as CreateAssetSourceUrl).url) {
-          const createdAsset = await this._create<
-            { asset: StudioAsset },
-            CreateAssetSourceUrl
-          >('/asset/upload/url', {
-            json: {
-              name: source.name,
-              url: (source as CreateAssetSourceUrl).url,
-            },
-            headers: this._defaultHeaders,
-          });
-
-          return createdAsset?.asset?.id;
-        } else {
-          const uploadReq = await this._create<
-            { tusEndpoint: string; asset: { id: string } },
-            { name: string }
-          >('/asset/request-upload', {
-            json: {
-              name: source.name,
-            },
-            headers: this._defaultHeaders,
-          });
-
-          const {
-            tusEndpoint,
-            asset: { id: assetId },
-          } = uploadReq;
-
-          await new Promise<void>((resolve, reject) => {
-            const upload = new tus.Upload(
-              (source as CreateAssetSourceFile).file as File,
-              {
-                endpoint: tusEndpoint,
-                metadata: {
-                  id: assetId,
-                },
-                ...(chunkSize
-                  ? { chunkSize }
-                  : (typeof File !== 'undefined' &&
-                      (source as CreateAssetSourceFile)?.file instanceof
-                        File) ||
-                    (typeof navigator !== 'undefined' &&
-                      typeof navigator.product === 'string' &&
-                      navigator.product.toLowerCase() === 'reactnative')
-                  ? null
-                  : { chunkSize: DEFAULT_CHUNK_SIZE }),
-                // fingerprint: function (file: File & { exif?: any }) {
-                //   return fingerprint(file);
-                // },
-                onError: (error) => {
-                  console.log('Failed because: ', error);
-                },
-                // TODO add configurable url storage for nodejs
-                onProgress(bytesSent, bytesTotal) {
-                  const progressPercent = bytesSent / bytesTotal;
-
-                  const status: CreateAssetFileProgress = {
-                    name: source.name,
-                    progress: progressPercent,
-                    phase: 'uploading',
-                  };
-
-                  const newSources = [
-                    ...(progress as CreateAssetProgressBase[]),
-                  ];
-
-                  newSources[index] = status;
-
-                  progress = newSources as {
-                    [K in keyof TSource]: TSource[K] extends CreateAssetSourceUrl
-                      ? CreateAssetUrlProgress
-                      : CreateAssetFileProgress;
-                  };
-
-                  onProgress?.(progress);
-                },
-
-                onSuccess() {
-                  resolve();
-                },
+    const pendingAssetIds: PromiseSettledResult<string | null>[] =
+      await allSettled(
+        sources.map(async (source, index) => {
+          if ((source as CreateAssetSourceUrl).url) {
+            const createdAsset = await this._create<
+              { asset: StudioAsset },
+              CreateAssetSourceUrl
+            >('/asset/upload/url', {
+              json: {
+                name: source.name,
+                url: (source as CreateAssetSourceUrl).url,
               },
-            );
+              headers: this._defaultHeaders,
+            });
 
-            upload
-              .findPreviousUploads()
-              .then((previousUploads) => {
-                if (previousUploads?.length > 0 && previousUploads[0]) {
-                  upload.resumeFromPreviousUpload(previousUploads[0]);
-                }
-                upload.start();
-              })
-              .catch(reject);
-          });
+            return createdAsset?.asset?.id ?? null;
+          } else {
+            const uploadReq = await this._create<
+              { tusEndpoint: string; asset: { id: string } },
+              { name: string }
+            >('/asset/request-upload', {
+              json: {
+                name: source.name,
+              },
+              headers: this._defaultHeaders,
+            });
 
-          return assetId;
-        }
-      }),
-    );
+            const {
+              tusEndpoint,
+              asset: { id: assetId },
+            } = uploadReq;
+
+            await new Promise<void>((resolve, reject) => {
+              const upload = new tus.Upload(
+                (source as CreateAssetSourceFile).file as File,
+                {
+                  endpoint: tusEndpoint,
+                  metadata: {
+                    id: assetId,
+                  },
+                  ...(chunkSize
+                    ? { chunkSize }
+                    : (typeof File !== 'undefined' &&
+                        (source as CreateAssetSourceFile)?.file instanceof
+                          File) ||
+                      (typeof navigator !== 'undefined' &&
+                        typeof navigator.product === 'string' &&
+                        navigator.product.toLowerCase() === 'reactnative')
+                    ? null
+                    : { chunkSize: DEFAULT_CHUNK_SIZE }),
+                  // fingerprint: function (file: File & { exif?: any }) {
+                  //   return fingerprint(file);
+                  // },
+                  onError: (error) => {
+                    console.log('Failed because: ', error);
+                    reject(error);
+                  },
+                  // TODO add configurable url storage for nodejs
+                  onProgress(bytesSent, bytesTotal) {
+                    const progressPercent = bytesSent / bytesTotal;
+
+                    const status: CreateAssetFileProgress = {
+                      name: source.name,
+                      progress: progressPercent,
+                      phase: 'uploading',
+                    };
+
+                    const newSources = [
+                      ...(progress as CreateAssetProgressBase[]),
+                    ];
+
+                    newSources[index] = status;
+
+                    progress = newSources as {
+                      [K in keyof TSource]: TSource[K] extends CreateAssetSourceUrl
+                        ? CreateAssetUrlProgress
+                        : CreateAssetFileProgress;
+                    };
+
+                    onProgress?.(progress);
+                  },
+
+                  onSuccess() {
+                    resolve();
+                  },
+                },
+              );
+
+              upload
+                .findPreviousUploads()
+                .then((previousUploads) => {
+                  if (previousUploads?.length > 0 && previousUploads[0]) {
+                    upload.resumeFromPreviousUpload(previousUploads[0]);
+                  }
+                  upload.start();
+                })
+                .catch(reject);
+            });
+
+            return assetId ?? null;
+          }
+        }),
+      );
 
     if (noWait) {
       return Promise.all(
         pendingAssetIds.map(async (assetIdResult) => {
           if (assetIdResult.status === 'rejected') {
             throw assetIdResult.reason;
+          }
+          if (!assetIdResult.value) {
+            throw new Error('Asset ID not available.');
           }
           return this.getAsset(assetIdResult.value);
         }),
@@ -265,10 +284,13 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     const MAX_ERROR_COUNT = 5;
 
     // wait for all assets to complete uploading before returning
-    const assets = await Promise.allSettled(
+    const assets = await allSettled(
       pendingAssetIds.map(async (assetIdResult, index) => {
         if (assetIdResult.status === 'rejected') {
           throw assetIdResult.reason;
+        }
+        if (!assetIdResult.value) {
+          throw new Error('Asset ID not available.');
         }
 
         let asset: Asset | null = null;
