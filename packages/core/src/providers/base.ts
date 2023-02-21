@@ -60,7 +60,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     if (!response.ok) {
       throw new HttpError(
         response.status,
-        `Provider failed to get object from ${this._config.baseUrl}${url}`,
+        `Provider failed to get object from ${this._config.baseUrl}${url}, status code was ${response.status}`,
         await response.json(),
       );
     }

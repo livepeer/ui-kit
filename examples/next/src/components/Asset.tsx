@@ -7,6 +7,7 @@ export const Asset = () => {
     mutate: createAsset,
     data: assets,
     status,
+    progress,
   } = useCreateAsset({
     sources: videos.map((video) => ({
       file: video,
@@ -39,7 +40,7 @@ export const Asset = () => {
         }}
       />
       <button
-        disabled={!videos || status === 'loading'}
+        disabled={videos.length === 0 || status === 'loading'}
         onClick={() => {
           createAsset?.();
         }}
@@ -64,6 +65,17 @@ export const Asset = () => {
             >
               Upload to IPFS
             </button>
+          </div>
+        ))}
+      </>
+      <>
+        {progress?.map((p) => (
+          <div key={p.name}>
+            <div>
+              <div>Asset Name: {p?.name}</div>
+              <div>Phase: {p?.phase}</div>
+              <div>Progress: {p.progress * 100}</div>
+            </div>
           </div>
         ))}
       </>
