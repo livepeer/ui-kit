@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.2.2
+
+### Patch Changes
+
+- [#284](https://github.com/livepeer/livepeer.js/pull/284) [`620751e`](https://github.com/livepeer/livepeer.js/commit/620751efbf1108ce207e5b83f67e28f9e7dd263e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added better logs for failure on `create` in Studio provider.
+
 ## 1.2.1
 
 ### Patch Changes
