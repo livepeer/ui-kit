@@ -28,7 +28,7 @@ type RawMetrics = {
 
   player: 'livepeer-js';
 
-  protocol: MimeType | 'unknown';
+  sourceType: MimeType | 'unknown';
 
   pageUrl: string;
   sourceUrl: string;
@@ -211,7 +211,7 @@ export class MetricsStatus<TElement> {
       playerHeight: null,
       playerWidth: null,
       preloadTime: 0,
-      protocol: currentState?.src?.mime ?? 'unknown',
+      sourceType: currentState?.src?.mime ?? 'unknown',
       sourceUrl: '',
       timeStalled: 0,
       timeUnpaused: 0,
