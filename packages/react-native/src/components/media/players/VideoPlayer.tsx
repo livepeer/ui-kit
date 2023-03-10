@@ -30,7 +30,7 @@ import { MediaControllerContext } from '../../../context';
 import { PosterSource } from '../Player';
 import { MediaElement } from '../types';
 
-const defaultProgressUpdateInterval = 20;
+const defaultProgressUpdateInterval = 100;
 
 export type VideoPlayerProps = VideoPlayerCoreProps<
   MediaElement,
@@ -131,6 +131,8 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
             buffered: status.playableDurationMillis
               ? status.playableDurationMillis / 1000
               : buffered,
+
+            live: !status.durationMillis,
 
             isVolumeChangeSupported: true,
 
