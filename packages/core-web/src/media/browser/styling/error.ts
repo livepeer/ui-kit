@@ -6,10 +6,13 @@ const errorBackground = css('div', {
   flexDirection: 'column',
   alignItems: 'center',
   maxWidth: '220px',
+  marginTop: '1rem',
 
   '@md': {
     maxWidth: '340px',
   },
+
+  maxHeight: '100%',
 });
 
 const errorTitle = css(text, {
@@ -32,6 +35,7 @@ const errorText = css(text, {
   textAlign: 'center',
   width: '90%',
   fontSize: '$errorTextFontSizeSm',
+  marginBottom: '1rem',
 
   '@md': {
     fontSize: '$errorTextFontSizeMd',
