@@ -100,7 +100,9 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
         };
 
         const onError = (error: HlsError) => {
-          const cleanError = new Error(error.response?.data.toString());
+          const cleanError = new Error(
+            error?.response?.data?.toString?.() ?? 'Error with HLS.js',
+          );
           if (isStreamOfflineError(cleanError)) {
             onStreamStatusChange?.(false);
           } else if (isAccessControlError(cleanError)) {
