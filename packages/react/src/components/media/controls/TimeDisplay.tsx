@@ -28,10 +28,11 @@ export const TimeDisplay: React.FC = () => {
 
   return (
     <>
-      <span className={styling.time.text()} aria-label={'Playback time'}>
-        {title}
-      </span>
-      {isLive && (
+      {!isLive ? (
+        <span className={styling.time.text()} aria-label={'Playback time'}>
+          {title}
+        </span>
+      ) : (
         <div className={styling.time.container()}>
           <div className={styling.time.liveIndicator()} />
           <span

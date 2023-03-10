@@ -10,27 +10,29 @@ const mediaControllerSelector = ({
   progress,
   requestSeek,
   buffered,
+  live,
 }: MediaControllerState<HTMLMediaElement>) => ({
   duration,
   progress,
   requestSeek,
   buffered,
+  live,
 });
 
 export type { ProgressProps };
 
 export const Progress: React.FC<ProgressProps> = (props) => {
-  const { duration, progress, requestSeek, buffered } = useMediaController(
-    mediaControllerSelector,
-  );
+  const { duration, progress, requestSeek, buffered, live } =
+    useMediaController(mediaControllerSelector);
 
-  const { progressProps, title } = useProgress({
+  const { isVisible, progressProps, title } = useProgress({
     duration,
     progress,
     requestSeek,
     buffered,
+    live,
     ...props,
   });
 
-  return <BaseSlider {...progressProps} ariaName={title} />;
+  return isVisible ? <BaseSlider {...progressProps} ariaName={title} /> : <></>;
 };
