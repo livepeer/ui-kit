@@ -5,6 +5,7 @@ import { text } from './text';
 
 export const TimeContainer = styled(View, {
   display: 'flex',
+  flexDirection: 'row',
   alignItems: 'center',
 });
 

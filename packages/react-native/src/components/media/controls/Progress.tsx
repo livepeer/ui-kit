@@ -9,11 +9,13 @@ import { MediaElement } from '../types';
 const mediaControllerSelector = ({
   duration,
   progress,
+  live,
   requestSeek,
   buffered,
 }: MediaControllerState<MediaElement>) => ({
   duration,
   progress,
+  live,
   requestSeek,
   buffered,
 });
@@ -21,17 +23,17 @@ const mediaControllerSelector = ({
 export type { ProgressProps };
 
 export const Progress: React.FC<ProgressProps> = (props) => {
-  const { duration, progress, requestSeek, buffered } = useMediaController(
-    mediaControllerSelector,
-  );
+  const { duration, progress, requestSeek, live, buffered } =
+    useMediaController(mediaControllerSelector);
 
-  const { progressProps, title } = useProgress({
+  const { isVisible, progressProps, title } = useProgress({
     duration,
     progress,
     requestSeek,
     buffered,
+    live,
     ...props,
   });
 
-  return <BaseSlider {...progressProps} ariaName={title} />;
+  return isVisible ? <BaseSlider {...progressProps} ariaName={title} /> : <></>;
 };

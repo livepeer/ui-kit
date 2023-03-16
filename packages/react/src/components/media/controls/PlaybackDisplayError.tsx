@@ -11,7 +11,7 @@ export const OfflineStreamError: React.FC = () => (
       Stream is offline
     </div>
     <div className={styling.controlsContainer.error.text()}>
-      Playback will start automatically once stream has started.
+      Playback will start automatically once the stream has started.
     </div>
   </div>
 );
