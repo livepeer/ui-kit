@@ -55,6 +55,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   const hls = new Hls({
     maxBufferLength: 15,
     maxMaxBufferLength: 60,
+    liveMaxLatencyDurationCount: 7,
+    liveSyncDurationCount: 3,
     ...config,
   });
 
