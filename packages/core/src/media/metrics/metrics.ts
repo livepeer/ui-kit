@@ -178,7 +178,7 @@ export class MetricsStatus<TElement> {
   timeStalled = new Timer();
   timeUnpaused = new Timer();
 
-  constructor(store: MediaControllerStore<TElement>) {
+  constructor(store: MediaControllerStore<TElement>, sourceUrl: string) {
     const currentState = store.getState();
 
     if (currentState.autoplay) {
@@ -212,7 +212,7 @@ export class MetricsStatus<TElement> {
       playerWidth: null,
       preloadTime: 0,
       sourceType: currentState?.src?.mime ?? 'unknown',
-      sourceUrl: '',
+      sourceUrl,
       timeStalled: 0,
       timeUnpaused: 0,
       timeWaiting: 0,
@@ -362,7 +362,7 @@ export function addMediaMetricsToStore<TElement>(
   // set the src from the source URL
   store.setState({ src: getMediaSourceType(sourceUrl) });
 
-  const metricsStatus = new MetricsStatus(store);
+  const metricsStatus = new MetricsStatus(store, sourceUrl);
 
   try {
     const createNewWebSocket = async (numRetries = 0) => {
