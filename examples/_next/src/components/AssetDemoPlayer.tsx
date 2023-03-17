@@ -20,6 +20,7 @@ export const AssetDemoPlayer = () => {
     sources: videos.map((video) => ({
       name: video.name ?? 'Cool Video',
       file: video,
+      storage: {},
     })),
   });
 

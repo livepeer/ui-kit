@@ -3,6 +3,8 @@ import * as tus from 'tus-js-client';
 import {
   StudioAsset,
   StudioAssetPatchPayload,
+  StudioCreateAssetArgs,
+  StudioCreateAssetUrlArgs,
   StudioCreateStreamArgs,
   StudioPlaybackInfo,
   StudioStream,
@@ -154,11 +156,22 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         if ((source as CreateAssetSourceUrl).url) {
           const createdAsset = await this._create<
             { asset: StudioAsset },
-            CreateAssetSourceUrl
+            StudioCreateAssetUrlArgs
           >('/asset/upload/url', {
             json: {
               name: source.name,
               url: (source as CreateAssetSourceUrl).url,
+              storage: source?.storage?.ipfs
+                ? {
+                    ipfs: {
+                      spec: {
+                        nftMetadata: source?.storage?.metadata ?? {},
+                        nftMetadataTemplate:
+                          source?.storage?.metadataTemplate ?? 'player',
+                      },
+                    },
+                  }
+                : undefined,
             },
             headers: this._defaultHeaders,
           });
@@ -167,10 +180,21 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         } else {
           const uploadReq = await this._create<
             { tusEndpoint: string; asset: { id: string } },
-            { name: string }
+            StudioCreateAssetArgs
           >('/asset/request-upload', {
             json: {
               name: source.name,
+              storage: source?.storage?.ipfs
+                ? {
+                    ipfs: {
+                      spec: {
+                        nftMetadata: source?.storage?.metadata ?? {},
+                        nftMetadataTemplate:
+                          source?.storage?.metadataTemplate ?? 'player',
+                      },
+                    },
+                  }
+                : undefined,
             },
             headers: this._defaultHeaders,
           });
