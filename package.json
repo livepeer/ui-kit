@@ -1,6 +1,7 @@
 {
   "name": "root",
   "scripts": {
+    "test-build": "preconstruct build",
     "build": "pnpm run generate-version && preconstruct build",
     "build:examples": "pnpm build && pnpm --filter \"example-*\" build",
     "changeset:release": "pnpm build && changeset publish",
