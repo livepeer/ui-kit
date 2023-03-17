@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.3.1
+
+### Patch Changes
+
+- [#293](https://github.com/livepeer/livepeer.js/pull/293) [`8e28a01`](https://github.com/livepeer/livepeer.js/commit/8e28a016fb77059524b9a21cddf9e06df699a749) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `sourceUrl` reporting to the Player.
+
+- Updated dependencies [[`8e28a01`](https://github.com/livepeer/livepeer.js/commit/8e28a016fb77059524b9a21cddf9e06df699a749)]:
+  - livepeer@2.3.1
+  - @livepeer/core-react@1.3.1
+
 ## 2.3.0
 
 ### Minor Changes
