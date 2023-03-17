@@ -212,4 +212,44 @@ describe('addMediaMetrics', () => {
                 `);
     });
   });
+
+  it('should replace user agent special characters', async () => {
+    const element = new MockedVideoElement();
+
+    (navigator as any)?.['__defineGetter__']?.('userAgent', function () {
+      return '\\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"';
+    });
+
+    const { metrics } = addMediaMetrics(element, playbackUrl);
+
+    const metricsSnapshot = metrics?.getMetrics();
+
+    expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
+
+    expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
+      {
+        "autoplay": "preload-metadata",
+        "duration": 0,
+        "firstPlayback": 0,
+        "nError": 0,
+        "nStalled": 0,
+        "nWaiting": 0,
+        "pageUrl": "http://localhost:3000/",
+        "playbackScore": null,
+        "player": "livepeer-js",
+        "playerHeight": null,
+        "playerWidth": null,
+        "preloadTime": 0,
+        "sourceType": "application/vnd.apple.mpegurl",
+        "sourceUrl": "https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8",
+        "timeStalled": 0,
+        "timeUnpaused": 0,
+        "timeWaiting": 0,
+        "ttff": 0,
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
+        "videoHeight": null,
+        "videoWidth": null,
+      }
+    `);
+  });
 });
