@@ -51,8 +51,7 @@ export type PlayerProps<TElement, TPoster> = {
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
   /**
-   * Play media automatically when the content loads (if this is specified, you must also specify muted,
-   * since this is required in browsers)
+   * Play media automatically when the content loads
    */
   autoPlay?: boolean;
   /** Mute media by default */
@@ -248,7 +247,7 @@ export const usePlayer = <TElement, TPoster>(
     playerProps: {
       ref: playerRef,
       autoPlay,
-      muted: autoPlay ? true : muted,
+      muted,
       poster: poster,
       loop: loop,
       objectFit: objectFit,

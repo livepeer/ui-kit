@@ -5,7 +5,7 @@ import { Src } from './src';
 import { ClientStorage } from '../storage';
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
-export const DEFAULT_VOLUME_LEVEL = 0.2; // 0-1 for how loud the audio is
+export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
 
