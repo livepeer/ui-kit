@@ -217,7 +217,10 @@ export class MetricsStatus<TElement> {
       timeUnpaused: 0,
       timeWaiting: 0,
       ttff: 0,
-      userAgent: currentState.device.userAgent,
+      userAgent: String(currentState?.device?.userAgent ?? '').replace(
+        /\\|"/gm,
+        '',
+      ),
       videoHeight: null,
       videoWidth: null,
     };
