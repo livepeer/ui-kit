@@ -52,30 +52,52 @@ export type StudioStreamSetActivePayload = {
   [k: string]: unknown;
 };
 
+export type StudioStorageConfig = {
+  ipfs?:
+    | {
+        spec?: null | {
+          /**
+           * Name of the NFT metadata template to export. 'player' will embed the Livepeer Player on the NFT while 'file' will reference only the immutable MP4 files.
+           */
+          nftMetadataTemplate?: 'player' | 'file';
+          /**
+           * Additional data to add to the NFT metadata exported to IPFS. Will be deep merged with the default metadata exported.
+           */
+          nftMetadata?: {
+            [k: string]: unknown;
+          };
+        };
+      }
+    | (boolean | null);
+};
+
 export type StudioAssetPatchPayload = {
   /**
    * Name of the asset. This is not necessarily the filename, can be a custom name or title
    */
   name?: string;
   /** Storage configs for the asset */
-  storage?: {
-    ipfs?:
-      | {
-          spec?: null | {
-            /**
-             * Name of the NFT metadata template to export. 'player' will embed the Livepeer Player on the NFT while 'file' will reference only the immutable MP4 files.
-             */
-            nftMetadataTemplate?: 'player' | 'file';
-            /**
-             * Additional data to add to the NFT metadata exported to IPFS. Will be deep merged with the default metadata exported.
-             */
-            nftMetadata?: {
-              [k: string]: unknown;
-            };
-          };
-        }
-      | (boolean | null);
-  };
+  storage?: StudioStorageConfig;
+};
+
+export type StudioCreateAssetArgs = {
+  /**
+   * Name of the asset. This is not necessarily the filename, can be a custom name or title
+   */
+  name: string;
+  /** Storage configs for the asset */
+  storage?: StudioStorageConfig;
+};
+
+export type StudioCreateAssetUrlArgs = {
+  /**
+   * Name of the asset. This is not necessarily the filename, can be a custom name or title
+   */
+  name: string;
+  /** External URL to be imported */
+  url: string;
+  /** Storage configs for the asset */
+  storage?: StudioStorageConfig;
 };
 
 export interface StudioCreateStreamArgs extends CreateStreamArgs {

@@ -194,9 +194,35 @@ export type CreateAssetProgress<TSource extends CreateAssetSourceType> = {
     : CreateAssetFileProgress;
 };
 
+export type StorageConfig = {
+  /**
+   * If the asset should be stored on IPFS.
+   */
+  ipfs?: boolean;
+  /**
+   * Metadata exported to the storage provider. This will be deep merged with the default
+   * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
+   *
+   * @see {@link https://eips.ethereum.org/EIPS/eip-721}
+   */
+  metadata?:
+    | Partial<Metadata> & {
+        [k: string]: unknown;
+      };
+  /**
+   * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
+   * will reference only the immutable media files.
+   */
+  metadataTemplate?: 'player' | 'file';
+};
+
 export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
+  /**
+   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
+   */
+  storage?: StorageConfig;
 };
 
 export type CreateAssetSourceUrl = CreateAssetSourceBase & {
@@ -278,27 +304,7 @@ export type UpdateAssetArgs = {
   /**
    * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
    */
-  storage?: {
-    /**
-     * If the asset should be stored on IPFS.
-     */
-    ipfs?: boolean;
-    /**
-     * Metadata exported to the storage provider. This will be deep merged with the default
-     * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
-     *
-     * @see {@link https://eips.ethereum.org/EIPS/eip-721}
-     */
-    metadata?:
-      | Partial<Metadata> & {
-          [k: string]: unknown;
-        };
-    /**
-     * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
-     * will reference only the immutable media files.
-     */
-    metadataTemplate?: 'player' | 'file';
-  };
+  storage?: StorageConfig;
 } & (
   | {
       name: string;
