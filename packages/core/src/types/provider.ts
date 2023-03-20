@@ -243,7 +243,9 @@ export type CreateAssetSourceFile = CreateAssetSourceBase & {
 
 export type CreateAssetSource = CreateAssetSourceFile | CreateAssetSourceUrl;
 
-export type CreateAssetSourceType = Array<CreateAssetSource>;
+export type CreateAssetSourceType =
+  | ReadonlyArray<CreateAssetSource>
+  | Array<CreateAssetSource>;
 
 export type CreateAssetArgs<TSource extends CreateAssetSourceType> = {
   /** Source(s) to upload */
