@@ -166,8 +166,12 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                     ipfs: {
                       spec: {
                         nftMetadata: source?.storage?.metadata ?? {},
-                        nftMetadataTemplate:
-                          source?.storage?.metadataTemplate ?? 'player',
+                        ...(source?.storage?.metadataTemplate
+                          ? {
+                              nftMetadataTemplate:
+                                source.storage.metadataTemplate,
+                            }
+                          : {}),
                       },
                     },
                   }
@@ -189,8 +193,12 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                     ipfs: {
                       spec: {
                         nftMetadata: source?.storage?.metadata ?? {},
-                        nftMetadataTemplate:
-                          source?.storage?.metadataTemplate ?? 'player',
+                        ...(source?.storage?.metadataTemplate
+                          ? {
+                              nftMetadataTemplate:
+                                source.storage.metadataTemplate,
+                            }
+                          : {}),
                       },
                     },
                   }
@@ -397,7 +405,11 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 ipfs: {
                   spec: {
                     nftMetadata: storage?.metadata ?? {},
-                    nftMetadataTemplate: storage?.metadataTemplate ?? 'player',
+                    ...(storage?.metadataTemplate
+                      ? {
+                          nftMetadataTemplate: storage.metadataTemplate,
+                        }
+                      : {}),
                   },
                 },
               }
