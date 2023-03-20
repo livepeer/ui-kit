@@ -17,12 +17,23 @@ export const AssetDemoPlayer = () => {
     progress,
     error,
   } = useCreateAsset({
-    sources: videos.map((video) => ({
-      name: video.name ?? 'Cool Video',
-      file: video,
-      storage: {},
-    })),
+    sources: videos.map(
+      (video) =>
+        ({
+          name: video.name ?? 'Cool Video',
+          file: video,
+          storage: {
+            ipfs: true,
+            metadata: {
+              name: 'interesting video',
+              description: 'overridden',
+            },
+          },
+        } as const),
+    ),
   });
+
+  console.log(assets);
 
   const onSourceUpdated = useCallback(
     (sources: Src[]) =>
