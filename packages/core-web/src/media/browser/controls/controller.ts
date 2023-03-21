@@ -80,11 +80,13 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   const initializedState = store.getState();
 
   // restore the persisted values from store
-  if (element && !element.muted && !element.defaultMuted) {
-    element.volume = initializedState.volume;
+  if (element) {
+    setTimeout(() => {
+      if (element && !store.getState().muted) {
+        store.getState().requestVolume(initializedState.volume);
+      }
+    }, 1);
   }
-
-  store.setState({ muted: element?.muted });
 
   const onCanPlay = () => store.getState().onCanPlay();
 
@@ -359,8 +361,9 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           element.volume = current.volume;
         }
 
+        element.muted = current.muted;
+
         if (current.muted !== prev.muted) {
-          element.muted = current.muted;
           if (current.volume === 0) {
             element.volume = DEFAULT_VOLUME_LEVEL;
           }

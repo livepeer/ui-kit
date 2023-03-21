@@ -33,8 +33,6 @@ export const AssetDemoPlayer = () => {
     ),
   });
 
-  console.log(assets);
-
   const onSourceUpdated = useCallback(
     (sources: Src[]) =>
       setSources((prev) => new Set([...prev, sources?.[0]?.src])),
