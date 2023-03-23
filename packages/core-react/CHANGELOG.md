@@ -12,7 +12,7 @@
 
 - [#298](https://github.com/livepeer/livepeer.js/pull/298) [`b79c11b`](https://github.com/livepeer/livepeer.js/commit/b79c11bb051d85bf47caa98d574eb0b1dff35e0b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed the default Player volume level to 1.0, from 0.2. To continue with the previous behavior, use `defaultVolume` in the [controls](https://docs.livepeer.org/reference/livepeer-js/Player#controls) prop.
 
-- Updated dependencies [[`b79c11b`](https://github.com/livepeer/livepeer.js/commit/b79c11bb051d85bf47caa98d574eb0b1dff35e0b), [`3f653f7`](https://github.com/livepeer/livepeer.js/commit/3f653f716ed03b587389cda330541cb30a5f3b4a), [`1d34ea4`](https://github.com/livepeer/livepeer.js/commit/1d34ea483e8b5e2bfb01d009e376055deab4fe24), [`b79c11b`](https://github.com/livepeer/livepeer.js/commit/b79c11bb051d85bf47caa98d574eb0b1dff35e0b)]:
+- Updated dependencies [[`b79c11b`](https://github.com/livepeer/livepeer.js/commit/b79c11bb051d85bf47caa98d574eb0b1dff35e0b), [`3f653f7`](https://github.com/livepeer/livepeer.js/commit/3f653f716ed03b587389cda330541cb30a5f3b4a), [`1d34ea4`](https://github.com/livepeer/livepeer.js/commit/1d34ea483e8b5e2bfb01d009e376055deab4fe24), [`b79c11b`](https://github.com/livepeer/livepeer.js/commit/b79c11bb051d85bf47caa98d574eb0b1dff35e0b)]: 
   - @livepeer/core@1.3.2
 
 ## 1.3.1
