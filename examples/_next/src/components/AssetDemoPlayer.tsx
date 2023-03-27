@@ -1,4 +1,9 @@
-import { Player, Src, useCreateAsset } from '@livepeer/react';
+import {
+  CreateAssetSourceFile,
+  Player,
+  Src,
+  useCreateAsset,
+} from '@livepeer/react';
 import { useCallback, useState } from 'react';
 
 // const playbackId = 'ipfs://bafybeifavmtea3u5ulvrkdzc2wnjwjl35jefqiyhgruxu2cjd4kumymqm4'; // ipfs asset
@@ -11,26 +16,32 @@ export const AssetDemoPlayer = () => {
   const [videos, setVideos] = useState<File[]>([]);
   const [sources, setSources] = useState<Set<string>>(new Set());
 
+  const assetSources: CreateAssetSourceFile[] = videos.map((video) => ({
+    name: video.name ?? 'Cool Video',
+    file: video,
+    storage: {
+      ipfs: true,
+      metadata: {
+        name: 'interesting video',
+        description: 'overridden',
+      },
+    },
+  }));
+
   const {
     mutate: createAsset,
     data: assets,
     progress,
     error,
   } = useCreateAsset({
-    sources: videos.map(
-      (video) =>
-        ({
-          name: video.name ?? 'Cool Video',
-          file: video,
-          storage: {
-            ipfs: true,
-            metadata: {
-              name: 'interesting video',
-              description: 'overridden',
-            },
-          },
-        } as const),
-    ),
+    sources: assetSources,
+    playbackPolicy: {
+      type: 'webhook',
+      webhookId: '',
+      webhookContext: {
+        userValue: '',
+      },
+    },
   });
 
   const onSourceUpdated = useCallback(

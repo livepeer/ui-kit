@@ -34,6 +34,7 @@ import {
   Metrics,
   MirrorSizeArray,
   PlaybackInfo,
+  PlaybackPolicy,
   Stream,
   StreamSession,
   UpdateAssetArgs,
@@ -61,11 +62,15 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
   }
 
   async createStream(args: CreateStreamArgs): Promise<Stream> {
+    const playbackPolicy = this._getPlaybackPolicyMapped(args.playbackPolicy);
     const studioStream = await this._create<
       StudioStream,
       StudioCreateStreamArgs
     >('/stream', {
-      json: args,
+      json: {
+        ...args,
+        ...(playbackPolicy ? { playbackPolicy } : {}),
+      },
       headers: this._defaultHeaders,
     });
     return this._mapToStream(studioStream);
@@ -73,6 +78,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async updateStream(args: UpdateStreamArgs): Promise<Stream> {
     const streamId = typeof args === 'string' ? args : args.streamId;
+    const playbackPolicy = this._getPlaybackPolicyMapped(args.playbackPolicy);
 
     await this._update(`/stream/${streamId}`, {
       json: {
@@ -93,13 +99,8 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
               },
             }
           : {}),
-        ...(typeof args?.playbackPolicy?.type !== 'undefined'
-          ? {
-              playbackPolicy: {
-                type: args.playbackPolicy.type,
-              },
-            }
-          : {}),
+
+        ...(playbackPolicy ? { playbackPolicy } : {}),
       },
       headers: this._defaultHeaders,
     });
@@ -143,6 +144,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     args: CreateAssetArgs<TSource>,
   ): Promise<MirrorSizeArray<TSource, Asset>> {
     const { sources, onProgress, noWait, chunkSize } = args;
+    const playbackPolicy = this._getPlaybackPolicyMapped(args.playbackPolicy);
 
     let progress = sources.map((source) => ({
       name: source.name,
@@ -176,6 +178,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                     },
                   }
                 : undefined,
+              ...(playbackPolicy ? { playbackPolicy } : {}),
             },
             headers: this._defaultHeaders,
           });
@@ -203,6 +206,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                     },
                   }
                 : undefined,
+              ...(playbackPolicy ? { playbackPolicy } : {}),
             },
             headers: this._defaultHeaders,
           });
@@ -395,6 +399,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async updateAsset(args: UpdateAssetArgs): Promise<Asset> {
     const { assetId, name, storage } = args;
+    const playbackPolicy = this._getPlaybackPolicyMapped(args.playbackPolicy);
     await this._update<Omit<StudioAssetPatchPayload, 'assetId'>>(
       `/asset/${assetId}`,
       {
@@ -414,6 +419,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 },
               }
             : undefined,
+          ...(playbackPolicy ? { playbackPolicy } : {}),
         },
         headers: this._defaultHeaders,
       },
@@ -500,6 +506,22 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       type: 'ViewsMetrics',
       metrics: studioMetrics,
     };
+  }
+
+  _getPlaybackPolicyMapped(
+    policy: PlaybackPolicy | undefined,
+  ): PlaybackPolicy | null {
+    return policy && typeof policy?.type !== 'undefined'
+      ? policy.type === 'webhook'
+        ? {
+            type: policy.type,
+            webhookId: policy.webhookId,
+            webhookContext: policy.webhookContext,
+          }
+        : {
+            type: policy.type,
+          }
+      : null;
   }
 }
 

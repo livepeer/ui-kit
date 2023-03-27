@@ -71,14 +71,35 @@ export type CreateStreamArgs = {
   playbackPolicy?: PlaybackPolicy;
 };
 
-export type PlaybackPolicy = {
+export type WebhookPlaybackPolicy<TContext extends object> = {
   /**
    * The type of playback policy to apply. `jwt` requires a signed JWT for
-   * playback. `public` indicates no access control will be applied (anyone
-   * with the `playbackId` can view without a JWT).
+   * playback. `webhook` requires that a webhook is configured and passed during the
+   * creation of the asset. `public` indicates no
+   * access control will be applied (anyone with the `playbackId` can
+   * view without a JWT or webhook).
+   */
+  type: 'webhook';
+  /** The ID of the webhook which has already been created. */
+  webhookId: string;
+  /** The context which is passed to the webhook when it is called on playback. */
+  webhookContext: TContext;
+};
+
+export type JwtOrPublicPlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `webhook` requires that a webhook is configured and passed during the
+   * creation of the asset. `public` indicates no
+   * access control will be applied (anyone with the `playbackId` can
+   * view without a JWT or webhook).
    */
   type: 'jwt' | 'public';
 };
+
+export type PlaybackPolicy<TContext extends object = object> =
+  | JwtOrPublicPlaybackPolicy
+  | WebhookPlaybackPolicy<TContext>;
 
 export type UpdateStreamArgs = {
   /** The unique identifier for the stream */
@@ -267,6 +288,10 @@ export type CreateAssetArgs<TSource extends CreateAssetSourceType> = {
    * environments.
    */
   chunkSize?: number;
+  /**
+   * Sets the playback policy for all of the assets created.
+   */
+  playbackPolicy?: PlaybackPolicy;
 };
 
 export type Metadata = {
@@ -305,6 +330,10 @@ export type UpdateAssetArgs = {
    * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
    */
   storage?: StorageConfig;
+  /**
+   * Sets the playback policy for the asset.
+   */
+  playbackPolicy?: PlaybackPolicy;
 } & (
   | {
       name: string;
