@@ -1,6 +1,7 @@
 import { ControlsOptions, PlaybackInfo, Src } from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
+import { useQuery } from '@tanstack/react-query';
 
 import * as React from 'react';
 
@@ -89,8 +90,13 @@ export type PlayerProps<TElement, TPoster> = {
     | boolean
     | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
 
-  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  /** The JWT which is passed along to allow playback of an asset. */
   jwt?: string;
+
+  /** An access key to be used for playback. */
+  accessKey?: string;
+  /** Callback to create an access key dynamically based on the playback policies. */
+  onAccessKeyRequest?: () => Promise<string> | string;
 
   /** Callback called when the stream status changes (live or offline) */
   onStreamStatusChange?: (isLive: boolean) => void;
@@ -137,6 +143,9 @@ export const usePlayer = <TElement, TPoster>(
     refetchPlaybackInfoInterval = 5000,
     autoUrlUpload = true,
 
+    accessKey,
+    onAccessKeyRequest,
+
     showLoadingSpinner = true,
     showUploadingIndicator = true,
     showTitle = true,
@@ -151,6 +160,27 @@ export const usePlayer = <TElement, TPoster>(
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
   const [loaded, setLoaded] = React.useState(false);
 
+  const [accessControlError, setAccessControlError] = React.useState<Error>();
+
+  const accessControlErrorCallback = React.useCallback(
+    (error: Error) => {
+      setAccessControlError(error);
+      onAccessControlError?.(error);
+    },
+    [onAccessControlError],
+  );
+
+  const { data: accessKeyData } = useQuery({
+    queryFn: async () => {
+      if (accessKey) {
+        return accessKey;
+      }
+
+      return onAccessKeyRequest?.();
+    },
+    onError: (error) => accessControlErrorCallback(error as Error),
+  });
+
   const { source, uploadStatus } = useSourceMimeTyped({
     src,
     playbackId,
@@ -159,6 +189,7 @@ export const usePlayer = <TElement, TPoster>(
     autoUrlUpload,
     screenWidth: _screenWidth,
     playbackInfo,
+    accessKey: accessKeyData,
   });
 
   React.useEffect(() => {
@@ -175,16 +206,6 @@ export const usePlayer = <TElement, TPoster>(
       onStreamStatusChange?.(isLive);
     },
     [onStreamStatusChange],
-  );
-
-  const [accessControlError, setAccessControlError] = React.useState<Error>();
-
-  const accessControlErrorCallback = React.useCallback(
-    (error: Error) => {
-      setAccessControlError(error);
-      onAccessControlError?.(error);
-    },
-    [onAccessControlError],
   );
 
   const [playbackDisplayErrorType, setPlaybackDisplayErrorType] =

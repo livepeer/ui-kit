@@ -37,9 +37,9 @@ export const AssetDemoPlayer = () => {
     sources: assetSources,
     playbackPolicy: {
       type: 'webhook',
-      webhookId: '',
+      webhookId: 'ba50ec61-c9fe-488c-8c49-52d7746d9d7d',
       webhookContext: {
-        userValue: '',
+        userValue: 'somevalue',
       },
     },
   });

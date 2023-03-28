@@ -25,6 +25,7 @@ export type UseSourceMimeTypedProps<TElement, TPoster> = {
   jwt: PlayerProps<TElement, TPoster>['jwt'];
   screenWidth: InternalPlayerProps['_screenWidth'];
   playbackInfo: PlayerProps<TElement, TPoster>['playbackInfo'];
+  accessKey: PlayerProps<TElement, TPoster>['accessKey'];
 };
 
 type PlaybackUrlWithInfo = {
@@ -42,6 +43,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   autoUrlUpload = { fallback: true },
   playbackInfo,
   screenWidth,
+  accessKey,
 }: UseSourceMimeTypedProps<TElement, TPoster>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
@@ -160,6 +162,13 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         return url.toString();
       }
 
+      // append the access key to the query params
+      if (accessKey) {
+        const url = new URL(source);
+        url.searchParams.append('accessKey', accessKey);
+        return url.toString();
+      }
+
       return source;
     });
 
@@ -179,7 +188,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         : null;
 
     return mediaSourceFiltered;
-  }, [playbackUrls, src, jwt]);
+  }, [playbackUrls, src, jwt, accessKey]);
 
   const sourceMimeTypedSorted = React.useMemo(() => {
     // if there is no source mime type and the Player has dstorage fallback enabled,
