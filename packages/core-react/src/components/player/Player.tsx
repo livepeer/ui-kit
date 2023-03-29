@@ -104,6 +104,9 @@ export type PlayerProps<TElement, TPoster> = {
   /** Callback called when the media sources are changed */
   onSourceUpdated?: (sources: Src[]) => void;
 
+  /** Callback called when an error occurs that is not access control or metrics */
+  onError?: (error: Error) => void;
+
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
 } & (
@@ -131,6 +134,7 @@ export const usePlayer = <TElement, TPoster>(
     onStreamStatusChange,
     onMetricsError,
     onAccessControlError,
+    onError,
     onSourceUpdated,
     jwt,
 
@@ -256,6 +260,7 @@ export const usePlayer = <TElement, TPoster>(
       onStreamStatusChange: onStreamStatusChangeCallback,
       onMetricsError,
       onAccessControlError: accessControlErrorCallback,
+      onError,
       isCurrentlyShown: _isCurrentlyShown,
     },
     controlsContainerProps: {
