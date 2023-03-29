@@ -18,6 +18,7 @@ export type VideoPlayerProps<TElement, TPoster> = {
   onStreamStatusChange?: (isLive: boolean) => void;
   onMetricsError?: (error: Error) => void;
   onAccessControlError?: (error: Error) => void;
+  onError?: (error: Error) => void;
 };
 
 export type AudioPlayerProps<TElement, TPoster> = Omit<

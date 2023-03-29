@@ -47,6 +47,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
       onStreamStatusChange,
       onMetricsError,
       onAccessControlError,
+      onError: onMiscError,
       priority,
       allowCrossOriginCredentials,
     } = props;
@@ -107,6 +108,8 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
             onStreamStatusChange?.(false);
           } else if (isAccessControlError(cleanError)) {
             onAccessControlError?.(cleanError);
+          } else {
+            onMiscError?.(cleanError);
           }
           console.warn(cleanError.message);
         };
