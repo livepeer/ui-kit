@@ -1,4 +1,4 @@
-import { ContainerProps } from '@livepeer/core-react/components';
+import { ContainerProps as CoreContainerProps } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 
 import { styling } from 'livepeer/media/browser/styling';
@@ -12,10 +12,12 @@ const mediaControllerSelector = ({
   fullscreen,
 });
 
-export type { ContainerProps };
+export type ContainerProps = CoreContainerProps & {
+  tabIndex?: number;
+};
 
 export const Container: React.FC<ContainerProps> = (props) => {
-  const { children, aspectRatio, theme } = props;
+  const { children, aspectRatio, theme, tabIndex } = props;
 
   // cast response from useTheme to string
   const className = useTheme(theme) as string;
@@ -27,14 +29,14 @@ export const Container: React.FC<ContainerProps> = (props) => {
       style={{
         display: 'contents',
       }}
-      className={className}
+      className={`${className} livepeer-contents-container`}
     >
       <div
-        className={styling.container({
+        className={`${styling.container({
           aspectRatio,
           size: fullscreen ? 'fullscreen' : 'default',
-        })}
-        tabIndex={0}
+        })} livepeer-aspect-ratio-container`}
+        tabIndex={tabIndex ?? 0}
       >
         {children}
       </div>

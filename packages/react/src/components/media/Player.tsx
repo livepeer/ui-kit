@@ -40,6 +40,10 @@ type PlayerProps = CorePlayerProps<HTMLMediaElement, PosterSource> & {
    * domains, for access control policies.
    */
   allowCrossOriginCredentials?: boolean;
+  /**
+   * The tab index of the container element.
+   */
+  tabIndex?: number;
 };
 
 export type { PlayerObjectFit, PlayerProps };
@@ -83,7 +87,11 @@ export const PlayerInternal = (props: PlayerProps) => {
       opts={controls ?? {}}
       playerProps={props}
     >
-      <Container theme={theme} aspectRatio={aspectRatio}>
+      <Container
+        theme={theme}
+        aspectRatio={aspectRatio}
+        tabIndex={props.tabIndex}
+      >
         {source && source?.[0]?.type === 'audio' ? (
           <AudioPlayer
             {...playerProps}
