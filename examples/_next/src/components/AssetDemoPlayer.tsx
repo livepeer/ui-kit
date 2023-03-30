@@ -2,9 +2,13 @@ import {
   CreateAssetSourceFile,
   Player,
   Src,
+  WebhookPlaybackPolicy,
   useCreateAsset,
 } from '@livepeer/react';
+import fetch from 'cross-fetch';
 import { useCallback, useState } from 'react';
+
+import { SecretResponse } from '../pages/api/secret';
 
 // const playbackId = 'ipfs://bafybeifavmtea3u5ulvrkdzc2wnjwjl35jefqiyhgruxu2cjd4kumymqm4'; // ipfs asset
 // const playbackId = '499fa78eu8g59m26'; // asset
@@ -19,13 +23,13 @@ export const AssetDemoPlayer = () => {
   const assetSources: CreateAssetSourceFile[] = videos.map((video) => ({
     name: video.name ?? 'Cool Video',
     file: video,
-    storage: {
-      ipfs: true,
-      metadata: {
-        name: 'interesting video',
-        description: 'overridden',
-      },
-    },
+    // storage: {
+    //   ipfs: true,
+    //   metadata: {
+    //     name: 'interesting video',
+    //     description: 'overridden',
+    //   },
+    // },
   }));
 
   const {
@@ -37,16 +41,15 @@ export const AssetDemoPlayer = () => {
     sources: assetSources,
     playbackPolicy: {
       type: 'webhook',
-      webhookId: 'ba50ec61-c9fe-488c-8c49-52d7746d9d7d',
+      webhookId: '7e7cf81b-28f3-48e3-9284-195cbe4d5c0b',
       webhookContext: {
-        userValue: 'somevalue',
+        userId: 'this is a demo user id which is passed along to the backend',
       },
     },
   });
 
   const onSourceUpdated = useCallback(
-    (sources: Src[]) =>
-      setSources((prev) => new Set([...prev, sources?.[0]?.src])),
+    (sources: Src[]) => setSources(new Set([sources?.[0]?.src])),
     [],
   );
 
@@ -85,6 +88,25 @@ export const AssetDemoPlayer = () => {
           autoPlay
           showPipButton
           onSourceUpdated={onSourceUpdated}
+          onAccessKeyRequest={async (
+            playbackPolicy: WebhookPlaybackPolicy<{ userId: string }>,
+          ) => {
+            await new Promise((r) => setTimeout(r, 10000));
+
+            const result = await fetch('/api/secret', {
+              method: 'POST',
+              body: JSON.stringify({
+                userId: playbackPolicy.webhookContext.userId,
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+            });
+            const json: SecretResponse = await result.json();
+
+            return json.secret;
+          }}
           theme={{
             fonts: {
               display: 'Inter',

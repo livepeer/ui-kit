@@ -1,14 +1,23 @@
+import type { WebhookRequest } from '@livepeer/react';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-type Data = {
-  name: string;
+export type WebhookContext = {
+  userId: string;
+};
+
+export type WebhookResponse = {
+  error?: string | null;
 };
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<WebhookResponse>,
 ) {
-  console.log({ req: req.body, headers: req.headers });
+  const body: WebhookRequest<WebhookContext> = req.body;
 
-  return res.status(200).json({ name: 'John Doe' });
+  if (body.accessKey === 'verysecret22') {
+    return res.status(200).json({});
+  }
+
+  return res.status(401).json({ error: 'Not allowed' });
 }

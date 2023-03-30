@@ -34,7 +34,8 @@ const defaultProgressUpdateInterval = 100;
 
 export type VideoPlayerProps = VideoPlayerCoreProps<
   MediaElement,
-  PosterSource
+  PosterSource,
+  object
 > &
   VideoCustomizationProps;
 

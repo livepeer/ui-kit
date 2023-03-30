@@ -58,6 +58,7 @@ export type {
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
   Hash,
+  JwtOrPublicPlaybackPolicy,
   LivepeerProvider,
   LivepeerProviderConfig,
   Metrics,
@@ -73,6 +74,8 @@ export type {
   UpdateAssetArgs,
   UpdateStreamArgs,
   ViewsMetrics,
+  WebhookPlaybackPolicy,
+  WebhookRequest,
 } from './types';
 export {
   b64Decode,

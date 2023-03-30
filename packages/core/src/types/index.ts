@@ -27,6 +27,7 @@ export type {
   GetStreamArgs,
   GetStreamSessionArgs,
   GetStreamSessionsArgs,
+  JwtOrPublicPlaybackPolicy,
   LivepeerProvider,
   LivepeerProviderConfig,
   Metrics,
@@ -41,4 +42,6 @@ export type {
   UpdateAssetArgs,
   UpdateStreamArgs,
   ViewsMetrics,
+  WebhookPlaybackPolicy,
+  WebhookRequest,
 } from './provider';

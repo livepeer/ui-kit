@@ -39,6 +39,12 @@ export interface LivepeerProvider {
   getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics>;
 }
 
+export type WebhookRequest<TContext extends object> = {
+  context: TContext;
+  accessKey: string;
+  timestamp: number;
+};
+
 export type StreamIdOrString =
   | string
   | {
@@ -464,6 +470,8 @@ export type Asset = {
    * name or title
    */
   name: string;
+  /** Configuration for asset playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
   /** Storage configs for the asset */
   storage?: {
     ipfs?: {
@@ -590,8 +598,10 @@ export type GetPlaybackInfoArgs =
 
 export type PlaybackInfo = {
   type: 'live' | 'vod' | 'recording';
+
   meta: {
     live: boolean;
+    playbackPolicy?: Asset['playbackPolicy'] | Stream['playbackPolicy'];
     source: {
       hrn: 'HLS (TS)' | 'MP4';
       type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';

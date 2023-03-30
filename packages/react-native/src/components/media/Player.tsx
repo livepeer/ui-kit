@@ -25,19 +25,25 @@ export type { PlayerObjectFit };
 
 export type PosterSource = ImageProps['source'];
 
-export type PlayerProps = CorePlayerProps<MediaElement, PosterSource> &
+export type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
+  MediaElement,
+  PosterSource,
+  TPlaybackPolicyObject
+> &
   VideoCustomizationProps;
 
 const screenDimensions = Dimensions.get('screen');
 
-export const PlayerInternal = (props: PlayerProps) => {
+export const PlayerInternal = <TPlaybackPolicyObject extends object>(
+  props: PlayerProps<TPlaybackPolicyObject>,
+) => {
   const {
     mediaElement,
     playerProps,
     controlsContainerProps,
     source,
     props: { controls, children, theme, title, showTitle, aspectRatio },
-  } = usePlayer<MediaElement, PosterSource>(
+  } = usePlayer<MediaElement, PosterSource, TPlaybackPolicyObject>(
     { ...props, _isCurrentlyShown: props._isCurrentlyShown ?? true },
     {
       _screenWidth: screenDimensions?.width ?? null,
@@ -48,7 +54,7 @@ export const PlayerInternal = (props: PlayerProps) => {
     <MediaControllerProvider
       element={mediaElement}
       opts={controls ?? {}}
-      playerProps={props}
+      playerProps={props as PlayerProps<object>}
     >
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && source?.[0]?.type === 'audio' ? (

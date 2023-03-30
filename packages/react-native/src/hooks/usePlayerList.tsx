@@ -38,8 +38,8 @@ export type UsePlayerListReturn<
 };
 
 type PlayerListOverriddenProps = {
-  _isCurrentlyShown: PlayerProps['_isCurrentlyShown'];
-  priority: PlayerProps['priority'];
+  _isCurrentlyShown: PlayerProps<object>['_isCurrentlyShown'];
+  priority: PlayerProps<object>['priority'];
 };
 
 type IndexStatus = {

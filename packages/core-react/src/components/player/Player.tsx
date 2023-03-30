@@ -1,7 +1,11 @@
-import { ControlsOptions, PlaybackInfo, Src } from '@livepeer/core';
+import {
+  ControlsOptions,
+  PlaybackInfo,
+  Src,
+  WebhookPlaybackPolicy,
+} from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
-import { useQuery } from '@tanstack/react-query';
 
 import * as React from 'react';
 
@@ -16,7 +20,11 @@ export type InternalPlayerProps = {
   _screenWidth: number | null;
 };
 
-export type PlayerProps<TElement, TPoster> = {
+export type PlayerProps<
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject extends object,
+> = {
   /** The source(s) of the media (**required** if `playbackId` or `playbackInfo` is not provided) */
   src?: string | string[] | null | undefined;
   /** The playback ID for the media (**required** if `src` or `playbackInfo` is not provided) */
@@ -96,7 +104,9 @@ export type PlayerProps<TElement, TPoster> = {
   /** An access key to be used for playback. */
   accessKey?: string;
   /** Callback to create an access key dynamically based on the playback policies. */
-  onAccessKeyRequest?: () => Promise<string> | string;
+  onAccessKeyRequest?: (
+    playbackPolicy: WebhookPlaybackPolicy<TPlaybackPolicyObject>,
+  ) => Promise<string | null | undefined> | string | null | undefined;
 
   /** Callback called when the stream status changes (live or offline) */
   onStreamStatusChange?: (isLive: boolean) => void;
@@ -122,7 +132,11 @@ export type PlayerProps<TElement, TPoster> = {
   | { playbackId: string | null | undefined }
 );
 
-export const usePlayer = <TElement, TPoster>(
+export const usePlayer = <
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject extends object,
+>(
   {
     autoPlay,
     children,
@@ -158,7 +172,7 @@ export const usePlayer = <TElement, TPoster>(
     objectFit = 'contain',
     mediaElementRef,
     _isCurrentlyShown,
-  }: PlayerProps<TElement, TPoster>,
+  }: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>,
   { _screenWidth }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
@@ -174,17 +188,6 @@ export const usePlayer = <TElement, TPoster>(
     [onAccessControlError],
   );
 
-  const { data: accessKeyData } = useQuery({
-    queryFn: async () => {
-      if (accessKey) {
-        return accessKey;
-      }
-
-      return onAccessKeyRequest?.();
-    },
-    onError: (error) => accessControlErrorCallback(error as Error),
-  });
-
   const { source, uploadStatus } = useSourceMimeTyped({
     src,
     playbackId,
@@ -193,7 +196,9 @@ export const usePlayer = <TElement, TPoster>(
     autoUrlUpload,
     screenWidth: _screenWidth,
     playbackInfo,
-    accessKey: accessKeyData,
+    accessKey,
+    onAccessKeyRequest,
+    accessControlErrorCallback,
   });
 
   React.useEffect(() => {
