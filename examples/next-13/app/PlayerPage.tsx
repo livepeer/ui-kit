@@ -19,7 +19,7 @@ function isIframe() {
   return true;
 }
 
-export default (props: PlayerProps) => {
+export default (props: PlayerProps<object>) => {
   useEffect(() => {
     if (!isIframe()) {
       document.body.style.backgroundColor = 'black';

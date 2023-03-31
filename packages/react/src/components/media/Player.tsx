@@ -27,7 +27,11 @@ import { useIsElementShown } from '../useIsElementShown';
 
 export type PosterSource = string | React.ReactNode;
 
-type PlayerProps = CorePlayerProps<HTMLMediaElement, PosterSource> & {
+type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
+  HTMLMediaElement,
+  PosterSource,
+  TPlaybackPolicyObject
+> & {
   /** Whether to show the picture in picture button (web only) */
   showPipButton?: boolean;
   /** Configuration for the event listeners */
@@ -48,7 +52,9 @@ type PlayerProps = CorePlayerProps<HTMLMediaElement, PosterSource> & {
 
 export type { PlayerObjectFit, PlayerProps };
 
-export const PlayerInternal = (props: PlayerProps) => {
+export const PlayerInternal = <TPlaybackPolicyObject extends object>(
+  props: PlayerProps<TPlaybackPolicyObject>,
+) => {
   const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
 
   const screenWidth = React.useMemo(
@@ -65,7 +71,7 @@ export const PlayerInternal = (props: PlayerProps) => {
     controlsContainerProps,
     source,
     props: { children, controls, theme, title, poster, showTitle, aspectRatio },
-  } = usePlayer<HTMLMediaElement, PosterSource>(
+  } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject>(
     {
       ...props,
       _isCurrentlyShown: props._isCurrentlyShown ?? isCurrentlyShown,
@@ -137,4 +143,5 @@ export const PlayerInternal = (props: PlayerProps) => {
   );
 };
 
-export const Player = React.memo(PlayerInternal);
+const typedMemo: <T>(c: T) => T = React.memo;
+export const Player = typedMemo(PlayerInternal);

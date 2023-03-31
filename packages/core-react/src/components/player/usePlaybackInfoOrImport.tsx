@@ -4,12 +4,11 @@ import { parseCid } from '@livepeer/core/utils';
 
 import * as React from 'react';
 
-import { PlayerProps } from './Player';
 import { useCreateAsset, usePlaybackInfo } from '../../hooks';
 
-export type UsePlaybackInfoOrImportProps<TElement, TPoster> = {
+export type UsePlaybackInfoOrImportProps = {
   decentralizedSrcOrPlaybackId: ReturnType<typeof parseCid>;
-  playbackId: PlayerProps<TElement, TPoster>['playbackId'];
+  playbackId: string | null | undefined;
   refetchPlaybackInfoInterval: number;
   autoUrlUpload: boolean | { fallback: true; gateway?: string };
   onAssetStatusChange: (status: CreateAssetUrlProgress) => void;
@@ -22,13 +21,13 @@ export type UsePlaybackInfoOrImportProps<TElement, TPoster> = {
  * @param src Source URL for the media.
  * @param playbackId Playback ID of the media.
  */
-export const usePlaybackInfoOrImport = <TElement, TPoster>({
+export const usePlaybackInfoOrImport = ({
   decentralizedSrcOrPlaybackId,
   playbackId,
   refetchPlaybackInfoInterval,
   autoUrlUpload,
   onAssetStatusChange,
-}: UsePlaybackInfoOrImportProps<TElement, TPoster>) => {
+}: UsePlaybackInfoOrImportProps) => {
   const {
     mutate: importAsset,
     status,

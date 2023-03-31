@@ -9,8 +9,11 @@ import { PrefetchQueryOptions } from '../../utils';
 export async function prefetchPlayer<
   TLivepeerProvider extends LivepeerProvider,
   TData = PlaybackInfo,
+  TPlaybackPolicyObject extends object = object,
 >(
-  props: Partial<PlayerProps<HTMLMediaElement, ReactNode | string>> &
+  props: Partial<
+    PlayerProps<HTMLMediaElement, ReactNode | string, TPlaybackPolicyObject>
+  > &
     PrefetchQueryOptions,
   config: Omit<ClientConfig<TLivepeerProvider>, 'storage'>,
 ) {

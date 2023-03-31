@@ -1,4 +1,9 @@
-import { ControlsOptions, PlaybackInfo, Src } from '@livepeer/core';
+import {
+  ControlsOptions,
+  PlaybackInfo,
+  Src,
+  WebhookPlaybackPolicy,
+} from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
 
@@ -15,7 +20,11 @@ export type InternalPlayerProps = {
   _screenWidth: number | null;
 };
 
-export type PlayerProps<TElement, TPoster> = {
+export type PlayerProps<
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject extends object,
+> = {
   /** The source(s) of the media (**required** if `playbackId` or `playbackInfo` is not provided) */
   src?: string | string[] | null | undefined;
   /** The playback ID for the media (**required** if `src` or `playbackInfo` is not provided) */
@@ -89,8 +98,15 @@ export type PlayerProps<TElement, TPoster> = {
     | boolean
     | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
 
-  /** If a decentralized identifier (an IPFS CID/URL) should automatically be imported as an Asset if playback info does not exist. Defaults to true. */
+  /** The JWT which is passed along to allow playback of an asset. */
   jwt?: string;
+
+  /** An access key to be used for playback. */
+  accessKey?: string;
+  /** Callback to create an access key dynamically based on the playback policies. */
+  onAccessKeyRequest?: (
+    playbackPolicy: WebhookPlaybackPolicy<TPlaybackPolicyObject>,
+  ) => Promise<string | null | undefined> | string | null | undefined;
 
   /** Callback called when the stream status changes (live or offline) */
   onStreamStatusChange?: (isLive: boolean) => void;
@@ -116,7 +132,11 @@ export type PlayerProps<TElement, TPoster> = {
   | { playbackId: string | null | undefined }
 );
 
-export const usePlayer = <TElement, TPoster>(
+export const usePlayer = <
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject extends object,
+>(
   {
     autoPlay,
     children,
@@ -141,6 +161,9 @@ export const usePlayer = <TElement, TPoster>(
     refetchPlaybackInfoInterval = 5000,
     autoUrlUpload = true,
 
+    accessKey,
+    onAccessKeyRequest,
+
     showLoadingSpinner = true,
     showUploadingIndicator = true,
     showTitle = true,
@@ -149,11 +172,24 @@ export const usePlayer = <TElement, TPoster>(
     objectFit = 'contain',
     mediaElementRef,
     _isCurrentlyShown,
-  }: PlayerProps<TElement, TPoster>,
+  }: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>,
   { _screenWidth }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
   const [loaded, setLoaded] = React.useState(false);
+
+  const [accessControlError, setAccessControlError] =
+    React.useState<Error | null>(null);
+
+  const accessControlErrorCallback = React.useCallback(
+    (error: Error) => {
+      if (!accessControlError) {
+        setAccessControlError(error);
+      }
+      onAccessControlError?.(error);
+    },
+    [onAccessControlError, accessControlError],
+  );
 
   const { source, uploadStatus } = useSourceMimeTyped({
     src,
@@ -163,11 +199,14 @@ export const usePlayer = <TElement, TPoster>(
     autoUrlUpload,
     screenWidth: _screenWidth,
     playbackInfo,
+    accessKey,
+    onAccessKeyRequest,
   });
 
   React.useEffect(() => {
     if (source) {
       onSourceUpdated?.(source);
+      setAccessControlError?.(null);
     }
   }, [source, onSourceUpdated]);
 
@@ -179,16 +218,6 @@ export const usePlayer = <TElement, TPoster>(
       onStreamStatusChange?.(isLive);
     },
     [onStreamStatusChange],
-  );
-
-  const [accessControlError, setAccessControlError] = React.useState<Error>();
-
-  const accessControlErrorCallback = React.useCallback(
-    (error: Error) => {
-      setAccessControlError(error);
-      onAccessControlError?.(error);
-    },
-    [onAccessControlError],
   );
 
   const [playbackDisplayErrorType, setPlaybackDisplayErrorType] =

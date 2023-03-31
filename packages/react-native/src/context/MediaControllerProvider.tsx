@@ -13,7 +13,7 @@ export type MediaControllerProviderProps<TElement extends MediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
   opts: ControlsOptions;
-  playerProps: PlayerProps;
+  playerProps: PlayerProps<object>;
 };
 
 export const MediaControllerProvider = <TElement extends MediaElement>({
@@ -34,7 +34,7 @@ export const MediaControllerProvider = <TElement extends MediaElement>({
 const useMediaControllerStore = <TElement extends MediaElement>(
   element: TElement | null,
   opts: ControlsOptions,
-  playerProps: PlayerProps,
+  playerProps: PlayerProps<object>,
 ) => {
   const client = useClient();
 

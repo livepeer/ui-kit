@@ -25,6 +25,8 @@ export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
  */
 export const isHlsSupported = () => (isClient() ? Hls.isSupported() : true);
 
+let retryCount = 0;
+
 /**
  * Create an hls.js instance and attach to the provided media element.
  */
@@ -81,20 +83,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
 
     hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
       callbacks?.onCanPlay?.();
-
-      if (config?.autoplay && element) {
-        try {
-          element.muted = true;
-        } catch (e) {
-          console.log(
-            'Unable to autoplay prior to user interaction with the dom.',
-          );
-        }
-      }
     });
   });
-
-  let retryCount = 0;
 
   hls.on(Events.ERROR, async (_event, data) => {
     const { type, details, fatal } = data;

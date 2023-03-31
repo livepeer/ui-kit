@@ -5,26 +5,54 @@ import {
   VideoSrc,
   getMediaSourceType,
 } from '@livepeer/core';
-import { CreateAssetUrlProgress } from '@livepeer/core/types';
+import {
+  CreateAssetUrlProgress,
+  WebhookPlaybackPolicy,
+} from '@livepeer/core/types';
 import { parseArweaveTxId, parseCid } from '@livepeer/core/utils';
 import * as React from 'react';
 
 import { InternalPlayerProps, PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
+import { useInternalQuery } from '../../utils';
 
 const defaultIpfsGateway = 'https://w3s.link';
 const defaultArweaveGateway = 'https://arweave.net';
 
-export type UseSourceMimeTypedProps<TElement, TPoster> = {
-  src: PlayerProps<TElement, TPoster>['src'];
-  playbackId: PlayerProps<TElement, TPoster>['playbackId'];
+export type UseSourceMimeTypedProps<
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject extends object,
+> = {
+  src: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['src'];
+  playbackId: PlayerProps<
+    TElement,
+    TPoster,
+    TPlaybackPolicyObject
+  >['playbackId'];
   refetchPlaybackInfoInterval: NonNullable<
-    PlayerProps<TElement, TPoster>['refetchPlaybackInfoInterval']
+    PlayerProps<
+      TElement,
+      TPoster,
+      TPlaybackPolicyObject
+    >['refetchPlaybackInfoInterval']
   >;
-  autoUrlUpload: NonNullable<PlayerProps<TElement, TPoster>['autoUrlUpload']>;
-  jwt: PlayerProps<TElement, TPoster>['jwt'];
+  autoUrlUpload: NonNullable<
+    PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['autoUrlUpload']
+  >;
+  jwt: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['jwt'];
   screenWidth: InternalPlayerProps['_screenWidth'];
-  playbackInfo: PlayerProps<TElement, TPoster>['playbackInfo'];
+  playbackInfo: PlayerProps<
+    TElement,
+    TPoster,
+    TPlaybackPolicyObject
+  >['playbackInfo'];
+  accessKey: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['accessKey'];
+  onAccessKeyRequest: PlayerProps<
+    TElement,
+    TPoster,
+    TPlaybackPolicyObject
+  >['onAccessKeyRequest'];
 };
 
 type PlaybackUrlWithInfo = {
@@ -34,7 +62,11 @@ type PlaybackUrlWithInfo = {
 
 const SCREEN_WIDTH_MULTIPLIER = 2.5;
 
-export const useSourceMimeTyped = <TElement, TPoster>({
+export const useSourceMimeTyped = <
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject extends object,
+>({
   src,
   playbackId,
   jwt,
@@ -42,7 +74,9 @@ export const useSourceMimeTyped = <TElement, TPoster>({
   autoUrlUpload = { fallback: true },
   playbackInfo,
   screenWidth,
-}: UseSourceMimeTypedProps<TElement, TPoster>) => {
+  accessKey,
+  onAccessKeyRequest,
+}: UseSourceMimeTypedProps<TElement, TPoster, TPlaybackPolicyObject>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
 
@@ -70,6 +104,35 @@ export const useSourceMimeTyped = <TElement, TPoster>({
     refetchPlaybackInfoInterval,
     autoUrlUpload,
     onAssetStatusChange,
+  });
+
+  const combinedPlaybackInfo = React.useMemo(
+    () => playbackInfo ?? resolvedPlaybackInfo,
+    [playbackInfo, resolvedPlaybackInfo],
+  );
+
+  const fetchAccessKey: () => Promise<string | null> =
+    React.useCallback(async () => {
+      if (accessKey) {
+        return accessKey;
+      }
+
+      if (combinedPlaybackInfo?.meta?.playbackPolicy?.type === 'webhook') {
+        const response = await onAccessKeyRequest?.(
+          combinedPlaybackInfo.meta
+            .playbackPolicy as WebhookPlaybackPolicy<TPlaybackPolicyObject>,
+        );
+        return response ?? null;
+      }
+
+      return null;
+    }, [accessKey, onAccessKeyRequest, combinedPlaybackInfo]);
+
+  const { data: accessKeyResolved } = useInternalQuery({
+    queryKey: [combinedPlaybackInfo, onAccessKeyRequest, accessKey],
+    queryFn: fetchAccessKey,
+    enabled: Boolean(combinedPlaybackInfo || accessKey),
+    staleTime: Infinity,
   });
 
   const [playbackUrls, setPlaybackUrls] = React.useState<PlaybackUrlWithInfo[]>(
@@ -160,6 +223,13 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         return url.toString();
       }
 
+      // append the access key to the query params
+      if (accessKeyResolved) {
+        const url = new URL(source);
+        url.searchParams.append('accessKey', accessKeyResolved);
+        return url.toString();
+      }
+
       return source;
     });
 
@@ -179,7 +249,7 @@ export const useSourceMimeTyped = <TElement, TPoster>({
         : null;
 
     return mediaSourceFiltered;
-  }, [playbackUrls, src, jwt]);
+  }, [playbackUrls, src, jwt, accessKeyResolved]);
 
   const sourceMimeTypedSorted = React.useMemo(() => {
     // if there is no source mime type and the Player has dstorage fallback enabled,

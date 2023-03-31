@@ -6,19 +6,25 @@ import * as React from 'react';
 import { MediaControllerContext } from './MediaControllerContext';
 import { PlayerProps } from '../components';
 
-export type MediaControllerProviderProps<TElement extends HTMLMediaElement> = {
+export type MediaControllerProviderProps<
+  TElement extends HTMLMediaElement,
+  TPlaybackPolicyObject extends object,
+> = {
   element: TElement | null;
   children: React.ReactNode;
-  playerProps: PlayerProps;
+  playerProps: PlayerProps<TPlaybackPolicyObject>;
   opts: ControlsOptions;
 };
 
-export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
+export const MediaControllerProvider = <
+  TElement extends HTMLMediaElement,
+  TPlaybackPolicyObject extends object,
+>({
   element,
   children,
   playerProps,
   opts,
-}: MediaControllerProviderProps<TElement>) => {
+}: MediaControllerProviderProps<TElement, TPlaybackPolicyObject>) => {
   const mediaController = useMediaControllerStore(element, opts, playerProps);
 
   return (
@@ -28,10 +34,13 @@ export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   );
 };
 
-const useMediaControllerStore = <TElement extends HTMLMediaElement>(
+const useMediaControllerStore = <
+  TElement extends HTMLMediaElement,
+  TPlaybackPolicyObject extends object,
+>(
   element: TElement | null,
   opts: ControlsOptions,
-  playerProps: PlayerProps,
+  playerProps: PlayerProps<TPlaybackPolicyObject>,
 ) => {
   const client = useClient();
 

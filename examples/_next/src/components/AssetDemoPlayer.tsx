@@ -1,5 +1,14 @@
-import { Player, Src, useCreateAsset } from '@livepeer/react';
+import {
+  CreateAssetSourceFile,
+  Player,
+  Src,
+  WebhookPlaybackPolicy,
+  useCreateAsset,
+} from '@livepeer/react';
+import fetch from 'cross-fetch';
 import { useCallback, useState } from 'react';
+
+import { SecretResponse } from '../pages/api/secret';
 
 // const playbackId = 'ipfs://bafybeifavmtea3u5ulvrkdzc2wnjwjl35jefqiyhgruxu2cjd4kumymqm4'; // ipfs asset
 // const playbackId = '499fa78eu8g59m26'; // asset
@@ -11,31 +20,36 @@ export const AssetDemoPlayer = () => {
   const [videos, setVideos] = useState<File[]>([]);
   const [sources, setSources] = useState<Set<string>>(new Set());
 
+  const assetSources: CreateAssetSourceFile[] = videos.map((video) => ({
+    name: video.name ?? 'Cool Video',
+    file: video,
+    // storage: {
+    //   ipfs: true,
+    //   metadata: {
+    //     name: 'interesting video',
+    //     description: 'overridden',
+    //   },
+    // },
+    playbackPolicy: {
+      type: 'webhook',
+      webhookId: '1496f546-acf1-4a61-96c7-d100b5b5e524',
+      webhookContext: {
+        userId: 'this is a demo user id which is passed along to the backend',
+      },
+    },
+  }));
+
   const {
     mutate: createAsset,
     data: assets,
     progress,
     error,
   } = useCreateAsset({
-    sources: videos.map(
-      (video) =>
-        ({
-          name: video.name ?? 'Cool Video',
-          file: video,
-          storage: {
-            ipfs: true,
-            metadata: {
-              name: 'interesting video',
-              description: 'overridden',
-            },
-          },
-        } as const),
-    ),
+    sources: assetSources,
   });
 
   const onSourceUpdated = useCallback(
-    (sources: Src[]) =>
-      setSources((prev) => new Set([...prev, sources?.[0]?.src])),
+    (sources: Src[]) => setSources(new Set([sources?.[0]?.src])),
     [],
   );
 
@@ -74,6 +88,25 @@ export const AssetDemoPlayer = () => {
           autoPlay
           showPipButton
           onSourceUpdated={onSourceUpdated}
+          onAccessKeyRequest={async (
+            playbackPolicy: WebhookPlaybackPolicy<{ userId: string }>,
+          ) => {
+            await new Promise((r) => setTimeout(r, 10000));
+
+            const result = await fetch('/api/secret', {
+              method: 'POST',
+              body: JSON.stringify({
+                userId: playbackPolicy.webhookContext.userId,
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+            });
+            const json: SecretResponse = await result.json();
+
+            return json.secret;
+          }}
           theme={{
             fonts: {
               display: 'Inter',
