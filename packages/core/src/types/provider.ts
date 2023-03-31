@@ -39,7 +39,7 @@ export interface LivepeerProvider {
   getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics>;
 }
 
-export type WebhookRequest<TContext extends object> = {
+export type PlaybackAccessControlRequest<TContext extends object> = {
   context: TContext;
   accessKey: string;
   timestamp: number;
@@ -250,6 +250,10 @@ export type CreateAssetSourceBase = {
    * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
    */
   storage?: StorageConfig;
+  /**
+   * Sets the playback policy for all of the assets created.
+   */
+  playbackPolicy?: PlaybackPolicy;
 };
 
 export type CreateAssetSourceUrl = CreateAssetSourceBase & {
@@ -294,10 +298,6 @@ export type CreateAssetArgs<TSource extends CreateAssetSourceType> = {
    * environments.
    */
   chunkSize?: number;
-  /**
-   * Sets the playback policy for all of the assets created.
-   */
-  playbackPolicy?: PlaybackPolicy;
 };
 
 export type Metadata = {

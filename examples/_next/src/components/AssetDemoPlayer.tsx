@@ -30,6 +30,13 @@ export const AssetDemoPlayer = () => {
     //     description: 'overridden',
     //   },
     // },
+    playbackPolicy: {
+      type: 'webhook',
+      webhookId: '7e7cf81b-28f3-48e3-9284-195cbe4d5c0b',
+      webhookContext: {
+        userId: 'this is a demo user id which is passed along to the backend',
+      },
+    },
   }));
 
   const {
@@ -39,13 +46,6 @@ export const AssetDemoPlayer = () => {
     error,
   } = useCreateAsset({
     sources: assetSources,
-    playbackPolicy: {
-      type: 'webhook',
-      webhookId: '7e7cf81b-28f3-48e3-9284-195cbe4d5c0b',
-      webhookContext: {
-        userId: 'this is a demo user id which is passed along to the backend',
-      },
-    },
   });
 
   const onSourceUpdated = useCallback(

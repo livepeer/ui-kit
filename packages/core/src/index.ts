@@ -66,6 +66,7 @@ export type {
   MultistreamTarget,
   MultistreamTargetRef,
   NativeFile,
+  PlaybackAccessControlRequest,
   PlaybackInfo,
   PlaybackPolicy,
   Stream,
@@ -75,7 +76,6 @@ export type {
   UpdateStreamArgs,
   ViewsMetrics,
   WebhookPlaybackPolicy,
-  WebhookRequest,
 } from './types';
 export {
   b64Decode,

@@ -144,7 +144,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     args: CreateAssetArgs<TSource>,
   ): Promise<MirrorSizeArray<TSource, Asset>> {
     const { sources, onProgress, noWait, chunkSize } = args;
-    const playbackPolicy = this._getPlaybackPolicyMapped(args.playbackPolicy);
 
     let progress = sources.map((source) => ({
       name: source.name,
@@ -155,6 +154,10 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     // upload all assets and do not throw for failed
     const pendingAssetIds = await Promise.allSettled(
       sources.map(async (source, index) => {
+        const playbackPolicy = this._getPlaybackPolicyMapped(
+          source.playbackPolicy,
+        );
+
         if ((source as CreateAssetSourceUrl).url) {
           const createdAsset = await this._create<
             { asset: StudioAsset },
