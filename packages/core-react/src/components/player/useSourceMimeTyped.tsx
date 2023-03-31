@@ -53,11 +53,6 @@ export type UseSourceMimeTypedProps<
     TPoster,
     TPlaybackPolicyObject
   >['onAccessKeyRequest'];
-  accessControlErrorCallback: PlayerProps<
-    TElement,
-    TPoster,
-    TPlaybackPolicyObject
-  >['onAccessControlError'];
 };
 
 type PlaybackUrlWithInfo = {
@@ -81,7 +76,6 @@ export const useSourceMimeTyped = <
   screenWidth,
   accessKey,
   onAccessKeyRequest,
-  accessControlErrorCallback,
 }: UseSourceMimeTypedProps<TElement, TPoster, TPlaybackPolicyObject>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
@@ -134,16 +128,11 @@ export const useSourceMimeTyped = <
       return null;
     }, [accessKey, onAccessKeyRequest, combinedPlaybackInfo]);
 
-  const onAccessKeyError = React.useCallback(
-    (error: Error) => accessControlErrorCallback?.(error as Error),
-    [accessControlErrorCallback],
-  );
-
   const { data: accessKeyResolved } = useInternalQuery({
-    queryKey: [combinedPlaybackInfo, accessKey],
+    queryKey: [combinedPlaybackInfo, onAccessKeyRequest, accessKey],
     queryFn: fetchAccessKey,
     enabled: Boolean(combinedPlaybackInfo || accessKey),
-    onError: onAccessKeyError,
+    staleTime: Infinity,
   });
 
   const [playbackUrls, setPlaybackUrls] = React.useState<PlaybackUrlWithInfo[]>(

@@ -32,7 +32,7 @@ export const AssetDemoPlayer = () => {
     // },
     playbackPolicy: {
       type: 'webhook',
-      webhookId: '7e7cf81b-28f3-48e3-9284-195cbe4d5c0b',
+      webhookId: '1496f546-acf1-4a61-96c7-d100b5b5e524',
       webhookContext: {
         userId: 'this is a demo user id which is passed along to the backend',
       },

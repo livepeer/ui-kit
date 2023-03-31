@@ -178,14 +178,17 @@ export const usePlayer = <
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
   const [loaded, setLoaded] = React.useState(false);
 
-  const [accessControlError, setAccessControlError] = React.useState<Error>();
+  const [accessControlError, setAccessControlError] =
+    React.useState<Error | null>(null);
 
   const accessControlErrorCallback = React.useCallback(
     (error: Error) => {
-      setAccessControlError(error);
+      if (!accessControlError) {
+        setAccessControlError(error);
+      }
       onAccessControlError?.(error);
     },
-    [onAccessControlError],
+    [onAccessControlError, accessControlError],
   );
 
   const { source, uploadStatus } = useSourceMimeTyped({
@@ -198,12 +201,12 @@ export const usePlayer = <
     playbackInfo,
     accessKey,
     onAccessKeyRequest,
-    accessControlErrorCallback,
   });
 
   React.useEffect(() => {
     if (source) {
       onSourceUpdated?.(source);
+      setAccessControlError?.(null);
     }
   }, [source, onSourceUpdated]);
 

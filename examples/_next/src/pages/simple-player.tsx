@@ -9,12 +9,13 @@ const Page = () => {
     <>
       <Player
         autoPlay
-        playbackId="c6b9yhj8zall51g4"
+        muted
+        playbackId="3330zn7r1adtxmpn"
         loop
         onAccessKeyRequest={async (
           playbackPolicy: WebhookPlaybackPolicy<{ userId: string }>,
         ) => {
-          await new Promise((r) => setTimeout(r, 10000));
+          // await new Promise((r) => setTimeout(r, 10000));
 
           const result = await fetch('/api/secret', {
             method: 'POST',

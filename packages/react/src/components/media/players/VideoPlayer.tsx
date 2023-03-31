@@ -13,7 +13,11 @@ import {
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { isAccessControlError, isStreamOfflineError } from './utils';
+import {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  isAccessControlError,
+  isStreamOfflineError,
+} from './utils';
 import { MediaControllerContext, useMediaController } from '../../../context';
 import { PosterSource } from '../Player';
 
@@ -103,8 +107,12 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
 
         const onError = (error: HlsError) => {
           const cleanError = new Error(
-            error?.response?.data?.toString?.() ?? 'Error with HLS.js',
+            error?.response?.data?.toString?.() ??
+            (error?.response as any)?.code === 401
+              ? ACCESS_CONTROL_ERROR_MESSAGE
+              : 'Error with HLS.js',
           );
+
           if (isStreamOfflineError(cleanError)) {
             onStreamStatusChange?.(false);
           } else if (isAccessControlError(cleanError)) {
@@ -198,7 +206,7 @@ const HtmlVideoPlayer = React.forwardRef<
     muted,
     poster,
     objectFit,
-    // onAccessControlError,
+    onAccessControlError,
     filteredSources,
     fullscreen,
     onError,
@@ -206,40 +214,34 @@ const HtmlVideoPlayer = React.forwardRef<
 
   const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
     React.useCallback(
-      async (_e) => {
-        // TODO: find a way to determine what the response code is from the backend
-        // we cannot pull the error code from the HTML video element
-        // and we cannot make a network request to the source URL unless CORS headers are added
-        // this is likely not a good idea, so we need to come up with a different solution
+      async (e) => {
+        const sourceElement = e.target;
+        const parentElement = (sourceElement as HTMLSourceElement)
+          ?.parentElement;
+        const videoUrl = (parentElement as HTMLVideoElement)?.currentSrc;
 
-        // const sourceElement = e.target;
-        // const parentElement = (sourceElement as HTMLSourceElement)
-        //   ?.parentElement;
-        // const videoUrl = (parentElement as HTMLVideoElement)?.currentSrc;
-
-        // if (videoUrl) {
-        //   try {
-        //     const response = await fetch(videoUrl);
-        //     if (response.status === 404) {
-        //       console.warn('Video not found');
-        //       onError?.(new Error('Video not found'));
-        //     } else if (response.status === 401) {
-        //       console.warn('Unauthorized to view video');
-        //       onAccessControlError?.(new Error('Unauthorized to view video'));
-        //     } else {
-        //       console.warn('Unknown error loading video');
-        //       onError?.(new Error('Unknown error loading video'));
-        //     }
-        //   } catch (err) {
-        //     console.warn(err);
-        //     onError?.(new Error('Error fetching video URL'));
-        //   }
-        // }
+        if (videoUrl) {
+          try {
+            const response = await fetch(videoUrl);
+            if (response.status === 404) {
+              console.warn('Video not found');
+              return onError?.(new Error('Video not found'));
+            } else if (response.status === 401) {
+              console.warn('Unauthorized to view video');
+              return onAccessControlError?.(
+                new Error('Unauthorized to view video'),
+              );
+            }
+          } catch (err) {
+            console.warn(err);
+            return onError?.(new Error('Error fetching video URL'));
+          }
+        }
 
         console.warn('Unknown error loading video');
-        onError?.(new Error('Unknown error loading video'));
+        return onError?.(new Error('Unknown error loading video'));
       },
-      [onError],
+      [onError, onAccessControlError],
     );
 
   return (
