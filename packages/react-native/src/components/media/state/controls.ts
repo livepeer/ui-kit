@@ -21,7 +21,7 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
   element: TElement | null;
   storage?: Storage;
   opts?: ControlsOptions;
-  playerProps?: PlayerProps;
+  playerProps?: PlayerProps<object>;
 }): StoreApi<MediaControllerState<MediaElement>> => {
   return createControllerStore<TElement>({
     element,

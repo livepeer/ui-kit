@@ -190,6 +190,15 @@ export class MetricsStatus<TElement> {
 
     this.store = store;
 
+    const windowHref =
+      typeof window !== 'undefined' ? window?.location?.href ?? '' : '';
+
+    const pageUrl = windowHref?.includes('lvpr.tv')
+      ? typeof document !== 'undefined'
+        ? document?.referrer ?? windowHref
+        : ''
+      : windowHref;
+
     this.currentMetrics = {
       autoplay:
         currentState.priority && currentState.autoplay
@@ -204,8 +213,7 @@ export class MetricsStatus<TElement> {
       nError: 0,
       nStalled: 0,
       nWaiting: 0,
-      pageUrl:
-        typeof window !== 'undefined' ? window?.location?.href ?? '' : '',
+      pageUrl,
       playbackScore: null,
       player: 'livepeer-js',
       playerHeight: null,

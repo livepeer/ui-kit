@@ -13,7 +13,11 @@ import {
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { isAccessControlError, isStreamOfflineError } from './utils';
+import {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  isAccessControlError,
+  isStreamOfflineError,
+} from './utils';
 import { MediaControllerContext, useMediaController } from '../../../context';
 import { PosterSource } from '../Player';
 
@@ -25,7 +29,8 @@ const mediaControllerSelector = ({
 
 export type VideoPlayerProps = VideoPlayerCoreProps<
   HTMLVideoElement,
-  PosterSource
+  PosterSource,
+  object
 > & {
   hlsConfig?: HlsVideoConfig;
   allowCrossOriginCredentials?: boolean;
@@ -47,6 +52,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
       onStreamStatusChange,
       onMetricsError,
       onAccessControlError,
+      onError: onMiscError,
       priority,
       allowCrossOriginCredentials,
     } = props;
@@ -101,12 +107,18 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
 
         const onError = (error: HlsError) => {
           const cleanError = new Error(
-            error?.response?.data?.toString?.() ?? 'Error with HLS.js',
+            error?.response?.data?.toString?.() ??
+            (error?.response as any)?.code === 401
+              ? ACCESS_CONTROL_ERROR_MESSAGE
+              : 'Error with HLS.js',
           );
+
           if (isStreamOfflineError(cleanError)) {
             onStreamStatusChange?.(false);
           } else if (isAccessControlError(cleanError)) {
             onAccessControlError?.(cleanError);
+          } else {
+            onMiscError?.(cleanError);
           }
           console.warn(cleanError.message);
         };
@@ -142,6 +154,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
       onStreamStatusChange,
       onAccessControlError,
       allowCrossOriginCredentials,
+      onMiscError,
     ]);
 
     // use HLS.js if Media Source is supported, then fallback to using a regular HTML video player
@@ -196,26 +209,40 @@ const HtmlVideoPlayer = React.forwardRef<
     onAccessControlError,
     filteredSources,
     fullscreen,
+    onError,
   } = props;
 
-  const handleError = React.useCallback(
-    (error: Error) => {
-      if (isAccessControlError(error)) {
-        onAccessControlError?.(error);
-      }
-      console.warn(error.message);
-    },
-    [onAccessControlError],
-  );
+  const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
+    React.useCallback(
+      async (e) => {
+        const sourceElement = e.target;
+        const parentElement = (sourceElement as HTMLSourceElement)
+          ?.parentElement;
+        const videoUrl = (parentElement as HTMLVideoElement)?.currentSrc;
 
-  const onVideoError = React.useCallback(
-    (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
-      // TODO: handleError(...)
-      console.log('video error', event);
-      handleError(new Error('Generic video error'));
-    },
-    [handleError],
-  );
+        if (videoUrl) {
+          try {
+            const response = await fetch(videoUrl);
+            if (response.status === 404) {
+              console.warn('Video not found');
+              return onError?.(new Error('Video not found'));
+            } else if (response.status === 401) {
+              console.warn('Unauthorized to view video');
+              return onAccessControlError?.(
+                new Error('Unauthorized to view video'),
+              );
+            }
+          } catch (err) {
+            console.warn(err);
+            return onError?.(new Error('Error fetching video URL'));
+          }
+        }
+
+        console.warn('Unknown error loading video');
+        return onError?.(new Error('Unknown error loading video'));
+      },
+      [onError, onAccessControlError],
+    );
 
   return (
     <video

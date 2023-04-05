@@ -39,6 +39,12 @@ export interface LivepeerProvider {
   getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics>;
 }
 
+export type PlaybackAccessControlRequest<TContext extends object> = {
+  context: TContext;
+  accessKey: string;
+  timestamp: number;
+};
+
 export type StreamIdOrString =
   | string
   | {
@@ -71,14 +77,35 @@ export type CreateStreamArgs = {
   playbackPolicy?: PlaybackPolicy;
 };
 
-export type PlaybackPolicy = {
+export type WebhookPlaybackPolicy<TContext extends object> = {
   /**
    * The type of playback policy to apply. `jwt` requires a signed JWT for
-   * playback. `public` indicates no access control will be applied (anyone
-   * with the `playbackId` can view without a JWT).
+   * playback. `webhook` requires that a webhook is configured and passed during the
+   * creation of the asset. `public` indicates no
+   * access control will be applied (anyone with the `playbackId` can
+   * view without a JWT or webhook).
+   */
+  type: 'webhook';
+  /** The ID of the webhook which has already been created. */
+  webhookId: string;
+  /** The context which is passed to the webhook when it is called on playback. */
+  webhookContext: TContext;
+};
+
+export type JwtOrPublicPlaybackPolicy = {
+  /**
+   * The type of playback policy to apply. `jwt` requires a signed JWT for
+   * playback. `webhook` requires that a webhook is configured and passed during the
+   * creation of the asset. `public` indicates no
+   * access control will be applied (anyone with the `playbackId` can
+   * view without a JWT or webhook).
    */
   type: 'jwt' | 'public';
 };
+
+export type PlaybackPolicy<TContext extends object = object> =
+  | JwtOrPublicPlaybackPolicy
+  | WebhookPlaybackPolicy<TContext>;
 
 export type UpdateStreamArgs = {
   /** The unique identifier for the stream */
@@ -194,9 +221,39 @@ export type CreateAssetProgress<TSource extends CreateAssetSourceType> = {
     : CreateAssetFileProgress;
 };
 
+export type StorageConfig = {
+  /**
+   * If the asset should be stored on IPFS.
+   */
+  ipfs?: boolean;
+  /**
+   * Metadata exported to the storage provider. This will be deep merged with the default
+   * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
+   *
+   * @see {@link https://eips.ethereum.org/EIPS/eip-721}
+   */
+  metadata?:
+    | Partial<Metadata> & {
+        [k: string]: unknown;
+      };
+  /**
+   * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
+   * will reference only the immutable media files.
+   */
+  metadataTemplate?: 'player' | 'file';
+};
+
 export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
+  /**
+   * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
+   */
+  storage?: StorageConfig;
+  /**
+   * Sets the playback policy for all of the assets created.
+   */
+  playbackPolicy?: PlaybackPolicy;
 };
 
 export type CreateAssetSourceUrl = CreateAssetSourceBase & {
@@ -278,27 +335,11 @@ export type UpdateAssetArgs = {
   /**
    * The storage configs to use for the asset. This also includes EIP-721 or EIP-1155 compatible NFT metadata configs.
    */
-  storage?: {
-    /**
-     * If the asset should be stored on IPFS.
-     */
-    ipfs?: boolean;
-    /**
-     * Metadata exported to the storage provider. This will be deep merged with the default
-     * metadata from the livepeer provider. This should ideally be EIP-721/EIP-1155 compatible.
-     *
-     * @see {@link https://eips.ethereum.org/EIPS/eip-721}
-     */
-    metadata?:
-      | Partial<Metadata> & {
-          [k: string]: unknown;
-        };
-    /**
-     * The NFT metadata template to use. `player` will embed the Livepeer Player's IPFS CID on the NFT while `file`
-     * will reference only the immutable media files.
-     */
-    metadataTemplate?: 'player' | 'file';
-  };
+  storage?: StorageConfig;
+  /**
+   * Sets the playback policy for the asset.
+   */
+  playbackPolicy?: PlaybackPolicy;
 } & (
   | {
       name: string;
@@ -429,6 +470,8 @@ export type Asset = {
    * name or title
    */
   name: string;
+  /** Configuration for asset playback access-control policy */
+  playbackPolicy?: PlaybackPolicy;
   /** Storage configs for the asset */
   storage?: {
     ipfs?: {
@@ -555,8 +598,10 @@ export type GetPlaybackInfoArgs =
 
 export type PlaybackInfo = {
   type: 'live' | 'vod' | 'recording';
+
   meta: {
     live: boolean;
+    playbackPolicy?: Asset['playbackPolicy'] | Stream['playbackPolicy'];
     source: {
       hrn: 'HLS (TS)' | 'MP4';
       type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';

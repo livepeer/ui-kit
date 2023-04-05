@@ -34,7 +34,8 @@ const defaultProgressUpdateInterval = 100;
 
 export type VideoPlayerProps = VideoPlayerCoreProps<
   MediaElement,
-  PosterSource
+  PosterSource,
+  object
 > &
   VideoCustomizationProps;
 
@@ -53,6 +54,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       poster,
       audioMode,
       onMetricsError,
+      onError,
       isCurrentlyShown,
     },
     ref,
@@ -79,12 +81,6 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       () => (autoPlay ? isCurrentlyShown : false),
       [autoPlay, isCurrentlyShown],
     );
-
-    const onError = async (_e: string) => {
-      // await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-      // await state._element?.unloadAsync();
-      // TODO add error handling
-    };
 
     React.useEffect(() => {
       const removeEffectsFromStore = addEffectsToStore(
@@ -183,7 +179,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         progressUpdateIntervalMillis={defaultProgressUpdateInterval}
         onFullscreenUpdate={onFullscreenUpdate}
         onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-        onError={onError}
+        onError={(err) => onError?.(new Error(err))}
         shouldPlay={shouldPlay}
         ref={ref}
         isMuted={muted}

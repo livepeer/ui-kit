@@ -10,7 +10,7 @@ export type { AudioPlayerProps };
 
 export const AudioPlayer = React.forwardRef<
   Video,
-  AudioPlayerProps<MediaElement, PosterSource>
+  AudioPlayerProps<MediaElement, PosterSource, object>
 >(() => {
   return <Text>Not implemented yet.</Text>;
 });
