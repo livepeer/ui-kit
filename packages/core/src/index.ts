@@ -23,6 +23,7 @@ export { HttpError } from './errors';
 export { createControllerStore, getMediaSourceType } from './media';
 export type {
   AudioSrc,
+  Base64Src,
   ControlsOptions,
   DeviceInformation,
   ElementSize,

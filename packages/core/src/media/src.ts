@@ -75,7 +75,7 @@ export const getMediaSourceType = (
     : base64String.test(src)
     ? {
         type: 'video',
-        src: src,
+        src: src as Base64Src['src'],
         mime: base64Mime ? (base64Mime[1] as MimeType) : 'video/mp4',
       }
     : null;

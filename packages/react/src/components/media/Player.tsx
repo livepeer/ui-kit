@@ -3,7 +3,7 @@ import {
   PlayerObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
-import { AudioSrc, HlsSrc, VideoSrc } from 'livepeer/media';
+import { AudioSrc, Base64Src, HlsSrc, VideoSrc } from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/browser';
 
 import { HlsVideoConfig } from 'livepeer/media/browser/hls';
@@ -95,7 +95,7 @@ export const PlayerInternal = (props: PlayerProps) => {
             {...playerProps}
             hlsConfig={props.hlsConfig}
             allowCrossOriginCredentials={props.allowCrossOriginCredentials}
-            src={source as (VideoSrc | HlsSrc)[] | null}
+            src={source as (VideoSrc | HlsSrc | Base64Src)[] | null}
           />
         )}
 
