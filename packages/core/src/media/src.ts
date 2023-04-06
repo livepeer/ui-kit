@@ -48,12 +48,13 @@ const audioExtensions =
 const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
 const base64String = /data:video/;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
-const mimeFromBase64 = /data:(.+?);base64/;
+const mimeFromBase64Pattern = /data:(.+?);base64/;
+const mimeFromBase64RegExp = new RegExp(mimeFromBase64Pattern);
 
 export const getMediaSourceType = (
   src: string,
 ): HlsSrc | AudioSrc | VideoSrc | Base64Src | null => {
-  const base64Mime = src.match(mimeFromBase64);
+  const base64Mime = src.match(mimeFromBase64RegExp);
   return hlsExtensions.test(src)
     ? {
         type: 'hls',
