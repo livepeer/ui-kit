@@ -1,4 +1,10 @@
-import { AudioSrc, ControlsOptions, HlsSrc, VideoSrc } from '@livepeer/core';
+import {
+  AudioSrc,
+  Base64Src,
+  ControlsOptions,
+  HlsSrc,
+  VideoSrc,
+} from '@livepeer/core';
 
 import { PlayerObjectFit, PlayerProps } from './Player';
 
@@ -7,7 +13,7 @@ export type VideoPlayerProps<
   TPoster,
   TPlaybackPolicyObject extends object,
 > = {
-  src: (HlsSrc | VideoSrc)[] | null;
+  src: (HlsSrc | VideoSrc | Base64Src)[] | null;
   objectFit: PlayerObjectFit;
   width?: string | number;
   autoPlay?: boolean;

@@ -1,4 +1,4 @@
-import { AudioSrc, VideoSrc } from '@livepeer/core-react';
+import { AudioSrc, Base64Src, VideoSrc } from '@livepeer/core-react';
 import {
   PlayerProps as CorePlayerProps,
   PlayerObjectFit,
@@ -62,7 +62,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
         ) : (
           <VideoPlayer
             {...playerProps}
-            src={source as VideoSrc[] | null}
+            src={source as VideoSrc[] | Base64Src[] | null}
             audioMode={props.audioMode}
           />
         )}

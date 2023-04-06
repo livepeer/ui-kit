@@ -1,5 +1,6 @@
 import {
   AudioSrc,
+  Base64Src,
   HlsSrc,
   Src,
   VideoSrc,
@@ -196,11 +197,18 @@ export const useSourceMimeTyped = <
         };
 
         return src;
+      } else {
+        const srcBase64: Base64Src = {
+          type: 'video',
+          mime: 'video/mp4',
+          src: src as Base64Src['src'],
+        };
+        return srcBase64;
       }
     }
 
     return null;
-  }, [autoUrlUpload, decentralizedSrcOrPlaybackId]);
+  }, [autoUrlUpload, decentralizedSrcOrPlaybackId, src]);
 
   const sourceMimeTyped = React.useMemo(() => {
     // cast all URLs to an array of strings
@@ -262,7 +270,11 @@ export const useSourceMimeTyped = <
       sourceMimeTyped?.[0]?.type === 'video' ||
       sourceMimeTyped?.[0]?.type === 'hls'
     ) {
-      const previousSources = [...sourceMimeTyped] as (HlsSrc | VideoSrc)[];
+      const previousSources = [...sourceMimeTyped] as (
+        | Base64Src
+        | HlsSrc
+        | VideoSrc
+      )[];
 
       return previousSources.sort((a, b) => {
         if (a.type === 'video' && b.type === 'video') {

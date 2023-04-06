@@ -1,5 +1,5 @@
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
-import { HlsSrc, MediaControllerState, VideoSrc } from 'livepeer';
+import { Base64Src, HlsSrc, MediaControllerState, VideoSrc } from 'livepeer';
 import {
   addMediaMetricsToInitializedStore,
   canPlayMediaNatively,
@@ -60,7 +60,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
     const canUseHlsjs = React.useMemo(() => isHlsSupported(), []);
 
     const [filteredSources, setFilteredSources] = React.useState<
-      VideoSrc[] | HlsSrc[] | null
+      VideoSrc[] | HlsSrc[] | Base64Src[] | null
     >(null);
 
     React.useEffect(() => {
@@ -71,7 +71,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
           ? [src[0]]
           : src
               ?.filter((s) => s?.type === 'video' && canPlayMediaNatively(s))
-              .map((s) => s as VideoSrc) ?? null,
+              .map((s) => s as VideoSrc | Base64Src) ?? null,
       );
     }, [src]);
 
@@ -191,7 +191,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
 );
 
 type HtmlVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
-  filteredSources: VideoSrc[] | HlsSrc[] | null;
+  filteredSources: VideoSrc[] | HlsSrc[] | Base64Src[] | null;
   fullscreen: boolean;
 };
 
