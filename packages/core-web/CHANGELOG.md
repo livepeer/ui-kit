@@ -1,5 +1,14 @@
 # livepeer
 
+## 2.4.1
+
+### Patch Changes
+
+- [#304](https://github.com/livepeer/livepeer.js/pull/304) [`d2522dd`](https://github.com/livepeer/livepeer.js/commit/d2522dd5d9dffce55c1c9d6f18c4db2b1b7eccda) Thanks [@spreadzp](https://github.com/spreadzp)! - **Feature:** added support for base64 video sources - this allows for a video source like `data:video/webm;base64,GkX...AUL3` to be passed into the `src` prop and the Player will handle it properly.
+
+- Updated dependencies [[`d2522dd`](https://github.com/livepeer/livepeer.js/commit/d2522dd5d9dffce55c1c9d6f18c4db2b1b7eccda)]:
+  - @livepeer/core@1.4.1
+
 ## 2.4.0
 
 ### Minor Changes
@@ -10,7 +19,7 @@
 
 - [#303](https://github.com/livepeer/livepeer.js/pull/303) [`8f65da8`](https://github.com/livepeer/livepeer.js/commit/8f65da8771771629da6c9fa5a55cce0447966d32) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated the metrics to send the `pageUrl` as the `document.referrer` when used in an iFrame context, to be able to attribute metrics to a page which uses an iFrame.
 
-- [#302](https://github.com/livepeer/livepeer.js/pull/302) [`4ebec15`](https://github.com/livepeer/livepeer.js/commit/4ebec150d92f64be31fcb78e9db64c8af6a24f79) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added an `onError` callback to the Player to allow users to catch and handle miscellaneous errors which occur in the Player, which are not already handled. 
+- [#302](https://github.com/livepeer/livepeer.js/pull/302) [`4ebec15`](https://github.com/livepeer/livepeer.js/commit/4ebec150d92f64be31fcb78e9db64c8af6a24f79) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added an `onError` callback to the Player to allow users to catch and handle miscellaneous errors which occur in the Player, which are not already handled.
 
 - Updated dependencies [[`ec96b12`](https://github.com/livepeer/livepeer.js/commit/ec96b12243b3688ddff9a55db1a03454d0af0e25), [`8f65da8`](https://github.com/livepeer/livepeer.js/commit/8f65da8771771629da6c9fa5a55cce0447966d32), [`4ebec15`](https://github.com/livepeer/livepeer.js/commit/4ebec150d92f64be31fcb78e9db64c8af6a24f79)]:
   - @livepeer/core@1.4.0
