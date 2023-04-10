@@ -101,6 +101,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
 
       if (element && shouldUseHlsjs) {
         const onLive = (fullscreen: boolean) => {
+          onAccessControlError?.(null);
           onStreamStatusChange?.(true);
           store.getState().setLive(fullscreen);
         };
@@ -142,6 +143,7 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
         );
 
         return () => {
+          onAccessControlError?.(null);
           destroy();
         };
       }
