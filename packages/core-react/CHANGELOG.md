@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.4.2
+
+### Patch Changes
+
+- [#306](https://github.com/livepeer/livepeer.js/pull/306) [`07f4a6e`](https://github.com/livepeer/livepeer.js/commit/07f4a6e3e257834611481325cbe7c7617ec9bf43) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed access control error not resetting when livestream starts. 
+
+- Updated dependencies [[`07f4a6e`](https://github.com/livepeer/livepeer.js/commit/07f4a6e3e257834611481325cbe7c7617ec9bf43)]:
+  - @livepeer/core@1.4.2
+
 ## 1.4.1
 
 ### Patch Changes
