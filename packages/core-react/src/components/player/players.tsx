@@ -31,7 +31,7 @@ export type VideoPlayerProps<
   options?: ControlsOptions;
   onStreamStatusChange?: (isLive: boolean) => void;
   onMetricsError?: (error: Error) => void;
-  onAccessControlError?: (error: Error) => void;
+  onAccessControlError?: (error: Error | null) => void;
   onError?: (error: Error) => void;
 };
 

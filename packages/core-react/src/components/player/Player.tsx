@@ -182,11 +182,15 @@ export const usePlayer = <
     React.useState<Error | null>(null);
 
   const accessControlErrorCallback = React.useCallback(
-    (error: Error) => {
+    (error: Error | null) => {
       if (!accessControlError) {
         setAccessControlError(error);
       }
-      onAccessControlError?.(error);
+      if (!error) {
+        setAccessControlError(null);
+      } else {
+        onAccessControlError?.(error);
+      }
     },
     [onAccessControlError, accessControlError],
   );
