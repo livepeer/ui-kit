@@ -124,7 +124,7 @@ export type MediaControllerState<TElement = void> = {
   requestSeekForward: (difference?: number) => void;
   _requestSeekDiff: (difference: number) => void;
 
-  setLive: (fullscreen: boolean) => void;
+  setLive: (live: boolean) => void;
 
   setSize: (size: MediaSizing) => void;
 

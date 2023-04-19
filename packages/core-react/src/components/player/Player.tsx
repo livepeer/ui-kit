@@ -125,12 +125,7 @@ export type PlayerProps<
 
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
-} & (
-  | {
-      src: string | string[] | null | undefined;
-    }
-  | { playbackId: string | null | undefined }
-);
+};
 
 export const usePlayer = <
   TElement,

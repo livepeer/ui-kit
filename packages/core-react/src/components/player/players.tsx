@@ -4,6 +4,7 @@ import {
   ControlsOptions,
   HlsSrc,
   VideoSrc,
+  WebRTCSrc,
 } from '@livepeer/core';
 
 import { PlayerObjectFit, PlayerProps } from './Player';
@@ -13,7 +14,7 @@ export type VideoPlayerProps<
   TPoster,
   TPlaybackPolicyObject extends object,
 > = {
-  src: (HlsSrc | VideoSrc | Base64Src)[] | null;
+  src: (HlsSrc | VideoSrc | Base64Src | WebRTCSrc)[] | null;
   objectFit: PlayerObjectFit;
   width?: string | number;
   autoPlay?: boolean;

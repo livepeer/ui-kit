@@ -16,7 +16,7 @@ export type {
   GetLivepeerProviderResult,
   WatchLivepeerProviderCallback,
 } from './actions';
-export { clearClient, Client, createClient } from './client';
+export { Client, clearClient, createClient } from './client';
 export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
 export { HttpError } from './errors';
@@ -37,6 +37,7 @@ export type {
   PlayerPropsOptions,
   Src,
   VideoSrc,
+  WebRTCSrc,
 } from './media';
 export { createStorage, noopStorage } from './storage';
 export type { ClientStorage as Storage } from './storage';
