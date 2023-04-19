@@ -164,6 +164,14 @@ class Timer {
   }
 }
 
+function isInIframe() {
+  try {
+    return typeof window !== 'undefined' && window.self !== window.top;
+  } catch (e) {
+    return false;
+  }
+}
+
 export class MetricsStatus<TElement> {
   preloadTime = 0;
   requestedPlayTime = 0;
@@ -193,10 +201,10 @@ export class MetricsStatus<TElement> {
     const windowHref =
       typeof window !== 'undefined' ? window?.location?.href ?? '' : '';
 
-    const pageUrl = windowHref?.includes('lvpr.tv')
+    const pageUrl = isInIframe()
       ? typeof document !== 'undefined'
-        ? document?.referrer ?? windowHref
-        : ''
+        ? document?.referrer || windowHref
+        : windowHref
       : windowHref;
 
     this.currentMetrics = {
