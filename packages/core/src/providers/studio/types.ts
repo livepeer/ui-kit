@@ -123,8 +123,11 @@ export type StudioPlaybackInfo = {
   meta: {
     live?: 0 | 1;
     source: {
-      hrn: 'HLS (TS)' | 'MP4';
-      type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';
+      hrn: 'HLS (TS)' | 'MP4' | 'WebRTC (VP8)';
+      type:
+        | 'html5/application/vnd.apple.mpegurl'
+        | 'html5/video/mp4'
+        | 'html5/video/vp8';
       url: string;
       size?: number;
       width?: number;
