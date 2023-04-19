@@ -36,6 +36,8 @@ type RawMetrics = {
 
   autoplay: 'autoplay' | 'preload-full' | 'preload-metadata' | 'standard';
   userAgent: string;
+
+  uid: string;
 };
 
 type PlaybackRecord = {
@@ -225,6 +227,7 @@ export class MetricsStatus<TElement> {
       timeUnpaused: 0,
       timeWaiting: 0,
       ttff: 0,
+      uid: currentState.walletId,
       userAgent: String(currentState?.device?.userAgent ?? '').replace(
         /\\|"/gm,
         '',

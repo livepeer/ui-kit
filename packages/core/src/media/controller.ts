@@ -49,6 +49,8 @@ export type MediaControllerState<TElement = void> = {
   priority: boolean;
   /** The preload option passed in to Player */
   preload: 'full' | 'metadata' | 'none';
+  /** The walletId for the viewer passed in to Player */
+  walletId: string;
 
   /** If the media is current playing or paused */
   playing: boolean;
@@ -191,6 +193,7 @@ export const createControllerStore = <TElement>({
         muted: Boolean(playerProps.muted),
         priority: Boolean(playerProps.priority),
         preload: playerProps.preload ?? 'none',
+        walletId: playerProps.walletId ?? '',
 
         hasPlayed: false,
         playing: false,
@@ -358,4 +361,5 @@ export type PlayerPropsOptions = {
   priority?: boolean;
   src?: Src | null;
   preload?: 'full' | 'metadata' | 'none';
+  walletId?: string;
 };
