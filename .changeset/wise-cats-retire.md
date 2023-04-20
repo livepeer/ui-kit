@@ -6,4 +6,4 @@
 '@livepeer/react-native': patch
 ---
 
-**Feature:**: added the ability to pass in a `walletId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.
+**Feature:**: added the ability to pass in a `viewerId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.

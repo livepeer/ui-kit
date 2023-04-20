@@ -237,7 +237,7 @@ export class MetricsStatus<TElement> {
       timeUnpaused: 0,
       timeWaiting: 0,
       ttff: 0,
-      uid: currentState.walletId,
+      uid: currentState.viewerId,
       userAgent: String(currentState?.device?.userAgent ?? '').replace(
         /\\|"/gm,
         '',

@@ -99,7 +99,7 @@ export type PlayerProps<
     | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
 
   /** The wallet ID of the user who is viewing the media. This is used to track viewership for specific wallet IDs. */
-  walletId?: string;
+  viewerId?: string;
 
   /** The JWT which is passed along to allow playback of an asset. */
   jwt?: string;
@@ -161,7 +161,7 @@ export const usePlayer = <
     onSourceUpdated,
     jwt,
 
-    walletId,
+    viewerId,
 
     refetchPlaybackInfoInterval = 5000,
     autoUrlUpload = true,
@@ -300,7 +300,7 @@ export const usePlayer = <
       onAccessControlError: accessControlErrorCallback,
       onError,
       isCurrentlyShown: _isCurrentlyShown,
-      walletId,
+      viewerId,
     },
     controlsContainerProps: {
       hidePosterOnPlayed,
