@@ -52,9 +52,9 @@ export const HLSVideoPlayer = React.forwardRef<
       const onError = (error: HlsError) => {
         const cleanError = new Error(
           error?.response?.data?.toString?.() ??
-          (error?.response as any)?.code === 401
-            ? ACCESS_CONTROL_ERROR_MESSAGE
-            : 'Error with HLS.js',
+            ((error?.response as any)?.code === 401
+              ? ACCESS_CONTROL_ERROR_MESSAGE
+              : 'Error with HLS.js'),
         );
 
         if (isStreamOfflineError(cleanError)) {

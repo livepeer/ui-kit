@@ -139,6 +139,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       try {
         await negotiateConnectionWithClientOffer(peerConnection, source);
       } catch (e) {
+        console.log(e);
         callbacks?.onError?.(e as Error);
       }
     });
@@ -189,7 +190,7 @@ async function negotiateConnectionWithClientOffer(
      * and what kind of media client and server have negotiated to exchange.
      */
     const response = await postSDPOffer(endpoint, ofr.sdp);
-    if (response.status === 201) {
+    if (response.ok) {
       const answerSDP = await response.text();
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription({ type: 'answer', sdp: answerSDP }),

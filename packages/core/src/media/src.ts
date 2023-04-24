@@ -52,7 +52,7 @@ const audioExtensions =
 const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
 const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
-const webrtcExtensions = /(webrtc)/i;
+const webrtcExtensions = /(webrtc|sdp)/i;
 const mimeFromBase64Pattern = /data:(.+?);base64/;
 
 export const getMediaSourceType = (

@@ -183,16 +183,13 @@ export const usePlayer = <
 
   const accessControlErrorCallback = React.useCallback(
     (error: Error | null) => {
-      if (!accessControlError) {
-        setAccessControlError(error);
-      }
-      if (!error) {
-        setAccessControlError(null);
-      } else {
+      setAccessControlError((prev) => prev ?? error);
+
+      if (error) {
         onAccessControlError?.(error);
       }
     },
-    [onAccessControlError, accessControlError],
+    [onAccessControlError],
   );
 
   const { source, uploadStatus } = useSourceMimeTyped({

@@ -1,5 +1,5 @@
 import { HttpError } from '@livepeer/core';
-import { CreateAssetUrlProgress } from '@livepeer/core/types';
+import { CreateAssetUrlProgress, PlaybackInfo } from '@livepeer/core/types';
 import { parseCid } from '@livepeer/core/utils';
 
 import * as React from 'react';
@@ -76,5 +76,28 @@ export const usePlaybackInfoOrImport = ({
     }
   }, [autoUrlUpload, playbackInfoErrorCode, importAsset, status]);
 
-  return playbackInfo;
+  const p: PlaybackInfo | undefined = React.useMemo(
+    () =>
+      playbackInfo
+        ? {
+            ...playbackInfo,
+            meta: {
+              ...playbackInfo?.meta,
+              source: [
+                ...(playbackInfo?.meta?.source?.filter(
+                  (s) => s.type !== 'html5/video/mp4',
+                ) ?? []),
+                {
+                  hrn: 'WebRTC (VP8)',
+                  type: 'html5/video/vp8',
+                  url: 'https://mdw-staging-staging-catalyst-0.livepeer.monster/webrtc/video+a8a6fftljh8noqgt',
+                } as const,
+              ],
+            },
+          }
+        : undefined,
+    [playbackInfo],
+  );
+
+  return p;
 };

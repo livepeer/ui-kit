@@ -55,8 +55,8 @@ export const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>(
       async (error: Error) => {
         onError?.(error);
 
-        /** Limit reconnection attempts to at-most once every 5 seconds */
-        await new Promise((r) => setTimeout(r, 5000));
+        /** Limit reconnection attempts to at-most once every 3 seconds */
+        await new Promise((r) => setTimeout(r, 3000));
 
         incrementSourceIndex();
       },
