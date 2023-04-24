@@ -36,6 +36,8 @@ type RawMetrics = {
 
   autoplay: 'autoplay' | 'preload-full' | 'preload-metadata' | 'standard';
   userAgent: string;
+
+  uid: string;
 };
 
 type PlaybackRecord = {
@@ -164,6 +166,16 @@ class Timer {
   }
 }
 
+function isInIframe() {
+  try {
+    return typeof window !== 'undefined' && window.self !== window.top;
+  } catch (e) {
+    // if accessing window.top throws an exception due to cross-origin policy, the catch block will also return true,
+    // indicating the code is running inside an iframe
+    return true;
+  }
+}
+
 export class MetricsStatus<TElement> {
   preloadTime = 0;
   requestedPlayTime = 0;
@@ -193,10 +205,10 @@ export class MetricsStatus<TElement> {
     const windowHref =
       typeof window !== 'undefined' ? window?.location?.href ?? '' : '';
 
-    const pageUrl = windowHref?.includes('lvpr.tv')
+    const pageUrl = isInIframe()
       ? typeof document !== 'undefined'
-        ? document?.referrer ?? windowHref
-        : ''
+        ? document?.referrer || windowHref
+        : windowHref
       : windowHref;
 
     this.currentMetrics = {
@@ -225,6 +237,7 @@ export class MetricsStatus<TElement> {
       timeUnpaused: 0,
       timeWaiting: 0,
       ttff: 0,
+      uid: currentState.viewerId,
       userAgent: String(currentState?.device?.userAgent ?? '').replace(
         /\\|"/gm,
         '',

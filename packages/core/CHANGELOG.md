@@ -1,5 +1,15 @@
 # @livepeer/core
 
+## 1.4.3
+
+### Patch Changes
+
+- [#310](https://github.com/livepeer/livepeer.js/pull/310) [`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed blank source URLs on lvpr.tv.
+
+- [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added the ability to pass in a `viewerId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.
+
+- [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:**: fix from @Tiagogv to resolve import errors due to the most recent HLS.js release.
+
 ## 1.4.2
 
 ### Patch Changes

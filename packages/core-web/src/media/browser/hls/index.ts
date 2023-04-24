@@ -1,4 +1,4 @@
-import Hls, { ErrorData, ErrorTypes, Events, HlsConfig } from 'hls.js';
+import Hls, { ErrorData, HlsConfig } from 'hls.js';
 
 import { isClient } from '../utils';
 
@@ -71,27 +71,27 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.attachMedia(element);
   }
 
-  hls.on(Events.LEVEL_LOADED, async (_e, data) => {
+  hls.on(Hls.Events.LEVEL_LOADED, async (_e, data) => {
     const { live, totalduration: duration } = data.details;
 
     callbacks?.onLive?.(Boolean(live));
     callbacks?.onDuration?.(duration ?? 0);
   });
 
-  hls.on(Events.MEDIA_ATTACHED, async () => {
+  hls.on(Hls.Events.MEDIA_ATTACHED, async () => {
     hls.loadSource(source);
 
-    hls.on(Events.MANIFEST_PARSED, (_event, _data) => {
+    hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
       callbacks?.onCanPlay?.();
     });
   });
 
-  hls.on(Events.ERROR, async (_event, data) => {
+  hls.on(Hls.Events.ERROR, async (_event, data) => {
     const { type, details, fatal } = data;
-    const isFatalNetworkError = type === ErrorTypes.NETWORK_ERROR && fatal;
-    const isFatalMediaError = type === ErrorTypes.MEDIA_ERROR && fatal;
+    const isFatalNetworkError = type === Hls.ErrorTypes.NETWORK_ERROR && fatal;
+    const isFatalMediaError = type === Hls.ErrorTypes.MEDIA_ERROR && fatal;
     const isManifestParsingError =
-      ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
+      Hls.ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
 
     if (!fatal && !isManifestParsingError) return;
     callbacks?.onError?.(data);
