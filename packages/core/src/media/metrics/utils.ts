@@ -9,6 +9,7 @@ const RECORDING_URL_PART_VALUE = 'recordings';
 // https://livepeercdn.com/recordings/<playback-id>/index.m3u8
 export const getMetricsReportingUrl = async (
   src: string,
+  sessionToken?: string | null,
 ): Promise<string | null> => {
   try {
     const parsedUrl = new URL(src);
@@ -57,7 +58,13 @@ export const getMetricsReportingUrl = async (
         // parse the url which we're redirected to
         const redirectedUrl = response?.url?.replace('https:', 'wss:');
 
-        return redirectedUrl ?? null;
+        const url = redirectedUrl ? new URL(redirectedUrl) : null;
+
+        if (url && sessionToken) {
+          url.searchParams.set('tkn', sessionToken);
+        }
+
+        return url?.toString?.() ?? null;
       } catch (error) {
         console.log(`Could not fetch metrics reporting URL.`, error);
       }

@@ -203,15 +203,25 @@ async function negotiateConnectionWithClientOffer(
   }
 }
 
+const timeout = 5000;
+
 async function postSDPOffer(endpoint: string, data: string) {
-  return await fetch(endpoint, {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  const response = await fetch(endpoint, {
     method: 'POST',
     mode: 'cors',
     headers: {
       'content-type': 'application/sdp',
     },
     body: data,
+    signal: controller.signal,
   });
+
+  clearTimeout(id);
+
+  return response;
 }
 
 /**

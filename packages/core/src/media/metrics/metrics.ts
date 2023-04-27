@@ -26,7 +26,7 @@ type RawMetrics = {
 
   playbackScore: number | null;
 
-  player: 'livepeer-js';
+  player: 'audio' | 'hls' | 'video' | 'webrtc' | 'unknown';
 
   sourceType: MimeType | 'unknown';
 
@@ -227,7 +227,7 @@ export class MetricsStatus<TElement> {
       nWaiting: 0,
       pageUrl,
       playbackScore: null,
-      player: 'livepeer-js',
+      player: currentState?.src?.type ?? 'unknown',
       playerHeight: null,
       playerWidth: null,
       preloadTime: 0,
@@ -348,6 +348,18 @@ export class MetricsStatus<TElement> {
   }
 }
 
+const generateRandomToken = () => {
+  try {
+    return Math.random().toString(16).substring(2);
+  } catch (e) {
+    //
+  }
+
+  return 'none';
+};
+
+const sessionToken = generateRandomToken(); // used to track playbacks across sessions
+
 const bootMs = Date.now(); // used for firstPlayback value
 
 export type MediaMetrics<TElement> = {
@@ -390,7 +402,10 @@ export function addMediaMetricsToStore<TElement>(
 
   try {
     const createNewWebSocket = async (numRetries = 0) => {
-      const reportingWebsocketUrl = await getMetricsReportingUrl(sourceUrl);
+      const reportingWebsocketUrl = await getMetricsReportingUrl(
+        sourceUrl,
+        sessionToken,
+      );
 
       if (reportingWebsocketUrl) {
         const newWebSocket = new WebSocket(reportingWebsocketUrl);
