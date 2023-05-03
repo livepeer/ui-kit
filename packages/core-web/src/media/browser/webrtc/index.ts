@@ -215,6 +215,7 @@ async function postSDPOffer(endpoint: string, data: string) {
     headers: {
       'content-type': 'application/sdp',
     },
+    redirect: 'follow',
     body: data,
     signal: controller.signal,
   });
