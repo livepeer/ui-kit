@@ -11,6 +11,7 @@ export const Asset = () => {
     sources: videos.map((video) => ({
       file: video,
       name: video.name,
+      creatorId: '0x0000000000000000000000000000000000000000',
     })),
   });
   const {
