@@ -11,6 +11,7 @@ export type MirrorSizeArray<TArray extends ReadonlyArray<any>, TType> = {
 export type {
   Asset,
   CreateAssetArgs,
+  CreateAssetCreatorId,
   CreateAssetFileProgress,
   CreateAssetProgress,
   CreateAssetProgressBase,

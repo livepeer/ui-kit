@@ -243,6 +243,20 @@ export type StorageConfig = {
   metadataTemplate?: 'player' | 'file';
 };
 
+export type CreateAssetCreatorId =
+  | {
+      /**
+       * The `type` of the identifier - unverified means that the value is not signed, and is an address
+       * that is blindly trusted.
+       */
+      type: 'unverified';
+      /**
+       * Developer-managed ID of the user who created the asset.
+       */
+      value: string;
+    }
+  | string;
+
 export type CreateAssetSourceBase = {
   /** Name for the new asset */
   name: string;
@@ -254,6 +268,11 @@ export type CreateAssetSourceBase = {
    * Sets the playback policy for all of the assets created.
    */
   playbackPolicy?: PlaybackPolicy;
+
+  /**
+   * Sets the creator ID for the asset that is created.
+   */
+  creatorId?: CreateAssetCreatorId;
 };
 
 export type CreateAssetSourceUrl = CreateAssetSourceBase & {

@@ -182,6 +182,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                   }
                 : undefined,
               ...(playbackPolicy ? { playbackPolicy } : {}),
+              ...(source.creatorId ? { creatorId: source.creatorId } : {}),
             },
             headers: this._defaultHeaders,
           });
@@ -210,6 +211,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                   }
                 : undefined,
               ...(playbackPolicy ? { playbackPolicy } : {}),
+              ...(source.creatorId ? { creatorId: source.creatorId } : {}),
             },
             headers: this._defaultHeaders,
           });

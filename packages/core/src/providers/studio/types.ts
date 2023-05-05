@@ -1,5 +1,6 @@
 import {
   Asset,
+  CreateAssetCreatorId,
   CreateStreamArgs,
   MultistreamTargetRef,
   Stream,
@@ -87,6 +88,8 @@ export type StudioCreateAssetArgs = {
   name: string;
   /** Storage configs for the asset */
   storage?: StudioStorageConfig;
+  /** The creator ID for the asset */
+  creatorId?: CreateAssetCreatorId;
 };
 
 export type StudioCreateAssetUrlArgs = {
@@ -98,6 +101,8 @@ export type StudioCreateAssetUrlArgs = {
   url: string;
   /** Storage configs for the asset */
   storage?: StudioStorageConfig;
+  /** The creator ID for the asset */
+  creatorId?: CreateAssetCreatorId;
 };
 
 export interface StudioCreateStreamArgs extends CreateStreamArgs {
