@@ -1,5 +1,30 @@
 # @livepeer/core-react
 
+## 1.4.4
+
+### Patch Changes
+
+- [#315](https://github.com/livepeer/livepeer.js/pull/315) [`f7246ca`](https://github.com/livepeer/livepeer.js/commit/f7246ca6e4d62758f46bf6c282c632ac97ffc654) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added creator ID to create asset, so users can provide either a string (which is an unverified address) or an object with a `type`. We currently only support `unverified` types, which means that passing a verified signature to verify the address is not yet possible.
+
+  ```tsx
+  type CreateAssetCreatorId =
+    | {
+        /**
+         * The `type` of the identifier - unverified means that the value is not signed, and is an address
+         * that is blindly trusted.
+         */
+        type: 'unverified';
+        /**
+         * Developer-managed ID of the user who created the asset.
+         */
+        value: string;
+      }
+    | string;
+  ```
+
+- Updated dependencies [[`f7246ca`](https://github.com/livepeer/livepeer.js/commit/f7246ca6e4d62758f46bf6c282c632ac97ffc654)]:
+  - @livepeer/core@1.4.4
+
 ## 1.4.3
 
 ### Patch Changes
@@ -8,7 +33,7 @@
 
 - [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added the ability to pass in a `viewerId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.
 
-- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]: 
+- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]:
   - @livepeer/core@1.4.3
 
 ## 1.4.2
