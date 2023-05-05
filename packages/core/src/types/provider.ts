@@ -557,6 +557,13 @@ export type Asset = {
     /** Value of the hash */
     hash?: string;
   }[];
+  creatorId?: {
+    type: 'unverified';
+    /**
+     * Developer-managed ID of the user who created the asset.
+     */
+    value: string;
+  };
   /** Detailed information about the video in the asset */
   videoSpec?: {
     /** Format of the asset, also referred to as container (e.g. MP4) */
