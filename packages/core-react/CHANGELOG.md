@@ -33,7 +33,7 @@
 
 - [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added the ability to pass in a `viewerId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.
 
-- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]:
+- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]: 
   - @livepeer/core@1.4.3
 
 ## 1.4.2
