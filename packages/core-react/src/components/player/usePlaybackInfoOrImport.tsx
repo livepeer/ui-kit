@@ -90,7 +90,7 @@ export const usePlaybackInfoOrImport = ({
                 {
                   hrn: 'WebRTC (VP8)',
                   type: 'html5/video/vp8',
-                  url: 'https://mdw-staging-staging-catalyst-0.livepeer.monster:443/webrtc/video+a8a6fftljh8noqgt', // 'https://livepeercdn.monster/webrtc/a8a6fftljh8noqgt',
+                  url: 'https://mdw-staging-staging-catalyst-0.livepeer.monster:443/webrtc/video+11e6ydrd8k22jm6g', // 'https://livepeercdn.monster/webrtc/a8a6fftljh8noqgt',
                 } as const,
               ],
             },

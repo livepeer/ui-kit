@@ -19,7 +19,14 @@ export type {
 export { Client, clearClient, createClient } from './client';
 export type { ClientConfig } from './client';
 export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
-export { HttpError } from './errors';
+export {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  HttpError,
+  STREAM_OFFLINE_ERROR_MESSAGE,
+  STREAM_OPEN_ERROR_MESSAGE,
+  isAccessControlError,
+  isStreamOfflineError,
+} from './errors';
 export { createControllerStore, getMediaSourceType } from './media';
 export type {
   AudioSrc,

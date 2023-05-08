@@ -1,15 +1,15 @@
-import { HlsSrc } from 'livepeer';
+import {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  HlsSrc,
+  isAccessControlError,
+  isStreamOfflineError,
+} from 'livepeer';
 import { HlsError, createNewHls } from 'livepeer/media/browser/hls';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { VideoPlayerProps } from './VideoPlayer';
 import { MediaControllerContext } from '../../../../context';
-import {
-  ACCESS_CONTROL_ERROR_MESSAGE,
-  isAccessControlError,
-  isStreamOfflineError,
-} from '../utils';
 
 export type HLSVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
   src: HlsSrc;

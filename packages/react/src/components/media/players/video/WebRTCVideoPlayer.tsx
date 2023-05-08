@@ -1,11 +1,15 @@
-import { WebRTCSrc } from 'livepeer';
+import {
+  WebRTCSrc,
+  isAccessControlError,
+  isStreamOfflineError,
+} from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import { createNewWHEP } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
 import { VideoPlayerProps } from './VideoPlayer';
+
 import { MediaControllerContext } from '../../../../context';
-import { isAccessControlError, isStreamOfflineError } from '../utils';
 
 export type WebRTCVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
   src: WebRTCSrc;
