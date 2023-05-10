@@ -62,7 +62,7 @@ function createPeerConnection(host: string | null): RTCPeerConnection | null {
 }
 
 /**
- * Example implementation of a client that uses WHEP to playback video over WebRTC.
+ * Client that uses WHEP to playback video over WebRTC.
  *
  * https://www.ietf.org/id/draft-murillo-whep-00.html
  */
