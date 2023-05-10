@@ -1,5 +1,5 @@
 import { HttpError } from '@livepeer/core';
-import { CreateAssetUrlProgress, PlaybackInfo } from '@livepeer/core/types';
+import { CreateAssetUrlProgress } from '@livepeer/core/types';
 import { parseCid } from '@livepeer/core/utils';
 
 import * as React from 'react';
@@ -76,28 +76,5 @@ export const usePlaybackInfoOrImport = ({
     }
   }, [autoUrlUpload, playbackInfoErrorCode, importAsset, status]);
 
-  const p: PlaybackInfo | undefined = React.useMemo(
-    () =>
-      playbackInfo
-        ? {
-            ...playbackInfo,
-            meta: {
-              ...playbackInfo?.meta,
-              source: [
-                ...(playbackInfo?.meta?.source?.filter(
-                  (s) => s.type !== 'html5/video/mp4',
-                ) ?? []),
-                {
-                  hrn: 'WebRTC (H264)',
-                  type: 'html5/video/h264',
-                  url: 'https://livepeercdn.monster/webrtc/11e6ydrd8k22jm6g',
-                } as const,
-              ],
-            },
-          }
-        : undefined,
-    [playbackInfo],
-  );
-
-  return p;
+  return playbackInfo;
 };
