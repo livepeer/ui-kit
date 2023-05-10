@@ -414,6 +414,30 @@ export function addMediaMetricsToStore<TElement>(
           // enable active statistics reporting
           report();
         });
+        newWebSocket.addEventListener('message', (event) => {
+          try {
+            if (event?.data) {
+              const json = JSON.parse(event.data);
+
+              if (json?.error) {
+                onError?.(new Error(json.error));
+              }
+
+              if (json?.meta?.bframes || json?.meta?.buffer_window) {
+                store.getState().setWebsocketMetadata({
+                  bframes: json?.meta?.bframes
+                    ? Number(json?.meta?.bframes)
+                    : undefined,
+                  bufferWindow: json?.meta?.buffer_window
+                    ? Number(json?.meta?.buffer_window)
+                    : undefined,
+                });
+              }
+            }
+          } catch (e) {
+            console.warn('Failed to parse metadata from websocket.');
+          }
+        });
         newWebSocket.addEventListener('close', (event) => {
           // disable active statistics gathering
           if (timeOut) {
@@ -558,7 +582,7 @@ export function addMediaMetricsToStore<TElement>(
 
     return { metrics: metricsStatus, destroy };
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 
   return defaultResponse;

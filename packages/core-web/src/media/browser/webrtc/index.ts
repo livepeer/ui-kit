@@ -1,4 +1,3 @@
-import { isStreamOfflineError } from '@livepeer/core';
 import fetch from 'cross-fetch';
 
 import { isClient } from '../utils';
@@ -36,14 +35,27 @@ export const isWebRTCSupported = () => {
 let peerConnection: RTCPeerConnection | null = null;
 let stream: MediaStream | null = null;
 
-function createPeerConnection(): RTCPeerConnection | null {
+function createPeerConnection(host: string | null): RTCPeerConnection | null {
   const RTCPeerConnectionConstructor =
     window.RTCPeerConnection ||
     window.webkitRTCPeerConnection ||
     window.mozRTCPeerConnection;
 
+  const iceServers = host
+    ? [
+        {
+          urls: `stun:${host}`,
+        },
+        {
+          urls: `turn:${host}`,
+          username: 'livepeer',
+          credential: 'livepeer',
+        },
+      ]
+    : [];
+
   if (RTCPeerConnectionConstructor) {
-    return new RTCPeerConnectionConstructor({ iceServers: [] });
+    return new RTCPeerConnectionConstructor({ iceServers });
   }
 
   return null;
@@ -58,116 +70,125 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
   source: string,
   element: TElement,
   callbacks?: {
+    onConnected?: () => void;
     onError?: (data: Error) => void;
   },
 ): {
   destroy: () => void;
 } => {
+  let destroyed = false;
+  const abortController = new AbortController();
+
   stream = new MediaStream();
 
-  /**
-   * Create a new WebRTC connection, using public STUN servers with ICE,
-   * allowing the client to discover its own IP address.
-   * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
-   */
-  peerConnection = createPeerConnection();
-
-  if (peerConnection) {
-    /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTransceiver */
-    peerConnection.addTransceiver('video', {
-      direction: 'recvonly',
-    });
-    peerConnection.addTransceiver('audio', {
-      direction: 'recvonly',
-    });
-
-    /**
-     * When new tracks are received in the connection, store local references,
-     * so that they can be added to a MediaStream, and to the <video> element.
-     *
-     * https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/track_event
-     */
-    peerConnection.ontrack = async (event) => {
-      try {
-        if (stream) {
-          const track = event.track;
-          const currentTracks = stream.getTracks();
-          const streamAlreadyHasVideoTrack = currentTracks.some(
-            (track) => track.kind === 'video',
-          );
-          const streamAlreadyHasAudioTrack = currentTracks.some(
-            (track) => track.kind === 'audio',
-          );
-          switch (track.kind) {
-            case 'video':
-              if (streamAlreadyHasVideoTrack) {
-                break;
-              }
-              stream.addTrack(track);
-              break;
-            case 'audio':
-              if (streamAlreadyHasAudioTrack) {
-                break;
-              }
-              stream.addTrack(track);
-              break;
-            default:
-              console.log('got unknown track ' + track);
-          }
-        }
-      } catch (e) {
-        callbacks?.onError?.(e as Error);
+  getRedirectHost(source, abortController)
+    .then((host) => {
+      if (destroyed) {
+        return;
       }
-    };
 
-    peerConnection.addEventListener('connectionstatechange', async (_ev) => {
-      try {
-        console.log({ _ev, p: peerConnection?.connectionState });
-        if (peerConnection?.connectionState === 'failed') {
-          throw new Error('Failed to connect to peer.');
-        }
-        if (
-          peerConnection?.connectionState === 'connected' &&
-          !element.srcObject
-        ) {
-          element.srcObject = stream;
-        }
-      } catch (e) {
-        callbacks?.onError?.(e as Error);
-      }
-    });
+      /**
+       * Create a new WebRTC connection, using public STUN servers with ICE,
+       * allowing the client to discover its own IP address.
+       * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
+       */
+      peerConnection = createPeerConnection(host);
 
-    peerConnection.addEventListener('negotiationneeded', async (_ev) => {
-      let count = 1;
+      if (peerConnection) {
+        /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTransceiver */
+        peerConnection.addTransceiver('video', {
+          direction: 'recvonly',
+        });
+        peerConnection.addTransceiver('audio', {
+          direction: 'recvonly',
+        });
 
-      const ofr = await constructClientOffer(peerConnection, source);
-
-      const negotiateWithErrorHandling = async () => {
-        try {
-          await negotiateConnectionWithClientOffer(peerConnection, source, ofr);
-        } catch (e) {
-          callbacks?.onError?.(e as Error);
-
-          if (isStreamOfflineError(e as Error)) {
-            /** Limit reconnection attempts to at-most once every 3 seconds, linear backoff */
-            await new Promise((r) => setTimeout(r, count++ * 3000));
-
-            await negotiateWithErrorHandling();
+        /**
+         * When new tracks are received in the connection, store local references,
+         * so that they can be added to a MediaStream, and to the <video> element.
+         *
+         * https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/track_event
+         */
+        peerConnection.ontrack = async (event) => {
+          try {
+            if (stream) {
+              const track = event.track;
+              const currentTracks = stream.getTracks();
+              const streamAlreadyHasVideoTrack = currentTracks.some(
+                (track) => track.kind === 'video',
+              );
+              const streamAlreadyHasAudioTrack = currentTracks.some(
+                (track) => track.kind === 'audio',
+              );
+              switch (track.kind) {
+                case 'video':
+                  if (streamAlreadyHasVideoTrack) {
+                    break;
+                  }
+                  stream.addTrack(track);
+                  break;
+                case 'audio':
+                  if (streamAlreadyHasAudioTrack) {
+                    break;
+                  }
+                  stream.addTrack(track);
+                  break;
+                default:
+                  console.log('got unknown track ' + track);
+              }
+            }
+          } catch (e) {
+            callbacks?.onError?.(e as Error);
           }
-        }
-      };
+        };
 
-      await negotiateWithErrorHandling();
-    });
-  }
+        peerConnection.addEventListener(
+          'connectionstatechange',
+          async (_ev) => {
+            try {
+              if (peerConnection?.connectionState === 'failed') {
+                throw new Error('Failed to connect to peer.');
+              }
+              if (
+                peerConnection?.connectionState === 'connected' &&
+                !element.srcObject
+              ) {
+                element.srcObject = stream;
+                callbacks?.onConnected?.();
+              }
+            } catch (e) {
+              callbacks?.onError?.(e as Error);
+            }
+          },
+        );
+
+        peerConnection.addEventListener('negotiationneeded', async (_ev) => {
+          try {
+            const ofr = await constructClientOffer(peerConnection, source);
+
+            await negotiateConnectionWithClientOffer(
+              peerConnection,
+              source,
+              ofr,
+            );
+          } catch (e) {
+            callbacks?.onError?.(e as Error);
+          }
+        });
+      }
+    })
+    .catch((e) => callbacks?.onError?.(e as Error));
 
   return {
     destroy: () => {
+      destroyed = true;
+      abortController?.abort?.();
+
       // Remove the WebRTC source
       if (element) {
         element.srcObject = null;
       }
-      peerConnection?.close();
+      peerConnection?.close?.();
     },
   };
 };
@@ -246,13 +267,20 @@ async function postSDPOffer(endpoint: string, data: string) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
 
-  const response = await fetch(endpoint, {
+  const redirectResponse = await fetch(endpoint, {
+    method: 'HEAD',
+    mode: 'cors',
+    signal: controller.signal,
+  });
+
+  const redirectURL = redirectResponse.url;
+
+  const response = await fetch(redirectURL, {
     method: 'POST',
     mode: 'cors',
     headers: {
       'content-type': 'application/sdp',
     },
-    redirect: 'follow',
     body: data,
     signal: controller.signal,
   });
@@ -260,6 +288,29 @@ async function postSDPOffer(endpoint: string, data: string) {
   clearTimeout(id);
 
   return response;
+}
+
+async function getRedirectHost(
+  endpoint: string,
+  abortController: AbortController,
+) {
+  const id = setTimeout(() => abortController.abort(), timeout);
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'HEAD',
+      signal: abortController.signal,
+      redirect: 'manual',
+    });
+
+    clearTimeout(id);
+
+    const parsedUrl = new URL(response.url);
+
+    return parsedUrl.host;
+  } catch (e) {
+    return null;
+  }
 }
 
 /**

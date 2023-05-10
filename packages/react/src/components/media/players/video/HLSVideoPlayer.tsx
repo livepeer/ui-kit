@@ -1,14 +1,9 @@
-import {
-  ACCESS_CONTROL_ERROR_MESSAGE,
-  HlsSrc,
-  isAccessControlError,
-  isStreamOfflineError,
-} from 'livepeer';
+import { ACCESS_CONTROL_ERROR_MESSAGE, HlsSrc } from 'livepeer';
 import { HlsError, createNewHls } from 'livepeer/media/browser/hls';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { VideoPlayerProps } from './VideoPlayer';
+import { VideoPlayerProps } from '.';
 import { MediaControllerContext } from '../../../../context';
 
 export type HLSVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
@@ -30,26 +25,27 @@ export const HLSVideoPlayer = React.forwardRef<
     poster,
     objectFit,
     fullscreen,
-    onStreamStatusChange,
-    onAccessControlError,
-    onError: onMiscError,
+    onPlaybackError,
     priority,
     allowCrossOriginCredentials,
   } = props;
 
   const store = React.useContext(MediaControllerContext);
 
+  const onLive = React.useCallback(
+    async (live: boolean) => {
+      onPlaybackError?.(null);
+
+      store.getState().setLive(live);
+    },
+    [onPlaybackError, store],
+  );
+
   React.useEffect(() => {
     const element = store.getState()._element;
 
     if (element) {
-      const onLive = (live: boolean) => {
-        onAccessControlError?.(null);
-        onStreamStatusChange?.(true);
-        store.getState().setLive(live);
-      };
-
-      const onError = (error: HlsError) => {
+      const onErrorComposed = (error: HlsError) => {
         const cleanError = new Error(
           error?.response?.data?.toString?.() ??
             ((error?.response as any)?.code === 401
@@ -57,14 +53,7 @@ export const HLSVideoPlayer = React.forwardRef<
               : 'Error with HLS.js'),
         );
 
-        if (isStreamOfflineError(cleanError)) {
-          onStreamStatusChange?.(false);
-        } else if (isAccessControlError(cleanError)) {
-          onAccessControlError?.(cleanError);
-        } else {
-          onMiscError?.(cleanError);
-        }
-        console.warn(cleanError.message);
+        onPlaybackError?.(cleanError);
       };
 
       const { destroy } = createNewHls(
@@ -74,7 +63,7 @@ export const HLSVideoPlayer = React.forwardRef<
           onLive,
           onDuration: store.getState().onDurationChange,
           onCanPlay: store.getState().onCanPlay,
-          onError,
+          onError: onErrorComposed,
         },
         {
           autoplay: autoPlay,
@@ -86,7 +75,6 @@ export const HLSVideoPlayer = React.forwardRef<
       );
 
       return () => {
-        onAccessControlError?.(null);
         destroy();
       };
     }
@@ -95,10 +83,9 @@ export const HLSVideoPlayer = React.forwardRef<
     hlsConfig,
     src,
     store,
-    onStreamStatusChange,
-    onAccessControlError,
+    onLive,
+    onPlaybackError,
     allowCrossOriginCredentials,
-    onMiscError,
   ]);
 
   return (

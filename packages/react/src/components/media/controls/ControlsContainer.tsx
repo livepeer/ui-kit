@@ -1,6 +1,5 @@
 import {
   ControlsContainerProps,
-  PlaybackDisplayErrorType,
   useControlsContainer,
 } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
@@ -36,7 +35,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
-    playbackDisplayErrorType,
+    playbackError,
     children,
   } = props;
 
@@ -48,17 +47,6 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     canPlay,
     buffered,
   });
-
-  const playbackDisplayErrorComponent = React.useMemo(() => {
-    switch (playbackDisplayErrorType) {
-      case PlaybackDisplayErrorType.OfflineStream:
-        return <OfflineStreamError />;
-      case PlaybackDisplayErrorType.PrivateStream:
-        return <PrivateStreamError />;
-      default:
-        return <></>;
-    }
-  }, [playbackDisplayErrorType]);
 
   return (
     <>
@@ -80,7 +68,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         />
       )}
 
-      {showLoadingSpinner && !isLoaded && !playbackDisplayErrorType && (
+      {showLoadingSpinner && !isLoaded && !playbackError?.type && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
@@ -95,12 +83,18 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </div>
       )}
 
-      {playbackDisplayErrorType && (
+      {playbackError?.type && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
         >
-          {playbackDisplayErrorComponent}
+          {playbackError?.type === 'access-control' ? (
+            <PrivateStreamError />
+          ) : playbackError?.type === 'offline' ? (
+            <OfflineStreamError />
+          ) : (
+            <></>
+          )}
         </div>
       )}
 

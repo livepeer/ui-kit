@@ -1,8 +1,14 @@
-import { Base64Src, HlsSrc, VideoSrc, WebRTCSrc } from 'livepeer';
+import {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  Base64Src,
+  HlsSrc,
+  VideoSrc,
+  WebRTCSrc,
+} from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { VideoPlayerProps } from './VideoPlayer';
+import { VideoPlayerProps } from '.';
 
 export type HtmlVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
   src: (VideoSrc | Base64Src | HlsSrc | WebRTCSrc) | null;
@@ -20,10 +26,9 @@ export const HtmlVideoPlayer = React.forwardRef<
     muted,
     poster,
     objectFit,
-    onAccessControlError,
+    onPlaybackError,
     src,
     fullscreen,
-    onError,
   } = props;
 
   const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
@@ -39,23 +44,21 @@ export const HtmlVideoPlayer = React.forwardRef<
             const response = await fetch(videoUrl);
             if (response.status === 404) {
               console.warn('Video not found');
-              return onError?.(new Error('Video not found'));
+              return onPlaybackError?.(new Error('Video not found'));
             } else if (response.status === 401) {
               console.warn('Unauthorized to view video');
-              return onAccessControlError?.(
-                new Error('Unauthorized to view video'),
-              );
+              return onPlaybackError?.(new Error(ACCESS_CONTROL_ERROR_MESSAGE));
             }
           } catch (err) {
             console.warn(err);
-            return onError?.(new Error('Error fetching video URL'));
+            return onPlaybackError?.(new Error('Error fetching video URL'));
           }
         }
 
         console.warn('Unknown error loading video');
-        return onError?.(new Error('Unknown error loading video'));
+        return onPlaybackError?.(new Error('Unknown error loading video'));
       },
-      [onError, onAccessControlError],
+      [onPlaybackError],
     );
 
   return (

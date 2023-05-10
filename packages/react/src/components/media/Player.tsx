@@ -71,6 +71,11 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     [],
   );
 
+  const isCurrentlyShownCombined = React.useMemo(
+    () => props._isCurrentlyShown ?? isCurrentlyShown,
+    [props._isCurrentlyShown, isCurrentlyShown],
+  );
+
   const {
     mediaElement,
     playerProps,
@@ -80,7 +85,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject>(
     {
       ...props,
-      _isCurrentlyShown: props._isCurrentlyShown ?? isCurrentlyShown,
+      _isCurrentlyShown: isCurrentlyShownCombined,
     },
     {
       _screenWidth: screenWidth,
@@ -96,8 +101,8 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   return (
     <MediaControllerProvider
       element={mediaElement}
-      opts={controls ?? {}}
-      playerProps={props}
+      opts={controls}
+      playerProps={playerProps}
     >
       <Container
         theme={theme}

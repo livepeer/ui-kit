@@ -39,6 +39,7 @@ export type {
   MediaControllerStore,
   MediaMetrics,
   MediaSizing,
+  Metadata,
   MetricsStatus,
   PlaybackMonitor,
   PlayerPropsOptions,

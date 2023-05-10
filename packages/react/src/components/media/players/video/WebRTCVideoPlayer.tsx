@@ -1,13 +1,9 @@
-import {
-  WebRTCSrc,
-  isAccessControlError,
-  isStreamOfflineError,
-} from 'livepeer';
+import { WebRTCSrc } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import { createNewWHEP } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
-import { VideoPlayerProps } from './VideoPlayer';
+import { VideoPlayerProps } from '.';
 
 import { MediaControllerContext } from '../../../../context';
 
@@ -29,52 +25,53 @@ export const WebRTCVideoPlayer = React.forwardRef<
     poster,
     objectFit,
     fullscreen,
-    onStreamStatusChange,
-    onAccessControlError,
-    onError: onMiscError,
+    onPlaybackError,
     priority,
   } = props;
 
   const store = React.useContext(MediaControllerContext);
 
+  const onConnected = React.useCallback(async () => {
+    onPlaybackError?.(null);
+    store.getState().setLive(true);
+  }, [onPlaybackError, store]);
+
   React.useEffect(() => {
     const element = store.getState()._element;
 
     if (element) {
-      store.getState().setLive(true);
-
-      const onError = (error: Error) => {
+      const onErrorComposed = (error: Error) => {
         const cleanError = new Error(
           error?.message?.toString?.() ?? 'Error with WebRTC',
         );
 
-        if (isStreamOfflineError(cleanError)) {
-          onStreamStatusChange?.(false);
-        } else if (isAccessControlError(cleanError)) {
-          onAccessControlError?.(cleanError);
-        } else {
-          onMiscError?.(cleanError);
-        }
-        console.warn(cleanError.message);
+        onPlaybackError?.(cleanError);
       };
 
       const { destroy } = createNewWHEP(src?.src, element, {
-        onError,
+        onConnected,
+        onError: onErrorComposed,
+      });
+
+      const unsubscribe = store.subscribe((state, prevState) => {
+        if (
+          state?.metadata?.bframes &&
+          state?.metadata?.bframes !== prevState.metadata?.bframes
+        ) {
+          onPlaybackError(
+            new Error(
+              'Metadata indicates that WebRTC playback contains bframes.',
+            ),
+          );
+        }
       });
 
       return () => {
-        onAccessControlError?.(null);
+        unsubscribe();
         destroy();
       };
     }
-  }, [
-    autoPlay,
-    src,
-    store,
-    onStreamStatusChange,
-    onAccessControlError,
-    onMiscError,
-  ]);
+  }, [autoPlay, store, onConnected, src, onPlaybackError]);
 
   return (
     <video

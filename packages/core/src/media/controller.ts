@@ -26,6 +26,11 @@ export type ElementSize = {
   height: number;
 };
 
+export type Metadata = {
+  bframes?: number;
+  bufferWindow?: number;
+};
+
 export type MediaControllerState<TElement = void> = {
   /** If the media has loaded and can be played */
   canPlay: boolean;
@@ -51,6 +56,8 @@ export type MediaControllerState<TElement = void> = {
   preload: 'full' | 'metadata' | 'none';
   /** The viewerId for the viewer passed in to Player */
   viewerId: string;
+  /** The media metadata, from the playback websocket */
+  metadata?: Metadata;
 
   /** If the media is current playing or paused */
   playing: boolean;
@@ -108,6 +115,8 @@ export type MediaControllerState<TElement = void> = {
 
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
+
+  setWebsocketMetadata: (metadata: Metadata) => void;
 
   onCanPlay: () => void;
 
@@ -276,6 +285,8 @@ export const createControllerStore = <TElement>({
             duration,
             live: duration === Number.POSITIVE_INFINITY ? true : live,
           })),
+
+        setWebsocketMetadata: (metadata: Metadata) => set(() => ({ metadata })),
 
         _updateBuffered: (buffered) => set(() => ({ buffered })),
 

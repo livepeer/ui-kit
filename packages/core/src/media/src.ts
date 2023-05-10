@@ -63,7 +63,7 @@ export const getMediaSourceType = (
     ? {
         type: 'webrtc',
         src: src as WebRTCSrc['src'],
-        mime: 'video/vp8',
+        mime: 'video/h264',
       }
     : hlsExtensions.test(src)
     ? {

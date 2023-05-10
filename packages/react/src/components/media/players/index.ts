@@ -1,2 +1,2 @@
 export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer';
-export { VideoPlayer, type VideoPlayerProps } from './video/VideoPlayer';
+export { VideoPlayer, type VideoPlayerProps } from './video';

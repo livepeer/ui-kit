@@ -53,8 +53,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
       options,
       poster,
       audioMode,
-      onMetricsError,
-      onError,
+      onPlaybackError,
       isCurrentlyShown,
     },
     ref,
@@ -103,13 +102,13 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         context,
         filteredSources?.[0]?.src,
         (e) => {
-          onMetricsError?.(e as Error);
+          onPlaybackError?.(e as Error);
           console.error('Not able to report player metrics', e);
         },
       );
 
       return destroy;
-    }, [onMetricsError, context, filteredSources]);
+    }, [onPlaybackError, context, filteredSources]);
 
     const onPlaybackStatusUpdate = React.useCallback(
       async (status?: AVPlaybackStatus) => {
@@ -179,7 +178,7 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
         progressUpdateIntervalMillis={defaultProgressUpdateInterval}
         onFullscreenUpdate={onFullscreenUpdate}
         onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-        onError={(err) => onError?.(new Error(err))}
+        onError={(err) => onPlaybackError?.(new Error(err))}
         shouldPlay={shouldPlay}
         ref={ref}
         isMuted={muted}

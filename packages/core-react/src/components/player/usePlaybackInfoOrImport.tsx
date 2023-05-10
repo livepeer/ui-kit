@@ -88,9 +88,9 @@ export const usePlaybackInfoOrImport = ({
                   (s) => s.type !== 'html5/video/mp4',
                 ) ?? []),
                 {
-                  hrn: 'WebRTC (VP8)',
-                  type: 'html5/video/vp8',
-                  url: 'https://mdw-staging-staging-catalyst-0.livepeer.monster:443/webrtc/video+11e6ydrd8k22jm6g', // 'https://livepeercdn.monster/webrtc/a8a6fftljh8noqgt',
+                  hrn: 'WebRTC (H264)',
+                  type: 'html5/video/h264',
+                  url: 'https://livepeercdn.monster/webrtc/11e6ydrd8k22jm6g',
                 } as const,
               ],
             },

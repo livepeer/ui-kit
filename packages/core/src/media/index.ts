@@ -10,6 +10,7 @@ export type {
   MediaControllerState,
   MediaControllerStore,
   MediaSizing,
+  Metadata,
   PlayerPropsOptions,
 } from './controller';
 export { addMediaMetricsToStore } from './metrics';

@@ -2,6 +2,7 @@ import fetch from 'cross-fetch';
 
 const LP_DOMAINS = ['livepeer', 'livepeercdn', 'lp-playback'];
 const ASSET_URL_PART_VALUE = 'hls';
+const WEBRTC_URL_PART_VALUE = 'webrtc';
 const RECORDING_URL_PART_VALUE = 'recordings';
 
 // Example url the playback id needs to be found in
@@ -17,13 +18,15 @@ export const getMetricsReportingUrl = async (
     const parts = parsedUrl.pathname.split('/');
 
     const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
+    const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
     const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
 
     // Check if the url is valid
-    const playbackId =
-      includesRecording || includesAssetUrl
-        ? parts?.[(parts?.length ?? 0) - 2] ?? null
-        : null;
+    const playbackId = includesWebRtcUrl
+      ? parts?.[(parts?.length ?? 0) - 1]
+      : includesRecording || includesAssetUrl
+      ? parts?.[(parts?.length ?? 0) - 2] ?? null
+      : null;
 
     const splitHost = parsedUrl.host.split('.');
     const includesDomain = LP_DOMAINS.includes(
