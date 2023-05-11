@@ -1,5 +1,16 @@
 # @livepeer/core-react
 
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#314](https://github.com/livepeer/livepeer.js/pull/314) [`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Added WebRTC playback for the web Player, which uses the new endpoint from the Studio provider to play back WebRTC livestreams, if they are available. If these do not succeed in playing back, the Player will automatically fall back to HLS playback. Also, if the stream contains "bframes" (which are common for users streaming with OBS or other streaming providers), the Player will automatically fall back.
+
+### Patch Changes
+
+- Updated dependencies [[`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377)]:
+  - @livepeer/core@1.5.0-next.0
+
 ## 1.4.4
 
 ### Patch Changes
@@ -33,7 +44,7 @@
 
 - [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added the ability to pass in a `viewerId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.
 
-- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]: 
+- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]:
   - @livepeer/core@1.4.3
 
 ## 1.4.2

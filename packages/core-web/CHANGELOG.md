@@ -1,5 +1,36 @@
 # livepeer
 
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#314](https://github.com/livepeer/livepeer.js/pull/314) [`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Added WebRTC playback for the web Player, which uses the new endpoint from the Studio provider to play back WebRTC livestreams, if they are available. If these do not succeed in playing back, the Player will automatically fall back to HLS playback. Also, if the stream contains "bframes" (which are common for users streaming with OBS or other streaming providers), the Player will automatically fall back.
+
+### Patch Changes
+
+- [#314](https://github.com/livepeer/livepeer.js/pull/314) [`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `webrtcConfig` to the Player to allow for customization of playback from WebRTC. This currently only supports selecting the video track, but will be expanded further in future releases.
+
+  ```tsx
+  export type WebRTCVideoConfig = {
+    /**
+     * The configuration for the video track selector in MistServer.
+     *
+     * @default maxbps
+     * @link https://mistserver.org/guides/MistServer_Manual_3.0.pdf
+     */
+    videoTrackSelector?:
+      | 'highbps'
+      | 'maxbps'
+      | 'bestbps'
+      | 'lowbps'
+      | 'minbps'
+      | 'worstbps';
+  };
+  ```
+
+- Updated dependencies [[`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377)]:
+  - @livepeer/core@1.5.0-next.0
+
 ## 2.4.4
 
 ### Patch Changes

@@ -17,5 +17,8 @@
     "@livepeer/react": "2.4.4",
     "@livepeer/react-native": "1.4.4"
   },
-  "changesets": []
+  "changesets": [
+    "silly-spoons-type",
+    "thin-pugs-juggle"
+  ]
 }
