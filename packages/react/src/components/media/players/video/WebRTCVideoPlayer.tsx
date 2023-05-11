@@ -34,6 +34,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
     fullscreen,
     onPlaybackError,
     priority,
+    webrtcConfig,
   } = props;
 
   const store = React.useContext(MediaControllerContext);
@@ -55,10 +56,15 @@ export const WebRTCVideoPlayer = React.forwardRef<
         onPlaybackError?.(cleanError);
       };
 
-      const { destroy } = createNewWHEP(src?.src, element, {
-        onConnected,
-        onError: onErrorComposed,
-      });
+      const { destroy } = createNewWHEP(
+        src?.src,
+        element,
+        {
+          onConnected,
+          onError: onErrorComposed,
+        },
+        webrtcConfig,
+      );
 
       const unsubscribe = store.subscribe((state, prevState) => {
         if (
