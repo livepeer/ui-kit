@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#314](https://github.com/livepeer/livepeer.js/pull/314) [`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Added WebRTC playback for the web Player, which uses the new endpoint from the Studio provider to play back WebRTC livestreams, if they are available. If these do not succeed in playing back, the Player will automatically fall back to HLS playback. Also, if the stream contains "bframes" (which are common for users streaming with OBS or other streaming providers), the Player will automatically fall back.
+
 ## 1.4.4
 
 ### Patch Changes
