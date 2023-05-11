@@ -20,7 +20,7 @@ import {
  * @param element Element to capture playback metrics from.
  * @param sourceUrl Source URL for the player.
  * @param onError Callback when an error with metrics occurs.
-
+ * @param opts Options for the metrics reporting.
  * @returns A callback for destroying the store and metrics.
  */
 export function addMediaMetrics<TElement extends HTMLMediaElement>(

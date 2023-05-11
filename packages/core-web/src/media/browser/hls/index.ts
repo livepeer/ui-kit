@@ -99,8 +99,6 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     if (isFatalNetworkError || isFatalMediaError || isManifestParsingError) {
       await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
       hls?.recoverMediaError();
-    } else {
-      onDestroy();
     }
   });
 

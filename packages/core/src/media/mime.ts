@@ -80,6 +80,7 @@ const mime = {
   'video/vnd.ms-playready.media.pyv': ['pyv'],
   'video/vnd.uvvu.mp4': ['uvu', 'uvvu'],
   'video/vnd.vivo': ['viv'],
+  'video/vp8': ['vp8'],
   'video/webm': ['webm'],
   'video/x-f4v': ['f4v'],
   'video/x-fli': ['fli'],

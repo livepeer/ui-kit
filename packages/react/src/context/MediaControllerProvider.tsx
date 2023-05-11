@@ -13,7 +13,7 @@ export type MediaControllerProviderProps<
   element: TElement | null;
   children: React.ReactNode;
   playerProps: PlayerProps<TPlaybackPolicyObject>;
-  opts: ControlsOptions;
+  opts: ControlsOptions | undefined;
 };
 
 export const MediaControllerProvider = <
@@ -39,7 +39,7 @@ const useMediaControllerStore = <
   TPlaybackPolicyObject extends object,
 >(
   element: TElement | null,
-  opts: ControlsOptions,
+  opts: ControlsOptions | undefined,
   playerProps: PlayerProps<TPlaybackPolicyObject>,
 ) => {
   const client = useClient();
@@ -50,7 +50,7 @@ const useMediaControllerStore = <
         element: element ?? null,
         device: getDeviceInfo(),
         storage: client.storage,
-        opts: opts,
+        opts: opts ?? {},
         playerProps: {
           ...playerProps,
           src: null,
@@ -62,7 +62,6 @@ const useMediaControllerStore = <
               : 'none',
         },
       }),
-
     [element, client?.storage, opts, playerProps],
   );
 

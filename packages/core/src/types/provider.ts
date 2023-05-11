@@ -629,8 +629,11 @@ export type PlaybackInfo = {
     live: boolean;
     playbackPolicy?: Asset['playbackPolicy'] | Stream['playbackPolicy'];
     source: {
-      hrn: 'HLS (TS)' | 'MP4';
-      type: 'html5/application/vnd.apple.mpegurl' | 'html5/video/mp4';
+      hrn: 'HLS (TS)' | 'MP4' | 'WebRTC (H264)';
+      type:
+        | 'html5/application/vnd.apple.mpegurl'
+        | 'html5/video/mp4'
+        | 'html5/video/h264';
       url: string;
       size?: number;
       width?: number;

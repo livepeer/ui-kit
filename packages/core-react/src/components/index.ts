@@ -1,5 +1,4 @@
 export {
-  PlaybackDisplayErrorType,
   useBaseSlider,
   useControlsContainer,
   useFullscreenButton,
@@ -15,6 +14,7 @@ export {
   type FullscreenButtonProps,
   type InternalPlayerProps,
   type PlayButtonProps,
+  type PlaybackError,
   type PlayerObjectFit,
   type PlayerProps,
   type PosterProps,

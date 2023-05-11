@@ -4,6 +4,7 @@ import {
   HlsSrc,
   Src,
   VideoSrc,
+  WebRTCSrc,
   getMediaSourceType,
 } from '@livepeer/core';
 import {
@@ -168,15 +169,21 @@ export const useSourceMimeTyped = <
   const dStoragePlaybackUrl = React.useMemo(() => {
     // if the player is auto uploading, we do not play back the detected input file unless specified
     // e.g. https://arweave.net/84KylA52FVGLxyvLADn1Pm8Q3kt8JJM74B87MeoBt2w/400019.mp4
-    if (
-      decentralizedSrcOrPlaybackId &&
-      autoUrlUpload &&
-      typeof autoUrlUpload !== 'boolean'
-    ) {
+    if (decentralizedSrcOrPlaybackId && autoUrlUpload) {
+      const urlUploadWithFallback =
+        typeof autoUrlUpload !== 'boolean'
+          ? {
+              arweaveGateway:
+                autoUrlUpload.arweaveGateway ?? defaultArweaveGateway,
+              ipfsGateway: autoUrlUpload.ipfsGateway ?? defaultIpfsGateway,
+            }
+          : {
+              arweaveGateway: defaultArweaveGateway,
+              ipfsGateway: defaultIpfsGateway,
+            };
+
       if (decentralizedSrcOrPlaybackId.url.startsWith('ar://')) {
-        const { host } = new URL(
-          autoUrlUpload.arweaveGateway ?? defaultArweaveGateway,
-        );
+        const { host } = new URL(urlUploadWithFallback.arweaveGateway);
 
         const src: VideoSrc = {
           type: 'video',
@@ -186,9 +193,7 @@ export const useSourceMimeTyped = <
 
         return src;
       } else if (decentralizedSrcOrPlaybackId.url.startsWith('ipfs://')) {
-        const { host } = new URL(
-          autoUrlUpload.ipfsGateway ?? defaultIpfsGateway,
-        );
+        const { host } = new URL(urlUploadWithFallback.ipfsGateway);
 
         const src: VideoSrc = {
           type: 'video',
@@ -210,7 +215,9 @@ export const useSourceMimeTyped = <
     return null;
   }, [autoUrlUpload, decentralizedSrcOrPlaybackId, src]);
 
-  const sourceMimeTyped = React.useMemo(() => {
+  const [type, sourceMimeTyped] = React.useMemo(() => {
+    const defaultValue = ['none', null] as const;
+
     // cast all URLs to an array of strings
     const sources =
       playbackUrls.length > 0
@@ -220,7 +227,7 @@ export const useSourceMimeTyped = <
         : src;
 
     if (!sources) {
-      return null;
+      return defaultValue;
     }
 
     const authenticatedSources = sources.map((source) => {
@@ -246,17 +253,22 @@ export const useSourceMimeTyped = <
       .filter((s) => s) as Src[];
 
     // we filter by either audio or video/hls
-    const mediaSourceFiltered =
-      mediaSourceTypes?.[0]?.type === 'audio'
-        ? (mediaSourceTypes.filter((s) => s.type === 'audio') as AudioSrc[])
-        : mediaSourceTypes?.[0]?.type === 'video' ||
-          mediaSourceTypes?.[0]?.type === 'hls'
-        ? (mediaSourceTypes.filter(
-            (s) => s.type === 'video' || s.type === 'hls',
-          ) as (VideoSrc | HlsSrc)[])
-        : null;
-
-    return mediaSourceFiltered;
+    return mediaSourceTypes?.[0]?.type === 'audio'
+      ? ([
+          'audio',
+          mediaSourceTypes.filter((s) => s.type === 'audio') as AudioSrc[],
+        ] as const)
+      : mediaSourceTypes?.[0]?.type === 'video' ||
+        mediaSourceTypes?.[0]?.type === 'hls' ||
+        mediaSourceTypes?.[0]?.type === 'webrtc'
+      ? ([
+          'video',
+          mediaSourceTypes.filter(
+            (s) =>
+              s.type === 'video' || s.type === 'hls' || s.type === 'webrtc',
+          ) as (VideoSrc | HlsSrc | WebRTCSrc)[],
+        ] as const)
+      : defaultValue;
   }, [playbackUrls, src, jwt, accessKeyResolved]);
 
   const sourceMimeTypedSorted = React.useMemo(() => {
@@ -266,14 +278,12 @@ export const useSourceMimeTyped = <
       return [dStoragePlaybackUrl];
     }
 
-    if (
-      sourceMimeTyped?.[0]?.type === 'video' ||
-      sourceMimeTyped?.[0]?.type === 'hls'
-    ) {
+    if (type === 'video') {
       const previousSources = [...sourceMimeTyped] as (
         | Base64Src
         | HlsSrc
         | VideoSrc
+        | WebRTCSrc
       )[];
 
       return previousSources.sort((a, b) => {
@@ -286,14 +296,23 @@ export const useSourceMimeTyped = <
           return bOriginal?.screenWidthDelta && aOriginal?.screenWidthDelta
             ? aOriginal.screenWidthDelta - bOriginal.screenWidthDelta
             : 1;
+        } else if (
+          a.type === 'video' &&
+          (b.type === 'hls' || b.type === 'webrtc')
+        ) {
+          // if the type is an MP4, we prefer that to HLS/WebRTC due to better caching/less overhead
+          return -1;
+        } else if (a.type === 'webrtc' && b.type === 'hls') {
+          // if there is a webrtc source, we prefer that to HLS
+          return -1;
         }
 
-        return a.type === 'video' && b.type === 'hls' ? -1 : 1;
+        return 1;
       });
     }
 
     return sourceMimeTyped;
-  }, [sourceMimeTyped, dStoragePlaybackUrl, playbackUrls]);
+  }, [sourceMimeTyped, type, dStoragePlaybackUrl, playbackUrls]);
 
   return {
     source: sourceMimeTypedSorted,

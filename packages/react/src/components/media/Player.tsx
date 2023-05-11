@@ -3,10 +3,17 @@ import {
   PlayerObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
-import { AudioSrc, Base64Src, HlsSrc, VideoSrc } from 'livepeer/media';
+import {
+  AudioSrc,
+  Base64Src,
+  HlsSrc,
+  VideoSrc,
+  WebRTCSrc,
+} from 'livepeer/media';
 import { ControlsOptions } from 'livepeer/media/browser';
 
 import { HlsVideoConfig } from 'livepeer/media/browser/hls';
+import { WebRTCVideoConfig } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
 import {
@@ -38,6 +45,8 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
   controls?: ControlsOptions;
   /** Configuration for the HLS.js instance used for HLS playback */
   hlsConfig?: HlsVideoConfig;
+  /** Configuration for the WebRTC playback */
+  webrtcConfig?: WebRTCVideoConfig;
   /**
    * Whether to include credentials in cross-origin requests made from the Player.
    * This is typically used to have the Player include cookies for requests made to Livepeer
@@ -65,6 +74,11 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     [],
   );
 
+  const isCurrentlyShownCombined = React.useMemo(
+    () => props._isCurrentlyShown ?? isCurrentlyShown,
+    [props._isCurrentlyShown, isCurrentlyShown],
+  );
+
   const {
     mediaElement,
     playerProps,
@@ -74,7 +88,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject>(
     {
       ...props,
-      _isCurrentlyShown: props._isCurrentlyShown ?? isCurrentlyShown,
+      _isCurrentlyShown: isCurrentlyShownCombined,
     },
     {
       _screenWidth: screenWidth,
@@ -90,8 +104,8 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   return (
     <MediaControllerProvider
       element={mediaElement}
-      opts={controls ?? {}}
-      playerProps={props}
+      opts={controls}
+      playerProps={playerProps}
     >
       <Container
         theme={theme}
@@ -108,8 +122,9 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
           <VideoPlayer
             {...playerProps}
             hlsConfig={props.hlsConfig}
+            webrtcConfig={props.webrtcConfig}
             allowCrossOriginCredentials={props.allowCrossOriginCredentials}
-            src={source as (VideoSrc | HlsSrc | Base64Src)[] | null}
+            src={source as (VideoSrc | HlsSrc | Base64Src | WebRTCSrc)[] | null}
           />
         )}
 

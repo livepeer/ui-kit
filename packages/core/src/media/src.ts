@@ -20,7 +20,7 @@ type HlsExtension = 'm3u8';
 type OptionalQueryParams = `?${string}` | '';
 
 type BaseSrc = {
-  type: 'audio' | 'video' | 'hls';
+  type: 'audio' | 'video' | 'hls' | 'webrtc';
   src: string;
   mime: MimeType | null;
 };
@@ -41,20 +41,31 @@ export interface HlsSrc extends BaseSrc {
   type: 'hls';
   src: `${string}${HlsExtension}${OptionalQueryParams}`;
 }
-export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src;
+export interface WebRTCSrc extends BaseSrc {
+  type: 'webrtc';
+  src: `${string}${OptionalQueryParams}`;
+}
+export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src | WebRTCSrc;
 
 const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;
 const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
 const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
+const webrtcExtensions = /(webrtc|sdp)/i;
 const mimeFromBase64Pattern = /data:(.+?);base64/;
 
 export const getMediaSourceType = (
   src: string,
-): HlsSrc | AudioSrc | VideoSrc | Base64Src | null => {
+): HlsSrc | AudioSrc | VideoSrc | Base64Src | WebRTCSrc | null => {
   const base64Mime = src.match(mimeFromBase64Pattern);
-  return hlsExtensions.test(src)
+  return webrtcExtensions.test(src)
+    ? {
+        type: 'webrtc',
+        src: src as WebRTCSrc['src'],
+        mime: 'video/h264',
+      }
+    : hlsExtensions.test(src)
     ? {
         type: 'hls',
         src: src as HlsSrc['src'],

@@ -3,13 +3,13 @@ import {
   PlaybackInfo,
   Src,
   WebhookPlaybackPolicy,
+  isAccessControlError,
+  isStreamOfflineError,
 } from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import { isNumber } from '@livepeer/core/utils';
 
 import * as React from 'react';
-
-import { PlaybackDisplayErrorType } from './PlaybackDisplayErrorType';
 
 import { useSourceMimeTyped } from './useSourceMimeTyped';
 
@@ -114,9 +114,6 @@ export type PlayerProps<
   /** Callback called when the stream status changes (live or offline) */
   onStreamStatusChange?: (isLive: boolean) => void;
 
-  /** Callback called when the metrics plugin cannot be initialized properly */
-  onMetricsError?: (error: Error) => void;
-
   /** Callback called when the access control errors */
   onAccessControlError?: (error: Error) => void;
 
@@ -128,12 +125,12 @@ export type PlayerProps<
 
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
-} & (
-  | {
-      src: string | string[] | null | undefined;
-    }
-  | { playbackId: string | null | undefined }
-);
+};
+
+export type PlaybackError = {
+  type: 'offline' | 'access-control' | 'unknown';
+  message: string;
+};
 
 export const usePlayer = <
   TElement,
@@ -155,7 +152,6 @@ export const usePlayer = <
     loop,
 
     onStreamStatusChange,
-    onMetricsError,
     onAccessControlError,
     onError,
     onSourceUpdated,
@@ -181,24 +177,6 @@ export const usePlayer = <
   { _screenWidth }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
-  const [loaded, setLoaded] = React.useState(false);
-
-  const [accessControlError, setAccessControlError] =
-    React.useState<Error | null>(null);
-
-  const accessControlErrorCallback = React.useCallback(
-    (error: Error | null) => {
-      if (!accessControlError) {
-        setAccessControlError(error);
-      }
-      if (!error) {
-        setAccessControlError(null);
-      } else {
-        onAccessControlError?.(error);
-      }
-    },
-    [onAccessControlError, accessControlError],
-  );
 
   const { source, uploadStatus } = useSourceMimeTyped({
     src,
@@ -212,42 +190,63 @@ export const usePlayer = <
     onAccessKeyRequest,
   });
 
+  const [playbackError, setPlaybackError] =
+    React.useState<PlaybackError | null>(null);
+
+  const onPlaybackError = React.useCallback(
+    (error: Error | null) => {
+      const newPlaybackError: PlaybackError | null = error
+        ? {
+            type: isAccessControlError(error)
+              ? 'access-control'
+              : isStreamOfflineError(error)
+              ? 'offline'
+              : 'unknown',
+            message: error?.message ?? 'Error with playback.',
+          }
+        : null;
+
+      if (newPlaybackError?.type !== playbackError?.type) {
+        setPlaybackError(newPlaybackError);
+
+        if (error) {
+          console.warn(error);
+        }
+
+        if (!error) {
+          onStreamStatusChange?.(true);
+        } else if (newPlaybackError?.type === 'offline') {
+          onStreamStatusChange?.(false);
+        } else if (newPlaybackError?.type === 'access-control') {
+          onAccessControlError?.(new Error(newPlaybackError.message));
+        } else if (newPlaybackError?.message) {
+          onError?.(new Error(newPlaybackError.message));
+        }
+      }
+    },
+    [onAccessControlError, onStreamStatusChange, onError, playbackError],
+  );
+
   React.useEffect(() => {
     if (source) {
       onSourceUpdated?.(source);
-      setAccessControlError?.(null);
+      setPlaybackError(null);
     }
   }, [source, onSourceUpdated]);
 
-  const [isStreamOffline, setIsStreamOffline] = React.useState(false);
+  // if the source is priority or currently shown on the screen, then load
+  const [hasBeenShown, setHasBeenShown] = React.useState(false);
 
-  const onStreamStatusChangeCallback = React.useCallback(
-    (isLive: boolean) => {
-      setIsStreamOffline(!isLive);
-      onStreamStatusChange?.(isLive);
-    },
-    [onStreamStatusChange],
+  const loaded = React.useMemo(
+    () => priority || _isCurrentlyShown || hasBeenShown,
+    [priority, _isCurrentlyShown, hasBeenShown],
   );
 
-  const [playbackDisplayErrorType, setPlaybackDisplayErrorType] =
-    React.useState<PlaybackDisplayErrorType>();
-
   React.useEffect(() => {
-    if (isStreamOffline) {
-      setPlaybackDisplayErrorType(PlaybackDisplayErrorType.OfflineStream);
-    } else if (accessControlError) {
-      setPlaybackDisplayErrorType(PlaybackDisplayErrorType.PrivateStream);
-    } else {
-      setPlaybackDisplayErrorType(undefined);
+    if (_isCurrentlyShown && !hasBeenShown) {
+      setHasBeenShown(true);
     }
-  }, [accessControlError, isStreamOffline]);
-
-  // if the source is priority or currently shown on the screen, then load
-  React.useEffect(() => {
-    if (!loaded && (priority || _isCurrentlyShown)) {
-      setLoaded(true);
-    }
-  }, [priority, _isCurrentlyShown, loaded]);
+  }, [_isCurrentlyShown, hasBeenShown]);
 
   const hidePosterOnPlayed = React.useMemo(
     () =>
@@ -282,11 +281,8 @@ export const usePlayer = <
     [uploadStatus, showUploadingIndicator],
   );
 
-  return {
-    mediaElement,
-    source: loaded ? source : null,
-    uploadStatus,
-    playerProps: {
+  const playerProps = React.useMemo(
+    () => ({
       ref: playerRef,
       autoPlay,
       muted,
@@ -295,21 +291,46 @@ export const usePlayer = <
       objectFit: objectFit,
       options: controls,
       priority: priority,
-      onStreamStatusChange: onStreamStatusChangeCallback,
-      onMetricsError,
-      onAccessControlError: accessControlErrorCallback,
-      onError,
+      playbackError,
+      onPlaybackError,
       isCurrentlyShown: _isCurrentlyShown,
       viewerId,
-    },
-    controlsContainerProps: {
+    }),
+    [
+      playerRef,
+      autoPlay,
+      muted,
+      poster,
+      loop,
+      objectFit,
+      controls,
+      priority,
+      playbackError,
+      onPlaybackError,
+      _isCurrentlyShown,
+      viewerId,
+    ],
+  );
+
+  const controlsContainerProps = React.useMemo(
+    () => ({
       hidePosterOnPlayed,
       showLoadingSpinner,
       loadingText,
       showUploadingIndicator,
-      playbackDisplayErrorType,
-    },
-    props: {
+      playbackError,
+    }),
+    [
+      hidePosterOnPlayed,
+      showLoadingSpinner,
+      loadingText,
+      showUploadingIndicator,
+      playbackError,
+    ],
+  );
+
+  const props = React.useMemo(
+    () => ({
       autoPlay,
       children,
       controls,
@@ -325,6 +346,37 @@ export const usePlayer = <
       showTitle,
       aspectRatio,
       objectFit,
-    },
+    }),
+    [
+      autoPlay,
+      children,
+      controls,
+      playbackId,
+      src,
+      theme,
+      title,
+      poster,
+      loop,
+      jwt,
+      refetchPlaybackInfoInterval,
+      autoUrlUpload,
+      showTitle,
+      aspectRatio,
+      objectFit,
+    ],
+  );
+
+  const sourceWithLoaded = React.useMemo(
+    () => (loaded ? source : null),
+    [loaded, source],
+  );
+
+  return {
+    mediaElement,
+    source: sourceWithLoaded,
+    uploadStatus,
+    playerProps,
+    controlsContainerProps,
+    props,
   };
 };

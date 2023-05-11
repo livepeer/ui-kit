@@ -4,16 +4,17 @@ import {
   ControlsOptions,
   HlsSrc,
   VideoSrc,
+  WebRTCSrc,
 } from '@livepeer/core';
 
-import { PlayerObjectFit, PlayerProps } from './Player';
+import { PlaybackError, PlayerObjectFit, PlayerProps } from './Player';
 
 export type VideoPlayerProps<
   TElement,
   TPoster,
   TPlaybackPolicyObject extends object,
 > = {
-  src: (HlsSrc | VideoSrc | Base64Src)[] | null;
+  src: (HlsSrc | VideoSrc | Base64Src | WebRTCSrc)[] | null;
   objectFit: PlayerObjectFit;
   width?: string | number;
   autoPlay?: boolean;
@@ -29,10 +30,9 @@ export type VideoPlayerProps<
     TPlaybackPolicyObject
   >['_isCurrentlyShown'];
   options?: ControlsOptions;
-  onStreamStatusChange?: (isLive: boolean) => void;
-  onMetricsError?: (error: Error) => void;
-  onAccessControlError?: (error: Error | null) => void;
-  onError?: (error: Error) => void;
+
+  playbackError: PlaybackError | null;
+  onPlaybackError: (error: Error | null) => void;
 };
 
 export type AudioPlayerProps<

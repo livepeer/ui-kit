@@ -7,9 +7,20 @@ declare global {
     readonly safari: boolean;
     readonly WebKitMediaSource: typeof MediaSource | undefined;
     readonly WebKitSourceBuffer: typeof SourceBuffer | undefined;
+    readonly webkitRTCPeerConnection: typeof RTCPeerConnection | undefined;
+    readonly mozRTCPeerConnection: typeof RTCPeerConnection | undefined;
+    readonly webkitRTCDataChannel: typeof RTCDataChannel | undefined;
+    readonly mozRTCDataChannel: typeof RTCDataChannel | undefined;
   }
 
   type WebKitPresentationMode = 'picture-in-picture' | 'inline' | 'fullscreen';
+
+  interface Navigator extends Navigator {
+    getUserMedia?: NavigatorUserMedia['getUserMedia'];
+    webkitGetUserMedia?: NavigatorUserMedia['getUserMedia'];
+    mozGetUserMedia?: NavigatorUserMedia['getUserMedia'];
+    msGetUserMedia?: NavigatorUserMedia['getUserMedia'];
+  }
 
   interface HTMLElement extends HTMLElement {
     /**
