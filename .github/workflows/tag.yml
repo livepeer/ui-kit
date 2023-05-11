@@ -1,9 +1,9 @@
 name: Tag
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    tags:
+      - '@livepeer/react@**'
 
 jobs:
   release:
