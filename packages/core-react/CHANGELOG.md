@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.5.0-next.1
+
+### Patch Changes
+
+- [#320](https://github.com/livepeer/livepeer.js/pull/320) [`c49706d`](https://github.com/livepeer/livepeer.js/commit/c49706d816bc9048db29e6eac9fa44135ccd71fd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed error reporting for metrics websocket with MP4 playback.
+
+- Updated dependencies [[`c49706d`](https://github.com/livepeer/livepeer.js/commit/c49706d816bc9048db29e6eac9fa44135ccd71fd)]:
+  - @livepeer/core@1.5.0-next.1
+
 ## 1.5.0-next.0
 
 ### Minor Changes
@@ -44,7 +53,7 @@
 
 - [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added the ability to pass in a `viewerId` to the Player to pass along to the metrics endpoint, for application builders to be able to query viewership by wallet.
 
-- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]: 
+- Updated dependencies [[`f840c70`](https://github.com/livepeer/livepeer.js/commit/f840c70f25a4688d66453db778931db029691866), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef), [`c8050be`](https://github.com/livepeer/livepeer.js/commit/c8050be34e8056abccaae595df6c6d3153e44fef)]:
   - @livepeer/core@1.4.3
 
 ## 1.4.2
