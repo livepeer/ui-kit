@@ -419,7 +419,7 @@ export function addMediaMetricsToStore<TElement>(
             if (event?.data) {
               const json = JSON.parse(event.data);
 
-              if (json?.error) {
+              if (json?.error && !sourceUrl.includes('.mp4')) {
                 onError?.(new Error(json.error));
               }
 
