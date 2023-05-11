@@ -61,6 +61,22 @@ function createPeerConnection(host: string | null): RTCPeerConnection | null {
   return null;
 }
 
+export type WebRTCVideoConfig = {
+  /**
+   * The configuration for the video track selector in MistServer.
+   *
+   * @default maxbps
+   * @link https://mistserver.org/guides/MistServer_Manual_3.0.pdf
+   */
+  videoTrackSelector?:
+    | 'highbps'
+    | 'maxbps'
+    | 'bestbps'
+    | 'lowbps'
+    | 'minbps'
+    | 'worstbps';
+};
+
 /**
  * Client that uses WHEP to playback video over WebRTC.
  *
@@ -73,6 +89,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
     onConnected?: () => void;
     onError?: (data: Error) => void;
   },
+  config?: WebRTCVideoConfig,
 ): {
   destroy: () => void;
 } => {
@@ -86,6 +103,14 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       if (destroyed) {
         return;
       }
+
+      const sourceUrl = new URL(source);
+      sourceUrl.searchParams.set(
+        'video',
+        config?.videoTrackSelector ?? 'maxbps',
+      );
+
+      const composedSource = sourceUrl.toString();
 
       /**
        * Create a new WebRTC connection, using public STUN servers with ICE,
@@ -164,11 +189,14 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
 
         peerConnection.addEventListener('negotiationneeded', async (_ev) => {
           try {
-            const ofr = await constructClientOffer(peerConnection, source);
+            const ofr = await constructClientOffer(
+              peerConnection,
+              composedSource,
+            );
 
             await negotiateConnectionWithClientOffer(
               peerConnection,
-              source,
+              composedSource,
               ofr,
             );
           } catch (e) {

@@ -1,15 +1,22 @@
 import { WebRTCSrc } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
-import { createNewWHEP } from 'livepeer/media/browser/webrtc';
+import {
+  WebRTCVideoConfig,
+  createNewWHEP,
+} from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
 import { VideoPlayerProps } from '.';
 
 import { MediaControllerContext } from '../../../../context';
 
-export type WebRTCVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
+export type WebRTCVideoPlayerProps = Omit<
+  VideoPlayerProps,
+  'src' | 'hlsConfig'
+> & {
   src: WebRTCSrc;
   fullscreen: boolean;
+  webrtcConfig?: WebRTCVideoConfig;
 };
 
 export const WebRTCVideoPlayer = React.forwardRef<

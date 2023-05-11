@@ -5,7 +5,10 @@ import {
   canPlayMediaNatively,
 } from 'livepeer/media/browser';
 import { HlsVideoConfig, isHlsSupported } from 'livepeer/media/browser/hls';
-import { isWebRTCSupported } from 'livepeer/media/browser/webrtc';
+import {
+  WebRTCVideoConfig,
+  isWebRTCSupported,
+} from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
 import { HLSVideoPlayer } from './HLSVideoPlayer';
@@ -28,8 +31,9 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   PosterSource,
   object
 > & {
-  hlsConfig?: HlsVideoConfig;
   allowCrossOriginCredentials?: boolean;
+  hlsConfig?: HlsVideoConfig;
+  webrtcConfig?: WebRTCVideoConfig;
 };
 
 const InternalVideoPlayer = React.forwardRef<

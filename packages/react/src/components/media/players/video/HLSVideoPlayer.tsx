@@ -6,7 +6,10 @@ import * as React from 'react';
 import { VideoPlayerProps } from '.';
 import { MediaControllerContext } from '../../../../context';
 
-export type HLSVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
+export type HLSVideoPlayerProps = Omit<
+  VideoPlayerProps,
+  'src' | 'webrtcConfig'
+> & {
   src: HlsSrc;
   fullscreen: boolean;
 };

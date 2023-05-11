@@ -13,6 +13,7 @@ import {
 import { ControlsOptions } from 'livepeer/media/browser';
 
 import { HlsVideoConfig } from 'livepeer/media/browser/hls';
+import { WebRTCVideoConfig } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
 import {
@@ -44,6 +45,8 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
   controls?: ControlsOptions;
   /** Configuration for the HLS.js instance used for HLS playback */
   hlsConfig?: HlsVideoConfig;
+  /** Configuration for the WebRTC playback */
+  webrtcConfig?: WebRTCVideoConfig;
   /**
    * Whether to include credentials in cross-origin requests made from the Player.
    * This is typically used to have the Player include cookies for requests made to Livepeer
@@ -119,6 +122,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
           <VideoPlayer
             {...playerProps}
             hlsConfig={props.hlsConfig}
+            webrtcConfig={props.webrtcConfig}
             allowCrossOriginCredentials={props.allowCrossOriginCredentials}
             src={source as (VideoSrc | HlsSrc | Base64Src | WebRTCSrc)[] | null}
           />
