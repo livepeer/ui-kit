@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.5.0-next.1
+
+### Patch Changes
+
+- [#320](https://github.com/livepeer/livepeer.js/pull/320) [`c49706d`](https://github.com/livepeer/livepeer.js/commit/c49706d816bc9048db29e6eac9fa44135ccd71fd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed error reporting for metrics websocket with MP4 playback.
+
 ## 1.5.0-next.0
 
 ### Minor Changes
