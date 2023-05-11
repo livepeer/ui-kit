@@ -6,8 +6,11 @@ import * as Exports from '.';
 it('should expose correct exports', () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
+      "ACCESS_CONTROL_ERROR_MESSAGE",
       "Client",
       "HttpError",
+      "STREAM_OFFLINE_ERROR_MESSAGE",
+      "STREAM_OPEN_ERROR_MESSAGE",
       "b64Decode",
       "b64Encode",
       "b64UrlDecode",
@@ -29,6 +32,8 @@ it('should expose correct exports', () => {
       "getStream",
       "getStreamSession",
       "getStreamSessions",
+      "isAccessControlError",
+      "isStreamOfflineError",
       "noopStorage",
       "omit",
       "pick",
