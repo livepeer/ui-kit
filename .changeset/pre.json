@@ -18,6 +18,7 @@
     "@livepeer/react-native": "1.4.4"
   },
   "changesets": [
+    "blue-maps-work",
     "silly-spoons-type",
     "thin-pugs-juggle"
   ]

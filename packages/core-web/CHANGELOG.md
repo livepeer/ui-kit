@@ -1,5 +1,11 @@
 # livepeer
 
+## 2.5.0-next.1
+
+### Patch Changes
+
+- [#318](https://github.com/livepeer/livepeer.js/pull/318) [`0b79b4d`](https://github.com/livepeer/livepeer.js/commit/0b79b4d812d3c783ce15122b522279d8ffb9396f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed the default WebRTC `videoTrackSelector` to be `0,1`, to select the source video/audio for the lowest latency.
+
 ## 2.5.0-next.0
 
 ### Minor Changes

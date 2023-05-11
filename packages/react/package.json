@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React components & hooks for web apps built with Livepeer.",
   "license": "MIT",
-  "version": "2.5.0-next.0",
+  "version": "2.5.0-next.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -63,7 +63,7 @@
     "@livepeer/core-react": "^1.5.0-next.0",
     "@stitches/react": "^1.2.8",
     "core-js": "^3.27.2",
-    "livepeer": "2.5.0-next.0",
+    "livepeer": "2.5.0-next.1",
     "zustand": "^4.3.2"
   },
   "devDependencies": {
