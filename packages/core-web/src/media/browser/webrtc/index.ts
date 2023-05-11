@@ -105,10 +105,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       }
 
       const sourceUrl = new URL(source);
-      sourceUrl.searchParams.set(
-        'video',
-        config?.videoTrackSelector ?? 'maxbps',
-      );
+      sourceUrl.searchParams.set('video', config?.videoTrackSelector ?? '0,1');
 
       const composedSource = sourceUrl.toString();
 
