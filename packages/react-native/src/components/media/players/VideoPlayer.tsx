@@ -1,6 +1,3 @@
-// polyfill for URL
-import 'react-native-url-polyfill/auto';
-
 import {
   ControlsOptions,
   DEFAULT_AUTOHIDE_TIME,

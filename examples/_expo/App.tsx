@@ -39,7 +39,13 @@ export default function App() {
 const VideoPlayer = () => {
   return (
     <>
-      <Player aspectRatio="16to9" playbackId="c8f8fw0j8ondyili" autoPlay loop />
+      <Player
+        aspectRatio="16to9"
+        // src="https://livepeercdn.studio/recordings/2155e493-e63a-4379-b1ee-8aa8d7ac2983/index.m3u8"
+        playbackId="52725sw6ofw5wbzh"
+        autoPlay
+        loop
+      />
     </>
   );
 };

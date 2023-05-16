@@ -12,7 +12,7 @@ import { MediaElement } from '../components/media/types';
 export type MediaControllerProviderProps<TElement extends MediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
-  opts: ControlsOptions;
+  opts: ControlsOptions | undefined;
   playerProps: PlayerProps<object>;
 };
 
@@ -33,7 +33,7 @@ export const MediaControllerProvider = <TElement extends MediaElement>({
 
 const useMediaControllerStore = <TElement extends MediaElement>(
   element: TElement | null,
-  opts: ControlsOptions,
+  opts: ControlsOptions | undefined,
   playerProps: PlayerProps<object>,
 ) => {
   const client = useClient();
@@ -41,13 +41,18 @@ const useMediaControllerStore = <TElement extends MediaElement>(
   const store = React.useMemo(
     () =>
       createNativeControllerStore<TElement>({
-        element,
         storage: client.storage,
-        opts,
+        opts: opts ?? {},
         playerProps,
       }),
-    [element, client?.storage, opts, playerProps],
+    [client?.storage, opts, playerProps],
   );
+
+  React.useEffect(() => {
+    if (element) {
+      store.setState({ _element: element });
+    }
+  }, [store, element]);
 
   return store;
 };

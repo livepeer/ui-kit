@@ -1,3 +1,6 @@
+// polyfill for URL
+import 'react-native-url-polyfill/auto';
+
 import { AudioSrc, Base64Src, VideoSrc, WebRTCSrc } from '@livepeer/core-react';
 import {
   PlayerProps as CorePlayerProps,
@@ -53,7 +56,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   return (
     <MediaControllerProvider
       element={mediaElement}
-      opts={controls ?? {}}
+      opts={controls}
       playerProps={props as PlayerProps<object>}
     >
       <Container theme={theme} aspectRatio={aspectRatio}>

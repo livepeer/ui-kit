@@ -13,18 +13,16 @@ import { PlayerProps } from '../Player';
 import { MediaElement } from '../types';
 
 export const createNativeControllerStore = <TElement extends MediaElement>({
-  element,
   storage,
   opts,
   playerProps,
 }: {
-  element: TElement | null;
   storage?: Storage;
   opts?: ControlsOptions;
   playerProps?: PlayerProps<object>;
 }): StoreApi<MediaControllerState<MediaElement>> => {
   return createControllerStore<TElement>({
-    element: element ?? undefined,
+    element: undefined,
     device: {
       isMobile: true,
       isAndroid: Platform?.OS === 'android',
