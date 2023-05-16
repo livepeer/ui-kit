@@ -1,7 +1,6 @@
 import { getMetricsReportingUrl } from './utils';
 import { MediaControllerStore } from '../controller';
 import { MimeType } from '../mime';
-import { getMediaSourceType } from '../src';
 
 type RawMetrics = {
   preloadTime: number;
@@ -31,7 +30,7 @@ type RawMetrics = {
   sourceType: MimeType | 'unknown';
 
   pageUrl: string;
-  sourceUrl: string;
+  sourceUrl: string | null;
   duration: number | null;
 
   autoplay: 'autoplay' | 'preload-full' | 'preload-metadata' | 'standard';
@@ -183,6 +182,8 @@ export class MetricsStatus<TElement> {
   connected = false;
   store: MediaControllerStore<TElement>;
 
+  destroy: () => void;
+
   currentMetrics: RawMetrics;
   previousMetrics: RawMetrics | null = null;
 
@@ -190,7 +191,7 @@ export class MetricsStatus<TElement> {
   timeStalled = new Timer();
   timeUnpaused = new Timer();
 
-  constructor(store: MediaControllerStore<TElement>, sourceUrl: string) {
+  constructor(store: MediaControllerStore<TElement>) {
     const currentState = store.getState();
 
     if (currentState.autoplay) {
@@ -228,11 +229,11 @@ export class MetricsStatus<TElement> {
       pageUrl,
       playbackScore: null,
       player: currentState?.src?.type ?? 'unknown',
+      sourceType: currentState?.src?.mime ?? 'unknown',
+      sourceUrl: currentState?.src?.src ?? null,
       playerHeight: null,
       playerWidth: null,
       preloadTime: 0,
-      sourceType: currentState?.src?.mime ?? 'unknown',
-      sourceUrl,
       timeStalled: 0,
       timeUnpaused: 0,
       timeWaiting: 0,
@@ -246,7 +247,7 @@ export class MetricsStatus<TElement> {
       videoWidth: null,
     };
 
-    store.subscribe((state, prevState) => {
+    this.destroy = store.subscribe((state, prevState) => {
       if (
         state._requestedPlayPauseLastTime !==
           prevState._requestedPlayPauseLastTime &&
@@ -257,6 +258,12 @@ export class MetricsStatus<TElement> {
         if (this.preloadTime === 0) {
           this.preloadTime = Date.now() - bootMs;
         }
+      }
+
+      if (state.src?.src !== prevState.src?.src) {
+        this.currentMetrics.player = state.src?.type ?? 'unknown';
+        this.currentMetrics.sourceType = state.src?.mime ?? 'unknown';
+        this.currentMetrics.sourceUrl = state.src?.src ?? null;
       }
 
       if (state.playing !== prevState.playing) {
@@ -362,8 +369,7 @@ const sessionToken = generateRandomToken(); // used to track playbacks across se
 
 const bootMs = Date.now(); // used for firstPlayback value
 
-export type MediaMetrics<TElement> = {
-  metrics: MetricsStatus<TElement> | null;
+export type MediaMetrics = {
   destroy: () => void;
 };
 
@@ -373,20 +379,19 @@ export type MediaMetrics<TElement> = {
  * metrics endpoint.
  *
  * @param store Element to capture playback metrics from
+ * @param onError Error callback
  */
 export function addMediaMetricsToStore<TElement>(
   store: MediaControllerStore<TElement> | undefined | null,
-  sourceUrl: string | undefined | null,
   onError?: (error: unknown) => void,
-): MediaMetrics<TElement> {
-  const defaultResponse: MediaMetrics<TElement> = {
-    metrics: null,
+): MediaMetrics {
+  const defaultResponse: MediaMetrics = {
     destroy: () => {
       //
     },
   };
 
-  if (!store || !sourceUrl) {
+  if (!store) {
     return defaultResponse;
   }
 
@@ -395,92 +400,140 @@ export function addMediaMetricsToStore<TElement>(
     return defaultResponse;
   }
 
-  // set the src from the source URL
-  store.setState({ src: getMediaSourceType(sourceUrl) });
+  let ws: WebSocket | null;
 
-  const metricsStatus = new MetricsStatus(store, sourceUrl);
+  let timeOut: NodeJS.Timeout | null = null;
+  let enabled = true;
+
+  const metricsStatus = new MetricsStatus(store);
+  const monitor = new PlaybackMonitor(store);
+
+  const report = () => {
+    if (!enabled || !ws) {
+      return;
+    }
+
+    // update playback score from monitor
+    const playbackScore = monitor.calculateScore();
+    if (playbackScore !== null) {
+      metricsStatus.setPlaybackScore(playbackScore);
+    }
+
+    const metrics = metricsStatus.getMetrics();
+
+    // only send a report if stats have changed, and only send those changes
+    const d: Partial<RawMetrics> = {};
+    let key: keyof RawMetrics;
+    for (key in metrics.current) {
+      const val = metrics.current[key];
+      if (val !== metrics?.previous?.[key]) {
+        (d[key] as typeof val) = val;
+      }
+    }
+    if (Object.keys(d).length > 0) {
+      send(ws, d);
+    }
+
+    timeOut = setTimeout(function () {
+      report();
+    }, 1e3);
+  };
+
+  let previousPlaybackId: string | null = null;
+
+  const destroyPlaybackIdListener = store.subscribe((currentState) => {
+    if (
+      currentState?.playbackId &&
+      currentState?.playbackId !== previousPlaybackId &&
+      currentState?.src?.src
+    ) {
+      const playbackId = currentState.playbackId;
+      const currentSource = currentState.src;
+      const playbackDomain = currentSource.src;
+
+      console.log('adding playback ID metrics listener');
+
+      previousPlaybackId = playbackId;
+
+      try {
+        const createNewWebSocket = async (numRetries = 0) => {
+          const reportingWebsocketUrl = await getMetricsReportingUrl(
+            playbackId,
+            playbackDomain,
+            sessionToken,
+          );
+
+          if (reportingWebsocketUrl) {
+            const newWebSocket = new WebSocket(reportingWebsocketUrl);
+
+            newWebSocket.addEventListener('open', () => {
+              // enable active statistics reporting
+              report();
+            });
+            newWebSocket.addEventListener('message', (event) => {
+              try {
+                if (event?.data) {
+                  const json = JSON.parse(event.data);
+
+                  if (json?.error && store.getState().live) {
+                    onError?.(new Error(json.error));
+                  }
+
+                  if (json?.meta?.bframes || json?.meta?.buffer_window) {
+                    store.getState().setWebsocketMetadata({
+                      bframes: json?.meta?.bframes
+                        ? Number(json?.meta?.bframes)
+                        : undefined,
+                      bufferWindow: json?.meta?.buffer_window
+                        ? Number(json?.meta?.buffer_window)
+                        : undefined,
+                    });
+                  }
+                }
+              } catch (e) {
+                console.warn('Failed to parse metadata from websocket.');
+              }
+            });
+            newWebSocket.addEventListener('close', (event) => {
+              // disable active statistics gathering
+              if (timeOut) {
+                clearTimeout(timeOut);
+                timeOut = null;
+                enabled = false;
+              }
+
+              // use random code for internal error
+              if (event.code !== 3077) {
+                // auto-reconnect with exponential backoff
+                setTimeout(function () {
+                  createNewWebSocket(numRetries++).then((websocket) => {
+                    ws = websocket;
+                  });
+                }, Math.pow(2, numRetries) * 1e3);
+              }
+            });
+            return newWebSocket;
+          }
+
+          return null;
+        };
+
+        createNewWebSocket()
+          .then((websocket) => {
+            ws = websocket;
+          })
+          .catch((e) => {
+            console.error(e);
+            onError?.(e);
+          });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  });
 
   try {
-    const createNewWebSocket = async (numRetries = 0) => {
-      const reportingWebsocketUrl = await getMetricsReportingUrl(
-        sourceUrl,
-        sessionToken,
-      );
-
-      if (reportingWebsocketUrl) {
-        const newWebSocket = new WebSocket(reportingWebsocketUrl);
-
-        newWebSocket.addEventListener('open', () => {
-          // enable active statistics reporting
-          report();
-        });
-        newWebSocket.addEventListener('message', (event) => {
-          try {
-            if (event?.data) {
-              const json = JSON.parse(event.data);
-
-              if (json?.error && !sourceUrl.includes('.mp4')) {
-                onError?.(new Error(json.error));
-              }
-
-              if (json?.meta?.bframes || json?.meta?.buffer_window) {
-                store.getState().setWebsocketMetadata({
-                  bframes: json?.meta?.bframes
-                    ? Number(json?.meta?.bframes)
-                    : undefined,
-                  bufferWindow: json?.meta?.buffer_window
-                    ? Number(json?.meta?.buffer_window)
-                    : undefined,
-                });
-              }
-            }
-          } catch (e) {
-            console.warn('Failed to parse metadata from websocket.');
-          }
-        });
-        newWebSocket.addEventListener('close', (event) => {
-          // disable active statistics gathering
-          if (timeOut) {
-            clearTimeout(timeOut);
-            timeOut = null;
-            enabled = false;
-          }
-
-          // use random code for internal error
-          if (event.code !== 3077) {
-            // auto-reconnect with exponential backoff
-            setTimeout(function () {
-              createNewWebSocket(numRetries++).then((websocket) => {
-                ws = websocket;
-              });
-            }, Math.pow(2, numRetries) * 1e3);
-          }
-        });
-        return newWebSocket;
-      }
-
-      return null;
-    };
-
-    let ws: WebSocket | null;
-
-    createNewWebSocket()
-      .then((websocket) => {
-        ws = websocket;
-      })
-      .catch((e) => {
-        console.error(e);
-        onError?.(e);
-      });
-
-    let timeOut: NodeJS.Timeout | null = null;
-    let enabled = true;
-
-    /////////////////////
-    //  basics         //
-    /////////////////////
-
-    store.subscribe((state, prevState) => {
+    const destroyTtffListener = store.subscribe((state, prevState) => {
       if (
         state.playing !== prevState.playing &&
         metricsStatus.getFirstPlayback() === 0
@@ -504,13 +557,7 @@ export function addMediaMetricsToStore<TElement>(
       }
     });
 
-    /////////////////////
-    //  playbackScore  //
-    /////////////////////
-
-    const monitor = new PlaybackMonitor(store);
-
-    store.subscribe((state, prevState) => {
+    const destroyMonitorListener = store.subscribe((state, prevState) => {
       // enable
       if (
         (state.playing !== prevState.playing && state.playing) ||
@@ -519,68 +566,34 @@ export function addMediaMetricsToStore<TElement>(
         monitor.init();
       }
 
-      // TODO add rate change here similar to
-      // for (const eventName of ['seeking', 'seeked', 'ratechange'] as const) {
-      //   element.addEventListener(eventName, function () {
-      //     monitor.reset();
-      //   });
-      // }
       if (state._requestedRangeToSeekTo !== prevState._requestedRangeToSeekTo) {
         monitor.reset();
       }
 
-      // TODO ensure that these events are handled
-      //   'loadeddata',
-      //   'pause',
-      //   'abort',
-      //   'emptied',
-      //   'ended',
       if (state.playing !== prevState.playing && !state.playing) {
         monitor.destroy();
       }
     });
 
-    const report = () => {
-      if (!enabled || !ws) {
-        return;
-      }
-
-      // update playback score from monitor
-      const playbackScore = monitor.calculateScore();
-      if (playbackScore !== null) {
-        metricsStatus.setPlaybackScore(playbackScore);
-      }
-
-      const metrics = metricsStatus.getMetrics();
-
-      // only send a report if stats have changed, and only send those changes
-      const d: Partial<RawMetrics> = {};
-      let key: keyof RawMetrics;
-      for (key in metrics.current) {
-        const val = metrics.current[key];
-        if (val !== metrics?.previous?.[key]) {
-          (d[key] as typeof val) = val;
-        }
-      }
-      if (Object.keys(d).length > 0) {
-        send(ws, d);
-      }
-
-      timeOut = setTimeout(function () {
-        report();
-      }, 1e3);
-    };
-
     const destroy = () => {
       enabled = false;
-      monitor.destroy();
+
+      console.log('destroying metrics listener');
+
+      destroyPlaybackIdListener?.();
+      destroyMonitorListener?.();
+      destroyTtffListener?.();
+
+      monitor?.destroy?.();
+      metricsStatus?.destroy?.();
+
       if (timeOut) {
         clearTimeout(timeOut);
       }
       ws?.close(3077);
     };
 
-    return { metrics: metricsStatus, destroy };
+    return { destroy };
   } catch (e) {
     console.error(e);
   }

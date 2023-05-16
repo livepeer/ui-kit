@@ -1,32 +1,15 @@
 import fetch from 'cross-fetch';
 
 const LP_DOMAINS = ['livepeer', 'livepeercdn', 'lp-playback'];
-const ASSET_URL_PART_VALUE = 'hls';
-const WEBRTC_URL_PART_VALUE = 'webrtc';
-const RECORDING_URL_PART_VALUE = 'recordings';
 
-// Example url the playback id needs to be found in
-// https://livepeercdn.com/hls/<playback-id>/index.m3u8
-// https://livepeercdn.com/recordings/<playback-id>/index.m3u8
+// Finds the metrics reporting URL from a playback ID and a playback domain
 export const getMetricsReportingUrl = async (
-  src: string,
+  playbackId: string,
+  playbackDomain: string,
   sessionToken?: string | null,
 ): Promise<string | null> => {
   try {
-    const parsedUrl = new URL(src);
-
-    const parts = parsedUrl.pathname.split('/');
-
-    const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
-    const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
-    const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
-
-    // Check if the url is valid
-    const playbackId = includesWebRtcUrl
-      ? parts?.[(parts?.length ?? 0) - 1]
-      : includesRecording || includesAssetUrl
-      ? parts?.[(parts?.length ?? 0) - 2] ?? null
-      : null;
+    const parsedUrl = new URL(playbackDomain);
 
     const splitHost = parsedUrl.host.split('.');
     const includesDomain = LP_DOMAINS.includes(

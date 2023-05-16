@@ -82,6 +82,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   const {
     mediaElement,
     playerProps,
+    mediaControllerProps,
     controlsContainerProps,
     source,
     props: { children, controls, theme, title, poster, showTitle, aspectRatio },
@@ -105,7 +106,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     <MediaControllerProvider
       element={mediaElement}
       opts={controls}
-      playerProps={playerProps}
+      playerProps={mediaControllerProps}
     >
       <Container
         theme={theme}

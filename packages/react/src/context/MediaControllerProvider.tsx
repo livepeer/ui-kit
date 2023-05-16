@@ -1,30 +1,27 @@
 import { useClient } from '@livepeer/core-react/context';
-import { ControlsOptions, createControllerStore } from 'livepeer/media';
+import {
+  ControlsOptions,
+  PlayerPropsOptions,
+  createControllerStore,
+} from 'livepeer/media';
 import { addEventListeners, getDeviceInfo } from 'livepeer/media/browser';
 import * as React from 'react';
 
 import { MediaControllerContext } from './MediaControllerContext';
-import { PlayerProps } from '../components';
 
-export type MediaControllerProviderProps<
-  TElement extends HTMLMediaElement,
-  TPlaybackPolicyObject extends object,
-> = {
+export type MediaControllerProviderProps<TElement extends HTMLMediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
-  playerProps: PlayerProps<TPlaybackPolicyObject>;
+  playerProps: PlayerPropsOptions;
   opts: ControlsOptions | undefined;
 };
 
-export const MediaControllerProvider = <
-  TElement extends HTMLMediaElement,
-  TPlaybackPolicyObject extends object,
->({
+export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   element,
   children,
   playerProps,
   opts,
-}: MediaControllerProviderProps<TElement, TPlaybackPolicyObject>) => {
+}: MediaControllerProviderProps<TElement>) => {
   const mediaController = useMediaControllerStore(element, opts, playerProps);
 
   return (
@@ -34,35 +31,22 @@ export const MediaControllerProvider = <
   );
 };
 
-const useMediaControllerStore = <
-  TElement extends HTMLMediaElement,
-  TPlaybackPolicyObject extends object,
->(
+const useMediaControllerStore = <TElement extends HTMLMediaElement>(
   element: TElement | null,
   opts: ControlsOptions | undefined,
-  playerProps: PlayerProps<TPlaybackPolicyObject>,
+  playerProps: PlayerPropsOptions,
 ) => {
   const client = useClient();
 
   const store = React.useMemo(
     () =>
       createControllerStore<TElement>({
-        element: element ?? null,
         device: getDeviceInfo(),
         storage: client.storage,
         opts: opts ?? {},
-        playerProps: {
-          ...playerProps,
-          src: null,
-          preload:
-            element?.preload === 'auto'
-              ? 'full'
-              : element?.preload === 'metadata'
-              ? 'metadata'
-              : 'none',
-        },
+        playerProps,
       }),
-    [element, client?.storage, opts, playerProps],
+    [client?.storage, opts, playerProps],
   );
 
   React.useEffect(() => {
@@ -72,6 +56,13 @@ const useMediaControllerStore = <
       destroy?.();
     };
   }, [store, opts]);
+
+  React.useEffect(() => {
+    if (element) {
+      console.log('setting new element');
+      store.setState({ _element: element });
+    }
+  }, [element]);
 
   return store;
 };

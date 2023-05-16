@@ -37,8 +37,8 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
     opts: opts ?? {},
     playerProps: {
       ...playerProps,
+      playbackId: playerProps?.playbackId ?? undefined,
       preload: 'none',
-      src: null,
     },
   });
 };

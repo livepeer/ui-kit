@@ -286,7 +286,7 @@ async function constructClientOffer(
   return null;
 }
 
-const timeout = 5000;
+const timeout = 10000;
 
 async function postSDPOffer(endpoint: string, data: string) {
   const controller = new AbortController();

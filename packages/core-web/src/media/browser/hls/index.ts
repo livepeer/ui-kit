@@ -43,6 +43,12 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
 ): {
   destroy: () => void;
 } => {
+  console.log(
+    `Element attribute: ${element.getAttribute(
+      VIDEO_HLS_INITIALIZED_ATTRIBUTE,
+    )}`,
+  );
+
   // do not attach twice
   if (element.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE) === 'true') {
     return {
@@ -54,6 +60,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
 
   element.setAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE, 'true');
 
+  console.log('setting attribute');
+
   const hls = new Hls({
     maxBufferLength: 15,
     maxMaxBufferLength: 60,
@@ -63,6 +71,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   });
 
   const onDestroy = () => {
+    console.log('destroying attribute');
     hls?.destroy?.();
     element?.removeAttribute?.(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
   };
@@ -74,6 +83,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Hls.Events.LEVEL_LOADED, async (_e, data) => {
     const { live, totalduration: duration } = data.details;
 
+    console.log('level loaded');
+
     callbacks?.onLive?.(Boolean(live));
     callbacks?.onDuration?.(duration ?? 0);
   });
@@ -82,6 +93,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.loadSource(source);
 
     hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
+      console.log('can play');
+
       callbacks?.onCanPlay?.();
     });
   });
@@ -95,6 +108,8 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
 
     if (!fatal && !isManifestParsingError) return;
     callbacks?.onError?.(data);
+
+    console.log({ data });
 
     if (isFatalNetworkError || isFatalMediaError || isManifestParsingError) {
       await new Promise((r) => setTimeout(r, 1000 * ++retryCount));

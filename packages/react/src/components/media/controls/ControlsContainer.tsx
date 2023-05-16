@@ -48,6 +48,10 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     buffered,
   });
 
+  React.useEffect(() => {
+    console.log(`Current playback error: ${playbackError?.type}`);
+  }, [playbackError]);
+
   return (
     <>
       {poster ? (
@@ -98,7 +102,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </div>
       )}
 
-      {isLoaded && (
+      {isLoaded && !playbackError?.type && (
         <>
           <div
             className={styling.controlsContainer.gradient({

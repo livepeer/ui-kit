@@ -1,4 +1,4 @@
-import { WebRTCSrc } from 'livepeer';
+import { MediaControllerState, WebRTCSrc } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import {
   WebRTCVideoConfig,
@@ -8,7 +8,17 @@ import * as React from 'react';
 
 import { VideoPlayerProps } from '.';
 
-import { MediaControllerContext } from '../../../../context';
+import { useMediaController } from '../../../../context';
+
+const mediaControllerSelector = ({
+  metadata,
+  _element,
+  setLive,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  metadata,
+  _element,
+  setLive,
+});
 
 export type WebRTCVideoPlayerProps = Omit<
   VideoPlayerProps,
@@ -37,17 +47,25 @@ export const WebRTCVideoPlayer = React.forwardRef<
     webrtcConfig,
   } = props;
 
-  const store = React.useContext(MediaControllerContext);
+  const { metadata, _element, setLive } = useMediaController(
+    mediaControllerSelector,
+  );
 
   const onConnected = React.useCallback(async () => {
     onPlaybackError?.(null);
-    store.getState().setLive(true);
-  }, [onPlaybackError, store]);
+    setLive(true);
+  }, [onPlaybackError, setLive]);
 
   React.useEffect(() => {
-    const element = store.getState()._element;
+    if (metadata?.bframes) {
+      onPlaybackError(
+        new Error('Metadata indicates that WebRTC playback contains bframes.'),
+      );
+    }
+  }, [metadata, onPlaybackError]);
 
-    if (element) {
+  React.useEffect(() => {
+    if (_element && src.src) {
       const onErrorComposed = (error: Error) => {
         const cleanError = new Error(
           error?.message?.toString?.() ?? 'Error with WebRTC',
@@ -58,7 +76,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
 
       const { destroy } = createNewWHEP(
         src?.src,
-        element,
+        _element,
         {
           onConnected,
           onError: onErrorComposed,
@@ -66,25 +84,11 @@ export const WebRTCVideoPlayer = React.forwardRef<
         webrtcConfig,
       );
 
-      const unsubscribe = store.subscribe((state, prevState) => {
-        if (
-          state?.metadata?.bframes &&
-          state?.metadata?.bframes !== prevState.metadata?.bframes
-        ) {
-          onPlaybackError(
-            new Error(
-              'Metadata indicates that WebRTC playback contains bframes.',
-            ),
-          );
-        }
-      });
-
       return () => {
-        unsubscribe();
-        destroy();
+        destroy?.();
       };
     }
-  }, [autoPlay, store, onConnected, src, onPlaybackError]);
+  }, [webrtcConfig, _element, onConnected, src, onPlaybackError]);
 
   return (
     <video

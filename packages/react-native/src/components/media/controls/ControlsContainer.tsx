@@ -48,6 +48,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     hidePosterOnPlayed = true,
     loadingText,
     children,
+    playbackError,
   } = props;
 
   const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
@@ -81,7 +82,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </Background>
       )}
 
-      {isLoaded && (
+      {isLoaded && !playbackError?.type && (
         <>
           <Gradient
             display={hidden ? 'hidden' : 'shown'}
