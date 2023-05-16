@@ -97,10 +97,6 @@ const InternalVideoPlayer = React.forwardRef<
   }, [store, currentPlaybackSource]);
 
   React.useEffect(() => {
-    console.log({ currentPlaybackSource });
-  }, [currentPlaybackSource]);
-
-  React.useEffect(() => {
     const { destroy } = addMediaMetricsToStore(store, (e) => {
       onPlaybackError?.(e as Error);
       console.error('Not able to report player metrics', e);

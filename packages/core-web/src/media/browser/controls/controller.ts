@@ -285,11 +285,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       const removeExitPictureInPictureListener =
         addExitPictureInPictureEventListener(element, onExitPictureInPicture);
 
-      console.log('adding event listeners');
-
       destroy = () => {
-        console.log('destroying event listeners');
-
         removeFullscreenListener?.();
 
         removeEnterPictureInPictureListener?.();

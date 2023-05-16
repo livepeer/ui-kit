@@ -59,7 +59,6 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
 
   React.useEffect(() => {
     if (element) {
-      console.log('setting new element');
       store.setState({ _element: element });
     }
   }, [store, element]);

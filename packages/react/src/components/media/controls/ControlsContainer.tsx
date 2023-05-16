@@ -48,10 +48,6 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     buffered,
   });
 
-  React.useEffect(() => {
-    console.log(`Current playback error: ${playbackError?.type}`);
-  }, [playbackError]);
-
   return (
     <>
       {poster ? (

@@ -64,11 +64,7 @@ export const HLSVideoPlayer = React.forwardRef<
   );
 
   React.useEffect(() => {
-    console.log('running sub effect in hls');
-
     if (_element && src) {
-      console.log('createNewHls');
-
       const onErrorComposed = (error: HlsError) => {
         const cleanError = new Error(
           error?.response?.data?.toString?.() ??

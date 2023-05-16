@@ -453,8 +453,6 @@ export function addMediaMetricsToStore<TElement>(
       const currentSource = currentState.src;
       const playbackDomain = currentSource.src;
 
-      console.log('adding playback ID metrics listener');
-
       previousPlaybackId = playbackId;
 
       try {
@@ -579,8 +577,6 @@ export function addMediaMetricsToStore<TElement>(
 
     const destroy = () => {
       enabled = false;
-
-      console.log('destroying metrics listener');
 
       destroyPlaybackIdListener?.();
       destroyMonitorListener?.();
