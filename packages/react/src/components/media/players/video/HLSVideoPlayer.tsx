@@ -1,10 +1,26 @@
-import { ACCESS_CONTROL_ERROR_MESSAGE, HlsSrc } from 'livepeer';
+import {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  HlsSrc,
+  MediaControllerState,
+} from 'livepeer';
 import { HlsError, createNewHls } from 'livepeer/media/browser/hls';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { VideoPlayerProps } from '.';
-import { MediaControllerContext } from '../../../../context';
+import { useMediaController } from '../../../../context';
+
+const mediaControllerSelector = ({
+  setLive,
+  onDurationChange,
+  onCanPlay,
+  _element,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  setLive,
+  onDurationChange,
+  onCanPlay,
+  _element,
+});
 
 export type HLSVideoPlayerProps = Omit<
   VideoPlayerProps,
@@ -19,8 +35,8 @@ export const HLSVideoPlayer = React.forwardRef<
   HLSVideoPlayerProps
 >((props, ref) => {
   const {
-    hlsConfig,
     src,
+    hlsConfig,
     autoPlay,
     title,
     loop,
@@ -28,26 +44,27 @@ export const HLSVideoPlayer = React.forwardRef<
     poster,
     objectFit,
     fullscreen,
+    playbackError,
     onPlaybackError,
     priority,
     allowCrossOriginCredentials,
   } = props;
 
-  const store = React.useContext(MediaControllerContext);
+  const { setLive, onCanPlay, onDurationChange, _element } = useMediaController(
+    mediaControllerSelector,
+  );
 
   const onLive = React.useCallback(
     async (live: boolean) => {
       onPlaybackError?.(null);
 
-      store.getState().setLive(live);
+      setLive(live);
     },
-    [onPlaybackError, store],
+    [onPlaybackError, setLive],
   );
 
   React.useEffect(() => {
-    const element = store.getState()._element;
-
-    if (element) {
+    if (_element && src) {
       const onErrorComposed = (error: HlsError) => {
         const cleanError = new Error(
           error?.response?.data?.toString?.() ??
@@ -61,11 +78,11 @@ export const HLSVideoPlayer = React.forwardRef<
 
       const { destroy } = createNewHls(
         src?.src,
-        element,
+        _element,
         {
           onLive,
-          onDuration: store.getState().onDurationChange,
-          onCanPlay: store.getState().onCanPlay,
+          onDuration: onDurationChange,
+          onCanPlay: onCanPlay,
           onError: onErrorComposed,
         },
         {
@@ -78,20 +95,22 @@ export const HLSVideoPlayer = React.forwardRef<
       );
 
       return () => {
-        destroy();
+        destroy?.();
       };
     }
   }, [
     autoPlay,
     hlsConfig,
+    onDurationChange,
+    onCanPlay,
+    _element,
     src,
-    store,
     onLive,
     onPlaybackError,
     allowCrossOriginCredentials,
   ]);
 
-  return (
+  return !playbackError?.type ? (
     <video
       className={styling.media.video({
         size: fullscreen ? 'fullscreen' : objectFit,
@@ -112,5 +131,7 @@ export const HLSVideoPlayer = React.forwardRef<
         allowCrossOriginCredentials ? 'use-credentials' : 'anonymous'
       }
     />
+  ) : (
+    <></>
   );
 });

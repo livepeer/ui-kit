@@ -1,6 +1,3 @@
-// polyfill for URL
-import 'react-native-url-polyfill/auto';
-
 import {
   ControlsOptions,
   DEFAULT_AUTOHIDE_TIME,
@@ -82,11 +79,9 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     );
 
     React.useEffect(() => {
-      const removeEffectsFromStore = addEffectsToStore(
-        context,
-        context.getState()._element,
-        { autohide: options?.autohide ?? DEFAULT_AUTOHIDE_TIME },
-      );
+      const removeEffectsFromStore = addEffectsToStore(context, {
+        autohide: options?.autohide ?? DEFAULT_AUTOHIDE_TIME,
+      });
 
       return () => {
         removeEffectsFromStore?.();
@@ -98,14 +93,10 @@ export const VideoPlayer = React.forwardRef<MediaElement, VideoPlayerProps>(
     }, [src]);
 
     React.useEffect(() => {
-      const { destroy } = addMediaMetricsToStore(
-        context,
-        filteredSources?.[0]?.src,
-        (e) => {
-          onPlaybackError?.(e as Error);
-          console.error('Not able to report player metrics', e);
-        },
-      );
+      const { destroy } = addMediaMetricsToStore(context, (e) => {
+        onPlaybackError?.(e as Error);
+        console.error('Not able to report player metrics', e);
+      });
 
       return destroy;
     }, [onPlaybackError, context, filteredSources]);
@@ -204,76 +195,76 @@ let previousPromise: Promise<any> | boolean | null;
 
 const addEffectsToStore = <TElement extends MediaElement>(
   store: StoreApi<MediaControllerState<TElement>>,
-  element: MediaElement | null,
   options: Required<Pick<ControlsOptions, 'autohide'>>,
 ) => {
   // add effects to store changes
   return store.subscribe(async (current, prev) => {
     try {
-      if (element) {
-        if (previousPromise) {
-          try {
-            // wait for the previous promise to execute before handling the next effect
-            await previousPromise;
-          } catch (e) {
-            console.warn(e);
-          }
-        }
+      if (!current._element) {
+        return;
+      }
 
-        if (
-          current._requestedPlayPauseLastTime !==
-          prev._requestedPlayPauseLastTime
-        ) {
-          if (!current.playing) {
-            if (current.progress >= current.duration) {
-              previousPromise = element.playFromPositionAsync(0);
-            } else {
-              previousPromise = element.playAsync();
-            }
+      if (previousPromise) {
+        try {
+          // wait for the previous promise to execute before handling the next effect
+          await previousPromise;
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+
+      if (
+        current._requestedPlayPauseLastTime !== prev._requestedPlayPauseLastTime
+      ) {
+        if (!current.playing) {
+          if (current.progress >= current.duration) {
+            previousPromise = current._element.playFromPositionAsync(0);
           } else {
-            previousPromise = element.pauseAsync();
+            previousPromise = current._element.playAsync();
           }
+        } else {
+          previousPromise = current._element.pauseAsync();
         }
+      }
 
-        if (current.muted !== prev.muted) {
-          previousPromise = element.setIsMutedAsync(current.muted);
-          if (!current.muted) {
-            previousPromise = element.setVolumeAsync(1);
-          }
+      if (current.muted !== prev.muted) {
+        previousPromise = current._element.setIsMutedAsync(current.muted);
+        if (!current.muted) {
+          previousPromise = current._element.setVolumeAsync(1);
         }
+      }
 
-        if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
-          previousPromise = element.setStatusAsync({
-            positionMillis: current._requestedRangeToSeekTo * 1000, // convert to ms
-          });
-        }
+      if (current._requestedRangeToSeekTo !== prev._requestedRangeToSeekTo) {
+        previousPromise = current._element.setStatusAsync({
+          positionMillis: current._requestedRangeToSeekTo * 1000, // convert to ms
+        });
+      }
 
-        // user has interacted with element
-        if (
-          options.autohide &&
-          current._lastInteraction !== prev._lastInteraction
-        ) {
-          await delay(options.autohide);
-
-          if (
-            !store.getState().hidden &&
-            current._lastInteraction === store.getState()._lastInteraction
-          ) {
-            store.getState().setHidden(true);
-          }
-        }
+      // user has interacted with element
+      if (
+        options.autohide &&
+        current._lastInteraction !== prev._lastInteraction
+      ) {
+        await delay(options.autohide);
 
         if (
-          current._requestedFullscreenLastTime !==
-          prev._requestedFullscreenLastTime
+          !store.getState().hidden &&
+          current._lastInteraction === store.getState()._lastInteraction
         ) {
-          const isFullscreen = current.fullscreen;
+          store.getState().setHidden(true);
+        }
+      }
 
-          if (!isFullscreen) {
-            previousPromise = element.presentFullscreenPlayer();
-          } else {
-            previousPromise = element.dismissFullscreenPlayer();
-          }
+      if (
+        current._requestedFullscreenLastTime !==
+        prev._requestedFullscreenLastTime
+      ) {
+        const isFullscreen = current.fullscreen;
+
+        if (!isFullscreen) {
+          previousPromise = current._element.presentFullscreenPlayer();
+        } else {
+          previousPromise = current._element.dismissFullscreenPlayer();
         }
       }
     } catch (e) {

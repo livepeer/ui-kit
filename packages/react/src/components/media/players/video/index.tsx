@@ -1,9 +1,7 @@
+import { addMediaMetricsToStore } from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
-import {
-  addMediaMetricsToInitializedStore,
-  canPlayMediaNatively,
-} from 'livepeer/media/browser';
+import { canPlayMediaNatively } from 'livepeer/media/browser';
 import { HlsVideoConfig, isHlsSupported } from 'livepeer/media/browser/hls';
 import {
   WebRTCVideoConfig,
@@ -93,17 +91,19 @@ const InternalVideoPlayer = React.forwardRef<
   const store = React.useContext(MediaControllerContext);
 
   React.useEffect(() => {
-    const { destroy } = addMediaMetricsToInitializedStore(
-      store,
-      currentPlaybackSource?.src,
-      (e) => {
-        onPlaybackError?.(e as Error);
-        console.error('Not able to report player metrics', e);
-      },
-    );
+    if (currentPlaybackSource) {
+      store?.getState?.()?._updateSource?.(currentPlaybackSource?.src);
+    }
+  }, [store, currentPlaybackSource]);
+
+  React.useEffect(() => {
+    const { destroy } = addMediaMetricsToStore(store, (e) => {
+      onPlaybackError?.(e as Error);
+      console.error('Not able to report player metrics', e);
+    });
 
     return destroy;
-  }, [onPlaybackError, store, currentPlaybackSource]);
+  }, [onPlaybackError, store]);
 
   return currentPlaybackSource?.type === 'webrtc' ? (
     <WebRTCVideoPlayer

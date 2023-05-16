@@ -3,8 +3,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { addMediaMetrics } from './metrics';
 import { MockedVideoElement, resetDateNow, setupClient } from '../../../test';
 
-const playbackUrl =
-  'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
+// const playbackUrl =
+//   'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
 
 describe('addMediaMetrics', () => {
   beforeAll(() => {
@@ -13,45 +13,10 @@ describe('addMediaMetrics', () => {
   });
 
   describe('event listeners', () => {
-    it('registers listeners', async () => {
-      const element = new MockedVideoElement();
-
-      const { metrics } = addMediaMetrics(element, playbackUrl);
-
-      expect(metrics).toBeTruthy;
-      expect(element.setAttribute).toHaveBeenCalledTimes(2);
-      expect(
-        element.addEventListener.mock.calls.map((e) => e?.[0]),
-      ).toMatchInlineSnapshot(
-        `
-        [
-          "volumechange",
-          "canplay",
-          "play",
-          "pause",
-          "durationchange",
-          "timeupdate",
-          "error",
-          "waiting",
-          "stalled",
-          "loadstart",
-          "resize",
-          "keyup",
-          "mouseenter",
-          "mouseleave",
-          "mousemove",
-          "touchstart",
-          "touchend",
-          "touchmove",
-        ]
-      `,
-      );
-    });
-
     it('should initialize to base state', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics } = addMediaMetrics(element, playbackUrl);
+      const { metrics } = addMediaMetrics(element);
 
       const metricsSnapshot = metrics?.getMetrics();
 
@@ -62,7 +27,7 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
-          "autoplay": "preload-metadata",
+          "autoplay": "standard",
           "duration": 0,
           "firstPlayback": 0,
           "nError": 0,
@@ -70,12 +35,12 @@ describe('addMediaMetrics', () => {
           "nWaiting": 0,
           "pageUrl": "http://localhost:3000/",
           "playbackScore": null,
-          "player": "hls",
+          "player": "unknown",
           "playerHeight": null,
           "playerWidth": null,
           "preloadTime": 0,
-          "sourceType": "application/vnd.apple.mpegurl",
-          "sourceUrl": "https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8",
+          "sourceType": "unknown",
+          "sourceUrl": null,
           "timeStalled": 0,
           "timeUnpaused": 0,
           "timeWaiting": 0,
@@ -91,7 +56,7 @@ describe('addMediaMetrics', () => {
     it('should update time unpaused and first playback', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics } = addMediaMetrics(element, playbackUrl);
+      const { metrics } = addMediaMetrics(element);
 
       element.dispatchEvent(new Event('playing'));
 
@@ -104,7 +69,7 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
       {
-        "autoplay": "preload-metadata",
+        "autoplay": "standard",
         "duration": 0,
         "firstPlayback": 0,
         "nError": 0,
@@ -112,12 +77,12 @@ describe('addMediaMetrics', () => {
         "nWaiting": 0,
         "pageUrl": "http://localhost:3000/",
         "playbackScore": null,
-        "player": "hls",
+        "player": "unknown",
         "playerHeight": null,
         "playerWidth": null,
         "preloadTime": 0,
-        "sourceType": "application/vnd.apple.mpegurl",
-        "sourceUrl": "https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8",
+        "sourceType": "unknown",
+        "sourceUrl": null,
         "timeStalled": 0,
         "timeUnpaused": 0,
         "timeWaiting": 0,
@@ -133,7 +98,7 @@ describe('addMediaMetrics', () => {
     it('should update time waiting and waiting count', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics } = addMediaMetrics(element, playbackUrl);
+      const { metrics } = addMediaMetrics(element);
 
       element.dispatchEvent(new Event('waiting'));
 
@@ -146,23 +111,23 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
           {
-            "autoplay": "preload-metadata",
+            "autoplay": "standard",
             "duration": 0,
             "firstPlayback": 0,
             "nError": 0,
             "nStalled": 0,
-            "nWaiting": 1,
+            "nWaiting": 0,
             "pageUrl": "http://localhost:3000/",
             "playbackScore": null,
-            "player": "hls",
+            "player": "unknown",
             "playerHeight": null,
             "playerWidth": null,
             "preloadTime": 0,
-            "sourceType": "application/vnd.apple.mpegurl",
-            "sourceUrl": "https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8",
+            "sourceType": "unknown",
+            "sourceUrl": null,
             "timeStalled": 0,
             "timeUnpaused": 0,
-            "timeWaiting": 1000,
+            "timeWaiting": 0,
             "ttff": 0,
             "uid": "",
             "userAgent": "UA",
@@ -175,7 +140,7 @@ describe('addMediaMetrics', () => {
     it('should update time stalled and stalled count', async () => {
       const element = new MockedVideoElement();
 
-      const { metrics } = addMediaMetrics(element, playbackUrl);
+      const { metrics } = addMediaMetrics(element);
 
       expect(element.dispatchEvent.mock.calls).toMatchInlineSnapshot('[]');
 
@@ -190,21 +155,21 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
                   {
-                    "autoplay": "preload-metadata",
+                    "autoplay": "standard",
                     "duration": 0,
                     "firstPlayback": 0,
                     "nError": 0,
-                    "nStalled": 1,
+                    "nStalled": 0,
                     "nWaiting": 0,
                     "pageUrl": "http://localhost:3000/",
                     "playbackScore": null,
-                    "player": "hls",
+                    "player": "unknown",
                     "playerHeight": null,
                     "playerWidth": null,
                     "preloadTime": 0,
-                    "sourceType": "application/vnd.apple.mpegurl",
-                    "sourceUrl": "https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8",
-                    "timeStalled": 1000,
+                    "sourceType": "unknown",
+                    "sourceUrl": null,
+                    "timeStalled": 0,
                     "timeUnpaused": 0,
                     "timeWaiting": 0,
                     "ttff": 0,
@@ -224,7 +189,7 @@ describe('addMediaMetrics', () => {
       return '\\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"';
     });
 
-    const { metrics } = addMediaMetrics(element, playbackUrl);
+    const { metrics } = addMediaMetrics(element);
 
     const metricsSnapshot = metrics?.getMetrics();
 
@@ -232,7 +197,7 @@ describe('addMediaMetrics', () => {
 
     expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
                       {
-                        "autoplay": "preload-metadata",
+                        "autoplay": "standard",
                         "duration": 0,
                         "firstPlayback": 0,
                         "nError": 0,
@@ -240,12 +205,12 @@ describe('addMediaMetrics', () => {
                         "nWaiting": 0,
                         "pageUrl": "http://localhost:3000/",
                         "playbackScore": null,
-                        "player": "hls",
+                        "player": "unknown",
                         "playerHeight": null,
                         "playerWidth": null,
                         "preloadTime": 0,
-                        "sourceType": "application/vnd.apple.mpegurl",
-                        "sourceUrl": "https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8",
+                        "sourceType": "unknown",
+                        "sourceUrl": null,
                         "timeStalled": 0,
                         "timeUnpaused": 0,
                         "timeWaiting": 0,

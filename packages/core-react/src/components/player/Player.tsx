@@ -1,6 +1,7 @@
 import {
   ControlsOptions,
   PlaybackInfo,
+  PlayerPropsOptions,
   Src,
   WebhookPlaybackPolicy,
   isAccessControlError,
@@ -206,9 +207,9 @@ export const usePlayer = <
           }
         : null;
 
-      if (newPlaybackError?.type !== playbackError?.type) {
-        setPlaybackError(newPlaybackError);
+      setPlaybackError(newPlaybackError);
 
+      try {
         if (error) {
           console.warn(error);
         }
@@ -222,9 +223,14 @@ export const usePlayer = <
         } else if (newPlaybackError?.message) {
           onError?.(new Error(newPlaybackError.message));
         }
+      } catch (e) {
+        //
       }
+
+      return newPlaybackError;
     },
-    [onAccessControlError, onStreamStatusChange, onError, playbackError],
+
+    [onAccessControlError, onStreamStatusChange, onError],
   );
 
   React.useEffect(() => {
@@ -285,6 +291,7 @@ export const usePlayer = <
     () => ({
       ref: playerRef,
       autoPlay,
+      playbackId,
       muted,
       poster: poster,
       loop: loop,
@@ -298,6 +305,7 @@ export const usePlayer = <
     }),
     [
       playerRef,
+      playbackId,
       autoPlay,
       muted,
       poster,
@@ -310,6 +318,19 @@ export const usePlayer = <
       _isCurrentlyShown,
       viewerId,
     ],
+  );
+
+  const mediaControllerProps: PlayerPropsOptions = React.useMemo(
+    () => ({
+      autoPlay,
+      playbackId: playbackId ?? undefined,
+      muted,
+      priority: priority,
+      viewerId,
+
+      // preload?: "none" | "full" | "metadata" | undefined;
+    }),
+    [autoPlay, playbackId, muted, priority, viewerId],
   );
 
   const controlsContainerProps = React.useMemo(
@@ -376,6 +397,7 @@ export const usePlayer = <
     source: sourceWithLoaded,
     uploadStatus,
     playerProps,
+    mediaControllerProps,
     controlsContainerProps,
     props,
   };

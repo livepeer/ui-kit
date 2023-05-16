@@ -1,13 +1,40 @@
-import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  createJSONStorage,
+  persist,
+  subscribeWithSelector,
+} from 'zustand/middleware';
 import { StoreApi, createStore } from 'zustand/vanilla';
 
-import { Src } from './src';
+import { Src, getMediaSourceType } from './src';
 import { ClientStorage } from '../storage';
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
 export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
+
+const ASSET_URL_PART_VALUE = 'hls';
+const WEBRTC_URL_PART_VALUE = 'webrtc';
+const RECORDING_URL_PART_VALUE = 'recordings';
+
+const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
+  const parsedUrl = new URL(sourceUrl);
+
+  const parts = parsedUrl.pathname.split('/');
+
+  const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
+  const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
+  const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
+
+  // Check if the url is valid
+  const playbackId = includesWebRtcUrl
+    ? parts?.[(parts?.length ?? 0) - 1]
+    : includesRecording || includesAssetUrl
+    ? parts?.[(parts?.length ?? 0) - 2] ?? null
+    : null;
+
+  return playbackId;
+};
 
 export type DeviceInformation = {
   isMobile: boolean;
@@ -46,6 +73,8 @@ export type MediaControllerState<TElement = void> = {
   /** If media supports changing the volume */
   isVolumeChangeSupported: boolean;
 
+  /** The playbackId that was passed in to Player */
+  playbackId: string | null;
   /** The Source that was passed in to Player */
   src: Src | null;
   /** If autoplay was passed in to Player */
@@ -113,6 +142,8 @@ export type MediaControllerState<TElement = void> = {
   /** Device tracking set on load of the media */
   device: DeviceInformation;
 
+  _updateSource: (source: string) => void;
+
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
 
@@ -157,7 +188,24 @@ export type MediaControllerState<TElement = void> = {
 
 export type MediaControllerStore<TElement> = StoreApi<
   MediaControllerState<TElement>
->;
+> & {
+  subscribe: {
+    (
+      listener: (
+        selectedState: MediaControllerState<TElement>,
+        previousSelectedState: MediaControllerState<TElement>,
+      ) => void,
+    ): () => void;
+    <U>(
+      selector: (state: MediaControllerState<TElement>) => U,
+      listener: (selectedState: U, previousSelectedState: U) => void,
+      options?: {
+        equalityFn?: (a: U, b: U) => boolean;
+        fireImmediately?: boolean;
+      },
+    ): () => void;
+  };
+};
 
 const getFilteredNaN = (value: number | undefined | null) =>
   value && !isNaN(value) && isFinite(value) ? value : 0;
@@ -179,180 +227,199 @@ export const createControllerStore = <TElement>({
   playerProps,
   opts,
 }: {
-  element: TElement | null;
+  element?: TElement;
   device: DeviceInformation;
   storage: ClientStorage;
   playerProps: PlayerPropsOptions;
   opts: ControlsOptions;
-}) => {
+}): MediaControllerStore<TElement> => {
   const store = createStore<
     MediaControllerState<TElement>,
-    [['zustand/persist', Partial<MediaControllerState<TElement>>]]
+    [
+      [
+        'zustand/subscribeWithSelector',
+        Partial<MediaControllerState<TElement>>,
+      ],
+      ['zustand/persist', Partial<MediaControllerState<TElement>>],
+    ]
   >(
-    persist(
-      (set, get) => ({
-        _element: element,
+    subscribeWithSelector(
+      persist(
+        (set, get) => ({
+          _element: element ?? null,
 
-        canPlay: false,
-        hidden: false,
-        live: false,
+          canPlay: false,
+          hidden: false,
+          live: false,
 
-        src: playerProps.src ?? null,
-        autoplay: Boolean(playerProps.autoPlay),
-        muted: Boolean(playerProps.muted),
-        priority: Boolean(playerProps.priority),
-        preload: playerProps.preload ?? 'none',
-        viewerId: playerProps.viewerId ?? '',
+          playbackId: playerProps.playbackId ?? null,
+          src: null,
+          autoplay: Boolean(playerProps.autoPlay),
+          muted: Boolean(playerProps.muted),
+          priority: Boolean(playerProps.priority),
+          preload: playerProps.priority ? 'full' : 'none',
+          viewerId: playerProps.viewerId ?? '',
 
-        hasPlayed: false,
-        playing: false,
-        fullscreen: false,
-        pictureInPicture: false,
+          hasPlayed: false,
+          playing: false,
+          fullscreen: false,
+          pictureInPicture: false,
 
-        waiting: false,
-        stalled: false,
-        loading: false,
-        playbackRate: 1,
+          waiting: false,
+          stalled: false,
+          loading: false,
+          playbackRate: 1,
 
-        device,
+          device,
 
-        progress: 0,
-        duration: 0,
+          progress: 0,
+          duration: 0,
 
-        buffered: 0,
+          buffered: 0,
 
-        volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
-        isVolumeChangeSupported: false,
+          volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
+          isVolumeChangeSupported: false,
 
-        _lastInteraction: Date.now(),
+          _lastInteraction: Date.now(),
 
-        _requestedRangeToSeekTo: 0,
-        _requestedFullscreenLastTime: Date.now(),
-        _requestedPictureInPictureLastTime: Date.now(),
-        _requestedPlayPauseLastTime: Date.now(),
+          _requestedRangeToSeekTo: 0,
+          _requestedFullscreenLastTime: Date.now(),
+          _requestedPictureInPictureLastTime: Date.now(),
+          _requestedPlayPauseLastTime: Date.now(),
 
-        setHidden: (hidden: boolean) =>
-          set(({ playing }) => ({ hidden: playing ? hidden : false })),
-        _updateLastInteraction: () =>
-          set(() => ({ _lastInteraction: Date.now() })),
+          setHidden: (hidden: boolean) =>
+            set(({ playing }) => ({ hidden: playing ? hidden : false })),
+          _updateLastInteraction: () =>
+            set(() => ({ _lastInteraction: Date.now() })),
 
-        onCanPlay: () =>
-          set(() => ({
-            canPlay: true,
-            loading: false,
-          })),
+          // set the src and playbackId from the source URL
+          _updateSource: (source: string) =>
+            set(({ playbackId }) => ({
+              src: getMediaSourceType(source),
+              ...(!playbackId
+                ? { playbackId: getPlaybackIdFromSourceUrl(source) }
+                : {}),
+            })),
 
-        onPlay: () =>
-          set(() => ({
-            playing: true,
-            hasPlayed: true,
-            stalled: false,
-            waiting: false,
-          })),
-        onPause: () =>
-          set(() => ({
-            playing: false,
-            hidden: false,
-            // TODO check if these should be getting set when pause event is fired (this was pulled from metrics)
-            stalled: false,
-            waiting: false,
-          })),
-        togglePlay: (force?: boolean) => {
-          const { hidden, setHidden, device } = store.getState();
-          if (!force && hidden && device.isMobile) {
-            setHidden(false);
-          } else {
+          onCanPlay: () =>
             set(() => ({
-              _requestedPlayPauseLastTime: Date.now(),
-              _lastInteraction: Date.now(),
-            }));
-          }
-        },
-        onProgress: (time) =>
-          set(() => ({
-            progress: getFilteredNaN(time),
-            waiting: false,
-            stalled: false,
-          })),
-        requestSeek: (time) =>
-          set(({ duration }) => ({
-            _requestedRangeToSeekTo: getBoundedSeek(time, duration),
-            progress: getBoundedSeek(time, duration),
-          })),
+              canPlay: true,
+              loading: false,
+            })),
 
-        onDurationChange: (duration) =>
-          set(({ live }) => ({
-            duration,
-            live: duration === Number.POSITIVE_INFINITY ? true : live,
-          })),
+          onPlay: () =>
+            set(() => ({
+              playing: true,
+              hasPlayed: true,
+              stalled: false,
+              waiting: false,
+            })),
+          onPause: () =>
+            set(() => ({
+              playing: false,
+              hidden: false,
+              // TODO check if these should be getting set when pause event is fired (this was pulled from metrics)
+              stalled: false,
+              waiting: false,
+            })),
+          togglePlay: (force?: boolean) => {
+            const { hidden, setHidden, device } = store.getState();
+            if (!force && hidden && device.isMobile) {
+              setHidden(false);
+            } else {
+              set(() => ({
+                _requestedPlayPauseLastTime: Date.now(),
+                _lastInteraction: Date.now(),
+              }));
+            }
+          },
+          onProgress: (time) =>
+            set(() => ({
+              progress: getFilteredNaN(time),
+              waiting: false,
+              stalled: false,
+            })),
+          requestSeek: (time) =>
+            set(({ duration }) => ({
+              _requestedRangeToSeekTo: getBoundedSeek(time, duration),
+              progress: getBoundedSeek(time, duration),
+            })),
 
-        setWebsocketMetadata: (metadata: Metadata) => set(() => ({ metadata })),
-
-        _updateBuffered: (buffered) => set(() => ({ buffered })),
-
-        _requestSeekDiff: (difference) =>
-          set(({ progress, duration }) => ({
-            _requestedRangeToSeekTo: getBoundedSeek(
-              getFilteredNaN(progress) + difference / 1000,
+          onDurationChange: (duration) =>
+            set(({ live }) => ({
               duration,
-            ),
-          })),
-        requestSeekBack: (difference = DEFAULT_SEEK_TIME) =>
-          get()._requestSeekDiff(-difference),
-        requestSeekForward: (difference = DEFAULT_SEEK_TIME) =>
-          get()._requestSeekDiff(difference),
+              live: duration === Number.POSITIVE_INFINITY ? true : live,
+            })),
 
-        setSize: (size: MediaSizing) => set(() => ({ size })),
-        setWaiting: (waiting: boolean) => set(() => ({ waiting })),
-        setError: (error: string) => set(() => ({ error })),
-        setStalled: (stalled: boolean) => set(() => ({ stalled })),
-        setLoading: (loading: boolean) => set(() => ({ loading })),
+          setWebsocketMetadata: (metadata: Metadata) =>
+            set(() => ({ metadata })),
 
-        setFullscreen: (fullscreen: boolean) => set(() => ({ fullscreen })),
-        requestToggleFullscreen: () =>
-          set(() => ({
-            _requestedFullscreenLastTime: Date.now(),
-          })),
+          _updateBuffered: (buffered) => set(() => ({ buffered })),
 
-        setPictureInPicture: (pictureInPicture: boolean) =>
-          set(() => ({ pictureInPicture })),
-        requestTogglePictureInPicture: () =>
-          set(() => ({
-            _requestedPictureInPictureLastTime: Date.now(),
-          })),
+          _requestSeekDiff: (difference) =>
+            set(({ progress, duration }) => ({
+              _requestedRangeToSeekTo: getBoundedSeek(
+                getFilteredNaN(progress) + difference / 1000,
+                duration,
+              ),
+            })),
+          requestSeekBack: (difference = DEFAULT_SEEK_TIME) =>
+            get()._requestSeekDiff(-difference),
+          requestSeekForward: (difference = DEFAULT_SEEK_TIME) =>
+            get()._requestSeekDiff(difference),
 
-        setLive: (live: boolean) => set(() => ({ live })),
+          setSize: (size: MediaSizing) => set(() => ({ size })),
+          setWaiting: (waiting: boolean) => set(() => ({ waiting })),
+          setError: (error: string) => set(() => ({ error })),
+          setStalled: (stalled: boolean) => set(() => ({ stalled })),
+          setLoading: (loading: boolean) => set(() => ({ loading })),
 
-        requestVolume: (newVolume) =>
-          set(({ volume }) => ({
-            volume: newVolume === 0 ? volume : getBoundedVolume(newVolume),
-            muted: newVolume === 0,
-          })),
-        _setVolume: (newVolume) =>
-          set(() => ({
-            volume: getBoundedVolume(newVolume),
-          })),
+          setFullscreen: (fullscreen: boolean) => set(() => ({ fullscreen })),
+          requestToggleFullscreen: () =>
+            set(() => ({
+              _requestedFullscreenLastTime: Date.now(),
+            })),
 
-        requestToggleMute: () =>
-          set(({ muted }) => ({
-            muted: !muted,
-          })),
+          setPictureInPicture: (pictureInPicture: boolean) =>
+            set(() => ({ pictureInPicture })),
+          requestTogglePictureInPicture: () =>
+            set(() => ({
+              _requestedPictureInPictureLastTime: Date.now(),
+            })),
 
-        setIsVolumeChangeSupported: (supported) =>
-          set(() => ({
-            isVolumeChangeSupported: supported,
-          })),
-      }),
-      {
-        name: 'livepeer-player',
-        version: 1,
-        // since these values are persisted across media, only persist volume and playbackRate
-        partialize: ({ volume, playbackRate }) => ({
-          volume,
-          playbackRate,
+          setLive: (live: boolean) => set(() => ({ live })),
+
+          requestVolume: (newVolume) =>
+            set(({ volume }) => ({
+              volume: newVolume === 0 ? volume : getBoundedVolume(newVolume),
+              muted: newVolume === 0,
+            })),
+          _setVolume: (newVolume) =>
+            set(() => ({
+              volume: getBoundedVolume(newVolume),
+            })),
+
+          requestToggleMute: () =>
+            set(({ muted }) => ({
+              muted: !muted,
+            })),
+
+          setIsVolumeChangeSupported: (supported) =>
+            set(() => ({
+              isVolumeChangeSupported: supported,
+            })),
         }),
-        storage: createJSONStorage(() => storage),
-      },
+        {
+          name: 'livepeer-player',
+          version: 1,
+          // since these values are persisted across media, only persist volume and playbackRate
+          partialize: ({ volume, playbackRate }) => ({
+            volume,
+            playbackRate,
+          }),
+          storage: createJSONStorage(() => storage),
+        },
+      ),
     ),
   );
 
@@ -367,10 +434,9 @@ export type ControlsOptions = {
 };
 
 export type PlayerPropsOptions = {
+  playbackId?: string;
   autoPlay?: boolean;
   muted?: boolean;
   priority?: boolean;
-  src?: Src | null;
-  preload?: 'full' | 'metadata' | 'none';
   viewerId?: string;
 };

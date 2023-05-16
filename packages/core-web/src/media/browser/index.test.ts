@@ -8,7 +8,6 @@ it('should expose correct exports', () => {
     [
       "addEventListeners",
       "addMediaMetrics",
-      "addMediaMetricsToInitializedStore",
       "canPlayMediaNatively",
       "getDeviceInfo",
       "isPictureInPictureSupported",

@@ -1,16 +1,15 @@
 import {
   ControlsOptions,
+  MediaMetrics,
   PlayerPropsOptions,
   createStorage,
 } from '@livepeer/core';
-import { createControllerStore } from '@livepeer/core/media';
-
 import {
-  MediaMetrics,
-  addEventListeners,
-  addMediaMetricsToInitializedStore,
-  getDeviceInfo,
-} from './controls';
+  addMediaMetricsToStore,
+  createControllerStore,
+} from '@livepeer/core/media';
+
+import { addEventListeners, getDeviceInfo } from './controls';
 
 /**
  * Gather playback metrics from a generic HTML5 video/audio element and
@@ -25,12 +24,11 @@ import {
  */
 export function addMediaMetrics<TElement extends HTMLMediaElement>(
   element: TElement | undefined | null,
-  sourceUrl: string | undefined | null,
   onError?: (error: unknown) => void,
   opts?: ControlsOptions & PlayerPropsOptions,
 ): MediaMetrics<TElement> {
   const store = createControllerStore<TElement>({
-    element: element ?? null,
+    element: element ?? undefined,
     device: getDeviceInfo(),
     storage: createStorage(
       typeof window !== 'undefined'
@@ -43,17 +41,16 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
       autoPlay: Boolean(element?.autoplay),
       muted: Boolean(element?.muted),
       priority: false,
-      src: null,
-      preload:
-        element?.preload || Boolean(element?.autoplay) ? 'full' : 'metadata',
     },
     opts: opts ?? {},
   });
 
   const { destroy: destroyListeners } = addEventListeners(store, opts);
 
-  const { metrics, destroy: destroyMetrics } =
-    addMediaMetricsToInitializedStore(store, sourceUrl, onError);
+  const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(
+    store,
+    onError,
+  );
 
   return {
     metrics,

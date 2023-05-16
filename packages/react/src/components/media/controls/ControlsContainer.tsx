@@ -98,7 +98,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </div>
       )}
 
-      {isLoaded && (
+      {isLoaded && !playbackError?.type && (
         <>
           <div
             className={styling.controlsContainer.gradient({
