@@ -1,5 +1,17 @@
 # @livepeer/react
 
+## 2.5.0-next.3
+
+### Patch Changes
+
+- [#324](https://github.com/livepeer/livepeer.js/pull/324) [`4c6e1c7`](https://github.com/livepeer/livepeer.js/commit/4c6e1c781d362e2cf43cf18d200491ee652a1213) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved continuous restart on playback errors and reworked player to only create a single websocket across playbacks.
+
+- [#322](https://github.com/livepeer/livepeer.js/pull/322) [`e15a399`](https://github.com/livepeer/livepeer.js/commit/e15a3993e9a3e9b6d6517f0af01405f1057654ad) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with release not using the latest changes to MP4 restart.
+
+- Updated dependencies [[`4c6e1c7`](https://github.com/livepeer/livepeer.js/commit/4c6e1c781d362e2cf43cf18d200491ee652a1213), [`e15a399`](https://github.com/livepeer/livepeer.js/commit/e15a3993e9a3e9b6d6517f0af01405f1057654ad)]:
+  - @livepeer/core-react@1.5.0-next.2
+  - livepeer@2.5.0-next.3
+
 ## 2.5.0-next.2
 
 ### Patch Changes
