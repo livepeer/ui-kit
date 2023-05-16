@@ -62,7 +62,7 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
       console.log('setting new element');
       store.setState({ _element: element });
     }
-  }, [element]);
+  }, [store, element]);
 
   return store;
 };

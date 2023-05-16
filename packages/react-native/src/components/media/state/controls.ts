@@ -24,7 +24,7 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
   playerProps?: PlayerProps<object>;
 }): StoreApi<MediaControllerState<MediaElement>> => {
   return createControllerStore<TElement>({
-    element,
+    element: element ?? undefined,
     device: {
       isMobile: true,
       isAndroid: Platform?.OS === 'android',
@@ -38,7 +38,6 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
     playerProps: {
       ...playerProps,
       playbackId: playerProps?.playbackId ?? undefined,
-      preload: 'none',
     },
   });
 };

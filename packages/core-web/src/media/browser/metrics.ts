@@ -26,9 +26,9 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
   element: TElement | undefined | null,
   onError?: (error: unknown) => void,
   opts?: ControlsOptions & PlayerPropsOptions,
-): MediaMetrics {
+): MediaMetrics<TElement> {
   const store = createControllerStore<TElement>({
-    element: element ?? null,
+    element: element ?? undefined,
     device: getDeviceInfo(),
     storage: createStorage(
       typeof window !== 'undefined'
@@ -41,17 +41,19 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
       autoPlay: Boolean(element?.autoplay),
       muted: Boolean(element?.muted),
       priority: false,
-      preload:
-        element?.preload || Boolean(element?.autoplay) ? 'full' : 'metadata',
     },
     opts: opts ?? {},
   });
 
   const { destroy: destroyListeners } = addEventListeners(store, opts);
 
-  const { destroy: destroyMetrics } = addMediaMetricsToStore(store, onError);
+  const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(
+    store,
+    onError,
+  );
 
   return {
+    metrics,
     destroy: () => {
       destroyListeners?.();
       destroyMetrics?.();

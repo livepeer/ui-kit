@@ -369,7 +369,8 @@ const sessionToken = generateRandomToken(); // used to track playbacks across se
 
 const bootMs = Date.now(); // used for firstPlayback value
 
-export type MediaMetrics = {
+export type MediaMetrics<TElement> = {
+  metrics: MetricsStatus<TElement> | null;
   destroy: () => void;
 };
 
@@ -384,8 +385,9 @@ export type MediaMetrics = {
 export function addMediaMetricsToStore<TElement>(
   store: MediaControllerStore<TElement> | undefined | null,
   onError?: (error: unknown) => void,
-): MediaMetrics {
-  const defaultResponse: MediaMetrics = {
+): MediaMetrics<TElement> {
+  const defaultResponse: MediaMetrics<TElement> = {
+    metrics: null,
     destroy: () => {
       //
     },
@@ -593,7 +595,7 @@ export function addMediaMetricsToStore<TElement>(
       ws?.close(3077);
     };
 
-    return { destroy };
+    return { metrics: metricsStatus, destroy };
   } catch (e) {
     console.error(e);
   }

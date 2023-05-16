@@ -26,6 +26,7 @@ export const HtmlVideoPlayer = React.forwardRef<
     muted,
     poster,
     objectFit,
+    priority,
     onPlaybackError,
     src,
     fullscreen,
@@ -78,6 +79,7 @@ export const HtmlVideoPlayer = React.forwardRef<
       muted={muted}
       poster={typeof poster === 'string' ? poster : undefined}
       onError={onVideoError}
+      preload={priority ? 'auto' : 'metadata'}
     >
       {src && <source key={src.src} src={src.src} type={src.mime!} />}
       {

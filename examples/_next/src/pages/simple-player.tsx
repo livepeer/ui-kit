@@ -7,8 +7,8 @@ const Page = () => {
         autoPlay
         priority
         muted
-        src="https://livepeercdn.monster/hls/11e6ydrd8k22jm6g/index.m3u8"
-        // playbackId="11e6ydrd8k22jm6g"
+        // src="https://asset-cdn.lp-playback.monster/hls/db0f2grwvfwnildl/1440p0.mp4"
+        playbackId="11e6ydrd8k22jm6g"
         loop
       />
     </>

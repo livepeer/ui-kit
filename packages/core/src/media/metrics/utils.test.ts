@@ -8,7 +8,10 @@ describe('getMetricsReportingUrl', () => {
       const sourceUrl =
         'https://livepeercdn.com/hls/172159gos7h0pq17/index.m3u8';
 
-      const reportingUrl = await getMetricsReportingUrl(sourceUrl);
+      const reportingUrl = await getMetricsReportingUrl(
+        '172159gos7h0pq17',
+        sourceUrl,
+      );
 
       expect(reportingUrl).toContain(
         '.lp-playback.studio/json_video+172159gos7h0pq17.js',
@@ -19,7 +22,10 @@ describe('getMetricsReportingUrl', () => {
       const sourceUrl =
         'https://asset-cdn.lp-playback.studio/hls/172159gos7h0pq17/index.m3u8';
 
-      const reportingUrl = await getMetricsReportingUrl(sourceUrl);
+      const reportingUrl = await getMetricsReportingUrl(
+        '172159gos7h0pq17',
+        sourceUrl,
+      );
 
       expect(reportingUrl).toContain(
         '.lp-playback.studio/json_video+172159gos7h0pq17.js',
@@ -33,7 +39,7 @@ describe('getMetricsReportingUrl', () => {
       ];
 
       const reportingUrls = await Promise.all(
-        sourceUrls.map(async (url) => getMetricsReportingUrl(url)),
+        sourceUrls.map(async (url) => getMetricsReportingUrl('test', url)),
       );
 
       expect(reportingUrls).toEqual([null, null]);
@@ -45,7 +51,10 @@ describe('getMetricsReportingUrl', () => {
       const sourceUrl =
         'https://livepeercdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8';
 
-      const reportingUrl = await getMetricsReportingUrl(sourceUrl);
+      const reportingUrl = await getMetricsReportingUrl(
+        'c34af47b-bbf2-40ed-ad2d-77abd43860c9',
+        sourceUrl,
+      );
 
       expect(reportingUrl).toContain(
         '.lp-playback.studio/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js',
@@ -54,12 +63,21 @@ describe('getMetricsReportingUrl', () => {
 
     it('given invalid urls then it should not return a reporting urls', async () => {
       const sourceUrls = [
-        'https://livecdn.com/static/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8',
-        'https://livecdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/master.m3u8',
+        {
+          playbackId: 'someid',
+          url: 'https://livecdn.com/static/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8',
+        },
+        {
+          playbackId: 'someid',
+          url: 'https://livecdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/master.m3u8',
+        },
       ];
 
       const reportingUrls = await Promise.all(
-        sourceUrls.map(async (url) => await getMetricsReportingUrl(url)),
+        sourceUrls.map(
+          async ({ playbackId, url }) =>
+            await getMetricsReportingUrl(playbackId, url),
+        ),
       );
 
       expect(reportingUrls).toEqual([null, null]);

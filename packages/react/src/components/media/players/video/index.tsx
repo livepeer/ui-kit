@@ -94,7 +94,7 @@ const InternalVideoPlayer = React.forwardRef<
     if (currentPlaybackSource) {
       store?.getState?.()?._updateSource?.(currentPlaybackSource?.src);
     }
-  }, [currentPlaybackSource]);
+  }, [store, currentPlaybackSource]);
 
   React.useEffect(() => {
     console.log({ currentPlaybackSource });
@@ -105,13 +105,6 @@ const InternalVideoPlayer = React.forwardRef<
       onPlaybackError?.(e as Error);
       console.error('Not able to report player metrics', e);
     });
-
-    // preload:
-    //   element?.preload === 'auto'
-    //     ? 'full'
-    //     : element?.preload === 'metadata'
-    //     ? 'metadata'
-    //     : 'none',
 
     return destroy;
   }, [onPlaybackError, store]);

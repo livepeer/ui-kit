@@ -257,7 +257,7 @@ export const createControllerStore = <TElement>({
           autoplay: Boolean(playerProps.autoPlay),
           muted: Boolean(playerProps.muted),
           priority: Boolean(playerProps.priority),
-          preload: playerProps.preload ?? 'none',
+          preload: playerProps.priority ? 'full' : 'none',
           viewerId: playerProps.viewerId ?? '',
 
           hasPlayed: false,
@@ -438,6 +438,5 @@ export type PlayerPropsOptions = {
   autoPlay?: boolean;
   muted?: boolean;
   priority?: boolean;
-  preload?: 'full' | 'metadata' | 'none';
   viewerId?: string;
 };
