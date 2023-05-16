@@ -13,6 +13,29 @@ export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
 
+const ASSET_URL_PART_VALUE = 'hls';
+const WEBRTC_URL_PART_VALUE = 'webrtc';
+const RECORDING_URL_PART_VALUE = 'recordings';
+
+const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
+  const parsedUrl = new URL(sourceUrl);
+
+  const parts = parsedUrl.pathname.split('/');
+
+  const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
+  const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
+  const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
+
+  // Check if the url is valid
+  const playbackId = includesWebRtcUrl
+    ? parts?.[(parts?.length ?? 0) - 1]
+    : includesRecording || includesAssetUrl
+    ? parts?.[(parts?.length ?? 0) - 2] ?? null
+    : null;
+
+  return playbackId;
+};
+
 export type DeviceInformation = {
   isMobile: boolean;
   isIos: boolean;
@@ -269,10 +292,13 @@ export const createControllerStore = <TElement>({
           _updateLastInteraction: () =>
             set(() => ({ _lastInteraction: Date.now() })),
 
-          // set the src from the source URL
+          // set the src and playbackId from the source URL
           _updateSource: (source: string) =>
-            set(() => ({
+            set(({ playbackId }) => ({
               src: getMediaSourceType(source),
+              ...(!playbackId
+                ? { playbackId: getPlaybackIdFromSourceUrl(source) }
+                : {}),
             })),
 
           onCanPlay: () =>
