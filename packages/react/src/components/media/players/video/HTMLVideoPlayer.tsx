@@ -1,17 +1,24 @@
 import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   Base64Src,
-  HlsSrc,
+  MediaControllerState,
+  STREAM_OFFLINE_ERROR_MESSAGE,
   VideoSrc,
-  WebRTCSrc,
 } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { VideoPlayerProps } from '.';
+import { useMediaController } from '../../../../context';
+
+const mediaControllerSelector = ({
+  canPlay,
+}: MediaControllerState<HTMLMediaElement>) => ({
+  canPlay,
+});
 
 export type HtmlVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
-  src: (VideoSrc | Base64Src | HlsSrc | WebRTCSrc) | null;
+  src: (VideoSrc | Base64Src) | null;
   fullscreen: boolean;
 };
 
@@ -32,20 +39,24 @@ export const HtmlVideoPlayer = React.forwardRef<
     fullscreen,
   } = props;
 
+  const { canPlay } = useMediaController(mediaControllerSelector);
+
   const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
     React.useCallback(
       async (e) => {
         const sourceElement = e.target;
         const parentElement = (sourceElement as HTMLSourceElement)
           ?.parentElement;
-        const videoUrl = (parentElement as HTMLVideoElement)?.currentSrc;
+        const videoUrl =
+          (parentElement as HTMLVideoElement)?.currentSrc ??
+          (sourceElement as HTMLVideoElement)?.currentSrc;
 
         if (videoUrl) {
           try {
             const response = await fetch(videoUrl);
             if (response.status === 404) {
               console.warn('Video not found');
-              return onPlaybackError?.(new Error('Video not found'));
+              return onPlaybackError?.(new Error(STREAM_OFFLINE_ERROR_MESSAGE));
             } else if (response.status === 401) {
               console.warn('Unauthorized to view video');
               return onPlaybackError?.(new Error(ACCESS_CONTROL_ERROR_MESSAGE));
@@ -61,6 +72,12 @@ export const HtmlVideoPlayer = React.forwardRef<
       },
       [onPlaybackError],
     );
+
+  React.useEffect(() => {
+    if (canPlay) {
+      onPlaybackError?.(null);
+    }
+  }, [canPlay, onPlaybackError]);
 
   return (
     <video
@@ -80,8 +97,8 @@ export const HtmlVideoPlayer = React.forwardRef<
       poster={typeof poster === 'string' ? poster : undefined}
       onError={onVideoError}
       preload={priority ? 'auto' : 'metadata'}
+      src={src?.src ?? undefined}
     >
-      {src && <source key={src.src} src={src.src} type={src.mime!} />}
       {
         "Your browser doesn't support the HTML5 <code>video</code> tag, or the video format."
       }
