@@ -304,7 +304,8 @@ export const useSourceMimeTyped = <
           return -1;
         } else if (a.type === 'webrtc' && b.type === 'hls') {
           // if there is a webrtc source, we prefer that to HLS
-          return -1;
+          // TODO undo this, currently preferring HLS to webrtc
+          return 1; // -1;
         }
 
         return 1;
