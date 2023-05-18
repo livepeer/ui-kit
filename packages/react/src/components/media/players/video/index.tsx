@@ -34,6 +34,31 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   webrtcConfig?: WebRTCVideoConfig;
 };
 
+function debounce<T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number,
+): { debouncedFn: T; cancel: () => void } {
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  const debouncedFn = ((...args: Parameters<T>) => {
+    if (timeoutId === null) {
+      timeoutId = setTimeout(() => {
+        timeoutId = null;
+        fn(...args);
+      }, delay);
+    }
+  }) as T;
+
+  const cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  return { debouncedFn, cancel };
+}
+
 const InternalVideoPlayer = React.forwardRef<
   HTMLVideoElement,
   VideoPlayerProps
@@ -48,9 +73,27 @@ const InternalVideoPlayer = React.forwardRef<
   );
 
   const [currentSourceIndex, setCurrentSourceIndex] = React.useState(0);
+
   const incrementSourceIndex = React.useCallback(() => {
     setCurrentSourceIndex((prev) => prev + 1);
   }, [setCurrentSourceIndex]);
+
+  // update the debounced function when currentSourceIndex changes
+  const { debouncedFn: debouncedIncrementSourceIndex, cancel } = React.useMemo(
+    () => debounce(incrementSourceIndex, 1000 * 2 ** currentSourceIndex),
+    [incrementSourceIndex, currentSourceIndex],
+  );
+
+  // Store the debounced function and cancel method in refs
+  const debouncedIncrementSourceIndexRef = React.useRef(
+    debouncedIncrementSourceIndex,
+  );
+  const cancelRef = React.useRef(cancel);
+
+  React.useEffect(() => {
+    debouncedIncrementSourceIndexRef.current = debouncedIncrementSourceIndex;
+    cancelRef.current = cancel;
+  }, [debouncedIncrementSourceIndex, cancel]);
 
   const currentPlaybackSource = React.useMemo(
     // use modulo to limit it to the source array's length
@@ -62,18 +105,21 @@ const InternalVideoPlayer = React.forwardRef<
   React.useEffect(() => {
     if (
       playbackError?.type === 'offline' &&
-      currentPlaybackSource?.type === 'webrtc'
+      currentPlaybackSource?.type !== 'hls'
     ) {
-      incrementSourceIndex();
+      debouncedIncrementSourceIndexRef?.current?.();
     }
-  }, [playbackError, incrementSourceIndex, currentPlaybackSource]);
+  }, [playbackError, currentPlaybackSource]);
 
   // we increment the source on an unknown error
+  // and we clear the timeout if we have a null playbackError
   React.useEffect(() => {
     if (playbackError?.type === 'unknown') {
-      incrementSourceIndex();
+      debouncedIncrementSourceIndexRef?.current?.();
+    } else if (playbackError === null) {
+      cancelRef?.current?.();
     }
-  }, [incrementSourceIndex, playbackError]);
+  }, [playbackError]);
 
   // we auto-increment the index of the playback source if it can't be handled
   React.useEffect(() => {
@@ -84,9 +130,9 @@ const InternalVideoPlayer = React.forwardRef<
         !canPlayMediaNatively(currentPlaybackSource));
 
     if (shouldTryNextSource) {
-      incrementSourceIndex();
+      debouncedIncrementSourceIndexRef?.current?.();
     }
-  }, [canUseHlsjs, canUseWebRTC, currentPlaybackSource, incrementSourceIndex]);
+  }, [canUseHlsjs, canUseWebRTC, currentPlaybackSource]);
 
   const store = React.useContext(MediaControllerContext);
 

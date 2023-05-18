@@ -447,7 +447,8 @@ export function addMediaMetricsToStore<TElement>(
     if (
       currentState?.playbackId &&
       currentState?.playbackId !== previousPlaybackId &&
-      currentState?.src?.src
+      currentState?.src?.src &&
+      currentState._element
     ) {
       const playbackId = currentState.playbackId;
       const currentSource = currentState.src;
