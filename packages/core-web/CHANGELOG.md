@@ -1,5 +1,14 @@
 # livepeer
 
+## 2.5.0-next.4
+
+### Patch Changes
+
+- [#325](https://github.com/livepeer/livepeer.js/pull/325) [`d2c76a6`](https://github.com/livepeer/livepeer.js/commit/d2c76a68b789df066880e62f2713d8a06fa1ea1c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added debouncing to the error handler to increment the source index with exponential backoff, to prevent any fast reloads.
+
+- Updated dependencies [[`d2c76a6`](https://github.com/livepeer/livepeer.js/commit/d2c76a68b789df066880e62f2713d8a06fa1ea1c)]:
+  - @livepeer/core@1.5.0-next.3
+
 ## 2.5.0-next.3
 
 ### Patch Changes
