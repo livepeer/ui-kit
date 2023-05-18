@@ -48,7 +48,7 @@ export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
   apiKey: string;
 };
 
-const DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024;
+const DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024;
 
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
   readonly _defaultHeaders: { Authorization?: `Bearer ${string}` };
@@ -231,12 +231,9 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
                 },
                 ...(chunkSize
                   ? { chunkSize }
-                  : (typeof File !== 'undefined' &&
-                      (source as CreateAssetSourceFile)?.file instanceof
-                        File) ||
-                    (typeof navigator !== 'undefined' &&
-                      typeof navigator.product === 'string' &&
-                      navigator.product.toLowerCase() === 'reactnative')
+                  : typeof navigator !== 'undefined' &&
+                    typeof navigator.product === 'string' &&
+                    navigator.product.toLowerCase() === 'reactnative'
                   ? null
                   : { chunkSize: DEFAULT_CHUNK_SIZE }),
                 // fingerprint: function (file: File & { exif?: any }) {
