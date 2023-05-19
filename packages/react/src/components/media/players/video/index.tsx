@@ -1,4 +1,4 @@
-import { addMediaMetricsToStore } from '@livepeer/core-react';
+import { VideoSrc, addMediaMetricsToStore } from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { canPlayMediaNatively } from 'livepeer/media/browser';
@@ -72,6 +72,21 @@ const InternalVideoPlayer = React.forwardRef<
     [],
   );
 
+  // we map the HLS sources to be a "video" source instead, if HLS.js is not supported
+  const playbackMappedSources = React.useMemo(
+    () =>
+      src?.map((s) =>
+        s.type === 'hls' && !canUseHlsjs
+          ? ({
+              ...s,
+              type: 'video',
+              mime: 'application/vnd.apple.mpegurl',
+            } as VideoSrc)
+          : s,
+      ),
+    [src, canUseHlsjs],
+  );
+
   const [currentSourceIndex, setCurrentSourceIndex] = React.useState(0);
 
   const incrementSourceIndex = React.useCallback(() => {
@@ -97,8 +112,11 @@ const InternalVideoPlayer = React.forwardRef<
 
   const currentPlaybackSource = React.useMemo(
     // use modulo to limit it to the source array's length
-    () => src?.[currentSourceIndex % (src?.length ?? 0)] ?? null,
-    [src, currentSourceIndex],
+    () =>
+      playbackMappedSources?.[
+        currentSourceIndex % (playbackMappedSources?.length ?? 0)
+      ] ?? null,
+    [playbackMappedSources, currentSourceIndex],
   );
 
   // we increment the source for stream offline errors for WebRTC

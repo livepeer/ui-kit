@@ -107,7 +107,10 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
 
       const onTouchEnd = async (e: TouchEvent) => {
         setIsDragging(false);
-        const clientX = e.touches?.item?.(0)?.clientX;
+
+        const clientX =
+          e.touches?.item?.(0)?.clientX ?? e.changedTouches?.item?.(0)?.clientX;
+
         if (clientX) {
           await sliderProps.onUpdate(clientX - sliderLocation.left, true);
         }

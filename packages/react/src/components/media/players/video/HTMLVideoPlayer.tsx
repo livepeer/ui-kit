@@ -1,6 +1,7 @@
 import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   Base64Src,
+  HlsSrc,
   MediaControllerState,
   STREAM_OFFLINE_ERROR_MESSAGE,
   VideoSrc,
@@ -18,7 +19,7 @@ const mediaControllerSelector = ({
 });
 
 export type HtmlVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
-  src: (VideoSrc | Base64Src) | null;
+  src: (VideoSrc | Base64Src | HlsSrc) | null;
   fullscreen: boolean;
 };
 
