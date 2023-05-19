@@ -49,17 +49,19 @@ const getIsVolumeChangeSupported = <TElement extends HTMLMediaElement>(
   return new Promise<boolean>((resolve) => {
     const prevVolume = element?.volume ?? DEFAULT_VOLUME_LEVEL;
 
-    const newVolume = 0.345;
+    const newVolume = 0.342;
 
     // set new value and test
     element.volume = newVolume;
 
-    const isSupported = element.volume !== 1;
+    setTimeout(() => {
+      const isSupported = element.volume !== 1;
 
-    // reset to old value
-    element.volume = getBoundedVolume(prevVolume);
+      // reset to old value
+      element.volume = getBoundedVolume(prevVolume);
 
-    resolve(isSupported);
+      resolve(isSupported);
+    });
   });
 };
 
@@ -77,6 +79,19 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   { hotkeys = true, autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
 ) => {
   let destroy: (() => void) | null = null;
+
+  const element = store?.getState()?._element;
+
+  const initializedState = store.getState();
+
+  // restore the persisted values from store
+  if (element) {
+    setTimeout(() => {
+      if (element && !store.getState().muted) {
+        store.getState().requestVolume(initializedState.volume);
+      }
+    }, 1);
+  }
 
   const storeListener = store.subscribe(
     (store) => store._element,
