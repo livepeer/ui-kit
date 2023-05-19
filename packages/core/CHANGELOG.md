@@ -1,5 +1,13 @@
 # @livepeer/core
 
+## 1.5.0-next.4
+
+### Patch Changes
+
+- [#329](https://github.com/livepeer/livepeer.js/pull/329) [`be5a1cc`](https://github.com/livepeer/livepeer.js/commit/be5a1cc701065150f35271bff1259dd3dbe06692) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed bugs on iOS - use native playback for HLS (instead of HLS.js) and fixed single touch not seeking on Progress.
+
+- [#327](https://github.com/livepeer/livepeer.js/pull/327) [`bbb2727`](https://github.com/livepeer/livepeer.js/commit/bbb27278ece20acda11c8fb1a78d1f26d9f73f0e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolve tus upload issue with large uploads (>1GB) going over nginx limit.
+
 ## 1.5.0-next.3
 
 ### Patch Changes
