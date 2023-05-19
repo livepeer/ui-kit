@@ -1,5 +1,16 @@
 # @livepeer/core-react
 
+## 1.5.0-next.4
+
+### Patch Changes
+
+- [#329](https://github.com/livepeer/livepeer.js/pull/329) [`be5a1cc`](https://github.com/livepeer/livepeer.js/commit/be5a1cc701065150f35271bff1259dd3dbe06692) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed bugs on iOS - use native playback for HLS (instead of HLS.js) and fixed single touch not seeking on Progress.
+
+- [#327](https://github.com/livepeer/livepeer.js/pull/327) [`bbb2727`](https://github.com/livepeer/livepeer.js/commit/bbb27278ece20acda11c8fb1a78d1f26d9f73f0e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolve tus upload issue with large uploads (>1GB) going over nginx limit.
+
+- Updated dependencies [[`be5a1cc`](https://github.com/livepeer/livepeer.js/commit/be5a1cc701065150f35271bff1259dd3dbe06692), [`bbb2727`](https://github.com/livepeer/livepeer.js/commit/bbb27278ece20acda11c8fb1a78d1f26d9f73f0e)]: 
+  - @livepeer/core@1.5.0-next.4
+
 ## 1.5.0-next.3
 
 ### Patch Changes
@@ -13,7 +24,7 @@
 
 ### Patch Changes
 
-- [#324](https://github.com/livepeer/livepeer.js/pull/324) [`4c6e1c7`](https://github.com/livepeer/livepeer.js/commit/4c6e1c781d362e2cf43cf18d200491ee652a1213) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved continuous restart on playback errors and reworked player to only create a single websocket across playbacks. 
+- [#324](https://github.com/livepeer/livepeer.js/pull/324) [`4c6e1c7`](https://github.com/livepeer/livepeer.js/commit/4c6e1c781d362e2cf43cf18d200491ee652a1213) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved continuous restart on playback errors and reworked player to only create a single websocket across playbacks.
 
 - [#322](https://github.com/livepeer/livepeer.js/pull/322) [`e15a399`](https://github.com/livepeer/livepeer.js/commit/e15a3993e9a3e9b6d6517f0af01405f1057654ad) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with release not using the latest changes to MP4 restart.
 
