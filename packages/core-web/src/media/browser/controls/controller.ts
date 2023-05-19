@@ -381,17 +381,8 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           }
         }
 
-        // console.log('hreeee');
-        // console.log(current.volume);
-
         if (current.volume !== prev.volume) {
           current._element.volume = current.volume;
-
-          console.log('here');
-
-          if (current.volume > 0) {
-            current._element.muted = false;
-          }
         }
 
         current._element.muted = current.muted;
