@@ -65,7 +65,7 @@ export type WebRTCVideoConfig = {
   /**
    * The configuration for the video track selector in MistServer.
    *
-   * @default maxbps
+   * @default first
    * @link https://mistserver.org/guides/MistServer_Manual_3.0.pdf
    */
   videoTrackSelector?:
@@ -74,7 +74,9 @@ export type WebRTCVideoConfig = {
     | 'bestbps'
     | 'lowbps'
     | 'minbps'
-    | 'worstbps';
+    | 'worstbps'
+    | 'first'
+    | string;
 };
 
 /**
@@ -105,7 +107,10 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       }
 
       const sourceUrl = new URL(source);
-      sourceUrl.searchParams.set('video', config?.videoTrackSelector ?? '0,1');
+      sourceUrl.searchParams.set(
+        'video',
+        config?.videoTrackSelector ?? 'first',
+      );
 
       const composedSource = sourceUrl.toString();
 
