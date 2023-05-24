@@ -1,5 +1,31 @@
 # @livepeer/core
 
+## 1.5.0
+
+### Minor Changes
+
+- [#314](https://github.com/livepeer/livepeer.js/pull/314) [`49c4c99`](https://github.com/livepeer/livepeer.js/commit/49c4c99f9b044afc37072517db8eda1d94b4c377) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Added WebRTC playback for the web Player, which uses the new endpoint from the Studio provider to play back WebRTC livestreams, if they are available. If these do not succeed in playing back, the Player will automatically fall back to HLS playback. Also, if the stream contains "bframes" (which are common for users streaming with OBS or other streaming providers), the Player will automatically fall back.
+
+### Patch Changes
+
+- [#332](https://github.com/livepeer/livepeer.js/pull/332) [`7924cb5`](https://github.com/livepeer/livepeer.js/commit/7924cb5276697386a131046cffe1552347ce27bb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed default track selector to `first` and loosened video track selector type defs to allow any string.
+
+- [#320](https://github.com/livepeer/livepeer.js/pull/320) [`c49706d`](https://github.com/livepeer/livepeer.js/commit/c49706d816bc9048db29e6eac9fa44135ccd71fd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed error reporting for metrics websocket with MP4 playback.
+
+- [#329](https://github.com/livepeer/livepeer.js/pull/329) [`be5a1cc`](https://github.com/livepeer/livepeer.js/commit/be5a1cc701065150f35271bff1259dd3dbe06692) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed bugs on iOS - use native playback for HLS (instead of HLS.js) and fixed single touch not seeking on Progress.
+
+- [#324](https://github.com/livepeer/livepeer.js/pull/324) [`4c6e1c7`](https://github.com/livepeer/livepeer.js/commit/4c6e1c781d362e2cf43cf18d200491ee652a1213) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved continuous restart on playback errors and reworked player to only create a single websocket across playbacks.
+
+- [#330](https://github.com/livepeer/livepeer.js/pull/330) [`24111d4`](https://github.com/livepeer/livepeer.js/commit/24111d4902058dbcec6ef3d2e73e396e7ffe8604) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** enable prioritization of WebRTC playback over HLS.
+
+- [#333](https://github.com/livepeer/livepeer.js/pull/333) [`ad1781c`](https://github.com/livepeer/livepeer.js/commit/ad1781c42eab5a6eb41564bea3f8c3ab287cca1e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed the video track selector due to an upstream bug, and added configurable timeout for SDP negotiation.
+
+- [#325](https://github.com/livepeer/livepeer.js/pull/325) [`d2c76a6`](https://github.com/livepeer/livepeer.js/commit/d2c76a68b789df066880e62f2713d8a06fa1ea1c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added debouncing to the error handler to increment the source index with exponential backoff, to prevent any fast reloads.
+
+- [#327](https://github.com/livepeer/livepeer.js/pull/327) [`bbb2727`](https://github.com/livepeer/livepeer.js/commit/bbb27278ece20acda11c8fb1a78d1f26d9f73f0e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolve tus upload issue with large uploads (>1GB) going over nginx limit.
+
+- [#322](https://github.com/livepeer/livepeer.js/pull/322) [`e15a399`](https://github.com/livepeer/livepeer.js/commit/e15a3993e9a3e9b6d6517f0af01405f1057654ad) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with release not using the latest changes to MP4 restart.
+
 ## 1.5.0-next.4
 
 ### Patch Changes
