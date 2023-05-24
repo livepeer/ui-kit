@@ -63,21 +63,14 @@ function createPeerConnection(host: string | null): RTCPeerConnection | null {
 
 export type WebRTCVideoConfig = {
   /**
-   * The configuration for the video track selector in MistServer.
+   * The timeout of the network requests made for the SDP negotiation, in ms.
    *
-   * @default first
-   * @link https://mistserver.org/guides/MistServer_Manual_3.0.pdf
+   * @default 10000
    */
-  videoTrackSelector?:
-    | 'highbps'
-    | 'maxbps'
-    | 'bestbps'
-    | 'lowbps'
-    | 'minbps'
-    | 'worstbps'
-    | 'first'
-    | string;
+  sdpTimeout?: number;
 };
+
+const DEFAULT_TIMEOUT = 10000;
 
 /**
  * Client that uses WHEP to playback video over WebRTC.
@@ -100,18 +93,13 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
 
   stream = new MediaStream();
 
-  getRedirectHost(source, abortController)
+  getRedirectHost(source, abortController, config?.sdpTimeout)
     .then((host) => {
       if (destroyed) {
         return;
       }
 
       const sourceUrl = new URL(source);
-      sourceUrl.searchParams.set(
-        'video',
-        config?.videoTrackSelector ?? 'first',
-      );
-
       const composedSource = sourceUrl.toString();
 
       /**
@@ -200,6 +188,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               peerConnection,
               composedSource,
               ofr,
+              config?.sdpTimeout,
             );
           } catch (e) {
             callbacks?.onError?.(e as Error);
@@ -238,6 +227,7 @@ async function negotiateConnectionWithClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
+  timeout?: number,
 ) {
   if (peerConnection && endpoint && ofr) {
     /**
@@ -245,7 +235,7 @@ async function negotiateConnectionWithClientOffer(
      * This specifies how the client should communicate,
      * and what kind of media client and server have negotiated to exchange.
      */
-    const response = await postSDPOffer(endpoint, ofr.sdp);
+    const response = await postSDPOffer(endpoint, ofr.sdp, timeout);
     if (response.ok) {
       const answerSDP = await response.text();
       await peerConnection.setRemoteDescription(
@@ -291,11 +281,9 @@ async function constructClientOffer(
   return null;
 }
 
-const timeout = 10000;
-
-async function postSDPOffer(endpoint: string, data: string) {
+async function postSDPOffer(endpoint: string, data: string, timeout?: number) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
+  const id = setTimeout(() => controller.abort(), timeout ?? DEFAULT_TIMEOUT);
 
   const redirectResponse = await fetch(endpoint, {
     method: 'HEAD',
@@ -323,8 +311,12 @@ async function postSDPOffer(endpoint: string, data: string) {
 async function getRedirectHost(
   endpoint: string,
   abortController: AbortController,
+  timeout?: number,
 ) {
-  const id = setTimeout(() => abortController.abort(), timeout);
+  const id = setTimeout(
+    () => abortController.abort(),
+    timeout ?? DEFAULT_TIMEOUT,
+  );
 
   try {
     const response = await fetch(endpoint, {
