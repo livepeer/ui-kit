@@ -32,6 +32,7 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   allowCrossOriginCredentials?: boolean;
   hlsConfig?: HlsVideoConfig;
   webrtcConfig?: WebRTCVideoConfig;
+  lowLatency?: boolean;
 };
 
 function debounce<T extends (...args: any[]) => any>(
@@ -65,7 +66,7 @@ const InternalVideoPlayer = React.forwardRef<
 >((props, ref) => {
   const { fullscreen } = useMediaController(mediaControllerSelector);
 
-  const { src, onPlaybackError, playbackError } = props;
+  const { src, onPlaybackError, playbackError, lowLatency } = props;
 
   const [canUseHlsjs, canUseWebRTC] = React.useMemo(
     () => [isHlsSupported(), isWebRTCSupported()],
@@ -75,16 +76,18 @@ const InternalVideoPlayer = React.forwardRef<
   // we map the HLS sources to be a "video" source instead, if HLS.js is not supported
   const playbackMappedSources = React.useMemo(
     () =>
-      src?.map((s) =>
-        s.type === 'hls' && !canUseHlsjs
-          ? ({
-              ...s,
-              type: 'video',
-              mime: 'application/vnd.apple.mpegurl',
-            } as VideoSrc)
-          : s,
-      ),
-    [src, canUseHlsjs],
+      src
+        ?.filter((s) => (lowLatency ? true : s.type !== 'webrtc'))
+        ?.map((s) =>
+          s.type === 'hls' && !canUseHlsjs
+            ? ({
+                ...s,
+                type: 'video',
+                mime: 'application/vnd.apple.mpegurl',
+              } as VideoSrc)
+            : s,
+        ),
+    [src, canUseHlsjs, lowLatency],
   );
 
   const [currentSourceIndex, setCurrentSourceIndex] = React.useState(0);

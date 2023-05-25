@@ -61,7 +61,7 @@ export default async function Page({
     autoplay = muted = '1';
   }
 
-  const { loop, objectFit = 'contain' } = query;
+  const { loop, lowLatency, objectFit = 'contain' } = query;
 
   // fetch the playback info from livepeer
   const playbackInfo =
@@ -77,6 +77,7 @@ export default async function Page({
       autoPlay={isTrue(autoplay)}
       loop={isTrue(loop)}
       objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
+      lowLatency={isTrue(lowLatency)}
     />
   );
 }

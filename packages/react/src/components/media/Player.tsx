@@ -45,6 +45,8 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
   controls?: ControlsOptions;
   /** Configuration for the HLS.js instance used for HLS playback */
   hlsConfig?: HlsVideoConfig;
+  /** Whether low latency is enabled for live-streaming */
+  lowLatency?: boolean;
   /** Configuration for the WebRTC playback */
   webrtcConfig?: WebRTCVideoConfig;
   /**
@@ -124,6 +126,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
             {...playerProps}
             hlsConfig={props.hlsConfig}
             webrtcConfig={props.webrtcConfig}
+            lowLatency={props.lowLatency}
             allowCrossOriginCredentials={props.allowCrossOriginCredentials}
             src={source as (VideoSrc | HlsSrc | Base64Src | WebRTCSrc)[] | null}
           />
