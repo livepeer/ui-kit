@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#334](https://github.com/livepeer/livepeer.js/pull/334) [`8cd5537`](https://github.com/livepeer/livepeer.js/commit/8cd5537fd19e585cb69c9c1f7fb775a76fae9f25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added a prop, `lowLatency`, to the Player, to allow for opting-in to low latency WebRTC.
+- [#334](https://github.com/livepeer/livepeer.js/pull/334) [`8cd5537`](https://github.com/livepeer/livepeer.js/commit/8cd5537fd19e585cb69c9c1f7fb775a76fae9f25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added a prop, `lowLatency`, to the Player, to allow for opting-in to low latency WebRTC. 
 
 - Updated dependencies [[`8cd5537`](https://github.com/livepeer/livepeer.js/commit/8cd5537fd19e585cb69c9c1f7fb775a76fae9f25)]:
   - @livepeer/core@1.5.1
