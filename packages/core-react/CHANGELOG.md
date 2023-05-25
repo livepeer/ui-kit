@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.5.1
+
+### Patch Changes
+
+- [#334](https://github.com/livepeer/livepeer.js/pull/334) [`8cd5537`](https://github.com/livepeer/livepeer.js/commit/8cd5537fd19e585cb69c9c1f7fb775a76fae9f25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added a prop, `lowLatency`, to the Player, to allow for opting-in to low latency WebRTC.
+
+- Updated dependencies [[`8cd5537`](https://github.com/livepeer/livepeer.js/commit/8cd5537fd19e585cb69c9c1f7fb775a76fae9f25)]:
+  - @livepeer/core@1.5.1
+
 ## 1.5.0
 
 ### Minor Changes
@@ -16,7 +25,7 @@
 
 - [#324](https://github.com/livepeer/livepeer.js/pull/324) [`4c6e1c7`](https://github.com/livepeer/livepeer.js/commit/4c6e1c781d362e2cf43cf18d200491ee652a1213) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved continuous restart on playback errors and reworked player to only create a single websocket across playbacks.
 
-- [#330](https://github.com/livepeer/livepeer.js/pull/330) [`24111d4`](https://github.com/livepeer/livepeer.js/commit/24111d4902058dbcec6ef3d2e73e396e7ffe8604) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** enable prioritization of WebRTC playback over HLS. 
+- [#330](https://github.com/livepeer/livepeer.js/pull/330) [`24111d4`](https://github.com/livepeer/livepeer.js/commit/24111d4902058dbcec6ef3d2e73e396e7ffe8604) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** enable prioritization of WebRTC playback over HLS.
 
 - [#333](https://github.com/livepeer/livepeer.js/pull/333) [`ad1781c`](https://github.com/livepeer/livepeer.js/commit/ad1781c42eab5a6eb41564bea3f8c3ab287cca1e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed the video track selector due to an upstream bug, and added configurable timeout for SDP negotiation.
 
