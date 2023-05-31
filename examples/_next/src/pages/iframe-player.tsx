@@ -3,7 +3,7 @@ const Page = () => {
     <>
       <div style={{ height: '110vh' }}></div>
       <iframe
-        src="https://lvpr.tv/?v=2550uxcuerfo9e9h"
+        src="http://localhost:3000/simple-player"
         allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
       ></iframe>
     </>
