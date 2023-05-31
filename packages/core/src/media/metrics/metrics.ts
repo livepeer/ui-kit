@@ -176,8 +176,9 @@ function isInIframe() {
 }
 
 export class MetricsStatus<TElement> {
-  preloadTime = 0;
   requestedPlayTime = 0;
+  firstFrameTime = 0;
+
   retryCount = 0;
   connected = false;
   store: MediaControllerStore<TElement>;
@@ -193,13 +194,6 @@ export class MetricsStatus<TElement> {
 
   constructor(store: MediaControllerStore<TElement>) {
     const currentState = store.getState();
-
-    if (currentState.autoplay) {
-      this.requestedPlayTime = Date.now();
-      this.preloadTime = this.requestedPlayTime - bootMs;
-    } else {
-      this.requestedPlayTime = 0;
-    }
 
     this.store = store;
 
@@ -248,15 +242,24 @@ export class MetricsStatus<TElement> {
     };
 
     this.destroy = store.subscribe((state, prevState) => {
-      if (
-        state._requestedPlayPauseLastTime !==
-          prevState._requestedPlayPauseLastTime &&
-        this.requestedPlayTime === 0
-      ) {
-        this.requestedPlayTime = state._requestedPlayPauseLastTime;
-
-        if (this.preloadTime === 0) {
-          this.preloadTime = Date.now() - bootMs;
+      if (this.requestedPlayTime === 0) {
+        if (state.autoplay) {
+          if (!state.priority) {
+            if (state.src?.src) {
+              this.requestedPlayTime = Date.now() - bootMs;
+              console.log(`setting requestedPlayTime (autoplay, no priority)`);
+            }
+          } else {
+            if (state.src?.src && state.hasPlayed) {
+              this.requestedPlayTime = Date.now() - bootMs;
+              console.log(`setting requestedPlayTime (autoplay, priority)`);
+            }
+          }
+        } else {
+          if (state.src?.src && state._requestedPlayPauseLastTime) {
+            this.requestedPlayTime = Date.now() - bootMs;
+            console.log(`setting requestedPlayTime (no autoplay)`);
+          }
         }
       }
 
@@ -308,16 +311,11 @@ export class MetricsStatus<TElement> {
   setFirstPlayback() {
     this.currentMetrics.firstPlayback = Date.now() - bootMs;
   }
-  getTtff() {
-    return this.currentMetrics.ttff;
+  getFirstFrameTime() {
+    return this.firstFrameTime;
   }
-  setTtff() {
-    const ttffCalculated = Date.now() - this.requestedPlayTime;
-
-    // filter out erroneous values
-    if (ttffCalculated < 120000) {
-      this.currentMetrics.ttff = ttffCalculated;
-    }
+  setFirstFrameTime() {
+    this.firstFrameTime = Date.now() - bootMs;
   }
   setPlaybackScore(playbackScore: number) {
     this.currentMetrics.playbackScore = playbackScore;
@@ -342,11 +340,25 @@ export class MetricsStatus<TElement> {
       timeStalled: this.timeStalled.getTotalTime(),
       timeUnpaused: this.timeUnpaused.getTotalTime(),
 
-      preloadTime: this.preloadTime,
+      // this is the amount of time that a video has had to preload content, from boot until play was requested
+      preloadTime: this.requestedPlayTime,
+      // 1. When a video is above the fold and set to autoplay, ttff is from when the player is added to the HTML of the page to when the first
+      // progress update
+      // 2. When a video is below the fold and set to autoplay, from when lazy loading is triggered and the first progress update
+      // 3. When a video is below the fold and not set to autoplay, from when lazy loading is triggered and the first progress update
+      ttff:
+        this.firstFrameTime > 0
+          ? this.firstFrameTime - this.requestedPlayTime
+          : 0,
     };
 
     const previousMetrics = this.previousMetrics;
     this.previousMetrics = currentMetrics;
+
+    console.log({
+      ttff: currentMetrics.ttff,
+      preloadTime: currentMetrics.preloadTime,
+    });
 
     return {
       current: currentMetrics,
@@ -542,15 +554,11 @@ export function addMediaMetricsToStore<TElement>(
         metricsStatus.setFirstPlayback();
       }
 
-      // 1. When a video is above the fold and set to autoplay, ttff is from when the player is added to the HTML of the page to when the first
-      // progress update
-      // 2. When a video is below the fold and set to autoplay, from when lazy loading is triggered and the first progress update
-      // 3. When a video is below the fold and not set to autoplay, from when lazy loading is triggered and the first progress update
       if (
         state.progress !== prevState.progress &&
-        metricsStatus.getTtff() === 0
+        metricsStatus.getFirstFrameTime() === 0
       ) {
-        metricsStatus.setTtff();
+        metricsStatus.setFirstFrameTime();
       }
 
       if (state.error !== prevState.error && state.error) {

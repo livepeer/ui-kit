@@ -11,7 +11,7 @@ import NextHead from 'next/head';
 const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: process.env.NEXT_PUBLIC_STUDIO_API_KEY ?? '',
-    // baseUrl: 'https://livepeer.monster/api',
+    baseUrl: 'https://livepeer.monster/api',
   }),
 });
 

@@ -285,7 +285,7 @@ export const createControllerStore = <TElement>({
           _requestedRangeToSeekTo: 0,
           _requestedFullscreenLastTime: Date.now(),
           _requestedPictureInPictureLastTime: Date.now(),
-          _requestedPlayPauseLastTime: Date.now(),
+          _requestedPlayPauseLastTime: 0,
 
           setHidden: (hidden: boolean) =>
             set(({ playing }) => ({ hidden: playing ? hidden : false })),
