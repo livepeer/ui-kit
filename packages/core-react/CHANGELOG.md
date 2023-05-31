@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.5.2
+
+### Patch Changes
+
+- [#336](https://github.com/livepeer/livepeer.js/pull/336) [`effc06b`](https://github.com/livepeer/livepeer.js/commit/effc06bd2c578ca1a4688108062badd9f6a9c802) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed TTFF bug with the Player reporting an inaccurate TTFF when `priority` was used with a Player which is below the fold. This was happening on the lvpr.tv player, since it is always set to `priority` even though the Player can be below the fold.
+
+- Updated dependencies [[`effc06b`](https://github.com/livepeer/livepeer.js/commit/effc06bd2c578ca1a4688108062badd9f6a9c802)]:
+  - @livepeer/core@1.5.2
+
 ## 1.5.1
 
 ### Patch Changes
