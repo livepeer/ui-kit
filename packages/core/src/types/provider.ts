@@ -75,6 +75,10 @@ export type CreateStreamArgs = {
   };
   /** Configuration for stream playback access-control policy */
   playbackPolicy?: PlaybackPolicy;
+  /**
+   * Sets the creator ID for the stream that is created.
+   */
+  creatorId?: CreatorId;
 };
 
 export type WebhookPlaybackPolicy<TContext extends object> = {
@@ -123,6 +127,10 @@ export type UpdateStreamArgs = {
   };
   /** Configuration for stream playback access-control policy */
   playbackPolicy?: PlaybackPolicy;
+  /**
+   * Sets the creator ID for the stream.
+   */
+  creatorId?: CreatorId;
 } & (
   | {
       suspend: boolean;
@@ -243,7 +251,7 @@ export type StorageConfig = {
   metadataTemplate?: 'player' | 'file';
 };
 
-export type CreateAssetCreatorId =
+export type CreatorId =
   | {
       /**
        * The `type` of the identifier - unverified means that the value is not signed, and is an address
@@ -268,11 +276,10 @@ export type CreateAssetSourceBase = {
    * Sets the playback policy for all of the assets created.
    */
   playbackPolicy?: PlaybackPolicy;
-
   /**
    * Sets the creator ID for the asset that is created.
    */
-  creatorId?: CreateAssetCreatorId;
+  creatorId?: CreatorId;
 };
 
 export type CreateAssetSourceUrl = CreateAssetSourceBase & {
@@ -359,6 +366,10 @@ export type UpdateAssetArgs = {
    * Sets the playback policy for the asset.
    */
   playbackPolicy?: PlaybackPolicy;
+  /**
+   * Sets the creator ID for the asset.
+   */
+  creatorId?: CreatorId;
 } & (
   | {
       name: string;
