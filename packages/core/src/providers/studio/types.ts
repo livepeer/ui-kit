@@ -1,7 +1,7 @@
 import {
   Asset,
-  CreateAssetCreatorId,
   CreateStreamArgs,
+  CreatorId,
   MultistreamTargetRef,
   Stream,
   StreamSession,
@@ -79,6 +79,8 @@ export type StudioAssetPatchPayload = {
   name?: string;
   /** Storage configs for the asset */
   storage?: StudioStorageConfig;
+  /** The creator ID for the asset */
+  creatorId?: CreatorId;
 };
 
 export type StudioCreateAssetArgs = {
@@ -89,7 +91,7 @@ export type StudioCreateAssetArgs = {
   /** Storage configs for the asset */
   storage?: StudioStorageConfig;
   /** The creator ID for the asset */
-  creatorId?: CreateAssetCreatorId;
+  creatorId?: CreatorId;
 };
 
 export type StudioCreateAssetUrlArgs = {
@@ -102,7 +104,7 @@ export type StudioCreateAssetUrlArgs = {
   /** Storage configs for the asset */
   storage?: StudioStorageConfig;
   /** The creator ID for the asset */
-  creatorId?: CreateAssetCreatorId;
+  creatorId?: CreatorId;
 };
 
 export interface StudioCreateStreamArgs extends CreateStreamArgs {

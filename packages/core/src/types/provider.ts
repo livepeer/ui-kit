@@ -76,7 +76,7 @@ export type CreateStreamArgs = {
   /** Configuration for stream playback access-control policy */
   playbackPolicy?: PlaybackPolicy;
   /**
-   * Sets the creator ID for the asset that is created.
+   * Sets the creator ID for the stream that is created.
    */
   creatorId?: CreatorId;
 };
@@ -127,6 +127,10 @@ export type UpdateStreamArgs = {
   };
   /** Configuration for stream playback access-control policy */
   playbackPolicy?: PlaybackPolicy;
+  /**
+   * Sets the creator ID for the stream.
+   */
+  creatorId?: CreatorId;
 } & (
   | {
       suspend: boolean;
@@ -272,7 +276,6 @@ export type CreateAssetSourceBase = {
    * Sets the playback policy for all of the assets created.
    */
   playbackPolicy?: PlaybackPolicy;
-
   /**
    * Sets the creator ID for the asset that is created.
    */
@@ -363,6 +366,10 @@ export type UpdateAssetArgs = {
    * Sets the playback policy for the asset.
    */
   playbackPolicy?: PlaybackPolicy;
+  /**
+   * Sets the creator ID for the asset.
+   */
+  creatorId?: CreatorId;
 } & (
   | {
       name: string;

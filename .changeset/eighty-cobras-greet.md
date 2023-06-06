@@ -6,4 +6,4 @@
 '@livepeer/react-native': patch
 ---
 
-**Feature:** added `creatorId` to useCreateStream.
+**Feature:** added `creatorId` to useCreateStream, useUpdateStream, and useUpdateAsset.
