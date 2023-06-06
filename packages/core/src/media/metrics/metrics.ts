@@ -348,7 +348,7 @@ export class MetricsStatus<TElement> {
       // 3. When a video is below the fold and not set to autoplay, from when lazy loading is triggered and the first progress update
       ttff:
         this.firstFrameTime > 0
-          ? this.firstFrameTime - this.requestedPlayTime
+          ? Math.max(this.firstFrameTime - this.requestedPlayTime, 0)
           : 0,
     };
 
