@@ -355,11 +355,6 @@ export class MetricsStatus<TElement> {
     const previousMetrics = this.previousMetrics;
     this.previousMetrics = currentMetrics;
 
-    console.log({
-      ttff: currentMetrics.ttff,
-      preloadTime: currentMetrics.preloadTime,
-    });
-
     return {
       current: currentMetrics,
       previous: previousMetrics,

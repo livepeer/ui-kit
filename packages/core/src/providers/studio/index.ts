@@ -70,6 +70,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       json: {
         ...args,
         ...(playbackPolicy ? { playbackPolicy } : {}),
+        ...(args.creatorId ? { creatorId: args.creatorId } : {}),
       },
       headers: this._defaultHeaders,
     });

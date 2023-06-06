@@ -61,6 +61,7 @@ export type {
   CreateAssetSourceUrl,
   CreateAssetUrlProgress,
   CreateStreamArgs,
+  CreatorId,
   GetAssetArgs,
   GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
