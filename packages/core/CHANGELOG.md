@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.5.3
+
+### Patch Changes
+
+- [#338](https://github.com/livepeer/livepeer.js/pull/338) [`8efce52`](https://github.com/livepeer/livepeer.js/commit/8efce520a6c5f1c240356360671a434088cab7dd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `creatorId` to useCreateStream, useUpdateStream, and useUpdateAsset.
+
 ## 1.5.2
 
 ### Patch Changes
