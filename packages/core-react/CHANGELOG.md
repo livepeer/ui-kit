@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.5.4
+
+### Patch Changes
+
+- [#340](https://github.com/livepeer/livepeer.js/pull/340) [`99321fb`](https://github.com/livepeer/livepeer.js/commit/99321fb44e130c89fa6e2a0f24082d8a88df9bf7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed WebRTC playback on Safari and removed redundant `HEAD` request in SDP negotiation. 
+
+- Updated dependencies [[`99321fb`](https://github.com/livepeer/livepeer.js/commit/99321fb44e130c89fa6e2a0f24082d8a88df9bf7)]:
+  - @livepeer/core@1.5.4
+
 ## 1.5.3
 
 ### Patch Changes
