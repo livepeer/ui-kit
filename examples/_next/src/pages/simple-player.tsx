@@ -5,11 +5,10 @@ const Page = () => {
     <>
       {/* <div style={{ height: '110vh' }} /> */}
       <Player
-        // autoPlay
+        autoPlay
         // priority
         muted
-        // src="https://asset-cdn.lp-playback.monster/hls/db0f2grwvfwnildl/1440p0.mp4"
-        playbackId="d277t8pq2ez43heb"
+        playbackId="2c98ea3a200be258"
         loop
         lowLatency
       />
