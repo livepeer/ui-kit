@@ -247,18 +247,15 @@ export class MetricsStatus<TElement> {
           if (!state.priority) {
             if (state.src?.src) {
               this.requestedPlayTime = Date.now() - bootMs;
-              console.log(`setting requestedPlayTime (autoplay, no priority)`);
             }
           } else {
             if (state.src?.src && state.hasPlayed) {
               this.requestedPlayTime = Date.now() - bootMs;
-              console.log(`setting requestedPlayTime (autoplay, priority)`);
             }
           }
         } else {
           if (state.src?.src && state._requestedPlayPauseLastTime) {
             this.requestedPlayTime = Date.now() - bootMs;
-            console.log(`setting requestedPlayTime (no autoplay)`);
           }
         }
       }

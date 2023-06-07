@@ -18,6 +18,7 @@ export const isWebRTCSupported = () => {
 
   const hasGetUserMedia = !!(
     navigator.getUserMedia ||
+    navigator.mediaDevices.getUserMedia ||
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia ||
     navigator.msGetUserMedia
@@ -93,21 +94,20 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
 
   stream = new MediaStream();
 
-  getRedirectHost(source, abortController, config?.sdpTimeout)
-    .then((host) => {
-      if (destroyed) {
+  getRedirectUrl(source, abortController, config?.sdpTimeout)
+    .then((redirectUrl) => {
+      if (destroyed || !redirectUrl) {
         return;
       }
 
-      const sourceUrl = new URL(source);
-      const composedSource = sourceUrl.toString();
+      const redirectUrlString = redirectUrl.toString();
 
       /**
        * Create a new WebRTC connection, using public STUN servers with ICE,
        * allowing the client to discover its own IP address.
        * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
        */
-      peerConnection = createPeerConnection(host);
+      peerConnection = createPeerConnection(redirectUrl.host);
 
       if (peerConnection) {
         /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTransceiver */
@@ -181,12 +181,12 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
           try {
             const ofr = await constructClientOffer(
               peerConnection,
-              composedSource,
+              redirectUrlString,
             );
 
             await negotiateConnectionWithClientOffer(
               peerConnection,
-              composedSource,
+              redirectUrlString,
               ofr,
               config?.sdpTimeout,
             );
@@ -285,15 +285,7 @@ async function postSDPOffer(endpoint: string, data: string, timeout?: number) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout ?? DEFAULT_TIMEOUT);
 
-  const redirectResponse = await fetch(endpoint, {
-    method: 'HEAD',
-    mode: 'cors',
-    signal: controller.signal,
-  });
-
-  const redirectURL = redirectResponse.url;
-
-  const response = await fetch(redirectURL, {
+  const response = await fetch(endpoint, {
     method: 'POST',
     mode: 'cors',
     headers: {
@@ -308,7 +300,7 @@ async function postSDPOffer(endpoint: string, data: string, timeout?: number) {
   return response;
 }
 
-async function getRedirectHost(
+async function getRedirectUrl(
   endpoint: string,
   abortController: AbortController,
   timeout?: number,
@@ -329,7 +321,7 @@ async function getRedirectHost(
 
     const parsedUrl = new URL(response.url);
 
-    return parsedUrl.host;
+    return parsedUrl;
   } catch (e) {
     return null;
   }
