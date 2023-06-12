@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@livepeer/react": "^2.5.4",
+    "@livepeer/react": "^2.5.5",
     "@next/font": "13.1.2",
     "@sentry/nextjs": "^7.24.2",
     "@types/node": "18.11.18",
@@ -18,7 +18,7 @@
     "encoding": "^0.1.13",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.2",
-    "livepeer": "^2.5.4",
+    "livepeer": "^2.5.5",
     "mux-embed": "^4.15.0",
     "next": "13.1.2",
     "react": "18.2.0",
