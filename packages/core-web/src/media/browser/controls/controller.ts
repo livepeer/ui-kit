@@ -98,7 +98,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
     (element) => {
       destroy?.();
 
-      const onCanPlay = () => store.getState().onCanPlay();
+      const onLoadedMetadata = () => store.getState().onCanPlay();
 
       const onPlay = () => {
         store.getState().onPlay();
@@ -237,7 +237,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
       if (element) {
         element.addEventListener('volumechange', onVolumeChange);
 
-        element.addEventListener('canplay', onCanPlay);
+        element.addEventListener('loadedmetadata', onLoadedMetadata);
         element.addEventListener('play', onPlay);
         element.addEventListener('pause', onPause);
         element.addEventListener('durationchange', onDurationChange);
@@ -307,7 +307,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
         removeExitPictureInPictureListener?.();
 
         element?.removeEventListener?.('volumechange', onVolumeChange);
-        element?.removeEventListener?.('canplay', onCanPlay);
+        element?.removeEventListener?.('loadedmetadata', onLoadedMetadata);
         element?.removeEventListener?.('play', onPlay);
         element?.removeEventListener?.('pause', onPause);
         element?.removeEventListener?.('durationchange', onDurationChange);
