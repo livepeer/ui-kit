@@ -5,12 +5,8 @@ const Page = () => {
     <>
       {/* <div style={{ height: '110vh' }} /> */}
       <Player
-        autoPlay
-        // priority
-        muted
-        playbackId="2c98ea3a200be258"
-        loop
-        lowLatency
+        // autoPlay
+        src="https://lp-playback.com/hls/2d0c5o70uvln4zmu/1920p0.mp4"
       />
     </>
   );

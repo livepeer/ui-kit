@@ -22,7 +22,6 @@ export const Player = ({ playbackId }: { playbackId: string }) => {
         objectFit="contain"
         playbackId={playbackId}
         muted
-        autoPlay
         theme={{
           colors: {
             accent: '#fff',
