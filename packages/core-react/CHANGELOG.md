@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 1.5.5
+
+### Patch Changes
+
+- [#342](https://github.com/livepeer/livepeer.js/pull/342) [`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed [Safari not emitting `canplay` event](https://github.com/video-dev/hls.js/issues/1686) with autoplay disabled, and replaced this event with `loadedmetadata` to know when the video is ready for playback.
+
+- Updated dependencies [[`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86)]:
+  - @livepeer/core@1.5.5
+
 ## 1.5.4
 
 ### Patch Changes
 
-- [#340](https://github.com/livepeer/livepeer.js/pull/340) [`99321fb`](https://github.com/livepeer/livepeer.js/commit/99321fb44e130c89fa6e2a0f24082d8a88df9bf7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed WebRTC playback on Safari and removed redundant `HEAD` request in SDP negotiation. 
+- [#340](https://github.com/livepeer/livepeer.js/pull/340) [`99321fb`](https://github.com/livepeer/livepeer.js/commit/99321fb44e130c89fa6e2a0f24082d8a88df9bf7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed WebRTC playback on Safari and removed redundant `HEAD` request in SDP negotiation.
 
 - Updated dependencies [[`99321fb`](https://github.com/livepeer/livepeer.js/commit/99321fb44e130c89fa6e2a0f24082d8a88df9bf7)]:
   - @livepeer/core@1.5.4

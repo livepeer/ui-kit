@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.5.5
+
+### Patch Changes
+
+- [#342](https://github.com/livepeer/livepeer.js/pull/342) [`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed [Safari not emitting `canplay` event](https://github.com/video-dev/hls.js/issues/1686) with autoplay disabled, and replaced this event with `loadedmetadata` to know when the video is ready for playback.
+
+- Updated dependencies [[`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86)]:
+  - livepeer@2.5.5
+  - @livepeer/core-react@1.5.5
+
 ## 2.5.4
 
 ### Patch Changes
