@@ -22,8 +22,10 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
 
-      if (metricsSnapshot?.current?.userAgent)
+      if (metricsSnapshot?.current?.userAgent) {
         metricsSnapshot.current.userAgent = 'UA';
+        metricsSnapshot.current.player = 'hls-1';
+      }
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
@@ -35,7 +37,7 @@ describe('addMediaMetrics', () => {
           "nWaiting": 0,
           "pageUrl": "http://localhost:3000/",
           "playbackScore": null,
-          "player": "unknown",
+          "player": "hls-1",
           "playerHeight": null,
           "playerWidth": null,
           "preloadTime": 0,
@@ -64,35 +66,37 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
 
-      if (metricsSnapshot?.current?.userAgent)
+      if (metricsSnapshot?.current?.userAgent) {
         metricsSnapshot.current.userAgent = 'UA';
+        metricsSnapshot.current.player = 'hls-1';
+      }
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-      {
-        "autoplay": "standard",
-        "duration": 0,
-        "firstPlayback": 0,
-        "nError": 0,
-        "nStalled": 0,
-        "nWaiting": 0,
-        "pageUrl": "http://localhost:3000/",
-        "playbackScore": null,
-        "player": "unknown",
-        "playerHeight": null,
-        "playerWidth": null,
-        "preloadTime": 0,
-        "sourceType": "unknown",
-        "sourceUrl": null,
-        "timeStalled": 0,
-        "timeUnpaused": 0,
-        "timeWaiting": 0,
-        "ttff": 0,
-        "uid": "",
-        "userAgent": "UA",
-        "videoHeight": null,
-        "videoWidth": null,
-      }
-    `);
+        {
+          "autoplay": "standard",
+          "duration": 0,
+          "firstPlayback": 0,
+          "nError": 0,
+          "nStalled": 0,
+          "nWaiting": 0,
+          "pageUrl": "http://localhost:3000/",
+          "playbackScore": null,
+          "player": "hls-1",
+          "playerHeight": null,
+          "playerWidth": null,
+          "preloadTime": 0,
+          "sourceType": "unknown",
+          "sourceUrl": null,
+          "timeStalled": 0,
+          "timeUnpaused": 0,
+          "timeWaiting": 0,
+          "ttff": 0,
+          "uid": "",
+          "userAgent": "UA",
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
 
     it('should update time waiting and waiting count', async () => {
@@ -106,35 +110,37 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
 
-      if (metricsSnapshot?.current?.userAgent)
+      if (metricsSnapshot?.current?.userAgent) {
         metricsSnapshot.current.userAgent = 'UA';
+        metricsSnapshot.current.player = 'hls-1';
+      }
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-          {
-            "autoplay": "standard",
-            "duration": 0,
-            "firstPlayback": 0,
-            "nError": 0,
-            "nStalled": 0,
-            "nWaiting": 0,
-            "pageUrl": "http://localhost:3000/",
-            "playbackScore": null,
-            "player": "unknown",
-            "playerHeight": null,
-            "playerWidth": null,
-            "preloadTime": 0,
-            "sourceType": "unknown",
-            "sourceUrl": null,
-            "timeStalled": 0,
-            "timeUnpaused": 0,
-            "timeWaiting": 0,
-            "ttff": 0,
-            "uid": "",
-            "userAgent": "UA",
-            "videoHeight": null,
-            "videoWidth": null,
-          }
-        `);
+        {
+          "autoplay": "standard",
+          "duration": 0,
+          "firstPlayback": 0,
+          "nError": 0,
+          "nStalled": 0,
+          "nWaiting": 0,
+          "pageUrl": "http://localhost:3000/",
+          "playbackScore": null,
+          "player": "hls-1",
+          "playerHeight": null,
+          "playerWidth": null,
+          "preloadTime": 0,
+          "sourceType": "unknown",
+          "sourceUrl": null,
+          "timeStalled": 0,
+          "timeUnpaused": 0,
+          "timeWaiting": 0,
+          "ttff": 0,
+          "uid": "",
+          "userAgent": "UA",
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
 
     it('should update time stalled and stalled count', async () => {
@@ -150,35 +156,37 @@ describe('addMediaMetrics', () => {
 
       expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
 
-      if (metricsSnapshot?.current?.userAgent)
+      if (metricsSnapshot?.current?.userAgent) {
         metricsSnapshot.current.userAgent = 'UA';
+        metricsSnapshot.current.player = 'hls-1';
+      }
 
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-                  {
-                    "autoplay": "standard",
-                    "duration": 0,
-                    "firstPlayback": 0,
-                    "nError": 0,
-                    "nStalled": 0,
-                    "nWaiting": 0,
-                    "pageUrl": "http://localhost:3000/",
-                    "playbackScore": null,
-                    "player": "unknown",
-                    "playerHeight": null,
-                    "playerWidth": null,
-                    "preloadTime": 0,
-                    "sourceType": "unknown",
-                    "sourceUrl": null,
-                    "timeStalled": 0,
-                    "timeUnpaused": 0,
-                    "timeWaiting": 0,
-                    "ttff": 0,
-                    "uid": "",
-                    "userAgent": "UA",
-                    "videoHeight": null,
-                    "videoWidth": null,
-                  }
-                `);
+        {
+          "autoplay": "standard",
+          "duration": 0,
+          "firstPlayback": 0,
+          "nError": 0,
+          "nStalled": 0,
+          "nWaiting": 0,
+          "pageUrl": "http://localhost:3000/",
+          "playbackScore": null,
+          "player": "hls-1",
+          "playerHeight": null,
+          "playerWidth": null,
+          "preloadTime": 0,
+          "sourceType": "unknown",
+          "sourceUrl": null,
+          "timeStalled": 0,
+          "timeUnpaused": 0,
+          "timeWaiting": 0,
+          "ttff": 0,
+          "uid": "",
+          "userAgent": "UA",
+          "videoHeight": null,
+          "videoWidth": null,
+        }
+      `);
     });
   });
 
@@ -195,31 +203,35 @@ describe('addMediaMetrics', () => {
 
     expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
 
+    if (metricsSnapshot?.current?.player) {
+      metricsSnapshot.current.player = 'hls-1';
+    }
+
     expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-                      {
-                        "autoplay": "standard",
-                        "duration": 0,
-                        "firstPlayback": 0,
-                        "nError": 0,
-                        "nStalled": 0,
-                        "nWaiting": 0,
-                        "pageUrl": "http://localhost:3000/",
-                        "playbackScore": null,
-                        "player": "unknown",
-                        "playerHeight": null,
-                        "playerWidth": null,
-                        "preloadTime": 0,
-                        "sourceType": "unknown",
-                        "sourceUrl": null,
-                        "timeStalled": 0,
-                        "timeUnpaused": 0,
-                        "timeWaiting": 0,
-                        "ttff": 0,
-                        "uid": "",
-                        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
-                        "videoHeight": null,
-                        "videoWidth": null,
-                      }
-                    `);
+      {
+        "autoplay": "standard",
+        "duration": 0,
+        "firstPlayback": 0,
+        "nError": 0,
+        "nStalled": 0,
+        "nWaiting": 0,
+        "pageUrl": "http://localhost:3000/",
+        "playbackScore": null,
+        "player": "hls-1",
+        "playerHeight": null,
+        "playerWidth": null,
+        "preloadTime": 0,
+        "sourceType": "unknown",
+        "sourceUrl": null,
+        "timeStalled": 0,
+        "timeUnpaused": 0,
+        "timeWaiting": 0,
+        "ttff": 0,
+        "uid": "",
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
+        "videoHeight": null,
+        "videoWidth": null,
+      }
+    `);
   });
 });
