@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.5.7
+
+### Patch Changes
+
+- [`9811490`](https://github.com/livepeer/livepeer.js/commit/981149007660ab63d7d09d2d30e9f12aa32c0dfa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** hotfix to improve handling of player version.
+
+- Updated dependencies [[`9811490`](https://github.com/livepeer/livepeer.js/commit/981149007660ab63d7d09d2d30e9f12aa32c0dfa)]:
+  - @livepeer/core-react@1.5.7
+  - livepeer@2.5.7
+
 ## 2.5.6
 
 ### Patch Changes
