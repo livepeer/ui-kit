@@ -216,11 +216,13 @@ export type CreateAssetProgressBase = {
 export type CreateAssetFileProgress = CreateAssetProgressBase & {
   /** Phase of the asset */
   phase: 'uploading' | 'waiting' | 'processing' | 'ready' | 'failed';
+  assetId: string;
 };
 
 export type CreateAssetUrlProgress = CreateAssetProgressBase & {
   /** Phase of the asset */
   phase: 'waiting' | 'processing' | 'ready' | 'failed';
+  assetId: string;
 };
 
 export type CreateAssetProgress<TSource extends CreateAssetSourceType> = {
