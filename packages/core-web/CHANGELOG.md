@@ -1,10 +1,28 @@
 # livepeer
 
+## 2.5.7
+
+### Patch Changes
+
+- [`9811490`](https://github.com/livepeer/livepeer.js/commit/981149007660ab63d7d09d2d30e9f12aa32c0dfa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** hotfix to improve handling of player version.
+
+- Updated dependencies [[`9811490`](https://github.com/livepeer/livepeer.js/commit/981149007660ab63d7d09d2d30e9f12aa32c0dfa)]:
+  - @livepeer/core@1.5.7
+
+## 2.5.6
+
+### Patch Changes
+
+- [#345](https://github.com/livepeer/livepeer.js/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer.js/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific livepeer.js releases.
+
+- Updated dependencies [[`af16f6d`](https://github.com/livepeer/livepeer.js/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513)]:
+  - @livepeer/core@1.5.6
+
 ## 2.5.5
 
 ### Patch Changes
 
-- [#342](https://github.com/livepeer/livepeer.js/pull/342) [`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed [Safari not emitting `canplay` event](https://github.com/video-dev/hls.js/issues/1686) with autoplay disabled, and replaced this event with `loadedmetadata` to know when the video is ready for playback. 
+- [#342](https://github.com/livepeer/livepeer.js/pull/342) [`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed [Safari not emitting `canplay` event](https://github.com/video-dev/hls.js/issues/1686) with autoplay disabled, and replaced this event with `loadedmetadata` to know when the video is ready for playback.
 
 - Updated dependencies [[`e36b570`](https://github.com/livepeer/livepeer.js/commit/e36b57025246682d1396226fadf665cf12afed86)]:
   - @livepeer/core@1.5.5

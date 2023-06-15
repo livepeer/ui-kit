@@ -13,9 +13,15 @@ import {
 import fs from 'fs';
 
 fs.writeFileSync(
-  `./packages/core/src/providers/version.ts`,
-  `export const core = \`${coreName}@${coreVersion}\`;
-export const react = \`${reactName}@${reactVersion}\`;
-export const reactNative = \`${reactNativeName}@${reactNativeVersion}\`;
+  `./packages/core/src/version.ts`,
+  `const core = \`${coreName}@${coreVersion}\`;
+const react = \`${reactName}@${reactVersion}\`;
+const reactNative = \`${reactNativeName}@${reactNativeVersion}\`;
+
+export const version = {
+  core,
+  react,
+  reactNative,
+} as const;
 `,
 );

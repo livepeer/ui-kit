@@ -1,5 +1,17 @@
 # @livepeer/core
 
+## 1.5.7
+
+### Patch Changes
+
+- [`9811490`](https://github.com/livepeer/livepeer.js/commit/981149007660ab63d7d09d2d30e9f12aa32c0dfa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** hotfix to improve handling of player version.
+
+## 1.5.6
+
+### Patch Changes
+
+- [#345](https://github.com/livepeer/livepeer.js/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer.js/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific livepeer.js releases.
+
 ## 1.5.5
 
 ### Patch Changes
