@@ -264,8 +264,8 @@ export class MetricsStatus<TElement> {
       }
 
       if (state.src?.src !== prevState.src?.src) {
-        const playerPrefix = currentState?.src?.type ?? 'unknown';
-        const version = currentState?.device.version ?? 'unknown';
+        const playerPrefix = state?.src?.type ?? 'unknown';
+        const version = state?.device.version ?? 'unknown';
 
         this.currentMetrics.player = `${playerPrefix}-${version}`;
         this.currentMetrics.sourceType = state.src?.mime ?? 'unknown';
