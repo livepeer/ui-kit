@@ -37,6 +37,7 @@ const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
 };
 
 export type DeviceInformation = {
+  version: string;
   isMobile: boolean;
   isIos: boolean;
   isAndroid: boolean;

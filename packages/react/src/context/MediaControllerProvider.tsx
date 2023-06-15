@@ -1,4 +1,5 @@
 import { useClient } from '@livepeer/core-react/context';
+import { version } from 'livepeer';
 import {
   ControlsOptions,
   PlayerPropsOptions,
@@ -41,7 +42,7 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
   const store = React.useMemo(
     () =>
       createControllerStore<TElement>({
-        device: getDeviceInfo(),
+        device: getDeviceInfo(version.react),
         storage: client.storage,
         opts: opts ?? {},
         playerProps,

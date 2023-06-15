@@ -4,6 +4,7 @@ import {
   Storage,
   createControllerStore,
   createStorage,
+  version,
 } from '@livepeer/core-react';
 import { Platform } from 'react-native';
 import { StoreApi } from 'zustand';
@@ -24,6 +25,7 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
   return createControllerStore<TElement>({
     element: undefined,
     device: {
+      version: version.reactNative,
       isMobile: true,
       isAndroid: Platform?.OS === 'android',
       isIos: Platform?.OS === 'ios',

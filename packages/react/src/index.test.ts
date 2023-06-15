@@ -84,6 +84,7 @@ it('should expose correct exports', () => {
       "useTheme",
       "useUpdateAsset",
       "useUpdateStream",
+      "version",
       "watchLivepeerProvider",
     ]
   `);

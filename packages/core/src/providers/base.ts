@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 
-import * as versions from './version';
+import { version } from '..';
 import { HttpError } from '../errors';
 
 import {
@@ -51,9 +51,9 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
       ...options,
       headers: {
         ...options?.headers,
-        'x-core-sdk-version': versions.core,
-        'x-react-sdk-version': versions.react,
-        'x-react-native-sdk-version': versions.reactNative,
+        'x-core-sdk-version': version.core,
+        'x-react-sdk-version': version.react,
+        'x-react-native-sdk-version': version.reactNative,
       },
     });
 
@@ -79,9 +79,9 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
       headers: {
         ...(options?.json ? { 'content-type': 'application/json' } : {}),
         ...options?.headers,
-        'x-core-sdk-version': versions.core,
-        'x-react-sdk-version': versions.react,
-        'x-react-native-sdk-version': versions.reactNative,
+        'x-core-sdk-version': version.core,
+        'x-react-sdk-version': version.react,
+        'x-react-native-sdk-version': version.reactNative,
       },
     });
 
@@ -107,9 +107,9 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
       headers: {
         ...(options?.json ? { 'content-type': 'application/json' } : {}),
         ...options?.headers,
-        'x-core-sdk-version': versions.core,
-        'x-react-sdk-version': versions.react,
-        'x-react-native-sdk-version': versions.reactNative,
+        'x-core-sdk-version': version.core,
+        'x-react-sdk-version': version.react,
+        'x-react-native-sdk-version': version.reactNative,
       },
     });
 

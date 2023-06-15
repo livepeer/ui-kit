@@ -39,6 +39,7 @@ it('should expose correct exports', () => {
       "pick",
       "updateAsset",
       "updateStream",
+      "version",
       "watchLivepeerProvider",
     ]
   `);
