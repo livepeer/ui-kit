@@ -97,3 +97,4 @@ export {
   omit,
   pick,
 } from './utils';
+export * as version from './version';

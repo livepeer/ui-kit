@@ -13,7 +13,7 @@ import {
 import fs from 'fs';
 
 fs.writeFileSync(
-  `./packages/core/src/providers/version.ts`,
+  `./packages/core/src/version.ts`,
   `export const core = \`${coreName}@${coreVersion}\`;
 export const react = \`${reactName}@${reactVersion}\`;
 export const reactNative = \`${reactNativeName}@${reactNativeVersion}\`;

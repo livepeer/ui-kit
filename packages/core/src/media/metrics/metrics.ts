@@ -25,7 +25,7 @@ type RawMetrics = {
 
   playbackScore: number | null;
 
-  player: 'audio' | 'hls' | 'video' | 'webrtc' | 'unknown';
+  player: `${'audio' | 'hls' | 'video' | 'webrtc' | 'unknown'}-${string}`;
 
   sourceType: MimeType | 'unknown';
 
@@ -206,6 +206,9 @@ export class MetricsStatus<TElement> {
         : windowHref
       : windowHref;
 
+    const playerPrefix = currentState?.src?.type ?? 'unknown';
+    const version = currentState?.device.version ?? 'unknown';
+
     this.currentMetrics = {
       autoplay:
         currentState.priority && currentState.autoplay
@@ -222,7 +225,7 @@ export class MetricsStatus<TElement> {
       nWaiting: 0,
       pageUrl,
       playbackScore: null,
-      player: currentState?.src?.type ?? 'unknown',
+      player: `${playerPrefix}-${version}`,
       sourceType: currentState?.src?.mime ?? 'unknown',
       sourceUrl: currentState?.src?.src ?? null,
       playerHeight: null,
@@ -261,7 +264,10 @@ export class MetricsStatus<TElement> {
       }
 
       if (state.src?.src !== prevState.src?.src) {
-        this.currentMetrics.player = state.src?.type ?? 'unknown';
+        const playerPrefix = currentState?.src?.type ?? 'unknown';
+        const version = currentState?.device.version ?? 'unknown';
+
+        this.currentMetrics.player = `${playerPrefix}-${version}`;
         this.currentMetrics.sourceType = state.src?.mime ?? 'unknown';
         this.currentMetrics.sourceUrl = state.src?.src ?? null;
       }

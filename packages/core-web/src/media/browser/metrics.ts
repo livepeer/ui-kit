@@ -3,6 +3,7 @@ import {
   MediaMetrics,
   PlayerPropsOptions,
   createStorage,
+  version,
 } from '@livepeer/core';
 import {
   addMediaMetricsToStore,
@@ -29,7 +30,7 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
 ): MediaMetrics<TElement> {
   const store = createControllerStore<TElement>({
     element: element ?? undefined,
-    device: getDeviceInfo(),
+    device: getDeviceInfo(version.core),
     storage: createStorage(
       typeof window !== 'undefined'
         ? {
