@@ -211,6 +211,8 @@ export type CreateAssetProgressBase = {
    * This will reset to zero upon beginning the next phase.
    */
   progress: number;
+  /** ID for the asset, from the backend */
+  assetId: string | null;
 };
 
 export type CreateAssetFileProgress = CreateAssetProgressBase & {

@@ -150,6 +150,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     let progress = sources.map((source) => ({
       name: source.name,
       progress: 0,
+      assetId: null,
       phase: (source as CreateAssetSourceUrl)?.url ? 'waiting' : 'uploading',
     })) as CreateAssetProgress<TSource>;
 
@@ -250,6 +251,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
                   const status: CreateAssetFileProgress = {
                     name: source.name,
+                    assetId,
                     progress: progressPercent,
                     phase: 'uploading',
                   };
@@ -329,6 +331,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
             if (typeof asset.status?.phase !== 'undefined') {
               const status: CreateAssetUrlProgress = {
                 name: asset.name,
+                assetId: asset.id,
                 progress: asset.status.progress ?? 0,
                 phase: asset.status.phase,
               };
@@ -358,6 +361,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
         const status: CreateAssetUrlProgress = {
           name: asset.name,
+          assetId: asset.id,
           progress: 1,
           phase: asset.status.phase,
         };
