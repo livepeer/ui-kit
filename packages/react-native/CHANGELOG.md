@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.5.7
+
+### Patch Changes
+
+- [`4811b3e`](https://github.com/livepeer/livepeer.js/commit/4811b3e42aeb4d42858d2e81b4af127175a722e0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** thanks @martincik - added `assetId` to the asset upload progress.
+
+- Updated dependencies [[`4811b3e`](https://github.com/livepeer/livepeer.js/commit/4811b3e42aeb4d42858d2e81b4af127175a722e0), [`7dcda99`](https://github.com/livepeer/livepeer.js/commit/7dcda99453cb204b76f93f5b881c89e1af0cc79d)]:
+  - @livepeer/core-react@1.5.8
+
 ## 1.5.6
 
 ### Patch Changes

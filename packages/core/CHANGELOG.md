@@ -1,5 +1,13 @@
 # @livepeer/core
 
+## 1.5.8
+
+### Patch Changes
+
+- [`4811b3e`](https://github.com/livepeer/livepeer.js/commit/4811b3e42aeb4d42858d2e81b4af127175a722e0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** thanks @martincik - added `assetId` to the asset upload progress.
+
+- [`7dcda99`](https://github.com/livepeer/livepeer.js/commit/7dcda99453cb204b76f93f5b881c89e1af0cc79d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed bug with `navigator.mediaDevices.getUserMedia` throwing an undefined error in a secure context.
+
 ## 1.5.7
 
 ### Patch Changes
