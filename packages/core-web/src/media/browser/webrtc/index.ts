@@ -11,23 +11,23 @@ export const isWebRTCSupported = () => {
   }
 
   const hasRTCPeerConnection = !!(
-    window.RTCPeerConnection ||
-    window.webkitRTCPeerConnection ||
-    window.mozRTCPeerConnection
+    window?.RTCPeerConnection ||
+    window?.webkitRTCPeerConnection ||
+    window?.mozRTCPeerConnection
   );
 
   const hasGetUserMedia = !!(
-    navigator.getUserMedia ||
-    navigator.mediaDevices.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia ||
-    navigator.msGetUserMedia
+    navigator?.getUserMedia ||
+    navigator?.mediaDevices?.getUserMedia ||
+    navigator?.webkitGetUserMedia ||
+    navigator?.mozGetUserMedia ||
+    navigator?.msGetUserMedia
   );
 
   const hasRTCDataChannel = !!(
-    window.RTCDataChannel ||
-    window.webkitRTCDataChannel ||
-    window.mozRTCDataChannel
+    window?.RTCDataChannel ||
+    window?.webkitRTCDataChannel ||
+    window?.mozRTCDataChannel
   );
 
   return hasRTCPeerConnection && hasGetUserMedia && hasRTCDataChannel;
@@ -38,9 +38,9 @@ let stream: MediaStream | null = null;
 
 function createPeerConnection(host: string | null): RTCPeerConnection | null {
   const RTCPeerConnectionConstructor =
-    window.RTCPeerConnection ||
-    window.webkitRTCPeerConnection ||
-    window.mozRTCPeerConnection;
+    window?.RTCPeerConnection ||
+    window?.webkitRTCPeerConnection ||
+    window?.mozRTCPeerConnection;
 
   const iceServers = host
     ? [
