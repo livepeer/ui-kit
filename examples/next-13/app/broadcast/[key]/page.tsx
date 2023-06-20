@@ -1,40 +1,8 @@
 import BroadcastPage from './BroadcastPage';
 
-type SearchParams = { [key: string]: string | string[] | undefined };
-
-function toStringValues(obj?: SearchParams) {
-  if (obj) {
-    const strObj: Record<string, string> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      if (value) {
-        strObj[key] = value.toString();
-      }
-    }
-    return strObj;
-  }
-  return {};
-}
-
-// Once this issue is fixed, this can be removed
-// https://github.com/vercel/next.js/issues/43077#issuecomment-1383742153
-export const dynamic = 'force-dynamic';
-
-export default async function Page({
-  searchParams,
-  params,
-}: {
-  searchParams?: SearchParams;
-  params: { key?: string };
-}) {
-  const query = toStringValues(searchParams);
-
-  const { objectFit = 'contain' } = query;
-
+export default async function Page({ params }: { params: { key?: string } }) {
   return params?.key ? (
-    <BroadcastPage
-      streamKey={params.key}
-      objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
-    />
+    <BroadcastPage streamKey={params.key} objectFit={'contain'} />
   ) : (
     <div
       style={{
