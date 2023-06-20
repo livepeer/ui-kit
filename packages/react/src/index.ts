@@ -1,10 +1,10 @@
 export * from '@livepeer/core-react';
+export { type ThemeConfig } from 'livepeer/media';
 export {
   defaultTheme,
   getCssText,
   styling,
 } from 'livepeer/media/browser/styling';
-export { type ThemeConfig } from 'livepeer/media';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
@@ -12,6 +12,7 @@ export {
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
+  Broadcast,
   ControlsContainer,
   FullscreenButton,
   PictureInPictureButton,
@@ -24,11 +25,12 @@ export {
   Volume,
 } from './components';
 export type {
+  BroadcastProps,
   ControlsContainerProps,
   FullscreenButtonProps,
+  ObjectFit,
   PictureInPictureButtonProps,
   PlayButtonProps,
-  PlayerObjectFit,
   PlayerProps,
   PosterProps,
   ProgressProps,

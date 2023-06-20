@@ -1,4 +1,5 @@
 export {
+  Broadcast,
   ControlsContainer,
   FullscreenButton,
   PictureInPictureButton,
@@ -11,11 +12,12 @@ export {
   Volume,
 } from './media';
 export type {
+  BroadcastProps,
   ControlsContainerProps,
   FullscreenButtonProps,
+  ObjectFit,
   PictureInPictureButtonProps,
   PlayButtonProps,
-  PlayerObjectFit,
   PlayerProps,
   PosterProps,
   ProgressProps,

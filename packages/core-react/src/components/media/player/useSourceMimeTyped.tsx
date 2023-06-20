@@ -14,9 +14,9 @@ import {
 import { parseArweaveTxId, parseCid } from '@livepeer/core/utils';
 import * as React from 'react';
 
-import { InternalPlayerProps, PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
-import { useInternalQuery } from '../../utils';
+import { InternalPlayerProps, PlayerProps } from './usePlayer';
+import { useInternalQuery } from '../../../utils';
 
 const defaultIpfsGateway = 'https://w3s.link';
 const defaultArweaveGateway = 'https://arweave.net';

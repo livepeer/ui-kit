@@ -42,7 +42,7 @@ export type {
   Metadata,
   MetricsStatus,
   PlaybackMonitor,
-  PlayerPropsOptions,
+  MediaPropsOptions,
   Src,
   VideoSrc,
   WebRTCSrc,

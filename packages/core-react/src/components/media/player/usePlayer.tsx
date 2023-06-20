@@ -1,7 +1,7 @@
 import {
   ControlsOptions,
+  MediaPropsOptions,
   PlaybackInfo,
-  PlayerPropsOptions,
   Src,
   WebhookPlaybackPolicy,
   isAccessControlError,
@@ -13,8 +13,7 @@ import { isNumber } from '@livepeer/core/utils';
 import * as React from 'react';
 
 import { useSourceMimeTyped } from './useSourceMimeTyped';
-
-export type PlayerObjectFit = 'cover' | 'contain';
+import { ObjectFit } from '../shared';
 
 export type InternalPlayerProps = {
   /** The current screen width. This is null if the screen size cannot be determined (SSR). */
@@ -81,7 +80,7 @@ export type PlayerProps<
   theme?: ThemeConfig;
 
   /** The object-fit property for the video element. Defaults to cover (contain is usually used in full-screen applications) */
-  objectFit?: PlayerObjectFit;
+  objectFit?: ObjectFit;
 
   /** Custom controls passed in to override the default controls */
   children?: React.ReactNode;
@@ -320,7 +319,7 @@ export const usePlayer = <
     ],
   );
 
-  const mediaControllerProps: PlayerPropsOptions = React.useMemo(
+  const mediaControllerProps: MediaPropsOptions = React.useMemo(
     () => ({
       autoPlay,
       playbackId: playbackId ?? undefined,

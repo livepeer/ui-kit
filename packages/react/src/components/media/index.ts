@@ -1,3 +1,7 @@
+export { Player } from './Player';
+export type { ObjectFit, PlayerProps } from './Player';
+export { Broadcast } from './broadcast';
+export type { BroadcastProps } from './broadcast';
 export {
   BaseSlider,
   ControlsContainer,
@@ -21,5 +25,3 @@ export type {
   TitleProps,
   VolumeProps,
 } from './controls';
-export { Player } from './Player';
-export type { PlayerObjectFit, PlayerProps } from './Player';
