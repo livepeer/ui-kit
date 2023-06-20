@@ -1,7 +1,7 @@
 import { MediaControllerState } from '@livepeer/core';
 import * as React from 'react';
 
-import { PlaybackError } from '../Player';
+import { PlaybackError } from '../player/usePlayer';
 
 export type ControlsContainerProps = {
   loadingText?: string | null;
@@ -9,6 +9,7 @@ export type ControlsContainerProps = {
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
   playbackError?: PlaybackError | null;
+  isBroadcast?: boolean;
 
   top?: React.ReactNode;
   middle?: React.ReactNode;
@@ -26,7 +27,7 @@ type ControlsContainerCoreProps = ControlsContainerStateSlice &
   ControlsContainerProps;
 
 export const useControlsContainer = (props: ControlsContainerCoreProps) => {
-  const { togglePlay, canPlay, buffered } = props;
+  const { togglePlay, canPlay, buffered, isBroadcast } = props;
 
   const isLoaded = React.useMemo(
     () => canPlay || buffered !== 0,
@@ -34,10 +35,10 @@ export const useControlsContainer = (props: ControlsContainerCoreProps) => {
   );
 
   const onPressBackground = React.useCallback(() => {
-    if (isLoaded) {
+    if (isLoaded && !isBroadcast) {
       togglePlay();
     }
-  }, [togglePlay, isLoaded]);
+  }, [togglePlay, isLoaded, isBroadcast]);
 
   return {
     isLoaded,

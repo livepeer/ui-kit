@@ -4,7 +4,7 @@ import 'react-native-url-polyfill/auto';
 import { AudioSrc, Base64Src, VideoSrc, WebRTCSrc } from '@livepeer/core-react';
 import {
   PlayerProps as CorePlayerProps,
-  PlayerObjectFit,
+  ObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
 
@@ -24,7 +24,7 @@ import { VideoCustomizationProps } from './players/VideoPlayer';
 import { MediaElement } from './types';
 import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
-export type { PlayerObjectFit };
+export type { ObjectFit };
 
 export type PosterSource = ImageProps['source'];
 

@@ -7,7 +7,8 @@ import {
   WebRTCSrc,
 } from '@livepeer/core';
 
-import { PlaybackError, PlayerObjectFit, PlayerProps } from './Player';
+import { PlaybackError, PlayerProps } from './usePlayer';
+import { ObjectFit } from '../shared';
 
 export type VideoPlayerProps<
   TElement,
@@ -15,7 +16,7 @@ export type VideoPlayerProps<
   TPlaybackPolicyObject extends object,
 > = {
   src: (HlsSrc | VideoSrc | Base64Src | WebRTCSrc)[] | null;
-  objectFit: PlayerObjectFit;
+  objectFit: ObjectFit;
   width?: string | number;
   autoPlay?: boolean;
   loop?: boolean;

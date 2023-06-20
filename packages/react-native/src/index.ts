@@ -20,7 +20,7 @@ export type {
   ControlsContainerProps,
   FullscreenButtonProps,
   PlayButtonProps,
-  PlayerObjectFit,
+  ObjectFit,
   PlayerProps,
   ProgressProps,
   TitleProps,

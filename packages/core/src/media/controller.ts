@@ -74,18 +74,22 @@ export type MediaControllerState<TElement = void> = {
   /** If media supports changing the volume */
   isVolumeChangeSupported: boolean;
 
-  /** The playbackId that was passed in to Player */
+  /** The playbackId that was passed in to the media element */
   playbackId: string | null;
-  /** The Source that was passed in to Player */
+  /** The Source that was passed in to the Player */
   src: Src | null;
-  /** If autoplay was passed in to Player */
+  /** The ingest URL that was passed in to the broadcast component */
+  ingestUrl: string | null;
+  /** If autoplay was passed in to the media element */
   autoplay: boolean;
-  /** If priority was passed in to Player */
+  /** If priority was passed in to the media element */
   priority: boolean;
-  /** The preload option passed in to Player */
+  /** The preload option passed in to the media element */
   preload: 'full' | 'metadata' | 'none';
   /** The viewerId for the viewer passed in to Player */
   viewerId: string;
+  /** The creatorId for the broadcast component */
+  creatorId: string;
   /** The media metadata, from the playback websocket */
   metadata?: Metadata;
 
@@ -225,13 +229,13 @@ export const createControllerStore = <TElement>({
   element,
   device,
   storage,
-  playerProps,
+  mediaProps,
   opts,
 }: {
   element?: TElement;
   device: DeviceInformation;
   storage: ClientStorage;
-  playerProps: PlayerPropsOptions;
+  mediaProps: MediaPropsOptions;
   opts: ControlsOptions;
 }): MediaControllerStore<TElement> => {
   const store = createStore<
@@ -253,13 +257,15 @@ export const createControllerStore = <TElement>({
           hidden: false,
           live: false,
 
-          playbackId: playerProps.playbackId ?? null,
+          ingestUrl: mediaProps.ingestUrl ?? null,
+          playbackId: mediaProps.playbackId ?? null,
           src: null,
-          autoplay: Boolean(playerProps.autoPlay),
-          muted: Boolean(playerProps.muted),
-          priority: Boolean(playerProps.priority),
-          preload: playerProps.priority ? 'full' : 'none',
-          viewerId: playerProps.viewerId ?? '',
+          autoplay: Boolean(mediaProps.autoPlay),
+          muted: Boolean(mediaProps.muted),
+          priority: Boolean(mediaProps.priority),
+          preload: mediaProps.priority ? 'full' : 'none',
+          viewerId: mediaProps.viewerId ?? '',
+          creatorId: mediaProps.creatorId ?? '',
 
           hasPlayed: false,
           playing: false,
@@ -434,10 +440,13 @@ export type ControlsOptions = {
   defaultVolume?: number;
 };
 
-export type PlayerPropsOptions = {
+export type MediaPropsOptions = {
   playbackId?: string;
   autoPlay?: boolean;
   muted?: boolean;
   priority?: boolean;
   viewerId?: string;
+
+  creatorId?: string;
+  ingestUrl?: string;
 };

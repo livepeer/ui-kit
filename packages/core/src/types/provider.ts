@@ -6,6 +6,8 @@ export type LivepeerProviderConfig = {
   name: string;
   /** Base URL for the provider */
   baseUrl: string;
+  /** Base WebRTC ingest URL for the provider */
+  webrtcIngestBaseUrl: string;
 };
 
 export interface LivepeerProvider {

@@ -1,6 +1,6 @@
 import {
   PlayerProps as CorePlayerProps,
-  PlayerObjectFit,
+  ObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
 import {
@@ -61,7 +61,7 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
   tabIndex?: number;
 };
 
-export type { PlayerObjectFit, PlayerProps };
+export type { ObjectFit, PlayerProps };
 
 export const PlayerInternal = <TPlaybackPolicyObject extends object>(
   props: PlayerProps<TPlaybackPolicyObject>,
@@ -108,7 +108,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     <MediaControllerProvider
       element={mediaElement}
       opts={controls}
-      playerProps={mediaControllerProps}
+      mediaProps={mediaControllerProps}
     >
       <Container
         theme={theme}

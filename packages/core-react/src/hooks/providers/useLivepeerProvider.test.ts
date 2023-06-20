@@ -13,6 +13,7 @@ describe('useProvider', () => {
         }",
         "baseUrl": "https://livepeer.studio/api",
         "name": "Livepeer Studio",
+        "webrtcIngestBaseUrl": "https://webrtc.livepeer.com/webrtc",
       }
     `);
   });
