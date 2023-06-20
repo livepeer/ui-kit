@@ -2,7 +2,7 @@
   "name": "@livepeer/core-react",
   "description": "React components & hooks for apps built with Livepeer.",
   "license": "MIT",
-  "version": "1.5.8",
+  "version": "1.6.0-next.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -69,7 +69,7 @@
   },
   "peerDependenciesMeta": {},
   "dependencies": {
-    "@livepeer/core": "^1.5.8",
+    "@livepeer/core": "^1.6.0-next.0",
     "@tanstack/query-async-storage-persister": "4.22.4",
     "@tanstack/query-core": "4.22.4",
     "@tanstack/react-query": "4.22.4",

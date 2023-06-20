@@ -1,5 +1,16 @@
 # livepeer
 
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#349](https://github.com/livepeer/livepeer.js/pull/349) [`82429d8`](https://github.com/livepeer/livepeer.js/commit/82429d8bd6dbc92d5f7136f445ca408660533d94) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added basic `<Broadcast />` component to kick off WebRTC broadcasting testing.
+
+### Patch Changes
+
+- Updated dependencies [[`82429d8`](https://github.com/livepeer/livepeer.js/commit/82429d8bd6dbc92d5f7136f445ca408660533d94)]:
+  - @livepeer/core@1.6.0-next.0
+
 ## 2.5.8
 
 ### Patch Changes

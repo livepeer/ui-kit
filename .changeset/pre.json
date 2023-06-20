@@ -17,5 +17,7 @@
     "@livepeer/react": "2.5.7",
     "@livepeer/react-native": "1.5.6"
   },
-  "changesets": []
+  "changesets": [
+    "little-zoos-give"
+  ]
 }
