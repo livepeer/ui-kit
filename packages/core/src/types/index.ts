@@ -10,6 +10,8 @@ export type MirrorSizeArray<TArray extends ReadonlyArray<any>, TType> = {
 
 export type {
   Asset,
+  Attestation,
+  AttestationRole,
   CreateAssetArgs,
   CreateAssetFileProgress,
   CreateAssetProgress,
@@ -22,6 +24,7 @@ export type {
   CreateAssetUrlProgress,
   CreateStreamArgs,
   CreatorId,
+  Domain,
   GetAssetArgs,
   GetAssetMetricsArgs,
   GetPlaybackInfoArgs,
@@ -31,6 +34,7 @@ export type {
   JwtOrPublicPlaybackPolicy,
   LivepeerProvider,
   LivepeerProviderConfig,
+  Message,
   Metrics,
   MultistreamTarget,
   MultistreamTargetRef,

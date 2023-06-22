@@ -1,6 +1,6 @@
 import * as tus from 'tus-js-client';
 
-import {
+import type {
   StudioAsset,
   StudioAssetPatchPayload,
   StudioCreateAssetArgs,
@@ -13,7 +13,7 @@ import {
 } from './types';
 import { defaultStudioConfig } from '../../constants';
 
-import {
+import type {
   Asset,
   CreateAssetArgs,
   CreateAssetFileProgress,
@@ -506,6 +506,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           ...source,
         })),
+        attestation: studioPlaybackInfo?.['meta']?.['attestation'],
       },
     };
   }

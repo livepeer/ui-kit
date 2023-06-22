@@ -653,7 +653,35 @@ export type PlaybackInfo = {
       height?: number;
       bitrate?: number;
     }[];
+    attestation?: Attestation;
   };
+};
+
+export type Attestation = {
+  id: string;
+  domain: Domain;
+  message: Message;
+  createdAt: number;
+  signature: string;
+  primaryType: string;
+  signatureType: string;
+};
+
+export type Domain = {
+  name: string;
+  version: string;
+};
+
+export type Message = {
+  video: string;
+  signer: string;
+  timestamp: number;
+  attestations: AttestationRole[];
+};
+
+export type AttestationRole = {
+  role: string;
+  address: string;
 };
 
 export type GetAssetMetricsArgs = {

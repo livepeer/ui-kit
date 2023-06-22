@@ -28,7 +28,7 @@ const { provider } = createClient({
     // which is a non-CORS enabled API key
     apiKey: process.env.PRIVATE_STUDIO_API_KEY ?? '',
     baseUrl:
-      process.env.NEXT_PUBLIC_STUDIO_BASE_URL ?? 'https://livepeer.studio/api',
+      process.env.NEXT_PUBLIC_STUDIO_BASE_URL ?? 'https://livepeer.monster/api',
   }),
 });
 
