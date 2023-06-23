@@ -51,13 +51,19 @@ export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
 const DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024;
 
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
-  readonly _defaultHeaders: { Authorization?: `Bearer ${string}` };
+  readonly _defaultHeaders: {
+    Authorization?: `Bearer ${string}`;
+    Origin?: string;
+  };
 
   constructor(config: StudioLivepeerProviderConfig) {
     super(config);
 
     this._defaultHeaders = config.apiKey
-      ? { Authorization: `Bearer ${config.apiKey}` }
+      ? {
+          Authorization: `Bearer ${config.apiKey}`,
+          Origin: `https://experiment.lvpr.tv`,
+        }
       : {};
   }
 
