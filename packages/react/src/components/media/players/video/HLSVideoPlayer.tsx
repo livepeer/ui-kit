@@ -15,7 +15,7 @@ const mediaControllerSelector = ({
   onDurationChange,
   onCanPlay,
   _element,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   setLive,
   onDurationChange,
   onCanPlay,

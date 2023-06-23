@@ -8,7 +8,7 @@ import { useMediaController, useTheme } from '../../../context';
 
 const mediaControllerSelector = ({
   fullscreen,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   fullscreen,
 });
 

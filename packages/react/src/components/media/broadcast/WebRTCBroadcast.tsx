@@ -16,12 +16,16 @@ const mediaControllerSelector = ({
   fullscreen,
   onCanPlay,
   togglePlay,
-}: MediaControllerState<HTMLMediaElement>) => ({
+  _updateMediaStream,
+  setVideo,
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   _element,
   setLive,
   fullscreen,
   onCanPlay,
   togglePlay,
+  _updateMediaStream,
+  setVideo,
 });
 
 export type WebRTCBroadcastProps = Omit<
@@ -44,26 +48,27 @@ export const WebRTCBroadcast = React.forwardRef<
     objectFit,
     webrtcConfig,
     onBroadcastError,
-    // onBroad,
   } = props;
 
-  const { _element, setLive, fullscreen, togglePlay } = useMediaController(
-    mediaControllerSelector,
+  const {
+    _element,
+    setLive,
+    fullscreen,
+    togglePlay,
+    _updateMediaStream,
+    setVideo,
+  } = useMediaController(mediaControllerSelector);
+
+  const onConnected = React.useCallback(
+    async (mediaStream: MediaStream) => {
+      setVideo(true);
+      _updateMediaStream(mediaStream);
+      onBroadcastError?.(null);
+      togglePlay?.(true);
+      setLive(true);
+    },
+    [setLive, onBroadcastError, togglePlay, _updateMediaStream, setVideo],
   );
-
-  const onConnected = React.useCallback(async () => {
-    onBroadcastError?.(null);
-    togglePlay?.(true);
-    setLive(true);
-  }, [setLive, onBroadcastError, togglePlay]);
-
-  // React.useEffect(() => {
-  //   if (metadata?.bframes) {
-  //     onPlaybackError(
-  //       new Error('Metadata indicates that WebRTC playback contains bframes.'),
-  //     );
-  //   }
-  // }, [metadata, onPlaybackError]);
 
   React.useEffect(() => {
     if (_element && ingestUrl) {

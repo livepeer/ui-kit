@@ -3,7 +3,7 @@ import { MediaControllerState, useMediaController } from '@livepeer/react';
 const mediaControllerSelector = ({
   togglePlay,
   playing,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   togglePlay,
   playing,
 });

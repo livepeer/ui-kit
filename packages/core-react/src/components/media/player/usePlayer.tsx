@@ -13,7 +13,7 @@ import { isNumber } from '@livepeer/core/utils';
 import * as React from 'react';
 
 import { useSourceMimeTyped } from './useSourceMimeTyped';
-import { ObjectFit } from '../shared';
+import { ControlsError, ObjectFit } from '../shared';
 
 export type InternalPlayerProps = {
   /** The current screen width. This is null if the screen size cannot be determined (SSR). */
@@ -127,11 +127,6 @@ export type PlayerProps<
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
 };
 
-export type PlaybackError = {
-  type: 'offline' | 'access-control' | 'unknown';
-  message: string;
-};
-
 export const usePlayer = <
   TElement,
   TPoster,
@@ -191,11 +186,11 @@ export const usePlayer = <
   });
 
   const [playbackError, setPlaybackError] =
-    React.useState<PlaybackError | null>(null);
+    React.useState<ControlsError | null>(null);
 
   const onPlaybackError = React.useCallback(
     (error: Error | null) => {
-      const newPlaybackError: PlaybackError | null = error
+      const newPlaybackError: ControlsError | null = error
         ? {
             type: isAccessControlError(error)
               ? 'access-control'
@@ -209,8 +204,8 @@ export const usePlayer = <
       setPlaybackError(newPlaybackError);
 
       try {
-        if (error) {
-          console.warn(error);
+        if (newPlaybackError) {
+          console.log(newPlaybackError);
         }
 
         if (!error) {
@@ -326,8 +321,6 @@ export const usePlayer = <
       muted,
       priority: priority,
       viewerId,
-
-      // preload?: "none" | "full" | "metadata" | undefined;
     }),
     [autoPlay, playbackId, muted, priority, viewerId],
   );
@@ -338,7 +331,7 @@ export const usePlayer = <
       showLoadingSpinner,
       loadingText,
       showUploadingIndicator,
-      playbackError,
+      error: playbackError,
     }),
     [
       hidePosterOnPlayed,

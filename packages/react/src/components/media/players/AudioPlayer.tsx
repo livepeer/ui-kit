@@ -4,12 +4,12 @@ import { canPlayMediaNatively } from 'livepeer/media/browser';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
+import { PosterSource } from './Player';
 import { useMediaController } from '../../../context';
-import { PosterSource } from '../Player';
 
 const mediaControllerSelector = ({
   fullscreen,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   fullscreen,
 });
 

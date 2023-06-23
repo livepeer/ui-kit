@@ -28,7 +28,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
   element: TElement,
   aspectRatio: AspectRatio,
   callbacks?: {
-    onConnected?: () => void;
+    onConnected?: (mediaStream: MediaStream) => void;
     onError?: (data: Error) => void;
   },
   config?: WebRTCVideoConfig & WebRTCWHIPConfig,
@@ -98,6 +98,28 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
           }
         });
 
+        peerConnection.addEventListener(
+          'connectionstatechange',
+          async (_ev) => {
+            try {
+              if (peerConnection?.connectionState === 'failed') {
+                throw new Error('Failed to connect to peer.');
+              }
+
+              if (
+                peerConnection?.connectionState === 'connected' &&
+                !element.srcObject &&
+                stream
+              ) {
+                element.srcObject = stream;
+                callbacks?.onConnected?.(stream);
+              }
+            } catch (e) {
+              callbacks?.onError?.(e as Error);
+            }
+          },
+        );
+
         /**
          * While the connection is being initialized, ask for camera and microphone permissions and
          * add video and audio tracks to the peerConnection.
@@ -117,14 +139,6 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
             });
 
             stream = mediaStream;
-
-            if (
-              // peerConnection?.connectionState === 'connected' &&
-              !element.srcObject
-            ) {
-              element.srcObject = stream;
-              callbacks?.onConnected?.();
-            }
           })
           .catch((e) => callbacks?.onError?.(e as Error));
 

@@ -16,21 +16,19 @@ import { HlsVideoConfig } from 'livepeer/media/browser/hls';
 import { WebRTCVideoConfig } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
+import { AudioPlayer } from '.';
+import { PlayButton, Poster, Progress, Volume } from './controls';
+import { VideoPlayer } from './video';
+import { MediaControllerProvider } from '../../../context';
+import { useIsElementShown } from '../../useIsElementShown';
 import {
   Container,
   ControlsContainer,
   FullscreenButton,
   PictureInPictureButton,
-  PlayButton,
-  Poster,
-  Progress,
   TimeDisplay,
   Title,
-  Volume,
-} from './controls';
-import { AudioPlayer, VideoPlayer } from './players';
-import { MediaControllerProvider } from '../../context';
-import { useIsElementShown } from '../useIsElementShown';
+} from '../controls';
 
 export type PosterSource = string | React.ReactNode;
 

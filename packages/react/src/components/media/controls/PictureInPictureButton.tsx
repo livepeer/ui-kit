@@ -44,7 +44,7 @@ const mediaControllerSelector = ({
   pictureInPicture,
   _element,
   fullscreen,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   requestTogglePictureInPicture,
   pictureInPicture,
   _element,
