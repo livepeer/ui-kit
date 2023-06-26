@@ -64,7 +64,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
           Authorization: `Bearer ${config.apiKey}`,
           Origin: `https://experiment.lvpr.tv`,
         }
-      : {};
+      : { Origin: `https://experiment.lvpr.tv` };
   }
 
   async createStream(args: CreateStreamArgs): Promise<Stream> {
