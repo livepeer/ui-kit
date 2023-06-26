@@ -39,24 +39,42 @@ export default (props: PlayerProps<object>) => {
   }, []);
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignContent: 'center',
-      }}
-    >
+    <>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
+        <Player
+          {...props}
+          src={props?.src}
+          showPipButton
+          priority
+          theme={{
+            radii: {
+              containerBorderRadius: '0px',
+            },
+          }}
+          controls={{
+            defaultVolume: 0.7,
+          }}
+          mediaElementRef={mediaElementRef}
+        />
+      </div>
       {props?.playbackInfo?.meta?.attestation && (
         <div
           style={{
             position: 'relative',
             width: '100%',
             height: '100%',
+            zIndex: 100,
           }}
         >
           <div
@@ -90,17 +108,6 @@ export default (props: PlayerProps<object>) => {
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
-                  {/* <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <span>
-                      {props?.playbackInfo?.meta?.attestation.primaryType}
-                    </span>
-                    <span>Hello</span>
-                  </div> */}
                 </div>
               </Popover.Trigger>
               <Popover.Portal>
@@ -111,6 +118,7 @@ export default (props: PlayerProps<object>) => {
                     padding: '10px 14px',
                     borderRadius: 8,
                     outline: 0,
+                    zIndex: 100,
                   }}
                 >
                   <div
@@ -210,22 +218,7 @@ export default (props: PlayerProps<object>) => {
           </div>
         </div>
       )}
-      <Player
-        {...props}
-        src={props?.src}
-        showPipButton
-        priority
-        theme={{
-          radii: {
-            containerBorderRadius: '0px',
-          },
-        }}
-        controls={{
-          defaultVolume: 0.7,
-        }}
-        mediaElementRef={mediaElementRef}
-      />
-    </div>
+    </>
   );
 };
 
