@@ -20,6 +20,7 @@ const mediaControllerSelector = ({
   hasPlayed,
   buffered,
   ingestUrl,
+  _updateLastInteraction,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   hidden,
   togglePlay,
@@ -27,6 +28,7 @@ const mediaControllerSelector = ({
   hasPlayed,
   buffered,
   ingestUrl,
+  _updateLastInteraction,
 });
 
 export type { ControlsContainerProps };
@@ -45,8 +47,15 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     children,
   } = props;
 
-  const { hidden, togglePlay, canPlay, hasPlayed, buffered, ingestUrl } =
-    useMediaController(mediaControllerSelector);
+  const {
+    hidden,
+    togglePlay,
+    canPlay,
+    hasPlayed,
+    buffered,
+    ingestUrl,
+    _updateLastInteraction,
+  } = useMediaController(mediaControllerSelector);
 
   const isBroadcast = React.useMemo(() => Boolean(ingestUrl), [ingestUrl]);
 
@@ -55,6 +64,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     canPlay,
     buffered,
     isBroadcast,
+    _updateLastInteraction,
   });
 
   return (

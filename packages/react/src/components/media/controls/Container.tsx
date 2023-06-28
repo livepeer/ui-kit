@@ -29,7 +29,9 @@ export const Container: React.FC<ContainerProps> = (props) => {
       style={{
         display: 'contents',
       }}
-      className={`${className} livepeer-contents-container`}
+      className={`${
+        className ? `${className} ` : ''
+      }livepeer-contents-container`}
     >
       <div
         className={`${styling.container({

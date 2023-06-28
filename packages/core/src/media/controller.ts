@@ -93,6 +93,12 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   /** The media metadata, from the playback websocket */
   metadata?: Metadata;
 
+  /** The audio and video device IDs for broadcasting */
+  deviceIds: {
+    audio?: string;
+    video?: string;
+  } | null;
+
   /** If the media is current playing or paused */
   playing: boolean;
   /** If the media has been played yet */
@@ -168,7 +174,6 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   togglePlay: (force?: boolean) => void;
 
   toggleVideo: () => void;
-  setVideo: (value: boolean) => void;
 
   onProgress: (time: number) => void;
   onDurationChange: (duration: number) => void;
@@ -176,6 +181,8 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   _updateBuffered: (buffered: number) => void;
 
   requestSeek: (time: number) => void;
+
+  _setDeviceIds: (ids: { audio?: string; video?: string }) => void;
 
   requestSeekBack: (difference?: number) => void;
   requestSeekForward: (difference?: number) => void;
@@ -280,6 +287,8 @@ export const createControllerStore = <TElement, TMediaStream>({
           viewerId: mediaProps.viewerId ?? '',
           creatorId: mediaProps.creatorId ?? '',
 
+          deviceIds: null,
+
           hasPlayed: false,
           playing: false,
           fullscreen: false,
@@ -310,11 +319,12 @@ export const createControllerStore = <TElement, TMediaStream>({
           _requestedPictureInPictureLastTime: Date.now(),
           _requestedPlayPauseLastTime: 0,
 
-          _updateMediaStream: (_mediaStream) => set(() => ({ _mediaStream })),
+          _updateMediaStream: (_mediaStream) =>
+            set(() => ({ _mediaStream, video: true })),
           setHidden: (hidden: boolean) =>
             set(({ playing }) => ({ hidden: playing ? hidden : false })),
           _updateLastInteraction: () =>
-            set(() => ({ _lastInteraction: Date.now() })),
+            set(() => ({ _lastInteraction: Date.now(), hidden: false })),
 
           // set the src and playbackId from the source URL
           _updateSource: (source: string) =>
@@ -323,6 +333,15 @@ export const createControllerStore = <TElement, TMediaStream>({
               ...(!playbackId
                 ? { playbackId: getPlaybackIdFromSourceUrl(source) }
                 : {}),
+            })),
+
+          _setDeviceIds: (ids) =>
+            set(({ deviceIds }) => ({
+              deviceIds: {
+                ...deviceIds,
+                ...(ids.audio ? { audio: ids.audio } : {}),
+                ...(ids.video ? { video: ids.video } : {}),
+              },
             })),
 
           onCanPlay: () =>
@@ -360,10 +379,6 @@ export const createControllerStore = <TElement, TMediaStream>({
           toggleVideo: () =>
             set(({ video }) => ({
               video: !video,
-            })),
-          setVideo: (value: boolean) =>
-            set(() => ({
-              video: value,
             })),
           onProgress: (time) =>
             set(() => ({
