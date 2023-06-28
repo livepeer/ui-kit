@@ -5,7 +5,7 @@ import {
 import { MediaControllerState, omit } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 
-import { useMediaController } from '../../../context';
+import { useMediaController } from '../../../../context';
 
 const DefaultPlayIcon = () => (
   <svg
@@ -34,7 +34,7 @@ const DefaultPauseIcon = () => (
 const mediaControllerSelector = ({
   togglePlay,
   playing,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   togglePlay,
   playing,
 });

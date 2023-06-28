@@ -21,7 +21,7 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
   opts?: ControlsOptions;
   mediaProps?: MediaPropsOptions;
 }): StoreApi<MediaControllerState<MediaElement>> => {
-  return createControllerStore<TElement>({
+  return createControllerStore<TElement, void>({
     element: undefined,
     device: {
       version: version.reactNative,

@@ -6,7 +6,11 @@ import { MediaControllerState } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
-import { OfflineStreamError, PrivateStreamError } from './PlaybackDisplayError';
+import {
+  GenericError,
+  OfflineStreamError,
+  PrivateStreamError,
+} from './PlaybackDisplayError';
 import { useMediaController } from '../../../context';
 
 const mediaControllerSelector = ({
@@ -16,13 +20,15 @@ const mediaControllerSelector = ({
   hasPlayed,
   buffered,
   ingestUrl,
-}: MediaControllerState<HTMLMediaElement>) => ({
+  _updateLastInteraction,
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   hidden,
   togglePlay,
   canPlay,
   hasPlayed,
   buffered,
   ingestUrl,
+  _updateLastInteraction,
 });
 
 export type { ControlsContainerProps };
@@ -37,18 +43,28 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     showLoadingSpinner = true,
     hidePosterOnPlayed = true,
     loadingText,
-    playbackError,
+    error,
     children,
   } = props;
 
-  const { hidden, togglePlay, canPlay, hasPlayed, buffered, ingestUrl } =
-    useMediaController(mediaControllerSelector);
+  const {
+    hidden,
+    togglePlay,
+    canPlay,
+    hasPlayed,
+    buffered,
+    ingestUrl,
+    _updateLastInteraction,
+  } = useMediaController(mediaControllerSelector);
+
+  const isBroadcast = React.useMemo(() => Boolean(ingestUrl), [ingestUrl]);
 
   const { isLoaded, containerProps } = useControlsContainer({
     togglePlay,
     canPlay,
     buffered,
-    isBroadcast: Boolean(ingestUrl),
+    isBroadcast,
+    _updateLastInteraction,
   });
 
   return (
@@ -71,7 +87,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         />
       )}
 
-      {showLoadingSpinner && !isLoaded && !playbackError?.type && (
+      {showLoadingSpinner && !isLoaded && !error?.type && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
@@ -86,22 +102,22 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </div>
       )}
 
-      {playbackError?.type && (
+      {error?.type && (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
         >
-          {playbackError?.type === 'access-control' ? (
+          {error?.type === 'access-control' ? (
             <PrivateStreamError />
-          ) : playbackError?.type === 'offline' ? (
-            <OfflineStreamError />
+          ) : error?.type === 'offline' ? (
+            <OfflineStreamError isBroadcast={isBroadcast} />
           ) : (
-            <></>
+            <GenericError isBroadcast={isBroadcast} />
           )}
         </div>
       )}
 
-      {isLoaded && !playbackError?.type && (
+      {isLoaded && !error?.type && (
         <>
           <div
             className={styling.controlsContainer.gradient({

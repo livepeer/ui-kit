@@ -15,7 +15,6 @@ export type {
   BroadcastProps,
   ControlsContainerProps,
   FullscreenButtonProps,
-  ObjectFit,
   PictureInPictureButtonProps,
   PlayButtonProps,
   PlayerProps,

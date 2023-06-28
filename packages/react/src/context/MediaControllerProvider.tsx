@@ -32,7 +32,10 @@ export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   );
 };
 
-const useMediaControllerStore = <TElement extends HTMLMediaElement>(
+const useMediaControllerStore = <
+  TElement extends HTMLMediaElement,
+  TMediaSource extends MediaStream,
+>(
   element: TElement | null,
   opts: ControlsOptions | undefined,
   mediaProps: MediaPropsOptions,
@@ -41,7 +44,7 @@ const useMediaControllerStore = <TElement extends HTMLMediaElement>(
 
   const store = React.useMemo(
     () =>
-      createControllerStore<TElement>({
+      createControllerStore<TElement, TMediaSource>({
         device: getDeviceInfo(version.react),
         storage: client.storage,
         opts: opts ?? {},

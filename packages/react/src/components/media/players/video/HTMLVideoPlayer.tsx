@@ -14,7 +14,7 @@ import { useMediaController } from '../../../../context';
 
 const mediaControllerSelector = ({
   canPlay,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   canPlay,
 });
 

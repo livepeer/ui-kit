@@ -16,11 +16,11 @@ import {
   MediaControllerContext,
   useMediaController,
 } from '../../../../context';
-import { PosterSource } from '../../Player';
+import { PosterSource } from '../Player';
 
 const mediaControllerSelector = ({
   fullscreen,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   fullscreen,
 });
 

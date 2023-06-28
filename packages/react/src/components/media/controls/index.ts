@@ -1,4 +1,7 @@
-export { BaseSlider, type BaseSliderProps } from './BaseSlider';
+export {
+  BaseSlider,
+  type BaseSliderProps,
+} from '../players/controls/BaseSlider';
 export { Container, type ContainerProps } from './Container';
 export {
   ControlsContainer,
@@ -12,9 +15,5 @@ export {
   PictureInPictureButton,
   type PictureInPictureButtonProps,
 } from './PictureInPictureButton';
-export { PlayButton, type PlayButtonProps } from './PlayButton';
-export { Poster, type PosterProps } from './Poster';
-export { Progress, type ProgressProps } from './Progress';
 export { TimeDisplay } from './TimeDisplay';
 export { Title, type TitleProps } from './Title';
-export { Volume, type VolumeProps } from './Volume';

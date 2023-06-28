@@ -59,7 +59,7 @@ export type Metadata = {
   bufferWindow?: number;
 };
 
-export type MediaControllerState<TElement = void> = {
+export type MediaControllerState<TElement = void, TMediaStream = void> = {
   /** If the media has loaded and can be played */
   canPlay: boolean;
   /** If the controls are currently hidden */
@@ -92,6 +92,12 @@ export type MediaControllerState<TElement = void> = {
   creatorId: string;
   /** The media metadata, from the playback websocket */
   metadata?: Metadata;
+
+  /** The audio and video device IDs for broadcasting */
+  deviceIds: {
+    audio?: string;
+    video?: string;
+  } | null;
 
   /** If the media is current playing or paused */
   playing: boolean;
@@ -141,6 +147,12 @@ export type MediaControllerState<TElement = void> = {
   /** Internal element used for playing media */
   _element: TElement | null;
 
+  /** Internal MediaStream used for broadcasting */
+  _mediaStream: TMediaStream | null;
+
+  /** If video is enabled (only applies to broadcasting) */
+  video: boolean | null;
+
   /** Media sizing information */
   size?: MediaSizing;
 
@@ -148,6 +160,7 @@ export type MediaControllerState<TElement = void> = {
   device: DeviceInformation;
 
   _updateSource: (source: string) => void;
+  _updateMediaStream: (mediaStream: TMediaStream) => void;
 
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
@@ -160,12 +173,16 @@ export type MediaControllerState<TElement = void> = {
   onPause: () => void;
   togglePlay: (force?: boolean) => void;
 
+  toggleVideo: () => void;
+
   onProgress: (time: number) => void;
   onDurationChange: (duration: number) => void;
 
   _updateBuffered: (buffered: number) => void;
 
   requestSeek: (time: number) => void;
+
+  _setDeviceIds: (ids: { audio?: string; video?: string }) => void;
 
   requestSeekBack: (difference?: number) => void;
   requestSeekForward: (difference?: number) => void;
@@ -191,18 +208,18 @@ export type MediaControllerState<TElement = void> = {
   setLoading: (stalled: boolean) => void;
 };
 
-export type MediaControllerStore<TElement> = StoreApi<
-  MediaControllerState<TElement>
+export type MediaControllerStore<TElement, TMediaStream> = StoreApi<
+  MediaControllerState<TElement, TMediaStream>
 > & {
   subscribe: {
     (
       listener: (
-        selectedState: MediaControllerState<TElement>,
-        previousSelectedState: MediaControllerState<TElement>,
+        selectedState: MediaControllerState<TElement, TMediaStream>,
+        previousSelectedState: MediaControllerState<TElement, TMediaStream>,
       ) => void,
     ): () => void;
     <U>(
-      selector: (state: MediaControllerState<TElement>) => U,
+      selector: (state: MediaControllerState<TElement, TMediaStream>) => U,
       listener: (selectedState: U, previousSelectedState: U) => void,
       options?: {
         equalityFn?: (a: U, b: U) => boolean;
@@ -225,7 +242,7 @@ const getBoundedSeek = (seek: number, duration: number | undefined) =>
 const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 
-export const createControllerStore = <TElement>({
+export const createControllerStore = <TElement, TMediaStream>({
   element,
   device,
   storage,
@@ -237,15 +254,18 @@ export const createControllerStore = <TElement>({
   storage: ClientStorage;
   mediaProps: MediaPropsOptions;
   opts: ControlsOptions;
-}): MediaControllerStore<TElement> => {
+}): MediaControllerStore<TElement, TMediaStream> => {
   const store = createStore<
-    MediaControllerState<TElement>,
+    MediaControllerState<TElement, TMediaStream>,
     [
       [
         'zustand/subscribeWithSelector',
-        Partial<MediaControllerState<TElement>>,
+        Partial<MediaControllerState<TElement, TMediaStream>>,
       ],
-      ['zustand/persist', Partial<MediaControllerState<TElement>>],
+      [
+        'zustand/persist',
+        Partial<MediaControllerState<TElement, TMediaStream>>,
+      ],
     ]
   >(
     subscribeWithSelector(
@@ -267,6 +287,8 @@ export const createControllerStore = <TElement>({
           viewerId: mediaProps.viewerId ?? '',
           creatorId: mediaProps.creatorId ?? '',
 
+          deviceIds: null,
+
           hasPlayed: false,
           playing: false,
           fullscreen: false,
@@ -276,6 +298,9 @@ export const createControllerStore = <TElement>({
           stalled: false,
           loading: false,
           playbackRate: 1,
+
+          _mediaStream: null,
+          video: null,
 
           device,
 
@@ -294,10 +319,12 @@ export const createControllerStore = <TElement>({
           _requestedPictureInPictureLastTime: Date.now(),
           _requestedPlayPauseLastTime: 0,
 
+          _updateMediaStream: (_mediaStream) =>
+            set(() => ({ _mediaStream, video: true })),
           setHidden: (hidden: boolean) =>
             set(({ playing }) => ({ hidden: playing ? hidden : false })),
           _updateLastInteraction: () =>
-            set(() => ({ _lastInteraction: Date.now() })),
+            set(() => ({ _lastInteraction: Date.now(), hidden: false })),
 
           // set the src and playbackId from the source URL
           _updateSource: (source: string) =>
@@ -306,6 +333,15 @@ export const createControllerStore = <TElement>({
               ...(!playbackId
                 ? { playbackId: getPlaybackIdFromSourceUrl(source) }
                 : {}),
+            })),
+
+          _setDeviceIds: (ids) =>
+            set(({ deviceIds }) => ({
+              deviceIds: {
+                ...deviceIds,
+                ...(ids.audio ? { audio: ids.audio } : {}),
+                ...(ids.video ? { video: ids.video } : {}),
+              },
             })),
 
           onCanPlay: () =>
@@ -340,6 +376,10 @@ export const createControllerStore = <TElement>({
               }));
             }
           },
+          toggleVideo: () =>
+            set(({ video }) => ({
+              video: !video,
+            })),
           onProgress: (time) =>
             set(() => ({
               progress: getFilteredNaN(time),

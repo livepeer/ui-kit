@@ -1,10 +1,15 @@
-import { ControlsOptions, MediaPropsOptions } from '@livepeer/core';
+import {
+  ControlsOptions,
+  MediaPropsOptions,
+  isAccessControlError,
+  isStreamOfflineError,
+} from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 
 import * as React from 'react';
 
 import { useLivepeerProvider } from '../../../hooks';
-import { ObjectFit } from '../shared';
+import { ControlsError, ObjectFit } from '../shared';
 
 export type BroadcastProps<TElement> = {
   /** The stream key for the broadcast. This is required. */
@@ -73,13 +78,23 @@ export const useBroadcast = <TElement,>({
 
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
-  const [broadcastError, setBroadcastError] = React.useState<Error | null>(
-    null,
-  );
+  const [broadcastError, setBroadcastError] =
+    React.useState<ControlsError | null>(null);
 
   const onBroadcastError = React.useCallback(
     (error: Error | null) => {
-      setBroadcastError(error);
+      const newError: ControlsError | null = error
+        ? {
+            type: isAccessControlError(error)
+              ? 'access-control'
+              : isStreamOfflineError(error)
+              ? 'offline'
+              : 'unknown',
+            message: error?.message ?? 'Error with playback.',
+          }
+        : null;
+
+      setBroadcastError(newError);
 
       if (error) {
         console.warn(error);
@@ -132,7 +147,7 @@ export const useBroadcast = <TElement,>({
     () => ({
       autoPlay: false,
       playbackId: undefined,
-      muted: true,
+      muted: false,
       priority: false,
       creatorId,
       ingestUrl: ingestUrl ?? undefined,
@@ -143,12 +158,12 @@ export const useBroadcast = <TElement,>({
   const controlsContainerProps = React.useMemo(
     () => ({
       hidePosterOnPlayed: true,
-      showLoadingSpinner: false,
+      showLoadingSpinner: true,
       loadingText: null,
       showUploadingIndicator: false,
-      playbackError: null,
+      error: broadcastError,
     }),
-    [],
+    [broadcastError],
   );
 
   const props = React.useMemo(

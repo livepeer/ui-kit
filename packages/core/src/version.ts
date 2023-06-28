@@ -1,6 +1,6 @@
-const core = `@livepeer/core@1.5.5`;
-const react = `@livepeer/react@2.5.5`;
-const reactNative = `@livepeer/react-native@1.5.4`;
+const core = `@livepeer/core@1.6.0-next.0`;
+const react = `@livepeer/react@2.6.0-next.0`;
+const reactNative = `@livepeer/react-native@1.6.0-next.0`;
 
 export const version = {
   core,

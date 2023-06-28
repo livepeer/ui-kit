@@ -14,7 +14,7 @@ const mediaControllerSelector = ({
   metadata,
   _element,
   setLive,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   metadata,
   _element,
   setLive,

@@ -8,6 +8,7 @@ import {
 import * as React from 'react';
 
 import { WebRTCBroadcast } from './WebRTCBroadcast';
+import { AudioToggle, BroadcastSettings, VideoToggle } from './controls';
 import {
   MediaControllerContext,
   MediaControllerProvider,
@@ -16,6 +17,7 @@ import {
   Container,
   ControlsContainer,
   FullscreenButton,
+  PictureInPictureButton,
   TimeDisplay,
   Title,
 } from '../controls';
@@ -27,6 +29,8 @@ type BroadcastProps = CoreBroadcastProps<HTMLMediaElement> & {
    * The tab index of the container element.
    */
   tabIndex?: number;
+  /** Whether to show the picture in picture button (web only) */
+  showPipButton?: boolean;
 };
 
 export type { BroadcastProps, ObjectFit };
@@ -70,19 +74,18 @@ export const BroadcastInternal = (props: BroadcastProps) => {
           <>
             <ControlsContainer
               {...controlsContainerProps}
-              // poster={poster && <Poster content={poster} title={title} />}
               top={<>{title && <Title content={title} />}</>}
-              // middle={<Progress />}
               left={
                 <>
-                  {/* <PlayButton /> */}
-                  {/* <Volume /> */}
+                  <VideoToggle />
+                  <AudioToggle />
                   <TimeDisplay />
                 </>
               }
               right={
                 <>
-                  {/* {props.showPipButton && <PictureInPictureButton />} */}
+                  {props.showPipButton && <PictureInPictureButton />}
+                  <BroadcastSettings />
                   <FullscreenButton />
                 </>
               }

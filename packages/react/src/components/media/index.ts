@@ -1,5 +1,3 @@
-export { Player } from './Player';
-export type { ObjectFit, PlayerProps } from './Player';
 export { Broadcast } from './broadcast';
 export type { BroadcastProps } from './broadcast';
 export {
@@ -7,21 +5,21 @@ export {
   ControlsContainer,
   FullscreenButton,
   PictureInPictureButton,
-  PlayButton,
-  Poster,
-  Progress,
   TimeDisplay,
   Title,
-  Volume,
 } from './controls';
 export type {
   BaseSliderProps,
   ControlsContainerProps,
   FullscreenButtonProps,
   PictureInPictureButtonProps,
+  TitleProps,
+} from './controls';
+export { PlayButton, Player, Poster, Progress, Volume } from './players';
+export type {
   PlayButtonProps,
+  PlayerProps,
   PosterProps,
   ProgressProps,
-  TitleProps,
   VolumeProps,
-} from './controls';
+} from './players';

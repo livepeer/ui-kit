@@ -45,14 +45,14 @@ type PlaybackRecord = {
   score: number;
 };
 
-export class PlaybackMonitor<TElement> {
+export class PlaybackMonitor<TElement, TMediaStream> {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
   averagingSteps = 20;
-  store: MediaControllerStore<TElement>;
+  store: MediaControllerStore<TElement, TMediaStream>;
 
-  constructor(store: MediaControllerStore<TElement>) {
+  constructor(store: MediaControllerStore<TElement, TMediaStream>) {
     this.store = store;
   }
 
@@ -175,13 +175,13 @@ function isInIframe() {
   }
 }
 
-export class MetricsStatus<TElement> {
+export class MetricsStatus<TElement, TMediaStream> {
   requestedPlayTime = 0;
   firstFrameTime = 0;
 
   retryCount = 0;
   connected = false;
-  store: MediaControllerStore<TElement>;
+  store: MediaControllerStore<TElement, TMediaStream>;
 
   destroy: () => void;
 
@@ -192,7 +192,7 @@ export class MetricsStatus<TElement> {
   timeStalled = new Timer();
   timeUnpaused = new Timer();
 
-  constructor(store: MediaControllerStore<TElement>) {
+  constructor(store: MediaControllerStore<TElement, TMediaStream>) {
     const currentState = store.getState();
 
     this.store = store;
@@ -379,8 +379,8 @@ const sessionToken = generateRandomToken(); // used to track playbacks across se
 
 const bootMs = Date.now(); // used for firstPlayback value
 
-export type MediaMetrics<TElement> = {
-  metrics: MetricsStatus<TElement> | null;
+export type MediaMetrics<TElement, TMediaStream> = {
+  metrics: MetricsStatus<TElement, TMediaStream> | null;
   destroy: () => void;
 };
 
@@ -392,11 +392,11 @@ export type MediaMetrics<TElement> = {
  * @param store Element to capture playback metrics from
  * @param onError Error callback
  */
-export function addMediaMetricsToStore<TElement>(
-  store: MediaControllerStore<TElement> | undefined | null,
+export function addMediaMetricsToStore<TElement, TMediaStream>(
+  store: MediaControllerStore<TElement, TMediaStream> | undefined | null,
   onError?: (error: unknown) => void,
-): MediaMetrics<TElement> {
-  const defaultResponse: MediaMetrics<TElement> = {
+): MediaMetrics<TElement, TMediaStream> {
+  const defaultResponse: MediaMetrics<TElement, TMediaStream> = {
     metrics: null,
     destroy: () => {
       //

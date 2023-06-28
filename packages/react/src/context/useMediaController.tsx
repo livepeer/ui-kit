@@ -5,9 +5,9 @@ import { useStore } from 'zustand';
 import { MediaControllerContext } from './MediaControllerContext';
 
 export const useMediaController = <
-  TSlice = MediaControllerState<HTMLMediaElement>,
+  TSlice = MediaControllerState<HTMLMediaElement, MediaStream>,
 >(
-  selector: (s: MediaControllerState<HTMLMediaElement>) => TSlice,
+  selector: (s: MediaControllerState<HTMLMediaElement, MediaStream>) => TSlice,
 ) => {
   const mediaController = React.useContext(MediaControllerContext);
 

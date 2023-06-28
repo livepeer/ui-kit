@@ -7,8 +7,8 @@ import {
   WebRTCSrc,
 } from '@livepeer/core';
 
-import { PlaybackError, PlayerProps } from './usePlayer';
-import { ObjectFit } from '../shared';
+import { PlayerProps } from './usePlayer';
+import { ControlsError, ObjectFit } from '../shared';
 
 export type VideoPlayerProps<
   TElement,
@@ -32,7 +32,7 @@ export type VideoPlayerProps<
   >['_isCurrentlyShown'];
   options?: ControlsOptions;
 
-  playbackError: PlaybackError | null;
+  playbackError: ControlsError | null;
   onPlaybackError: (error: Error | null) => void;
 };
 
