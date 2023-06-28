@@ -29,6 +29,5 @@ export const defaultStudioConfig: Omit<StudioLivepeerProviderConfig, 'apiKey'> =
   {
     name: 'Livepeer Studio',
     baseUrl: 'https://livepeer.studio/api',
-    webrtcIngestBaseUrl:
-      'https://mdw-staging-staging-catalyst-0.livepeer.monster/webrtc', // TODO
+    webrtcIngestBaseUrl: 'https://webrtc.livepeer.com/webrtc',
   };
