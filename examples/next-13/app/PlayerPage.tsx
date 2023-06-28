@@ -223,7 +223,7 @@ export default (props: PlayerProps<object>) => {
 };
 
 function shortenAddress(address: string, front = 6, back = 4) {
-  if (!address || address.length !== 42) {
+  if (!address) {
     return '';
   }
 
