@@ -27,12 +27,14 @@ const mediaControllerSelector = ({
   canPlay,
   hasPlayed,
   buffered,
+  _updateLastInteraction,
 }: MediaControllerState<MediaElement>) => ({
   hidden,
   togglePlay,
   canPlay,
   hasPlayed,
   buffered,
+  _updateLastInteraction,
 });
 
 export type { ControlsContainerProps };
@@ -51,13 +53,20 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     error,
   } = props;
 
-  const { hidden, togglePlay, canPlay, hasPlayed, buffered } =
-    useMediaController(mediaControllerSelector);
+  const {
+    hidden,
+    togglePlay,
+    canPlay,
+    hasPlayed,
+    buffered,
+    _updateLastInteraction,
+  } = useMediaController(mediaControllerSelector);
 
   const { isLoaded, containerProps } = useControlsContainer({
     togglePlay,
     canPlay,
     buffered,
+    _updateLastInteraction,
   });
 
   const theme = useTheme();

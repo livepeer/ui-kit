@@ -6,5 +6,5 @@ import { createNativeControllerStore } from '../components/media/state/controls'
 import { MediaElement } from '../components/media/types';
 
 export const MediaControllerContext = React.createContext<
-  MediaControllerStore<MediaElement>
+  MediaControllerStore<MediaElement, void>
 >(createNativeControllerStore<MediaElement>({}));

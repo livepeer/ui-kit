@@ -30,7 +30,7 @@ export function addMediaMetrics<
   element: TElement | undefined | null,
   onError?: (error: unknown) => void,
   opts?: ControlsOptions & MediaPropsOptions,
-): MediaMetrics<TElement> {
+): MediaMetrics<TElement, TMediaStream> {
   const store = createControllerStore<TElement, TMediaStream>({
     element: element ?? undefined,
     device: getDeviceInfo(version.core),
