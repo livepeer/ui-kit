@@ -56,15 +56,15 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     Origin?: string;
   };
 
-  constructor(config: StudioLivepeerProviderConfig) {
+  constructor(config: StudioLivepeerProviderConfig & Record<string, string>) {
     super(config);
 
     this._defaultHeaders = config.apiKey
       ? {
           Authorization: `Bearer ${config.apiKey}`,
-          Origin: `https://experiment.lvpr.tv`,
+          Origin: config.origin,
         }
-      : { Origin: `https://experiment.lvpr.tv` };
+      : { Origin: config.origin };
   }
 
   async createStream(args: CreateStreamArgs): Promise<Stream> {
