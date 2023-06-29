@@ -65,7 +65,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
         return;
       }
 
-      const redirectUrlString = redirectUrl.toString();
+      const redirectUrlString = redirectUrl.toString().replace('video+', '');
 
       /**
        * Create a new WebRTC connection, using public STUN servers with ICE,
@@ -253,17 +253,34 @@ export const changeVideoSource = async <TElement extends HTMLMediaElement>({
   });
 };
 
-export const getMediaDevices = async () => {
+export const getMediaDevices = (
+  onDevicesUpdated: (devices: MediaDeviceInfo[]) => void,
+) => {
   if (
     typeof navigator !== 'undefined' &&
     navigator?.mediaDevices?.enumerateDevices
   ) {
-    const devices = await navigator.mediaDevices.enumerateDevices();
+    const onDeviceChange = () => {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => onDevicesUpdated(devices));
+    };
 
-    return devices;
+    navigator.mediaDevices.addEventListener('devicechange', onDeviceChange);
+
+    onDeviceChange();
+
+    return () => {
+      navigator.mediaDevices.removeEventListener(
+        'devicechange',
+        onDeviceChange,
+      );
+    };
   }
 
-  return null;
+  return () => {
+    //
+  };
 };
 
 const getConstraints = (aspectRatio: AspectRatio) => {

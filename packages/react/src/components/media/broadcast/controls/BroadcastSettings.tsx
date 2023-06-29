@@ -49,20 +49,14 @@ export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
   } | null>(null);
 
   React.useEffect(() => {
-    (async () => {
-      try {
-        const devices = await getMediaDevices();
+    const destroy = getMediaDevices((devices) => {
+      setMediaDevices({
+        audio: devices.filter((device) => device.kind === 'audioinput'),
+        video: devices.filter((device) => device.kind === 'videoinput'),
+      });
+    });
 
-        if (devices) {
-          setMediaDevices({
-            audio: devices.filter((device) => device.kind === 'audioinput'),
-            video: devices.filter((device) => device.kind === 'videoinput'),
-          });
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    })();
+    return destroy;
   }, []);
 
   const onAudioChange = React.useCallback(
