@@ -21,6 +21,7 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
           baseUrl:
             process.env.NEXT_PUBLIC_STUDIO_BASE_URL ??
             'https://livepeer.studio/api',
+          ...{ origin: `https://lvpr.tv` },
         }),
       }),
     [],

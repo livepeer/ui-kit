@@ -20,6 +20,7 @@ describe('usePlaybackInfo', () => {
     expect(result.current.data).toMatchInlineSnapshot(`
       {
         "meta": {
+          "attestation": undefined,
           "live": false,
           "playbackPolicy": null,
           "source": [
