@@ -18,6 +18,7 @@
     "@livepeer/react-native": "1.5.6"
   },
   "changesets": [
-    "little-zoos-give"
+    "little-zoos-give",
+    "stupid-eyes-reply"
   ]
 }

@@ -1,5 +1,16 @@
 # @livepeer/react-native
 
+## 1.6.0-next.1
+
+### Minor Changes
+
+- [`60b46ad`](https://github.com/livepeer/livepeer.js/commit/60b46add0f0661ab1b95ccf4887ced8f91cb3541) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added controls for `<Broadcast />` - `<BroadcastSettings />`, `<AudioToggle />`, and `<VideoToggle />`.
+
+### Patch Changes
+
+- Updated dependencies [[`60b46ad`](https://github.com/livepeer/livepeer.js/commit/60b46add0f0661ab1b95ccf4887ced8f91cb3541)]:
+  - @livepeer/core-react@1.6.0-next.1
+
 ## 1.6.0-next.0
 
 ### Minor Changes
