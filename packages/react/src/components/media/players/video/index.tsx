@@ -1,4 +1,9 @@
-import { VideoSrc, addMediaMetricsToStore } from '@livepeer/core-react';
+import {
+  MediaControllerCallbackState,
+  VideoSrc,
+  addMediaMetricsToStore,
+  sanitizeMediaControllerState,
+} from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
 import { MediaControllerState } from 'livepeer';
 import { canPlayMediaNatively } from 'livepeer/media/browser';
@@ -27,7 +32,8 @@ const mediaControllerSelector = ({
 export type VideoPlayerProps = VideoPlayerCoreProps<
   HTMLVideoElement,
   PosterSource,
-  object
+  object,
+  any
 > & {
   allowCrossOriginCredentials?: boolean;
   hlsConfig?: HlsVideoConfig;
@@ -66,7 +72,14 @@ const InternalVideoPlayer = React.forwardRef<
 >((props, ref) => {
   const { fullscreen } = useMediaController(mediaControllerSelector);
 
-  const { src, onPlaybackError, playbackError, lowLatency } = props;
+  const {
+    src,
+    onPlaybackError,
+    playbackError,
+    lowLatency,
+    onPlaybackStatusUpdate,
+    playbackStatusSelector,
+  } = props;
 
   const [canUseHlsjs, canUseWebRTC] = React.useMemo(
     () => [isHlsSupported(), isWebRTCSupported()],
@@ -156,6 +169,30 @@ const InternalVideoPlayer = React.forwardRef<
   }, [canUseHlsjs, canUseWebRTC, currentPlaybackSource]);
 
   const store = React.useContext(MediaControllerContext);
+
+  const stateSelector = React.useCallback(
+    (state: MediaControllerCallbackState<HTMLMediaElement, MediaStream>) => {
+      return playbackStatusSelector
+        ? playbackStatusSelector(
+            state as MediaControllerState<HTMLVideoElement, never>,
+          )
+        : state;
+    },
+    [playbackStatusSelector],
+  );
+
+  React.useEffect(() => {
+    return store.subscribe(stateSelector, (state, prevState) =>
+      onPlaybackStatusUpdate?.(
+        sanitizeMediaControllerState(
+          state as MediaControllerState<HTMLVideoElement, never>,
+        ),
+        sanitizeMediaControllerState(
+          prevState as MediaControllerState<HTMLVideoElement, never>,
+        ),
+      ),
+    );
+  }, [onPlaybackStatusUpdate, stateSelector, store]);
 
   React.useEffect(() => {
     if (currentPlaybackSource) {

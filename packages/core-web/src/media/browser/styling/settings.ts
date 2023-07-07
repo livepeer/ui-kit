@@ -85,6 +85,9 @@ const selectTrigger = css('button', {
   gap: 5,
   backgroundColor: 'white',
   color: 'black',
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: 'black',
   boxShadow: `0 2px 10px hsla(0, 0%, 0%, 0.141)`,
   '&:hover': { backgroundColor: 'hsl(294, 5.5%, 95.3%)' },
   '&:focus': { boxShadow: `0 0 0 2px black` },
@@ -105,6 +108,10 @@ const selectContent = css('div', {
   flexDirection: 'column',
   borderRadius: 6,
 
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: 'black',
+
   boxShadow:
     '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
 });
@@ -119,7 +126,6 @@ const selectItem = css('div', {
 
   fontSize: 13,
   lineHeight: 1,
-  // color: violet.violet11,
   borderRadius: 3,
   display: 'flex',
   alignItems: 'center',
@@ -129,14 +135,12 @@ const selectItem = css('div', {
   userSelect: 'none',
 
   '&[data-disabled]': {
-    // color: mauve.mauve8,
     pointerEvents: 'none',
   },
 
   '&[data-highlighted]': {
     outline: 'none',
     backgroundColor: '#fafafa',
-    // color: violet.violet1,
   },
 });
 

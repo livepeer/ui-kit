@@ -34,17 +34,16 @@ export type { ObjectFit };
 
 export type PosterSource = ImageProps['source'];
 
-export type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
-  MediaElement,
-  PosterSource,
-  TPlaybackPolicyObject
-> &
+export type PlayerProps<
+  TPlaybackPolicyObject extends object,
+  TSlice,
+> = CorePlayerProps<MediaElement, PosterSource, TPlaybackPolicyObject, TSlice> &
   VideoCustomizationProps;
 
 const screenDimensions = Dimensions.get('screen');
 
-export const PlayerInternal = <TPlaybackPolicyObject extends object>(
-  props: PlayerProps<TPlaybackPolicyObject>,
+export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
+  props: PlayerProps<TPlaybackPolicyObject, TSlice>,
 ) => {
   const {
     mediaElement,
@@ -52,7 +51,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     controlsContainerProps,
     source,
     props: { controls, children, theme, title, showTitle, aspectRatio },
-  } = usePlayer<MediaElement, PosterSource, TPlaybackPolicyObject>(
+  } = usePlayer<MediaElement, PosterSource, TPlaybackPolicyObject, TSlice>(
     { ...props, _isCurrentlyShown: props._isCurrentlyShown ?? true },
     {
       _screenWidth: screenDimensions?.width ?? null,

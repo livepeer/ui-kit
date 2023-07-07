@@ -18,7 +18,7 @@ function isIframe() {
   return true;
 }
 
-export default (props: BroadcastProps) => {
+export default (props: BroadcastProps<any>) => {
   useEffect(() => {
     if (!isIframe()) {
       document.body.style.backgroundColor = 'black';
