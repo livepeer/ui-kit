@@ -66,10 +66,7 @@ type PlayerProps<
 
 export type { ObjectFit, PlayerProps };
 
-export const PlayerInternal = <
-  TPlaybackPolicyObject extends object,
-  TSlice = MediaControllerCallbackState<HTMLMediaElement, never>,
->(
+export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
   props: PlayerProps<TPlaybackPolicyObject, TSlice>,
 ) => {
   const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
