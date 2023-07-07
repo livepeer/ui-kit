@@ -1,5 +1,6 @@
 import {
   Asset,
+  Attestation,
   CreateStreamArgs,
   CreatorId,
   MultistreamTargetRef,
@@ -141,6 +142,7 @@ export type StudioPlaybackInfo = {
       height?: number;
       bitrate?: number;
     }[];
+    attestation?: Attestation;
   };
 };
 

@@ -1,6 +1,6 @@
 import * as tus from 'tus-js-client';
 
-import {
+import type {
   StudioAsset,
   StudioAssetPatchPayload,
   StudioCreateAssetArgs,
@@ -13,7 +13,7 @@ import {
 } from './types';
 import { defaultStudioConfig } from '../../constants';
 
-import {
+import type {
   Asset,
   CreateAssetArgs,
   CreateAssetFileProgress,
@@ -51,14 +51,20 @@ export type StudioLivepeerProviderConfig = LivepeerProviderConfig & {
 const DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024;
 
 export class StudioLivepeerProvider extends BaseLivepeerProvider {
-  readonly _defaultHeaders: { Authorization?: `Bearer ${string}` };
+  readonly _defaultHeaders: {
+    Authorization?: `Bearer ${string}`;
+    Origin?: string;
+  };
 
-  constructor(config: StudioLivepeerProviderConfig) {
+  constructor(config: StudioLivepeerProviderConfig & Record<string, string>) {
     super(config);
 
     this._defaultHeaders = config.apiKey
-      ? { Authorization: `Bearer ${config.apiKey}` }
-      : {};
+      ? {
+          Authorization: `Bearer ${config.apiKey}`,
+          Origin: config.origin,
+        }
+      : { Origin: config.origin };
   }
 
   async createStream(args: CreateStreamArgs): Promise<Stream> {
@@ -506,6 +512,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         source: studioPlaybackInfo?.['meta']?.['source']?.map((source) => ({
           ...source,
         })),
+        attestation: studioPlaybackInfo?.['meta']?.['attestation'],
       },
     };
   }
