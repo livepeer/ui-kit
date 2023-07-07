@@ -1,5 +1,23 @@
 # @livepeer/react
 
+## 2.6.0-next.2
+
+### Minor Changes
+
+- [#356](https://github.com/livepeer/livepeer.js/pull/356) [`ac886fb`](https://github.com/livepeer/livepeer.js/commit/ac886fb0dd3a6aade0da257cf225503d4fb05f00) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `<Screenshare />` component for Broadcast, which allows a user to share a screen with their WebRTC broadcast.
+
+### Patch Changes
+
+- [#356](https://github.com/livepeer/livepeer.js/pull/356) [`ac886fb`](https://github.com/livepeer/livepeer.js/commit/ac886fb0dd3a6aade0da257cf225503d4fb05f00) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `renderChildrenOutsideContainer` to both Broadcast and Player, which determines whether the children should be rendered outside of the aspect ratio container. This is used for custom controls, so children of the Player/Broadcast can use
+  `useMediaController` without any parent elements.
+
+  Also added `onPlaybackStatusUpdate`, which is a callback that is called when the broadcast status updates.
+  **This should be used with `playbackStatusSelector` to limit state updates.**
+
+- Updated dependencies [[`ac886fb`](https://github.com/livepeer/livepeer.js/commit/ac886fb0dd3a6aade0da257cf225503d4fb05f00), [`ac886fb`](https://github.com/livepeer/livepeer.js/commit/ac886fb0dd3a6aade0da257cf225503d4fb05f00)]:
+  - @livepeer/core-react@1.6.0-next.2
+  - livepeer@2.6.0-next.2
+
 ## 2.6.0-next.1
 
 ### Minor Changes
@@ -13,7 +31,7 @@
   - livepeer@2.6.0-next.1
 
 ## 2.6.0-next.0
- 
+
 ### Minor Changes
 
 - [#349](https://github.com/livepeer/livepeer.js/pull/349) [`82429d8`](https://github.com/livepeer/livepeer.js/commit/82429d8bd6dbc92d5f7136f445ca408660533d94) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added basic `<Broadcast />` component to kick off WebRTC broadcasting testing.
