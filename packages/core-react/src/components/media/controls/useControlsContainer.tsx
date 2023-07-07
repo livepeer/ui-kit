@@ -1,14 +1,15 @@
 import { MediaControllerState } from '@livepeer/core';
 import * as React from 'react';
 
-import { PlaybackError } from '../Player';
+import { ControlsError } from '../shared';
 
 export type ControlsContainerProps = {
   loadingText?: string | null;
   showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
-  playbackError?: PlaybackError | null;
+  error?: ControlsError | null;
+  isBroadcast?: boolean;
 
   top?: React.ReactNode;
   middle?: React.ReactNode;
@@ -19,14 +20,15 @@ export type ControlsContainerProps = {
 
 type ControlsContainerStateSlice = Pick<
   MediaControllerState,
-  'togglePlay' | 'canPlay' | 'buffered'
+  'togglePlay' | 'canPlay' | 'buffered' | '_updateLastInteraction'
 >;
 
 type ControlsContainerCoreProps = ControlsContainerStateSlice &
   ControlsContainerProps;
 
 export const useControlsContainer = (props: ControlsContainerCoreProps) => {
-  const { togglePlay, canPlay, buffered } = props;
+  const { togglePlay, canPlay, buffered, isBroadcast, _updateLastInteraction } =
+    props;
 
   const isLoaded = React.useMemo(
     () => canPlay || buffered !== 0,
@@ -35,9 +37,13 @@ export const useControlsContainer = (props: ControlsContainerCoreProps) => {
 
   const onPressBackground = React.useCallback(() => {
     if (isLoaded) {
-      togglePlay();
+      if (!isBroadcast) {
+        togglePlay();
+      } else {
+        _updateLastInteraction();
+      }
     }
-  }, [togglePlay, isLoaded]);
+  }, [togglePlay, isLoaded, isBroadcast, _updateLastInteraction]);
 
   return {
     isLoaded,

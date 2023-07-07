@@ -1,7 +1,7 @@
 import {
   ControlsOptions,
   MediaMetrics,
-  PlayerPropsOptions,
+  MediaPropsOptions,
   createStorage,
   version,
 } from '@livepeer/core';
@@ -23,12 +23,15 @@ import { addEventListeners, getDeviceInfo } from './controls';
  * @param opts Options for the metrics reporting.
  * @returns A callback for destroying the store and metrics.
  */
-export function addMediaMetrics<TElement extends HTMLMediaElement>(
+export function addMediaMetrics<
+  TElement extends HTMLMediaElement,
+  TMediaStream extends MediaStream,
+>(
   element: TElement | undefined | null,
   onError?: (error: unknown) => void,
-  opts?: ControlsOptions & PlayerPropsOptions,
-): MediaMetrics<TElement> {
-  const store = createControllerStore<TElement>({
+  opts?: ControlsOptions & MediaPropsOptions,
+): MediaMetrics<TElement, TMediaStream> {
+  const store = createControllerStore<TElement, TMediaStream>({
     element: element ?? undefined,
     device: getDeviceInfo(version.core),
     storage: createStorage(
@@ -38,7 +41,7 @@ export function addMediaMetrics<TElement extends HTMLMediaElement>(
           }
         : {},
     ),
-    playerProps: opts ?? {
+    mediaProps: opts ?? {
       autoPlay: Boolean(element?.autoplay),
       muted: Boolean(element?.muted),
       priority: false,

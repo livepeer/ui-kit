@@ -5,7 +5,12 @@ import * as Exports from '.';
 it('should expose correct exports', () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
+      "changeMediaStream",
       "createNewWHEP",
+      "createNewWHIP",
+      "getDisplayMedia",
+      "getMediaDevices",
+      "getUserMedia",
       "isWebRTCSupported",
     ]
   `);

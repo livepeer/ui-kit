@@ -36,6 +36,7 @@ it('should expose correct exports', () => {
       "noopStorage",
       "omit",
       "pick",
+      "sanitizeMediaControllerState",
       "updateAsset",
       "updateStream",
       "version",

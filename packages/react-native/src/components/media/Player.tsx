@@ -1,10 +1,16 @@
 // polyfill for URL
 import 'react-native-url-polyfill/auto';
 
-import { AudioSrc, Base64Src, VideoSrc, WebRTCSrc } from '@livepeer/core-react';
+import {
+  AudioSrc,
+  Base64Src,
+  MediaPropsOptions,
+  VideoSrc,
+  WebRTCSrc,
+} from '@livepeer/core-react';
 import {
   PlayerProps as CorePlayerProps,
-  PlayerObjectFit,
+  ObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
 
@@ -24,21 +30,20 @@ import { VideoCustomizationProps } from './players/VideoPlayer';
 import { MediaElement } from './types';
 import { MediaControllerProvider } from '../../context/MediaControllerProvider';
 
-export type { PlayerObjectFit };
+export type { ObjectFit };
 
 export type PosterSource = ImageProps['source'];
 
-export type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
-  MediaElement,
-  PosterSource,
-  TPlaybackPolicyObject
-> &
+export type PlayerProps<
+  TPlaybackPolicyObject extends object,
+  TSlice,
+> = CorePlayerProps<MediaElement, PosterSource, TPlaybackPolicyObject, TSlice> &
   VideoCustomizationProps;
 
 const screenDimensions = Dimensions.get('screen');
 
-export const PlayerInternal = <TPlaybackPolicyObject extends object>(
-  props: PlayerProps<TPlaybackPolicyObject>,
+export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
+  props: PlayerProps<TPlaybackPolicyObject, TSlice>,
 ) => {
   const {
     mediaElement,
@@ -46,7 +51,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     controlsContainerProps,
     source,
     props: { controls, children, theme, title, showTitle, aspectRatio },
-  } = usePlayer<MediaElement, PosterSource, TPlaybackPolicyObject>(
+  } = usePlayer<MediaElement, PosterSource, TPlaybackPolicyObject, TSlice>(
     { ...props, _isCurrentlyShown: props._isCurrentlyShown ?? true },
     {
       _screenWidth: screenDimensions?.width ?? null,
@@ -57,7 +62,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     <MediaControllerProvider
       element={mediaElement}
       opts={controls}
-      playerProps={props as PlayerProps<object>}
+      mediaProps={props as MediaPropsOptions}
     >
       <Container theme={theme} aspectRatio={aspectRatio}>
         {source && source?.[0]?.type === 'audio' ? (

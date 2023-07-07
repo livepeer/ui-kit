@@ -1,10 +1,4 @@
-export { usePlayer } from './Player';
-export type {
-  InternalPlayerProps,
-  PlaybackError,
-  PlayerObjectFit,
-  PlayerProps,
-} from './Player';
+export { useBroadcast, type BroadcastProps } from './broadcast';
 export {
   useBaseSlider,
   useControlsContainer,
@@ -23,4 +17,7 @@ export {
   type TitleProps,
   type VolumeProps,
 } from './controls';
-export type { AudioPlayerProps, VideoPlayerProps } from './players';
+export type { AudioPlayerProps, VideoPlayerProps } from './player/players';
+export { usePlayer } from './player/usePlayer';
+export type { InternalPlayerProps, PlayerProps } from './player/usePlayer';
+export type { ControlsError, ObjectFit } from './shared';

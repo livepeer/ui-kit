@@ -1,10 +1,10 @@
 export * from '@livepeer/core-react';
+export { type ThemeConfig } from 'livepeer/media';
 export {
   defaultTheme,
   getCssText,
   styling,
 } from 'livepeer/media/browser/styling';
-export { type ThemeConfig } from 'livepeer/media';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
@@ -12,6 +12,11 @@ export {
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {
+  AudioSourceSelect,
+  AudioToggle,
+  BaseSlider,
+  Broadcast,
+  BroadcastSettings,
   ControlsContainer,
   FullscreenButton,
   PictureInPictureButton,
@@ -19,21 +24,29 @@ export {
   Player,
   Poster,
   Progress,
+  Screenshare,
   TimeDisplay,
   Title,
+  VideoSourceSelect,
+  VideoToggle,
   Volume,
-} from './components';
-export type {
-  ControlsContainerProps,
-  FullscreenButtonProps,
-  PictureInPictureButtonProps,
-  PlayButtonProps,
-  PlayerObjectFit,
-  PlayerProps,
-  PosterProps,
-  ProgressProps,
-  TitleProps,
-  VolumeProps,
+  type AudioSourceSelectProps,
+  type AudioToggleProps,
+  type BaseSliderProps,
+  type BroadcastProps,
+  type BroadcastSettingsProps,
+  type ControlsContainerProps,
+  type FullscreenButtonProps,
+  type PictureInPictureButtonProps,
+  type PlayButtonProps,
+  type PlayerProps,
+  type PosterProps,
+  type ProgressProps,
+  type ScreenshareProps,
+  type TitleProps,
+  type VideoSourceSelectProps,
+  type VideoToggleProps,
+  type VolumeProps,
 } from './components';
 export {
   Context,

@@ -1,12 +1,13 @@
 import {
   PlayerProps as CorePlayerProps,
-  PlayerObjectFit,
+  ObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
 import {
   AudioSrc,
   Base64Src,
   HlsSrc,
+  MediaControllerCallbackState,
   VideoSrc,
   WebRTCSrc,
 } from 'livepeer/media';
@@ -16,28 +17,30 @@ import { HlsVideoConfig } from 'livepeer/media/browser/hls';
 import { WebRTCVideoConfig } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
+import { AudioPlayer } from '.';
+import { PlayButton, Poster, Progress, Volume } from './controls';
+import { VideoPlayer } from './video';
+import { MediaControllerProvider } from '../../../context';
+import { useIsElementShown } from '../../useIsElementShown';
 import {
   Container,
   ControlsContainer,
   FullscreenButton,
   PictureInPictureButton,
-  PlayButton,
-  Poster,
-  Progress,
   TimeDisplay,
   Title,
-  Volume,
-} from './controls';
-import { AudioPlayer, VideoPlayer } from './players';
-import { MediaControllerProvider } from '../../context';
-import { useIsElementShown } from '../useIsElementShown';
+} from '../controls';
 
 export type PosterSource = string | React.ReactNode;
 
-type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
+type PlayerProps<
+  TPlaybackPolicyObject extends object,
+  TSlice,
+> = CorePlayerProps<
   HTMLMediaElement,
   PosterSource,
-  TPlaybackPolicyObject
+  TPlaybackPolicyObject,
+  TSlice
 > & {
   /** Whether to show the picture in picture button (web only) */
   showPipButton?: boolean;
@@ -61,10 +64,10 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
   tabIndex?: number;
 };
 
-export type { PlayerObjectFit, PlayerProps };
+export type { ObjectFit, PlayerProps };
 
-export const PlayerInternal = <TPlaybackPolicyObject extends object>(
-  props: PlayerProps<TPlaybackPolicyObject>,
+export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
+  props: PlayerProps<TPlaybackPolicyObject, TSlice>,
 ) => {
   const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
 
@@ -87,8 +90,17 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     mediaControllerProps,
     controlsContainerProps,
     source,
-    props: { children, controls, theme, title, poster, showTitle, aspectRatio },
-  } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject>(
+    props: {
+      children,
+      controls,
+      theme,
+      title,
+      poster,
+      showTitle,
+      aspectRatio,
+      renderChildrenOutsideContainer,
+    },
+  } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject, TSlice>(
     {
       ...props,
       _isCurrentlyShown: isCurrentlyShownCombined,
@@ -108,7 +120,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     <MediaControllerProvider
       element={mediaElement}
       opts={controls}
-      playerProps={mediaControllerProps}
+      mediaProps={mediaControllerProps}
     >
       <Container
         theme={theme}
@@ -127,37 +139,45 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
             hlsConfig={props.hlsConfig}
             webrtcConfig={props.webrtcConfig}
             lowLatency={props.lowLatency}
+            playbackStatusSelector={
+              props.playbackStatusSelector as unknown as (
+                state: MediaControllerCallbackState<HTMLVideoElement, never>,
+              ) => MediaControllerCallbackState<HTMLVideoElement, never>
+            }
             allowCrossOriginCredentials={props.allowCrossOriginCredentials}
             src={source as (VideoSrc | HlsSrc | Base64Src | WebRTCSrc)[] | null}
           />
         )}
 
-        {React.isValidElement(children) ? (
+        {!renderChildrenOutsideContainer && React.isValidElement(children) ? (
           React.cloneElement(children, controlsContainerProps)
         ) : (
-          <>
-            <ControlsContainer
-              {...controlsContainerProps}
-              poster={poster && <Poster content={poster} title={title} />}
-              top={<>{title && showTitle && <Title content={title} />}</>}
-              middle={<Progress />}
-              left={
-                <>
-                  <PlayButton />
-                  <Volume />
-                  <TimeDisplay />
-                </>
-              }
-              right={
-                <>
-                  {props.showPipButton && <PictureInPictureButton />}
-                  <FullscreenButton />
-                </>
-              }
-            />
-          </>
+          <ControlsContainer
+            {...controlsContainerProps}
+            poster={poster && <Poster content={poster} title={title} />}
+            top={<>{title && showTitle && <Title content={title} />}</>}
+            middle={<Progress />}
+            left={
+              <>
+                <PlayButton />
+                <Volume />
+                <TimeDisplay />
+              </>
+            }
+            right={
+              <>
+                {props.showPipButton && <PictureInPictureButton />}
+                <FullscreenButton />
+              </>
+            }
+          />
         )}
       </Container>
+      {renderChildrenOutsideContainer && React.isValidElement(children) ? (
+        children
+      ) : (
+        <></>
+      )}
     </MediaControllerProvider>
   );
 };

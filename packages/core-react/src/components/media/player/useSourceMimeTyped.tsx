@@ -14,9 +14,9 @@ import {
 import { parseArweaveTxId, parseCid } from '@livepeer/core/utils';
 import * as React from 'react';
 
-import { InternalPlayerProps, PlayerProps } from './Player';
 import { usePlaybackInfoOrImport } from './usePlaybackInfoOrImport';
-import { useInternalQuery } from '../../utils';
+import { InternalPlayerProps, PlayerProps } from './usePlayer';
+import { useInternalQuery } from '../../../utils';
 
 const defaultIpfsGateway = 'https://w3s.link';
 const defaultArweaveGateway = 'https://arweave.net';
@@ -25,35 +25,50 @@ export type UseSourceMimeTypedProps<
   TElement,
   TPoster,
   TPlaybackPolicyObject extends object,
+  TSlice,
 > = {
-  src: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['src'];
+  src: PlayerProps<TElement, TPoster, TPlaybackPolicyObject, TSlice>['src'];
   playbackId: PlayerProps<
     TElement,
     TPoster,
-    TPlaybackPolicyObject
+    TPlaybackPolicyObject,
+    TSlice
   >['playbackId'];
   refetchPlaybackInfoInterval: NonNullable<
     PlayerProps<
       TElement,
       TPoster,
-      TPlaybackPolicyObject
+      TPlaybackPolicyObject,
+      TSlice
     >['refetchPlaybackInfoInterval']
   >;
   autoUrlUpload: NonNullable<
-    PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['autoUrlUpload']
+    PlayerProps<
+      TElement,
+      TPoster,
+      TPlaybackPolicyObject,
+      TSlice
+    >['autoUrlUpload']
   >;
-  jwt: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['jwt'];
+  jwt: PlayerProps<TElement, TPoster, TPlaybackPolicyObject, TSlice>['jwt'];
   screenWidth: InternalPlayerProps['_screenWidth'];
   playbackInfo: PlayerProps<
     TElement,
     TPoster,
-    TPlaybackPolicyObject
+    TPlaybackPolicyObject,
+    TSlice
   >['playbackInfo'];
-  accessKey: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>['accessKey'];
+  accessKey: PlayerProps<
+    TElement,
+    TPoster,
+    TPlaybackPolicyObject,
+    TSlice
+  >['accessKey'];
   onAccessKeyRequest: PlayerProps<
     TElement,
     TPoster,
-    TPlaybackPolicyObject
+    TPlaybackPolicyObject,
+    TSlice
   >['onAccessKeyRequest'];
 };
 
@@ -68,6 +83,7 @@ export const useSourceMimeTyped = <
   TElement,
   TPoster,
   TPlaybackPolicyObject extends object,
+  TSlice,
 >({
   src,
   playbackId,
@@ -78,7 +94,12 @@ export const useSourceMimeTyped = <
   screenWidth,
   accessKey,
   onAccessKeyRequest,
-}: UseSourceMimeTypedProps<TElement, TPoster, TPlaybackPolicyObject>) => {
+}: UseSourceMimeTypedProps<
+  TElement,
+  TPoster,
+  TPlaybackPolicyObject,
+  TSlice
+>) => {
   const [uploadStatus, setUploadStatus] =
     React.useState<CreateAssetUrlProgress | null>(null);
 

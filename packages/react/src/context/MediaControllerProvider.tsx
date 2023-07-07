@@ -2,7 +2,7 @@ import { useClient } from '@livepeer/core-react/context';
 import { version } from 'livepeer';
 import {
   ControlsOptions,
-  PlayerPropsOptions,
+  MediaPropsOptions,
   createControllerStore,
 } from 'livepeer/media';
 import { addEventListeners, getDeviceInfo } from 'livepeer/media/browser';
@@ -13,17 +13,17 @@ import { MediaControllerContext } from './MediaControllerContext';
 export type MediaControllerProviderProps<TElement extends HTMLMediaElement> = {
   element: TElement | null;
   children: React.ReactNode;
-  playerProps: PlayerPropsOptions;
+  mediaProps: MediaPropsOptions;
   opts: ControlsOptions | undefined;
 };
 
 export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   element,
   children,
-  playerProps,
+  mediaProps,
   opts,
 }: MediaControllerProviderProps<TElement>) => {
-  const mediaController = useMediaControllerStore(element, opts, playerProps);
+  const mediaController = useMediaControllerStore(element, opts, mediaProps);
 
   return (
     <MediaControllerContext.Provider value={mediaController}>
@@ -32,22 +32,25 @@ export const MediaControllerProvider = <TElement extends HTMLMediaElement>({
   );
 };
 
-const useMediaControllerStore = <TElement extends HTMLMediaElement>(
+const useMediaControllerStore = <
+  TElement extends HTMLMediaElement,
+  TMediaSource extends MediaStream,
+>(
   element: TElement | null,
   opts: ControlsOptions | undefined,
-  playerProps: PlayerPropsOptions,
+  mediaProps: MediaPropsOptions,
 ) => {
   const client = useClient();
 
   const store = React.useMemo(
     () =>
-      createControllerStore<TElement>({
+      createControllerStore<TElement, TMediaSource>({
         device: getDeviceInfo(version.react),
         storage: client.storage,
         opts: opts ?? {},
-        playerProps,
+        mediaProps,
       }),
-    [client?.storage, opts, playerProps],
+    [client?.storage, opts, mediaProps],
   );
 
   React.useEffect(() => {

@@ -1,5 +1,6 @@
 export {
   useBaseSlider,
+  useBroadcast,
   useControlsContainer,
   useFullscreenButton,
   usePlayButton,
@@ -9,17 +10,18 @@ export {
   useVolume,
   type AudioPlayerProps,
   type BaseSliderProps,
+  type BroadcastProps,
   type ContainerProps,
   type ControlsContainerProps,
+  type ControlsError,
   type FullscreenButtonProps,
   type InternalPlayerProps,
+  type ObjectFit,
   type PlayButtonProps,
-  type PlaybackError,
-  type PlayerObjectFit,
   type PlayerProps,
   type PosterProps,
   type ProgressProps,
   type TitleProps,
   type VideoPlayerProps,
   type VolumeProps,
-} from './player';
+} from './media';

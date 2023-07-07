@@ -29,6 +29,7 @@ const allKeyTriggers = [
   'KeyK',
   'KeyM',
   'KeyI',
+  'KeyV',
   'Space',
   'ArrowRight',
   'ArrowLeft',
@@ -74,20 +75,23 @@ export type ControlsOptions = ControlsOptionsBase & {
   hotkeys?: boolean;
 };
 
-export const addEventListeners = <TElement extends HTMLMediaElement>(
-  store: MediaControllerStore<TElement>,
+export const addEventListeners = <
+  TElement extends HTMLMediaElement,
+  TMediaStream extends MediaStream,
+>(
+  store: MediaControllerStore<TElement, TMediaStream>,
   { hotkeys = true, autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
 ) => {
   let destroy: (() => void) | null = null;
 
-  const element = store?.getState()?._element;
+  const _element = store?.getState()?._element;
 
   const initializedState = store.getState();
 
   // restore the persisted values from store
-  if (element) {
+  if (_element) {
     setTimeout(() => {
-      if (element && !store.getState().muted) {
+      if (_element && !store.getState().muted) {
         store.getState().requestVolume(initializedState.volume);
       }
     }, 1);
@@ -131,6 +135,8 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
             store.getState().requestSeekBack();
           } else if (code === 'KeyM') {
             store.getState().requestToggleMute();
+          } else if (code === 'KeyV') {
+            store.getState().toggleVideo();
           }
         }
       };
@@ -346,6 +352,7 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
   return {
     destroy: () => {
       storeListener?.();
+
       destroy?.();
     },
   };
@@ -353,8 +360,11 @@ export const addEventListeners = <TElement extends HTMLMediaElement>(
 
 let previousPromise: Promise<void> | Promise<null> | boolean | null;
 
-const addEffectsToStore = <TElement extends HTMLMediaElement>(
-  store: StoreApi<MediaControllerState<TElement>>,
+const addEffectsToStore = <
+  TElement extends HTMLMediaElement,
+  TMediaStream extends MediaStream,
+>(
+  store: StoreApi<MediaControllerState<TElement, TMediaStream>>,
   options: Required<Pick<ControlsOptions, 'autohide'>>,
 ) => {
   // add effects to store changes
@@ -385,11 +395,28 @@ const addEffectsToStore = <TElement extends HTMLMediaElement>(
           current._element.volume = current.volume;
         }
 
-        current._element.muted = current.muted;
+        if (!current.ingestUrl) {
+          current._element.muted = current.muted;
 
-        if (current.muted !== prev.muted) {
-          if (current.volume === 0) {
-            current._element.volume = DEFAULT_VOLUME_LEVEL;
+          if (current.muted !== prev.muted) {
+            if (current.volume === 0) {
+              current._element.volume = DEFAULT_VOLUME_LEVEL;
+            }
+          }
+        } else {
+          if (current.muted !== prev.muted) {
+            const audioTracks = current?._mediaStream?.getAudioTracks?.() ?? [];
+
+            for (const audioTrack of audioTracks) {
+              audioTrack.enabled = !current.muted;
+            }
+          }
+          if (current.video !== prev.video) {
+            const videoTracks = current?._mediaStream?.getVideoTracks?.() ?? [];
+
+            for (const videoTrack of videoTracks) {
+              videoTrack.enabled = Boolean(current.video);
+            }
           }
         }
 

@@ -18,6 +18,8 @@ const Page = () => {
       <Link href="/iframe-player">iFrame Player</Link>
       <br />
       <Link href="/inline-player">Inline Player</Link>
+      <br />
+      <Link href="/broadcast">Broadcast</Link>
     </>
   );
 };

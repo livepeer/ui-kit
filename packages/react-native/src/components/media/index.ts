@@ -18,5 +18,5 @@ export type {
   VolumeProps,
 } from './controls';
 export { Player } from './Player';
-export type { PlayerObjectFit, PlayerProps } from './Player';
+export type { ObjectFit, PlayerProps } from './Player';
 export { createNativeControllerStore } from './state';

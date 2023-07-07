@@ -3,7 +3,7 @@ import { MediaControllerState } from 'livepeer';
 import * as React from 'react';
 
 import { BaseSlider } from './BaseSlider';
-import { useMediaController } from '../../../context';
+import { useMediaController } from '../../../../context';
 
 const mediaControllerSelector = ({
   duration,
@@ -11,7 +11,7 @@ const mediaControllerSelector = ({
   requestSeek,
   buffered,
   live,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   duration,
   progress,
   requestSeek,

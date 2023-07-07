@@ -27,7 +27,11 @@ export {
   isAccessControlError,
   isStreamOfflineError,
 } from './errors';
-export { createControllerStore, getMediaSourceType } from './media';
+export {
+  createControllerStore,
+  getMediaSourceType,
+  sanitizeMediaControllerState,
+} from './media';
 export type {
   AudioSrc,
   Base64Src,
@@ -35,14 +39,15 @@ export type {
   DeviceInformation,
   ElementSize,
   HlsSrc,
+  MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
   MediaMetrics,
+  MediaPropsOptions,
   MediaSizing,
   Metadata,
   MetricsStatus,
   PlaybackMonitor,
-  PlayerPropsOptions,
   Src,
   VideoSrc,
   WebRTCSrc,

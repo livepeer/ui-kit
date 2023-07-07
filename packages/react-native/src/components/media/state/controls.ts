@@ -1,6 +1,7 @@
 import {
   ControlsOptions,
   MediaControllerState,
+  MediaPropsOptions,
   Storage,
   createControllerStore,
   createStorage,
@@ -9,20 +10,18 @@ import {
 import { Platform } from 'react-native';
 import { StoreApi } from 'zustand';
 
-import { PlayerProps } from '../Player';
-
 import { MediaElement } from '../types';
 
 export const createNativeControllerStore = <TElement extends MediaElement>({
   storage,
   opts,
-  playerProps,
+  mediaProps,
 }: {
   storage?: Storage;
   opts?: ControlsOptions;
-  playerProps?: PlayerProps<object>;
+  mediaProps?: MediaPropsOptions;
 }): StoreApi<MediaControllerState<MediaElement>> => {
-  return createControllerStore<TElement>({
+  return createControllerStore<TElement, void>({
     element: undefined,
     device: {
       version: version.reactNative,
@@ -35,9 +34,9 @@ export const createNativeControllerStore = <TElement extends MediaElement>({
     },
     storage: storage ?? createStorage({}),
     opts: opts ?? {},
-    playerProps: {
-      ...playerProps,
-      playbackId: playerProps?.playbackId ?? undefined,
+    mediaProps: {
+      ...mediaProps,
+      playbackId: mediaProps?.playbackId ?? undefined,
     },
   });
 };

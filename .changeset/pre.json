@@ -1,0 +1,26 @@
+{
+  "mode": "exit",
+  "tag": "next",
+  "initialVersions": {
+    "example-dev-expo": "0.0.1",
+    "example-dev-next": "0.0.1",
+    "example-dev-react-native": "0.0.1",
+    "example-expo": "0.0.1",
+    "example-next": "0.0.1",
+    "example-next-13": "0.0.1",
+    "example-nodejs": "0.0.1",
+    "example-svelte": "0.0.1",
+    "@livepeer/core": "1.5.7",
+    "@livepeer/core-react": "1.5.7",
+    "livepeer": "2.5.7",
+    "expo-broadcast": "0.0.1",
+    "@livepeer/react": "2.5.7",
+    "@livepeer/react-native": "1.5.6"
+  },
+  "changesets": [
+    "little-zoos-give",
+    "perfect-pants-hear",
+    "stupid-eyes-reply",
+    "two-eels-worry"
+  ]
+}

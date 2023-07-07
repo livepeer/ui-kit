@@ -29,4 +29,5 @@ export const defaultStudioConfig: Omit<StudioLivepeerProviderConfig, 'apiKey'> =
   {
     name: 'Livepeer Studio',
     baseUrl: 'https://livepeer.studio/api',
+    webrtcIngestBaseUrl: 'https://webrtc.livepeer.studio/webrtc',
   };

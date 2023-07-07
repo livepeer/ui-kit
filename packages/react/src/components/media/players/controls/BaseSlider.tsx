@@ -8,13 +8,13 @@ import { styling } from 'livepeer/media/browser/styling';
 
 import * as React from 'react';
 
-import { useMediaController } from '../../../context';
+import { useMediaController } from '../../../../context';
 
 const UPDATE_FREQUENCY_MS = 50;
 
 const mediaControllerSelector = ({
   device,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   device,
 });
 

@@ -1,7 +1,8 @@
 import {
   ControlsOptions,
+  MediaControllerCallbackState,
+  MediaPropsOptions,
   PlaybackInfo,
-  PlayerPropsOptions,
   Src,
   WebhookPlaybackPolicy,
   isAccessControlError,
@@ -13,8 +14,7 @@ import { isNumber } from '@livepeer/core/utils';
 import * as React from 'react';
 
 import { useSourceMimeTyped } from './useSourceMimeTyped';
-
-export type PlayerObjectFit = 'cover' | 'contain';
+import { ControlsError, ObjectFit } from '../shared';
 
 export type InternalPlayerProps = {
   /** The current screen width. This is null if the screen size cannot be determined (SSR). */
@@ -25,6 +25,7 @@ export type PlayerProps<
   TElement,
   TPoster,
   TPlaybackPolicyObject extends object,
+  TSlice,
 > = {
   /** The source(s) of the media (**required** if `playbackId` or `playbackInfo` is not provided) */
   src?: string | string[] | null | undefined;
@@ -81,7 +82,7 @@ export type PlayerProps<
   theme?: ThemeConfig;
 
   /** The object-fit property for the video element. Defaults to cover (contain is usually used in full-screen applications) */
-  objectFit?: PlayerObjectFit;
+  objectFit?: ObjectFit;
 
   /** Custom controls passed in to override the default controls */
   children?: React.ReactNode;
@@ -112,6 +113,13 @@ export type PlayerProps<
     playbackPolicy: WebhookPlaybackPolicy<TPlaybackPolicyObject>,
   ) => Promise<string | null | undefined> | string | null | undefined;
 
+  /**
+   * Whether the children should be rendered outside of the aspect ratio container.
+   * This is used for custom controls, so children of the Player can use
+   * `useMediaController` without any parent elements.
+   */
+  renderChildrenOutsideContainer?: boolean;
+
   /** Callback called when the stream status changes (live or offline) */
   onStreamStatusChange?: (isLive: boolean) => void;
 
@@ -126,17 +134,20 @@ export type PlayerProps<
 
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
-};
 
-export type PlaybackError = {
-  type: 'offline' | 'access-control' | 'unknown';
-  message: string;
+  /** Callback called when the broadcast status updates. **This should be used with `playbackStatusSelector` to limit state updates.** */
+  onPlaybackStatusUpdate?: (state: TSlice, previousState: TSlice) => any;
+  /** Selector used with `onPlaybackStatusUpdate`. */
+  playbackStatusSelector?: (
+    state: MediaControllerCallbackState<TElement, never>,
+  ) => TSlice;
 };
 
 export const usePlayer = <
   TElement,
   TPoster,
   TPlaybackPolicyObject extends object,
+  TSlice,
 >(
   {
     autoPlay,
@@ -174,7 +185,12 @@ export const usePlayer = <
     objectFit = 'contain',
     mediaElementRef,
     _isCurrentlyShown,
-  }: PlayerProps<TElement, TPoster, TPlaybackPolicyObject>,
+
+    onPlaybackStatusUpdate,
+    playbackStatusSelector,
+
+    renderChildrenOutsideContainer,
+  }: PlayerProps<TElement, TPoster, TPlaybackPolicyObject, TSlice>,
   { _screenWidth }: InternalPlayerProps,
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
@@ -192,11 +208,11 @@ export const usePlayer = <
   });
 
   const [playbackError, setPlaybackError] =
-    React.useState<PlaybackError | null>(null);
+    React.useState<ControlsError | null>(null);
 
   const onPlaybackError = React.useCallback(
     (error: Error | null) => {
-      const newPlaybackError: PlaybackError | null = error
+      const newPlaybackError: ControlsError | null = error
         ? {
             type: isAccessControlError(error)
               ? 'access-control'
@@ -210,8 +226,8 @@ export const usePlayer = <
       setPlaybackError(newPlaybackError);
 
       try {
-        if (error) {
-          console.warn(error);
+        if (newPlaybackError) {
+          console.log(newPlaybackError);
         }
 
         if (!error) {
@@ -302,6 +318,8 @@ export const usePlayer = <
       onPlaybackError,
       isCurrentlyShown: _isCurrentlyShown,
       viewerId,
+      onPlaybackStatusUpdate,
+      playbackStatusSelector,
     }),
     [
       playerRef,
@@ -317,18 +335,18 @@ export const usePlayer = <
       onPlaybackError,
       _isCurrentlyShown,
       viewerId,
+      onPlaybackStatusUpdate,
+      playbackStatusSelector,
     ],
   );
 
-  const mediaControllerProps: PlayerPropsOptions = React.useMemo(
+  const mediaControllerProps: MediaPropsOptions = React.useMemo(
     () => ({
       autoPlay,
       playbackId: playbackId ?? undefined,
       muted,
       priority: priority,
       viewerId,
-
-      // preload?: "none" | "full" | "metadata" | undefined;
     }),
     [autoPlay, playbackId, muted, priority, viewerId],
   );
@@ -339,7 +357,7 @@ export const usePlayer = <
       showLoadingSpinner,
       loadingText,
       showUploadingIndicator,
-      playbackError,
+      error: playbackError,
     }),
     [
       hidePosterOnPlayed,
@@ -367,6 +385,7 @@ export const usePlayer = <
       showTitle,
       aspectRatio,
       objectFit,
+      renderChildrenOutsideContainer,
     }),
     [
       autoPlay,
@@ -384,6 +403,7 @@ export const usePlayer = <
       showTitle,
       aspectRatio,
       objectFit,
+      renderChildrenOutsideContainer,
     ],
   );
 

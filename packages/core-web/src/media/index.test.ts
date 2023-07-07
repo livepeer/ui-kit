@@ -12,6 +12,7 @@ it('should expose correct exports', () => {
       "aspectRatios",
       "createControllerStore",
       "getMediaSourceType",
+      "sanitizeMediaControllerState",
     ]
   `);
 });

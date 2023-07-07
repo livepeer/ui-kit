@@ -9,7 +9,7 @@ const mediaControllerSelector = ({
   duration,
   progress,
   live,
-}: MediaControllerState<HTMLMediaElement>) => ({
+}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   duration,
   progress,
   live,

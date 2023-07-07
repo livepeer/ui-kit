@@ -4,13 +4,13 @@ import { getDeviceInfo } from 'livepeer/media/browser';
 import * as React from 'react';
 
 export const MediaControllerContext = React.createContext<
-  MediaControllerStore<HTMLMediaElement>
+  MediaControllerStore<HTMLMediaElement, MediaStream>
 >(
-  createControllerStore<HTMLMediaElement>({
+  createControllerStore<HTMLMediaElement, MediaStream>({
     element: undefined,
     device: getDeviceInfo(version.react),
     storage: createStorage({}),
-    playerProps: {},
+    mediaProps: {},
     opts: {},
   }),
 );
