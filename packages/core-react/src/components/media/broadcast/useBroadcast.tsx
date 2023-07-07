@@ -144,7 +144,6 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
       options: controls,
       broadcastError,
       onBroadcastError,
-      creatorId,
       onPlaybackStatusUpdate,
       playbackStatusSelector,
     }),
@@ -155,7 +154,6 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
       ingestUrl,
       objectFit,
       onBroadcastError,
-      creatorId,
       onPlaybackStatusUpdate,
       playbackStatusSelector,
     ],
@@ -167,10 +165,9 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
       playbackId: undefined,
       muted: false,
       priority: false,
-      creatorId,
       ingestUrl: ingestUrl ?? undefined,
     }),
-    [creatorId, ingestUrl],
+    [ingestUrl],
   );
 
   const controlsContainerProps = React.useMemo(
