@@ -1,8 +1,7 @@
 import { Player } from '@livepeer/react';
-import { useState } from 'react';
 
 const Page = () => {
-  const [playing, setPlaying] = useState<boolean | null>(null);
+  // const [playing, setPlaying] = useState<boolean | null>(null);
   return (
     <>
       {/* <div style={{ height: '110vh' }} /> */}
@@ -11,10 +10,10 @@ const Page = () => {
         renderChildrenOutsideContainer
         src="https://lp-playback.com/hls/2d0c5o70usvln4zmu/1920p0.mp4"
         // onPlaybackStatusUpdate={(state) => state.se}
-        playbackStatusSelector={(state) => state.playing}
-        onPlaybackStatusUpdate={(playing) => setPlaying(playing)}
+        // playbackStatusSelector={(state) => state.playing}
+        // onPlaybackStatusUpdate={(playing) => setPlaying(playing)}
       />
-      <span>{playing ? 'playing' : 'not playing'}</span>
+      {/* <span>{playing ? 'playing' : 'not playing'}</span> */}
     </>
   );
 };
