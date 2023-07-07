@@ -1,10 +1,10 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import * as Select from '@radix-ui/react-select';
 import { MediaControllerState, omit } from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
-import { getMediaDevices } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
+import { AudioSourceSelect } from './AudioSourceSelect';
+import { VideoSourceSelect } from './VideoSourceSelect';
 import { useMediaController } from '../../../../context';
 
 const DefaultSettingsIcon = () => (
@@ -17,12 +17,8 @@ const DefaultSettingsIcon = () => (
 );
 
 const mediaControllerSelector = ({
-  deviceIds,
-  _setDeviceIds,
   _element,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
-  deviceIds,
-  _setDeviceIds,
   _element,
 });
 
@@ -36,38 +32,14 @@ export type BroadcastSettingsProps = {
    * The size of the icon.
    */
   size?: number | string;
+  /**
+   * The media stream constraints to apply to the requested audio/video sources.
+   */
+  streamConstraints?: MediaStreamConstraints;
 };
 
 export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
-  const { deviceIds, _setDeviceIds, _element } = useMediaController(
-    mediaControllerSelector,
-  );
-
-  const [mediaDevices, setMediaDevices] = React.useState<{
-    audio: MediaDeviceInfo[];
-    video: MediaDeviceInfo[];
-  } | null>(null);
-
-  React.useEffect(() => {
-    const destroy = getMediaDevices((devices) => {
-      setMediaDevices({
-        audio: devices.filter((device) => device.kind === 'audioinput'),
-        video: devices.filter((device) => device.kind === 'videoinput'),
-      });
-    });
-
-    return destroy;
-  }, []);
-
-  const onAudioChange = React.useCallback(
-    (id: string) => _setDeviceIds({ audio: id }),
-    [_setDeviceIds],
-  );
-
-  const onVideoChange = React.useCallback(
-    (id: string) => _setDeviceIds({ video: id }),
-    [_setDeviceIds],
-  );
+  const { _element } = useMediaController(mediaControllerSelector);
 
   return (
     <div className={styling.volume.container()}>
@@ -81,7 +53,7 @@ export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
             className={styling.iconButton()}
             title="Broadcast settings"
             aria-label="Broadcast settings"
-            {...omit(props, 'icon', 'size')}
+            {...omit(props, 'icon', 'size', 'streamConstraints')}
           >
             {props?.icon ?? <DefaultSettingsIcon />}
           </button>
@@ -92,18 +64,12 @@ export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
             <Dialog.Title className={styling.settings.title()}>
               Settings
             </Dialog.Title>
-            <AVSelect
-              type="video"
-              onChange={onVideoChange}
-              defaultValue={deviceIds?.video}
-              mediaDevices={mediaDevices?.video ?? []}
+            <VideoSourceSelect
+              streamConstraints={props.streamConstraints}
               portalContainer={_element?.parentElement ?? _element}
             />
-            <AVSelect
-              type="audio"
-              onChange={onAudioChange}
-              defaultValue={deviceIds?.audio}
-              mediaDevices={mediaDevices?.audio ?? []}
+            <AudioSourceSelect
+              streamConstraints={props.streamConstraints}
               portalContainer={_element?.parentElement ?? _element}
             />
             <Dialog.Close asChild>
@@ -117,112 +83,6 @@ export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
     </div>
   );
 };
-
-type AVSelectProps = {
-  defaultValue: string | undefined;
-  onChange: (value: string) => void;
-  type: 'audio' | 'video';
-  mediaDevices: MediaDeviceInfo[];
-  portalContainer: HTMLElement | null | undefined;
-};
-
-const AVSelect = ({
-  defaultValue,
-  onChange,
-  type,
-  portalContainer,
-  mediaDevices,
-}: AVSelectProps) => {
-  return (
-    <div className={styling.settings.select.group()}>
-      <label
-        className={styling.settings.select.label()}
-        htmlFor={type === 'audio' ? 'audio-source' : 'video-source'}
-      >
-        {type === 'audio' ? 'Audio Source' : 'Video Source'}
-      </label>
-      <Select.Root
-        disabled={mediaDevices.length === 0}
-        defaultValue={defaultValue}
-        onValueChange={onChange}
-        name={type === 'audio' ? 'audio-source' : 'video-source'}
-      >
-        <Select.Trigger
-          className={styling.settings.select.trigger()}
-          aria-label={type === 'audio' ? 'Audio Source' : 'Video Source'}
-        >
-          <Select.Value
-            placeholder={
-              type === 'audio'
-                ? 'Select your audio source...'
-                : 'Select your video source...'
-            }
-          />
-          <Select.Icon className={styling.settings.select.icon()}>
-            <ChevronDownIcon />
-          </Select.Icon>
-        </Select.Trigger>
-
-        <Select.Portal container={portalContainer}>
-          <Select.Content className={styling.settings.select.content()}>
-            <Select.Viewport className={styling.settings.select.viewport()}>
-              <Select.Group>
-                {mediaDevices.map((mediaDevice, i) => (
-                  <Select.Item
-                    key={mediaDevice.deviceId}
-                    value={mediaDevice.deviceId}
-                    className={styling.settings.select.item()}
-                  >
-                    <Select.ItemText>
-                      {mediaDevice.label ??
-                        `${
-                          type === 'audio' ? `Audio Source` : `Video Source`
-                        } ${i + 1} (${
-                          mediaDevice.deviceId === 'default'
-                            ? 'default'
-                            : mediaDevice.deviceId.slice(0, 6)
-                        })`}
-                    </Select.ItemText>
-                    <Select.ItemIndicator
-                      className={styling.settings.select.itemIndicator()}
-                    >
-                      <SelectedIcon />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-                ))}
-              </Select.Group>
-            </Select.Viewport>
-          </Select.Content>
-        </Select.Portal>
-      </Select.Root>
-    </div>
-  );
-};
-
-const ChevronDownIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="20"
-    viewBox="0 -960 960 960"
-    width="20"
-  >
-    <path
-      fill="currentColor"
-      d="M480-345 240-585l43-43 197 198 197-197 43 43-240 239Z"
-    />
-  </svg>
-);
-
-const SelectedIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="16"
-    viewBox="0 -960 960 960"
-    width="16"
-  >
-    <path d="M378-246 154-470l43-43 181 181 384-384 43 43-427 427Z" />
-  </svg>
-);
 
 const CloseIcon = () => (
   <svg

@@ -7,6 +7,7 @@ import {
   AudioSrc,
   Base64Src,
   HlsSrc,
+  MediaControllerCallbackState,
   VideoSrc,
   WebRTCSrc,
 } from 'livepeer/media';
@@ -32,10 +33,14 @@ import {
 
 export type PosterSource = string | React.ReactNode;
 
-type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
+type PlayerProps<
+  TPlaybackPolicyObject extends object,
+  TSlice,
+> = CorePlayerProps<
   HTMLMediaElement,
   PosterSource,
-  TPlaybackPolicyObject
+  TPlaybackPolicyObject,
+  TSlice
 > & {
   /** Whether to show the picture in picture button (web only) */
   showPipButton?: boolean;
@@ -61,8 +66,11 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
 
 export type { ObjectFit, PlayerProps };
 
-export const PlayerInternal = <TPlaybackPolicyObject extends object>(
-  props: PlayerProps<TPlaybackPolicyObject>,
+export const PlayerInternal = <
+  TPlaybackPolicyObject extends object,
+  TSlice = MediaControllerCallbackState<HTMLMediaElement, never>,
+>(
+  props: PlayerProps<TPlaybackPolicyObject, TSlice>,
 ) => {
   const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
 
@@ -85,8 +93,17 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
     mediaControllerProps,
     controlsContainerProps,
     source,
-    props: { children, controls, theme, title, poster, showTitle, aspectRatio },
-  } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject>(
+    props: {
+      children,
+      controls,
+      theme,
+      title,
+      poster,
+      showTitle,
+      aspectRatio,
+      renderChildrenOutsideContainer,
+    },
+  } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject, TSlice>(
     {
       ...props,
       _isCurrentlyShown: isCurrentlyShownCombined,
@@ -125,37 +142,45 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object>(
             hlsConfig={props.hlsConfig}
             webrtcConfig={props.webrtcConfig}
             lowLatency={props.lowLatency}
+            playbackStatusSelector={
+              props.playbackStatusSelector as unknown as (
+                state: MediaControllerCallbackState<HTMLVideoElement, never>,
+              ) => MediaControllerCallbackState<HTMLVideoElement, never>
+            }
             allowCrossOriginCredentials={props.allowCrossOriginCredentials}
             src={source as (VideoSrc | HlsSrc | Base64Src | WebRTCSrc)[] | null}
           />
         )}
 
-        {React.isValidElement(children) ? (
+        {!renderChildrenOutsideContainer && React.isValidElement(children) ? (
           React.cloneElement(children, controlsContainerProps)
         ) : (
-          <>
-            <ControlsContainer
-              {...controlsContainerProps}
-              poster={poster && <Poster content={poster} title={title} />}
-              top={<>{title && showTitle && <Title content={title} />}</>}
-              middle={<Progress />}
-              left={
-                <>
-                  <PlayButton />
-                  <Volume />
-                  <TimeDisplay />
-                </>
-              }
-              right={
-                <>
-                  {props.showPipButton && <PictureInPictureButton />}
-                  <FullscreenButton />
-                </>
-              }
-            />
-          </>
+          <ControlsContainer
+            {...controlsContainerProps}
+            poster={poster && <Poster content={poster} title={title} />}
+            top={<>{title && showTitle && <Title content={title} />}</>}
+            middle={<Progress />}
+            left={
+              <>
+                <PlayButton />
+                <Volume />
+                <TimeDisplay />
+              </>
+            }
+            right={
+              <>
+                {props.showPipButton && <PictureInPictureButton />}
+                <FullscreenButton />
+              </>
+            }
+          />
         )}
       </Container>
+      {renderChildrenOutsideContainer && React.isValidElement(children) ? (
+        children
+      ) : (
+        <></>
+      )}
     </MediaControllerProvider>
   );
 };

@@ -1,5 +1,6 @@
 import {
   ControlsOptions,
+  MediaControllerCallbackState,
   MediaPropsOptions,
   isAccessControlError,
   isStreamOfflineError,
@@ -11,7 +12,7 @@ import * as React from 'react';
 import { useLivepeerProvider } from '../../../hooks';
 import { ControlsError, ObjectFit } from '../shared';
 
-export type BroadcastProps<TElement> = {
+export type BroadcastProps<TElement, TMediaStream, TSlice> = {
   /** The stream key for the broadcast. This is required. */
   streamKey: string | null | undefined;
 
@@ -41,14 +42,28 @@ export type BroadcastProps<TElement> = {
   /** The wallet ID of the creator who is broadcasting the media. This is used to track broadcasts for specific wallet IDs. */
   creatorId?: string;
 
+  /**
+   * Whether the children should be rendered outside of the aspect ratio container.
+   * This is used for custom controls, so children of the Player can use
+   * `useMediaController` without any parent elements.
+   */
+  renderChildrenOutsideContainer?: boolean;
+
   /** Callback called when an error occurs */
   onError?: (error: Error) => void;
 
   /** Callback ref passed to the underlying media element. Simple refs are not supported, due to the use of HLS.js under the hood. */
   mediaElementRef?: React.RefCallback<TElement | null | undefined>;
+
+  /** Callback called when the broadcast status updates. **This should be used with `playbackStatusSelector` to limit state updates.** */
+  onPlaybackStatusUpdate?: (state: TSlice, previousState: TSlice) => any;
+  /** Selector used with `onPlaybackStatusUpdate`. */
+  playbackStatusSelector?: (
+    state: MediaControllerCallbackState<TElement, TMediaStream>,
+  ) => TSlice;
 };
 
-export const useBroadcast = <TElement,>({
+export const useBroadcast = <TElement, TMediaStream, TSlice>({
   streamKey,
   children,
   controls,
@@ -63,7 +78,11 @@ export const useBroadcast = <TElement,>({
   aspectRatio = '16to9',
   objectFit = 'contain',
   mediaElementRef,
-}: BroadcastProps<TElement>) => {
+  onPlaybackStatusUpdate,
+  playbackStatusSelector,
+
+  renderChildrenOutsideContainer,
+}: BroadcastProps<TElement, TMediaStream, TSlice>) => {
   const provider = useLivepeerProvider();
 
   const ingestUrl = React.useMemo(() => {
@@ -131,6 +150,8 @@ export const useBroadcast = <TElement,>({
       broadcastError,
       onBroadcastError,
       creatorId,
+      onPlaybackStatusUpdate,
+      playbackStatusSelector,
     }),
     [
       broadcastError,
@@ -140,6 +161,8 @@ export const useBroadcast = <TElement,>({
       objectFit,
       onBroadcastError,
       creatorId,
+      onPlaybackStatusUpdate,
+      playbackStatusSelector,
     ],
   );
 
@@ -176,6 +199,8 @@ export const useBroadcast = <TElement,>({
       aspectRatio,
       objectFit,
       onBroadcastError,
+      onPlaybackStatusUpdate,
+      renderChildrenOutsideContainer,
     }),
     [
       ingestUrl,
@@ -186,6 +211,8 @@ export const useBroadcast = <TElement,>({
       theme,
       title,
       onBroadcastError,
+      onPlaybackStatusUpdate,
+      renderChildrenOutsideContainer,
     ],
   );
 

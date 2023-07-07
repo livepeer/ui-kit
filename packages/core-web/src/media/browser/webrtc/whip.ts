@@ -9,7 +9,7 @@ import {
   negotiateConnectionWithClientOffer,
 } from './shared';
 
-export type WebRTCTrackContraints = {
+export type WebRTCTrackConstraints = {
   /**
    * The constraints applied to the broadcast media track.
    *
@@ -40,7 +40,7 @@ export type WebRTCConnectedPayload = {
 export const createNewWHIP = <TElement extends HTMLMediaElement>(
   ingestUrl: string,
   element: TElement,
-  aspectRatio: AspectRatio,
+  aspectRatio?: AspectRatio,
   callbacks?: {
     onConnected?: (payload: WebRTCConnectedPayload) => void;
     onError?: (data: Error) => void;
@@ -134,7 +134,9 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
             const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
 
             if (newVideoTrack) {
-              await newVideoTrack.applyConstraints(getConstraints(aspectRatio));
+              await newVideoTrack.applyConstraints(
+                getConstraints(aspectRatio ?? '16to9'),
+              );
 
               videoTransceiver =
                 peerConnection?.addTransceiver(newVideoTrack, {
@@ -190,67 +192,98 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
 };
 
 /**
- * While the connection is being initialized, ask for camera and microphone permissions and
- * add video and audio tracks to the peerConnection.
+ * Ask for camera and microphone permissions and add video and audio tracks to the peerConnection.
+ * If a media stream is passed in, use this for the connection.
  *
  * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
  */
-export const changeVideoSource = async <TElement extends HTMLMediaElement>({
-  source,
+export const changeMediaStream = async <TElement extends HTMLMediaElement>({
+  newMediaStream,
+  prevMediaStream,
   aspectRatio,
   element,
-  prevMediaStream,
   onConnected,
   videoTransceiver,
   audioTransceiver,
 }: {
-  source: WebRTCTrackContraints;
+  newMediaStream: MediaStream;
+  prevMediaStream: MediaStream | null;
+
   aspectRatio: AspectRatio;
   element: TElement;
-  prevMediaStream: MediaStream;
+
   onConnected: (payload: WebRTCConnectedPayload) => void;
   videoTransceiver: RTCRtpTransceiver;
   audioTransceiver: RTCRtpTransceiver;
 }) => {
-  const mediaStream = await navigator.mediaDevices.getUserMedia(
-    source?.streamConstraints ?? {
-      video: source?.videoDeviceId
-        ? {
-            deviceId: source?.videoDeviceId,
-          }
-        : true,
-      audio: source?.audioDeviceId
-        ? {
-            deviceId: source?.audioDeviceId,
-          }
-        : true,
-    },
-  );
-
   const prevVideoTrack = prevMediaStream?.getVideoTracks?.()?.[0] ?? null;
   const prevAudioTrack = prevMediaStream?.getAudioTracks?.()?.[0] ?? null;
 
-  const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
-  const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
+  const newVideoTrack = newMediaStream?.getVideoTracks?.()?.[0] ?? null;
+  const newAudioTrack = newMediaStream?.getAudioTracks?.()?.[0] ?? null;
 
-  if (newVideoTrack && source?.videoDeviceId) {
+  if (newVideoTrack) {
     await newVideoTrack.applyConstraints(getConstraints(aspectRatio));
     await videoTransceiver.sender.replaceTrack(newVideoTrack);
     newVideoTrack.enabled = prevVideoTrack?.enabled ?? true;
   }
 
-  if (newAudioTrack && source?.audioDeviceId) {
+  if (newAudioTrack) {
     await audioTransceiver.sender.replaceTrack(newAudioTrack);
     newAudioTrack.enabled = prevAudioTrack?.enabled ?? true;
   }
 
-  element.srcObject = mediaStream;
+  element.srcObject = newMediaStream;
 
   onConnected({
-    stream: mediaStream,
+    stream: newMediaStream,
     videoTransceiver,
     audioTransceiver,
   });
+};
+
+/**
+ * Ask for camera and microphone permissions and get the MediaStream for the given constraints.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+ */
+export const getUserMedia = async ({
+  source,
+}: {
+  source: WebRTCTrackConstraints;
+}) => {
+  try {
+    const newMediaStream = await navigator?.mediaDevices?.getUserMedia({
+      ...(typeof source.streamConstraints === 'object'
+        ? source.streamConstraints
+        : {}),
+      video: {
+        ...(typeof source.streamConstraints?.video !== 'boolean'
+          ? source.streamConstraints?.video
+          : {}),
+        ...(source?.videoDeviceId
+          ? {
+              deviceId: source?.videoDeviceId,
+            }
+          : {}),
+      },
+      audio: {
+        ...(typeof source.streamConstraints?.audio !== 'boolean'
+          ? source.streamConstraints?.audio
+          : {}),
+        ...(source?.audioDeviceId
+          ? {
+              deviceId: source?.audioDeviceId,
+            }
+          : {}),
+      },
+    });
+
+    return newMediaStream ?? null;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 };
 
 export const getMediaDevices = (
@@ -281,6 +314,23 @@ export const getMediaDevices = (
   return () => {
     //
   };
+};
+
+export const getDisplayMedia = async (options?: DisplayMediaStreamOptions) => {
+  try {
+    if (
+      typeof navigator !== 'undefined' &&
+      navigator?.mediaDevices?.getDisplayMedia
+    ) {
+      const mediaStream = await navigator.mediaDevices.getDisplayMedia(options);
+
+      return mediaStream;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return null;
 };
 
 const getConstraints = (aspectRatio: AspectRatio) => {

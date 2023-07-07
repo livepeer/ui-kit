@@ -1,9 +1,13 @@
-import { MediaControllerState } from 'livepeer';
+import {
+  MediaControllerCallbackState,
+  MediaControllerState,
+  sanitizeMediaControllerState,
+} from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import {
   WebRTCConnectedPayload,
   WebRTCVideoConfig,
-  changeVideoSource,
+  changeMediaStream,
   createNewWHIP,
 } from 'livepeer/media/browser/webrtc';
 
@@ -19,7 +23,6 @@ const mediaControllerSelector = ({
   togglePlay,
   _updateMediaStream,
   deviceIds,
-  _setDeviceIds,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   _element,
   setLive,
@@ -27,11 +30,10 @@ const mediaControllerSelector = ({
   togglePlay,
   _updateMediaStream,
   deviceIds,
-  _setDeviceIds,
 });
 
 export type WebRTCBroadcastProps = Omit<
-  BroadcastProps,
+  BroadcastProps<any>,
   'onError' | 'streamKey'
 > & {
   webrtcConfig?: WebRTCVideoConfig;
@@ -50,18 +52,34 @@ export const WebRTCBroadcast = React.forwardRef<
     objectFit,
     webrtcConfig,
     onBroadcastError,
+    onPlaybackStatusUpdate,
+    playbackStatusSelector,
   } = props;
 
   const store = React.useContext(MediaControllerContext);
 
-  const {
-    _element,
-    setLive,
-    fullscreen,
-    togglePlay,
-    _setDeviceIds,
-    _updateMediaStream,
-  } = useMediaController(mediaControllerSelector);
+  const stateSelector = React.useCallback(
+    (state: MediaControllerCallbackState<HTMLMediaElement, MediaStream>) => {
+      return playbackStatusSelector?.(state) ?? state;
+    },
+    [playbackStatusSelector],
+  );
+
+  React.useEffect(() => {
+    return store.subscribe(stateSelector, (state, prevState) =>
+      onPlaybackStatusUpdate?.(
+        sanitizeMediaControllerState(
+          state as MediaControllerState<HTMLMediaElement, MediaStream>,
+        ),
+        sanitizeMediaControllerState(
+          prevState as MediaControllerState<HTMLMediaElement, MediaStream>,
+        ),
+      ),
+    );
+  }, [onPlaybackStatusUpdate, stateSelector, store]);
+
+  const { _element, setLive, fullscreen, togglePlay, _updateMediaStream } =
+    useMediaController(mediaControllerSelector);
 
   const [transceivers, setTransceivers] = React.useState<{
     audio: RTCRtpTransceiver;
@@ -70,22 +88,21 @@ export const WebRTCBroadcast = React.forwardRef<
 
   const onConnected = React.useCallback(
     async (payload: WebRTCConnectedPayload) => {
-      _updateMediaStream(payload.stream);
-      setTransceivers({
-        audio: payload.audioTransceiver,
-        video: payload.videoTransceiver,
-      });
-      _setDeviceIds({
+      _updateMediaStream(payload.stream, {
         audio:
           payload?.audioTransceiver?.sender?.track?.getSettings()?.deviceId,
         video:
           payload?.videoTransceiver?.sender?.track?.getSettings()?.deviceId,
       });
+      setTransceivers({
+        audio: payload.audioTransceiver,
+        video: payload.videoTransceiver,
+      });
       onBroadcastError?.(null);
       togglePlay?.(true);
       setLive(true);
     },
-    [setLive, onBroadcastError, togglePlay, _setDeviceIds, _updateMediaStream],
+    [setLive, onBroadcastError, togglePlay, _updateMediaStream],
   );
 
   const onErrorComposed = React.useCallback(
@@ -129,19 +146,16 @@ export const WebRTCBroadcast = React.forwardRef<
   React.useEffect(
     () =>
       store.subscribe((state, prevState) => {
+        // if the media stream changes
         if (
-          (state.deviceIds?.audio !== prevState.deviceIds?.audio ||
-            state.deviceIds?.video !== prevState.deviceIds?.video) &&
+          state._mediaStream?.id !== prevState._mediaStream?.id &&
           state._element &&
           transceivers &&
           state._mediaStream
         ) {
-          changeVideoSource({
-            source: {
-              videoDeviceId: state.deviceIds?.video ?? undefined,
-              audioDeviceId: state.deviceIds?.audio ?? undefined,
-            },
-            prevMediaStream: state._mediaStream,
+          changeMediaStream({
+            newMediaStream: state._mediaStream,
+            prevMediaStream: prevState._mediaStream,
             aspectRatio: aspectRatio ?? '16to9',
             element: state._element,
             videoTransceiver: transceivers.video,
@@ -152,21 +166,6 @@ export const WebRTCBroadcast = React.forwardRef<
       }),
     [store, transceivers, aspectRatio, onConnected, onErrorComposed],
   );
-
-  // React.useEffect(() => {
-  //   console.log({
-  //     vidId: transceivers?.video?.sender.track?.id,
-  //     deviceIds,
-  //   });
-
-  // }, [
-  //   _element,
-  //   transceivers,
-  //   onConnected,
-  //   aspectRatio,
-  //   onErrorComposed,
-  //   deviceIds,
-  // ]);
 
   return (
     <video

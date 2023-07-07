@@ -7,6 +7,7 @@ import { StoreApi, createStore } from 'zustand/vanilla';
 
 import { Src, getMediaSourceType } from './src';
 import { ClientStorage } from '../storage';
+import { omit } from '../utils';
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
 export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
@@ -58,6 +59,42 @@ export type Metadata = {
   bframes?: number;
   bufferWindow?: number;
 };
+
+const omittedKeys = [
+  '_lastInteraction',
+  '_requestSeekDiff',
+  '_requestedFullscreenLastTime',
+  '_requestedPictureInPictureLastTime',
+  '_requestedPlayPauseLastTime',
+  '_requestedRangeToSeekTo',
+  '_setVolume',
+  '_updateBuffered',
+  '_updateLastInteraction',
+  '_updateMediaStream',
+  '_updateSource',
+  'setIsVolumeChangeSupported',
+  'setError',
+  'setWebsocketMetadata',
+  'setStalled',
+  'setWaiting',
+  'onProgress',
+  'onDurationChange',
+  'onPlay',
+  'onPause',
+] as const;
+
+export const sanitizeMediaControllerState = <TElement, TMediaStream>(
+  state: MediaControllerState<TElement, TMediaStream>,
+): MediaControllerCallbackState<TElement, TMediaStream> =>
+  omit(state, ...omittedKeys);
+
+export type MediaControllerCallbackState<
+  TElement = HTMLMediaElement,
+  TMediaStream = MediaStream,
+> = Omit<
+  MediaControllerState<TElement, TMediaStream>,
+  typeof omittedKeys[number]
+>;
 
 export type MediaControllerState<TElement = void, TMediaStream = void> = {
   /** If the media has loaded and can be played */
@@ -160,7 +197,10 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   device: DeviceInformation;
 
   _updateSource: (source: string) => void;
-  _updateMediaStream: (mediaStream: TMediaStream) => void;
+  _updateMediaStream: (
+    mediaStream: TMediaStream,
+    ids?: { audio?: string; video?: string },
+  ) => void;
 
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
@@ -181,8 +221,6 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   _updateBuffered: (buffered: number) => void;
 
   requestSeek: (time: number) => void;
-
-  _setDeviceIds: (ids: { audio?: string; video?: string }) => void;
 
   requestSeekBack: (difference?: number) => void;
   requestSeekForward: (difference?: number) => void;
@@ -319,8 +357,17 @@ export const createControllerStore = <TElement, TMediaStream>({
           _requestedPictureInPictureLastTime: Date.now(),
           _requestedPlayPauseLastTime: 0,
 
-          _updateMediaStream: (_mediaStream) =>
-            set(() => ({ _mediaStream, video: true })),
+          _updateMediaStream: (_mediaStream, ids) =>
+            set(({ deviceIds }) => ({
+              _mediaStream,
+              ...(ids?.video ? { video: true } : {}),
+              deviceIds: {
+                ...deviceIds,
+                ...(ids?.audio ? { audio: ids.audio } : {}),
+                ...(ids?.video ? { video: ids.video } : {}),
+              },
+            })),
+
           setHidden: (hidden: boolean) =>
             set(({ playing }) => ({ hidden: playing ? hidden : false })),
           _updateLastInteraction: () =>
@@ -333,15 +380,6 @@ export const createControllerStore = <TElement, TMediaStream>({
               ...(!playbackId
                 ? { playbackId: getPlaybackIdFromSourceUrl(source) }
                 : {}),
-            })),
-
-          _setDeviceIds: (ids) =>
-            set(({ deviceIds }) => ({
-              deviceIds: {
-                ...deviceIds,
-                ...(ids.audio ? { audio: ids.audio } : {}),
-                ...(ids.video ? { video: ids.video } : {}),
-              },
             })),
 
           onCanPlay: () =>

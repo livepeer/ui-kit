@@ -16,7 +16,8 @@ const mediaControllerSelector = ({
 export type AudioPlayerProps = AudioPlayerCoreProps<
   HTMLAudioElement,
   PosterSource,
-  object
+  object,
+  any
 > & {
   allowCrossOriginCredentials?: boolean;
 };

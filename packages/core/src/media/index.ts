@@ -2,16 +2,18 @@ export {
   DEFAULT_AUTOHIDE_TIME,
   DEFAULT_VOLUME_LEVEL,
   createControllerStore,
+  sanitizeMediaControllerState,
 } from './controller';
 export type {
   ControlsOptions,
   DeviceInformation,
   ElementSize,
+  MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
+  MediaPropsOptions,
   MediaSizing,
   Metadata,
-  MediaPropsOptions,
 } from './controller';
 export { addMediaMetricsToStore } from './metrics';
 export type { MediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';

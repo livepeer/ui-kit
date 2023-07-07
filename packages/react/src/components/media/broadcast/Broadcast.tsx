@@ -1,18 +1,20 @@
-import { addMediaMetricsToStore } from '@livepeer/core-react';
 import {
   BroadcastProps as CoreBroadcastProps,
   ObjectFit,
   useBroadcast,
 } from '@livepeer/core-react/components';
 
+import { MediaControllerCallbackState } from 'livepeer';
 import * as React from 'react';
 
 import { WebRTCBroadcast } from './WebRTCBroadcast';
-import { AudioToggle, BroadcastSettings, VideoToggle } from './controls';
 import {
-  MediaControllerContext,
-  MediaControllerProvider,
-} from '../../../context';
+  AudioToggle,
+  BroadcastSettings,
+  Screenshare,
+  VideoToggle,
+} from './controls';
+import { MediaControllerProvider } from '../../../context';
 import {
   Container,
   ControlsContainer,
@@ -24,36 +26,48 @@ import {
 
 export type PosterSource = string | React.ReactNode;
 
-type BroadcastProps = CoreBroadcastProps<HTMLMediaElement> & {
+type BroadcastProps<TSlice> = CoreBroadcastProps<
+  HTMLMediaElement,
+  MediaStream,
+  TSlice
+> & {
   /**
    * The tab index of the container element.
    */
   tabIndex?: number;
-  /** Whether to show the picture in picture button (web only) */
+  /** Whether to show the picture in picture button */
   showPipButton?: boolean;
+  /**
+   * The display media stream options to use when requesting screen share.
+   */
+  displayMediaOptions?: DisplayMediaStreamOptions;
+  /**
+   * The media stream constraints to apply to the requested audio/video sources.
+   */
+  mediaStreamConstraints?: MediaStreamConstraints;
 };
 
 export type { BroadcastProps, ObjectFit };
 
-export const BroadcastInternal = (props: BroadcastProps) => {
+const BroadcastInternal = <
+  TSlice = MediaControllerCallbackState<HTMLMediaElement, MediaStream>,
+>(
+  props: BroadcastProps<TSlice>,
+) => {
   const {
     mediaElement,
     broadcastProps,
     mediaControllerProps,
     controlsContainerProps,
-    props: { children, controls, theme, title, aspectRatio, onBroadcastError },
-  } = useBroadcast<HTMLMediaElement>(props);
-
-  const store = React.useContext(MediaControllerContext);
-
-  React.useEffect(() => {
-    const { destroy } = addMediaMetricsToStore(store, (e) => {
-      onBroadcastError?.(e as Error);
-      console.error('Not able to report player metrics', e);
-    });
-
-    return destroy;
-  }, [onBroadcastError, store]);
+    props: {
+      children,
+      controls,
+      theme,
+      title,
+      aspectRatio,
+      renderChildrenOutsideContainer,
+    },
+  } = useBroadcast<HTMLMediaElement, MediaStream, TSlice>(props);
 
   return (
     <MediaControllerProvider
@@ -68,31 +82,37 @@ export const BroadcastInternal = (props: BroadcastProps) => {
       >
         <WebRTCBroadcast {...broadcastProps} />
 
-        {React.isValidElement(children) ? (
+        {!renderChildrenOutsideContainer && React.isValidElement(children) ? (
           React.cloneElement(children, controlsContainerProps)
         ) : (
-          <>
-            <ControlsContainer
-              {...controlsContainerProps}
-              top={<>{title && <Title content={title} />}</>}
-              left={
-                <>
-                  <VideoToggle />
-                  <AudioToggle />
-                  <TimeDisplay />
-                </>
-              }
-              right={
-                <>
-                  {props.showPipButton && <PictureInPictureButton />}
-                  <BroadcastSettings />
-                  <FullscreenButton />
-                </>
-              }
-            />
-          </>
+          <ControlsContainer
+            {...controlsContainerProps}
+            top={<>{title && <Title content={title} />}</>}
+            left={
+              <>
+                <VideoToggle />
+                <AudioToggle />
+                <Screenshare options={props?.displayMediaOptions} />
+                <TimeDisplay />
+              </>
+            }
+            right={
+              <>
+                {props.showPipButton && <PictureInPictureButton />}
+                <BroadcastSettings
+                  streamConstraints={props.mediaStreamConstraints}
+                />
+                <FullscreenButton />
+              </>
+            }
+          />
         )}
       </Container>
+      {renderChildrenOutsideContainer && React.isValidElement(children) ? (
+        children
+      ) : (
+        <></>
+      )}
     </MediaControllerProvider>
   );
 };
