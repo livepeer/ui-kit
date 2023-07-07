@@ -39,9 +39,6 @@ export type BroadcastProps<TElement, TMediaStream, TSlice> = {
   /** Custom controls passed in to override the default controls */
   children?: React.ReactNode;
 
-  /** The wallet ID of the creator who is broadcasting the media. This is used to track broadcasts for specific wallet IDs. */
-  creatorId?: string;
-
   /**
    * Whether the children should be rendered outside of the aspect ratio container.
    * This is used for custom controls, so children of the Player can use
@@ -72,8 +69,6 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
   title,
 
   onError,
-
-  creatorId,
 
   aspectRatio = '16to9',
   objectFit = 'contain',
@@ -149,7 +144,6 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
       options: controls,
       broadcastError,
       onBroadcastError,
-      creatorId,
       onPlaybackStatusUpdate,
       playbackStatusSelector,
     }),
@@ -160,7 +154,6 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
       ingestUrl,
       objectFit,
       onBroadcastError,
-      creatorId,
       onPlaybackStatusUpdate,
       playbackStatusSelector,
     ],
@@ -172,10 +165,9 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
       playbackId: undefined,
       muted: false,
       priority: false,
-      creatorId,
       ingestUrl: ingestUrl ?? undefined,
     }),
-    [creatorId, ingestUrl],
+    [ingestUrl],
   );
 
   const controlsContainerProps = React.useMemo(

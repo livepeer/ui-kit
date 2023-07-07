@@ -1,5 +1,26 @@
 # @livepeer/core-react
 
+## 1.6.0
+
+### Minor Changes
+
+- [#358](https://github.com/livepeer/livepeer.js/pull/358) [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added basic `<Broadcast />` component to kick off WebRTC broadcasting testing.
+
+- [#358](https://github.com/livepeer/livepeer.js/pull/358) [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added controls for `<Broadcast />` - `<BroadcastSettings />`, `<AudioToggle />`, and `<VideoToggle />`.
+
+- [#358](https://github.com/livepeer/livepeer.js/pull/358) [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `<Screenshare />` component for Broadcast, which allows a user to share a screen with their WebRTC broadcast.
+
+### Patch Changes
+
+- [#358](https://github.com/livepeer/livepeer.js/pull/358) [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `renderChildrenOutsideContainer` to both Broadcast and Player, which determines whether the children should be rendered outside of the aspect ratio container. This is used for custom controls, so children of the Player/Broadcast can use
+  `useMediaController` without any parent elements.
+
+  Also added `onPlaybackStatusUpdate`, which is a callback that is called when the broadcast status updates.
+  **This should be used with `playbackStatusSelector` to limit state updates.**
+
+- Updated dependencies [[`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b), [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b), [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b), [`50551ce`](https://github.com/livepeer/livepeer.js/commit/50551cebf04ff64307c95fdce3119ce29dae695b)]:
+  - @livepeer/core@1.6.0
+
 ## 1.6.0-next.2
 
 ### Minor Changes
