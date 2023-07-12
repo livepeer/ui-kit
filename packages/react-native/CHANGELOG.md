@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.6.1
+
+### Patch Changes
+
+- [`a89e71c`](https://github.com/livepeer/livepeer.js/commit/a89e71c5ed24a0b9ba967f844f5dcf148d004837) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** small styling fix for the video/audio source dropdowns.
+
+- Updated dependencies [[`a89e71c`](https://github.com/livepeer/livepeer.js/commit/a89e71c5ed24a0b9ba967f844f5dcf148d004837)]:
+  - @livepeer/core-react@1.6.1
+
 ## 1.6.0
 
 ### Minor Changes
