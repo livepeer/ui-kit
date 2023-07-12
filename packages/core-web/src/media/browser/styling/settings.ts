@@ -133,6 +133,7 @@ const selectItem = css('div', {
   padding: '10px 35px 10px 30px',
   position: 'relative',
   userSelect: 'none',
+  color: 'black',
 
   '&[data-disabled]': {
     pointerEvents: 'none',
