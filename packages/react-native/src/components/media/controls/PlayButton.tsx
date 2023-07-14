@@ -1,6 +1,6 @@
 import { MediaControllerState, omit } from '@livepeer/core-react';
 import {
-  PlayButtonProps,
+  PlayButtonProps as CorePlayButtonProps,
   usePlayButton,
 } from '@livepeer/core-react/components';
 import * as React from 'react';
@@ -32,7 +32,12 @@ const mediaControllerSelector = ({
   playing,
 });
 
-export type { PlayButtonProps };
+export type PlayButtonProps = CorePlayButtonProps & {
+  /**
+   * The size of the icon.
+   */
+  size?: number;
+};
 
 export const PlayButton: React.FC<PlayButtonProps> = (props) => {
   const { togglePlay, playing } = useMediaController(mediaControllerSelector);
