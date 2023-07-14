@@ -32,12 +32,8 @@ export type FetchOptions<P = object> = RequestInit & {
 export abstract class BaseLivepeerProvider implements LivepeerProvider {
   /** Provider base config */
   readonly _config: LivepeerProviderConfig;
-  /** Data fetching library */
-  readonly _fetch: typeof fetch;
 
   constructor(config: LivepeerProviderConfig) {
-    this._fetch = fetch;
-
     this._config = config;
   }
 
@@ -46,7 +42,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
   }
 
   async _get<T>(url: `/${string}`, options?: FetchOptions<never>): Promise<T> {
-    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
+    const response = await fetch(`${this._config.baseUrl}${url}`, {
       method: 'GET',
       ...options,
       headers: {
@@ -72,7 +68,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     url: `/${string}`,
     options?: FetchOptions<P>,
   ): Promise<T> {
-    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
+    const response = await fetch(`${this._config.baseUrl}${url}`, {
       method: 'POST',
       ...options,
       ...(options?.json ? { body: JSON.stringify(options.json) } : {}),
@@ -100,7 +96,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
     url: `/${string}`,
     options?: FetchOptions<P>,
   ): Promise<void> {
-    const response = await this._fetch(`${this._config.baseUrl}${url}`, {
+    const response = await fetch(`${this._config.baseUrl}${url}`, {
       method: 'PATCH',
       ...options,
       ...(options?.json ? { body: JSON.stringify(options.json) } : {}),
