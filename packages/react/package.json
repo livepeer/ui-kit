@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React components & hooks for web apps built with Livepeer.",
   "license": "MIT",
-  "version": "2.6.1",
+  "version": "2.7.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",
@@ -60,13 +60,13 @@
     }
   },
   "dependencies": {
-    "@livepeer/core-react": "^1.6.1",
+    "@livepeer/core-react": "^1.7.0",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-popover": "^1.0.6",
     "@radix-ui/react-select": "^1.2.2",
     "@stitches/react": "^1.2.8",
     "core-js": "^3.31.1",
-    "livepeer": "2.6.1",
+    "livepeer": "2.7.0",
     "zustand": "^4.3.9"
   },
   "devDependencies": {
