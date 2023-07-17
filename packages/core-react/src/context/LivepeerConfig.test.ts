@@ -33,7 +33,7 @@ describe('useClient', () => {
             "mountCount": 1,
             "mutationCache": MutationCache {
               "config": {},
-              "listeners": [],
+              "listeners": Set {},
               "mutationId": 0,
               "mutations": [],
               "subscribe": [Function],
@@ -41,7 +41,7 @@ describe('useClient', () => {
             "mutationDefaults": [],
             "queryCache": QueryCache {
               "config": {},
-              "listeners": [],
+              "listeners": Set {},
               "queries": [],
               "queriesMap": {},
               "subscribe": [Function],

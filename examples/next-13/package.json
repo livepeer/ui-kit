@@ -10,20 +10,20 @@
   },
   "dependencies": {
     "@livepeer/react": "^2.6.1",
-    "@next/font": "13.1.2",
+    "@next/font": "13.4.10",
     "@radix-ui/react-popover": "^1.0.6",
-    "@sentry/nextjs": "^7.24.2",
-    "@types/node": "18.11.18",
-    "@types/react": "18.0.27",
-    "@types/react-dom": "18.0.10",
+    "@sentry/nextjs": "^7.58.1",
+    "@types/node": "20.4.2",
+    "@types/react": "18.2.15",
+    "@types/react-dom": "18.2.7",
     "encoding": "^0.1.13",
-    "eslint": "8.32.0",
-    "eslint-config-next": "13.1.2",
+    "eslint": "8.45.0",
+    "eslint-config-next": "13.4.10",
     "livepeer": "^2.6.1",
-    "mux-embed": "^4.15.0",
-    "next": "13.1.2",
+    "mux-embed": "^4.26.0",
+    "next": "13.4.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "4.9.4"
+    "typescript": "5.1.6"
   }
 }

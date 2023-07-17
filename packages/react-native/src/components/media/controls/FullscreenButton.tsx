@@ -1,6 +1,6 @@
 import { MediaControllerState, omit } from '@livepeer/core-react';
 import {
-  FullscreenButtonProps,
+  FullscreenButtonProps as CoreFullscreenButtonProps,
   useFullscreenButton,
 } from '@livepeer/core-react/components';
 import * as React from 'react';
@@ -40,7 +40,12 @@ const mediaControllerSelector = ({
   requestToggleFullscreen,
 });
 
-export type { FullscreenButtonProps };
+export type FullscreenButtonProps = CoreFullscreenButtonProps & {
+  /**
+   * The size of the icon.
+   */
+  size?: number;
+};
 
 export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
   const { fullscreen, pictureInPicture, requestToggleFullscreen } =

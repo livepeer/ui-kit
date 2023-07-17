@@ -117,17 +117,16 @@
   "dependencies": {
     "@livepeer/core": "^1.6.1",
     "@stitches/core": "^1.2.8",
-    "core-js": "^3.27.2",
-    "cross-fetch": "^3.1.5",
-    "hls.js": "^1.4.0",
+    "core-js": "^3.31.1",
+    "cross-fetch": "^4.0.0",
+    "hls.js": "^1.4.9",
     "ms": "^3.0.0-canary.1",
-    "multiformats": "9.9.0",
-    "tus-js-client": "^3.0.1",
-    "zustand": "^4.3.2"
+    "tus-js-client": "^3.1.0",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
-    "jose": "^4.11.2"
+    "jose": "^4.14.4"
   },
   "keywords": [
     "eth",

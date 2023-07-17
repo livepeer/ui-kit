@@ -8,7 +8,7 @@ const Page = () => {
       <Player
         // autoPlay
         renderChildrenOutsideContainer
-        src="https://lp-playback.com/hls/2d0c5o70usvln4zmu/1920p0.mp4"
+        playbackId="2efceq16txprm65f"
         // onPlaybackStatusUpdate={(state) => state.se}
         // playbackStatusSelector={(state) => state.playing}
         // onPlaybackStatusUpdate={(playing) => setPlaying(playing)}
