@@ -6,7 +6,7 @@
 
 - [#362](https://github.com/livepeer/livepeer.js/pull/362) [`5c905ce`](https://github.com/livepeer/livepeer.js/commit/5c905cea6d4375a42403fe0eb95b6e522832741b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** update downstream packages and changed the default icon for microphone mute/unmute in `<Broadcast />`.
 
-  Package updates include:
+  Package updates include: 
 
   - `hls.js` upgraded from "^1.4.0" to "^1.4.9", to include a fix from Livepeer's @Thulinma for missing AUD units
   - `core-js` upgraded from "^3.27.2" to "^3.31.1".
