@@ -6,9 +6,10 @@ const Page = () => {
     <>
       {/* <div style={{ height: '110vh' }} /> */}
       <Player
-        // autoPlay
-        renderChildrenOutsideContainer
-        playbackId="2efceq16txprm65f"
+        autoPlay
+        // renderChildrenOutsideContainer
+        playbackId="dbe4u54fx6jc75k2"
+        lowLatency="force"
         // onPlaybackStatusUpdate={(state) => state.se}
         // playbackStatusSelector={(state) => state.playing}
         // onPlaybackStatusUpdate={(playing) => setPlaying(playing)}

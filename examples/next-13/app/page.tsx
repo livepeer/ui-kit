@@ -9,6 +9,8 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 const isTrue = (b: string) =>
   b === '' || b === '1' || b?.toLowerCase() === 'true';
 
+const isForce = (b: string) => b?.toLowerCase() === 'force';
+
 function toStringValues(obj?: SearchParams) {
   if (obj) {
     const strObj: Record<string, string> = {};
@@ -78,7 +80,9 @@ export default async function Page({
       autoPlay={isTrue(autoplay)}
       loop={isTrue(loop)}
       objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
-      lowLatency={isTrue(lowLatency)}
+      lowLatency={
+        isTrue(lowLatency) ? true : isForce(lowLatency) ? 'force' : false
+      }
     />
   );
 }

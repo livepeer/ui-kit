@@ -28,6 +28,14 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
   let peerConnection: RTCPeerConnection | null = null;
   const stream = new MediaStream();
 
+  const errorComposed = (e: Error) => {
+    if (element) {
+      element.srcObject = null;
+    }
+
+    callbacks?.onError?.(e as Error);
+  };
+
   getRedirectUrl(source, abortController, config?.sdpTimeout)
     .then((redirectUrl) => {
       if (destroyed || !redirectUrl) {
@@ -87,7 +95,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               }
             }
           } catch (e) {
-            callbacks?.onError?.(e as Error);
+            errorComposed(e as Error);
           }
         };
 
@@ -106,7 +114,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
                 callbacks?.onConnected?.();
               }
             } catch (e) {
-              callbacks?.onError?.(e as Error);
+              errorComposed(e as Error);
             }
           },
         );
@@ -125,12 +133,12 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               config?.sdpTimeout,
             );
           } catch (e) {
-            callbacks?.onError?.(e as Error);
+            errorComposed(e as Error);
           }
         });
       }
     })
-    .catch((e) => callbacks?.onError?.(e as Error));
+    .catch((e) => errorComposed(e as Error));
 
   return {
     destroy: () => {

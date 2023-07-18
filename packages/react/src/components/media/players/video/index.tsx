@@ -38,7 +38,7 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   allowCrossOriginCredentials?: boolean;
   hlsConfig?: HlsVideoConfig;
   webrtcConfig?: WebRTCVideoConfig;
-  lowLatency?: boolean;
+  lowLatency?: boolean | 'force';
 };
 
 function debounce<T extends (...args: any[]) => any>(
@@ -76,7 +76,7 @@ const InternalVideoPlayer = React.forwardRef<
     src,
     onPlaybackError,
     playbackError,
-    lowLatency,
+    lowLatency = true,
     onPlaybackStatusUpdate,
     playbackStatusSelector,
   } = props;
@@ -90,7 +90,13 @@ const InternalVideoPlayer = React.forwardRef<
   const playbackMappedSources = React.useMemo(
     () =>
       src
-        ?.filter((s) => (lowLatency ? true : s.type !== 'webrtc'))
+        ?.filter((s) =>
+          lowLatency === 'force' && src?.some((s) => s?.type === 'webrtc')
+            ? s.type === 'webrtc'
+            : lowLatency
+            ? true
+            : s.type !== 'webrtc',
+        )
         ?.map((s) =>
           s.type === 'hls' && !canUseHlsjs
             ? ({
@@ -134,16 +140,6 @@ const InternalVideoPlayer = React.forwardRef<
       ] ?? null,
     [playbackMappedSources, currentSourceIndex],
   );
-
-  // we increment the source for stream offline errors for WebRTC
-  React.useEffect(() => {
-    if (
-      playbackError?.type === 'offline' &&
-      currentPlaybackSource?.type !== 'hls'
-    ) {
-      debouncedIncrementSourceIndexRef?.current?.();
-    }
-  }, [playbackError, currentPlaybackSource]);
 
   // we increment the source on an unknown error
   // and we clear the timeout if we have a null playbackError

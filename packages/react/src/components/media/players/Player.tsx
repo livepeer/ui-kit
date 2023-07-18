@@ -48,8 +48,14 @@ type PlayerProps<
   controls?: ControlsOptions;
   /** Configuration for the HLS.js instance used for HLS playback */
   hlsConfig?: HlsVideoConfig;
-  /** Whether low latency is enabled for live-streaming */
-  lowLatency?: boolean;
+  /**
+   * Whether low latency is enabled for live-streaming.
+   * `force` can be passed to force the use of WebRTC low latency playback,
+   * and disable fallback to HLS if WebRTC cannot be used.
+   *
+   * Defaults to `true`.
+   */
+  lowLatency?: boolean | 'force';
   /** Configuration for the WebRTC playback */
   webrtcConfig?: WebRTCVideoConfig;
   /**
@@ -99,6 +105,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
       showTitle,
       aspectRatio,
       renderChildrenOutsideContainer,
+      // playbackError,
     },
   } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject, TSlice>(
     {
