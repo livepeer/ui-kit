@@ -1,12 +1,27 @@
 # @livepeer/core-react
 
+## 1.8.0
+
+### Minor Changes
+
+- [#364](https://github.com/livepeer/livepeer.js/pull/364) [`37c97e7`](https://github.com/livepeer/livepeer.js/commit/37c97e7cfce433e95cb790965acfd069634e66bd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `lowLatency` option of `force` - this requires WebRTC to be used, if a WebRTC playback source exists (which is only for livestreams). It disables the automatic fallback to HLS.
+
+  Fixed issue when `lowLatency` is `true` where it would immediately fall back to HLS - it should now retry if the stream is offline, and fall back to HLS only when there is an unknown error (this could be a variety of causes - intermittent network issues, browser failure, etc).
+
+  The default `lowLatency` option is now `true` - to opt out of low latency, pass `lowLatency=false` to the Player or the lvpr.tv search params.
+
+### Patch Changes
+
+- Updated dependencies [[`37c97e7`](https://github.com/livepeer/livepeer.js/commit/37c97e7cfce433e95cb790965acfd069634e66bd)]:
+  - @livepeer/core@1.8.0
+
 ## 1.7.0
 
 ### Minor Changes
 
 - [#362](https://github.com/livepeer/livepeer.js/pull/362) [`5c905ce`](https://github.com/livepeer/livepeer.js/commit/5c905cea6d4375a42403fe0eb95b6e522832741b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** update downstream packages and changed the default icon for microphone mute/unmute in `<Broadcast />`.
 
-  Package updates include: 
+  Package updates include:
 
   - `hls.js` upgraded from "^1.4.0" to "^1.4.9", to include a fix from Livepeer's @Thulinma for missing AUD units
   - `core-js` upgraded from "^3.27.2" to "^3.31.1".
