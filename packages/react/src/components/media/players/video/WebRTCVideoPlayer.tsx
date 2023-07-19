@@ -9,6 +9,7 @@ import * as React from 'react';
 import { VideoPlayerProps } from '.';
 
 import { useMediaController } from '../../../../context';
+import { useDebounce } from '../../../system';
 
 const mediaControllerSelector = ({
   metadata,
@@ -64,9 +65,15 @@ export const WebRTCVideoPlayer = React.forwardRef<
     }
   }, [metadata, onPlaybackError]);
 
+  const [errorCount, setErrorCount] = React.useState(0);
+
+  const debouncedErrorCount = useDebounce(errorCount, 1000 * errorCount);
+
   React.useEffect(() => {
     if (_element && src.src) {
       const onErrorComposed = (error: Error) => {
+        setErrorCount((prev) => prev + 1);
+
         const cleanError = new Error(
           error?.message?.toString?.() ?? 'Error with WebRTC',
         );
@@ -88,7 +95,14 @@ export const WebRTCVideoPlayer = React.forwardRef<
         destroy?.();
       };
     }
-  }, [webrtcConfig, _element, onConnected, src, onPlaybackError]);
+  }, [
+    webrtcConfig,
+    _element,
+    onConnected,
+    src,
+    onPlaybackError,
+    debouncedErrorCount,
+  ]);
 
   return (
     <video

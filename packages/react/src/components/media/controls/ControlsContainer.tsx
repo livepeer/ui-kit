@@ -102,7 +102,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
         </div>
       )}
 
-      {error?.type && (
+      {error?.type ? (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
@@ -115,52 +115,54 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
             <GenericError isBroadcast={isBroadcast} />
           )}
         </div>
-      )}
-
-      {isLoaded && !error?.type && (
-        <>
-          <div
-            className={styling.controlsContainer.gradient({
-              display: hidden ? 'hidden' : 'shown',
-            })}
-            onMouseUp={containerProps.onPress}
-          />
-          <div
-            className={styling.controlsContainer.top.container({
-              display: hidden ? 'hidden' : 'shown',
-            })}
-          >
-            {top}
-          </div>
-          <div
-            className={styling.controlsContainer.bottom.container({
-              display: hidden ? 'hidden' : 'shown',
-            })}
-          >
+      ) : (
+        isLoaded && (
+          <>
             <div
-              className={styling.controlsContainer.bottom.middle.container()}
-            >
-              {middle}
-            </div>
-            <div className={styling.controlsContainer.bottom.lower.container()}>
-              <div className={styling.controlsContainer.bottom.lower.left()}>
-                {left}
-              </div>
-              <div className={styling.controlsContainer.bottom.lower.right()}>
-                {right}
-              </div>
-            </div>
-          </div>
-          {children && (
+              className={styling.controlsContainer.gradient({
+                display: hidden ? 'hidden' : 'shown',
+              })}
+              onMouseUp={containerProps.onPress}
+            />
             <div
-              className={styling.controlsContainer.background({
+              className={styling.controlsContainer.top.container({
                 display: hidden ? 'hidden' : 'shown',
               })}
             >
-              {children}
+              {top}
             </div>
-          )}
-        </>
+            <div
+              className={styling.controlsContainer.bottom.container({
+                display: hidden ? 'hidden' : 'shown',
+              })}
+            >
+              <div
+                className={styling.controlsContainer.bottom.middle.container()}
+              >
+                {middle}
+              </div>
+              <div
+                className={styling.controlsContainer.bottom.lower.container()}
+              >
+                <div className={styling.controlsContainer.bottom.lower.left()}>
+                  {left}
+                </div>
+                <div className={styling.controlsContainer.bottom.lower.right()}>
+                  {right}
+                </div>
+              </div>
+            </div>
+            {children && (
+              <div
+                className={styling.controlsContainer.background({
+                  display: hidden ? 'hidden' : 'shown',
+                })}
+              >
+                {children}
+              </div>
+            )}
+          </>
+        )
       )}
     </>
   );

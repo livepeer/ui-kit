@@ -386,6 +386,7 @@ export const usePlayer = <
       aspectRatio,
       objectFit,
       renderChildrenOutsideContainer,
+      playbackError,
     }),
     [
       autoPlay,
@@ -404,6 +405,7 @@ export const usePlayer = <
       aspectRatio,
       objectFit,
       renderChildrenOutsideContainer,
+      playbackError,
     ],
   );
 

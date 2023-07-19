@@ -43,6 +43,7 @@ const background = css(sharedContainer, {
   right: 0,
   top: 0,
   height: '100%',
+  backgroundColor: '#000000',
 });
 
 const gradient = css(sharedContainer, {

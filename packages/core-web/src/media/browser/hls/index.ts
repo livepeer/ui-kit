@@ -25,8 +25,6 @@ export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
  */
 export const isHlsSupported = () => (isClient() ? Hls.isSupported() : true);
 
-let retryCount = 0;
-
 /**
  * Create an hls.js instance and attach to the provided media element.
  */
@@ -87,19 +85,15 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   });
 
   hls.on(Hls.Events.ERROR, async (_event, data) => {
-    const { type, details, fatal } = data;
-    const isFatalNetworkError = type === Hls.ErrorTypes.NETWORK_ERROR && fatal;
-    const isFatalMediaError = type === Hls.ErrorTypes.MEDIA_ERROR && fatal;
+    const { details, fatal } = data;
+
+    hls.detachMedia();
+
     const isManifestParsingError =
       Hls.ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
 
     if (!fatal && !isManifestParsingError) return;
     callbacks?.onError?.(data);
-
-    if (isFatalNetworkError || isFatalMediaError || isManifestParsingError) {
-      await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-      hls?.recoverMediaError();
-    }
   });
 
   return {

@@ -9,6 +9,7 @@ import * as React from 'react';
 
 import { VideoPlayerProps } from '.';
 import { useMediaController } from '../../../../context';
+import { useDebounce } from '../../../system';
 
 const mediaControllerSelector = ({
   setLive,
@@ -44,7 +45,7 @@ export const HLSVideoPlayer = React.forwardRef<
     poster,
     objectFit,
     fullscreen,
-    playbackError,
+    // playbackError,
     onPlaybackError,
     priority,
     allowCrossOriginCredentials,
@@ -63,9 +64,15 @@ export const HLSVideoPlayer = React.forwardRef<
     [onPlaybackError, setLive],
   );
 
+  const [errorCount, setErrorCount] = React.useState(0);
+
+  const debouncedErrorCount = useDebounce(errorCount, 1000 * errorCount);
+
   React.useEffect(() => {
     if (_element && src) {
       const onErrorComposed = (error: HlsError) => {
+        setErrorCount((prev) => prev + 1);
+
         const cleanError = new Error(
           error?.response?.data?.toString?.() ??
             ((error?.response as any)?.code === 401
@@ -108,9 +115,10 @@ export const HLSVideoPlayer = React.forwardRef<
     onLive,
     onPlaybackError,
     allowCrossOriginCredentials,
+    debouncedErrorCount,
   ]);
 
-  return !playbackError?.type ? (
+  return (
     <video
       className={styling.media.video({
         size: fullscreen ? 'fullscreen' : objectFit,
@@ -131,7 +139,5 @@ export const HLSVideoPlayer = React.forwardRef<
         allowCrossOriginCredentials ? 'use-credentials' : 'anonymous'
       }
     />
-  ) : (
-    <></>
   );
 });
