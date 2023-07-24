@@ -59,6 +59,10 @@ type PlayerProps<TPlaybackPolicyObject extends object> = CorePlayerProps<
    * The tab index of the container element.
    */
   tabIndex?: number;
+  /** Optional video track selector passed through to the source URL */
+  video?: string;
+  /** Optional audio track selector passed through to the source URL */
+  audio?: string;
 };
 
 export type { PlayerObjectFit, PlayerProps };
