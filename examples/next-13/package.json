@@ -22,7 +22,7 @@
     "eslint-config-next": "13.4.10",
     "livepeer": "^2.8.0",
     "mux-embed": "^4.26.0",
-    "next": "13.4.10",
+    "next": "13.4.13",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.1.6"
