@@ -17,6 +17,7 @@
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "encoding": "^0.1.13",
+    "react-countdown": "^2.3.5",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
     "livepeer": "^2.8.0",
