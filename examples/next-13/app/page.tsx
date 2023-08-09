@@ -3,6 +3,7 @@ import { studioProvider } from 'livepeer/providers/studio';
 import { cache } from 'react';
 
 import PlayerPage from './PlayerPage';
+import CountdownPage from './CountdownPage';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -68,23 +69,48 @@ export default async function Page({
 
   const { loop, lowLatency, objectFit = 'contain' } = query;
 
+  const { date, time, poster } = query; // countdown
+
   // fetch the playback info from livepeer
   const playbackInfo =
     !url && searchParams?.v
       ? await fetchPlaybackInfo(String(searchParams.v))
       : null;
 
+  function parseDateTime() {
+    const [day, month, year] = date.split('/').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  }
+
+  function isExpired() {
+    const targetDateTime = parseDateTime();
+    const currentDateTime = new Date();
+
+    if (targetDateTime < currentDateTime) {
+      return true; // The target date and time have passed
+    } else {
+      return false; // The target date and time are still in the future
+    }
+  }
+
   return (
-    <PlayerPage
-      src={!playbackInfo ? url : null}
-      playbackInfo={playbackInfo ? playbackInfo : null}
-      muted={isTrue(muted)}
-      autoPlay={isTrue(autoplay)}
-      loop={isTrue(loop)}
-      objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
-      lowLatency={
-        isFalse(lowLatency) ? false : isForce(lowLatency) ? 'force' : true
-      }
-    />
+    <>
+      {date && time && !isExpired() ? (
+        <CountdownPage poster={poster} countdown={parseDateTime()} />
+      ) : (
+        <PlayerPage
+          src={!playbackInfo ? url : null}
+          playbackInfo={playbackInfo ? playbackInfo : null}
+          muted={isTrue(muted)}
+          autoPlay={isTrue(autoplay)}
+          loop={isTrue(loop)}
+          objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
+          lowLatency={
+            isFalse(lowLatency) ? false : isForce(lowLatency) ? 'force' : true
+          }
+        />
+      )}
+    </>
   );
 }
