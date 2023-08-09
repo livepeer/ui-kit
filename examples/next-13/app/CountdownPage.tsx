@@ -1,6 +1,5 @@
 'use client';
 
-import { PlaybackInfo } from '@livepeer/react';
 import Countdown from 'react-countdown';
 
 interface Props {
@@ -17,14 +16,13 @@ interface CountdownProps {
 
 export default ({ poster, countdown }: Props) => {
   const formatDate = (date: Date) => {
-    const options = {
+    return date.toLocaleString('en-US', {
       month: 'long',
       day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
       hour12: true,
-    };
-    return date.toLocaleString('en-US', options);
+    });
   };
 
   const formattedDate = formatDate(countdown);

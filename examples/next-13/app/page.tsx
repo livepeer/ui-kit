@@ -2,8 +2,8 @@ import { createClient } from 'livepeer';
 import { studioProvider } from 'livepeer/providers/studio';
 import { cache } from 'react';
 
-import PlayerPage from './PlayerPage';
 import CountdownPage from './CountdownPage';
+import PlayerPage from './PlayerPage';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 

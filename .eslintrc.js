@@ -57,6 +57,7 @@ module.exports = {
       },
     ],
     'prettier/prettier': 'error',
+    '@typescript-eslint/no-empty-function': 'off',
   },
   overrides: [
     {
