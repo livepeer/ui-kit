@@ -38,7 +38,7 @@ const { provider } = createClient({
   }),
 });
 
-const fetchPlaybackInfo = cache(async (playbackId: string) => {
+export const fetchPlaybackInfo = cache(async (playbackId: string) => {
   try {
     const playbackInfo = await provider.getPlaybackInfo({ playbackId });
 
@@ -48,6 +48,18 @@ const fetchPlaybackInfo = cache(async (playbackId: string) => {
     return null;
   }
 });
+
+// Known URL parameters to use in reconstructing the poster URL
+const KNOWN_PARAMS = [
+  'loop',
+  'lowLatency',
+  'objectFit',
+  'poster',
+  'countdown',
+  'v',
+  'autoplay',
+  'muted',
+];
 
 // Once this issue is fixed, this can be removed
 // https://github.com/vercel/next.js/issues/43077#issuecomment-1383742153
@@ -67,37 +79,46 @@ export default async function Page({
     autoplay = muted = '1';
   }
 
-  const { loop, lowLatency, objectFit = 'contain' } = query;
+  const {
+    v,
+    loop,
+    lowLatency,
+    objectFit = 'contain',
+    poster,
+    countdown,
+  } = query;
 
-  const { date, time, poster } = query; // countdown
-
-  // fetch the playback info from livepeer
+  // Fetch playback info if necessary
   const playbackInfo =
     !url && searchParams?.v
       ? await fetchPlaybackInfo(String(searchParams.v))
       : null;
 
-  function parseDateTime() {
-    const [day, month, year] = date.split('/').map(Number);
-    const [hours, minutes] = time.split(':').map(Number);
-    return new Date(year, month - 1, day, hours, minutes);
-  }
-
-  function isExpired() {
-    const targetDateTime = parseDateTime();
-    const currentDateTime = new Date();
-
-    if (targetDateTime < currentDateTime) {
-      return true; // The target date and time have passed
-    } else {
-      return false; // The target date and time are still in the future
+  // Reconstruct the poster URL based on the query
+  let reconstructedPoster = poster || '';
+  for (const [key, value] of Object.entries(query)) {
+    if (!KNOWN_PARAMS.includes(key)) {
+      reconstructedPoster += `&${key}=${value}`;
     }
   }
 
   return (
     <>
-      {date && time && !isExpired() ? (
-        <CountdownPage poster={poster} countdown={parseDateTime()} />
+      {poster || countdown ? (
+        <CountdownPage
+          poster={reconstructedPoster}
+          countdown={Number(countdown)}
+          id={v}
+          src={!playbackInfo ? url : null}
+          playbackInfo={playbackInfo ? playbackInfo : null}
+          muted={isTrue(muted)}
+          autoPlay={isTrue(autoplay)}
+          loop={isTrue(loop)}
+          objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
+          lowLatency={
+            isFalse(lowLatency) ? false : isForce(lowLatency) ? 'force' : true
+          }
+        />
       ) : (
         <PlayerPage
           src={!playbackInfo ? url : null}

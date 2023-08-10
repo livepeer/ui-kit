@@ -1,12 +1,22 @@
 'use client';
 
+import { PlayerProps } from '@livepeer/react';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import { ReactNode, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
-interface Props {
-  poster: string;
-  countdown: Date;
-}
+import PlayerPage from './PlayerPage';
+import { fetchPlaybackInfo } from './page';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+interface CountdownPageProps extends PlayerProps<object, any> {
+  countdown: number;
+  id: string;
+}
 interface CountdownProps {
   hours: number;
   minutes: number;
@@ -14,81 +24,147 @@ interface CountdownProps {
   completed: boolean;
 }
 
-export default ({ poster, countdown }: Props) => {
-  const formatDate = (date: Date) => {
-    return date.toLocaleString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    });
+const nycToLocalTimestamp = (timestamp: number): number => {
+  return dayjs.tz(timestamp, 'America/New_York').local().valueOf();
+};
+
+const formattedDate = (timestamp: number): string => {
+  return dayjs(timestamp).format('MMMM D, h:mm a');
+};
+const CountdownPage: React.FC<CountdownPageProps> = ({
+  poster,
+  countdown,
+  id,
+  src,
+  playbackInfo,
+  muted,
+  autoPlay,
+  loop,
+  objectFit,
+  lowLatency,
+}) => {
+  const [startingSoon, setStartingSoon] = useState(!countdown);
+  const [isLive, setIsLive] = useState(false);
+
+  const localCountdown = nycToLocalTimestamp(countdown);
+
+  const onCountdownComplete = async () => {
+    setStartingSoon(true);
+    const interval = setInterval(async () => {
+      try {
+        const playbackData = await fetchPlaybackInfo(id);
+        if (playbackData?.meta?.live) {
+          setIsLive(true);
+          clearInterval(interval);
+        }
+      } catch (error) {
+        console.error('Error fetching playback info:', error);
+      }
+    }, 2000);
   };
 
-  const formattedDate = formatDate(countdown);
+  useEffect(() => {
+    if (!countdown) {
+      onCountdownComplete();
+    }
+  }, []);
 
-  return (
-    <section
-      style={{
-        backgroundImage: `url(${poster})`,
-        backgroundPosition: 'center',
-        display: 'flex',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        height: '100vh',
-        position: 'relative',
-      }}
-    >
-      <div
-        style={{
-          background: 'rgba(1,1,1,0.5)',
-          color: '#ffffff',
-          bottom: '0',
-          left: '0',
-          position: 'absolute',
-          margin: '20px',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          fontSize: '1.2em',
-          width: '19rem',
-          borderRadius: '10px',
-        }}
-      >
-        {clockIcon()}
-        <div
-          style={{
-            marginLeft: '1em',
-            marginTop: '1em',
-          }}
-        >
-          <Countdown date={countdown} renderer={renderer} />
-          <p
-            style={{
-              marginTop: '0.5em',
-            }}
-          >
-            {formattedDate}
-          </p>
-        </div>
-      </div>
-    </section>
+  const countdownRenderer = ({
+    hours,
+    minutes,
+    seconds,
+    completed,
+  }: CountdownProps): string | null => {
+    if (completed) {
+      onCountdownComplete();
+      return null;
+    }
+
+    if (hours > 0)
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`;
+    if (minutes > 0) return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${seconds}`;
+  };
+
+  return isLive ? (
+    <PlayerPage
+      src={src}
+      playbackInfo={playbackInfo}
+      muted={muted}
+      autoPlay={autoPlay}
+      loop={loop}
+      objectFit={objectFit}
+      lowLatency={lowLatency}
+    />
+  ) : (
+    <CountdownBackdrop poster={poster}>
+      <CountdownDisplay
+        startingSoon={startingSoon}
+        localCountdown={localCountdown}
+        renderer={countdownRenderer}
+      />
+    </CountdownBackdrop>
   );
 };
 
-const renderer = ({ hours, minutes, seconds, completed }: CountdownProps) => {
-  if (completed) {
-    window.location.reload();
-  } else {
-    return hours > 0
-      ? `${hours}:${String(minutes).padStart(2, '0')}:${String(
-          seconds,
-        ).padStart(2, '0')}`
-      : minutes > 0
-      ? `${minutes}:${String(seconds).padStart(2, '0')}`
-      : `${seconds}`;
-  }
-};
+const CountdownBackdrop: React.FC<{ poster: string; children: ReactNode }> = ({
+  poster,
+  children,
+}) => (
+  <section
+    style={{
+      backgroundImage: `url(${poster})`,
+      backgroundPosition: 'center',
+      display: 'flex',
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      height: '100vh',
+      position: 'relative',
+    }}
+  >
+    {children}
+  </section>
+);
+
+const CountdownDisplay: React.FC<{
+  startingSoon: boolean;
+  localCountdown: number;
+  renderer: any;
+}> = ({ startingSoon, localCountdown, renderer }) => (
+  <div
+    style={{
+      background: 'rgba(1,1,1,0.5)',
+      color: '#ffffff',
+      bottom: '0',
+      left: '0',
+      position: 'absolute',
+      margin: '20px',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      fontSize: '1.2em',
+      width: '17rem',
+      borderRadius: '10px',
+    }}
+  >
+    {clockIcon()}
+    {!startingSoon ? (
+      <div
+        style={{
+          marginLeft: '1em',
+          marginTop: '1em',
+        }}
+      >
+        <Countdown date={localCountdown} renderer={renderer} />
+        <p style={{ marginTop: '0.2em' }}>{formattedDate(localCountdown)}</p>
+      </div>
+    ) : (
+      <p style={{ marginLeft: '1em' }}>Starting soon!</p>
+    )}
+  </div>
+);
 
 const clockIcon = () => (
   <svg
@@ -107,3 +183,5 @@ const clockIcon = () => (
     <path d="M13 7h-2v6h6v-2h-4z"></path>
   </svg>
 );
+
+export default CountdownPage;
