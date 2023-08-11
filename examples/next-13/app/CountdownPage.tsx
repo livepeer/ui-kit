@@ -16,9 +16,10 @@ import { ReactNode, useEffect, useState } from 'react';
 
 import Countdown from 'react-countdown';
 
+import PlayerPage from './PlayerPage';
+
 import { fetchPlaybackInfo } from '../utils/client';
 
-import PlayerPage from './PlayerPage';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
