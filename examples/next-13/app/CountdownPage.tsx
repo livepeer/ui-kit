@@ -1,16 +1,24 @@
 'use client';
 
 import { PlayerProps } from '@livepeer/react';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import { ReactNode, useEffect, useState } from 'react';
-import Countdown from 'react-countdown';
-import PlayerPage from './PlayerPage';
-import { fetchPlaybackInfo } from '../utils/client';
 
+import dayjs from 'dayjs';
+
+import duration from 'dayjs/plugin/duration';
+
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+import timezone from 'dayjs/plugin/timezone';
+
+import utc from 'dayjs/plugin/utc';
+
+import { ReactNode, useEffect, useState } from 'react';
+
+import Countdown from 'react-countdown';
+
+import PlayerPage from './PlayerPage';
+
+import { fetchPlaybackInfo } from '../utils/client';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
