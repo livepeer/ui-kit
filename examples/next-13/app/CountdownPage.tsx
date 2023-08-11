@@ -51,6 +51,7 @@ const CountdownPage: React.FC<CountdownPageProps> = ({
   const onCountdownComplete = async () => {
     setStartingSoon(true);
     const interval = setInterval(async () => {
+      if (document.hidden) return; // Do not proceed if the tab/window is not active
       try {
         const playbackData = await fetchPlaybackInfo(id);
         if (playbackData?.meta?.live) {
@@ -60,7 +61,7 @@ const CountdownPage: React.FC<CountdownPageProps> = ({
       } catch (error) {
         console.error('Error fetching playback info:', error);
       }
-    }, 2000);
+    }, 3000);
   };
 
   useEffect(() => {
