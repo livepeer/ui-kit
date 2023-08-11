@@ -1,9 +1,6 @@
-import { createClient } from 'livepeer';
-import { studioProvider } from 'livepeer/providers/studio';
-import { cache } from 'react';
-
 import CountdownPage from './CountdownPage';
 import PlayerPage from './PlayerPage';
+import { fetchPlaybackInfo } from '../utils/client';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -26,28 +23,6 @@ function toStringValues(obj?: SearchParams) {
   }
   return {};
 }
-
-const { provider } = createClient({
-  provider: studioProvider({
-    // since this only executes on the server, we can use the PRIVATE_STUDIO_API_KEY,
-    // which is a non-CORS enabled API key
-    apiKey: process.env.PRIVATE_STUDIO_API_KEY ?? '',
-    baseUrl:
-      process.env.NEXT_PUBLIC_STUDIO_BASE_URL ?? 'https://livepeer.studio/api',
-    ...{ origin: `https://lvpr.tv` },
-  }),
-});
-
-export const fetchPlaybackInfo = cache(async (playbackId: string) => {
-  try {
-    const playbackInfo = await provider.getPlaybackInfo({ playbackId });
-
-    return playbackInfo;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-});
 
 // Known URL parameters to use in reconstructing the poster URL
 const KNOWN_PARAMS = [

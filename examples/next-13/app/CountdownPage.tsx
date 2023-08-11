@@ -8,7 +8,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import PlayerPage from './PlayerPage';
-import { fetchPlaybackInfo } from './page';
+import { fetchPlaybackInfo } from '../utils/client';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -100,7 +100,7 @@ const CountdownPage: React.FC<CountdownPageProps> = ({
       lowLatency={lowLatency}
     />
   ) : (
-    <CountdownBackdrop poster={poster}>
+    <CountdownBackdrop poster={poster as string}>
       <CountdownDisplay
         startingSoon={startingSoon}
         localCountdown={localCountdown}
@@ -110,10 +110,10 @@ const CountdownPage: React.FC<CountdownPageProps> = ({
   );
 };
 
-const CountdownBackdrop: React.FC<{ poster: string; children: ReactNode }> = ({
-  poster,
-  children,
-}) => (
+const CountdownBackdrop: React.FC<{
+  poster: string | undefined;
+  children: ReactNode;
+}> = ({ poster, children }) => (
   <section
     style={{
       backgroundImage: `url(${poster})`,
