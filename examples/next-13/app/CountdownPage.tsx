@@ -2,25 +2,27 @@
 
 import { PlayerProps } from '@livepeer/react';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { ReactNode, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
-import PlayerPage from './PlayerPage';
 import { fetchPlaybackInfo } from '../utils/client';
+import PlayerPage from './PlayerPage';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 interface CountdownPageProps extends PlayerProps<object, any> {
   countdown: number;
   id: string;
 }
 interface CountdownProps {
-  hours: number;
-  minutes: number;
-  seconds: number;
+  total: number;
   completed: boolean;
 }
 
@@ -71,22 +73,16 @@ const CountdownPage: React.FC<CountdownPageProps> = ({
   }, []);
 
   const countdownRenderer = ({
-    hours,
-    minutes,
-    seconds,
+    total,
     completed,
   }: CountdownProps): string | null => {
+    console.log(total);
     if (completed) {
       onCountdownComplete();
       return null;
     }
 
-    if (hours > 0)
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds
-        .toString()
-        .padStart(2, '0')}`;
-    if (minutes > 0) return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    return `${seconds}`;
+    return `Live ${dayjs.duration(total).humanize(true)}`;
   };
 
   return isLive ? (
