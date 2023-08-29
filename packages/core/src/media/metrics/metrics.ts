@@ -245,22 +245,8 @@ export class MetricsStatus<TElement, TMediaStream> {
     };
 
     this.destroy = store.subscribe((state, prevState) => {
-      if (this.requestedPlayTime === 0) {
-        if (state.autoplay) {
-          if (!state.priority) {
-            if (state.src?.src) {
-              this.requestedPlayTime = Date.now() - bootMs;
-            }
-          } else {
-            if (state.src?.src && state.hasPlayed) {
-              this.requestedPlayTime = Date.now() - bootMs;
-            }
-          }
-        } else {
-          if (state.src?.src && state._requestedPlayPauseLastTime) {
-            this.requestedPlayTime = Date.now() - bootMs;
-          }
-        }
+      if (this.requestedPlayTime === 0 && state._playLastTime !== 0) {
+        this.requestedPlayTime = Math.max(state._playLastTime - bootMs, 0);
       }
 
       if (state.src?.src !== prevState.src?.src) {
@@ -345,10 +331,7 @@ export class MetricsStatus<TElement, TMediaStream> {
 
       // this is the amount of time that a video has had to preload content, from boot until play was requested
       preloadTime: this.requestedPlayTime,
-      // 1. When a video is above the fold and set to autoplay, ttff is from when the player is added to the HTML of the page to when the first
-      // progress update
-      // 2. When a video is below the fold and set to autoplay, from when lazy loading is triggered and the first progress update
-      // 3. When a video is below the fold and not set to autoplay, from when lazy loading is triggered and the first progress update
+      // time from when the first `play` event is emitted and the first progress update
       ttff:
         this.firstFrameTime > 0
           ? Math.max(this.firstFrameTime - this.requestedPlayTime, 0)

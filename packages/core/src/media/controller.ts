@@ -67,6 +67,7 @@ const omittedKeys = [
   '_requestedPictureInPictureLastTime',
   '_requestedPlayPauseLastTime',
   '_requestedRangeToSeekTo',
+  '_playLastTime',
   '_setVolume',
   '_updateBuffered',
   '_updateLastInteraction',
@@ -166,6 +167,9 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
 
   /** The last time that picture in picture was changed*/
   _requestedPictureInPictureLastTime: number;
+
+  /** The last time that a play event was received */
+  _playLastTime: number;
 
   /** If the content is live media */
   live: boolean;
@@ -356,6 +360,7 @@ export const createControllerStore = <TElement, TMediaStream>({
           _requestedFullscreenLastTime: Date.now(),
           _requestedPictureInPictureLastTime: Date.now(),
           _requestedPlayPauseLastTime: 0,
+          _playLastTime: 0,
 
           _updateMediaStream: (_mediaStream, ids) =>
             set(({ deviceIds }) => ({
@@ -394,6 +399,7 @@ export const createControllerStore = <TElement, TMediaStream>({
               hasPlayed: true,
               stalled: false,
               waiting: false,
+              _playLastTime: Date.now(),
             })),
           onPause: () =>
             set(() => ({
