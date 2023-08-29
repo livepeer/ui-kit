@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 1.8.1
+
+### Patch Changes
+
+- [#370](https://github.com/livepeer/livepeer.js/pull/370) [`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for TTFF reporting, to measure the difference between the `play` event and the first progress update.
+
+- Updated dependencies [[`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988)]:
+  - @livepeer/core-react@1.8.1
+
 ## 1.8.0
 
 ### Minor Changes
