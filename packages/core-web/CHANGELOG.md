@@ -1,10 +1,19 @@
 # livepeer
 
+## 2.8.1
+
+### Patch Changes
+
+- [#370](https://github.com/livepeer/livepeer.js/pull/370) [`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for TTFF reporting, to measure the difference between the `play` event and the first progress update.
+
+- Updated dependencies [[`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988)]:
+  - @livepeer/core@1.8.1
+
 ## 2.8.0
 
 ### Minor Changes
 
-- [#364](https://github.com/livepeer/livepeer.js/pull/364) [`37c97e7`](https://github.com/livepeer/livepeer.js/commit/37c97e7cfce433e95cb790965acfd069634e66bd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `lowLatency` option of `force` - this requires WebRTC to be used, if a WebRTC playback source exists (which is only for livestreams). It disables the automatic fallback to HLS. 
+- [#364](https://github.com/livepeer/livepeer.js/pull/364) [`37c97e7`](https://github.com/livepeer/livepeer.js/commit/37c97e7cfce433e95cb790965acfd069634e66bd) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `lowLatency` option of `force` - this requires WebRTC to be used, if a WebRTC playback source exists (which is only for livestreams). It disables the automatic fallback to HLS.
 
   Fixed issue when `lowLatency` is `true` where it would immediately fall back to HLS - it should now retry if the stream is offline, and fall back to HLS only when there is an unknown error (this could be a variety of causes - intermittent network issues, browser failure, etc).
 
