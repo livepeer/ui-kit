@@ -8,7 +8,7 @@
     "dev:ios": "react-native run-ios",
     "install:pod": "cd ios/ && pod install",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "postinstall": "pnpm install:pod"
+    "postinstall": "pnpm install:pod || echo 'pod installation failed, skipping'"
   },
   "dependencies": {
     "@livepeer/react-native": "^1.8.1",
