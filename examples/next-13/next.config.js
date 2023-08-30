@@ -1,6 +1,6 @@
 const { withSentryConfig } = require('@sentry/nextjs');
 
-const disableSentry = process.env.DIABLE_SENTRY === 'true';
+const disableSentry = process.env.DISABLE_SENTRY === 'true';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
