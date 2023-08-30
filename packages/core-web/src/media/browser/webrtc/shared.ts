@@ -41,13 +41,16 @@ export function createPeerConnection(
     window?.webkitRTCPeerConnection ||
     window?.mozRTCPeerConnection;
 
+  // strip non-standard port number if present
+  const hostNoPort = host?.split(':')[0];
+
   const iceServers = host
     ? [
         {
-          urls: `stun:${host}`,
+          urls: `stun:${hostNoPort}`,
         },
         {
-          urls: `turn:${host}`,
+          urls: `turn:${hostNoPort}`,
           username: 'livepeer',
           credential: 'livepeer',
         },
