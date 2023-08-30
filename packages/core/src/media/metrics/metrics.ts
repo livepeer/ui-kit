@@ -333,7 +333,7 @@ export class MetricsStatus<TElement, TMediaStream> {
       preloadTime: this.requestedPlayTime,
       // time from when the first `play` event is emitted and the first progress update
       ttff:
-        this.firstFrameTime > 0
+        this.firstFrameTime > 0 && this.requestedPlayTime > 0
           ? Math.max(this.firstFrameTime - this.requestedPlayTime, 0)
           : 0,
     };
