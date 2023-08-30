@@ -1,5 +1,7 @@
 const { withSentryConfig } = require('@sentry/nextjs');
 
+const disableSentry = process.env.DIABLE_SENTRY === 'true';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -15,6 +17,13 @@ const nextConfig = {
     // for more information.
     hideSourceMaps: true,
   },
+
+  transpilePackages: [
+    '@livepeer/core-react',
+    '@livepeer/core',
+    '@livepeer/react-native',
+    '@livepeer/react',
+  ],
 };
 
 const sentryWebpackPluginOptions = {
@@ -31,4 +40,8 @@ const sentryWebpackPluginOptions = {
 
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+if (disableSentry) {
+  module.exports = nextConfig;
+} else {
+  module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+}
