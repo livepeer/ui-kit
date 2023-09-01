@@ -1,4 +1,8 @@
-import { MediaControllerState, WebRTCSrc } from 'livepeer';
+import {
+  BFRAMES_ERROR_MESSAGE,
+  MediaControllerState,
+  WebRTCSrc,
+} from 'livepeer';
 import { styling } from 'livepeer/media/browser/styling';
 import {
   WebRTCVideoConfig,
@@ -59,9 +63,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
 
   React.useEffect(() => {
     if (metadata?.bframes) {
-      onPlaybackError(
-        new Error('Metadata indicates that WebRTC playback contains bframes.'),
-      );
+      onPlaybackError(new Error(BFRAMES_ERROR_MESSAGE));
     }
   }, [metadata, onPlaybackError]);
 
