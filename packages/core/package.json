@@ -2,7 +2,7 @@
   "name": "@livepeer/core",
   "description": "Livepeer's core vanilla JS library.",
   "license": "MIT",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer.js.git",

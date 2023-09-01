@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 1.8.2
+
+### Patch Changes
+
+- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present. 
+
+- Updated dependencies [[`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a)]:
+  - @livepeer/core@1.8.2
+
 ## 1.8.1
 
 ### Patch Changes
 
-- [#370](https://github.com/livepeer/livepeer.js/pull/370) [`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for TTFF reporting, to measure the difference between the `play` event and the first progress update. 
+- [#370](https://github.com/livepeer/livepeer.js/pull/370) [`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for TTFF reporting, to measure the difference between the `play` event and the first progress update.
 
 - Updated dependencies [[`269d3a3`](https://github.com/livepeer/livepeer.js/commit/269d3a3f37845ea643e3c4f281de62347529b988)]:
   - @livepeer/core@1.8.1
