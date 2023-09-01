@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.8.3
+
+### Patch Changes
+
+- [#374](https://github.com/livepeer/livepeer.js/pull/374) [`5cbf402`](https://github.com/livepeer/livepeer.js/commit/5cbf4021ce3771d52bc69f2667f1431f6238e44d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the fallback when b-frames exist to not show a playback error until HLS has been attempted.
+
 ## 1.8.2
 
 ### Patch Changes
