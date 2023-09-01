@@ -141,10 +141,13 @@ const InternalVideoPlayer = React.forwardRef<
     [playbackMappedSources, currentSourceIndex],
   );
 
-  // we increment the source on an unknown error
+  // we increment the source on a bframes or  unknown error
   // and we clear the timeout if we have a null playbackError
   React.useEffect(() => {
-    if (playbackError?.type === 'unknown') {
+    if (
+      playbackError?.type === 'b-frames' ||
+      playbackError?.type === 'unknown'
+    ) {
       debouncedIncrementSourceIndexRef?.current?.();
     } else if (playbackError === null) {
       cancelRef?.current?.();

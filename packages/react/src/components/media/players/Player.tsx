@@ -105,7 +105,6 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
       showTitle,
       aspectRatio,
       renderChildrenOutsideContainer,
-      // playbackError,
     },
   } = usePlayer<HTMLMediaElement, PosterSource, TPlaybackPolicyObject, TSlice>(
     {

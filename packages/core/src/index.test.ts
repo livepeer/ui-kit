@@ -6,6 +6,7 @@ it('should expose correct exports', () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
       "ACCESS_CONTROL_ERROR_MESSAGE",
+      "BFRAMES_ERROR_MESSAGE",
       "Client",
       "HttpError",
       "STREAM_OFFLINE_ERROR_MESSAGE",
@@ -32,6 +33,7 @@ it('should expose correct exports', () => {
       "getStreamSession",
       "getStreamSessions",
       "isAccessControlError",
+      "isBframesError",
       "isStreamOfflineError",
       "noopStorage",
       "omit",
