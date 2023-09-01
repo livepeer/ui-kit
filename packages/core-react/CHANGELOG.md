@@ -13,7 +13,7 @@
 
 ### Patch Changes
 
-- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present.
+- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present. 
 
 - Updated dependencies [[`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a)]:
   - @livepeer/core@1.8.2
