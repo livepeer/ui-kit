@@ -89,7 +89,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
 
       {showLoadingSpinner &&
         !isLoaded &&
-        (!error?.type || error.type === 'b-frames') && (
+        (!error?.type || error.type === 'fallback') && (
           <div
             className={styling.controlsContainer.background()}
             onMouseUp={containerProps.onPress}
@@ -104,7 +104,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           </div>
         )}
 
-      {error?.type && error.type !== 'b-frames' ? (
+      {error?.type && error.type !== 'fallback' ? (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}

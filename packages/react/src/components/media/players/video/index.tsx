@@ -117,7 +117,7 @@ const InternalVideoPlayer = React.forwardRef<
 
   // update the debounced function when currentSourceIndex changes
   const { debouncedFn: debouncedIncrementSourceIndex, cancel } = React.useMemo(
-    () => debounce(incrementSourceIndex, 1000 * 2 ** currentSourceIndex),
+    () => debounce(incrementSourceIndex, 500 * currentSourceIndex),
     [incrementSourceIndex, currentSourceIndex],
   );
 
@@ -145,7 +145,7 @@ const InternalVideoPlayer = React.forwardRef<
   // and we clear the timeout if we have a null playbackError
   React.useEffect(() => {
     if (
-      playbackError?.type === 'b-frames' ||
+      playbackError?.type === 'fallback' ||
       playbackError?.type === 'unknown'
     ) {
       debouncedIncrementSourceIndexRef?.current?.();

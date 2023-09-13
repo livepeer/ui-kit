@@ -7,6 +7,7 @@ import {
   WebhookPlaybackPolicy,
   isAccessControlError,
   isBframesError,
+  isNotAcceptableError,
   isStreamOfflineError,
 } from '@livepeer/core';
 import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
@@ -217,8 +218,8 @@ export const usePlayer = <
         ? {
             type: isAccessControlError(error)
               ? 'access-control'
-              : isBframesError(error)
-              ? 'b-frames'
+              : isBframesError(error) || isNotAcceptableError(error)
+              ? 'fallback'
               : isStreamOfflineError(error)
               ? 'offline'
               : 'unknown',
