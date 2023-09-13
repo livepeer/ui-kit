@@ -1,3 +1,4 @@
+import { NOT_ACCEPTABLE_ERROR_MESSAGE } from '@livepeer/core';
 import fetch from 'cross-fetch';
 
 import { isClient } from '../utils';
@@ -107,6 +108,8 @@ export async function negotiateConnectionWithClientOffer(
       const sdpLinkHeader = response.headers.get('Link');
 
       return parseIceServersFromLinkHeader(sdpLinkHeader);
+    } else if (response.status === 406) {
+      throw new Error(NOT_ACCEPTABLE_ERROR_MESSAGE);
     } else {
       const errorMessage = await response.text();
       throw new Error(errorMessage);
