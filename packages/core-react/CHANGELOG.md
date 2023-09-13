@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.8.4
+
+### Patch Changes
+
+- [#376](https://github.com/livepeer/livepeer.js/pull/376) [`3301827`](https://github.com/livepeer/livepeer.js/commit/33018273c81b6a0482ce1cbb9441b7a1f100bf46) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed to have a cleaner fallback for 406 response from WebRTC negotiation.
+
+- Updated dependencies [[`3301827`](https://github.com/livepeer/livepeer.js/commit/33018273c81b6a0482ce1cbb9441b7a1f100bf46)]:
+  - @livepeer/core@1.8.4
+
 ## 1.8.3
 
 ### Patch Changes
@@ -13,7 +22,7 @@
 
 ### Patch Changes
 
-- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present. 
+- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present.
 
 - Updated dependencies [[`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a)]:
   - @livepeer/core@1.8.2
