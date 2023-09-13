@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.8.5
+
+### Patch Changes
+
+- [`17f84fd`](https://github.com/livepeer/livepeer.js/commit/17f84fd5dc9091555e240f45c0c54ae90b9e5a3d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** bumping version due to intermittent release error.
+
+- Updated dependencies [[`17f84fd`](https://github.com/livepeer/livepeer.js/commit/17f84fd5dc9091555e240f45c0c54ae90b9e5a3d)]:
+  - @livepeer/core-react@1.8.5
+  - livepeer@2.8.5
+
 ## 2.8.4
 
 ### Patch Changes
