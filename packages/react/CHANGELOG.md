@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 2.8.4
+
+### Patch Changes
+
+- [#376](https://github.com/livepeer/livepeer.js/pull/376) [`3301827`](https://github.com/livepeer/livepeer.js/commit/33018273c81b6a0482ce1cbb9441b7a1f100bf46) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed to have a cleaner fallback for 406 response from WebRTC negotiation.
+
+- Updated dependencies [[`3301827`](https://github.com/livepeer/livepeer.js/commit/33018273c81b6a0482ce1cbb9441b7a1f100bf46)]:
+  - @livepeer/core-react@1.8.4
+  - livepeer@2.8.4
+
 ## 2.8.3
 
 ### Patch Changes
