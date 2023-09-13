@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.8.5
+
+### Patch Changes
+
+- [`17f84fd`](https://github.com/livepeer/livepeer.js/commit/17f84fd5dc9091555e240f45c0c54ae90b9e5a3d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** bumping version due to intermittent release error.
+
+- Updated dependencies [[`17f84fd`](https://github.com/livepeer/livepeer.js/commit/17f84fd5dc9091555e240f45c0c54ae90b9e5a3d)]:
+  - @livepeer/core@1.8.5
+
 ## 1.8.4
 
 ### Patch Changes
@@ -22,7 +31,7 @@
 
 ### Patch Changes
 
-- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present. 
+- [`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added changes to strip a non-standard port number from the WebRTC redirect host, if present.
 
 - Updated dependencies [[`d809f28`](https://github.com/livepeer/livepeer.js/commit/d809f28ea71dd0317ae57973a4f85c5d65ad5d0a)]:
   - @livepeer/core@1.8.2
