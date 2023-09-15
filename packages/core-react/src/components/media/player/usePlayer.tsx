@@ -245,14 +245,14 @@ export const usePlayer = <
           }
         : null;
 
-      onPlaybackErrorProp?.(newPlaybackError);
-
       setPlaybackError(newPlaybackError);
 
       try {
         if (newPlaybackError) {
           console.log(newPlaybackError);
         }
+
+        onPlaybackErrorProp?.(newPlaybackError);
 
         if (!error) {
           onStreamStatusChange?.(true);
@@ -264,13 +264,13 @@ export const usePlayer = <
           onError?.(new Error(newPlaybackError.message));
         }
       } catch (e) {
-        //
+        console.error(e);
       }
 
       return newPlaybackError;
     },
 
-    [onAccessControlError, onStreamStatusChange, onError],
+    [onAccessControlError, onStreamStatusChange, onError, onPlaybackErrorProp],
   );
 
   React.useEffect(() => {
