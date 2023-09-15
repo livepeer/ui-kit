@@ -8,7 +8,7 @@ import {
 } from '@livepeer/core';
 
 import { PlayerProps } from './usePlayer';
-import { ControlsError, ObjectFit } from '../shared';
+import { ObjectFit, PlaybackError } from '../shared';
 
 export type VideoPlayerProps<
   TElement,
@@ -51,7 +51,7 @@ export type VideoPlayerProps<
     TSlice
   >['playbackStatusSelector'];
 
-  playbackError: ControlsError | null;
+  playbackError: PlaybackError | null;
   onPlaybackError: (error: Error | null) => void;
 };
 

@@ -10,7 +10,7 @@ import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import * as React from 'react';
 
 import { useLivepeerProvider } from '../../../hooks';
-import { ControlsError, ObjectFit } from '../shared';
+import { ObjectFit, PlaybackError } from '../shared';
 
 export type BroadcastProps<TElement, TMediaStream, TSlice> = {
   /** The stream key for the broadcast. This is required. */
@@ -93,11 +93,11 @@ export const useBroadcast = <TElement, TMediaStream, TSlice>({
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
   const [broadcastError, setBroadcastError] =
-    React.useState<ControlsError | null>(null);
+    React.useState<PlaybackError | null>(null);
 
   const onBroadcastError = React.useCallback(
     (error: Error | null) => {
-      const newError: ControlsError | null = error
+      const newError: PlaybackError | null = error
         ? {
             type: isAccessControlError(error)
               ? 'access-control'

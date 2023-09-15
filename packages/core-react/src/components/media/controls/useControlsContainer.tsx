@@ -1,15 +1,19 @@
 import { MediaControllerState } from '@livepeer/core';
 import * as React from 'react';
 
-import { ControlsError } from '../shared';
+import { PlaybackError } from '../shared';
 
 export type ControlsContainerProps = {
   loadingText?: string | null;
   showLoadingSpinner?: boolean;
   hidePosterOnPlayed?: boolean;
   poster?: React.ReactNode;
-  error?: ControlsError | null;
+  error?: PlaybackError | null;
   isBroadcast?: boolean;
+
+  playbackFailedErrorComponent?: React.ReactNode;
+  streamOfflineErrorComponent?: React.ReactNode;
+  accessControlErrorComponent?: React.ReactNode;
 
   top?: React.ReactNode;
   middle?: React.ReactNode;

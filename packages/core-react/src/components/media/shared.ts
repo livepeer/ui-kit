@@ -1,6 +1,6 @@
 export type ObjectFit = 'cover' | 'contain';
 
-export type ControlsError = {
+export type PlaybackError = {
   type: 'offline' | 'access-control' | 'fallback' | 'unknown';
   message: string;
 };

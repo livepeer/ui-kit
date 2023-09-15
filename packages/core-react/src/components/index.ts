@@ -13,7 +13,7 @@ export {
   type BroadcastProps,
   type ContainerProps,
   type ControlsContainerProps,
-  type ControlsError,
+  type PlaybackError,
   type FullscreenButtonProps,
   type InternalPlayerProps,
   type ObjectFit,
