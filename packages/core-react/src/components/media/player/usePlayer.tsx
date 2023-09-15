@@ -16,7 +16,7 @@ import { isNumber } from '@livepeer/core/utils';
 import * as React from 'react';
 
 import { useSourceMimeTyped } from './useSourceMimeTyped';
-import { ControlsError, ObjectFit } from '../shared';
+import { ObjectFit, PlaybackError } from '../shared';
 
 export type InternalPlayerProps = {
   /** The current screen width. This is null if the screen size cannot be determined (SSR). */
@@ -86,6 +86,15 @@ export type PlayerProps<
   /** The object-fit property for the video element. Defaults to cover (contain is usually used in full-screen applications) */
   objectFit?: ObjectFit;
 
+  /** Custom component to render when playback fails and is retrying */
+  playbackFailedErrorComponent?: React.ReactNode;
+
+  /** Custom component to render when the stream is offline */
+  accessControlErrorComponent?: React.ReactNode;
+
+  /** Custom component to render when the stream is offline */
+  streamOfflineErrorComponent?: React.ReactNode;
+
   /** Custom controls passed in to override the default controls */
   children?: React.ReactNode;
 
@@ -130,6 +139,9 @@ export type PlayerProps<
 
   /** Callback called when the media sources are changed */
   onSourceUpdated?: (sources: Src[]) => void;
+
+  /** Callback called when there is a playback error */
+  onPlaybackError?: (error: PlaybackError | null) => void;
 
   /** Callback called when an error occurs that is not access control or metrics */
   onError?: (error: Error) => void;
@@ -191,6 +203,12 @@ export const usePlayer = <
     onPlaybackStatusUpdate,
     playbackStatusSelector,
 
+    playbackFailedErrorComponent,
+    streamOfflineErrorComponent,
+    accessControlErrorComponent,
+
+    onPlaybackError: onPlaybackErrorProp,
+
     renderChildrenOutsideContainer,
   }: PlayerProps<TElement, TPoster, TPlaybackPolicyObject, TSlice>,
   { _screenWidth }: InternalPlayerProps,
@@ -210,11 +228,11 @@ export const usePlayer = <
   });
 
   const [playbackError, setPlaybackError] =
-    React.useState<ControlsError | null>(null);
+    React.useState<PlaybackError | null>(null);
 
   const onPlaybackError = React.useCallback(
     (error: Error | null) => {
-      const newPlaybackError: ControlsError | null = error
+      const newPlaybackError: PlaybackError | null = error
         ? {
             type: isAccessControlError(error)
               ? 'access-control'
@@ -226,6 +244,8 @@ export const usePlayer = <
             message: error?.message ?? 'Error with playback.',
           }
         : null;
+
+      onPlaybackErrorProp?.(newPlaybackError);
 
       setPlaybackError(newPlaybackError);
 
@@ -362,6 +382,10 @@ export const usePlayer = <
       loadingText,
       showUploadingIndicator,
       error: playbackError,
+
+      playbackFailedErrorComponent,
+      streamOfflineErrorComponent,
+      accessControlErrorComponent,
     }),
     [
       hidePosterOnPlayed,
@@ -369,6 +393,10 @@ export const usePlayer = <
       loadingText,
       showUploadingIndicator,
       playbackError,
+
+      playbackFailedErrorComponent,
+      streamOfflineErrorComponent,
+      accessControlErrorComponent,
     ],
   );
 

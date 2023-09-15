@@ -45,6 +45,9 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
     loadingText,
     error,
     children,
+    playbackFailedErrorComponent,
+    streamOfflineErrorComponent,
+    accessControlErrorComponent,
   } = props;
 
   const {
@@ -110,9 +113,19 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           onMouseUp={containerProps.onPress}
         >
           {error?.type === 'access-control' ? (
-            <PrivateStreamError />
+            accessControlErrorComponent ? (
+              accessControlErrorComponent
+            ) : (
+              <PrivateStreamError />
+            )
           ) : error?.type === 'offline' ? (
-            <OfflineStreamError isBroadcast={isBroadcast} />
+            streamOfflineErrorComponent ? (
+              streamOfflineErrorComponent
+            ) : (
+              <OfflineStreamError isBroadcast={isBroadcast} />
+            )
+          ) : playbackFailedErrorComponent ? (
+            playbackFailedErrorComponent
           ) : (
             <GenericError isBroadcast={isBroadcast} />
           )}
