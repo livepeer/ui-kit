@@ -51,18 +51,20 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
 
   return (
     <DesignSystemProvider>
-      <ThemeProvider
-        forcedTheme={'light'}
-        disableTransitionOnChange
-        attribute="class"
-        value={{
-          ...themes,
-          dark: 'dark-theme-green',
-          light: 'light-theme-green',
-        }}
-      >
-        <LivepeerConfig client={livepeerClient}>{children}</LivepeerConfig>
-      </ThemeProvider>
+      <LivepeerConfig client={livepeerClient}>
+        <ThemeProvider
+          forcedTheme={'light'}
+          disableTransitionOnChange
+          attribute="class"
+          value={{
+            ...themes,
+            dark: 'dark-theme-green',
+            light: 'light-theme-green',
+          }}
+        >
+          {children}
+        </ThemeProvider>
+      </LivepeerConfig>
     </DesignSystemProvider>
   );
 };
