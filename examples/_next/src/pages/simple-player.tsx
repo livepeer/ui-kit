@@ -8,8 +8,13 @@ const Page = () => {
       <Player
         autoPlay
         // renderChildrenOutsideContainer
-        playbackId="dbe4u54fx6jc75k2"
+        playbackId="806dk46k6ba0dv3m"
         lowLatency="force"
+        streamOfflineErrorComponent={
+          <>
+            <span style={{ color: 'white' }}>this failed.</span>
+          </>
+        }
         // onPlaybackStatusUpdate={(state) => state.se}
         // playbackStatusSelector={(state) => state.playing}
         // onPlaybackStatusUpdate={(playing) => setPlaying(playing)}
