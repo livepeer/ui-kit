@@ -1,5 +1,26 @@
 # @livepeer/core-react
 
+## 1.8.6
+
+### Patch Changes
+
+- [#379](https://github.com/livepeer/livepeer.js/pull/379) [`b29684d`](https://github.com/livepeer/livepeer.js/commit/b29684dfcf3259af2637a0d98059ba2a774084b4) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added custom components to render in place of the default error components, for when a stream is offline: `streamOfflineErrorComponent`, when an access control error occurs (like an invalid JWT is passed): `accessControlErrorComponent`, and when playback fails another unknown error: `playbackFailedErrorComponent`.
+
+  Also added a callback for when these errors occur: `onPlaybackError`. This can be used like:
+
+  ```tsx
+  onPlaybackError={(e) => {
+    if (e === null) {
+      doSomethingWithErrorResolved();
+    } else if (e?.type === 'offline') {
+      doSomethingWithOfflineError();
+    }
+  }}
+  ```
+
+- Updated dependencies [[`b29684d`](https://github.com/livepeer/livepeer.js/commit/b29684dfcf3259af2637a0d98059ba2a774084b4)]:
+  - @livepeer/core@1.8.6
+
 ## 1.8.5
 
 ### Patch Changes
