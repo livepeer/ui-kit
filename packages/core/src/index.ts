@@ -1,5 +1,6 @@
 export {
   createAsset,
+  createClip,
   createStream,
   getAsset,
   getAssetMetrics,
@@ -39,6 +40,7 @@ export {
 export type {
   AudioSrc,
   Base64Src,
+  ClipLength,
   ControlsOptions,
   DeviceInformation,
   ElementSize,
@@ -71,6 +73,7 @@ export type {
   CreateAssetSourceType,
   CreateAssetSourceUrl,
   CreateAssetUrlProgress,
+  CreateClipArgs,
   CreateStreamArgs,
   CreatorId,
   Domain,

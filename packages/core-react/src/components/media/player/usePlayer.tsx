@@ -1,4 +1,6 @@
 import {
+  Asset,
+  ClipLength,
   ControlsOptions,
   MediaControllerCallbackState,
   MediaPropsOptions,
@@ -60,6 +62,14 @@ export type PlayerProps<
   showLoadingSpinner?: boolean;
   /** Enables/disables the dStorage uploading indicator (text and progress percentage) */
   showUploadingIndicator?: boolean;
+
+  /** The length of a clip to generate. Set to a number to enable (web only). */
+  clipLength?: ClipLength;
+
+  /** Callback when a clip is created from the clip button. */
+  onClipCreated?: (asset: Asset) => Promise<any> | any;
+  /** Callback when a clip fails to be created from the clip button. */
+  onClipError?: (error: any) => Promise<any> | any;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
@@ -182,6 +192,10 @@ export const usePlayer = <
     onError,
     onSourceUpdated,
     jwt,
+
+    clipLength,
+    onClipCreated,
+    onClipError,
 
     viewerId,
 
@@ -371,8 +385,20 @@ export const usePlayer = <
       muted,
       priority: priority,
       viewerId,
+      clipLength,
+      onClipCreated,
+      onClipError,
     }),
-    [autoPlay, playbackId, muted, priority, viewerId],
+    [
+      autoPlay,
+      playbackId,
+      muted,
+      priority,
+      viewerId,
+      clipLength,
+      onClipCreated,
+      onClipError,
+    ],
   );
 
   const controlsContainerProps = React.useMemo(

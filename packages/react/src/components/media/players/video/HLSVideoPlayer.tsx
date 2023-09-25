@@ -16,11 +16,13 @@ const mediaControllerSelector = ({
   onDurationChange,
   onCanPlay,
   _element,
+  _updatePlaybackOffsetMs,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   setLive,
   onDurationChange,
   onCanPlay,
   _element,
+  _updatePlaybackOffsetMs,
 });
 
 export type HLSVideoPlayerProps = Omit<
@@ -45,15 +47,18 @@ export const HLSVideoPlayer = React.forwardRef<
     poster,
     objectFit,
     fullscreen,
-    // playbackError,
     onPlaybackError,
     priority,
     allowCrossOriginCredentials,
   } = props;
 
-  const { setLive, onCanPlay, onDurationChange, _element } = useMediaController(
-    mediaControllerSelector,
-  );
+  const {
+    setLive,
+    onCanPlay,
+    onDurationChange,
+    _element,
+    _updatePlaybackOffsetMs,
+  } = useMediaController(mediaControllerSelector);
 
   const onLive = React.useCallback(
     async (live: boolean) => {
@@ -91,6 +96,7 @@ export const HLSVideoPlayer = React.forwardRef<
           onDuration: onDurationChange,
           onCanPlay: onCanPlay,
           onError: onErrorComposed,
+          onPlaybackOffsetUpdated: _updatePlaybackOffsetMs,
         },
         {
           autoplay: autoPlay,
@@ -116,6 +122,7 @@ export const HLSVideoPlayer = React.forwardRef<
     onPlaybackError,
     allowCrossOriginCredentials,
     debouncedErrorCount,
+    _updatePlaybackOffsetMs,
   ]);
 
   return (

@@ -23,6 +23,7 @@ import type {
   CreateAssetSourceType,
   CreateAssetSourceUrl,
   CreateAssetUrlProgress,
+  CreateClipArgs,
   CreateStreamArgs,
   GetAssetArgs,
   GetAssetMetricsArgs,
@@ -152,6 +153,20 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
       },
     );
     return studioStreamSessions;
+  }
+
+  async createClip(args: CreateClipArgs): Promise<Asset> {
+    const clip = await this._create<{ asset: Asset }, CreateClipArgs>(`/clip`, {
+      json: {
+        playbackId: args.playbackId,
+        startTime: args.startTime,
+        endTime: args.endTime,
+        ...(args.name ? { name: args.name } : {}),
+      },
+      headers: this._defaultHeaders,
+    });
+
+    return clip.asset;
   }
 
   async createAsset<TSource extends CreateAssetSourceType>(

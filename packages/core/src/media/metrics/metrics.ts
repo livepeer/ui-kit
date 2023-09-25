@@ -29,6 +29,8 @@ type RawMetrics = {
 
   sourceType: MimeType | 'unknown';
 
+  offset: number;
+
   pageUrl: string;
   sourceUrl: string | null;
   duration: number | null;
@@ -223,6 +225,7 @@ export class MetricsStatus<TElement, TMediaStream> {
       nError: 0,
       nStalled: 0,
       nWaiting: 0,
+      offset: 0,
       pageUrl,
       playbackScore: null,
       player: `${playerPrefix}-${version}`,
@@ -328,6 +331,8 @@ export class MetricsStatus<TElement, TMediaStream> {
       timeWaiting: this.timeWaiting.getTotalTime(),
       timeStalled: this.timeStalled.getTotalTime(),
       timeUnpaused: this.timeUnpaused.getTotalTime(),
+
+      offset: this.store.getState().playbackOffsetMs ?? 0,
 
       // this is the amount of time that a video has had to preload content, from boot until play was requested
       preloadTime: this.requestedPlayTime,

@@ -7,7 +7,7 @@ import {
 } from './shared';
 
 /**
- * Client that uses WHEP to playback video over WebRTC.
+ * Client that uses WHEP to play back video over WebRTC.
  *
  * https://www.ietf.org/id/draft-murillo-whep-00.html
  */
@@ -16,6 +16,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
   element: TElement,
   callbacks?: {
     onConnected?: () => void;
+    onPlaybackOffsetUpdated?: (d: number) => void;
     onError?: (data: Error) => void;
   },
   config?: WebRTCVideoConfig,
@@ -126,12 +127,20 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               redirectUrlString,
             );
 
-            await negotiateConnectionWithClientOffer(
+            const playheadTime = await negotiateConnectionWithClientOffer(
               peerConnection,
               redirectUrlString,
               ofr,
               config?.sdpTimeout,
             );
+
+            const currentDate = Date.now();
+
+            if (playheadTime && currentDate) {
+              callbacks?.onPlaybackOffsetUpdated?.(
+                currentDate - playheadTime.getTime(),
+              );
+            }
           } catch (e) {
             errorComposed(e as Error);
           }
