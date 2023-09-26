@@ -42,24 +42,8 @@ export function createPeerConnection(
     window?.webkitRTCPeerConnection ||
     window?.mozRTCPeerConnection;
 
-  // strip non-standard port number if present
-  const hostNoPort = host?.split(':')[0];
-
-  const iceServers = host
-    ? [
-        {
-          urls: `stun:${hostNoPort}`,
-        },
-        {
-          urls: `turn:${hostNoPort}`,
-          username: 'livepeer',
-          credential: 'livepeer',
-        },
-      ]
-    : [];
-
   if (RTCPeerConnectionConstructor) {
-    return new RTCPeerConnectionConstructor({ iceServers });
+    return new RTCPeerConnectionConstructor();
   }
 
   return null;
@@ -106,8 +90,12 @@ export async function negotiateConnectionWithClientOffer(
         new RTCSessionDescription({ type: 'answer', sdp: answerSDP }),
       );
       const sdpLinkHeader = response.headers.get('Link');
-
-      return parseIceServersFromLinkHeader(sdpLinkHeader);
+      const iceServers = parseIceServersFromLinkHeader(sdpLinkHeader);
+      peerConnection.setConfiguration({
+        iceServers: iceServers,
+      });
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
     } else if (response.status === 406) {
       throw new Error(NOT_ACCEPTABLE_ERROR_MESSAGE);
     } else {
@@ -221,12 +209,15 @@ async function waitToCompleteICEGathering(peerConnection: RTCPeerConnection) {
  */
 function parseIceServersFromLinkHeader(
   iceString: string | null,
-): NonNullable<RTCConfiguration['iceServers']> | null {
+): NonNullable<RTCConfiguration['iceServers']> {
   try {
     const servers = iceString
       ?.split(', ')
       .map((serverStr) => {
-        const parts = serverStr.split('; ');
+        const parts = serverStr
+          .split(';')
+          .map((x) => x.trim())
+          .filter((x) => x);
         const server: NonNullable<RTCConfiguration['iceServers']>[number] = {
           urls: '',
         };
@@ -245,10 +236,10 @@ function parseIceServersFromLinkHeader(
       })
       .filter((server) => server.urls);
 
-    return servers && (servers?.length ?? 0) > 0 ? servers : null;
+    return servers && (servers?.length ?? 0) > 0 ? servers : [];
   } catch (e) {
     console.error(e);
   }
 
-  return null;
+  return [];
 }
