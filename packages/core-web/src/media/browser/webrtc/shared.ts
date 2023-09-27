@@ -34,9 +34,7 @@ export const isWebRTCSupported = () => {
   return hasRTCPeerConnection && hasGetUserMedia && hasRTCDataChannel;
 };
 
-export function createPeerConnection(
-  host: string | null,
-): RTCPeerConnection | null {
+export function createPeerConnection(): RTCPeerConnection | null {
   const RTCPeerConnectionConstructor =
     window?.RTCPeerConnection ||
     window?.webkitRTCPeerConnection ||
@@ -70,13 +68,15 @@ const DEFAULT_TIMEOUT = 10000;
  *
  * https://developer.mozilla.org/en-US/docs/Glossary/SDP
  * https://www.ietf.org/archive/id/draft-ietf-wish-whip-01.html#name-protocol-operation
+ *
+ * Returns the URL of the post-redirect media server such that we may DELETE our session later
  */
 export async function negotiateConnectionWithClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
   timeout?: number,
-) {
+): Promise<string> {
   if (peerConnection && endpoint && ofr) {
     /**
      * This response contains the server's SDP offer.
@@ -96,6 +96,7 @@ export async function negotiateConnectionWithClientOffer(
       });
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
+      return response.url;
     } else if (response.status === 406) {
       throw new Error(NOT_ACCEPTABLE_ERROR_MESSAGE);
     } else {
@@ -117,9 +118,8 @@ export async function negotiateConnectionWithClientOffer(
  */
 export async function constructClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
-  endpoint: string | null | undefined,
 ) {
-  if (peerConnection && endpoint) {
+  if (peerConnection) {
     /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createOffer */
     const offer = await peerConnection.createOffer();
     /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setLocalDescription */
@@ -154,32 +154,6 @@ async function postSDPOffer(endpoint: string, data: string, timeout?: number) {
   clearTimeout(id);
 
   return response;
-}
-
-export async function getRedirectUrl(
-  endpoint: string,
-  abortController: AbortController,
-  timeout?: number,
-) {
-  const id = setTimeout(
-    () => abortController.abort(),
-    timeout ?? DEFAULT_TIMEOUT,
-  );
-
-  try {
-    const response = await fetch(endpoint, {
-      method: 'HEAD',
-      signal: abortController.signal,
-    });
-
-    clearTimeout(id);
-
-    const parsedUrl = new URL(response.url);
-
-    return parsedUrl;
-  } catch (e) {
-    return null;
-  }
 }
 
 /**
