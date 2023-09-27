@@ -345,7 +345,12 @@ export const addEventListeners = <
   };
 };
 
-let previousPromise: Promise<void> | Promise<null> | boolean | null;
+let previousPromise:
+  | Promise<void>
+  | Promise<any>
+  | Promise<null>
+  | boolean
+  | null;
 
 const addEffectsToStore = <
   TElement extends HTMLMediaElement,
@@ -467,21 +472,19 @@ const addEffectsToStore = <
           const startTime = estimatedServerClipTime - clipLength * 1000;
           const endTime = estimatedServerClipTime;
 
-          previousPromise = (async () => {
-            await createClip({
-              playbackId,
-              startTime,
-              endTime,
+          previousPromise = createClip({
+            playbackId,
+            startTime,
+            endTime,
+          })
+            .then((asset) => {
+              if (asset?.id) {
+                current?.onClipCreated?.(asset);
+              } else {
+                throw new Error('returned asset was not defined');
+              }
             })
-              .then((asset) => {
-                if (asset?.id) {
-                  current?.onClipCreated?.(asset);
-                } else {
-                  throw new Error('returned asset was not defined');
-                }
-              })
-              .catch((error) => current?.onClipError?.(error));
-          })();
+            .catch((error) => current?.onClipError?.(error));
         }
 
         if (
