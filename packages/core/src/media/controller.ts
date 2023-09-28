@@ -61,7 +61,7 @@ export type Metadata = {
   bufferWindow?: number;
 };
 
-export type ClipLength = 60 | 30 | 10 | number;
+export type ClipLength = 90 | 60 | 45 | 30 | 15 | 10;
 
 const omittedKeys = [
   '_lastInteraction',
