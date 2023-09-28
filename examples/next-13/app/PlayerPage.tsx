@@ -62,6 +62,10 @@ export default (props: PlayerProps<object, any>) => {
               containerBorderRadius: '0px',
             },
           }}
+          clipLength={60}
+          onClipCreated={(asset) => {
+            console.log(asset);
+          }}
           controls={{
             defaultVolume: 0.7,
           }}
