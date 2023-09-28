@@ -1,5 +1,6 @@
 'use client';
 
+import { DesignSystemProvider, getThemes } from '@livepeer/design-system';
 import {
   LivepeerConfig,
   createReactClient,
@@ -7,6 +8,7 @@ import {
   noopStorage,
   studioProvider,
 } from '@livepeer/react';
+import { ThemeProvider } from 'next-themes';
 import { useMemo } from 'react';
 
 function fromStorage(key: string): string | null {
@@ -18,6 +20,8 @@ function fromStorage(key: string): string | null {
   }
   return apiOverride;
 }
+
+const themes = getThemes();
 
 export const Providers = ({ children }: React.PropsWithChildren) => {
   const livepeerClient = useMemo(
@@ -45,5 +49,22 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
     [],
   );
 
-  return <LivepeerConfig client={livepeerClient}>{children}</LivepeerConfig>;
+  return (
+    <DesignSystemProvider>
+      <LivepeerConfig client={livepeerClient}>
+        <ThemeProvider
+          forcedTheme={'light'}
+          disableTransitionOnChange
+          attribute="class"
+          value={{
+            ...themes,
+            dark: 'dark-theme-green',
+            light: 'light-theme-green',
+          }}
+        >
+          {children}
+        </ThemeProvider>
+      </LivepeerConfig>
+    </DesignSystemProvider>
+  );
 };
