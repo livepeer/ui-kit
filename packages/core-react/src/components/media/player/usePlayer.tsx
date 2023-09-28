@@ -63,7 +63,7 @@ export type PlayerProps<
   /** Enables/disables the dStorage uploading indicator (text and progress percentage) */
   showUploadingIndicator?: boolean;
 
-  /** The length of a clip to generate. Set to a number to enable (web only). */
+  /** The length of a clip in seconds to generate. Set to a number to enable (web only). */
   clipLength?: ClipLength;
 
   /** Callback when a clip is created from the clip button. */
