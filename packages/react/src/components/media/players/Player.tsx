@@ -18,7 +18,7 @@ import { WebRTCVideoConfig } from 'livepeer/media/browser/webrtc';
 import * as React from 'react';
 
 import { AudioPlayer } from '.';
-import { PlayButton, Poster, Progress, Volume } from './controls';
+import { ClipButton, PlayButton, Poster, Progress, Volume } from './controls';
 import { VideoPlayer } from './video';
 import { MediaControllerProvider } from '../../../context';
 import { useIsElementShown } from '../../useIsElementShown';
@@ -172,6 +172,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
             }
             right={
               <>
+                {props.clipLength && <ClipButton length={props.clipLength} />}
                 {props.showPipButton && <PictureInPictureButton />}
                 <FullscreenButton />
               </>

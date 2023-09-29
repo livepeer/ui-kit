@@ -54,18 +54,18 @@ const useMediaControllerStore = <
   );
 
   React.useEffect(() => {
+    if (element) {
+      store.setState({ _element: element });
+    }
+  }, [store, element]);
+
+  React.useEffect(() => {
     const { destroy } = addEventListeners(store, opts);
 
     return () => {
       destroy?.();
     };
-  }, [store, opts]);
-
-  React.useEffect(() => {
-    if (element) {
-      store.setState({ _element: element });
-    }
-  }, [store, element]);
+  }, [store, element, opts]);
 
   return store;
 };

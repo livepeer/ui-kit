@@ -1,6 +1,7 @@
 export { useBroadcast, type BroadcastProps } from './broadcast';
 export {
   useBaseSlider,
+  useClipButton,
   useControlsContainer,
   useFullscreenButton,
   usePlayButton,
@@ -8,6 +9,7 @@ export {
   useTimeDisplay,
   useVolume,
   type BaseSliderProps,
+  type ClipButtonProps,
   type ContainerProps,
   type ControlsContainerProps,
   type FullscreenButtonProps,
@@ -20,4 +22,4 @@ export {
 export type { AudioPlayerProps, VideoPlayerProps } from './player/players';
 export { usePlayer } from './player/usePlayer';
 export type { InternalPlayerProps, PlayerProps } from './player/usePlayer';
-export type { PlaybackError, ObjectFit } from './shared';
+export type { ObjectFit, PlaybackError } from './shared';

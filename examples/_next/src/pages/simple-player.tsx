@@ -7,9 +7,16 @@ const Page = () => {
       {/* <div style={{ height: '110vh' }} /> */}
       <Player
         autoPlay
+        muted
         // renderChildrenOutsideContainer
-        playbackId="dbe4u54fx6jc75k2"
+        playbackId="459dd5to4ie9a65p"
+        // playbackId="d701rc6r97wyso8s"
+        clipLength={60}
+        onClipCreated={(asset) => {
+          console.log(asset);
+        }}
         lowLatency="force"
+        showPipButton
         // onPlaybackStatusUpdate={(state) => state.se}
         // playbackStatusSelector={(state) => state.playing}
         // onPlaybackStatusUpdate={(playing) => setPlaying(playing)}

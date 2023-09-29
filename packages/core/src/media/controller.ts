@@ -7,6 +7,7 @@ import { StoreApi, createStore } from 'zustand/vanilla';
 
 import { Src, getMediaSourceType } from './src';
 import { ClientStorage } from '../storage';
+import { Asset } from '../types';
 import { omit } from '../utils';
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
@@ -60,6 +61,8 @@ export type Metadata = {
   bufferWindow?: number;
 };
 
+export type ClipLength = 90 | 60 | 45 | 30 | 15 | 10;
+
 const omittedKeys = [
   '_lastInteraction',
   '_requestSeekDiff',
@@ -82,6 +85,9 @@ const omittedKeys = [
   'onDurationChange',
   'onPlay',
   'onPause',
+  'onClipCreated',
+  'onClipError',
+  '_updatePlaybackOffsetMs',
 ] as const;
 
 export const sanitizeMediaControllerState = <TElement, TMediaStream>(
@@ -130,6 +136,15 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   creatorId: string;
   /** The media metadata, from the playback websocket */
   metadata?: Metadata;
+  /** The length (in seconds) of the clip to create from instant clipping. */
+  clipLength?: ClipLength;
+  /** Callback when a clip is created from the clip button. */
+  onClipCreated?: (asset: Asset) => Promise<any> | any;
+  /** Callback when a clip fails to be created from the clip button. */
+  onClipError?: (error: any) => Promise<any> | any;
+
+  /** The offset of the browser's livestream versus the server time (in ms). */
+  playbackOffsetMs?: number;
 
   /** The audio and video device IDs for broadcasting */
   deviceIds: {
@@ -164,6 +179,9 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
 
   /** The last time that fullscreen was changed */
   _requestedFullscreenLastTime: number;
+
+  /** The last time that a clip was requested */
+  _requestedClipLastTime: number;
 
   /** The last time that picture in picture was changed*/
   _requestedPictureInPictureLastTime: number;
@@ -209,6 +227,8 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   setHidden: (hidden: boolean) => void;
   _updateLastInteraction: () => void;
 
+  _updatePlaybackOffsetMs: (offset: number) => void;
+
   setWebsocketMetadata: (metadata: Metadata) => void;
 
   onCanPlay: () => void;
@@ -238,6 +258,7 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   setPictureInPicture: (pictureInPicture: boolean) => void;
   requestToggleFullscreen: () => void;
   requestTogglePictureInPicture: () => void;
+  requestClip: () => void;
 
   _setVolume: (volume: number) => void;
   requestVolume: (volume: number) => void;
@@ -328,6 +349,11 @@ export const createControllerStore = <TElement, TMediaStream>({
           preload: mediaProps.priority ? 'full' : 'none',
           viewerId: mediaProps.viewerId ?? '',
           creatorId: mediaProps.creatorId ?? '',
+          clipLength: mediaProps.clipLength,
+          onClipCreated: mediaProps.onClipCreated,
+          onClipError: mediaProps.onClipError,
+
+          playbackOffsetMs: 0,
 
           deviceIds: null,
 
@@ -357,6 +383,7 @@ export const createControllerStore = <TElement, TMediaStream>({
           _lastInteraction: Date.now(),
 
           _requestedRangeToSeekTo: 0,
+          _requestedClipLastTime: Date.now(),
           _requestedFullscreenLastTime: Date.now(),
           _requestedPictureInPictureLastTime: Date.now(),
           _requestedPlayPauseLastTime: 0,
@@ -385,6 +412,11 @@ export const createControllerStore = <TElement, TMediaStream>({
               ...(!playbackId
                 ? { playbackId: getPlaybackIdFromSourceUrl(source) }
                 : {}),
+            })),
+
+          _updatePlaybackOffsetMs: (offset: number) =>
+            set(() => ({
+              playbackOffsetMs: offset,
             })),
 
           onCanPlay: () =>
@@ -470,6 +502,10 @@ export const createControllerStore = <TElement, TMediaStream>({
             set(() => ({
               _requestedFullscreenLastTime: Date.now(),
             })),
+          requestClip: () =>
+            set(() => ({
+              _requestedClipLastTime: Date.now(),
+            })),
 
           setPictureInPicture: (pictureInPicture: boolean) =>
             set(() => ({ pictureInPicture })),
@@ -530,6 +566,10 @@ export type MediaPropsOptions = {
   muted?: boolean;
   priority?: boolean;
   viewerId?: string;
+  clipLength?: ClipLength;
+
+  onClipCreated?: (asset: Asset) => Promise<any> | any;
+  onClipError?: (error: any) => Promise<any> | any;
 
   creatorId?: string;
   ingestUrl?: string;

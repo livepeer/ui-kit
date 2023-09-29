@@ -25,6 +25,9 @@ export interface LivepeerProvider {
   /** List sessions for a specific parent stream ID */
   getStreamSessions(args: GetStreamSessionsArgs): Promise<StreamSession[]>;
 
+  /** Create a new clip */
+  createClip(args: CreateClipArgs): Promise<Asset>;
+
   /** Create a new asset(s) */
   createAsset<TSource extends CreateAssetSourceType>(
     args: CreateAssetArgs<TSource>,
@@ -81,6 +84,17 @@ export type CreateStreamArgs = {
    * Sets the creator ID for the stream that is created.
    */
   creatorId?: CreatorId;
+};
+
+export type CreateClipArgs = {
+  /** Name for the new clip */
+  name?: string;
+  /** Playback ID of the stream to clip */
+  playbackId: string;
+  /** Start of the clip in unix seconds */
+  startTime: number;
+  /** End of the clip in unix seconds */
+  endTime: number;
 };
 
 export type WebhookPlaybackPolicy<TContext extends object> = {

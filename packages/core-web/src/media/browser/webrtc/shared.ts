@@ -105,9 +105,10 @@ export async function negotiateConnectionWithClientOffer(
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription({ type: 'answer', sdp: answerSDP }),
       );
-      const sdpLinkHeader = response.headers.get('Link');
 
-      return parseIceServersFromLinkHeader(sdpLinkHeader);
+      const playheadUtc = response.headers.get('Playhead-Utc');
+
+      return new Date(playheadUtc ?? new Date());
     } else if (response.status === 406) {
       throw new Error(NOT_ACCEPTABLE_ERROR_MESSAGE);
     } else {
@@ -219,36 +220,36 @@ async function waitToCompleteICEGathering(peerConnection: RTCPeerConnection) {
 /**
  * Parses the ICE servers from the `Link` headers returned during SDP negotiation.
  */
-function parseIceServersFromLinkHeader(
-  iceString: string | null,
-): NonNullable<RTCConfiguration['iceServers']> | null {
-  try {
-    const servers = iceString
-      ?.split(', ')
-      .map((serverStr) => {
-        const parts = serverStr.split('; ');
-        const server: NonNullable<RTCConfiguration['iceServers']>[number] = {
-          urls: '',
-        };
+// function parseIceServersFromLinkHeader(
+//   iceString: string | null,
+// ): NonNullable<RTCConfiguration['iceServers']> | null {
+//   try {
+//     const servers = iceString
+//       ?.split(', ')
+//       .map((serverStr) => {
+//         const parts = serverStr.split('; ');
+//         const server: NonNullable<RTCConfiguration['iceServers']>[number] = {
+//           urls: '',
+//         };
 
-        for (const part of parts) {
-          if (part.startsWith('stun:') || part.startsWith('turn:')) {
-            server.urls = part;
-          } else if (part.startsWith('username=')) {
-            server.username = part.slice('username="'.length, -1);
-          } else if (part.startsWith('credential=')) {
-            server.credential = part.slice('credential="'.length, -1);
-          }
-        }
+//         for (const part of parts) {
+//           if (part.startsWith('stun:') || part.startsWith('turn:')) {
+//             server.urls = part;
+//           } else if (part.startsWith('username=')) {
+//             server.username = part.slice('username="'.length, -1);
+//           } else if (part.startsWith('credential=')) {
+//             server.credential = part.slice('credential="'.length, -1);
+//           }
+//         }
 
-        return server;
-      })
-      .filter((server) => server.urls);
+//         return server;
+//       })
+//       .filter((server) => server.urls);
 
-    return servers && (servers?.length ?? 0) > 0 ? servers : null;
-  } catch (e) {
-    console.error(e);
-  }
+//     return servers && (servers?.length ?? 0) > 0 ? servers : null;
+//   } catch (e) {
+//     console.error(e);
+//   }
 
-  return null;
-}
+//   return null;
+// }

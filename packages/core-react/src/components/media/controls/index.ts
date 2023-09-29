@@ -1,4 +1,5 @@
 export { useBaseSlider, type BaseSliderProps } from './useBaseSlider';
+export { useClipButton, type ClipButtonProps } from './useClipButton';
 export { type ContainerProps } from './useContainer';
 export {
   useControlsContainer,

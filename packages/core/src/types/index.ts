@@ -22,6 +22,7 @@ export type {
   CreateAssetSourceType,
   CreateAssetSourceUrl,
   CreateAssetUrlProgress,
+  CreateClipArgs,
   CreateStreamArgs,
   CreatorId,
   Domain,

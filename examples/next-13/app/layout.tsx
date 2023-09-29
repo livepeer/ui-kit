@@ -1,7 +1,11 @@
 import './globals.css';
 
+import { Inter } from 'next/font/google';
+
 import { Providers } from './providers';
 import { StitchesRegistry } from './registry';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,
@@ -15,7 +19,7 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>
+      <body className={inter.className}>
         <StitchesRegistry>
           <Providers>{children}</Providers>
         </StitchesRegistry>

@@ -1,3 +1,4 @@
+import { createClip } from '@livepeer/core';
 import {
   ControlsOptions as ControlsOptionsBase,
   DEFAULT_AUTOHIDE_TIME,
@@ -30,6 +31,7 @@ const allKeyTriggers = [
   'KeyM',
   'KeyI',
   'KeyV',
+  'KeyX',
   'Space',
   'ArrowRight',
   'ArrowLeft',
@@ -82,8 +84,6 @@ export const addEventListeners = <
   store: MediaControllerStore<TElement, TMediaStream>,
   { hotkeys = true, autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
 ) => {
-  let destroy: (() => void) | null = null;
-
   const _element = store?.getState()?._element;
 
   const initializedState = store.getState();
@@ -97,268 +97,260 @@ export const addEventListeners = <
     }, 1);
   }
 
-  const storeListener = store.subscribe(
-    (store) => store._element,
-    (element) => {
-      destroy?.();
+  const element = _element;
 
-      const onLoadedMetadata = () => store.getState().onCanPlay();
+  const onLoadedMetadata = () => store.getState().onCanPlay();
 
-      const onPlay = () => {
-        store.getState().onPlay();
-      };
-      const onPause = () => {
-        store.getState().onPause();
-      };
+  const onPlay = () => {
+    store.getState().onPlay();
+  };
+  const onPause = () => {
+    store.getState().onPause();
+  };
 
-      const onDurationChange = () =>
-        store.getState().onDurationChange(element?.duration ?? 0);
+  const onDurationChange = () =>
+    store.getState().onDurationChange(element?.duration ?? 0);
 
-      const onKeyUp = (e: KeyboardEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+  const onKeyUp = (e: KeyboardEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-        const code = e.code as KeyTrigger;
+    const code = e.code as KeyTrigger;
 
-        store.getState()._updateLastInteraction();
+    store.getState()._updateLastInteraction();
 
-        if (allKeyTriggers.includes(code)) {
-          if (code === 'Space' || code === 'KeyK') {
-            store.getState().togglePlay();
-          } else if (code === 'KeyF') {
-            store.getState().requestToggleFullscreen();
-          } else if (code === 'KeyI') {
-            store.getState().requestTogglePictureInPicture();
-          } else if (code === 'ArrowRight') {
-            store.getState().requestSeekForward();
-          } else if (code === 'ArrowLeft') {
-            store.getState().requestSeekBack();
-          } else if (code === 'KeyM') {
-            store.getState().requestToggleMute();
-          } else if (code === 'KeyV') {
-            store.getState().toggleVideo();
+    if (allKeyTriggers.includes(code)) {
+      if (code === 'Space' || code === 'KeyK') {
+        store.getState().togglePlay();
+      } else if (code === 'KeyF') {
+        store.getState().requestToggleFullscreen();
+      } else if (code === 'KeyI') {
+        store.getState().requestTogglePictureInPicture();
+      } else if (code === 'ArrowRight') {
+        store.getState().requestSeekForward();
+      } else if (code === 'ArrowLeft') {
+        store.getState().requestSeekBack();
+      } else if (code === 'KeyM') {
+        store.getState().requestToggleMute();
+      } else if (code === 'KeyV') {
+        store.getState().toggleVideo();
+      } else if (code === 'KeyX') {
+        store.getState().requestClip();
+      }
+    }
+  };
+
+  const onMouseEnter = () => {
+    store.getState()._updateLastInteraction();
+  };
+  const onMouseLeave = () => {
+    if (autohide) {
+      store.getState().setHidden(true);
+    }
+  };
+  const onMouseMove = async () => {
+    store.getState()._updateLastInteraction();
+  };
+
+  const onTouchUpdate = async () => {
+    store.getState()._updateLastInteraction();
+  };
+
+  const onVolumeChange = () => {
+    if (
+      typeof element?.volume !== 'undefined' &&
+      element?.volume !== store.getState().volume
+    ) {
+      store.getState()._setVolume(element.volume);
+    }
+  };
+
+  const onTimeUpdate = () => {
+    store.getState().onProgress(element?.currentTime ?? 0);
+
+    if (element && (element?.duration ?? 0) > 0) {
+      const currentTime = element.currentTime;
+
+      const buffered = [...Array(element.buffered.length)].reduce(
+        (prev, _curr, i) => {
+          const start = element.buffered.start(element.buffered.length - 1 - i);
+          const end = element.buffered.end(element.buffered.length - 1 - i);
+
+          // if the TimeRange covers the current time, then use this value
+          if (start <= currentTime && end >= currentTime) {
+            return end;
           }
-        }
-      };
 
-      const onMouseEnter = () => {
-        store.getState()._updateLastInteraction();
-      };
-      const onMouseLeave = () => {
-        if (autohide) {
-          store.getState().setHidden(true);
-        }
-      };
-      const onMouseMove = async () => {
-        store.getState()._updateLastInteraction();
-      };
-
-      const onTouchUpdate = async () => {
-        store.getState()._updateLastInteraction();
-      };
-
-      const onVolumeChange = () => {
-        if (
-          typeof element?.volume !== 'undefined' &&
-          element?.volume !== store.getState().volume
-        ) {
-          store.getState()._setVolume(element.volume);
-        }
-      };
-
-      const onTimeUpdate = () => {
-        store.getState().onProgress(element?.currentTime ?? 0);
-
-        if (element && (element?.duration ?? 0) > 0) {
-          const currentTime = element.currentTime;
-
-          const buffered = [...Array(element.buffered.length)].reduce(
-            (prev, _curr, i) => {
-              const start = element.buffered.start(
-                element.buffered.length - 1 - i,
-              );
-              const end = element.buffered.end(element.buffered.length - 1 - i);
-
-              // if the TimeRange covers the current time, then use this value
-              if (start <= currentTime && end >= currentTime) {
-                return end;
-              }
-
-              return prev;
-            },
-            // default to no buffering
-            0,
-          );
-
-          store.getState()._updateBuffered(buffered);
-        }
-      };
-
-      let retryCount = 0;
-
-      const onError = async (e: ErrorEvent) => {
-        store.getState().setError(e.message);
-        await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
-        element?.load();
-      };
-
-      const onWaiting = async () => {
-        store.getState().setWaiting(true);
-      };
-
-      const onStalled = async () => {
-        store.getState().setStalled(true);
-      };
-
-      const onLoadStart = async () => {
-        store.getState().setLoading(true);
-      };
-
-      const onResize = async () => {
-        store.getState().setSize({
-          ...((element as unknown as HTMLVideoElement)?.videoHeight &&
-          (element as unknown as HTMLVideoElement)?.videoWidth
-            ? {
-                media: {
-                  height: (element as unknown as HTMLVideoElement).videoHeight,
-                  width: (element as unknown as HTMLVideoElement).videoWidth,
-                },
-              }
-            : {}),
-          ...(element?.clientHeight && element?.clientWidth
-            ? {
-                container: {
-                  height: element.clientHeight,
-                  width: element.clientWidth,
-                },
-              }
-            : {}),
-        });
-      };
-
-      if (element) {
-        onResize();
-      }
-
-      if (element) {
-        element.addEventListener('volumechange', onVolumeChange);
-
-        element.addEventListener('loadedmetadata', onLoadedMetadata);
-        element.addEventListener('play', onPlay);
-        element.addEventListener('pause', onPause);
-        element.addEventListener('durationchange', onDurationChange);
-        element.addEventListener('timeupdate', onTimeUpdate);
-        element.addEventListener('error', onError);
-        element.addEventListener('waiting', onWaiting);
-        element.addEventListener('stalled', onStalled);
-        element.addEventListener('loadstart', onLoadStart);
-        element.addEventListener('resize', onResize);
-
-        const parentElementOrElement = element?.parentElement ?? element;
-
-        if (hotkeys) {
-          parentElementOrElement.addEventListener('keyup', onKeyUp);
-        }
-        if (autohide) {
-          parentElementOrElement.addEventListener('mouseenter', onMouseEnter);
-          parentElementOrElement.addEventListener('mouseleave', onMouseLeave);
-          parentElementOrElement.addEventListener('mousemove', onMouseMove);
-
-          parentElementOrElement.addEventListener('touchstart', onTouchUpdate);
-          parentElementOrElement.addEventListener('touchend', onTouchUpdate);
-          parentElementOrElement.addEventListener('touchmove', onTouchUpdate);
-        }
-
-        element.load();
-
-        getIsVolumeChangeSupported(element).then((isVolumeChangeSupported) =>
-          store.getState().setIsVolumeChangeSupported(isVolumeChangeSupported),
-        );
-
-        element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
-      }
-
-      const onFullscreenChange = () => {
-        store.getState().setFullscreen(isCurrentlyFullscreen(element));
-      };
-
-      const onEnterPictureInPicture = () => {
-        store.getState().setPictureInPicture(true);
-      };
-      const onExitPictureInPicture = () => {
-        store.getState().setPictureInPicture(false);
-      };
-
-      // add effects
-      const removeEffectsFromStore = addEffectsToStore(store, {
-        autohide,
-      });
-
-      // add fullscreen listener
-      const removeFullscreenListener = addFullscreenEventListener(
-        element,
-        onFullscreenChange,
+          return prev;
+        },
+        // default to no buffering
+        0,
       );
 
-      // add picture in picture listeners
-      const removeEnterPictureInPictureListener =
-        addEnterPictureInPictureEventListener(element, onEnterPictureInPicture);
-      const removeExitPictureInPictureListener =
-        addExitPictureInPictureEventListener(element, onExitPictureInPicture);
+      store.getState()._updateBuffered(buffered);
+    }
+  };
 
-      destroy = () => {
-        removeFullscreenListener?.();
+  let retryCount = 0;
 
-        removeEnterPictureInPictureListener?.();
-        removeExitPictureInPictureListener?.();
+  const onError = async (e: ErrorEvent) => {
+    store.getState().setError(e.message);
+    await new Promise((r) => setTimeout(r, 1000 * ++retryCount));
+    element?.load();
+  };
 
-        element?.removeEventListener?.('volumechange', onVolumeChange);
-        element?.removeEventListener?.('loadedmetadata', onLoadedMetadata);
-        element?.removeEventListener?.('play', onPlay);
-        element?.removeEventListener?.('pause', onPause);
-        element?.removeEventListener?.('durationchange', onDurationChange);
-        element?.removeEventListener?.('timeupdate', onTimeUpdate);
-        element?.removeEventListener?.('error', onError);
-        element?.removeEventListener?.('waiting', onWaiting);
-        element?.removeEventListener?.('stalled', onStalled);
-        element?.removeEventListener?.('loadstart', onLoadStart);
-        element?.removeEventListener?.('resize', onResize);
+  const onWaiting = async () => {
+    store.getState().setWaiting(true);
+  };
 
-        const parentElementOrElement = element?.parentElement ?? element;
+  const onStalled = async () => {
+    store.getState().setStalled(true);
+  };
 
-        parentElementOrElement?.removeEventListener?.('keyup', onKeyUp);
+  const onLoadStart = async () => {
+    store.getState().setLoading(true);
+  };
 
-        parentElementOrElement?.removeEventListener?.(
-          'mouseenter',
-          onMouseEnter,
-        );
-        parentElementOrElement?.removeEventListener?.(
-          'mouseleave',
-          onMouseLeave,
-        );
-        parentElementOrElement?.removeEventListener?.('mousemove', onMouseMove);
+  const onResize = async () => {
+    store.getState().setSize({
+      ...((element as unknown as HTMLVideoElement)?.videoHeight &&
+      (element as unknown as HTMLVideoElement)?.videoWidth
+        ? {
+            media: {
+              height: (element as unknown as HTMLVideoElement).videoHeight,
+              width: (element as unknown as HTMLVideoElement).videoWidth,
+            },
+          }
+        : {}),
+      ...(element?.clientHeight && element?.clientWidth
+        ? {
+            container: {
+              height: element.clientHeight,
+              width: element.clientWidth,
+            },
+          }
+        : {}),
+    });
+  };
 
-        parentElementOrElement?.addEventListener?.('touchstart', onTouchUpdate);
-        parentElementOrElement?.addEventListener?.('touchend', onTouchUpdate);
-        parentElementOrElement?.addEventListener?.('touchmove', onTouchUpdate);
+  if (element) {
+    onResize();
+  }
 
-        removeEffectsFromStore?.();
+  const parentElementOrElement = element?.parentElement ?? element;
 
-        element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
-      };
-    },
+  if (element) {
+    element.addEventListener('volumechange', onVolumeChange);
+
+    element.addEventListener('loadedmetadata', onLoadedMetadata);
+    element.addEventListener('play', onPlay);
+    element.addEventListener('pause', onPause);
+    element.addEventListener('durationchange', onDurationChange);
+    element.addEventListener('timeupdate', onTimeUpdate);
+    element.addEventListener('error', onError);
+    element.addEventListener('waiting', onWaiting);
+    element.addEventListener('stalled', onStalled);
+    element.addEventListener('loadstart', onLoadStart);
+    element.addEventListener('resize', onResize);
+
+    if (parentElementOrElement) {
+      if (hotkeys) {
+        parentElementOrElement.addEventListener('keyup', onKeyUp);
+      }
+      if (autohide) {
+        parentElementOrElement.addEventListener('mouseenter', onMouseEnter);
+        parentElementOrElement.addEventListener('mouseleave', onMouseLeave);
+        parentElementOrElement.addEventListener('mousemove', onMouseMove);
+
+        parentElementOrElement.addEventListener('touchstart', onTouchUpdate);
+        parentElementOrElement.addEventListener('touchend', onTouchUpdate);
+        parentElementOrElement.addEventListener('touchmove', onTouchUpdate);
+      }
+    }
+
+    element.load();
+
+    getIsVolumeChangeSupported(element).then((isVolumeChangeSupported) =>
+      store.getState().setIsVolumeChangeSupported(isVolumeChangeSupported),
+    );
+
+    element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, 'true');
+  }
+
+  const onFullscreenChange = () => {
+    store.getState().setFullscreen(isCurrentlyFullscreen(element));
+  };
+
+  const onEnterPictureInPicture = () => {
+    store.getState().setPictureInPicture(true);
+  };
+  const onExitPictureInPicture = () => {
+    store.getState().setPictureInPicture(false);
+  };
+
+  // add effects
+  const removeEffectsFromStore = addEffectsToStore(store, {
+    autohide,
+  });
+
+  // add fullscreen listener
+  const removeFullscreenListener = addFullscreenEventListener(
+    element,
+    onFullscreenChange,
   );
+
+  // add picture in picture listeners
+  const removeEnterPictureInPictureListener =
+    addEnterPictureInPictureEventListener(element, onEnterPictureInPicture);
+  const removeExitPictureInPictureListener =
+    addExitPictureInPictureEventListener(element, onExitPictureInPicture);
+
+  const destroy = () => {
+    removeFullscreenListener?.();
+
+    removeEnterPictureInPictureListener?.();
+    removeExitPictureInPictureListener?.();
+
+    element?.removeEventListener?.('volumechange', onVolumeChange);
+    element?.removeEventListener?.('loadedmetadata', onLoadedMetadata);
+    element?.removeEventListener?.('play', onPlay);
+    element?.removeEventListener?.('pause', onPause);
+    element?.removeEventListener?.('durationchange', onDurationChange);
+    element?.removeEventListener?.('timeupdate', onTimeUpdate);
+    element?.removeEventListener?.('error', onError);
+    element?.removeEventListener?.('waiting', onWaiting);
+    element?.removeEventListener?.('stalled', onStalled);
+    element?.removeEventListener?.('loadstart', onLoadStart);
+    element?.removeEventListener?.('resize', onResize);
+
+    parentElementOrElement?.removeEventListener?.('keyup', onKeyUp);
+
+    parentElementOrElement?.removeEventListener?.('mouseenter', onMouseEnter);
+    parentElementOrElement?.removeEventListener?.('mouseleave', onMouseLeave);
+    parentElementOrElement?.removeEventListener?.('mousemove', onMouseMove);
+
+    parentElementOrElement?.addEventListener?.('touchstart', onTouchUpdate);
+    parentElementOrElement?.addEventListener?.('touchend', onTouchUpdate);
+    parentElementOrElement?.addEventListener?.('touchmove', onTouchUpdate);
+
+    removeEffectsFromStore?.();
+
+    element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
+  };
 
   return {
     destroy: () => {
-      storeListener?.();
-
       destroy?.();
     },
   };
 };
 
-let previousPromise: Promise<void> | Promise<null> | boolean | null;
+let previousPromise:
+  | Promise<void>
+  | Promise<any>
+  | Promise<null>
+  | boolean
+  | null;
 
 const addEffectsToStore = <
   TElement extends HTMLMediaElement,
@@ -462,6 +454,37 @@ const addEffectsToStore = <
           } else {
             previousPromise = exitFullscreen(current._element);
           }
+        }
+
+        if (
+          current._requestedClipLastTime !== prev._requestedClipLastTime &&
+          current.clipLength &&
+          current.playbackId
+        ) {
+          const clipLength = current.clipLength;
+          const playbackId = current.playbackId;
+
+          // we get the estimated time on the server that the user "clipped"
+          // by subtracting the offset from the recorded clip time
+          const estimatedServerClipTime =
+            current._requestedClipLastTime - (current.playbackOffsetMs ?? 0);
+
+          const startTime = estimatedServerClipTime - clipLength * 1000;
+          const endTime = estimatedServerClipTime;
+
+          previousPromise = createClip({
+            playbackId,
+            startTime,
+            endTime,
+          })
+            .then((asset) => {
+              if (asset?.id) {
+                current?.onClipCreated?.(asset);
+              } else {
+                throw new Error('returned asset was not defined');
+              }
+            })
+            .catch((error) => current?.onClipError?.(error));
         }
 
         if (
