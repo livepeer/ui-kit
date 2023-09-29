@@ -7,6 +7,7 @@ import {
   Asset,
   CreateAssetArgs,
   CreateAssetSourceType,
+  CreateClipArgs,
   CreateStreamArgs,
   GetAssetArgs,
   GetAssetMetricsArgs,
@@ -132,6 +133,7 @@ export abstract class BaseLivepeerProvider implements LivepeerProvider {
   abstract updateAsset(args: UpdateAssetArgs): Promise<Asset>;
   abstract getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo>;
   abstract getAssetMetrics(args: GetAssetMetricsArgs): Promise<Metrics>;
+  abstract createClip(args: CreateClipArgs): Promise<Asset>;
 }
 
 export type LivepeerProviderFn<

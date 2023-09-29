@@ -41,19 +41,19 @@ export const ClipButton: React.FC<ClipButtonProps> = (props) => {
     ...props,
   });
 
-  return (
-    isShown && (
-      <button
-        style={{
-          width: props.size,
-          height: props.size,
-        }}
-        className={styling.iconButton()}
-        title={title}
-        aria-label={title}
-        onClick={buttonProps.onPress}
-        {...omit(buttonProps, 'onPress', 'size')}
-      />
-    )
+  return isShown ? (
+    <button
+      style={{
+        width: props.size,
+        height: props.size,
+      }}
+      className={styling.iconButton()}
+      title={title}
+      aria-label={title}
+      onClick={buttonProps.onPress}
+      {...omit(buttonProps, 'onPress', 'size')}
+    />
+  ) : (
+    <></>
   );
 };
