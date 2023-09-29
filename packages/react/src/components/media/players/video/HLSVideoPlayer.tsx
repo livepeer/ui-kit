@@ -50,6 +50,7 @@ export const HLSVideoPlayer = React.forwardRef<
     onPlaybackError,
     priority,
     allowCrossOriginCredentials,
+    playRecording,
   } = props;
 
   const {
@@ -64,9 +65,11 @@ export const HLSVideoPlayer = React.forwardRef<
     async (live: boolean) => {
       onPlaybackError?.(null);
 
-      setLive(live);
+      if (!playRecording) {
+        setLive(live);
+      }
     },
-    [onPlaybackError, setLive],
+    [onPlaybackError, setLive, playRecording],
   );
 
   const [errorCount, setErrorCount] = React.useState(0);

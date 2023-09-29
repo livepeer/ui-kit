@@ -473,7 +473,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     const urlEncodedPlaybackId = encodeURIComponent(playbackId);
 
     const studioPlaybackInfo = await this._get<StudioPlaybackInfo>(
-      `/playback/${urlEncodedPlaybackId}?recording=true`,
+      `/playback/${urlEncodedPlaybackId}?recordings=true`,
       {
         headers: this._defaultHeaders,
       },

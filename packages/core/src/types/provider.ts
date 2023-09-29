@@ -669,6 +669,11 @@ export type PlaybackInfo = {
       height?: number;
       bitrate?: number;
     }[];
+    dvrPlayback?: {
+      hrn: string;
+      type: 'html5/application/vnd.apple.mpegurl';
+      url: string;
+    }[];
     attestation?: Attestation;
   };
 };
