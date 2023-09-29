@@ -88,6 +88,7 @@ it('should expose correct exports', () => {
       "useAssetMetrics",
       "useClient",
       "useCreateAsset",
+      "useCreateClip",
       "useCreateStream",
       "useLivepeerProvider",
       "useMediaController",

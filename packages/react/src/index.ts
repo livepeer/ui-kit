@@ -73,6 +73,7 @@ export {
   useAsset,
   useAssetMetrics,
   useCreateAsset,
+  useCreateClip,
   useCreateStream,
   useLivepeerProvider,
   usePlaybackInfo,
