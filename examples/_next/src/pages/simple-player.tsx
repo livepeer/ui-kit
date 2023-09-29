@@ -9,12 +9,13 @@ const Page = () => {
         autoPlay
         muted
         // renderChildrenOutsideContainer
-        playbackId="a8a6fftljh8noqgt"
+        playbackId="459dd5to4ie9a65p"
+        // playbackId="d701rc6r97wyso8s"
         clipLength={60}
         onClipCreated={(asset) => {
           console.log(asset);
         }}
-        // lowLatency="force"
+        lowLatency="force"
         showPipButton
         // onPlaybackStatusUpdate={(state) => state.se}
         // playbackStatusSelector={(state) => state.playing}

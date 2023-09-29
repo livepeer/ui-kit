@@ -46,6 +46,9 @@ export type PlayerProps<
   /** Whether the media will loop when finished. Defaults to false. */
   loop?: boolean;
 
+  /** Whether the player should play from a livestream's recording URL, if available. */
+  playRecording?: boolean;
+
   /**
    * The aspect ratio of the media. Defaults to 16to9 (16 / 9).
    * This significantly improves the cumulative layout shift and is required for the player.
@@ -214,6 +217,8 @@ export const usePlayer = <
     mediaElementRef,
     _isCurrentlyShown,
 
+    playRecording,
+
     onPlaybackStatusUpdate,
     playbackStatusSelector,
 
@@ -239,6 +244,7 @@ export const usePlayer = <
     playbackInfo,
     accessKey,
     onAccessKeyRequest,
+    playRecording,
   });
 
   const [playbackError, setPlaybackError] =

@@ -32,6 +32,7 @@ export default (props: ClippingPageProps) => {
       >
         <Player
           autoPlay
+          playRecording
           muted
           src={`https://link.storjshare.io/raw/juixm77hfsmhyslrxtycnqfmnlfq/catalyst-recordings-com/hls/806dk46k6ba0dv3m/685269ea-42ba-4752-9851-9391bc103df3/output.m3u8`}
           playbackStatusSelector={(state) => ({

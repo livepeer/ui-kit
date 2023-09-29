@@ -70,6 +70,12 @@ export type UseSourceMimeTypedProps<
     TPlaybackPolicyObject,
     TSlice
   >['onAccessKeyRequest'];
+  playRecording: PlayerProps<
+    TElement,
+    TPoster,
+    TPlaybackPolicyObject,
+    TSlice
+  >['playRecording'];
 };
 
 type PlaybackUrlWithInfo = {
