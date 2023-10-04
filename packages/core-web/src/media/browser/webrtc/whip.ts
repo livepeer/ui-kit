@@ -86,7 +86,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
               peerConnection,
               redirectUrlString,
               ofr,
-              config?.sdpTimeout,
+              config,
             );
           } catch (e) {
             callbacks?.onError?.(e as Error);

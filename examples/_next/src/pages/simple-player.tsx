@@ -11,6 +11,9 @@ const Page = () => {
         // renderChildrenOutsideContainer
         playbackId="459dd5to4ie9a65p"
         // playbackId="d701rc6r97wyso8s"
+        webrtcConfig={{
+          constant: true,
+        }}
         clipLength={60}
         onClipCreated={(asset) => {
           console.log(asset);
