@@ -5,7 +5,7 @@ const disableSentry = process.env.DISABLE_SENTRY === 'true';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    appDir: true,
+    serverActions: true,
   },
 
   sentry: {

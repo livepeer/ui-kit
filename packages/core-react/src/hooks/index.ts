@@ -17,6 +17,7 @@ export {
   prefetchStream,
   prefetchStreamSession,
   prefetchStreamSessions,
+  useCreateClip,
   useCreateStream,
   useStream,
   useStreamSession,

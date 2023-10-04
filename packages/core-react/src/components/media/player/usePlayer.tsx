@@ -1,4 +1,6 @@
 import {
+  Asset,
+  ClipLength,
   ControlsOptions,
   MediaControllerCallbackState,
   MediaPropsOptions,
@@ -44,6 +46,9 @@ export type PlayerProps<
   /** Whether the media will loop when finished. Defaults to false. */
   loop?: boolean;
 
+  /** Whether the player should play from a livestream's recording URL, if available. */
+  playRecording?: boolean;
+
   /**
    * The aspect ratio of the media. Defaults to 16to9 (16 / 9).
    * This significantly improves the cumulative layout shift and is required for the player.
@@ -60,6 +65,14 @@ export type PlayerProps<
   showLoadingSpinner?: boolean;
   /** Enables/disables the dStorage uploading indicator (text and progress percentage) */
   showUploadingIndicator?: boolean;
+
+  /** The length of a clip in seconds to generate. Set to a number to enable (web only). */
+  clipLength?: ClipLength;
+
+  /** Callback when a clip is created from the clip button. */
+  onClipCreated?: (asset: Asset) => Promise<any> | any;
+  /** Callback when a clip fails to be created from the clip button. */
+  onClipError?: (error: any) => Promise<any> | any;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;
@@ -183,6 +196,10 @@ export const usePlayer = <
     onSourceUpdated,
     jwt,
 
+    clipLength,
+    onClipCreated,
+    onClipError,
+
     viewerId,
 
     refetchPlaybackInfoInterval = 5000,
@@ -199,6 +216,8 @@ export const usePlayer = <
     objectFit = 'contain',
     mediaElementRef,
     _isCurrentlyShown,
+
+    playRecording,
 
     onPlaybackStatusUpdate,
     playbackStatusSelector,
@@ -225,6 +244,7 @@ export const usePlayer = <
     playbackInfo,
     accessKey,
     onAccessKeyRequest,
+    playRecording,
   });
 
   const [playbackError, setPlaybackError] =
@@ -371,8 +391,20 @@ export const usePlayer = <
       muted,
       priority: priority,
       viewerId,
+      clipLength,
+      onClipCreated,
+      onClipError,
     }),
-    [autoPlay, playbackId, muted, priority, viewerId],
+    [
+      autoPlay,
+      playbackId,
+      muted,
+      priority,
+      viewerId,
+      clipLength,
+      onClipCreated,
+      onClipError,
+    ],
   );
 
   const controlsContainerProps = React.useMemo(

@@ -70,11 +70,18 @@ export type UseSourceMimeTypedProps<
     TPlaybackPolicyObject,
     TSlice
   >['onAccessKeyRequest'];
+  playRecording: PlayerProps<
+    TElement,
+    TPoster,
+    TPlaybackPolicyObject,
+    TSlice
+  >['playRecording'];
 };
 
 type PlaybackUrlWithInfo = {
   url: string;
   screenWidthDelta: number | null;
+  isRecording?: true;
 };
 
 const SCREEN_WIDTH_MULTIPLIER = 2.5;
@@ -94,6 +101,7 @@ export const useSourceMimeTyped = <
   screenWidth,
   accessKey,
   onAccessKeyRequest,
+  playRecording,
 }: UseSourceMimeTypedProps<
   TElement,
   TPoster,
@@ -166,7 +174,15 @@ export const useSourceMimeTyped = <
     const screenWidthWithDefault =
       (screenWidth ?? 1280) * SCREEN_WIDTH_MULTIPLIER;
 
-    const playbackInfoSources: PlaybackUrlWithInfo[] | null =
+    const recordingPlaybackSources: PlaybackUrlWithInfo[] = playRecording
+      ? (playbackInfo ?? resolvedPlaybackInfo)?.meta?.dvrPlayback?.map((s) => ({
+          url: s?.url,
+          screenWidthDelta: null,
+          isRecording: true,
+        })) ?? []
+      : [];
+
+    const playbackInfoSources: PlaybackUrlWithInfo[] =
       (playbackInfo ?? resolvedPlaybackInfo)?.meta?.source?.map((s) => ({
         url: s?.url,
         screenWidthDelta: s?.width
@@ -180,12 +196,17 @@ export const useSourceMimeTyped = <
           : s?.url.includes('static2160p')
           ? Math.abs(screenWidthWithDefault - 3840)
           : null,
-      })) ?? null;
+      })) ?? [];
 
-    if (playbackInfoSources) {
-      setPlaybackUrls(playbackInfoSources);
+    const combinedPlaybackSources = [
+      ...recordingPlaybackSources,
+      ...playbackInfoSources,
+    ];
+
+    if (combinedPlaybackSources.length) {
+      setPlaybackUrls(combinedPlaybackSources);
     }
-  }, [playbackInfo, resolvedPlaybackInfo, screenWidth]);
+  }, [playbackInfo, resolvedPlaybackInfo, screenWidth, playRecording]);
 
   const dStoragePlaybackUrl = React.useMemo(() => {
     // if the player is auto uploading, we do not play back the detected input file unless specified
@@ -242,7 +263,9 @@ export const useSourceMimeTyped = <
     // cast all URLs to an array of strings
     const sources =
       playbackUrls.length > 0
-        ? playbackUrls.map((p) => p.url)
+        ? playRecording
+          ? playbackUrls.filter((p) => p.isRecording).map((p) => p.url)
+          : playbackUrls.map((p) => p.url)
         : typeof src === 'string'
         ? [src]
         : src;
@@ -290,7 +313,7 @@ export const useSourceMimeTyped = <
           ) as (VideoSrc | HlsSrc | WebRTCSrc)[],
         ] as const)
       : defaultValue;
-  }, [playbackUrls, src, jwt, accessKeyResolved]);
+  }, [playbackUrls, src, jwt, accessKeyResolved, playRecording]);
 
   const sourceMimeTypedSorted = React.useMemo(() => {
     // if there is no source mime type and the Player has dstorage fallback enabled,

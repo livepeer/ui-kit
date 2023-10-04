@@ -5,6 +5,7 @@ export {
   sanitizeMediaControllerState,
 } from './controller';
 export type {
+  ClipLength,
   ControlsOptions,
   DeviceInformation,
   ElementSize,

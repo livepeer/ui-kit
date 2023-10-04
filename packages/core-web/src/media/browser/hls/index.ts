@@ -33,6 +33,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   element: TElement,
   callbacks?: {
     onLive?: (v: boolean) => void;
+    onPlaybackOffsetUpdated?: (d: number) => void;
     onDuration?: (v: number) => void;
     onCanPlay?: () => void;
     onError?: (data: HlsError) => void;
@@ -96,7 +97,21 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     callbacks?.onError?.(data);
   });
 
+  function updateOffset() {
+    const currentDate = Date.now();
+    const newDate = hls.playingDate;
+
+    if (newDate && currentDate) {
+      callbacks?.onPlaybackOffsetUpdated?.(currentDate - newDate.getTime());
+    }
+  }
+
+  const updateOffsetInterval = setInterval(updateOffset, 2000);
+
   return {
-    destroy: onDestroy,
+    destroy: () => {
+      onDestroy?.();
+      clearInterval?.(updateOffsetInterval);
+    },
   };
 };

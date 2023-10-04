@@ -18,7 +18,7 @@ describe('getAssetMetrics', () => {
         "metrics": [
           {
             "id": "373d7a8kibjpsi0d",
-            "startViews": 2,
+            "startViews": 1,
           },
         ],
         "type": "ViewsMetrics",

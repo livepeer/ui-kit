@@ -7,6 +7,7 @@ export {
   type WatchLivepeerProviderCallback,
 } from './providers';
 export {
+  createClip,
   createStream,
   getStream,
   getStreamSession,

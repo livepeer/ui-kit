@@ -7,6 +7,7 @@ it('should expose correct exports', () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
       "createAsset",
+      "createClip",
       "createStream",
       "getAsset",
       "getAssetMetrics",

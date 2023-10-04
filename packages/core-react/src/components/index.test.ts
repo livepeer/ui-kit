@@ -8,6 +8,7 @@ it('should expose correct exports', () => {
     [
       "useBaseSlider",
       "useBroadcast",
+      "useClipButton",
       "useControlsContainer",
       "useFullscreenButton",
       "usePlayButton",

@@ -39,6 +39,7 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   hlsConfig?: HlsVideoConfig;
   webrtcConfig?: WebRTCVideoConfig;
   lowLatency?: boolean | 'force';
+  playRecording?: boolean;
 };
 
 function debounce<T extends (...args: any[]) => any>(

@@ -19,6 +19,7 @@ it('should expose correct exports', () => {
       "clearClient",
       "createAsset",
       "createClient",
+      "createClip",
       "createControllerStore",
       "createStorage",
       "createStream",

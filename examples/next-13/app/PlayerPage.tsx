@@ -1,9 +1,20 @@
 'use client';
 
-import { Player, PlayerProps } from '@livepeer/react';
+import { Button } from '@livepeer/design-system';
+import { Asset, Player, PlayerProps } from '@livepeer/react';
 import * as Popover from '@radix-ui/react-popover';
+
 import mux from 'mux-embed';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import {
+  ToastAction,
+  ToastDescription,
+  ToastProvider,
+  ToastRoot,
+  ToastTitle,
+  ToastViewport,
+} from './toast';
 
 function isIframe() {
   try {
@@ -20,12 +31,42 @@ function isIframe() {
   return true;
 }
 
+const controls = {
+  defaultVolume: 0.7,
+};
+
 export default (props: PlayerProps<object, any>) => {
+  const [open, setOpen] = useState(false);
+  const [clipPlaybackId, setClipPlaybackId] = useState<string | null>(null);
+  const timerRef = useRef(0);
+
+  useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
   useEffect(() => {
     if (!isIframe()) {
       document.body.style.backgroundColor = 'black';
     }
   }, []);
+
+  const onClipCreated = useCallback((asset: Asset) => {
+    setOpen(false);
+    window?.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setClipPlaybackId(asset.playbackId ?? null);
+      setOpen(true);
+    }, 100);
+  }, []);
+
+  const theme = useMemo(
+    () => ({
+      radii: {
+        containerBorderRadius: '0px',
+      },
+    }),
+    [],
+  );
 
   const mediaElementRef = useCallback((element: HTMLMediaElement) => {
     mux.monitor(element, {
@@ -39,7 +80,7 @@ export default (props: PlayerProps<object, any>) => {
   }, []);
 
   return (
-    <>
+    <ToastProvider swipeDirection="right">
       <div
         style={{
           position: 'absolute',
@@ -57,14 +98,10 @@ export default (props: PlayerProps<object, any>) => {
           src={props?.src}
           showPipButton
           priority
-          theme={{
-            radii: {
-              containerBorderRadius: '0px',
-            },
-          }}
-          controls={{
-            defaultVolume: 0.7,
-          }}
+          theme={theme}
+          clipLength={90}
+          onClipCreated={onClipCreated}
+          controls={controls}
           mediaElementRef={mediaElementRef}
         />
       </div>
@@ -218,7 +255,21 @@ export default (props: PlayerProps<object, any>) => {
           </div>
         </div>
       )}
-    </>
+      <ToastRoot open={open} onOpenChange={setOpen}>
+        <ToastTitle>Livestream clipped</ToastTitle>
+        <ToastDescription>Your clip has been created.</ToastDescription>
+        <ToastAction asChild altText="Open clip in new tab">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`/?v=${clipPlaybackId}`}
+          >
+            <Button size="1">Open in new tab</Button>
+          </a>
+        </ToastAction>
+      </ToastRoot>
+      <ToastViewport />
+    </ToastProvider>
   );
 };
 
