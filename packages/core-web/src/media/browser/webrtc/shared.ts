@@ -54,6 +54,10 @@ export type WebRTCVideoConfig = {
    * @default 10000
    */
   sdpTimeout?: number;
+  /**
+   * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
+   */
+  constant?: boolean;
 };
 
 const DEFAULT_TIMEOUT = 10000;
@@ -75,7 +79,7 @@ export async function negotiateConnectionWithClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
-  timeout?: number,
+  config?: WebRTCVideoConfig,
 ): Promise<{
   playhead: Date;
   url: string;
@@ -86,7 +90,7 @@ export async function negotiateConnectionWithClientOffer(
      * This specifies how the client should communicate,
      * and what kind of media client and server have negotiated to exchange.
      */
-    const response = await postSDPOffer(endpoint, ofr.sdp, timeout);
+    const response = await postSDPOffer(endpoint, ofr.sdp, config);
     if (response.ok) {
       const answerSDP = await response.text();
       await peerConnection.setRemoteDescription(
@@ -146,9 +150,22 @@ export async function constructClientOffer(
   return null;
 }
 
-async function postSDPOffer(endpoint: string, data: string, timeout?: number) {
+async function postSDPOffer(
+  endpoint: string,
+  data: string,
+  config?: WebRTCVideoConfig,
+) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout ?? DEFAULT_TIMEOUT);
+  const id = setTimeout(
+    () => controller.abort(),
+    config?.sdpTimeout ?? DEFAULT_TIMEOUT,
+  );
+
+  if (config?.constant) {
+    const url = new URL(endpoint);
+    url.searchParams.append('constant', 'true');
+    endpoint = url.toString();
+  }
 
   const response = await fetch(endpoint, {
     method: 'POST',

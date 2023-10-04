@@ -66,7 +66,7 @@ export default async function Page({
     autoplay = muted = '1';
   }
 
-  const { loop, lowLatency, objectFit = 'contain' } = query;
+  const { loop, lowLatency, objectFit = 'contain', constant } = query;
 
   // fetch the playback info from livepeer
   const playbackInfo =
@@ -80,6 +80,9 @@ export default async function Page({
       playbackInfo={playbackInfo ? playbackInfo : null}
       muted={isTrue(muted)}
       autoPlay={isTrue(autoplay)}
+      webrtcConfig={{
+        constant: isTrue(constant),
+      }}
       loop={isTrue(loop)}
       objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
       lowLatency={

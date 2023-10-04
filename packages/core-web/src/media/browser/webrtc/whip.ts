@@ -73,7 +73,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
           peerConnection,
           ingestUrl,
           ofr,
-          config?.sdpTimeout,
+          config,
         );
 
         deleteUrl = response?.url ?? null;

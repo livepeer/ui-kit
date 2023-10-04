@@ -114,7 +114,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
           peerConnection,
           source,
           ofr,
-          config?.sdpTimeout,
+          config,
         );
 
         const currentDate = Date.now();
