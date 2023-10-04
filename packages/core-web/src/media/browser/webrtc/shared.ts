@@ -76,7 +76,10 @@ export async function negotiateConnectionWithClientOffer(
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
   timeout?: number,
-): Promise<Date> {
+): Promise<{
+  playhead: Date;
+  url: string;
+}> {
   if (peerConnection && endpoint && ofr) {
     /**
      * This response contains the server's SDP offer.
@@ -99,7 +102,10 @@ export async function negotiateConnectionWithClientOffer(
 
       const playheadUtc = response.headers.get('Playhead-Utc');
 
-      return new Date(playheadUtc ?? new Date());
+      return {
+        playhead: new Date(playheadUtc ?? new Date()),
+        url: response.url,
+      };
     } else if (response.status === 406) {
       throw new Error(NOT_ACCEPTABLE_ERROR_MESSAGE);
     } else {

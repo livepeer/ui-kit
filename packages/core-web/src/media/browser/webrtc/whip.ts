@@ -69,12 +69,14 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
       try {
         const ofr = await constructClientOffer(peerConnection);
 
-        deleteUrl = await negotiateConnectionWithClientOffer(
+        const response = await negotiateConnectionWithClientOffer(
           peerConnection,
           ingestUrl,
           ofr,
           config?.sdpTimeout,
         );
+
+        deleteUrl = response?.url ?? null;
       } catch (e) {
         callbacks?.onError?.(e as Error);
       }
@@ -139,12 +141,6 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
       })
       .catch((e) => callbacks?.onError?.(e as Error));
 
-    /**
-     * Terminate the streaming session by notifying the WHIP server by sending a DELETE request
-     *
-     * Once this is called, this instance of this WHIPClient cannot be reused.
-     */
-    // todo: make this work with post-redirect from the SDP
     disconnectStream = () => {
       if (!deleteUrl) {
         return;

@@ -110,7 +110,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       try {
         const ofr = await constructClientOffer(peerConnection);
 
-        const playheadTime = await negotiateConnectionWithClientOffer(
+        const response = await negotiateConnectionWithClientOffer(
           peerConnection,
           source,
           ofr,
@@ -119,9 +119,9 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
 
         const currentDate = Date.now();
 
-        if (playheadTime && currentDate) {
+        if (response?.playhead && currentDate) {
           callbacks?.onPlaybackOffsetUpdated?.(
-            currentDate - playheadTime.getTime(),
+            currentDate - response.playhead.getTime(),
           );
         }
       } catch (e) {
