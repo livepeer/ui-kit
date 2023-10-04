@@ -34,32 +34,14 @@ export const isWebRTCSupported = () => {
   return hasRTCPeerConnection && hasGetUserMedia && hasRTCDataChannel;
 };
 
-export function createPeerConnection(
-  host: string | null,
-): RTCPeerConnection | null {
+export function createPeerConnection(): RTCPeerConnection | null {
   const RTCPeerConnectionConstructor =
     window?.RTCPeerConnection ||
     window?.webkitRTCPeerConnection ||
     window?.mozRTCPeerConnection;
 
-  // strip non-standard port number if present
-  const hostNoPort = host?.split(':')[0];
-
-  const iceServers = host
-    ? [
-        {
-          urls: `stun:${hostNoPort}`,
-        },
-        {
-          urls: `turn:${hostNoPort}`,
-          username: 'livepeer',
-          credential: 'livepeer',
-        },
-      ]
-    : [];
-
   if (RTCPeerConnectionConstructor) {
-    return new RTCPeerConnectionConstructor({ iceServers });
+    return new RTCPeerConnectionConstructor();
   }
 
   return null;
@@ -86,13 +68,18 @@ const DEFAULT_TIMEOUT = 10000;
  *
  * https://developer.mozilla.org/en-US/docs/Glossary/SDP
  * https://www.ietf.org/archive/id/draft-ietf-wish-whip-01.html#name-protocol-operation
+ *
+ * Returns the URL of the post-redirect media server such that we may DELETE our session later
  */
 export async function negotiateConnectionWithClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
   timeout?: number,
-) {
+): Promise<{
+  playhead: Date;
+  url: string;
+}> {
   if (peerConnection && endpoint && ofr) {
     /**
      * This response contains the server's SDP offer.
@@ -105,10 +92,20 @@ export async function negotiateConnectionWithClientOffer(
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription({ type: 'answer', sdp: answerSDP }),
       );
+      const sdpLinkHeader = response.headers.get('Link');
+      const iceServers = parseIceServersFromLinkHeader(sdpLinkHeader);
+      peerConnection.setConfiguration({
+        iceServers: iceServers,
+      });
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
 
       const playheadUtc = response.headers.get('Playhead-Utc');
 
-      return new Date(playheadUtc ?? new Date());
+      return {
+        playhead: new Date(playheadUtc ?? new Date()),
+        url: response.url,
+      };
     } else if (response.status === 406) {
       throw new Error(NOT_ACCEPTABLE_ERROR_MESSAGE);
     } else {
@@ -130,9 +127,8 @@ export async function negotiateConnectionWithClientOffer(
  */
 export async function constructClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
-  endpoint: string | null | undefined,
 ) {
-  if (peerConnection && endpoint) {
+  if (peerConnection) {
     /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createOffer */
     const offer = await peerConnection.createOffer();
     /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setLocalDescription */
@@ -169,32 +165,6 @@ async function postSDPOffer(endpoint: string, data: string, timeout?: number) {
   return response;
 }
 
-export async function getRedirectUrl(
-  endpoint: string,
-  abortController: AbortController,
-  timeout?: number,
-) {
-  const id = setTimeout(
-    () => abortController.abort(),
-    timeout ?? DEFAULT_TIMEOUT,
-  );
-
-  try {
-    const response = await fetch(endpoint, {
-      method: 'HEAD',
-      signal: abortController.signal,
-    });
-
-    clearTimeout(id);
-
-    const parsedUrl = new URL(response.url);
-
-    return parsedUrl;
-  } catch (e) {
-    return null;
-  }
-}
-
 /**
  * Receives an RTCPeerConnection and waits until
  * the connection is initialized or a timeout passes.
@@ -220,36 +190,39 @@ async function waitToCompleteICEGathering(peerConnection: RTCPeerConnection) {
 /**
  * Parses the ICE servers from the `Link` headers returned during SDP negotiation.
  */
-// function parseIceServersFromLinkHeader(
-//   iceString: string | null,
-// ): NonNullable<RTCConfiguration['iceServers']> | null {
-//   try {
-//     const servers = iceString
-//       ?.split(', ')
-//       .map((serverStr) => {
-//         const parts = serverStr.split('; ');
-//         const server: NonNullable<RTCConfiguration['iceServers']>[number] = {
-//           urls: '',
-//         };
+function parseIceServersFromLinkHeader(
+  iceString: string | null,
+): NonNullable<RTCConfiguration['iceServers']> {
+  try {
+    const servers = iceString
+      ?.split(', ')
+      .map((serverStr) => {
+        const parts = serverStr
+          .split(';')
+          .map((x) => x.trim())
+          .filter((x) => x);
+        const server: NonNullable<RTCConfiguration['iceServers']>[number] = {
+          urls: '',
+        };
 
-//         for (const part of parts) {
-//           if (part.startsWith('stun:') || part.startsWith('turn:')) {
-//             server.urls = part;
-//           } else if (part.startsWith('username=')) {
-//             server.username = part.slice('username="'.length, -1);
-//           } else if (part.startsWith('credential=')) {
-//             server.credential = part.slice('credential="'.length, -1);
-//           }
-//         }
+        for (const part of parts) {
+          if (part.startsWith('stun:') || part.startsWith('turn:')) {
+            server.urls = part;
+          } else if (part.startsWith('username=')) {
+            server.username = part.slice('username="'.length, -1);
+          } else if (part.startsWith('credential=')) {
+            server.credential = part.slice('credential="'.length, -1);
+          }
+        }
 
-//         return server;
-//       })
-//       .filter((server) => server.urls);
+        return server;
+      })
+      .filter((server) => server.urls);
 
-//     return servers && (servers?.length ?? 0) > 0 ? servers : null;
-//   } catch (e) {
-//     console.error(e);
-//   }
+    return servers && (servers?.length ?? 0) > 0 ? servers : [];
+  } catch (e) {
+    console.error(e);
+  }
 
-//   return null;
-// }
+  return [];
+}
