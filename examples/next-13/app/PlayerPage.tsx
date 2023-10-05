@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@livepeer/design-system';
-import { Asset, Player, PlayerProps } from '@livepeer/react';
+import { Asset, Player, PlayerProps, useAsset } from '@livepeer/react';
 import * as Popover from '@radix-ui/react-popover';
 
 import mux from 'mux-embed';
@@ -37,7 +37,8 @@ const controls = {
 
 export default (props: PlayerProps<object, any>) => {
   const [open, setOpen] = useState(false);
-  const [clipPlaybackId, setClipPlaybackId] = useState<string | null>(null);
+  const [clipAssetId, setClipAssetId] = useState<string | null>(null);
+  const [clipDownloadUrl, setClipDownloadUrl] = useState<string | null>(null);
   const timerRef = useRef(0);
 
   useEffect(() => {
@@ -50,11 +51,30 @@ export default (props: PlayerProps<object, any>) => {
     }
   }, []);
 
+  const { data: clippedAsset } = useAsset({
+    assetId: clipAssetId ?? undefined,
+    refetchInterval: (asset) => (!asset?.downloadUrl ? 2000 : false),
+  });
+
+  useEffect(() => {
+    if (clippedAsset?.downloadUrl) {
+      setOpen(false);
+      window?.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => {
+        setClipDownloadUrl(clippedAsset.downloadUrl ?? null);
+        setOpen(true);
+      }, 100);
+    }
+  }, [clippedAsset]);
+
   const onClipCreated = useCallback((asset: Asset) => {
+    setClipAssetId(asset.id ?? null);
+  }, []);
+
+  const onClipStarted = useCallback(() => {
     setOpen(false);
     window?.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
-      setClipPlaybackId(asset.playbackId ?? null);
       setOpen(true);
     }, 100);
   }, []);
@@ -99,6 +119,7 @@ export default (props: PlayerProps<object, any>) => {
           showPipButton
           priority
           theme={theme}
+          onClipStarted={onClipStarted}
           onClipCreated={onClipCreated}
           controls={controls}
           mediaElementRef={mediaElementRef}
@@ -255,17 +276,21 @@ export default (props: PlayerProps<object, any>) => {
         </div>
       )}
       <ToastRoot open={open} onOpenChange={setOpen}>
-        <ToastTitle>Livestream clipped</ToastTitle>
-        <ToastDescription>Your clip has been created.</ToastDescription>
-        <ToastAction asChild altText="Open clip in new tab">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`/?v=${clipPlaybackId}`}
-          >
-            <Button size="1">Open in new tab</Button>
-          </a>
-        </ToastAction>
+        <ToastTitle>
+          {!clipDownloadUrl ? 'Clip loading' : 'Livestream clipped'}
+        </ToastTitle>
+        <ToastDescription>
+          {!clipDownloadUrl
+            ? 'Your clip is being processed in the background...'
+            : 'Your clip has been created.'}
+        </ToastDescription>
+        {clipDownloadUrl && (
+          <ToastAction asChild altText="Download clip">
+            <a target="_blank" rel="noopener noreferrer" href={clipDownloadUrl}>
+              <Button size="1">Download clip</Button>
+            </a>
+          </ToastAction>
+        )}
       </ToastRoot>
       <ToastViewport />
     </ToastProvider>

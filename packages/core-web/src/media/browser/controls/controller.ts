@@ -472,6 +472,8 @@ const addEffectsToStore = <
           const startTime = estimatedServerClipTime - clipLength * 1000;
           const endTime = estimatedServerClipTime;
 
+          current?.onClipStarted?.();
+
           previousPromise = createClip({
             playbackId,
             startTime,

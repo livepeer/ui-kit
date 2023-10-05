@@ -1,7 +1,8 @@
 import { keyframes, styled } from '@livepeer/design-system';
 import * as Toast from '@radix-ui/react-toast';
 
-const VIEWPORT_PADDING = 25;
+const VIEWPORT_Y_PADDING = 50;
+const VIEWPORT_X_PADDING = 15;
 
 export const ToastProvider = Toast.Provider;
 
@@ -11,9 +12,10 @@ export const ToastViewport = styled(Toast.Viewport, {
   right: 0,
   display: 'flex',
   flexDirection: 'column',
-  padding: VIEWPORT_PADDING,
+  paddingBottom: VIEWPORT_Y_PADDING,
+  paddingRight: VIEWPORT_X_PADDING,
   gap: 10,
-  width: 390,
+  width: 320,
   maxWidth: '100vw',
   margin: 0,
   listStyle: 'none',
@@ -27,17 +29,17 @@ const hide = keyframes({
 });
 
 const slideIn = keyframes({
-  from: { transform: `translateX(calc(100% + ${VIEWPORT_PADDING}px))` },
+  from: { transform: `translateX(calc(100% + ${VIEWPORT_X_PADDING}px))` },
   to: { transform: 'translateX(0)' },
 });
 
 const swipeOut = keyframes({
   from: { transform: 'translateX(var(--radix-toast-swipe-end-x))' },
-  to: { transform: `translateX(calc(100% + ${VIEWPORT_PADDING}px))` },
+  to: { transform: `translateX(calc(100% + ${VIEWPORT_X_PADDING}px))` },
 });
 
 export const ToastRoot = styled(Toast.Root, {
-  backgroundColor: '$slate12',
+  backgroundColor: '$gray12',
   borderRadius: 6,
   boxShadow:
     'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
@@ -70,14 +72,14 @@ export const ToastTitle = styled(Toast.Title, {
   gridArea: 'title',
   marginBottom: 5,
   fontWeight: 500,
-  color: '$slate1',
+  color: '$gray1',
   fontSize: 15,
 });
 
 export const ToastDescription = styled(Toast.Description, {
   gridArea: 'description',
   margin: 0,
-  color: '$slate1',
+  color: '$gray1',
   fontSize: 13,
   lineHeight: 1.3,
 });
