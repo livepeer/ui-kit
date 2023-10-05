@@ -1,4 +1,4 @@
-import { createClient } from 'livepeer';
+import { ClipLength, createClient } from 'livepeer';
 import { studioProvider } from 'livepeer/providers/studio';
 import { cache } from 'react';
 
@@ -66,7 +66,13 @@ export default async function Page({
     autoplay = muted = '1';
   }
 
-  const { loop, lowLatency, objectFit = 'contain', constant } = query;
+  const {
+    loop,
+    lowLatency,
+    objectFit = 'contain',
+    constant,
+    clipLength,
+  } = query;
 
   // fetch the playback info from livepeer
   const playbackInfo =
@@ -83,6 +89,7 @@ export default async function Page({
       webrtcConfig={{
         constant: isTrue(constant),
       }}
+      clipLength={clipLength ? (Number(clipLength) as ClipLength) : undefined}
       loop={isTrue(loop)}
       objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
       lowLatency={

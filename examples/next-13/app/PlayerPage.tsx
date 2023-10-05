@@ -99,7 +99,6 @@ export default (props: PlayerProps<object, any>) => {
           showPipButton
           priority
           theme={theme}
-          clipLength={90}
           onClipCreated={onClipCreated}
           controls={controls}
           mediaElementRef={mediaElementRef}
