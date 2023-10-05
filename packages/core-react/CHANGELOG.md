@@ -1,5 +1,16 @@
 # @livepeer/core-react
 
+## 1.8.7
+
+### Patch Changes
+
+- [#386](https://github.com/livepeer/livepeer.js/pull/386) [`1dc5657`](https://github.com/livepeer/livepeer.js/commit/1dc56579028acafcdcb5c45a79fed34855bad1d3) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added constant to WebRTCConfig to allow constant playback speed in the Player, and prevent audio distortion.
+
+- [#383](https://github.com/livepeer/livepeer.js/pull/383) [`9264eee`](https://github.com/livepeer/livepeer.js/commit/9264eee8e6b4b33329f0777db481e77de564bc4c) Thanks [@iameli-streams](https://github.com/iameli-streams)! - **Fix:** added single SDP negotiation when performing WHEP.
+
+- Updated dependencies [[`1dc5657`](https://github.com/livepeer/livepeer.js/commit/1dc56579028acafcdcb5c45a79fed34855bad1d3), [`9264eee`](https://github.com/livepeer/livepeer.js/commit/9264eee8e6b4b33329f0777db481e77de564bc4c)]:
+  - @livepeer/core@1.8.7
+
 ## 1.8.6
 
 ### Patch Changes
