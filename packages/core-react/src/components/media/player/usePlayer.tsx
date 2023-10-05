@@ -69,6 +69,8 @@ export type PlayerProps<
   /** The length of a clip in seconds to generate. Set to a number to enable (web only). */
   clipLength?: ClipLength;
 
+  /** Callback when the clip button is triggered. */
+  onClipStarted?: () => Promise<any> | any;
   /** Callback when a clip is created from the clip button. */
   onClipCreated?: (asset: Asset) => Promise<any> | any;
   /** Callback when a clip fails to be created from the clip button. */
@@ -199,6 +201,7 @@ export const usePlayer = <
     clipLength,
     onClipCreated,
     onClipError,
+    onClipStarted,
 
     viewerId,
 
@@ -394,6 +397,7 @@ export const usePlayer = <
       clipLength,
       onClipCreated,
       onClipError,
+      onClipStarted,
     }),
     [
       autoPlay,
@@ -404,6 +408,7 @@ export const usePlayer = <
       clipLength,
       onClipCreated,
       onClipError,
+      onClipStarted,
     ],
   );
 

@@ -4,6 +4,7 @@ import { Button, Label, TextField } from '@livepeer/design-system';
 import {
   MediaControllerCallbackState,
   Player,
+  useAsset,
   useCreateClip,
 } from '@livepeer/react';
 
@@ -24,10 +25,18 @@ export type ClippingPageProps = {
   playbackId: string;
 };
 
+const hlsConfig = {
+  liveSyncDurationCount: Number.MAX_VALUE - 10,
+};
+
 export default (props: ClippingPageProps) => {
   const [open, setOpen] = useState(false);
+  const [clipDownloadUrl, setClipDownloadUrl] = useState<string | null>(null);
   const timerRef = useRef(0);
-  const [clipPlaybackId, setClipPlaybackId] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
 
   const [playbackStatus, setPlaybackStatus] = useState<{
     duration: number;
@@ -47,6 +56,8 @@ export default (props: ClippingPageProps) => {
     [],
   );
 
+  const onError = useCallback((error: Error) => console.log(error), []);
+
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
 
@@ -61,17 +72,32 @@ export default (props: ClippingPageProps) => {
   });
 
   useEffect(() => {
-    if (clipAsset) {
+    if (isLoading) {
+      setStartTime(null);
+      setEndTime(null);
       setOpen(false);
       window?.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => {
-        setClipPlaybackId(clipAsset?.playbackId ?? null);
         setOpen(true);
       }, 100);
-
-      return () => window?.clearTimeout(timerRef.current);
     }
-  }, [clipAsset]);
+  }, [isLoading]);
+
+  const { data: clippedAsset } = useAsset({
+    assetId: clipAsset?.id ?? undefined,
+    refetchInterval: (asset) => (!asset?.downloadUrl ? 2000 : false),
+  });
+
+  useEffect(() => {
+    if (clippedAsset?.downloadUrl) {
+      setOpen(false);
+      window?.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => {
+        setClipDownloadUrl(clippedAsset.downloadUrl ?? null);
+        setOpen(true);
+      }, 100);
+    }
+  }, [clippedAsset]);
 
   return (
     <ToastProvider>
@@ -93,6 +119,8 @@ export default (props: ClippingPageProps) => {
             playbackId={props.playbackId}
             playbackStatusSelector={playbackStatusSelector}
             onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+            onError={onError}
+            hlsConfig={hlsConfig}
           />
           <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
             <Button
@@ -168,17 +196,21 @@ export default (props: ClippingPageProps) => {
         </form>
       </div>
       <ToastRoot open={open} onOpenChange={setOpen}>
-        <ToastTitle>Livestream clipped</ToastTitle>
-        <ToastDescription>Your clip has been created.</ToastDescription>
-        <ToastAction asChild altText="Open clip in new tab">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`/?v=${clipPlaybackId ?? ''}`}
-          >
-            <Button size="1">Open in new tab</Button>
-          </a>
-        </ToastAction>
+        <ToastTitle>
+          {!clipDownloadUrl ? 'Clip loading' : 'Livestream clipped'}
+        </ToastTitle>
+        <ToastDescription>
+          {!clipDownloadUrl
+            ? 'Your clip is being processed in the background...'
+            : 'Your clip has been created.'}
+        </ToastDescription>
+        {clipDownloadUrl && (
+          <ToastAction asChild altText="Download clip">
+            <a target="_blank" rel="noopener noreferrer" href={clipDownloadUrl}>
+              <Button size="1">Download clip</Button>
+            </a>
+          </ToastAction>
+        )}
       </ToastRoot>
       <ToastViewport />
     </ToastProvider>

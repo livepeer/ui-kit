@@ -87,6 +87,7 @@ const omittedKeys = [
   'onPause',
   'onClipCreated',
   'onClipError',
+  'onClipStarted',
   '_updatePlaybackOffsetMs',
 ] as const;
 
@@ -138,6 +139,8 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   metadata?: Metadata;
   /** The length (in seconds) of the clip to create from instant clipping. */
   clipLength?: ClipLength;
+  /** Callback when a clip is created from the clip button. */
+  onClipStarted?: () => Promise<any> | any;
   /** Callback when a clip is created from the clip button. */
   onClipCreated?: (asset: Asset) => Promise<any> | any;
   /** Callback when a clip fails to be created from the clip button. */
@@ -352,6 +355,7 @@ export const createControllerStore = <TElement, TMediaStream>({
           clipLength: mediaProps.clipLength,
           onClipCreated: mediaProps.onClipCreated,
           onClipError: mediaProps.onClipError,
+          onClipStarted: mediaProps.onClipStarted,
 
           playbackOffsetMs: 0,
 
@@ -568,6 +572,7 @@ export type MediaPropsOptions = {
   viewerId?: string;
   clipLength?: ClipLength;
 
+  onClipStarted?: () => Promise<any> | any;
   onClipCreated?: (asset: Asset) => Promise<any> | any;
   onClipError?: (error: any) => Promise<any> | any;
 
