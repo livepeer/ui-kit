@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@livepeer/design-system';
-import { Asset, Player, PlayerProps, useAsset } from '@livepeer/react';
+import { Asset, Player, PlayerProps, usePlaybackInfo } from '@livepeer/react';
 import * as Popover from '@radix-ui/react-popover';
 
 import mux from 'mux-embed';
@@ -37,8 +37,7 @@ const controls = {
 
 export default (props: PlayerProps<object, any>) => {
   const [open, setOpen] = useState(false);
-  const [clipAssetId, setClipAssetId] = useState<string | null>(null);
-  const [clipDownloadUrl, setClipDownloadUrl] = useState<string | null>(null);
+  const [clipPlaybackId, setClipPlaybackId] = useState<string | null>(null);
   const timerRef = useRef(0);
 
   useEffect(() => {
@@ -51,24 +50,37 @@ export default (props: PlayerProps<object, any>) => {
     }
   }, []);
 
-  const { data: clippedAsset } = useAsset({
-    assetId: clipAssetId ?? undefined,
-    refetchInterval: (asset) => (!asset?.downloadUrl ? 2000 : false),
+  const { data: clipPlaybackInfo } = usePlaybackInfo({
+    playbackId: clipPlaybackId ?? undefined,
+    refetchInterval: (info) =>
+      !info?.meta?.source?.some((s) => s.hrn === 'MP4') ? 2000 : false,
   });
 
+  const mp4DownloadUrl = useMemo(
+    () =>
+      clipPlaybackInfo?.meta?.source
+        ?.sort((a, b) => {
+          const sizeA = a?.size ?? 0;
+          const sizeB = b?.size ?? 0;
+
+          return sizeB - sizeA;
+        })
+        ?.find((s) => s.hrn === 'MP4')?.url ?? null,
+    [clipPlaybackInfo],
+  );
+
   useEffect(() => {
-    if (clippedAsset?.downloadUrl) {
+    if (mp4DownloadUrl) {
       setOpen(false);
       window?.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => {
-        setClipDownloadUrl(clippedAsset.downloadUrl ?? null);
         setOpen(true);
       }, 100);
     }
-  }, [clippedAsset]);
+  }, [mp4DownloadUrl]);
 
   const onClipCreated = useCallback((asset: Asset) => {
-    setClipAssetId(asset.id ?? null);
+    setClipPlaybackId(asset.playbackId ?? null);
   }, []);
 
   const onClipStarted = useCallback(() => {
@@ -277,16 +289,16 @@ export default (props: PlayerProps<object, any>) => {
       )}
       <ToastRoot open={open} onOpenChange={setOpen}>
         <ToastTitle>
-          {!clipDownloadUrl ? 'Clip loading' : 'Livestream clipped'}
+          {!mp4DownloadUrl ? 'Clip loading' : 'Livestream clipped'}
         </ToastTitle>
         <ToastDescription>
-          {!clipDownloadUrl
+          {!mp4DownloadUrl
             ? 'Your clip is being processed in the background...'
             : 'Your clip has been created.'}
         </ToastDescription>
-        {clipDownloadUrl && (
+        {mp4DownloadUrl && (
           <ToastAction asChild altText="Download clip">
-            <a target="_blank" rel="noopener noreferrer" href={clipDownloadUrl}>
+            <a target="_blank" rel="noopener noreferrer" href={mp4DownloadUrl}>
               <Button size="1">Download clip</Button>
             </a>
           </ToastAction>
