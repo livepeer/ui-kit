@@ -447,8 +447,6 @@ export type Stream = {
   rtmpIngestUrl: string;
   /** ID used to create the playback URLs */
   playbackId: string;
-  /** URL for HLS playback */
-  playbackUrl: string;
   /** ID of the parent stream object. Only present for sessions. */
   parentId?: string;
   /** Unix timestamp (in milliseconds) at which the stream object was created */

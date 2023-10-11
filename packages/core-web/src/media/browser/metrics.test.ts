@@ -3,9 +3,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { addMediaMetrics } from './metrics';
 import { MockedVideoElement, resetDateNow, setupClient } from '../../../test';
 
-// const playbackUrl =
-//   'https://livepeercdn.com/recordings/9b8a9c59-e5c6-4ba8-9f88-e400b0f9153f/index.m3u8';
-
 describe('addMediaMetrics', () => {
   beforeAll(() => {
     setupClient();

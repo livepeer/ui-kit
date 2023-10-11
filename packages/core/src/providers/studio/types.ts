@@ -23,7 +23,7 @@ export type StudioFfmpegProfile = TranscodingProfile & {
 };
 
 export interface StudioStream
-  extends Omit<Stream, 'rtmpIngestUrl' | 'playbackUrl' | 'multistream'> {
+  extends Omit<Stream, 'playbackUrl' | 'multistream'> {
   profiles: StudioFfmpegProfile[];
   /**
    * Name of the token used to create this object.

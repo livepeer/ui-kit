@@ -503,8 +503,6 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
     return {
       ...studioStream,
       multistream: await this._mapToMultistream(studioStream.multistream),
-      rtmpIngestUrl: this._getRtmpIngestUrl(studioStream.streamKey),
-      playbackUrl: this._getPlaybackUrl(studioStream.playbackId),
     };
   }
 
