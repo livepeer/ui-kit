@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@livepeer/design-system": "^1.1.0",
-    "@livepeer/react": "^2.8.8",
+    "@livepeer/react": "^2.9.0",
     "@radix-ui/react-popover": "^1.0.6",
     "@radix-ui/react-toast": "^1.1.5",
     "@sentry/nextjs": "^7.69.0",
@@ -20,7 +20,7 @@
     "encoding": "^0.1.13",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
-    "livepeer": "^2.8.8",
+    "livepeer": "^2.9.0",
     "mux-embed": "^4.28.1",
     "next": "13.5.1",
     "next-themes": "^0.2.1",
