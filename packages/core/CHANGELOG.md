@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.9.0
+
+### Minor Changes
+
+- [#390](https://github.com/livepeer/livepeer.js/pull/390) [`961772d`](https://github.com/livepeer/livepeer.js/commit/961772da5eb0dc85da045841aef14b7c6b9386ac) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** removed `playbackUrl` from stream responses. Developers should migrate to using `playbackId` to query stream playback URLs.
+
 ## 1.8.8
 
 ### Patch Changes
