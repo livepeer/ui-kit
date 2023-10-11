@@ -14,8 +14,10 @@ describe('useStream', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
-    expect(result?.current?.data?.playbackUrl).toMatchInlineSnapshot(
-      '"https://livepeercdn.com/hls/d7aer9qx8act4lfd/index.m3u8"',
+    expect((result?.current?.data as any)?.['playbackUrl']).toBeUndefined();
+
+    expect(result?.current?.data?.playbackId).toMatchInlineSnapshot(
+      '"d7aer9qx8act4lfd"',
     );
   });
 
