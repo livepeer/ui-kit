@@ -4,14 +4,12 @@ import { Button, Label, TextField } from '@livepeer/design-system';
 import {
   MediaControllerCallbackState,
   Player,
-  useAsset,
   useCreateClip,
+  usePlaybackInfo,
 } from '@livepeer/react';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { SubmitButton } from './SubmitButton';
-import { createClip } from './actions';
 import {
   ToastAction,
   ToastDescription,
@@ -26,40 +24,43 @@ export type ClippingPageProps = {
 };
 
 const hlsConfig = {
-  liveSyncDurationCount: Number.MAX_VALUE - 10,
+  liveSyncDurationCount: Infinity,
+};
+
+type PlaybackStatus = {
+  progress: number;
+  offset: number;
 };
 
 export default (props: ClippingPageProps) => {
   const [open, setOpen] = useState(false);
-  const [clipDownloadUrl, setClipDownloadUrl] = useState<string | null>(null);
   const timerRef = useRef(0);
 
   useEffect(() => {
     return () => clearTimeout(timerRef.current);
   }, []);
 
-  const [playbackStatus, setPlaybackStatus] = useState<{
-    duration: number;
-    progress: number;
-  } | null>(null);
+  const [playbackStatus, setPlaybackStatus] = useState<PlaybackStatus | null>(
+    null,
+  );
 
   const playbackStatusSelector = useCallback(
     (state: MediaControllerCallbackState<HTMLMediaElement, never>) => ({
-      duration: Number(state.duration.toFixed(1)),
       progress: Number(state.progress.toFixed(1)),
+      offset: Number(state.playbackOffsetMs?.toFixed(1) ?? 0),
     }),
     [],
   );
 
   const onPlaybackStatusUpdate = useCallback(
-    (state: { duration: number; progress: number }) => setPlaybackStatus(state),
+    (state: { progress: number; offset: number }) => setPlaybackStatus(state),
     [],
   );
 
   const onError = useCallback((error: Error) => console.log(error), []);
 
-  const [startTime, setStartTime] = useState<string | null>(null);
-  const [endTime, setEndTime] = useState<string | null>(null);
+  const [startTime, setStartTime] = useState<PlaybackStatus | null>(null);
+  const [endTime, setEndTime] = useState<PlaybackStatus | null>(null);
 
   const {
     data: clipAsset,
@@ -67,14 +68,35 @@ export default (props: ClippingPageProps) => {
     isLoading,
   } = useCreateClip({
     playbackId: props.playbackId,
-    startTime: (Number(startTime) ?? 0) * 1000,
-    endTime: (Number(endTime) ?? 0) * 1000,
+    startTime: Date.now() - Number(startTime?.offset ?? 0),
+    endTime: Date.now() - Number(endTime?.offset ?? 0),
   });
 
   useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
+  const { data: clipPlaybackInfo } = usePlaybackInfo({
+    playbackId: clipAsset?.playbackId ?? undefined,
+    refetchInterval: (info) =>
+      !info?.meta?.source?.some((s) => s.hrn === 'MP4') ? 2000 : false,
+  });
+
+  const mp4DownloadUrl = useMemo(
+    () =>
+      clipPlaybackInfo?.meta?.source
+        ?.sort((a, b) => {
+          const sizeA = a?.size ?? 0;
+          const sizeB = b?.size ?? 0;
+
+          return sizeB - sizeA;
+        })
+        ?.find((s) => s.hrn === 'MP4')?.url ?? null,
+    [clipPlaybackInfo],
+  );
+
+  useEffect(() => {
     if (isLoading) {
-      setStartTime(null);
-      setEndTime(null);
       setOpen(false);
       window?.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => {
@@ -83,21 +105,15 @@ export default (props: ClippingPageProps) => {
     }
   }, [isLoading]);
 
-  const { data: clippedAsset } = useAsset({
-    assetId: clipAsset?.id ?? undefined,
-    refetchInterval: (asset) => (!asset?.downloadUrl ? 2000 : false),
-  });
-
   useEffect(() => {
-    if (clippedAsset?.downloadUrl) {
+    if (mp4DownloadUrl) {
       setOpen(false);
       window?.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => {
-        setClipDownloadUrl(clippedAsset.downloadUrl ?? null);
         setOpen(true);
       }, 100);
     }
-  }, [clippedAsset]);
+  }, [mp4DownloadUrl]);
 
   return (
     <ToastProvider>
@@ -125,13 +141,14 @@ export default (props: ClippingPageProps) => {
           <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
             <Button
               onClick={() => {
-                const progress = playbackStatus?.progress?.toString?.();
+                const progress = playbackStatus?.progress;
+                const offset = playbackStatus?.offset;
 
-                if (progress) {
+                if (progress && offset) {
                   if (!startTime) {
-                    setStartTime(progress);
+                    setStartTime({ progress, offset });
                   } else if (!endTime) {
-                    setEndTime(progress);
+                    setEndTime({ progress, offset });
                   } else {
                     setStartTime(null);
                     setEndTime(null);
@@ -148,65 +165,61 @@ export default (props: ClippingPageProps) => {
           </div>
         </div>
 
-        <form action={createClip}>
-          <div
-            style={{
-              marginTop: '20px',
-              display: 'flex',
-              gap: '10px',
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <Label>Start time (seconds)</Label>
-              <TextField
-                name="start"
-                type="number"
-                disabled
-                value={startTime ?? ''}
-                step={0.1}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <Label>End time (seconds)</Label>
-              <TextField
-                name="end"
-                type="number"
-                disabled
-                value={endTime ?? ''}
-                step={0.1}
-              />
-            </div>
-
-            <input type="hidden" value={props.playbackId} name="playbackId" />
+        <div
+          style={{
+            marginTop: '20px',
+            display: 'flex',
+            gap: '10px',
+          }}
+        >
+          <div style={{ flex: 1 }}>
+            <Label>Start time (seconds)</Label>
+            <TextField
+              name="start"
+              type="number"
+              disabled
+              value={startTime?.progress?.toString() ?? ''}
+              step={0.1}
+            />
           </div>
-
-          <div
-            style={{
-              float: 'right',
-              marginTop: '10px',
-            }}
-          >
-            <SubmitButton
-              onClick={mutate}
-              disabled={!startTime || !endTime || isLoading}
-            >
-              Create clip
-            </SubmitButton>
+          <div style={{ flex: 1 }}>
+            <Label>End time (seconds)</Label>
+            <TextField
+              name="end"
+              type="number"
+              disabled
+              value={endTime?.progress?.toString() ?? ''}
+              step={0.1}
+            />
           </div>
-        </form>
+        </div>
+
+        <div
+          style={{
+            float: 'right',
+            marginTop: '10px',
+          }}
+        >
+          <Button
+            onClick={mutate}
+            disabled={!startTime || !endTime || isLoading}
+          >
+            Create clip
+          </Button>
+        </div>
       </div>
       <ToastRoot open={open} onOpenChange={setOpen}>
         <ToastTitle>
-          {!clipDownloadUrl ? 'Clip loading' : 'Livestream clipped'}
+          {!mp4DownloadUrl ? 'Clip loading' : 'Livestream clipped'}
         </ToastTitle>
         <ToastDescription>
-          {!clipDownloadUrl
+          {!mp4DownloadUrl
             ? 'Your clip is being processed in the background...'
             : 'Your clip has been created.'}
         </ToastDescription>
-        {clipDownloadUrl && (
+        {mp4DownloadUrl && (
           <ToastAction asChild altText="Download clip">
-            <a target="_blank" rel="noopener noreferrer" href={clipDownloadUrl}>
+            <a target="_blank" rel="noopener noreferrer" href={mp4DownloadUrl}>
               <Button size="1">Download clip</Button>
             </a>
           </ToastAction>
