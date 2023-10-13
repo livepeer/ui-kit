@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 1.9.1
+
+### Patch Changes
+
+- [#392](https://github.com/livepeer/livepeer.js/pull/392) [`b8e2831`](https://github.com/livepeer/livepeer.js/commit/b8e2831ffde3b7cc87dde7e5030dfcee10adb57c) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added better error handling for HLS.js buffer append errors.
+
 ## 1.9.0
 
 ### Minor Changes
