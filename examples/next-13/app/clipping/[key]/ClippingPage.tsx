@@ -32,6 +32,11 @@ type PlaybackStatus = {
   offset: number;
 };
 
+type PlaybackStartEnd = {
+  displayTime: string;
+  unix: number;
+};
+
 export default (props: ClippingPageProps) => {
   const [open, setOpen] = useState(false);
   const timerRef = useRef(0);
@@ -59,8 +64,8 @@ export default (props: ClippingPageProps) => {
 
   const onError = useCallback((error: Error) => console.log(error), []);
 
-  const [startTime, setStartTime] = useState<PlaybackStatus | null>(null);
-  const [endTime, setEndTime] = useState<PlaybackStatus | null>(null);
+  const [startTime, setStartTime] = useState<PlaybackStartEnd | null>(null);
+  const [endTime, setEndTime] = useState<PlaybackStartEnd | null>(null);
 
   const {
     data: clipAsset,
@@ -68,8 +73,8 @@ export default (props: ClippingPageProps) => {
     isLoading,
   } = useCreateClip({
     playbackId: props.playbackId,
-    startTime: Date.now() - Number(startTime?.offset ?? 0),
-    endTime: Date.now() - Number(endTime?.offset ?? 0),
+    startTime: startTime?.unix ?? 0,
+    endTime: endTime?.unix ?? 0,
   });
 
   useEffect(() => {
@@ -145,10 +150,18 @@ export default (props: ClippingPageProps) => {
                 const offset = playbackStatus?.offset;
 
                 if (progress && offset) {
+                  const calculatedTime = Date.now() - offset;
+
                   if (!startTime) {
-                    setStartTime({ progress, offset });
+                    setStartTime({
+                      unix: calculatedTime,
+                      displayTime: progress.toFixed(0).toString(),
+                    });
                   } else if (!endTime) {
-                    setEndTime({ progress, offset });
+                    setEndTime({
+                      unix: calculatedTime,
+                      displayTime: progress.toFixed(0).toString(),
+                    });
                   } else {
                     setStartTime(null);
                     setEndTime(null);
@@ -178,7 +191,7 @@ export default (props: ClippingPageProps) => {
               name="start"
               type="number"
               disabled
-              value={startTime?.progress?.toString() ?? ''}
+              value={startTime?.displayTime ?? ''}
               step={0.1}
             />
           </div>
@@ -188,7 +201,7 @@ export default (props: ClippingPageProps) => {
               name="end"
               type="number"
               disabled
-              value={endTime?.progress?.toString() ?? ''}
+              value={endTime?.displayTime ?? ''}
               step={0.1}
             />
           </div>
