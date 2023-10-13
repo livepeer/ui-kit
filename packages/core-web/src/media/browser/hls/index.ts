@@ -54,8 +54,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   element.setAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE, 'true');
 
   const hls = new Hls({
-    maxBufferLength: 15,
-    maxMaxBufferLength: 60,
+    backBufferLength: 60 * 1.5,
     ...config,
     ...(config?.liveSyncDurationCount
       ? {
@@ -94,13 +93,27 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Hls.Events.ERROR, async (_event, data) => {
     const { details, fatal } = data;
 
-    hls.detachMedia();
-
     const isManifestParsingError =
       Hls.ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
 
     if (!fatal && !isManifestParsingError) return;
     callbacks?.onError?.(data);
+
+    if (fatal) {
+      console.error(`Fatal error : ${data.details}`);
+      switch (data.type) {
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          hls.recoverMediaError();
+          break;
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          console.error(`A network error occurred: ${data.details}`);
+          break;
+        default:
+          console.error(`An unrecoverable error occurred: ${data.details}`);
+          hls.destroy();
+          break;
+      }
+    }
   });
 
   function updateOffset() {
