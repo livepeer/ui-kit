@@ -46,7 +46,7 @@ export default (props: ClippingPageProps) => {
     () =>
       props.sessionId
         ? {
-            src: `https://link.storjshare.io/raw/juixm77hfsmhyslrxtycnqfmnlfq/catalyst-recordings-com/hls/${props.playbackId}/${props.sessionId}/output.m3u8`,
+            src: `${process.env.NEXT_PUBLIC_RECORDINGS_BASE_URL}${props.playbackId}/${props.sessionId}/output.m3u8`,
             playRecording: true,
           }
         : {
