@@ -17,10 +17,11 @@ import {
   ToastRoot,
   ToastTitle,
   ToastViewport,
-} from '../../toast';
+} from '../../../toast';
 
 export type ClippingPageProps = {
   playbackId: string;
+  sessionId?: string;
 };
 
 const hlsConfig = {
@@ -40,6 +41,19 @@ type PlaybackStartEnd = {
 export default (props: ClippingPageProps) => {
   const [open, setOpen] = useState(false);
   const timerRef = useRef(0);
+
+  const playerProps = useMemo(
+    () =>
+      props.sessionId
+        ? {
+            src: `https://link.storjshare.io/raw/juixm77hfsmhyslrxtycnqfmnlfq/catalyst-recordings-com/hls/${props.playbackId}/${props.sessionId}/output.m3u8`,
+            playRecording: true,
+          }
+        : {
+            playbackId: props.playbackId,
+          },
+    [props],
+  );
 
   useEffect(() => {
     return () => clearTimeout(timerRef.current);
@@ -72,6 +86,7 @@ export default (props: ClippingPageProps) => {
     mutate,
     isLoading,
   } = useCreateClip({
+    sessionId: props.sessionId,
     playbackId: props.playbackId,
     startTime: startTime?.unix ?? 0,
     endTime: endTime?.unix ?? 0,
@@ -134,10 +149,9 @@ export default (props: ClippingPageProps) => {
           }}
         >
           <Player
+            {...playerProps}
             autoPlay
-            playRecording
             muted
-            playbackId={props.playbackId}
             playbackStatusSelector={playbackStatusSelector}
             onPlaybackStatusUpdate={onPlaybackStatusUpdate}
             onError={onError}

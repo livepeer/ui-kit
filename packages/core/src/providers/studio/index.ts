@@ -162,6 +162,7 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
         startTime: args.startTime,
         endTime: args.endTime,
         ...(args.name ? { name: args.name } : {}),
+        ...(args.sessionId ? { sessionId: args.sessionId } : {}),
       },
       headers: this._defaultHeaders,
     });
