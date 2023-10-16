@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 1.9.2
+
+### Patch Changes
+
+- [#394](https://github.com/livepeer/livepeer.js/pull/394) [`5d5048d`](https://github.com/livepeer/livepeer.js/commit/5d5048d4854c55f8f452ce969d2adcaf4c5b5dc3) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated clipping to include an optional session ID.
+
+- Updated dependencies [[`5d5048d`](https://github.com/livepeer/livepeer.js/commit/5d5048d4854c55f8f452ce969d2adcaf4c5b5dc3)]:
+  - @livepeer/core@1.9.2
+
 ## 1.9.1
 
 ### Patch Changes
@@ -24,7 +33,7 @@
 
 ### Patch Changes
 
-- [#388](https://github.com/livepeer/livepeer.js/pull/388) [`6095d73`](https://github.com/livepeer/livepeer.js/commit/6095d73fbfd469f5148479d757d90e81ed8569db) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `onClipStarted` and ensured overridden `liveSyncDurationCount` in HLS config does not throw errors in HLS.js. 
+- [#388](https://github.com/livepeer/livepeer.js/pull/388) [`6095d73`](https://github.com/livepeer/livepeer.js/commit/6095d73fbfd469f5148479d757d90e81ed8569db) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `onClipStarted` and ensured overridden `liveSyncDurationCount` in HLS config does not throw errors in HLS.js.
 
 - Updated dependencies [[`6095d73`](https://github.com/livepeer/livepeer.js/commit/6095d73fbfd469f5148479d757d90e81ed8569db)]:
   - @livepeer/core@1.8.8

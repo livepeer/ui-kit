@@ -1,5 +1,14 @@
 # livepeer
 
+## 2.9.2
+
+### Patch Changes
+
+- [#394](https://github.com/livepeer/livepeer.js/pull/394) [`5d5048d`](https://github.com/livepeer/livepeer.js/commit/5d5048d4854c55f8f452ce969d2adcaf4c5b5dc3) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated clipping to include an optional session ID.
+
+- Updated dependencies [[`5d5048d`](https://github.com/livepeer/livepeer.js/commit/5d5048d4854c55f8f452ce969d2adcaf4c5b5dc3)]:
+  - @livepeer/core@1.9.2
+
 ## 2.9.1
 
 ### Patch Changes
