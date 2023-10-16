@@ -7,12 +7,18 @@ export const metadata = {
 export default async function Page({
   params,
 }: {
-  params: { streamKey?: string; sessionId?: string };
+  params: { streamKey?: string; sessionId?: string[] | string };
 }) {
   return params?.streamKey ? (
     <ClippingPage
       playbackId={params.streamKey}
-      sessionId={params.sessionId || undefined}
+      sessionId={
+        params.sessionId
+          ? typeof params.sessionId === 'string'
+            ? String(params.sessionId)
+            : String(params.sessionId[0])
+          : undefined
+      }
     />
   ) : (
     <div
