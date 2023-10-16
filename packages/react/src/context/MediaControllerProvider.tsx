@@ -1,11 +1,14 @@
 import { useClient } from '@livepeer/core-react/context';
-import { version } from 'livepeer';
+import { version } from '@livepeer/core-web';
 import {
   ControlsOptions,
   MediaPropsOptions,
   createControllerStore,
-} from 'livepeer/media';
-import { addEventListeners, getDeviceInfo } from 'livepeer/media/browser';
+} from '@livepeer/core-web/media';
+import {
+  addEventListeners,
+  getDeviceInfo,
+} from '@livepeer/core-web/media/browser';
 import * as React from 'react';
 
 import { MediaControllerContext } from './MediaControllerContext';

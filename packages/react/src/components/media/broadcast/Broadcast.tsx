@@ -4,7 +4,7 @@ import {
   useBroadcast,
 } from '@livepeer/core-react/components';
 
-import { MediaControllerCallbackState } from 'livepeer';
+import { MediaControllerCallbackState } from '@livepeer/core-web';
 import * as React from 'react';
 
 import { WebRTCBroadcast } from './WebRTCBroadcast';

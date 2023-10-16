@@ -1,5 +1,5 @@
 import { TitleProps } from '@livepeer/core-react/components';
-import { styling } from 'livepeer/media/browser/styling';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 export type { TitleProps };

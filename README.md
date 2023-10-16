@@ -9,15 +9,6 @@
   livepeer.js
 <h3>
 
-<div align="center">
-  <a href="https://www.npmjs.com/package/livepeer">
-    <img src="https://img.shields.io/npm/v/livepeer?colorA=21262d&colorB=161b22&style=flat" alt="Version">
-  </a>
-  <a href="https://www.npmjs.com/package/livepeer">
-    <img src="https://img.shields.io/npm/dm/livepeer?colorA=21262d&colorB=161b22&style=flat" alt="Downloads per month">
-  </a>
-</div>
-
 ## Features
 
 - 📺 Player for video/audio with built-in low-latency WebRTC/HLS support, accessibility, keyboard shortcuts, and customizable controls

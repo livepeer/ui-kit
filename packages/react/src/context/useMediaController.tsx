@@ -1,4 +1,4 @@
-import { MediaControllerState } from 'livepeer/media';
+import { MediaControllerState } from '@livepeer/core-web/media';
 import * as React from 'react';
 import { useStore } from 'zustand';
 

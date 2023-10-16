@@ -1,7 +1,7 @@
-import { MediaControllerState, omit } from 'livepeer';
+import { MediaControllerState, omit } from '@livepeer/core-web';
 
-import { styling } from 'livepeer/media/browser/styling';
-import { getDisplayMedia } from 'livepeer/media/browser/webrtc';
+import { styling } from '@livepeer/core-web/media/browser/styling';
+import { getDisplayMedia } from '@livepeer/core-web/media/browser/webrtc';
 import React, { useCallback } from 'react';
 
 import { useMediaController } from '../../../../context';

@@ -1,7 +1,7 @@
 import { AudioPlayerProps as AudioPlayerCoreProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from 'livepeer';
-import { canPlayMediaNatively } from 'livepeer/media/browser';
-import { styling } from 'livepeer/media/browser/styling';
+import { MediaControllerState } from '@livepeer/core-web';
+import { canPlayMediaNatively } from '@livepeer/core-web/media/browser';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 import { PosterSource } from './Player';

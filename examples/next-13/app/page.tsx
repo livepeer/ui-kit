@@ -1,5 +1,5 @@
-import { ClipLength, createClient } from 'livepeer';
-import { studioProvider } from 'livepeer/providers/studio';
+import { ClipLength, createClient } from '@livepeer/core-web';
+import { studioProvider } from '@livepeer/core-web/providers/studio';
 import { cache } from 'react';
 
 import PlayerPage from './PlayerPage';

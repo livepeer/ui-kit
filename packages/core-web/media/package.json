@@ -1,4 +1,4 @@
 {
-  "main": "dist/livepeer-media.cjs.js",
-  "module": "dist/livepeer-media.esm.js"
+  "main": "dist/livepeer-core-web-media.cjs.js",
+  "module": "dist/livepeer-core-web-media.esm.js"
 }

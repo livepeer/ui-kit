@@ -1,4 +1,4 @@
 {
-  "main": "dist/livepeer-media-browser-styling.cjs.js",
-  "module": "dist/livepeer-media-browser-styling.esm.js"
+  "main": "dist/livepeer-core-web-media-browser-styling.cjs.js",
+  "module": "dist/livepeer-core-web-media-browser-styling.esm.js"
 }

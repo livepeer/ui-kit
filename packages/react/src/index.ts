@@ -1,14 +1,14 @@
 export * from '@livepeer/core-react';
-export { type ThemeConfig } from 'livepeer/media';
+export { type ThemeConfig } from '@livepeer/core-web/media';
 export {
   defaultTheme,
   getCssText,
   styling,
-} from 'livepeer/media/browser/styling';
+} from '@livepeer/core-web/media/browser/styling';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
-} from 'livepeer/providers/studio';
+} from '@livepeer/core-web/providers/studio';
 export { createReactClient, defaultQueryClient } from './client';
 export type { CreateReactClientConfig, ReactClient } from './client';
 export {

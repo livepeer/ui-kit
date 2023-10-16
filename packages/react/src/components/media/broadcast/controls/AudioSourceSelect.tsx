@@ -1,5 +1,8 @@
-import { MediaControllerState } from 'livepeer';
-import { getMediaDevices, getUserMedia } from 'livepeer/media/browser/webrtc';
+import { MediaControllerState } from '@livepeer/core-web';
+import {
+  getMediaDevices,
+  getUserMedia,
+} from '@livepeer/core-web/media/browser/webrtc';
 import * as React from 'react';
 
 import { AVSelect } from './AVSelect';

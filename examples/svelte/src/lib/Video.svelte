@@ -2,11 +2,11 @@
   import {
     addMediaMetrics,
     canPlayMediaNatively,
-  } from 'livepeer/media/browser';
-  import { getMediaSourceType } from 'livepeer/media';
-  import { createClient } from 'livepeer/client';
-  import { createNewHls, isHlsSupported } from 'livepeer/media/browser/hls';
-  import { studioProvider } from 'livepeer/providers/studio';
+  } from '@livepeer/core-web/media/browser';
+  import { getMediaSourceType } from '@livepeer/core-web/media';
+  import { createClient } from '@livepeer/core-web/client';
+  import { createNewHls, isHlsSupported } from '@livepeer/core-web/media/browser/hls';
+  import { studioProvider } from '@livepeer/core-web/providers/studio';
   import { onMount } from 'svelte';
 
   let videoSrc = '';

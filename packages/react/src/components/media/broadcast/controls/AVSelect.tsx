@@ -1,5 +1,5 @@
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as Select from '@radix-ui/react-select';
-import { styling } from 'livepeer/media/browser/styling';
 import { useMemo } from 'react';
 
 export type AVSelectProps = {

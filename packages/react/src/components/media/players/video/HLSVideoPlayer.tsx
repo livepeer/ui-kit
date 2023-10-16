@@ -2,9 +2,9 @@ import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   HlsSrc,
   MediaControllerState,
-} from 'livepeer';
-import { HlsError, createNewHls } from 'livepeer/media/browser/hls';
-import { styling } from 'livepeer/media/browser/styling';
+} from '@livepeer/core-web';
+import { HlsError, createNewHls } from '@livepeer/core-web/media/browser/hls';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 import { VideoPlayerProps } from '.';

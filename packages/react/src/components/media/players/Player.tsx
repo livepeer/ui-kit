@@ -10,11 +10,11 @@ import {
   MediaControllerCallbackState,
   VideoSrc,
   WebRTCSrc,
-} from 'livepeer/media';
-import { ControlsOptions } from 'livepeer/media/browser';
+} from '@livepeer/core-web/media';
+import { ControlsOptions } from '@livepeer/core-web/media/browser';
 
-import { HlsVideoConfig } from 'livepeer/media/browser/hls';
-import { WebRTCVideoConfig } from 'livepeer/media/browser/webrtc';
+import { HlsVideoConfig } from '@livepeer/core-web/media/browser/hls';
+import { WebRTCVideoConfig } from '@livepeer/core-web/media/browser/webrtc';
 import * as React from 'react';
 
 import { AudioPlayer } from '.';

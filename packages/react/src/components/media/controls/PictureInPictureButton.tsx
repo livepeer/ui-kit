@@ -1,6 +1,6 @@
-import { MediaControllerState } from 'livepeer';
-import { isPictureInPictureSupported } from 'livepeer/media/browser';
-import { styling } from 'livepeer/media/browser/styling';
+import { MediaControllerState } from '@livepeer/core-web';
+import { isPictureInPictureSupported } from '@livepeer/core-web/media/browser';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController } from '../../../context';

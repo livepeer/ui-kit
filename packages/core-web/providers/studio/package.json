@@ -1,4 +1,4 @@
 {
-  "main": "dist/livepeer-providers-studio.cjs.js",
-  "module": "dist/livepeer-providers-studio.esm.js"
+  "main": "dist/livepeer-core-web-providers-studio.cjs.js",
+  "module": "dist/livepeer-core-web-providers-studio.esm.js"
 }
