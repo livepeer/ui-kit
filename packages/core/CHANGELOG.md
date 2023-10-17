@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.0.0
+
+### Major Changes
+
+- [#395](https://github.com/livepeer/livepeer.js/pull/395) [`119c28b`](https://github.com/livepeer/livepeer.js/commit/119c28b64d6f6d0e0948d0477feb7999f6e331d5) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** moved `livepeer` to `@livepeer/core-web`, which will be aligned with our `livepeer` packages that are 1-1 with the backend API.
+
 ## 1.9.2
 
 ### Patch Changes
