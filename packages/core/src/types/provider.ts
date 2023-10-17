@@ -95,6 +95,8 @@ export type CreateClipArgs = {
   startTime: number;
   /** End of the clip in unix seconds */
   endTime: number;
+  /** Session ID of the stream to clip (used for clipping historical stream sessions) */
+  sessionId?: string;
 };
 
 export type WebhookPlaybackPolicy<TContext extends object> = {

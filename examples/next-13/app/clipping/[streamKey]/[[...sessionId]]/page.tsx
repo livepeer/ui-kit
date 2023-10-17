@@ -4,9 +4,22 @@ export const metadata = {
   title: 'Clipping',
 };
 
-export default async function Page({ params }: { params: { key?: string } }) {
-  return params?.key ? (
-    <ClippingPage playbackId={params.key} />
+export default async function Page({
+  params,
+}: {
+  params: { streamKey?: string; sessionId?: string[] | string };
+}) {
+  return params?.streamKey ? (
+    <ClippingPage
+      playbackId={params.streamKey}
+      sessionId={
+        params.sessionId
+          ? typeof params.sessionId === 'string'
+            ? String(params.sessionId)
+            : String(params.sessionId[0])
+          : undefined
+      }
+    />
   ) : (
     <div
       style={{
