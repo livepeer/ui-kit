@@ -1,4 +1,4 @@
-import { styling } from 'livepeer/media/browser/styling';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 import OfflineStreamImage from './images/OfflineStreamImage';

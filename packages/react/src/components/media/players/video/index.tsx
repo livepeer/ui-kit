@@ -5,13 +5,16 @@ import {
   sanitizeMediaControllerState,
 } from '@livepeer/core-react';
 import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from 'livepeer';
-import { canPlayMediaNatively } from 'livepeer/media/browser';
-import { HlsVideoConfig, isHlsSupported } from 'livepeer/media/browser/hls';
+import { MediaControllerState } from '@livepeer/core-web';
+import { canPlayMediaNatively } from '@livepeer/core-web/media/browser';
+import {
+  HlsVideoConfig,
+  isHlsSupported,
+} from '@livepeer/core-web/media/browser/hls';
 import {
   WebRTCVideoConfig,
   isWebRTCSupported,
-} from 'livepeer/media/browser/webrtc';
+} from '@livepeer/core-web/media/browser/webrtc';
 import * as React from 'react';
 
 import { HLSVideoPlayer } from './HLSVideoPlayer';

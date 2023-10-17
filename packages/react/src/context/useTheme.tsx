@@ -1,6 +1,6 @@
 import { useTheme as useThemeCore } from '@livepeer/core-react/context';
-import { ThemeConfig } from 'livepeer/media';
-import { createTheme } from 'livepeer/media/browser/styling';
+import { ThemeConfig } from '@livepeer/core-web/media';
+import { createTheme } from '@livepeer/core-web/media/browser/styling';
 
 import { ThemeContext } from './ThemeContext';
 

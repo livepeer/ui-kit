@@ -2,9 +2,9 @@ import {
   BaseSliderProps,
   useBaseSlider,
 } from '@livepeer/core-react/components';
+import { MediaControllerState } from '@livepeer/core-web';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import { CSS } from '@stitches/react';
-import { MediaControllerState } from 'livepeer';
-import { styling } from 'livepeer/media/browser/styling';
 
 import * as React from 'react';
 

@@ -1,7 +1,7 @@
 import { ContainerProps as CoreContainerProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from 'livepeer';
+import { MediaControllerState } from '@livepeer/core-web';
 
-import { styling } from 'livepeer/media/browser/styling';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 import { useMediaController, useTheme } from '../../../context';

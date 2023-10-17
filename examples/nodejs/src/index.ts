@@ -1,6 +1,6 @@
-import { Asset } from 'livepeer';
-import { createClient } from 'livepeer/client';
-import { studioProvider } from 'livepeer/providers/studio';
+import { Asset } from '@livepeer/core-web';
+import { createClient } from '@livepeer/core-web/client';
+import { studioProvider } from '@livepeer/core-web/providers/studio';
 
 import { CombinedMedia } from './create-dataset';
 import * as fs from 'fs';

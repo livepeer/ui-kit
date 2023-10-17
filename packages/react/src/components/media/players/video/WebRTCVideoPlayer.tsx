@@ -2,12 +2,12 @@ import {
   BFRAMES_ERROR_MESSAGE,
   MediaControllerState,
   WebRTCSrc,
-} from 'livepeer';
-import { styling } from 'livepeer/media/browser/styling';
+} from '@livepeer/core-web';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import {
   WebRTCVideoConfig,
   createNewWHEP,
-} from 'livepeer/media/browser/webrtc';
+} from '@livepeer/core-web/media/browser/webrtc';
 import * as React from 'react';
 
 import { VideoPlayerProps } from '.';

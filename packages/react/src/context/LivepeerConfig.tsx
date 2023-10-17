@@ -6,10 +6,10 @@ import {
   QueryClientContext as CoreQueryClientContext,
   useClient as useClientCore,
 } from '@livepeer/core-react/context';
-import { QueryClient } from '@tanstack/react-query';
-import { ThemeConfig } from 'livepeer/media';
+import { ThemeConfig } from '@livepeer/core-web/media';
 
-import { LivepeerProvider } from 'livepeer/types';
+import { LivepeerProvider } from '@livepeer/core-web/types';
+import { QueryClient } from '@tanstack/react-query';
 import * as React from 'react';
 
 import { ThemeProvider } from './ThemeProvider';

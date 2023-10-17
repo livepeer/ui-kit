@@ -1,15 +1,15 @@
-# livepeer
+# @livepeer/core-web
 
 ## Documentation
 
-The `livepeer` package contains vanilla JS data fetching and Livepeer provider/protocol interactions for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
+The `@livepeer/core-web` package contains vanilla JS data fetching and Livepeer provider/protocol interactions for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
 
 ## Installation
 
-Install livepeer and its peer dependencies.
+Install `@livepeer/core-web` and its peer dependencies.
 
 ```bash
-npm install livepeer
+npm install @livepeer/core-web
 ```
 
 ## Community

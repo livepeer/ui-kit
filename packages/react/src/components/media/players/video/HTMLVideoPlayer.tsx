@@ -5,8 +5,8 @@ import {
   MediaControllerState,
   STREAM_OFFLINE_ERROR_MESSAGE,
   VideoSrc,
-} from 'livepeer';
-import { styling } from 'livepeer/media/browser/styling';
+} from '@livepeer/core-web';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as React from 'react';
 
 import { VideoPlayerProps } from '.';

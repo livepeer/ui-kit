@@ -1,6 +1,6 @@
+import { MediaControllerState, omit } from '@livepeer/core-web';
+import { styling } from '@livepeer/core-web/media/browser/styling';
 import * as Dialog from '@radix-ui/react-dialog';
-import { MediaControllerState, omit } from 'livepeer';
-import { styling } from 'livepeer/media/browser/styling';
 import * as React from 'react';
 
 import { AudioSourceSelect } from './AudioSourceSelect';
