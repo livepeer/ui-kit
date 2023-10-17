@@ -1,5 +1,16 @@
 # @livepeer/core-react
 
+## 2.0.0
+
+### Major Changes
+
+- [#395](https://github.com/livepeer/livepeer.js/pull/395) [`119c28b`](https://github.com/livepeer/livepeer.js/commit/119c28b64d6f6d0e0948d0477feb7999f6e331d5) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** moved `livepeer` to `@livepeer/core-web`, which will be aligned with our `livepeer` packages that are 1-1 with the backend API.
+
+### Patch Changes
+
+- Updated dependencies [[`119c28b`](https://github.com/livepeer/livepeer.js/commit/119c28b64d6f6d0e0948d0477feb7999f6e331d5)]:
+  - @livepeer/core@2.0.0
+
 ## 1.9.2
 
 ### Patch Changes
@@ -33,7 +44,7 @@
 
 ### Patch Changes
 
-- [#388](https://github.com/livepeer/livepeer.js/pull/388) [`6095d73`](https://github.com/livepeer/livepeer.js/commit/6095d73fbfd469f5148479d757d90e81ed8569db) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `onClipStarted` and ensured overridden `liveSyncDurationCount` in HLS config does not throw errors in HLS.js. 
+- [#388](https://github.com/livepeer/livepeer.js/pull/388) [`6095d73`](https://github.com/livepeer/livepeer.js/commit/6095d73fbfd469f5148479d757d90e81ed8569db) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `onClipStarted` and ensured overridden `liveSyncDurationCount` in HLS config does not throw errors in HLS.js.
 
 - Updated dependencies [[`6095d73`](https://github.com/livepeer/livepeer.js/commit/6095d73fbfd469f5148479d757d90e81ed8569db)]:
   - @livepeer/core@1.8.8
