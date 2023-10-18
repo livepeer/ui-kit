@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 2.0.1
+
+### Patch Changes
+
+- [#398](https://github.com/livepeer/livepeer.js/pull/398) [`8ce5d5c`](https://github.com/livepeer/livepeer.js/commit/8ce5d5ccd6b69f5783783b4abdc00c69c648030e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added loading states to the clipping button in the Player, with better callbacks for users to implement UIs on top of clipping.
+
+- Updated dependencies [[`8ce5d5c`](https://github.com/livepeer/livepeer.js/commit/8ce5d5ccd6b69f5783783b4abdc00c69c648030e)]:
+  - @livepeer/core@2.0.1
+
 ## 2.0.0
 
 ### Major Changes
 
-- [#395](https://github.com/livepeer/livepeer.js/pull/395) [`119c28b`](https://github.com/livepeer/livepeer.js/commit/119c28b64d6f6d0e0948d0477feb7999f6e331d5) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** moved `livepeer` to `@livepeer/core-web`, which will be aligned with our `livepeer` packages that are 1-1 with the backend API. 
+- [#395](https://github.com/livepeer/livepeer.js/pull/395) [`119c28b`](https://github.com/livepeer/livepeer.js/commit/119c28b64d6f6d0e0948d0477feb7999f6e331d5) Thanks [@0xcadams](https://github.com/0xcadams)! - **Breaking:** moved `livepeer` to `@livepeer/core-web`, which will be aligned with our `livepeer` packages that are 1-1 with the backend API.
 
 ### Patch Changes
 

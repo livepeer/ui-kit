@@ -85,7 +85,7 @@ importers:
   examples/_expo:
     specifiers:
       '@babel/core': ^7.20.5
-      '@livepeer/react-native': ^2.0.0
+      '@livepeer/react-native': ^2.0.1
       '@types/react': ~18.0.27
       '@types/react-native': ~0.71.0
       babel-preset-expo: ~9.2.1
@@ -117,7 +117,7 @@ importers:
 
   examples/_next:
     specifiers:
-      '@livepeer/react': ^3.0.0
+      '@livepeer/react': ^3.0.1
       '@preconstruct/next': ^4.0.0
       '@rainbow-me/rainbowkit': ^0.8.0
       '@types/node': ^18.11.11
@@ -152,7 +152,7 @@ importers:
     specifiers:
       '@babel/core': ^7.20.5
       '@babel/runtime': ^7.20.6
-      '@livepeer/react-native': ^2.0.0
+      '@livepeer/react-native': ^2.0.1
       '@react-native-community/eslint-config': ^3.2.0
       '@rnx-kit/metro-config': ^1.3.3
       '@rnx-kit/metro-resolver-symlinks': ^0.1.23
@@ -208,7 +208,7 @@ importers:
   examples/expo:
     specifiers:
       '@babel/core': ^7.20.5
-      '@livepeer/react-native': ^2.0.0
+      '@livepeer/react-native': ^2.0.1
       '@types/react': ~18.0.27
       '@types/react-native': ~0.71.0
       babel-preset-expo: ~9.2.1
@@ -240,7 +240,7 @@ importers:
 
   examples/next:
     specifiers:
-      '@livepeer/react': ^3.0.0
+      '@livepeer/react': ^3.0.1
       '@preconstruct/next': ^4.0.0
       '@types/node': ^18.11.11
       '@types/react': ^18.0.27
@@ -267,9 +267,9 @@ importers:
 
   examples/next-13:
     specifiers:
-      '@livepeer/core-web': ^3.0.0
+      '@livepeer/core-web': ^3.0.1
       '@livepeer/design-system': ^1.1.0
-      '@livepeer/react': ^3.0.0
+      '@livepeer/react': ^3.0.1
       '@radix-ui/react-popover': ^1.0.6
       '@radix-ui/react-toast': ^1.1.5
       '@sentry/nextjs': ^7.69.0
@@ -316,7 +316,7 @@ importers:
       '@graphql-codegen/typescript': ^2.8.3
       '@graphql-codegen/typescript-operations': ^2.5.8
       '@graphql-typed-document-node/core': ^3.1.1
-      '@livepeer/core-web': ^3.0.0
+      '@livepeer/core-web': ^3.0.1
       '@types/node': ^18.11.11
       cross-fetch: ^3.1.5
       graphql: ^16.6.0
@@ -340,7 +340,7 @@ importers:
 
   examples/svelte:
     specifiers:
-      '@livepeer/core-web': ^3.0.0
+      '@livepeer/core-web': ^3.0.1
       '@sveltejs/vite-plugin-svelte': ^1.4.0
       svelte: ^3.54.0
       vite: ^3.2.5
@@ -372,7 +372,7 @@ importers:
 
   packages/core-react:
     specifiers:
-      '@livepeer/core': ^2.0.0
+      '@livepeer/core': ^2.0.1
       '@tanstack/query-async-storage-persister': 4.29.23
       '@tanstack/query-core': 4.29.23
       '@tanstack/react-query': 4.29.23
@@ -405,7 +405,7 @@ importers:
 
   packages/core-web:
     specifiers:
-      '@livepeer/core': ^2.0.0
+      '@livepeer/core': ^2.0.1
       '@stitches/core': ^1.2.8
       '@types/ms': ^0.7.31
       core-js: ^3.31.1
@@ -433,8 +433,8 @@ importers:
 
   packages/react:
     specifiers:
-      '@livepeer/core-react': ^2.0.0
-      '@livepeer/core-web': ^3.0.0
+      '@livepeer/core-react': ^2.0.1
+      '@livepeer/core-web': ^3.0.1
       '@radix-ui/react-dialog': ^1.0.4
       '@radix-ui/react-popover': ^1.0.6
       '@radix-ui/react-select': ^1.2.2
@@ -468,7 +468,7 @@ importers:
 
   packages/react-native:
     specifiers:
-      '@livepeer/core-react': ^2.0.0
+      '@livepeer/core-react': ^2.0.1
       '@tanstack/react-query': 4.29.23
       '@testing-library/react-hooks': ^8.0.1
       '@testing-library/react-native': ^12.1.2
