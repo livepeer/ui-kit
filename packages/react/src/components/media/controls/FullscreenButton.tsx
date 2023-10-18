@@ -102,7 +102,7 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
         width: props.size,
         height: props.size,
       }}
-      className={styling.iconButton()}
+      className={styling.iconButton.button()}
       title={title}
       aria-label={title}
       onClick={buttonProps.onPress}

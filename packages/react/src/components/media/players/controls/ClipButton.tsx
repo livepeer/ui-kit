@@ -20,23 +20,26 @@ const mediaControllerSelector = ({
   live,
   requestClip,
   playbackId,
+  clipStatus,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   live,
   requestClip,
   playbackId,
+  clipStatus,
 });
 
 export type { ClipButtonProps, ClipLength };
 
 export const ClipButton: React.FC<ClipButtonProps> = (props) => {
-  const { live, requestClip, playbackId } = useMediaController(
+  const { live, requestClip, playbackId, clipStatus } = useMediaController(
     mediaControllerSelector,
   );
 
-  const { buttonProps, title, isShown } = useClipButton({
+  const { buttonProps, title, isShown, status } = useClipButton({
     live,
     requestClip,
     playbackId,
+    clipStatus,
     defaultIcon: <DefaultClipIcon />,
     ...props,
   });
@@ -47,9 +50,10 @@ export const ClipButton: React.FC<ClipButtonProps> = (props) => {
         width: props.size,
         height: props.size,
       }}
-      className={styling.iconButton()}
+      className={styling.iconButton.button()}
       title={title}
       aria-label={title}
+      disabled={status === 'loading'}
       onClick={buttonProps.onPress}
       {...omit(buttonProps, 'onPress', 'size')}
     />

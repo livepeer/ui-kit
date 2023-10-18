@@ -50,7 +50,7 @@ export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
               width: props.size,
               height: props.size,
             }}
-            className={styling.iconButton()}
+            className={styling.iconButton.button()}
             title="Broadcast settings"
             aria-label="Broadcast settings"
             {...omit(props, 'icon', 'size', 'streamConstraints')}

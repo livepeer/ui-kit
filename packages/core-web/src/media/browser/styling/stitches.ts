@@ -12,6 +12,7 @@ const theme: Required<{
     containerBorderStyle: 'solid',
   },
   borderWidths: {
+    buttonLoadingWidth: '1px',
     containerBorderWidth: 0,
     loadingWidth: '3px',
   },
