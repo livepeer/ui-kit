@@ -25,6 +25,7 @@ export type ThemeConfig = Partial<{
     containerBorderStyle?: 'solid' | 'dotted' | 'dashed' | undefined;
   };
   borderWidths: {
+    buttonLoadingWidth?: string | number | undefined;
     containerBorderWidth?: string | number | undefined;
     loadingWidth?: string | number | undefined;
   };

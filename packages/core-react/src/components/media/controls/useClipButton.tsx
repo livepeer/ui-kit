@@ -4,7 +4,7 @@ import * as React from 'react';
 
 type ClipButtonStateSlice = Pick<
   MediaControllerState,
-  'live' | 'requestClip' | 'playbackId'
+  'live' | 'requestClip' | 'playbackId' | 'clipStatus'
 >;
 
 export type ClipButtonProps = {
@@ -37,6 +37,7 @@ export const useClipButton = (props: ClipButtonCoreProps) => {
     requestClip,
     playbackId,
     defaultIcon,
+    clipStatus,
     length,
     ...rest
   } = props;
@@ -56,6 +57,7 @@ export const useClipButton = (props: ClipButtonCoreProps) => {
   return {
     title,
     isShown: isShown,
+    status: clipStatus,
     buttonProps: {
       onPress: onPressComposed,
       children: defaultIcon,

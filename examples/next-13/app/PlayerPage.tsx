@@ -38,11 +38,8 @@ const controls = {
 export default (props: PlayerProps<object, any>) => {
   const [open, setOpen] = useState(false);
   const [clipPlaybackId, setClipPlaybackId] = useState<string | null>(null);
+  const [clipError, setClipError] = useState<string | null>(null);
   const timerRef = useRef(0);
-
-  useEffect(() => {
-    return () => clearTimeout(timerRef.current);
-  }, []);
 
   useEffect(() => {
     if (!isIframe()) {
@@ -70,25 +67,25 @@ export default (props: PlayerProps<object, any>) => {
   );
 
   useEffect(() => {
-    if (mp4DownloadUrl) {
-      setOpen(false);
-      window?.clearTimeout(timerRef.current);
-      timerRef.current = window.setTimeout(() => {
-        setOpen(true);
-      }, 100);
+    if (clipError || clipPlaybackId || mp4DownloadUrl) {
+      setOpen(true);
+      timerRef.current = window.setTimeout(
+        () => {
+          setOpen(false);
+        },
+        mp4DownloadUrl ? 30000 : 5000,
+      );
+
+      return () => clearTimeout(timerRef.current);
     }
-  }, [mp4DownloadUrl]);
+  }, [mp4DownloadUrl, clipError, clipPlaybackId]);
 
   const onClipCreated = useCallback((asset: Asset) => {
     setClipPlaybackId(asset.playbackId ?? null);
   }, []);
 
-  const onClipStarted = useCallback(() => {
-    setOpen(false);
-    window?.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => {
-      setOpen(true);
-    }, 100);
+  const onClipError = useCallback((error: Error) => {
+    setClipError(error?.message ?? 'Error with clip');
   }, []);
 
   const theme = useMemo(
@@ -131,7 +128,7 @@ export default (props: PlayerProps<object, any>) => {
           showPipButton
           priority
           theme={theme}
-          onClipStarted={onClipStarted}
+          onClipError={onClipError}
           onClipCreated={onClipCreated}
           controls={controls}
           mediaElementRef={mediaElementRef}
@@ -289,10 +286,16 @@ export default (props: PlayerProps<object, any>) => {
       )}
       <ToastRoot open={open} onOpenChange={setOpen}>
         <ToastTitle>
-          {!mp4DownloadUrl ? 'Clip loading' : 'Livestream clipped'}
+          {clipError
+            ? 'Error with clip'
+            : !mp4DownloadUrl
+            ? 'Clip loading'
+            : 'Stream clipped'}
         </ToastTitle>
         <ToastDescription>
-          {!mp4DownloadUrl
+          {clipError
+            ? 'There was an error with your clip. Please try again in a few seconds.'
+            : !mp4DownloadUrl
             ? 'Your clip is being processed in the background...'
             : 'Your clip has been created.'}
         </ToastDescription>

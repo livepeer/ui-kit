@@ -139,12 +139,15 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   metadata?: Metadata;
   /** The length (in seconds) of the clip to create from instant clipping. */
   clipLength?: ClipLength;
+
+  /** Status of the ongoing clip request. */
+  clipStatus: 'idle' | 'loading' | 'success' | 'error';
   /** Callback when a clip is created from the clip button. */
   onClipStarted?: () => Promise<any> | any;
   /** Callback when a clip is created from the clip button. */
   onClipCreated?: (asset: Asset) => Promise<any> | any;
   /** Callback when a clip fails to be created from the clip button. */
-  onClipError?: (error: any) => Promise<any> | any;
+  onClipError?: (error: Error) => Promise<any> | any;
 
   /** The offset of the browser's livestream versus the server time (in ms). */
   playbackOffsetMs?: number;
@@ -353,9 +356,7 @@ export const createControllerStore = <TElement, TMediaStream>({
           viewerId: mediaProps.viewerId ?? '',
           creatorId: mediaProps.creatorId ?? '',
           clipLength: mediaProps.clipLength,
-          onClipCreated: mediaProps.onClipCreated,
-          onClipError: mediaProps.onClipError,
-          onClipStarted: mediaProps.onClipStarted,
+          clipStatus: 'idle',
 
           playbackOffsetMs: 0,
 
@@ -403,6 +404,28 @@ export const createControllerStore = <TElement, TMediaStream>({
                 ...(ids?.video ? { video: ids.video } : {}),
               },
             })),
+
+          onClipStarted: () => {
+            mediaProps?.onClipStarted?.();
+
+            return set(() => ({
+              clipStatus: 'loading',
+            }));
+          },
+          onClipCreated: (asset: Asset) => {
+            mediaProps?.onClipCreated?.(asset);
+
+            return set(() => ({
+              clipStatus: 'success',
+            }));
+          },
+          onClipError: (error: Error) => {
+            mediaProps?.onClipError?.(error);
+
+            return set(() => ({
+              clipStatus: 'error',
+            }));
+          },
 
           setHidden: (hidden: boolean) =>
             set(({ playing }) => ({ hidden: playing ? hidden : false })),
@@ -574,7 +597,7 @@ export type MediaPropsOptions = {
 
   onClipStarted?: () => Promise<any> | any;
   onClipCreated?: (asset: Asset) => Promise<any> | any;
-  onClipError?: (error: any) => Promise<any> | any;
+  onClipError?: (error: Error) => Promise<any> | any;
 
   creatorId?: string;
   ingestUrl?: string;

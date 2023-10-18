@@ -54,7 +54,7 @@ export const Screenshare: React.FC<ScreenshareProps> = (props) => {
         width: props.size,
         height: props.size,
       }}
-      className={styling.iconButton()}
+      className={styling.iconButton.button()}
       title="Screen share"
       aria-label="Screen share"
       {...omit(props, 'icon', 'options', 'size')}

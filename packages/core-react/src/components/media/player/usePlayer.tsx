@@ -74,7 +74,7 @@ export type PlayerProps<
   /** Callback when a clip is created from the clip button. */
   onClipCreated?: (asset: Asset) => Promise<any> | any;
   /** Callback when a clip fails to be created from the clip button. */
-  onClipError?: (error: any) => Promise<any> | any;
+  onClipError?: (error: Error) => Promise<any> | any;
 
   /** Configuration for the event listeners */
   controls?: ControlsOptions;

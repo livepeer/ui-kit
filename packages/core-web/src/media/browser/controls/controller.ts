@@ -483,7 +483,7 @@ const addEffectsToStore = <
               if (asset?.id) {
                 current?.onClipCreated?.(asset);
               } else {
-                throw new Error('returned asset was not defined');
+                throw new Error('Error with clipping');
               }
             })
             .catch((error) => current?.onClipError?.(error));

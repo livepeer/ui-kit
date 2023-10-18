@@ -3,12 +3,12 @@ import { keyframes } from '@stitches/core';
 import { css } from './stitches';
 import { isMobile } from '../utils';
 
-export const scaleUp = keyframes({
+const scaleUp = keyframes({
   '0%': { transform: 'scale(1)' },
   '100%': { transform: 'scale(1.1)' },
 });
 
-export const iconButton = css('button', {
+const button = css('button', {
   background: 'none',
   border: 'none',
   cursor: 'pointer',
@@ -32,4 +32,13 @@ export const iconButton = css('button', {
     color: '$iconHover',
     animation: !isMobile() ? `${scaleUp} 200ms` : undefined,
   },
+  '&:disabled': {
+    opacity: 0.5,
+    animation: 'none',
+    cursor: 'not-allowed',
+  },
 });
+
+export const iconButton = {
+  button,
+};

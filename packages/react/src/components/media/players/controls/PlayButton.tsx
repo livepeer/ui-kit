@@ -58,7 +58,7 @@ export const PlayButton: React.FC<PlayButtonProps> = (props) => {
         width: props.size,
         height: props.size,
       }}
-      className={styling.iconButton()}
+      className={styling.iconButton.button()}
       title={title}
       aria-label={title}
       onClick={buttonProps.onPress}
