@@ -47,7 +47,6 @@ export default (props: ClippingPageProps) => {
       props.sessionId
         ? {
             src: `${process.env.NEXT_PUBLIC_RECORDINGS_BASE_URL}${props.playbackId}/${props.sessionId}/output.m3u8`,
-            playRecording: true,
           }
         : {
             playbackId: props.playbackId,
@@ -150,6 +149,7 @@ export default (props: ClippingPageProps) => {
         >
           <Player
             {...playerProps}
+            playRecording
             autoPlay
             muted
             playbackStatusSelector={playbackStatusSelector}
