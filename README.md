@@ -6,7 +6,7 @@
 </p>
 
 <h3 align="center">
-  livepeer.js
+  Livepeer React
 <h3>
 
 ## Features
