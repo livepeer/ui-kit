@@ -23,7 +23,7 @@ const App = ({
   return (
     <>
       <NextHead>
-        <title>dev example - livepeer.js</title>
+        <title>dev example - Livepeer React</title>
       </NextHead>
 
       <LivepeerConfig

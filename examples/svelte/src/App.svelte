@@ -9,14 +9,15 @@
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a>
   </div>
-  <h1>livepeer.js + Svelte</h1>
+  <h1>Livepeer React + Svelte</h1>
 
   <div class="card">
     <Video />
   </div>
 
   <p>
-    Check out <a href="https://docs.livepeer.org" target="_blank">livepeer.js</a
+    Check out <a href="https://docs.livepeer.org" target="_blank"
+      >Livepeer React</a
     > to learn more!
   </p>
 </main>

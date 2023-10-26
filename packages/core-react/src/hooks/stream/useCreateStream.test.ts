@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { useCreateStream } from './useCreateStream';
 import { act, renderHook } from '../../../test';
 
-const streamName = 'livepeer.js tests :: new stream';
+const streamName = 'Livepeer React tests :: new stream';
 
 describe('useCreateStream', () => {
   it('mounts', async () => {

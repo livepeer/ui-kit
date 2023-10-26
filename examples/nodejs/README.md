@@ -1,6 +1,6 @@
 # example-nodejs
 
-Welcome to the NodeJS example for livepeer.js. We provide this repo as both an example project and an open source load testing tool for providers.
+Welcome to the NodeJS example for Livepeer React. We provide this repo as both an example project and an open source load testing tool for providers.
 
 There are two parts to this example - the `create-dataset` step, which pulls videos from open-source platforms like Zora and Lens, and the
 upload step, which uses those videos in the import pipeline to test and records the results.

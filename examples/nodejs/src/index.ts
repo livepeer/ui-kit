@@ -11,7 +11,7 @@ if (!process.env.STUDIO_API_KEY) {
   throw new Error('process.env.STUDIO_API_KEY is not defined');
 }
 
-// create the livepeer.js client
+// create the Livepeer React client
 const { provider } = createClient({
   provider: studioProvider({
     apiKey: process.env.STUDIO_API_KEY,

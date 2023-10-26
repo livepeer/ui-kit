@@ -1,8 +1,8 @@
 # \_next
 
-This example is for playing around with livepeer.js during development. It uses [Preconstruct](https://github.com/preconstruct/preconstruct) to set up local links between packages.
+This example is for playing around with Livepeer React during development. It uses [Preconstruct](https://github.com/preconstruct/preconstruct) to set up local links between packages.
 
-To get started, in the root of livepeer.js, run:
+To get started, in the root of Livepeer React, run:
 
 ```bash
 pnpm i

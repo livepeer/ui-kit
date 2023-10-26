@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Thanks for adding a feature request! _Note: this is only for the internal Livepeer team - please use
-        [Discussions](https://github.com/livepeer/livepeer.js/discussions) if you are not a maintainer of this project._
+        [Discussions](https://github.com/livepeer/livepeer-react/discussions) if you are not a maintainer of this project._
   - type: textarea
     attributes:
       label: Description

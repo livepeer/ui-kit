@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { useCreateAsset } from './useCreateAsset';
 import { act, getSampleVideo, renderHook } from '../../../test';
 
-const assetName = 'livepeer.js tests :: new asset';
+const assetName = 'Livepeer React tests :: new asset';
 
 describe('useCreateAsset', () => {
   it('mounts', () => {

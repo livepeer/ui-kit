@@ -16,6 +16,6 @@ npm install @livepeer/core-web
 
 Check out the following places for more livepeer-related content:
 
-- Join the [discussions on GitHub](https://github.com/livepeer/livepeer.js/discussions)
+- Join the [discussions on GitHub](https://github.com/livepeer/livepeer-react/discussions)
 - Follow [@livepeer](https://twitter.com/livepeer) on Twitter
 - Jump into our [Discord](https://discord.gg/livepeer)

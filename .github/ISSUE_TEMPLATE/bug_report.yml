@@ -19,7 +19,7 @@ body:
   - type: input
     attributes:
       label: Package Version
-      description: What version of livepeer.js are you using?
+      description: What version of Livepeer React are you using?
       placeholder: 0.4.0
     validations:
       required: true
