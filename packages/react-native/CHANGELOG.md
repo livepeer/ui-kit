@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 2.0.2
+
+### Patch Changes
+
+- [#401](https://github.com/livepeer/livepeer-react/pull/401) [`06095b6`](https://github.com/livepeer/livepeer-react/commit/06095b61ce6d2171f7aced300d7cf00566fdd597) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issues with WebRTC not playing back correctly on Firefox.
+
+- Updated dependencies [[`06095b6`](https://github.com/livepeer/livepeer-react/commit/06095b61ce6d2171f7aced300d7cf00566fdd597)]:
+  - @livepeer/core-react@2.0.2
+
 ## 2.0.1
 
 ### Patch Changes

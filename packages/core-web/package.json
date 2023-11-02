@@ -2,7 +2,7 @@
   "name": "@livepeer/core-web",
   "description": "Livepeer's vanilla JS library.",
   "license": "MIT",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer-react.git",
@@ -115,7 +115,7 @@
     }
   },
   "dependencies": {
-    "@livepeer/core": "^2.0.1",
+    "@livepeer/core": "^2.0.2",
     "@stitches/core": "^1.2.8",
     "core-js": "^3.31.1",
     "cross-fetch": "^4.0.0",
