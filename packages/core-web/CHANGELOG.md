@@ -1,5 +1,14 @@
 # livepeer
 
+## 3.0.2
+
+### Patch Changes
+
+- [#401](https://github.com/livepeer/livepeer-react/pull/401) [`06095b6`](https://github.com/livepeer/livepeer-react/commit/06095b61ce6d2171f7aced300d7cf00566fdd597) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issues with WebRTC not playing back correctly on Firefox.
+
+- Updated dependencies [[`06095b6`](https://github.com/livepeer/livepeer-react/commit/06095b61ce6d2171f7aced300d7cf00566fdd597)]:
+  - @livepeer/core@2.0.2
+
 ## 3.0.1
 
 ### Patch Changes
@@ -1366,159 +1375,159 @@
 
 ### Actions
 
-  ```diff
-  + import {
-  +   createAsset,
-  +   createStream,
-  +   getAsset,
-  +   getBondingManager,
-  +   getContractAddressFromController,
-  +   getController,
-  +   getL1Migrator,
-  +   getL2Migrator,
-  +   getLivepeerToken,
-  +   getLivepeerTokenFaucet,
-  +   getLPMSProvider,
-  +   getMerkleSnapshot,
-  +   getMinter,
-  +   getPollCreator,
-  +   getRoundsManager,
-  +   getServiceRegistry,
-  +   getStream,
-  +   getStreamSession,
-  +   getStreamSessions,
-  +   getTicketBroker,
-  +   updateAsset,
-  +   updateStream,
-  +   watchLPMSProvider,
-  + } from 'livepeer';
-  +
-  + import type {
-  +   GetLPMSProviderResult,
-  +   WatchLPMSProviderCallback,
-  + } from 'livepeer';
-  ```
+```diff
++ import {
++   createAsset,
++   createStream,
++   getAsset,
++   getBondingManager,
++   getContractAddressFromController,
++   getController,
++   getL1Migrator,
++   getL2Migrator,
++   getLivepeerToken,
++   getLivepeerTokenFaucet,
++   getLPMSProvider,
++   getMerkleSnapshot,
++   getMinter,
++   getPollCreator,
++   getRoundsManager,
++   getServiceRegistry,
++   getStream,
++   getStreamSession,
++   getStreamSessions,
++   getTicketBroker,
++   updateAsset,
++   updateStream,
++   watchLPMSProvider,
++ } from 'livepeer';
++
++ import type {
++   GetLPMSProviderResult,
++   WatchLPMSProviderCallback,
++ } from 'livepeer';
+```
 
 ### Client
 
-  ```diff
-  + import { Client, createClient } from 'livepeer';
-  + import type { ClientConfig } from 'livepeer';
-  ```
+```diff
++ import { Client, createClient } from 'livepeer';
++ import type { ClientConfig } from 'livepeer';
+```
 
 ### Constants
 
-  ```diff
-  + import {
-  +   allChainId,
-  +   allLPMS,
-  +   arbitrumOneAddress,
-  +   arbitrumRinkebyAddress,
-  +   ArbRetryableTxABI,
-  +   BondingManagerABI,
-  +   ControllerABI,
-  +   defaultLPMS,
-  +   defaultTranscodingProfiles,
-  +   InboxABI,
-  +   L1BondingManagerABI,
-  +   L1MigratorABI,
-  +   L2LPTGatewayABI,
-  +   L2MigratorABI,
-  +   LivepeerTokenABI,
-  +   LivepeerTokenFaucetABI,
-  +   lpms,
-  +   mainnetAddress,
-  +   mainnetChainId,
-  +   MerkleSnapshotABI,
-  +   MinterABI,
-  +   NodeInterfaceABI,
-  +   PollABI,
-  +   PollCreatorABI,
-  +   rinkebyAddress,
-  +   RoundsManagerABI,
-  +   ServiceRegistryABI,
-  +   studio,
-  +   testnetChainId,
-  +   TicketBrokerABI,
-  + } from 'livepeer';
-  +
-  + import type {
-  +   L1Address,
-  +   L1LivepeerChain,
-  +   L1LivepeerChainId,
-  +   L2Address,
-  +   L2LivepeerChain,
-  +   L2LivepeerChainId,
-  +   LivepeerAddress,
-  +   LivepeerChain,
-  +   LivepeerChainId,
-  +   LPMSName,
-  +   MainnetLivepeerChain,
-  +   MainnetLivepeerChainId,
-  +   TestnetLivepeerChain,
-  +   TestnetLivepeerChainId,
-  + } from 'livepeer';
-  ```
+```diff
++ import {
++   allChainId,
++   allLPMS,
++   arbitrumOneAddress,
++   arbitrumRinkebyAddress,
++   ArbRetryableTxABI,
++   BondingManagerABI,
++   ControllerABI,
++   defaultLPMS,
++   defaultTranscodingProfiles,
++   InboxABI,
++   L1BondingManagerABI,
++   L1MigratorABI,
++   L2LPTGatewayABI,
++   L2MigratorABI,
++   LivepeerTokenABI,
++   LivepeerTokenFaucetABI,
++   lpms,
++   mainnetAddress,
++   mainnetChainId,
++   MerkleSnapshotABI,
++   MinterABI,
++   NodeInterfaceABI,
++   PollABI,
++   PollCreatorABI,
++   rinkebyAddress,
++   RoundsManagerABI,
++   ServiceRegistryABI,
++   studio,
++   testnetChainId,
++   TicketBrokerABI,
++ } from 'livepeer';
++
++ import type {
++   L1Address,
++   L1LivepeerChain,
++   L1LivepeerChainId,
++   L2Address,
++   L2LivepeerChain,
++   L2LivepeerChainId,
++   LivepeerAddress,
++   LivepeerChain,
++   LivepeerChainId,
++   LPMSName,
++   MainnetLivepeerChain,
++   MainnetLivepeerChainId,
++   TestnetLivepeerChain,
++   TestnetLivepeerChainId,
++ } from 'livepeer';
+```
 
 ### Types
 
-  ```diff
-  + import {
-  +   ArbRetryableTxFactory,
-  +   BondingManagerFactory,
-  +   ControllerFactory,
-  +   InboxFactory,
-  +   L1BondingManagerFactory,
-  +   L1MigratorFactory,
-  +   L2LPTGatewayFactory,
-  +   L2MigratorFactory,
-  +   LivepeerTokenFactory,
-  +   LivepeerTokenFaucetFactory,
-  +   MerkleSnapshotFactory,
-  +   MinterFactory,
-  +   NodeInterfaceFactory,
-  +   PollCreatorFactory,
-  +   PollFactory,
-  +   RoundsManagerFactory,
-  +   ServiceRegistryFactory,
-  +   TicketBrokerFactory,
-  + } from 'livepeer';
-  +
-  + import type {
-  +   Address,
-  +   ArbRetryableTx,
-  +   Asset,
-  +   BondingManager,
-  +   Controller,
-  +   CreateAssetArgs,
-  +   CreateStreamArgs,
-  +   GetAssetArgs,
-  +   GetStreamArgs,
-  +   GetStreamSessionArgs,
-  +   GetStreamSessionsArgs,
-  +   Hash,
-  +   Inbox,
-  +   Ipfs,
-  +   L1BondingManager,
-  +   L1Migrator,
-  +   L2LPTGateway,
-  +   L2Migrator,
-  +   LivepeerToken,
-  +   LivepeerTokenFaucet,
-  +   LPMS,
-  +   LPMSProvider,
-  +   MerkleSnapshot,
-  +   Minter,
-  +   NodeInterface,
-  +   Poll,
-  +   PollCreator,
-  +   RoundsManager,
-  +   ServiceRegistry,
-  +   Stream,
-  +   StreamSession,
-  +   TicketBroker,
-  +   TranscodingProfile,
-  +   UpdateAssetArgs,
-  +   UpdateStreamArgs,
-  + } from 'livepeer';
-  ```
+```diff
++ import {
++   ArbRetryableTxFactory,
++   BondingManagerFactory,
++   ControllerFactory,
++   InboxFactory,
++   L1BondingManagerFactory,
++   L1MigratorFactory,
++   L2LPTGatewayFactory,
++   L2MigratorFactory,
++   LivepeerTokenFactory,
++   LivepeerTokenFaucetFactory,
++   MerkleSnapshotFactory,
++   MinterFactory,
++   NodeInterfaceFactory,
++   PollCreatorFactory,
++   PollFactory,
++   RoundsManagerFactory,
++   ServiceRegistryFactory,
++   TicketBrokerFactory,
++ } from 'livepeer';
++
++ import type {
++   Address,
++   ArbRetryableTx,
++   Asset,
++   BondingManager,
++   Controller,
++   CreateAssetArgs,
++   CreateStreamArgs,
++   GetAssetArgs,
++   GetStreamArgs,
++   GetStreamSessionArgs,
++   GetStreamSessionsArgs,
++   Hash,
++   Inbox,
++   Ipfs,
++   L1BondingManager,
++   L1Migrator,
++   L2LPTGateway,
++   L2Migrator,
++   LivepeerToken,
++   LivepeerTokenFaucet,
++   LPMS,
++   LPMSProvider,
++   MerkleSnapshot,
++   Minter,
++   NodeInterface,
++   Poll,
++   PollCreator,
++   RoundsManager,
++   ServiceRegistry,
++   Stream,
++   StreamSession,
++   TicketBroker,
++   TranscodingProfile,
++   UpdateAssetArgs,
++   UpdateStreamArgs,
++ } from 'livepeer';
+```

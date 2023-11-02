@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 3.0.2
+
+### Patch Changes
+
+- [#401](https://github.com/livepeer/livepeer-react/pull/401) [`06095b6`](https://github.com/livepeer/livepeer-react/commit/06095b61ce6d2171f7aced300d7cf00566fdd597) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issues with WebRTC not playing back correctly on Firefox.
+
+- Updated dependencies [[`06095b6`](https://github.com/livepeer/livepeer-react/commit/06095b61ce6d2171f7aced300d7cf00566fdd597)]:
+  - @livepeer/core-web@3.0.2
+  - @livepeer/core-react@2.0.2
+
 ## 3.0.1
 
 ### Patch Changes
@@ -1772,45 +1782,45 @@
 
 ### Client
 
-  ```diff
-  + import { createReactClient } from '@livepeer/react';
-  + import type { CreateReactClientConfig } from '@livepeer/react';
-  ```
+```diff
++ import { createReactClient } from '@livepeer/react';
++ import type { CreateReactClientConfig } from '@livepeer/react';
+```
 
 ### Context
 
-  ```diff
-  + import { Context, LivepeerConfig, useClient } from '@livepeer/react';
-  + import type { LivepeerConfigProps } from '@livepeer/react';
-  ```
+```diff
++ import { Context, LivepeerConfig, useClient } from '@livepeer/react';
++ import type { LivepeerConfigProps } from '@livepeer/react';
+```
 
 ### Hooks
 
-  ```diff
-  + import {
-  +   useAsset,
-  +   useBondingManager,
-  +   useController,
-  +   useCreateAsset,
-  +   useCreateStream,
-  +   useL1Migrator,
-  +   useL2Migrator,
-  +   useLivepeerToken,
-  +   useLivepeerTokenFaucet,
-  +   useLPMSProvider,
-  +   useMerkleSnapshot,
-  +   useMinter,
-  +   usePollCreator,
-  +   useRoundsManager,
-  +   useServiceRegistry,
-  +   useStream,
-  +   useStreamSession,
-  +   useStreamSessions,
-  +   useTicketBroker,
-  +   useUpdateAsset,
-  +   useUpdateStream,
-  + } from '@livepeer/react';
-  ```
+```diff
++ import {
++   useAsset,
++   useBondingManager,
++   useController,
++   useCreateAsset,
++   useCreateStream,
++   useL1Migrator,
++   useL2Migrator,
++   useLivepeerToken,
++   useLivepeerTokenFaucet,
++   useLPMSProvider,
++   useMerkleSnapshot,
++   useMinter,
++   usePollCreator,
++   useRoundsManager,
++   useServiceRegistry,
++   useStream,
++   useStreamSession,
++   useStreamSessions,
++   useTicketBroker,
++   useUpdateAsset,
++   useUpdateStream,
++ } from '@livepeer/react';
+```
 
 ### Patch Changes
 
