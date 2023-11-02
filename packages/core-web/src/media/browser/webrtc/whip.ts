@@ -1,10 +1,10 @@
 import { AspectRatio } from '@livepeer/core/media';
-import fetch from 'cross-fetch';
 
 import {
   WebRTCVideoConfig,
   constructClientOffer,
   createPeerConnection,
+  getRedirectUrl,
   negotiateConnectionWithClientOffer,
 } from './shared';
 
@@ -48,113 +48,117 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
 ): {
   destroy: () => void;
 } => {
+  let destroyed = false;
   const abortController = new AbortController();
 
   let peerConnection: RTCPeerConnection | null = null;
   let stream: MediaStream | null = null;
   let videoTransceiver: RTCRtpTransceiver | null = null;
   let audioTransceiver: RTCRtpTransceiver | null = null;
-  let deleteUrl: string | null = null;
 
-  let disconnectStream: (() => void) | null = null;
-
-  /**
-   * Create a new WebRTC connection
-   * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
-   */
-  peerConnection = createPeerConnection();
-
-  if (peerConnection) {
-    peerConnection.addEventListener('negotiationneeded', async (_ev) => {
-      try {
-        const ofr = await constructClientOffer(peerConnection);
-
-        const response = await negotiateConnectionWithClientOffer(
-          peerConnection,
-          ingestUrl,
-          ofr,
-          config,
-        );
-
-        deleteUrl = response?.url ?? null;
-      } catch (e) {
-        callbacks?.onError?.(e as Error);
-      }
-    });
-
-    peerConnection.addEventListener('connectionstatechange', async (_ev) => {
-      try {
-        if (peerConnection?.connectionState === 'failed') {
-          throw new Error('Failed to connect to peer.');
-        }
-
-        if (
-          peerConnection?.connectionState === 'connected' &&
-          stream &&
-          audioTransceiver &&
-          videoTransceiver
-        ) {
-          element.srcObject = stream;
-
-          callbacks?.onConnected?.({
-            stream,
-            videoTransceiver,
-            audioTransceiver,
-          });
-        }
-      } catch (e) {
-        callbacks?.onError?.(e as Error);
-      }
-    });
-
-    /**
-     * While the connection is being initialized, ask for camera and microphone permissions and
-     * add video and audio tracks to the peerConnection.
-     *
-     * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-     */
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then(async (mediaStream) => {
-        const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
-        const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
-
-        if (newVideoTrack) {
-          await newVideoTrack.applyConstraints(
-            getConstraints(aspectRatio ?? '16to9'),
-          );
-
-          videoTransceiver =
-            peerConnection?.addTransceiver(newVideoTrack, {
-              direction: 'sendonly',
-            }) ?? null;
-        }
-
-        if (newAudioTrack) {
-          audioTransceiver =
-            peerConnection?.addTransceiver(newAudioTrack, {
-              direction: 'sendonly',
-            }) ?? null;
-        }
-
-        stream = mediaStream;
-      })
-      .catch((e) => callbacks?.onError?.(e as Error));
-
-    disconnectStream = () => {
-      if (!deleteUrl) {
+  getRedirectUrl(ingestUrl, abortController, config?.sdpTimeout)
+    .then((redirectUrl) => {
+      if (destroyed || !redirectUrl) {
         return;
       }
-      fetch(deleteUrl, {
-        method: 'DELETE',
-        mode: 'cors',
-      }).catch((e) => callbacks?.onError?.(e as Error));
-    };
-  }
+
+      const redirectUrlString = redirectUrl.toString().replace('video+', '');
+
+      /**
+       * Create a new WebRTC connection, using public STUN servers with ICE,
+       * allowing the client to discover its own IP address.
+       * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
+       */
+      peerConnection = createPeerConnection(redirectUrl.host);
+
+      if (peerConnection) {
+        peerConnection.addEventListener('negotiationneeded', async (_ev) => {
+          try {
+            const ofr = await constructClientOffer(
+              peerConnection,
+              redirectUrlString,
+            );
+
+            await negotiateConnectionWithClientOffer(
+              peerConnection,
+              ingestUrl,
+              ofr,
+              config,
+            );
+          } catch (e) {
+            callbacks?.onError?.(e as Error);
+          }
+        });
+
+        peerConnection.addEventListener(
+          'connectionstatechange',
+          async (_ev) => {
+            try {
+              if (peerConnection?.connectionState === 'failed') {
+                throw new Error('Failed to connect to peer.');
+              }
+
+              if (
+                peerConnection?.connectionState === 'connected' &&
+                stream &&
+                audioTransceiver &&
+                videoTransceiver
+              ) {
+                element.srcObject = stream;
+
+                callbacks?.onConnected?.({
+                  stream,
+                  videoTransceiver,
+                  audioTransceiver,
+                });
+              }
+            } catch (e) {
+              callbacks?.onError?.(e as Error);
+            }
+          },
+        );
+
+        /**
+         * While the connection is being initialized, ask for camera and microphone permissions and
+         * add video and audio tracks to the peerConnection.
+         *
+         * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+         */
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: true })
+          .then(async (mediaStream) => {
+            const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
+            const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
+
+            if (newVideoTrack) {
+              await newVideoTrack.applyConstraints(
+                getConstraints(aspectRatio ?? '16to9'),
+              );
+
+              videoTransceiver =
+                peerConnection?.addTransceiver(newVideoTrack, {
+                  direction: 'sendonly',
+                }) ?? null;
+            }
+
+            if (newAudioTrack) {
+              audioTransceiver =
+                peerConnection?.addTransceiver(newAudioTrack, {
+                  direction: 'sendonly',
+                }) ?? null;
+            }
+
+            stream = mediaStream;
+          })
+          .catch((e) => callbacks?.onError?.(e as Error));
+      }
+    })
+    .catch((e) => callbacks?.onError?.(e as Error));
 
   return {
     destroy: () => {
-      disconnectStream?.();
+      destroyed = true;
+
       abortController?.abort?.();
 
       // Remove the WebRTC source
