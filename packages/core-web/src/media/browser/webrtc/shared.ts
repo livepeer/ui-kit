@@ -198,7 +198,7 @@ export async function getRedirectUrl(
 
   try {
     const response = await fetch(endpoint, {
-      method: 'HEAD',
+      method: 'GET',
       signal: abortController.signal,
     });
 
