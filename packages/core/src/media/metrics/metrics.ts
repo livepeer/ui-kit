@@ -335,7 +335,7 @@ export class MetricsStatus<TElement, TMediaStream> {
       offset: this.store.getState().playbackOffsetMs ?? 0,
 
       // this is the amount of time that a video has had to preload content, from boot until play was requested
-      preloadTime: this.requestedPlayTime,
+      preloadTime: Math.max(this.requestedPlayTime, 0),
       // time from when the first `play` event is emitted and the first progress update
       ttff:
         this.firstFrameTime > 0 && this.requestedPlayTime > 0
