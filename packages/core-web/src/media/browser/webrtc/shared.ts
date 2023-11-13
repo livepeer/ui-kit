@@ -95,6 +95,7 @@ export async function negotiateConnectionWithClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
+  controller: AbortController,
   config?: WebRTCVideoConfig,
 ): Promise<Date> {
   if (peerConnection && endpoint && ofr) {
@@ -103,7 +104,7 @@ export async function negotiateConnectionWithClientOffer(
      * This specifies how the client should communicate,
      * and what kind of media client and server have negotiated to exchange.
      */
-    const response = await postSDPOffer(endpoint, ofr.sdp, config);
+    const response = await postSDPOffer(endpoint, ofr.sdp, controller, config);
     if (response.ok) {
       const answerSDP = await response.text();
       await peerConnection.setRemoteDescription(
@@ -157,9 +158,9 @@ export async function constructClientOffer(
 async function postSDPOffer(
   endpoint: string,
   data: string,
+  controller: AbortController,
   config?: WebRTCVideoConfig,
 ) {
-  const controller = new AbortController();
   const id = setTimeout(
     () => controller.abort(),
     config?.sdpTimeout ?? DEFAULT_TIMEOUT,

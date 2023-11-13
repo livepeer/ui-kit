@@ -132,6 +132,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               peerConnection,
               source,
               ofr,
+              abortController,
               config,
             );
 

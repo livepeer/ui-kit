@@ -74,14 +74,18 @@ export const WebRTCVideoPlayer = React.forwardRef<
 
   React.useEffect(() => {
     if (_element && src.src) {
+      let mounted = true;
+
       const onErrorComposed = (error: Error) => {
-        setErrorCount((prev) => prev + 1);
+        if (mounted) {
+          setErrorCount((prev) => prev + 1);
 
-        const cleanError = new Error(
-          error?.message?.toString?.() ?? 'Error with WebRTC',
-        );
+          const cleanError = new Error(
+            error?.message?.toString?.() ?? 'Error with WebRTC',
+          );
 
-        onPlaybackError?.(cleanError);
+          onPlaybackError?.(cleanError);
+        }
       };
 
       const { destroy } = createNewWHEP(
@@ -96,6 +100,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
       );
 
       return () => {
+        mounted = false;
         destroy?.();
       };
     }
@@ -106,6 +111,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
     src,
     onPlaybackError,
     debouncedErrorCount,
+    _updatePlaybackOffsetMs,
   ]);
 
   return (

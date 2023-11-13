@@ -83,6 +83,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
               peerConnection,
               ingestUrl,
               ofr,
+              abortController,
               config,
             );
           } catch (e) {
