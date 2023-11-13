@@ -81,7 +81,9 @@ export const WebRTCVideoPlayer = React.forwardRef<
           error?.message?.toString?.() ?? 'Error with WebRTC',
         );
 
-        onPlaybackError?.(cleanError);
+        if (!cleanError.message.includes('The user aborted a request')) {
+          onPlaybackError?.(cleanError);
+        }
       };
 
       const { destroy } = createNewWHEP(

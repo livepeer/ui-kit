@@ -9,8 +9,7 @@ const Page = () => {
         autoPlay
         muted
         // renderChildrenOutsideContainer
-        playbackId="459dd5to4ie9a65p"
-        // playbackId="d701rc6r97wyso8s"
+        playbackId="9df76sqekj764s7k"
         webrtcConfig={{
           constant: true,
         }}
@@ -18,7 +17,6 @@ const Page = () => {
         onClipCreated={(asset) => {
           console.log(asset);
         }}
-        lowLatency="force"
         showPipButton
         // onPlaybackStatusUpdate={(state) => state.se}
         // playbackStatusSelector={(state) => state.playing}
