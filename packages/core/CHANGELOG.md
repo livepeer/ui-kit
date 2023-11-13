@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.0.3
+
+### Patch Changes
+
+- [#403](https://github.com/livepeer/livepeer-react/pull/403) [`2d29716`](https://github.com/livepeer/livepeer-react/commit/2d297160a42dc17893e15342e0344139e385d873) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed a race condition when b-frames are present in a stream, and fallback happens to HLS while SDP negotiation is still pending.
+
 ## 2.0.2
 
 ### Patch Changes
