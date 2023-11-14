@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.0.4
+
+### Patch Changes
+
+- [#406](https://github.com/livepeer/livepeer-react/pull/406) [`570342f`](https://github.com/livepeer/livepeer-react/commit/570342fc3e4570006c458a161f6edff9ef4de004) Thanks [@victorges](https://github.com/victorges)! - **Fix:** fixed metrics to only send values when they are defined, to avoid filtering on the backend.
+
 ## 2.0.3
 
 ### Patch Changes
