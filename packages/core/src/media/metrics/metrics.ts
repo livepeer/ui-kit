@@ -3,19 +3,19 @@ import { MediaControllerStore } from '../controller';
 import { MimeType } from '../mime';
 
 type RawMetrics = {
-  preloadTime: number;
-  ttff: number;
-  firstPlayback: number;
+  preloadTime: number | null;
+  ttff: number | null;
+  firstPlayback: number | null;
 
-  nWaiting: number;
+  nWaiting: number | null;
   timeWaiting: number;
 
-  nStalled: number;
+  nStalled: number | null;
   timeStalled: number;
 
   timeUnpaused: number;
 
-  nError: number;
+  nError: number | null;
   lastError?: string;
 
   videoHeight: number | null;
@@ -29,7 +29,7 @@ type RawMetrics = {
 
   sourceType: MimeType | 'unknown';
 
-  offset: number;
+  offset: number | null;
 
   pageUrl: string;
   sourceUrl: string | null;
@@ -178,8 +178,8 @@ function isInIframe() {
 }
 
 export class MetricsStatus<TElement, TMediaStream> {
-  requestedPlayTime = 0;
-  firstFrameTime = 0;
+  requestedPlayTime: number | null = null;
+  firstFrameTime: number | null = null;
 
   retryCount = 0;
   connected = false;
@@ -221,11 +221,11 @@ export class MetricsStatus<TElement, TMediaStream> {
           ? 'preload-metadata'
           : 'standard',
       duration: null,
-      firstPlayback: 0,
-      nError: 0,
-      nStalled: 0,
-      nWaiting: 0,
-      offset: 0,
+      firstPlayback: null,
+      nError: null,
+      nStalled: null,
+      nWaiting: null,
+      offset: null,
       pageUrl,
       playbackScore: null,
       player: `${playerPrefix}-${version}`,
@@ -233,11 +233,11 @@ export class MetricsStatus<TElement, TMediaStream> {
       sourceUrl: currentState?.src?.src ?? null,
       playerHeight: null,
       playerWidth: null,
-      preloadTime: 0,
+      preloadTime: null,
       timeStalled: 0,
       timeUnpaused: 0,
       timeWaiting: 0,
-      ttff: 0,
+      ttff: null,
       uid: currentState.viewerId,
       userAgent: String(currentState?.device?.userAgent ?? '').replace(
         /\\|"/gm,
@@ -248,7 +248,7 @@ export class MetricsStatus<TElement, TMediaStream> {
     };
 
     this.destroy = store.subscribe((state, prevState) => {
-      if (this.requestedPlayTime === 0 && state._playLastTime !== 0) {
+      if (this.requestedPlayTime === null && state._playLastTime !== 0) {
         this.requestedPlayTime = Math.max(state._playLastTime - bootMs, 0);
       }
 
@@ -293,7 +293,7 @@ export class MetricsStatus<TElement, TMediaStream> {
   }
 
   addError(error: string) {
-    this.currentMetrics.nError++;
+    this.currentMetrics.nError = (this.currentMetrics.nError ?? 0) + 1;
     this.currentMetrics.lastError = error;
   }
 
@@ -319,11 +319,11 @@ export class MetricsStatus<TElement, TMediaStream> {
   getMetrics() {
     const currentMetrics: RawMetrics = {
       ...this.currentMetrics,
-      playerHeight: this.store.getState().size?.container?.height ?? null,
-      playerWidth: this.store.getState().size?.container?.width ?? null,
-      videoWidth: this.store.getState().size?.media?.width ?? null,
-      videoHeight: this.store.getState().size?.media?.height ?? null,
-      duration: this.store.getState().duration,
+      playerHeight: this.store.getState().size?.container?.height || null,
+      playerWidth: this.store.getState().size?.container?.width || null,
+      videoWidth: this.store.getState().size?.media?.width || null,
+      videoHeight: this.store.getState().size?.media?.height || null,
+      duration: this.store.getState().duration || null,
 
       nWaiting: this.timeWaiting.getCountStarts(),
       nStalled: this.timeStalled.getCountStarts(),
@@ -332,15 +332,18 @@ export class MetricsStatus<TElement, TMediaStream> {
       timeStalled: this.timeStalled.getTotalTime(),
       timeUnpaused: this.timeUnpaused.getTotalTime(),
 
-      offset: this.store.getState().playbackOffsetMs ?? 0,
+      offset: this.store.getState().playbackOffsetMs || null,
 
       // this is the amount of time that a video has had to preload content, from boot until play was requested
-      preloadTime: Math.max(this.requestedPlayTime, 0),
+      preloadTime: this.requestedPlayTime,
       // time from when the first `play` event is emitted and the first progress update
       ttff:
-        this.firstFrameTime > 0 && this.requestedPlayTime > 0
+        this.firstFrameTime &&
+        this.requestedPlayTime &&
+        this.firstFrameTime > 0 &&
+        this.requestedPlayTime > 0
           ? Math.max(this.firstFrameTime - this.requestedPlayTime, 0)
-          : 0,
+          : null,
     };
 
     const previousMetrics = this.previousMetrics;
@@ -426,7 +429,13 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
     let key: keyof RawMetrics;
     for (key in metrics.current) {
       const val = metrics.current[key];
-      if (val !== metrics?.previous?.[key]) {
+
+      const shouldSendValue =
+        typeof val === 'number'
+          ? Number.isFinite(val) && !Number.isNaN(val) && val >= 0
+          : Boolean(val);
+
+      if (shouldSendValue && val !== metrics?.previous?.[key]) {
         (d[key] as typeof val) = val;
       }
     }
@@ -535,14 +544,14 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
     const destroyTtffListener = store.subscribe((state, prevState) => {
       if (
         state.playing !== prevState.playing &&
-        metricsStatus.getFirstPlayback() === 0
+        metricsStatus.getFirstPlayback() === null
       ) {
         metricsStatus.setFirstPlayback();
       }
 
       if (
         state.progress !== prevState.progress &&
-        metricsStatus.getFirstFrameTime() === 0
+        metricsStatus.getFirstFrameTime() === null
       ) {
         metricsStatus.setFirstFrameTime();
       }
