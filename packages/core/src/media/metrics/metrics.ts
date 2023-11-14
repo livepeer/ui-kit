@@ -3,7 +3,7 @@ import { MediaControllerStore } from '../controller';
 import { MimeType } from '../mime';
 
 type RawMetrics = {
-  preloadTime?: number;
+  preloadTime: number;
   ttff: number;
   firstPlayback: number;
 
@@ -178,8 +178,8 @@ function isInIframe() {
 }
 
 export class MetricsStatus<TElement, TMediaStream> {
-  requestedPlayTime?: number;
-  firstFrameTime?: number;
+  requestedPlayTime = 0;
+  firstFrameTime = 0;
 
   retryCount = 0;
   connected = false;
@@ -233,6 +233,7 @@ export class MetricsStatus<TElement, TMediaStream> {
       sourceUrl: currentState?.src?.src ?? null,
       playerHeight: null,
       playerWidth: null,
+      preloadTime: 0,
       timeStalled: 0,
       timeUnpaused: 0,
       timeWaiting: 0,
@@ -247,7 +248,7 @@ export class MetricsStatus<TElement, TMediaStream> {
     };
 
     this.destroy = store.subscribe((state, prevState) => {
-      if (this.requestedPlayTime === undefined && state._playLastTime !== 0) {
+      if (this.requestedPlayTime === 0 && state._playLastTime !== 0) {
         this.requestedPlayTime = Math.max(state._playLastTime - bootMs, 0);
       }
 
@@ -334,11 +335,10 @@ export class MetricsStatus<TElement, TMediaStream> {
       offset: this.store.getState().playbackOffsetMs ?? 0,
 
       // this is the amount of time that a video has had to preload content, from boot until play was requested
-      preloadTime: this.requestedPlayTime,
+      preloadTime: Math.max(this.requestedPlayTime, 0),
       // time from when the first `play` event is emitted and the first progress update
       ttff:
-        this.firstFrameTime !== undefined &&
-        this.requestedPlayTime !== undefined
+        this.firstFrameTime > 0 && this.requestedPlayTime > 0
           ? Math.max(this.firstFrameTime - this.requestedPlayTime, 0)
           : 0,
     };
@@ -542,7 +542,7 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
 
       if (
         state.progress !== prevState.progress &&
-        metricsStatus.getFirstFrameTime() === undefined
+        metricsStatus.getFirstFrameTime() === 0
       ) {
         metricsStatus.setFirstFrameTime();
       }
