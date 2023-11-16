@@ -5,6 +5,7 @@ import {
 } from 'zustand/middleware';
 import { StoreApi, createStore } from 'zustand/vanilla';
 
+import { getPlaybackIdFromSourceUrl } from './metrics/utils';
 import { Src, getMediaSourceType } from './src';
 import { ClientStorage } from '../storage';
 import { Asset } from '../types';
@@ -14,29 +15,6 @@ const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when s
 export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
-
-const ASSET_URL_PART_VALUE = 'hls';
-const WEBRTC_URL_PART_VALUE = 'webrtc';
-const RECORDING_URL_PART_VALUE = 'recordings';
-
-const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
-  const parsedUrl = new URL(sourceUrl);
-
-  const parts = parsedUrl.pathname.split('/');
-
-  const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
-  const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
-  const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
-
-  // Check if the url is valid
-  const playbackId = includesWebRtcUrl
-    ? parts?.[(parts?.length ?? 0) - 1]
-    : includesRecording || includesAssetUrl
-    ? parts?.[(parts?.length ?? 0) - 2] ?? null
-    : null;
-
-  return playbackId;
-};
 
 export type DeviceInformation = {
   version: string;
