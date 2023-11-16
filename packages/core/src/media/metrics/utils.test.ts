@@ -85,7 +85,7 @@ describe('getMetricsReportingUrl', () => {
   });
 });
 
-describe('getMetricsReportingUrl', () => {
+describe('getPlaybackIdFromSourceUrl', () => {
   it('given a valid url then it should return a reporting url', async () => {
     const sourceUrl =
       'https://livepeercdn.studio/hls/172159gos7h0pq17/index.m3u8';
