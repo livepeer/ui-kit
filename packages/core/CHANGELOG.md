@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.0.5
+
+### Patch Changes
+
+- [#408](https://github.com/livepeer/livepeer-react/pull/408) [`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed parsing of playback IDs from a pinned playback URL.
+
 ## 2.0.4
 
 ### Patch Changes
