@@ -1,5 +1,14 @@
 # livepeer
 
+## 3.0.6
+
+### Patch Changes
+
+- [#411](https://github.com/livepeer/livepeer-react/pull/411) [`c627b39`](https://github.com/livepeer/livepeer-react/commit/c627b39d4708090ba87eb9fda90f29f4a5478d04) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed properly closing the playback websocket when a new playback ID is passed into the Player.
+
+- Updated dependencies [[`c627b39`](https://github.com/livepeer/livepeer-react/commit/c627b39d4708090ba87eb9fda90f29f4a5478d04)]:
+  - @livepeer/core@2.0.6
+
 ## 3.0.5
 
 ### Patch Changes
