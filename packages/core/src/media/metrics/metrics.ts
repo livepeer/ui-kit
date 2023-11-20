@@ -472,6 +472,7 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
           );
 
           if (reportingWebsocketUrl) {
+            ws?.close(3077);
             const newWebSocket = new WebSocket(reportingWebsocketUrl);
 
             newWebSocket.addEventListener('open', () => {
@@ -502,7 +503,7 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
                 console.warn('Failed to parse metadata from websocket.');
               }
             });
-            newWebSocket.addEventListener('close', (event) => {
+            newWebSocket.addEventListener('close', () => {
               // disable active statistics gathering
               if (timeOut) {
                 clearTimeout(timeOut);
@@ -510,15 +511,14 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
                 enabled = false;
               }
 
-              // use random code for internal error
-              if (event.code !== 3077) {
-                // auto-reconnect with exponential backoff
-                setTimeout(function () {
-                  createNewWebSocket(numRetries++).then((websocket) => {
+              // auto-reconnect with exponential backoff
+              setTimeout(function () {
+                if (enabled) {
+                  createNewWebSocket(numRetries + 1).then((websocket) => {
                     ws = websocket;
                   });
-                }, Math.pow(2, numRetries) * 1e3);
-              }
+                }
+              }, Math.pow(2, numRetries) * 1e3);
             });
             return newWebSocket;
           }
@@ -592,6 +592,7 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
       if (timeOut) {
         clearTimeout(timeOut);
       }
+
       ws?.close(3077);
     };
 
