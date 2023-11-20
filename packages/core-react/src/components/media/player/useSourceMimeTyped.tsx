@@ -276,14 +276,14 @@ export const useSourceMimeTyped = <
 
     const authenticatedSources = sources.map((source) => {
       // append the JWT to the query params
-      if (jwt) {
+      if (jwt && source) {
         const url = new URL(source);
         url.searchParams.append('jwt', jwt);
         return url.toString();
       }
 
       // append the access key to the query params
-      if (accessKeyResolved) {
+      if (accessKeyResolved && source) {
         const url = new URL(source);
         url.searchParams.append('accessKey', accessKeyResolved);
         return url.toString();
