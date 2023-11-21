@@ -4,6 +4,8 @@ import {
   ControlsOptions,
   MediaControllerCallbackState,
   MediaPropsOptions,
+  ObjectFit,
+  PlaybackError,
   PlaybackInfo,
   Src,
   WebhookPlaybackPolicy,
@@ -18,7 +20,6 @@ import { isNumber } from '@livepeer/core/utils';
 import * as React from 'react';
 
 import { useSourceMimeTyped } from './useSourceMimeTyped';
-import { ObjectFit, PlaybackError } from '../shared';
 
 export type InternalPlayerProps = {
   /** The current screen width. This is null if the screen size cannot be determined (SSR). */

@@ -35,7 +35,9 @@ const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
     ? parts?.[(parts?.length ?? 0) - 2] ?? null
     : null;
 
-  return playbackId;
+  const playbackIdPlusSplit = playbackId?.split('+') ?? null;
+
+  return playbackIdPlusSplit?.[(playbackIdPlusSplit?.length ?? 1) - 1] ?? null;
 };
 
 export type DeviceInformation = {
@@ -44,6 +46,13 @@ export type DeviceInformation = {
   isIos: boolean;
   isAndroid: boolean;
   userAgent: string;
+};
+
+export type ObjectFit = 'cover' | 'contain';
+
+export type PlaybackError = {
+  type: 'offline' | 'access-control' | 'fallback' | 'unknown';
+  message: string;
 };
 
 export type MediaSizing = {
@@ -255,6 +264,10 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   requestSeekBack: (difference?: number) => void;
   requestSeekForward: (difference?: number) => void;
   _requestSeekDiff: (difference: number) => void;
+
+  /** If the media has a playback error */
+  playbackError?: PlaybackError | null;
+  setPlaybackError: (error: PlaybackError | null) => void;
 
   setLive: (live: boolean) => void;
 
@@ -503,6 +516,9 @@ export const createControllerStore = <TElement, TMediaStream>({
 
           setWebsocketMetadata: (metadata: Metadata) =>
             set(() => ({ metadata })),
+
+          setPlaybackError: (playbackError: PlaybackError | null) =>
+            set(() => ({ playbackError, playing: false })),
 
           _updateBuffered: (buffered) => set(() => ({ buffered })),
 

@@ -4,7 +4,7 @@ const LP_DOMAINS = ['livepeer', 'livepeercdn', 'lp-playback'];
 
 // Finds the metrics reporting URL from a playback ID and a playback domain
 export const getMetricsReportingUrl = async (
-  playbackId: string,
+  playbackId: string | null,
   playbackDomain: string,
   sessionToken?: string | null,
 ): Promise<string | null> => {

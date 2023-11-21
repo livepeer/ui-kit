@@ -2,6 +2,8 @@ import {
   ControlsOptions,
   MediaControllerCallbackState,
   MediaPropsOptions,
+  ObjectFit,
+  PlaybackError,
   isAccessControlError,
   isStreamOfflineError,
 } from '@livepeer/core';
@@ -10,7 +12,6 @@ import { AspectRatio, ThemeConfig } from '@livepeer/core/media';
 import * as React from 'react';
 
 import { useLivepeerProvider } from '../../../hooks';
-import { ObjectFit, PlaybackError } from '../shared';
 
 export type BroadcastProps<TElement, TMediaStream, TSlice> = {
   /** The stream key for the broadcast. This is required. */

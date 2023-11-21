@@ -5,12 +5,12 @@ import {
   AudioSrc,
   Base64Src,
   MediaPropsOptions,
+  ObjectFit,
   VideoSrc,
   WebRTCSrc,
 } from '@livepeer/core-react';
 import {
   PlayerProps as CorePlayerProps,
-  ObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
 

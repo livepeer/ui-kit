@@ -6,4 +6,4 @@
 '@livepeer/react-native': patch
 ---
 
-**Fix:** fixed properly closing the playback websocket when a new playback ID is passed into the Player.
+**Fix:** fixed random `Stream is offline` errors occurring on live stream playback, and reporting to websocket metrics.

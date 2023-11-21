@@ -53,6 +53,8 @@ export type {
   MediaSizing,
   Metadata,
   MetricsStatus,
+  ObjectFit,
+  PlaybackError,
   PlaybackMonitor,
   Src,
   VideoSrc,

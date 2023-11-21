@@ -3,12 +3,13 @@ import {
   Base64Src,
   ControlsOptions,
   HlsSrc,
+  ObjectFit,
+  PlaybackError,
   VideoSrc,
   WebRTCSrc,
 } from '@livepeer/core';
 
 import { PlayerProps } from './usePlayer';
-import { ObjectFit, PlaybackError } from '../shared';
 
 export type VideoPlayerProps<
   TElement,
