@@ -1,5 +1,25 @@
 # @livepeer/react
 
+## 3.0.6
+
+### Patch Changes
+
+- [#411](https://github.com/livepeer/livepeer-react/pull/411) [`c627b39`](https://github.com/livepeer/livepeer-react/commit/c627b39d4708090ba87eb9fda90f29f4a5478d04) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed properly closing the playback websocket when a new playback ID is passed into the Player.
+
+- Updated dependencies [[`c627b39`](https://github.com/livepeer/livepeer-react/commit/c627b39d4708090ba87eb9fda90f29f4a5478d04)]:
+  - @livepeer/core-react@2.0.6
+  - @livepeer/core-web@3.0.6
+
+## 3.0.5
+
+### Patch Changes
+
+- [#408](https://github.com/livepeer/livepeer-react/pull/408) [`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed parsing of playback IDs from a pinned playback URL.
+
+- Updated dependencies [[`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914)]:
+  - @livepeer/core-react@2.0.5
+  - @livepeer/core-web@3.0.5
+
 ## 3.0.4
 
 ### Patch Changes

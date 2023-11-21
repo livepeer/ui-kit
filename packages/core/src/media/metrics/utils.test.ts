@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getMetricsReportingUrl } from './utils';
+import { getMetricsReportingUrl, getPlaybackIdFromSourceUrl } from './utils';
 
 describe('getMetricsReportingUrl', () => {
   describe('asset url', () => {
@@ -82,5 +82,46 @@ describe('getMetricsReportingUrl', () => {
 
       expect(reportingUrls).toEqual([null, null]);
     });
+  });
+});
+
+describe('getPlaybackIdFromSourceUrl', () => {
+  it('given a valid url then it should return a reporting url', async () => {
+    const sourceUrl =
+      'https://livepeercdn.studio/hls/172159gos7h0pq17/index.m3u8';
+
+    const playbackId = await getPlaybackIdFromSourceUrl(sourceUrl);
+
+    expect(playbackId).toEqual('172159gos7h0pq17');
+  });
+
+  it('given a valid webrtc url then it should return a reporting url', async () => {
+    const sourceUrl = 'https://livepeercdn.studio/webrtc/172159gos7h0pq17';
+
+    const playbackId = await getPlaybackIdFromSourceUrl(sourceUrl);
+
+    expect(playbackId).toEqual('172159gos7h0pq17');
+  });
+
+  it('given a valid pinned playback url then it should return a reporting url', async () => {
+    const sourceUrl =
+      'https://sin-prod-catalyst-2.lp-playback.studio/webrtc/video+172159gos7h0pq17';
+
+    const playbackId = await getPlaybackIdFromSourceUrl(sourceUrl);
+
+    expect(playbackId).toEqual('172159gos7h0pq17');
+  });
+
+  it('given invalid urls then it should not return a playback ID', async () => {
+    const sourceUrls = [
+      'https://livecdn.com/static/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8',
+      'https://livecdn.com/another-url/c34af47b-bbf2-40ed-ad2d-77abd43860c9/master.m3u8',
+    ];
+
+    const reportingUrls = await Promise.all(
+      sourceUrls.map(async (url) => await getPlaybackIdFromSourceUrl(url)),
+    );
+
+    expect(reportingUrls).toEqual([null, null]);
   });
 });
