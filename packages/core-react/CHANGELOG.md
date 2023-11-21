@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 2.0.7
+
+### Patch Changes
+
+- [#413](https://github.com/livepeer/livepeer-react/pull/413) [`b8ba1f3`](https://github.com/livepeer/livepeer-react/commit/b8ba1f37772b3a35719d581344ff7d0acd44ea91) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed random `Stream is offline` errors occurring on live stream playback, and reporting to websocket metrics.
+
+- Updated dependencies [[`b8ba1f3`](https://github.com/livepeer/livepeer-react/commit/b8ba1f37772b3a35719d581344ff7d0acd44ea91)]:
+  - @livepeer/core@2.0.7
+
 ## 2.0.6
 
 ### Patch Changes
@@ -13,7 +22,7 @@
 
 ### Patch Changes
 
-- [#408](https://github.com/livepeer/livepeer-react/pull/408) [`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed parsing of playback IDs from a pinned playback URL. 
+- [#408](https://github.com/livepeer/livepeer-react/pull/408) [`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed parsing of playback IDs from a pinned playback URL.
 
 - Updated dependencies [[`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914)]:
   - @livepeer/core@2.0.5
