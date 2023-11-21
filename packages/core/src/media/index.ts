@@ -15,6 +15,8 @@ export type {
   MediaPropsOptions,
   MediaSizing,
   Metadata,
+  ObjectFit,
+  PlaybackError,
 } from './controller';
 export { addMediaMetricsToStore } from './metrics';
 export type { MediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';

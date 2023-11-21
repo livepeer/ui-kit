@@ -1,6 +1,5 @@
 import {
   PlayerProps as CorePlayerProps,
-  ObjectFit,
   usePlayer,
 } from '@livepeer/core-react/components';
 import {
@@ -8,6 +7,7 @@ import {
   Base64Src,
   HlsSrc,
   MediaControllerCallbackState,
+  ObjectFit,
   VideoSrc,
   WebRTCSrc,
 } from '@livepeer/core-web/media';

@@ -24,6 +24,13 @@ export type DeviceInformation = {
   userAgent: string;
 };
 
+export type ObjectFit = 'cover' | 'contain';
+
+export type PlaybackError = {
+  type: 'offline' | 'access-control' | 'fallback' | 'unknown';
+  message: string;
+};
+
 export type MediaSizing = {
   container?: ElementSize;
   media?: ElementSize;
@@ -233,6 +240,10 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   requestSeekBack: (difference?: number) => void;
   requestSeekForward: (difference?: number) => void;
   _requestSeekDiff: (difference: number) => void;
+
+  /** If the media has a playback error */
+  playbackError?: PlaybackError | null;
+  setPlaybackError: (error: PlaybackError | null) => void;
 
   setLive: (live: boolean) => void;
 
@@ -481,6 +492,9 @@ export const createControllerStore = <TElement, TMediaStream>({
 
           setWebsocketMetadata: (metadata: Metadata) =>
             set(() => ({ metadata })),
+
+          setPlaybackError: (playbackError: PlaybackError | null) =>
+            set(() => ({ playbackError, playing: false })),
 
           _updateBuffered: (buffered) => set(() => ({ buffered })),
 

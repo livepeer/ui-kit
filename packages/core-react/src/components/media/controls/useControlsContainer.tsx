@@ -1,7 +1,5 @@
-import { MediaControllerState } from '@livepeer/core';
+import { MediaControllerState, PlaybackError } from '@livepeer/core';
 import * as React from 'react';
-
-import { PlaybackError } from '../shared';
 
 export type ControlsContainerProps = {
   loadingText?: string | null;

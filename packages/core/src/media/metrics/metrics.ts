@@ -484,10 +484,6 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
                 if (event?.data) {
                   const json = JSON.parse(event.data);
 
-                  if (json?.error && store.getState().live) {
-                    onError?.(new Error(json.error));
-                  }
-
                   if (json?.meta?.bframes || json?.meta?.buffer_window) {
                     store.getState().setWebsocketMetadata({
                       bframes: json?.meta?.bframes
@@ -558,6 +554,13 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
 
       if (state.error !== prevState.error && state.error) {
         metricsStatus.addError(state.error ?? 'unknown');
+      }
+
+      if (
+        state.playbackError?.type !== prevState.playbackError?.type &&
+        state.playbackError
+      ) {
+        metricsStatus.addError(state.playbackError.message ?? 'unknown');
       }
     });
 

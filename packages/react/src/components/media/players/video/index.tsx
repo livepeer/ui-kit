@@ -28,8 +28,10 @@ import { PosterSource } from '../Player';
 
 const mediaControllerSelector = ({
   fullscreen,
+  setPlaybackError,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   fullscreen,
+  setPlaybackError,
 });
 
 export type VideoPlayerProps = VideoPlayerCoreProps<
@@ -74,7 +76,9 @@ const InternalVideoPlayer = React.forwardRef<
   HTMLVideoElement,
   VideoPlayerProps
 >((props, ref) => {
-  const { fullscreen } = useMediaController(mediaControllerSelector);
+  const { fullscreen, setPlaybackError } = useMediaController(
+    mediaControllerSelector,
+  );
 
   const {
     src,
@@ -156,7 +160,9 @@ const InternalVideoPlayer = React.forwardRef<
     } else if (playbackError === null) {
       cancelRef?.current?.();
     }
-  }, [playbackError]);
+
+    setPlaybackError(playbackError);
+  }, [playbackError, setPlaybackError]);
 
   // we auto-increment the index of the playback source if it can't be handled
   React.useEffect(() => {
