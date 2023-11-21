@@ -10,7 +10,7 @@
     "dev:web": "expo start --web"
   },
   "dependencies": {
-    "@livepeer/react-native": "^2.0.6",
+    "@livepeer/react-native": "^2.0.7",
     "expo": "47.0.9",
     "expo-av": "~13.0.2",
     "expo-image-picker": "~14.0.2",

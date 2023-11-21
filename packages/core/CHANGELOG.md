@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.0.7
+
+### Patch Changes
+
+- [#413](https://github.com/livepeer/livepeer-react/pull/413) [`b8ba1f3`](https://github.com/livepeer/livepeer-react/commit/b8ba1f37772b3a35719d581344ff7d0acd44ea91) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed random `Stream is offline` errors occurring on live stream playback, and reporting to websocket metrics.
+
 ## 2.0.6
 
 ### Patch Changes
