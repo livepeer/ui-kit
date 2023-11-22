@@ -448,26 +448,27 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
     }, 1e3);
   };
 
-  let previousPlaybackId: string | null = null;
+  let previousPlaybackUrl: string | null = null;
 
   const destroyPlaybackIdListener = store.subscribe((currentState) => {
-    if (
-      currentState?.playbackId &&
-      currentState?.playbackId !== previousPlaybackId &&
-      currentState?.src?.src &&
-      currentState._element
-    ) {
-      const playbackId = currentState.playbackId;
-      const currentSource = currentState.src;
-      const playbackDomain = currentSource.src;
+    const currentSource = currentState?.src?.src;
+    const currentPlaybackUrl = currentState?.url;
 
-      previousPlaybackId = playbackId;
+    const isMounted = currentSource && currentState._element;
+    const shouldOpenNewSocket =
+      isMounted &&
+      currentPlaybackUrl &&
+      currentPlaybackUrl !== previousPlaybackUrl;
+
+    if (shouldOpenNewSocket) {
+      const playbackId = currentState.playbackId;
+      previousPlaybackUrl = currentPlaybackUrl ?? null;
 
       try {
         const createNewWebSocket = async (numRetries = 0) => {
           const reportingWebsocketUrl = await getMetricsReportingUrl(
             playbackId,
-            playbackDomain,
+            currentPlaybackUrl,
             sessionToken,
           );
 

@@ -18,6 +18,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
     onConnected?: () => void;
     onPlaybackOffsetUpdated?: (d: number) => void;
     onError?: (data: Error) => void;
+    onRedirect?: (url: string | null) => void;
   },
   config?: WebRTCVideoConfig,
 ): {
@@ -45,6 +46,8 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       }
 
       const redirectUrlString = redirectUrl.toString();
+
+      callbacks?.onRedirect?.(redirectUrlString ?? null);
 
       /**
        * Create a new WebRTC connection, using public STUN servers with ICE,

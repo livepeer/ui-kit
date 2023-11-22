@@ -14,8 +14,10 @@ import { useMediaController } from '../../../../context';
 
 const mediaControllerSelector = ({
   canPlay,
+  onRedirect,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   canPlay,
+  onRedirect,
 });
 
 export type HtmlVideoPlayerProps = Omit<VideoPlayerProps, 'src'> & {
@@ -40,7 +42,7 @@ export const HtmlVideoPlayer = React.forwardRef<
     fullscreen,
   } = props;
 
-  const { canPlay } = useMediaController(mediaControllerSelector);
+  const { canPlay, onRedirect } = useMediaController(mediaControllerSelector);
 
   const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
     React.useCallback(
@@ -79,6 +81,12 @@ export const HtmlVideoPlayer = React.forwardRef<
       onPlaybackError?.(null);
     }
   }, [canPlay, onPlaybackError]);
+
+  React.useEffect(() => {
+    if (src?.src) {
+      onRedirect?.(src?.src);
+    }
+  }, [src, onRedirect]);
 
   return (
     <video

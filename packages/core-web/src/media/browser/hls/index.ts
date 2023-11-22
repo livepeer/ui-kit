@@ -37,6 +37,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     onDuration?: (v: number) => void;
     onCanPlay?: () => void;
     onError?: (data: HlsError) => void;
+    onRedirect?: (url: string | null) => void;
   },
   config?: HlsVideoConfig,
 ): {
@@ -75,8 +76,15 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.attachMedia(element);
   }
 
+  let redirected = false;
+
   hls.on(Hls.Events.LEVEL_LOADED, async (_e, data) => {
-    const { live, totalduration: duration } = data.details;
+    const { live, totalduration: duration, url } = data.details;
+
+    if (!redirected) {
+      callbacks?.onRedirect?.(url ?? null);
+      redirected = true;
+    }
 
     callbacks?.onLive?.(Boolean(live));
     callbacks?.onDuration?.(duration ?? 0);

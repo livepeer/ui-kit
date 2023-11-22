@@ -20,11 +20,13 @@ const mediaControllerSelector = ({
   _element,
   setLive,
   _updatePlaybackOffsetMs,
+  onRedirect,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   metadata,
   _element,
   setLive,
   _updatePlaybackOffsetMs,
+  onRedirect,
 });
 
 export type WebRTCVideoPlayerProps = Omit<
@@ -54,7 +56,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
     webrtcConfig,
   } = props;
 
-  const { metadata, _element, setLive, _updatePlaybackOffsetMs } =
+  const { metadata, _element, setLive, _updatePlaybackOffsetMs, onRedirect } =
     useMediaController(mediaControllerSelector);
 
   const onConnected = React.useCallback(async () => {
@@ -95,6 +97,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
           onConnected,
           onError: onErrorComposed,
           onPlaybackOffsetUpdated: _updatePlaybackOffsetMs,
+          onRedirect,
         },
         webrtcConfig,
       );

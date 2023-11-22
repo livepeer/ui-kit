@@ -209,6 +209,9 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   /** Device tracking set on load of the media */
   device: DeviceInformation;
 
+  /** The final playback URL for the media, after redirects. */
+  url: string | null;
+
   _updateSource: (source: string) => void;
   _updateMediaStream: (
     mediaStream: TMediaStream,
@@ -264,6 +267,8 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   setError: (error: string) => void;
   setStalled: (stalled: boolean) => void;
   setLoading: (stalled: boolean) => void;
+
+  onRedirect: (url: string | null) => void;
 };
 
 export type MediaControllerStore<TElement, TMediaStream> = StoreApi<
@@ -350,6 +355,8 @@ export const createControllerStore = <TElement, TMediaStream>({
           playbackOffsetMs: 0,
 
           deviceIds: null,
+
+          url: null,
 
           hasPlayed: false,
           playing: false,
@@ -509,6 +516,8 @@ export const createControllerStore = <TElement, TMediaStream>({
             get()._requestSeekDiff(-difference),
           requestSeekForward: (difference = DEFAULT_SEEK_TIME) =>
             get()._requestSeekDiff(difference),
+
+          onRedirect: (url: string | null) => set(() => ({ url: url })),
 
           setSize: (size: MediaSizing) => set(() => ({ size })),
           setWaiting: (waiting: boolean) => set(() => ({ waiting })),

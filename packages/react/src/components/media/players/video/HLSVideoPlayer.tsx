@@ -17,12 +17,14 @@ const mediaControllerSelector = ({
   onCanPlay,
   _element,
   _updatePlaybackOffsetMs,
+  onRedirect,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
   setLive,
   onDurationChange,
   onCanPlay,
   _element,
   _updatePlaybackOffsetMs,
+  onRedirect,
 });
 
 export type HLSVideoPlayerProps = Omit<
@@ -59,6 +61,7 @@ export const HLSVideoPlayer = React.forwardRef<
     onDurationChange,
     _element,
     _updatePlaybackOffsetMs,
+    onRedirect,
   } = useMediaController(mediaControllerSelector);
 
   const onLive = React.useCallback(
@@ -100,6 +103,7 @@ export const HLSVideoPlayer = React.forwardRef<
           onCanPlay: onCanPlay,
           onError: onErrorComposed,
           onPlaybackOffsetUpdated: _updatePlaybackOffsetMs,
+          onRedirect,
         },
         {
           autoplay: autoPlay,
