@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 2.0.8
+
+### Patch Changes
+
+- [#416](https://github.com/livepeer/livepeer-react/pull/416) [`d4f9abe`](https://github.com/livepeer/livepeer-react/commit/d4f9abee791cc7c41c7b78572f10b6ed495e93a1) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added redirect URL caching for faster WebRTC playback switching times.
+
+- Updated dependencies [[`d4f9abe`](https://github.com/livepeer/livepeer-react/commit/d4f9abee791cc7c41c7b78572f10b6ed495e93a1)]:
+  - @livepeer/core-react@2.0.8
+
 ## 2.0.7
 
 ### Patch Changes
