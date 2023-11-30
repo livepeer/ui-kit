@@ -187,11 +187,21 @@ async function postSDPOffer(
   return response;
 }
 
+let cachedRedirectHost: string | null = null;
+
 export async function getRedirectUrl(
   endpoint: string,
   abortController: AbortController,
   timeout?: number,
 ) {
+  if (cachedRedirectHost) {
+    const inputUrl = new URL(endpoint);
+
+    inputUrl.host = cachedRedirectHost;
+
+    return inputUrl;
+  }
+
   const id = setTimeout(
     () => abortController.abort(),
     timeout ?? DEFAULT_TIMEOUT,
@@ -206,6 +216,10 @@ export async function getRedirectUrl(
     clearTimeout(id);
 
     const parsedUrl = new URL(response.url);
+
+    if (parsedUrl?.host) {
+      cachedRedirectHost = parsedUrl.host;
+    }
 
     return parsedUrl;
   } catch (e) {
