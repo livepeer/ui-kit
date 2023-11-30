@@ -13,7 +13,7 @@
 
 ### Patch Changes
 
-- [`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the metrics URL to always use the URL for playback. This fixes the edge case where playback and metrics are assigned to different nodes.
+- [`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the metrics URL to always use the URL for playback. This fixes the edge case where playback and metrics are assigned to different nodes. 
 
 - Updated dependencies [[`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50)]:
   - @livepeer/core@2.0.8
