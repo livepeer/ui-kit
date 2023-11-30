@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 2.0.8
+
+### Patch Changes
+
+- [#416](https://github.com/livepeer/livepeer-react/pull/416) [`d4f9abe`](https://github.com/livepeer/livepeer-react/commit/d4f9abee791cc7c41c7b78572f10b6ed495e93a1) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added redirect URL caching for faster WebRTC playback switching times.
+
+- Updated dependencies [[`d4f9abe`](https://github.com/livepeer/livepeer-react/commit/d4f9abee791cc7c41c7b78572f10b6ed495e93a1)]:
+  - @livepeer/core@2.0.9
+
 ## 2.0.7
 
 ### Patch Changes
@@ -22,7 +31,7 @@
 
 ### Patch Changes
 
-- [#408](https://github.com/livepeer/livepeer-react/pull/408) [`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed parsing of playback IDs from a pinned playback URL. 
+- [#408](https://github.com/livepeer/livepeer-react/pull/408) [`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed parsing of playback IDs from a pinned playback URL.
 
 - Updated dependencies [[`f396e37`](https://github.com/livepeer/livepeer-react/commit/f396e37a477ce8ee38853b3a6e5ec78265d2c914)]:
   - @livepeer/core@2.0.5

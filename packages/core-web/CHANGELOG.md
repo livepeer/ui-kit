@@ -1,10 +1,19 @@
 # livepeer
 
+## 3.0.9
+
+### Patch Changes
+
+- [#416](https://github.com/livepeer/livepeer-react/pull/416) [`d4f9abe`](https://github.com/livepeer/livepeer-react/commit/d4f9abee791cc7c41c7b78572f10b6ed495e93a1) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added redirect URL caching for faster WebRTC playback switching times.
+
+- Updated dependencies [[`d4f9abe`](https://github.com/livepeer/livepeer-react/commit/d4f9abee791cc7c41c7b78572f10b6ed495e93a1)]:
+  - @livepeer/core@2.0.9
+
 ## 3.0.8
 
 ### Patch Changes
 
-- [`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the metrics URL to always use the URL for playback. This fixes the edge case where playback and metrics are assigned to different nodes. 
+- [`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the metrics URL to always use the URL for playback. This fixes the edge case where playback and metrics are assigned to different nodes.
 
 - Updated dependencies [[`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50)]:
   - @livepeer/core@2.0.8
