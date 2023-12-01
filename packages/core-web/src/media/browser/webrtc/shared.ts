@@ -69,7 +69,7 @@ export type WebRTCVideoConfig = {
   /**
    * The timeout of the network requests made for the SDP negotiation, in ms.
    *
-   * @default 10000
+   * @default 20000
    */
   sdpTimeout?: number;
   /**
@@ -78,7 +78,7 @@ export type WebRTCVideoConfig = {
   constant?: boolean;
 };
 
-const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_TIMEOUT = 20000;
 
 /**
  * Performs the actual SDP exchange.
@@ -194,20 +194,20 @@ export async function getRedirectUrl(
   abortController: AbortController,
   timeout?: number,
 ) {
-  if (cachedRedirectHost) {
-    const inputUrl = new URL(endpoint);
-
-    inputUrl.host = cachedRedirectHost;
-
-    return inputUrl;
-  }
-
-  const id = setTimeout(
-    () => abortController.abort(),
-    timeout ?? DEFAULT_TIMEOUT,
-  );
-
   try {
+    if (cachedRedirectHost) {
+      const inputUrl = new URL(endpoint);
+
+      inputUrl.host = cachedRedirectHost;
+
+      return inputUrl;
+    }
+
+    const id = setTimeout(
+      () => abortController.abort(),
+      timeout ?? DEFAULT_TIMEOUT,
+    );
+
     const response = await fetch(endpoint, {
       method: 'GET',
       signal: abortController.signal,

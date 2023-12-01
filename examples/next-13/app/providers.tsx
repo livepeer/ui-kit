@@ -42,7 +42,7 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
           webrtcIngestBaseUrl:
             fromStorage('WEBRTC_INGEST_BASE_URL') ??
             process.env.NEXT_PUBLIC_WEBRTC_INGEST_BASE_URL ??
-            'https://webrtc.livepeer.studio/webrtc',
+            'https://playback.livepeer.studio/webrtc',
           ...{ origin: `https://lvpr.tv` },
         }),
       }),
