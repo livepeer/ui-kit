@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.0.10
+
+### Patch Changes
+
+- [#418](https://github.com/livepeer/livepeer-react/pull/418) [`7b6b1d7`](https://github.com/livepeer/livepeer-react/commit/7b6b1d782abf2a2b8bcfa7f74fa11c2d8d31e7e7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed WebRTC negotiation endpoint to reduce hops to assigned node.
+
 ## 2.0.9
 
 ### Patch Changes
