@@ -1,5 +1,14 @@
 # livepeer
 
+## 3.0.10
+
+### Patch Changes
+
+- [#418](https://github.com/livepeer/livepeer-react/pull/418) [`7b6b1d7`](https://github.com/livepeer/livepeer-react/commit/7b6b1d782abf2a2b8bcfa7f74fa11c2d8d31e7e7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed WebRTC negotiation endpoint to reduce hops to assigned node.
+
+- Updated dependencies [[`7b6b1d7`](https://github.com/livepeer/livepeer-react/commit/7b6b1d782abf2a2b8bcfa7f74fa11c2d8d31e7e7)]:
+  - @livepeer/core@2.0.10
+
 ## 3.0.9
 
 ### Patch Changes
@@ -13,7 +22,7 @@
 
 ### Patch Changes
 
-- [`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the metrics URL to always use the URL for playback. This fixes the edge case where playback and metrics are assigned to different nodes. 
+- [`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the metrics URL to always use the URL for playback. This fixes the edge case where playback and metrics are assigned to different nodes.
 
 - Updated dependencies [[`fadfa23`](https://github.com/livepeer/livepeer-react/commit/fadfa23527997678ef810d01b463b30c54a80e50)]:
   - @livepeer/core@2.0.8
