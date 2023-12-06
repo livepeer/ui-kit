@@ -38,6 +38,7 @@ export {
   sanitizeMediaControllerState,
 } from './media';
 export type {
+  AccessControlParams,
   AudioSrc,
   Base64Src,
   ClipLength,

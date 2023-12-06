@@ -1,4 +1,4 @@
-import { AspectRatio } from '@livepeer/core/media';
+import { AccessControlParams, AspectRatio } from '@livepeer/core/media';
 
 import {
   WebRTCVideoConfig,
@@ -45,6 +45,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
     onError?: (data: Error) => void;
   },
   config?: WebRTCVideoConfig,
+  accessControl?: AccessControlParams,
 ): {
   destroy: () => void;
 } => {
@@ -85,6 +86,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
               ofr,
               abortController,
               config,
+              accessControl,
             );
           } catch (e) {
             callbacks?.onError?.(e as Error);

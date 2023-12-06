@@ -274,46 +274,57 @@ export const useSourceMimeTyped = <
       return defaultValue;
     }
 
-    const authenticatedSources = sources.map((source) => {
+    const mediaSourceTypes = sources
+      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : null))
+      .filter((s) => s) as Src[];
+
+    const authenticatedSources = mediaSourceTypes.map((source) => {
+      // we use headers for HLS and WebRTC for auth
+      if (source.type === 'hls' || source.type === 'webrtc') {
+        return source;
+      }
+
       // append the JWT to the query params
       if (jwt && source) {
-        const url = new URL(source);
+        const url = new URL(source.src);
         url.searchParams.append('jwt', jwt);
-        return url.toString();
+        return {
+          ...source,
+          src: url.toString(),
+        };
       }
 
       // append the access key to the query params
       if (accessKeyResolved && source) {
-        const url = new URL(source);
+        const url = new URL(source.src);
         url.searchParams.append('accessKey', accessKeyResolved);
-        return url.toString();
+        return {
+          ...source,
+          src: url.toString(),
+        };
       }
 
       return source;
     });
 
-    const mediaSourceTypes = authenticatedSources
-      .map((s) => (typeof s === 'string' ? getMediaSourceType(s) : null))
-      .filter((s) => s) as Src[];
-
     // we filter by either audio or video/hls
-    return mediaSourceTypes?.[0]?.type === 'audio'
+    return authenticatedSources?.[0]?.type === 'audio'
       ? ([
           'audio',
-          mediaSourceTypes.filter((s) => s.type === 'audio') as AudioSrc[],
+          authenticatedSources.filter((s) => s.type === 'audio') as AudioSrc[],
         ] as const)
-      : mediaSourceTypes?.[0]?.type === 'video' ||
-        mediaSourceTypes?.[0]?.type === 'hls' ||
-        mediaSourceTypes?.[0]?.type === 'webrtc'
+      : authenticatedSources?.[0]?.type === 'video' ||
+        authenticatedSources?.[0]?.type === 'hls' ||
+        authenticatedSources?.[0]?.type === 'webrtc'
       ? ([
           'video',
-          mediaSourceTypes.filter(
+          authenticatedSources.filter(
             (s) =>
               s.type === 'video' || s.type === 'hls' || s.type === 'webrtc',
           ) as (VideoSrc | HlsSrc | WebRTCSrc)[],
         ] as const)
       : defaultValue;
-  }, [playbackUrls, src, jwt, accessKeyResolved, playRecording]);
+  }, [playbackUrls, src, playRecording]);
 
   const sourceMimeTypedSorted = React.useMemo(() => {
     // if there is no source mime type and the Player has dstorage fallback enabled,
@@ -361,5 +372,7 @@ export const useSourceMimeTyped = <
   return {
     source: sourceMimeTypedSorted,
     uploadStatus,
+    accessKeyResolved,
+    jwtResolved: jwt,
   } as const;
 };
