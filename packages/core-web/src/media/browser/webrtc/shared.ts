@@ -208,46 +208,6 @@ async function postSDPOffer(
   return response;
 }
 
-let cachedRedirectHost: string | null = null;
-
-export async function getRedirectUrl(
-  endpoint: string,
-  abortController: AbortController,
-  timeout?: number,
-) {
-  try {
-    if (cachedRedirectHost) {
-      const inputUrl = new URL(endpoint);
-
-      inputUrl.host = cachedRedirectHost;
-
-      return inputUrl;
-    }
-
-    const id = setTimeout(
-      () => abortController.abort(),
-      timeout ?? DEFAULT_TIMEOUT,
-    );
-
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      signal: abortController.signal,
-    });
-
-    clearTimeout(id);
-
-    const parsedUrl = new URL(response.url);
-
-    if (parsedUrl?.host) {
-      cachedRedirectHost = parsedUrl.host;
-    }
-
-    return parsedUrl;
-  } catch (e) {
-    return null;
-  }
-}
-
 /**
  * Receives an RTCPeerConnection and waits until
  * the connection is initialized or a timeout passes.

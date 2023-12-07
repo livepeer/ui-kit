@@ -98,7 +98,7 @@ export const HLSVideoPlayer = React.forwardRef<
       };
 
       const { destroy } = createNewHls(
-        src?.src,
+        src.src,
         _element,
         {
           onLive,

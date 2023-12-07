@@ -1,6 +1,6 @@
 import Hls, { ErrorData, HlsConfig } from 'hls.js';
 
-import { isClient } from '../utils';
+import { getRedirectUrl, isClient } from '../utils';
 
 // deprecated! - all errors trigger exponential backoff
 // keeping for documentation
@@ -52,93 +52,114 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     };
   }
 
-  element.setAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE, 'true');
+  let destroyed = false;
 
-  const hls = new Hls({
-    backBufferLength: 60 * 1.5,
-    ...config,
-    ...(config?.liveSyncDurationCount
-      ? {
-          liveSyncDurationCount: config.liveSyncDurationCount,
-        }
-      : {
-          liveMaxLatencyDurationCount: 7,
-          liveSyncDurationCount: 3,
-        }),
-  });
+  const abortController = new AbortController();
 
-  const onDestroy = () => {
-    hls?.destroy?.();
-    element?.removeAttribute?.(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
+  let updateOffsetInterval: NodeJS.Timer | null = null;
+  let onDestroy: () => void = () => {
+    //
   };
 
-  if (element) {
-    hls.attachMedia(element);
-  }
-
-  let redirected = false;
-
-  hls.on(Hls.Events.LEVEL_LOADED, async (_e, data) => {
-    const { live, totalduration: duration, url } = data.details;
-
-    if (!redirected) {
-      callbacks?.onRedirect?.(url ?? null);
-      redirected = true;
+  getRedirectUrl(source, abortController).then((redirectUrl) => {
+    if (destroyed || !redirectUrl) {
+      return;
     }
 
-    callbacks?.onLive?.(Boolean(live));
-    callbacks?.onDuration?.(duration ?? 0);
-  });
+    const redirectUrlString = redirectUrl.toString();
 
-  hls.on(Hls.Events.MEDIA_ATTACHED, async () => {
-    hls.loadSource(source);
+    element.setAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE, 'true');
 
-    hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
-      callbacks?.onCanPlay?.();
+    const hls = new Hls({
+      backBufferLength: 60 * 1.5,
+      ...config,
+      ...(config?.liveSyncDurationCount
+        ? {
+            liveSyncDurationCount: config.liveSyncDurationCount,
+          }
+        : {
+            liveMaxLatencyDurationCount: 7,
+            liveSyncDurationCount: 3,
+          }),
     });
-  });
 
-  hls.on(Hls.Events.ERROR, async (_event, data) => {
-    const { details, fatal } = data;
+    onDestroy = () => {
+      hls?.destroy?.();
+      element?.removeAttribute?.(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
+    };
 
-    const isManifestParsingError =
-      Hls.ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
+    if (element) {
+      hls.attachMedia(element);
+    }
 
-    if (!fatal && !isManifestParsingError) return;
-    callbacks?.onError?.(data);
+    let redirected = false;
 
-    if (fatal) {
-      console.error(`Fatal error : ${data.details}`);
-      switch (data.type) {
-        case Hls.ErrorTypes.MEDIA_ERROR:
-          hls.recoverMediaError();
-          break;
-        case Hls.ErrorTypes.NETWORK_ERROR:
-          console.error(`A network error occurred: ${data.details}`);
-          break;
-        default:
-          console.error(`An unrecoverable error occurred: ${data.details}`);
-          hls.destroy();
-          break;
+    hls.on(Hls.Events.LEVEL_LOADED, async (_e, data) => {
+      const { live, totalduration: duration, url } = data.details;
+
+      if (!redirected) {
+        callbacks?.onRedirect?.(url ?? null);
+        redirected = true;
+      }
+
+      callbacks?.onLive?.(Boolean(live));
+      callbacks?.onDuration?.(duration ?? 0);
+    });
+
+    hls.on(Hls.Events.MEDIA_ATTACHED, async () => {
+      hls.loadSource(redirectUrlString);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
+        callbacks?.onCanPlay?.();
+      });
+    });
+
+    hls.on(Hls.Events.ERROR, async (_event, data) => {
+      const { details, fatal } = data;
+
+      const isManifestParsingError =
+        Hls.ErrorTypes.NETWORK_ERROR && details === 'manifestParsingError';
+
+      if (!fatal && !isManifestParsingError) return;
+      callbacks?.onError?.(data);
+
+      if (fatal) {
+        console.error(`Fatal error : ${data.details}`);
+        switch (data.type) {
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hls.recoverMediaError();
+            break;
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.error(`A network error occurred: ${data.details}`);
+            break;
+          default:
+            console.error(`An unrecoverable error occurred: ${data.details}`);
+            hls.destroy();
+            break;
+        }
+      }
+    });
+
+    function updateOffset() {
+      const currentDate = Date.now();
+      const newDate = hls.playingDate;
+
+      if (newDate && currentDate) {
+        callbacks?.onPlaybackOffsetUpdated?.(currentDate - newDate.getTime());
       }
     }
+
+    updateOffsetInterval = setInterval(updateOffset, 2000);
   });
-
-  function updateOffset() {
-    const currentDate = Date.now();
-    const newDate = hls.playingDate;
-
-    if (newDate && currentDate) {
-      callbacks?.onPlaybackOffsetUpdated?.(currentDate - newDate.getTime());
-    }
-  }
-
-  const updateOffsetInterval = setInterval(updateOffset, 2000);
 
   return {
     destroy: () => {
+      destroyed = true;
+
+      abortController?.abort?.();
+
       onDestroy?.();
-      clearInterval?.(updateOffsetInterval);
+      if (updateOffsetInterval) clearInterval?.(updateOffsetInterval);
     },
   };
 };
