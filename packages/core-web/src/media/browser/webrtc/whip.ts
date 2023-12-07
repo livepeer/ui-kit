@@ -4,9 +4,9 @@ import {
   WebRTCVideoConfig,
   constructClientOffer,
   createPeerConnection,
+  getRedirectUrl,
   negotiateConnectionWithClientOffer,
 } from './shared';
-import { getRedirectUrl } from '../utils';
 
 export type WebRTCTrackConstraints = {
   /**
