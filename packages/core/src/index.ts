@@ -40,6 +40,7 @@ export {
 export type {
   AccessControlParams,
   AudioSrc,
+  AudioTrackSelector,
   Base64Src,
   ClipLength,
   ControlsOptions,
@@ -57,8 +58,12 @@ export type {
   ObjectFit,
   PlaybackError,
   PlaybackMonitor,
+  SingleAudioTrackSelector,
+  SingleTrackSelector,
+  SingleVideoTrackSelector,
   Src,
   VideoSrc,
+  VideoTrackSelector,
   WebRTCSrc,
 } from './media';
 export { createStorage, noopStorage } from './storage';

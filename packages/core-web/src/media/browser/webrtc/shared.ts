@@ -1,6 +1,8 @@
 import {
   AccessControlParams,
+  AudioTrackSelector,
   NOT_ACCEPTABLE_ERROR_MESSAGE,
+  VideoTrackSelector,
 } from '@livepeer/core';
 import fetch from 'cross-fetch';
 
@@ -85,6 +87,18 @@ export type WebRTCVideoConfig = {
    * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
    */
   constant?: boolean;
+  /**
+   * The track selector used when choosing the video track for playback.
+   *
+   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
+   */
+  videoTrackSelector?: VideoTrackSelector;
+  /**
+   * The track selector used when choosing the audio track for playback.
+   *
+   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
+   */
+  audioTrackSelector?: AudioTrackSelector;
 };
 
 const DEFAULT_TIMEOUT = 20000;
@@ -183,13 +197,21 @@ async function postSDPOffer(
     config?.sdpTimeout ?? DEFAULT_TIMEOUT,
   );
 
+  const url = new URL(endpoint);
+
   if (config?.constant) {
-    const url = new URL(endpoint);
     url.searchParams.append('constant', 'true');
-    endpoint = url.toString();
   }
 
-  const response = await fetch(endpoint, {
+  if (config?.audioTrackSelector) {
+    url.searchParams.append('audio', config.audioTrackSelector);
+  }
+
+  if (config?.videoTrackSelector) {
+    url.searchParams.append('video', config.videoTrackSelector);
+  }
+
+  const response = await fetch(url.toString(), {
     method: 'POST',
     mode: 'cors',
     headers: {
