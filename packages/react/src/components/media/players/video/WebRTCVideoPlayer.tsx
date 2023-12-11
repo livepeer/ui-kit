@@ -36,7 +36,6 @@ export type WebRTCVideoPlayerProps = Omit<
   src: WebRTCSrc;
   fullscreen: boolean;
   webrtcConfig?: WebRTCVideoConfig;
-  accessKey?: string;
 };
 
 export const WebRTCVideoPlayer = React.forwardRef<
@@ -55,8 +54,6 @@ export const WebRTCVideoPlayer = React.forwardRef<
     onPlaybackError,
     priority,
     webrtcConfig,
-    jwt,
-    accessKey,
   } = props;
 
   const { metadata, _element, setLive, _updatePlaybackOffsetMs, onRedirect } =
@@ -103,10 +100,6 @@ export const WebRTCVideoPlayer = React.forwardRef<
           onRedirect,
         },
         webrtcConfig,
-        {
-          jwt,
-          accessKey,
-        },
       );
 
       return () => {
@@ -122,9 +115,6 @@ export const WebRTCVideoPlayer = React.forwardRef<
     onPlaybackError,
     debouncedErrorCount,
     _updatePlaybackOffsetMs,
-    onRedirect,
-    jwt,
-    accessKey,
   ]);
 
   return (

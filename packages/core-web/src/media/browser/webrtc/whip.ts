@@ -1,4 +1,4 @@
-import { AccessControlParams, AspectRatio } from '@livepeer/core/media';
+import { AspectRatio } from '@livepeer/core/media';
 
 import {
   WebRTCVideoConfig,
@@ -45,7 +45,6 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
     onError?: (data: Error) => void;
   },
   config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
 ): {
   destroy: () => void;
 } => {
@@ -86,7 +85,6 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
               ofr,
               abortController,
               config,
-              accessControl,
             );
           } catch (e) {
             callbacks?.onError?.(e as Error);
@@ -120,39 +118,6 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
             }
           },
         );
-
-        let iceCandidatesGenerated = false;
-
-        const iceCandidateTimeout = setTimeout(() => {
-          if (!iceCandidatesGenerated) {
-            callbacks?.onError?.(
-              new Error('Failed to generate any ICE candidates'),
-            );
-          }
-        }, config?.iceCandidateTimeout ?? 5000);
-
-        peerConnection?.addEventListener('icecandidate', (event) => {
-          if (event.candidate) {
-            clearTimeout(iceCandidateTimeout);
-            iceCandidatesGenerated = true;
-          }
-        });
-
-        peerConnection.addEventListener('iceconnectionstatechange', (_e) => {
-          if (peerConnection?.iceConnectionState === 'failed') {
-            callbacks?.onError?.(new Error('ICE Connection Failed'));
-          }
-        });
-
-        peerConnection.addEventListener('icecandidateerror', (e) => {
-          callbacks?.onError?.(
-            new Error(
-              `ICE Candidate Error: ${
-                (e as RTCPeerConnectionIceErrorEvent)?.errorText
-              }`,
-            ),
-          );
-        });
 
         /**
          * While the connection is being initialized, ask for camera and microphone permissions and

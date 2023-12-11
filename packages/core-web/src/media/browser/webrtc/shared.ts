@@ -1,7 +1,4 @@
-import {
-  AccessControlParams,
-  NOT_ACCEPTABLE_ERROR_MESSAGE,
-} from '@livepeer/core';
+import { NOT_ACCEPTABLE_ERROR_MESSAGE } from '@livepeer/core';
 import fetch from 'cross-fetch';
 
 import { isClient } from '../utils';
@@ -76,12 +73,6 @@ export type WebRTCVideoConfig = {
    */
   sdpTimeout?: number;
   /**
-   * The timeout of the time to wait for ICE candidates, in ms.
-   *
-   * @default 5000
-   */
-  iceCandidateTimeout?: number;
-  /**
    * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
    */
   constant?: boolean;
@@ -106,7 +97,6 @@ export async function negotiateConnectionWithClientOffer(
   ofr: RTCSessionDescription | null,
   controller: AbortController,
   config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
 ): Promise<Date> {
   if (peerConnection && endpoint && ofr) {
     /**
@@ -114,13 +104,7 @@ export async function negotiateConnectionWithClientOffer(
      * This specifies how the client should communicate,
      * and what kind of media client and server have negotiated to exchange.
      */
-    const response = await postSDPOffer(
-      endpoint,
-      ofr.sdp,
-      controller,
-      config,
-      accessControl,
-    );
+    const response = await postSDPOffer(endpoint, ofr.sdp, controller, config);
     if (response.ok) {
       const answerSDP = await response.text();
       await peerConnection.setRemoteDescription(
@@ -176,7 +160,6 @@ async function postSDPOffer(
   data: string,
   controller: AbortController,
   config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
 ) {
   const id = setTimeout(
     () => controller.abort(),
@@ -194,16 +177,6 @@ async function postSDPOffer(
     mode: 'cors',
     headers: {
       'content-type': 'application/sdp',
-      ...(accessControl?.accessKey
-        ? {
-            'Livepeer-Access-Key': accessControl.accessKey,
-          }
-        : {}),
-      ...(accessControl?.jwt
-        ? {
-            'Livepeer-Jwt': accessControl.jwt,
-          }
-        : {}),
     },
     body: data,
     signal: controller.signal,

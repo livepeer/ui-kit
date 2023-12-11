@@ -47,11 +47,6 @@ export interface WebRTCSrc extends BaseSrc {
 }
 export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src | WebRTCSrc;
 
-export type AccessControlParams = {
-  jwt?: string;
-  accessKey?: string;
-};
-
 const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;
 const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;

@@ -22,7 +22,6 @@ export { addMediaMetricsToStore } from './metrics';
 export type { MediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';
 export { getMediaSourceType } from './src';
 export type {
-  AccessControlParams,
   AudioSrc,
   Base64Src,
   HlsSrc,
