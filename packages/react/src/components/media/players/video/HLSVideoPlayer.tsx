@@ -33,6 +33,7 @@ export type HLSVideoPlayerProps = Omit<
 > & {
   src: HlsSrc;
   fullscreen: boolean;
+  accessKey?: string;
 };
 
 export const HLSVideoPlayer = React.forwardRef<
@@ -53,6 +54,8 @@ export const HLSVideoPlayer = React.forwardRef<
     priority,
     allowCrossOriginCredentials,
     playRecording,
+    jwt,
+    accessKey,
   } = props;
 
   const {
@@ -108,7 +111,12 @@ export const HLSVideoPlayer = React.forwardRef<
         {
           autoplay: autoPlay,
           xhrSetup(xhr, _url) {
-            xhr.withCredentials = Boolean(allowCrossOriginCredentials);
+            xhr.withCredentials = Boolean(
+              allowCrossOriginCredentials || jwt || accessKey,
+            );
+            if (accessKey)
+              xhr.setRequestHeader('Livepeer-Access-Key', accessKey);
+            else if (jwt) xhr.setRequestHeader('Livepeer-Jwt', jwt);
           },
           ...hlsConfig,
         },
@@ -130,6 +138,9 @@ export const HLSVideoPlayer = React.forwardRef<
     allowCrossOriginCredentials,
     debouncedErrorCount,
     _updatePlaybackOffsetMs,
+    onRedirect,
+    jwt,
+    accessKey,
   ]);
 
   return (
