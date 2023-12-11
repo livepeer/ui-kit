@@ -119,6 +119,39 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
           },
         );
 
+        let iceCandidatesGenerated = false;
+
+        const iceCandidateTimeout = setTimeout(() => {
+          if (!iceCandidatesGenerated) {
+            callbacks?.onError?.(
+              new Error('Failed to generate any ICE candidates'),
+            );
+          }
+        }, config?.iceCandidateTimeout ?? 5000);
+
+        peerConnection?.addEventListener('icecandidate', (event) => {
+          if (event.candidate) {
+            clearTimeout(iceCandidateTimeout);
+            iceCandidatesGenerated = true;
+          }
+        });
+
+        peerConnection.addEventListener('iceconnectionstatechange', (_e) => {
+          if (peerConnection?.iceConnectionState === 'failed') {
+            callbacks?.onError?.(new Error('ICE Connection Failed'));
+          }
+        });
+
+        peerConnection.addEventListener('icecandidateerror', (e) => {
+          callbacks?.onError?.(
+            new Error(
+              `ICE Candidate Error: ${
+                (e as RTCPeerConnectionIceErrorEvent)?.errorText
+              }`,
+            ),
+          );
+        });
+
         /**
          * While the connection is being initialized, ask for camera and microphone permissions and
          * add video and audio tracks to the peerConnection.
