@@ -177,6 +177,13 @@ export async function constructClientOffer(
   return null;
 }
 
+// Regular expression to match the playback ID at the end of the URL
+// It looks for a string that follows the last "+" or "/" and continues to the end of the pathname
+const playbackIdPattern = /([/+])([^/+?]+)$/;
+const REPLACE_PLACEHOLDER = 'PLAYBACK_ID';
+
+let cachedRedirectUrl: URL | null = null;
+
 async function postSDPOffer(
   endpoint: string,
   data: string,
@@ -189,6 +196,20 @@ async function postSDPOffer(
   );
 
   const url = new URL(endpoint);
+
+  const parsedMatches = url.pathname.match(playbackIdPattern);
+
+  // if we both have a cached redirect URL and a match for the playback ID,
+  // use these to shortcut the typical webrtc redirect flow
+  if (cachedRedirectUrl && parsedMatches?.[2]) {
+    const clonedCachedUrl = new URL(cachedRedirectUrl);
+
+    url.host = clonedCachedUrl.host;
+    url.pathname = clonedCachedUrl.pathname.replace(
+      REPLACE_PLACEHOLDER,
+      parsedMatches[2],
+    );
+  }
 
   if (config?.constant) {
     url.searchParams.append('constant', 'true');
@@ -217,18 +238,16 @@ async function postSDPOffer(
   return response;
 }
 
-let cachedRedirectHost: string | null = null;
-
 export async function getRedirectUrl(
   endpoint: string,
   abortController: AbortController,
   timeout?: number,
 ) {
   try {
-    if (cachedRedirectHost) {
+    if (cachedRedirectUrl) {
       const inputUrl = new URL(endpoint);
 
-      inputUrl.host = cachedRedirectHost;
+      inputUrl.host = cachedRedirectUrl.host;
 
       return inputUrl;
     }
@@ -247,8 +266,13 @@ export async function getRedirectUrl(
 
     const parsedUrl = new URL(response.url);
 
-    if (parsedUrl?.host) {
-      cachedRedirectHost = parsedUrl.host;
+    if (parsedUrl) {
+      const cachedUrl = new URL(parsedUrl);
+      cachedUrl.pathname = cachedUrl.pathname.replace(
+        playbackIdPattern,
+        `$1${REPLACE_PLACEHOLDER}`,
+      );
+      cachedRedirectUrl = cachedUrl;
     }
 
     return parsedUrl;

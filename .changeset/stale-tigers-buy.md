@@ -1,8 +1,8 @@
 ---
-'@livepeer/core': patch
-'@livepeer/core-web': patch
-'@livepeer/core-react': patch
-'@livepeer/react': patch
+'@livepeer/core': minor
+'@livepeer/core-web': minor
+'@livepeer/core-react': minor
+'@livepeer/react': minor
 ---
 
 **Feature:** added track selectors to WebRTC so developers can override video and audio tracks.
