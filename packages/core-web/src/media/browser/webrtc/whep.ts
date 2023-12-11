@@ -1,3 +1,5 @@
+import { AccessControlParams } from '@livepeer/core';
+
 import {
   WebRTCVideoConfig,
   constructClientOffer,
@@ -21,6 +23,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
     onRedirect?: (url: string | null) => void;
   },
   config?: WebRTCVideoConfig,
+  accessControl?: AccessControlParams,
 ): {
   destroy: () => void;
 } => {
@@ -137,6 +140,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               ofr,
               abortController,
               config,
+              accessControl,
             );
 
             const currentDate = Date.now();
@@ -149,6 +153,37 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
           } catch (e) {
             errorComposed(e as Error);
           }
+        });
+
+        let iceCandidatesGenerated = false;
+
+        const iceCandidateTimeout = setTimeout(() => {
+          if (!iceCandidatesGenerated) {
+            errorComposed(new Error('Failed to generate any ICE candidates'));
+          }
+        }, config?.iceCandidateTimeout ?? 5000);
+
+        peerConnection?.addEventListener('icecandidate', (event) => {
+          if (event.candidate) {
+            clearTimeout(iceCandidateTimeout);
+            iceCandidatesGenerated = true;
+          }
+        });
+
+        peerConnection.addEventListener('iceconnectionstatechange', (_e) => {
+          if (peerConnection?.iceConnectionState === 'failed') {
+            errorComposed(new Error('ICE Connection Failed'));
+          }
+        });
+
+        peerConnection.addEventListener('icecandidateerror', (e) => {
+          errorComposed(
+            new Error(
+              `ICE Candidate Error: ${
+                (e as RTCPeerConnectionIceErrorEvent)?.errorText
+              }`,
+            ),
+          );
         });
       }
     })
