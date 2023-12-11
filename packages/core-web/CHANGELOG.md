@@ -1,5 +1,38 @@
 # livepeer
 
+## 3.1.0
+
+### Minor Changes
+
+- [#426](https://github.com/livepeer/livepeer-react/pull/426) [`ab4da5f`](https://github.com/livepeer/livepeer-react/commit/ab4da5f1203f6dd235389cbe9d2e0b49583c536d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added track selectors to WebRTC so developers can override video and audio tracks.
+
+  ```tsx
+  <Player
+    webrtcConfig={{
+      videoTrackSelector: '~1280x720',
+    }}
+  />
+  ```
+
+  See [here](https://docs.mistserver.org/mistserver/concepts/track_selectors/) for more documentation.
+
+### Patch Changes
+
+- [#424](https://github.com/livepeer/livepeer-react/pull/424) [`c1a871a`](https://github.com/livepeer/livepeer-react/commit/c1a871af1f2a7c616496f889a8359db1748527b7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added timeout for VPN playback blocking ICE candidates and stalling indefinitely. The default is 5000ms with an override with:
+
+  ```tsx
+  <Player
+    webrtcConfig={{
+      iceCandidateTimeout: 2000,
+    }}
+  />
+  ```
+
+- [#427](https://github.com/livepeer/livepeer-react/pull/427) [`d453ebc`](https://github.com/livepeer/livepeer-react/commit/d453ebce05404ebabe1ba4847f2fb135f7c07740) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed a rare bug where coturn could be located in a different region from playback, resulting in playback failing.
+
+- Updated dependencies [[`c1a871a`](https://github.com/livepeer/livepeer-react/commit/c1a871af1f2a7c616496f889a8359db1748527b7), [`d453ebc`](https://github.com/livepeer/livepeer-react/commit/d453ebce05404ebabe1ba4847f2fb135f7c07740), [`ab4da5f`](https://github.com/livepeer/livepeer-react/commit/ab4da5f1203f6dd235389cbe9d2e0b49583c536d)]:
+  - @livepeer/core@2.1.0
+
 ## 3.0.10
 
 ### Patch Changes
