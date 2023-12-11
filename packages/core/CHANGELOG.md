@@ -1,5 +1,21 @@
 # @livepeer/core
 
+## 2.0.11
+
+### Patch Changes
+
+- [#421](https://github.com/livepeer/livepeer-react/pull/421) [`f056bc3`](https://github.com/livepeer/livepeer-react/commit/f056bc36c41523494c3f14078683ed2d4dbe9889) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added timeout for VPN playback blocking ICE candidates and stalling indefinitely. The default is 5000ms with an override with:
+
+  ```tsx
+  <Player
+    webrtcConfig={{
+      iceCandidateTimeout: 2000,
+    }}
+  />
+  ```
+
+- [#421](https://github.com/livepeer/livepeer-react/pull/421) [`f056bc3`](https://github.com/livepeer/livepeer-react/commit/f056bc36c41523494c3f14078683ed2d4dbe9889) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added header-based access control for webrtc and hls.
+
 ## 2.0.10
 
 ### Patch Changes
