@@ -47,6 +47,108 @@ export interface WebRTCSrc extends BaseSrc {
 }
 export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src | WebRTCSrc;
 
+/**
+ * Represents a single track selector
+ */
+export type SingleTrackSelector =
+  /** Selects no tracks */
+  | 'none'
+  /** Selects all tracks */
+  | 'all'
+  /** Selects all tracks */
+  | '*'
+  /** Specific track ID */
+  | `${number}`
+  /** Highest bit rate */
+  | 'maxbps'
+  /** Lowest bit rate */
+  | 'minbps'
+  /** Specific bit rate */
+  | `${number}bps`
+  /** Specific bit rate */
+  | `${number}kbps`
+  /** Specific bit rate */
+  | `${number}mbps`
+  /** Greater than specific bit rate */
+  | `>${number}bps`
+  /** Greater than specific bit rate */
+  | `>${number}kbps`
+  /** Greater than specific bit rate */
+  | `>${number}mbps`
+  /** Less than specific bit rate */
+  | `<${number}bps`
+  /** Less than specific bit rate */
+  | `<${number}kbps`
+  /** Less than specific bit rate */
+  | `<${number}mbps`
+  /** Max less than specific bit rate */
+  | `max<${number}bps`
+  /** Max less than specific bit rate */
+  | `max<${number}kbps`
+  /** Max less than specific bit rate */
+  | `max<${number}mbps`;
+
+/**
+ * Represents a single audio track selector
+ */
+export type SingleAudioTrackSelector =
+  | SingleTrackSelector
+  /** Channel count */
+  | 'surround'
+  /** Channel count */
+  | 'mono'
+  /** Channel count */
+  | 'stereo'
+  /** Channel count */
+  | `${number}ch`;
+
+/**
+ * Represents a single video track selector
+ */
+export type SingleVideoTrackSelector =
+  | SingleTrackSelector
+  /** Highest pixel surface area */
+  | 'maxres'
+  /** Lowest pixel surface area */
+  | 'minres'
+  /** Specific pixel surface area */
+  | `${number}x${number}`
+  /** Closest to specific pixel surface area */
+  | `~${number}x${number}`
+  /** Greater than pixel surface area */
+  | `>${number}x${number}`
+  /** Less than pixel surface area */
+  | `<${number}x${number}`
+  /** Resolution */
+  | '720p'
+  /** Resolution */
+  | '1080p'
+  /** Resolution */
+  | '1440p'
+  /** Resolution */
+  | '2k'
+  /** Resolution */
+  | '4k'
+  /** Resolution */
+  | '5k'
+  /** Resolution */
+  | '8k';
+
+/**
+ * Generic track selector for a given type
+ */
+type TrackSelector<T extends string> =
+  | T
+  /** Union of selectors */
+  | `${T},${T}`
+  /** Difference of selectors */
+  | `${T},!${T}`
+  /** Intersection of selectors */
+  | `${T},|${T}`;
+
+export type VideoTrackSelector = TrackSelector<SingleVideoTrackSelector>;
+export type AudioTrackSelector = TrackSelector<SingleAudioTrackSelector>;
+
 const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;
 const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;

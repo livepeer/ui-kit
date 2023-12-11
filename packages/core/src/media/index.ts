@@ -23,10 +23,15 @@ export type { MediaMetrics, MetricsStatus, PlaybackMonitor } from './metrics';
 export { getMediaSourceType } from './src';
 export type {
   AudioSrc,
+  AudioTrackSelector,
   Base64Src,
   HlsSrc,
+  SingleAudioTrackSelector,
+  SingleTrackSelector,
+  SingleVideoTrackSelector,
   Src,
   VideoSrc,
+  VideoTrackSelector,
   WebRTCSrc,
 } from './src';
 export { aspectRatios } from './theme';
