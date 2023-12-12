@@ -134,7 +134,6 @@ export const WebRTCBroadcast = React.forwardRef<
       };
     }
   }, [
-    webrtcConfig,
     aspectRatio,
     _element,
     onConnected,

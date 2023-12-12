@@ -5,6 +5,7 @@ export {
   getCssText,
   styling,
 } from '@livepeer/core-web/media/browser/styling';
+export type { WebRTCVideoConfig } from '@livepeer/core-web/media/browser/webrtc';
 export {
   studioProvider,
   type StudioLivepeerProviderConfig,
