@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 2.1.1
+
+### Patch Changes
+
+- [#423](https://github.com/livepeer/livepeer-react/pull/423) [`2743a30`](https://github.com/livepeer/livepeer-react/commit/2743a30b4e07a8b686a0937a10af106b01ff1415) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added header-based access control for webrtc and hls.
+
+- Updated dependencies [[`2743a30`](https://github.com/livepeer/livepeer-react/commit/2743a30b4e07a8b686a0937a10af106b01ff1415)]:
+  - @livepeer/core@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes
@@ -39,7 +48,7 @@
 
 - [#418](https://github.com/livepeer/livepeer-react/pull/418) [`7b6b1d7`](https://github.com/livepeer/livepeer-react/commit/7b6b1d782abf2a2b8bcfa7f74fa11c2d8d31e7e7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed WebRTC negotiation endpoint to reduce hops to assigned node.
 
-- Updated dependencies [[`7b6b1d7`](https://github.com/livepeer/livepeer-react/commit/7b6b1d782abf2a2b8bcfa7f74fa11c2d8d31e7e7)]: 
+- Updated dependencies [[`7b6b1d7`](https://github.com/livepeer/livepeer-react/commit/7b6b1d782abf2a2b8bcfa7f74fa11c2d8d31e7e7)]:
   - @livepeer/core@2.0.10
 
 ## 2.0.8
