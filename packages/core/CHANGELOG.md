@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 2.1.2
+
+### Patch Changes
+
+- [#430](https://github.com/livepeer/livepeer-react/pull/430) [`82fbbd6`](https://github.com/livepeer/livepeer-react/commit/82fbbd6b488b897ee5d91a21d22534b7a98a57a7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Revert:** revert VPN playback hanging.
+
 ## 2.1.1
 
 ### Patch Changes
