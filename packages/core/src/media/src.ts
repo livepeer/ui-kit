@@ -47,6 +47,11 @@ export interface WebRTCSrc extends BaseSrc {
 }
 export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src | WebRTCSrc;
 
+export type AccessControlParams = {
+  jwt?: string;
+  accessKey?: string;
+};
+
 /**
  * Represents a single track selector
  */

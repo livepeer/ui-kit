@@ -238,18 +238,19 @@ export const usePlayer = <
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
-  const { source, uploadStatus } = useSourceMimeTyped({
-    src,
-    playbackId,
-    jwt,
-    refetchPlaybackInfoInterval,
-    autoUrlUpload,
-    screenWidth: _screenWidth,
-    playbackInfo,
-    accessKey,
-    onAccessKeyRequest,
-    playRecording,
-  });
+  const { source, uploadStatus, jwtResolved, accessKeyResolved } =
+    useSourceMimeTyped({
+      src,
+      playbackId,
+      jwt,
+      refetchPlaybackInfoInterval,
+      autoUrlUpload,
+      screenWidth: _screenWidth,
+      playbackInfo,
+      accessKey,
+      onAccessKeyRequest,
+      playRecording,
+    });
 
   const [playbackError, setPlaybackError] =
     React.useState<PlaybackError | null>(null);
@@ -368,6 +369,8 @@ export const usePlayer = <
       viewerId,
       onPlaybackStatusUpdate,
       playbackStatusSelector,
+      jwt: jwtResolved,
+      accessKey: accessKeyResolved,
     }),
     [
       playerRef,
@@ -385,6 +388,8 @@ export const usePlayer = <
       viewerId,
       onPlaybackStatusUpdate,
       playbackStatusSelector,
+      jwtResolved,
+      accessKeyResolved,
     ],
   );
 

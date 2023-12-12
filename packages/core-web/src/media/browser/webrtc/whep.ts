@@ -1,3 +1,5 @@
+import { AccessControlParams } from '@livepeer/core';
+
 import {
   WebRTCVideoConfig,
   constructClientOffer,
@@ -21,6 +23,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
     onRedirect?: (url: string | null) => void;
   },
   config?: WebRTCVideoConfig,
+  accessControl?: AccessControlParams,
 ): {
   destroy: () => void;
 } => {
@@ -137,6 +140,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               ofr,
               abortController,
               config,
+              accessControl,
             );
 
             const currentDate = Date.now();

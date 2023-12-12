@@ -72,6 +72,7 @@ export default async function Page({
     objectFit = 'contain',
     constant,
     clipLength,
+    jwt,
   } = query;
 
   // fetch the playback info from livepeer
@@ -89,6 +90,7 @@ export default async function Page({
       webrtcConfig={{
         constant: isTrue(constant),
       }}
+      jwt={jwt}
       clipLength={clipLength ? (Number(clipLength) as ClipLength) : undefined}
       loop={isTrue(loop)}
       objectFit={objectFit === 'contain' ? 'contain' : 'cover'}
