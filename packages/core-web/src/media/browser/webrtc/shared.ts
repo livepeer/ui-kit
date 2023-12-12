@@ -78,12 +78,6 @@ export type WebRTCVideoConfig = {
    */
   sdpTimeout?: number;
   /**
-   * The timeout of the time to wait for ICE candidates, in ms.
-   *
-   * @default 5000
-   */
-  iceCandidateTimeout?: number;
-  /**
    * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
    */
   constant?: boolean;
