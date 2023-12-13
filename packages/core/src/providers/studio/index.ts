@@ -470,11 +470,16 @@ export class StudioLivepeerProvider extends BaseLivepeerProvider {
 
   async getPlaybackInfo(args: GetPlaybackInfoArgs): Promise<PlaybackInfo> {
     const playbackId = typeof args === 'string' ? args : args.playbackId;
+    const fetchRecordings = Boolean(
+      typeof args === 'string' ? false : args.recordings,
+    );
 
     const urlEncodedPlaybackId = encodeURIComponent(playbackId);
 
     const studioPlaybackInfo = await this._get<StudioPlaybackInfo>(
-      `/playback/${urlEncodedPlaybackId}?recordings=true`,
+      `/playback/${urlEncodedPlaybackId}${
+        fetchRecordings ? '?recordings=true' : ''
+      }`,
       {
         headers: this._defaultHeaders,
       },

@@ -111,9 +111,7 @@ export const HLSVideoPlayer = React.forwardRef<
         {
           autoplay: autoPlay,
           xhrSetup(xhr, _url) {
-            xhr.withCredentials = Boolean(
-              allowCrossOriginCredentials || jwt || accessKey,
-            );
+            xhr.withCredentials = Boolean(allowCrossOriginCredentials);
             if (accessKey)
               xhr.setRequestHeader('Livepeer-Access-Key', accessKey);
             else if (jwt) xhr.setRequestHeader('Livepeer-Jwt', jwt);

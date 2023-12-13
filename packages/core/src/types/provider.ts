@@ -649,6 +649,7 @@ export type GetPlaybackInfoArgs =
   | string
   | {
       playbackId: string;
+      recordings?: boolean;
     };
 
 export type PlaybackInfo = {

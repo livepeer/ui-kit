@@ -135,6 +135,7 @@ export const useSourceMimeTyped = <
     refetchPlaybackInfoInterval,
     autoUrlUpload,
     onAssetStatusChange,
+    playRecording,
   });
 
   const combinedPlaybackInfo = React.useMemo(
