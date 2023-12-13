@@ -462,7 +462,6 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
       currentPlaybackUrl.includes(playbackId);
 
     if (shouldOpenNewSocket) {
-      const playbackId = currentState.playbackId;
       previousPlaybackUrl = currentPlaybackUrl ?? null;
 
       try {
