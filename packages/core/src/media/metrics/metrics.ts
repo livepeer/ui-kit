@@ -451,17 +451,17 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
   let previousPlaybackUrl: string | null = null;
 
   const destroyPlaybackIdListener = store.subscribe((currentState) => {
-    const currentSource = currentState?.src?.src;
     const currentPlaybackUrl = currentState?.url;
+    const playbackId = currentState.playbackId;
 
-    const isMounted = currentSource && currentState._element;
     const shouldOpenNewSocket =
-      isMounted &&
+      Boolean(currentState._element) &&
       currentPlaybackUrl &&
-      currentPlaybackUrl !== previousPlaybackUrl;
+      currentPlaybackUrl !== previousPlaybackUrl &&
+      playbackId &&
+      currentPlaybackUrl.includes(playbackId);
 
     if (shouldOpenNewSocket) {
-      const playbackId = currentState.playbackId;
       previousPlaybackUrl = currentPlaybackUrl ?? null;
 
       try {
