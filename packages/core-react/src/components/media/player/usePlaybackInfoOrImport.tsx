@@ -12,6 +12,7 @@ export type UsePlaybackInfoOrImportProps = {
   refetchPlaybackInfoInterval: number;
   autoUrlUpload: boolean | { fallback: true; gateway?: string };
   onAssetStatusChange: (status: CreateAssetUrlProgress) => void;
+  playRecording: boolean | null | undefined;
 };
 
 /**
@@ -27,6 +28,7 @@ export const usePlaybackInfoOrImport = ({
   refetchPlaybackInfoInterval,
   autoUrlUpload,
   onAssetStatusChange,
+  playRecording,
 }: UsePlaybackInfoOrImportProps) => {
   const {
     mutate: importAsset,
@@ -54,6 +56,7 @@ export const usePlaybackInfoOrImport = ({
   const { data: playbackInfo, error: playbackInfoError } = usePlaybackInfo({
     // attempt to fetch if the source is from decentralized storage, or a playback ID is provided
     playbackId: decentralizedSrcOrPlaybackId?.id ?? playbackId ?? undefined,
+    recordings: Boolean(playRecording),
     staleTime: 1_000 * 60 * 60 * 24, // 24 hours
     refetchInterval: (info) => (info ? false : refetchPlaybackInfoInterval),
   });
