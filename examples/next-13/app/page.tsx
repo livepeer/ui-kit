@@ -1,4 +1,8 @@
-import { ClipLength, createClient } from '@livepeer/core-web';
+import {
+  ClipLength,
+  VideoTrackSelector,
+  createClient,
+} from '@livepeer/core-web';
 import { studioProvider } from '@livepeer/core-web/providers/studio';
 import { cache } from 'react';
 
@@ -73,6 +77,7 @@ export default async function Page({
     constant,
     clipLength,
     jwt,
+    videoTrackSelector,
   } = query;
 
   // fetch the playback info from livepeer
@@ -89,6 +94,7 @@ export default async function Page({
       autoPlay={isTrue(autoplay)}
       webrtcConfig={{
         constant: isTrue(constant),
+        videoTrackSelector: videoTrackSelector as VideoTrackSelector,
       }}
       jwt={jwt}
       clipLength={clipLength ? (Number(clipLength) as ClipLength) : undefined}
