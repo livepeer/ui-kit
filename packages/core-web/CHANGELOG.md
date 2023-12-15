@@ -1,5 +1,14 @@
 # livepeer
 
+## 3.1.4
+
+### Patch Changes
+
+- [#437](https://github.com/livepeer/livepeer-react/pull/437) [`714f354`](https://github.com/livepeer/livepeer-react/commit/714f3547a4c55d40b8ea0ab9e8f3d2bead0d18f8) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added back `webrtcConfig` to the dependencies for WebRTC negotiation useEffect.
+
+- Updated dependencies [[`714f354`](https://github.com/livepeer/livepeer-react/commit/714f3547a4c55d40b8ea0ab9e8f3d2bead0d18f8)]:
+  - @livepeer/core@2.1.4
+
 ## 3.1.3
 
 ### Patch Changes
