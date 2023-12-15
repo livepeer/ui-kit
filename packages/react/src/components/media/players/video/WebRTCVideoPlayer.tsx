@@ -115,6 +115,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
       };
     }
   }, [
+    webrtcConfig,
     _element,
     onConnected,
     src,
