@@ -87,6 +87,7 @@ const InternalVideoPlayer = React.forwardRef<
     lowLatency = true,
     onPlaybackStatusUpdate,
     playbackStatusSelector,
+    webrtcConfig,
   } = props;
 
   const [canUseHlsjs, canUseWebRTC] = React.useMemo(
@@ -220,6 +221,30 @@ const InternalVideoPlayer = React.forwardRef<
       store?.getState?.()?._updateSource?.(currentPlaybackSource?.src);
     }
   }, [store, currentPlaybackSource]);
+
+  React.useEffect(() => {
+    if (!playbackError && currentPlaybackSource?.type === 'webrtc') {
+      const id = setTimeout(() => {
+        if (!store.getState().canPlay) {
+          onPlaybackError(
+            new Error(
+              'Timeout reached for canPlay - triggering playback error.',
+            ),
+          );
+        }
+      }, webrtcConfig?.canPlayTimeout ?? 7000);
+
+      return () => {
+        clearTimeout(id);
+      };
+    }
+  }, [
+    store,
+    playbackError,
+    onPlaybackError,
+    webrtcConfig?.canPlayTimeout,
+    currentPlaybackSource,
+  ]);
 
   React.useEffect(() => {
     const { destroy } = addMediaMetricsToStore(store, (e) => {

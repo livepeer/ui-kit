@@ -93,6 +93,12 @@ export type WebRTCVideoConfig = {
    * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
    */
   audioTrackSelector?: AudioTrackSelector;
+  /**
+   * The timeout of the time to wait for WebRTC `canPlay`, in ms.
+   *
+   * @default 7000
+   */
+  canPlayTimeout?: number;
 };
 
 const DEFAULT_TIMEOUT = 20000;
