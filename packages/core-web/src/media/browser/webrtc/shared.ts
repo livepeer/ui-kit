@@ -94,9 +94,9 @@ export type WebRTCVideoConfig = {
    */
   audioTrackSelector?: AudioTrackSelector;
   /**
-   * The timeout of the time to wait for WebRTC canPlay, in ms.
+   * The timeout of the time to wait for WebRTC `canPlay`, in ms.
    *
-   * @default 5000
+   * @default 7000
    */
   canPlayTimeout?: number;
 };

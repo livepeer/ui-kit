@@ -219,25 +219,28 @@ const InternalVideoPlayer = React.forwardRef<
   React.useEffect(() => {
     if (currentPlaybackSource) {
       store?.getState?.()?._updateSource?.(currentPlaybackSource?.src);
+    }
+  }, [store, currentPlaybackSource]);
 
-      if (currentPlaybackSource.type === 'webrtc') {
-        const id = setTimeout(() => {
-          if (!store.getState().canPlay) {
-            onPlaybackError(
-              new Error(
-                'Timeout reached for canPlay - triggering playback error.',
-              ),
-            );
-          }
-        }, webrtcConfig?.canPlayTimeout ?? 5000);
+  React.useEffect(() => {
+    if (!playbackError && currentPlaybackSource?.type === 'webrtc') {
+      const id = setTimeout(() => {
+        if (!store.getState().canPlay) {
+          onPlaybackError(
+            new Error(
+              'Timeout reached for canPlay - triggering playback error.',
+            ),
+          );
+        }
+      }, webrtcConfig?.canPlayTimeout ?? 7000);
 
-        return () => {
-          clearTimeout(id);
-        };
-      }
+      return () => {
+        clearTimeout(id);
+      };
     }
   }, [
     store,
+    playbackError,
     onPlaybackError,
     webrtcConfig?.canPlayTimeout,
     currentPlaybackSource,
