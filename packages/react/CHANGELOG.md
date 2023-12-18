@@ -1,10 +1,34 @@
 # @livepeer/react
 
+## 3.1.4
+
+### Patch Changes
+
+- [#437](https://github.com/livepeer/livepeer-react/pull/437) [`714f354`](https://github.com/livepeer/livepeer-react/commit/714f3547a4c55d40b8ea0ab9e8f3d2bead0d18f8) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added back `webrtcConfig` to the dependencies for WebRTC negotiation useEffect.
+
+- Updated dependencies [[`714f354`](https://github.com/livepeer/livepeer-react/commit/714f3547a4c55d40b8ea0ab9e8f3d2bead0d18f8)]:
+  - @livepeer/core-react@2.1.4
+  - @livepeer/core-web@3.1.4
+
+## 3.1.3
+
+### Patch Changes
+
+- [#434](https://github.com/livepeer/livepeer-react/pull/434) [`ad3009c`](https://github.com/livepeer/livepeer-react/commit/ad3009c71bc713a0fa43f2f04ed8f51fe294f12f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `?recordings=true` parameter on playback info endpoint and fixed HLS CORS issues with JWT headers.
+
+- [#432](https://github.com/livepeer/livepeer-react/pull/432) [`b3081f3`](https://github.com/livepeer/livepeer-react/commit/b3081f34158544b42ef2135d6c7a177d20636873) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed to use `HEAD` instead of `GET` and removed listener for changes to `webrtcConfig` to reduce developer confusion.
+
+- [#435](https://github.com/livepeer/livepeer-react/pull/435) [`b83480c`](https://github.com/livepeer/livepeer-react/commit/b83480c6256e4dfe0311434890ffcfe74a0b7fde) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for metrics reporting when switching quickly between streams.
+
+- Updated dependencies [[`ad3009c`](https://github.com/livepeer/livepeer-react/commit/ad3009c71bc713a0fa43f2f04ed8f51fe294f12f), [`b3081f3`](https://github.com/livepeer/livepeer-react/commit/b3081f34158544b42ef2135d6c7a177d20636873), [`b83480c`](https://github.com/livepeer/livepeer-react/commit/b83480c6256e4dfe0311434890ffcfe74a0b7fde)]:
+  - @livepeer/core-react@2.1.3
+  - @livepeer/core-web@3.1.3
+
 ## 3.1.2
 
 ### Patch Changes
 
-- [#430](https://github.com/livepeer/livepeer-react/pull/430) [`82fbbd6`](https://github.com/livepeer/livepeer-react/commit/82fbbd6b488b897ee5d91a21d22534b7a98a57a7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Revert:** revert VPN playback hanging.
+- [#430](https://github.com/livepeer/livepeer-react/pull/430) [`82fbbd6`](https://github.com/livepeer/livepeer-react/commit/82fbbd6b488b897ee5d91a21d22534b7a98a57a7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Revert:** revert VPN playback hanging
 
 - Updated dependencies [[`82fbbd6`](https://github.com/livepeer/livepeer-react/commit/82fbbd6b488b897ee5d91a21d22534b7a98a57a7)]:
   - @livepeer/core-web@3.1.2
