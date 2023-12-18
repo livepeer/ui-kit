@@ -1254,7 +1254,7 @@
 
 - [#145](https://github.com/livepeer/livepeer-react/pull/145) [`3620666`](https://github.com/livepeer/livepeer-react/commit/36206660ab8825480414e4fb13409e1c22cc68f2) Thanks [@suhailkakar](https://github.com/suhailkakar)! - **Fix:** fixed the behaviour that caused the video to pause when a user touched it on a mobile device without the controls being shown. The video now pauses on the second touch (after the controls are shown).
 
-- [`825b25c`](https://github.com/livepeer/livepeer-react/commit/825b25c0c0d539b1596f932757f0184327fcb5c8) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed control state to use storage from the client.
+- [`825b25c`](https://github.com/livepeer/livepeer-react/commit/825b25c0c0d539b1596f932757f0184327fcb5c8) Thanks [@0xcadams](https://github.com/0xcadams)!  - **Fix:** fixed control state to use storage from the client.
 
 - Updated dependencies [[`3620666`](https://github.com/livepeer/livepeer-react/commit/36206660ab8825480414e4fb13409e1c22cc68f2), [`825b25c`](https://github.com/livepeer/livepeer-react/commit/825b25c0c0d539b1596f932757f0184327fcb5c8)]:
   - livepeer@1.4.1
