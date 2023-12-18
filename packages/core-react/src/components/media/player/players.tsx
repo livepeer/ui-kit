@@ -32,7 +32,7 @@ export type VideoPlayerProps<
     TSlice
   >['poster'];
   jwt?: string;
-  accessKey?: string;
+  accessKey?: string | null;
   isCurrentlyShown?: PlayerProps<
     TElement,
     TPoster,

@@ -33,7 +33,7 @@ export type HLSVideoPlayerProps = Omit<
 > & {
   src: HlsSrc;
   fullscreen: boolean;
-  accessKey?: string;
+  accessKey?: string | null;
 };
 
 export const HLSVideoPlayer = React.forwardRef<
