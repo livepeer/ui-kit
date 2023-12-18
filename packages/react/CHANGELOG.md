@@ -1,5 +1,29 @@
 # @livepeer/react
 
+## 3.1.6
+
+### Patch Changes
+
+- [#442](https://github.com/livepeer/livepeer-react/pull/442) [`f6ddf09`](https://github.com/livepeer/livepeer-react/commit/f6ddf097290549fb360996aaa5638d7691071a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolves issue with VPNs transparently blocking WebRTC playback and failing to start.
+
+  The timeout for playback can be customized with `webrtcConfig.canPlayTimeout`:
+
+  ```tsx
+  import { Player, WebRTCVideoConfig } from '@livepeer/react';
+
+  const webrtcConfig: WebRTCVideoConfig = {
+    canPlayTimeout: 8000,
+  };
+
+  const Page = () => {
+    return <Player playbackId={playbackId} webrtcConfig={webrtcConfig} />;
+  };
+  ```
+
+- Updated dependencies [[`f6ddf09`](https://github.com/livepeer/livepeer-react/commit/f6ddf097290549fb360996aaa5638d7691071a2d)]:
+  - @livepeer/core-web@3.1.6
+  - @livepeer/core-react@2.1.6
+
 ## 3.1.5
 
 ### Patch Changes
@@ -1254,7 +1278,7 @@
 
 - [#145](https://github.com/livepeer/livepeer-react/pull/145) [`3620666`](https://github.com/livepeer/livepeer-react/commit/36206660ab8825480414e4fb13409e1c22cc68f2) Thanks [@suhailkakar](https://github.com/suhailkakar)! - **Fix:** fixed the behaviour that caused the video to pause when a user touched it on a mobile device without the controls being shown. The video now pauses on the second touch (after the controls are shown).
 
-- [`825b25c`](https://github.com/livepeer/livepeer-react/commit/825b25c0c0d539b1596f932757f0184327fcb5c8) Thanks [@0xcadams](https://github.com/0xcadams)!  - **Fix:** fixed control state to use storage from the client.
+- [`825b25c`](https://github.com/livepeer/livepeer-react/commit/825b25c0c0d539b1596f932757f0184327fcb5c8) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed control state to use storage from the client.
 
 - Updated dependencies [[`3620666`](https://github.com/livepeer/livepeer-react/commit/36206660ab8825480414e4fb13409e1c22cc68f2), [`825b25c`](https://github.com/livepeer/livepeer-react/commit/825b25c0c0d539b1596f932757f0184327fcb5c8)]:
   - livepeer@1.4.1
