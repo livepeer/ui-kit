@@ -105,16 +105,28 @@ const InternalVideoPlayer = React.forwardRef<
             ? true
             : s.type !== 'webrtc',
         )
-        ?.map((s) =>
-          s.type === 'hls' && !canUseHlsjs
+        ?.map((s) => {
+          const url = new URL(s.src);
+
+          // append the JWT to the query params
+          if (props.jwt) {
+            url.searchParams.append('jwt', props.jwt);
+          }
+          // append the access key to the query params
+          else if (props.accessKey) {
+            url.searchParams.append('accessKey', props.accessKey);
+          }
+
+          return s.type === 'hls' && !canUseHlsjs
             ? ({
                 ...s,
+                src: url.toString(),
                 type: 'video',
                 mime: 'application/vnd.apple.mpegurl',
               } as VideoSrc)
-            : s,
-        ),
-    [src, canUseHlsjs, lowLatency],
+            : s;
+        }),
+    [src, canUseHlsjs, props.jwt, props.accessKey, lowLatency],
   );
 
   const [currentSourceIndex, setCurrentSourceIndex] = React.useState(0);
