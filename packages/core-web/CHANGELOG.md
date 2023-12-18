@@ -1,5 +1,14 @@
 # livepeer
 
+## 3.1.5
+
+### Patch Changes
+
+- [#439](https://github.com/livepeer/livepeer-react/pull/439) [`d9104a3`](https://github.com/livepeer/livepeer-react/commit/d9104a32c64ab15646c1c777f266b41f653f2b62) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed playback on iOS for JWT-protected HLS playback.
+
+- Updated dependencies [[`d9104a3`](https://github.com/livepeer/livepeer-react/commit/d9104a32c64ab15646c1c777f266b41f653f2b62)]:
+  - @livepeer/core@2.1.5
+
 ## 3.1.4
 
 ### Patch Changes
