@@ -48,8 +48,8 @@ export interface WebRTCSrc extends BaseSrc {
 export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src | WebRTCSrc;
 
 export type AccessControlParams = {
-  jwt?: string;
-  accessKey?: string;
+  jwt?: string | null;
+  accessKey?: string | null;
 };
 
 /**

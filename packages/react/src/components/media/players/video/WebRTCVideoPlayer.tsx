@@ -36,7 +36,7 @@ export type WebRTCVideoPlayerProps = Omit<
   src: WebRTCSrc;
   fullscreen: boolean;
   webrtcConfig?: WebRTCVideoConfig;
-  accessKey?: string;
+  accessKey?: string | null;
 };
 
 export const WebRTCVideoPlayer = React.forwardRef<
