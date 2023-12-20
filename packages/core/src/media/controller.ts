@@ -339,7 +339,7 @@ export const createControllerStore = <TElement, TMediaStream>({
         (set, get) => ({
           _element: element ?? null,
 
-          sessionToken: mediaProps.sessionToken,
+          sessionToken: mediaProps.sessionToken ?? 'default',
 
           canPlay: false,
           hidden: false,
@@ -600,7 +600,7 @@ export type MediaPropsOptions = {
   priority?: boolean;
   viewerId?: string;
   clipLength?: ClipLength;
-  sessionToken: string;
+  sessionToken?: string;
 
   onClipStarted?: () => Promise<any> | any;
   onClipCreated?: (asset: Asset) => Promise<any> | any;
