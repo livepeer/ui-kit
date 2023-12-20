@@ -76,6 +76,7 @@ export type UseSourceMimeTypedProps<
     TPlaybackPolicyObject,
     TSlice
   >['playRecording'];
+  sessionToken: string;
 };
 
 type PlaybackUrlWithInfo = {
@@ -102,6 +103,7 @@ export const useSourceMimeTyped = <
   accessKey,
   onAccessKeyRequest,
   playRecording,
+  sessionToken,
 }: UseSourceMimeTypedProps<
   TElement,
   TPoster,
@@ -280,14 +282,23 @@ export const useSourceMimeTyped = <
       .filter((s) => s) as Src[];
 
     const authenticatedSources = mediaSourceTypes.map((source) => {
+      const url = new URL(source.src);
+
+      // append the tkn to the query params
+      if (sessionToken) {
+        url.searchParams.append('tkn', sessionToken);
+      }
+
       // we use headers for HLS and WebRTC for auth
       if (source.type === 'hls' || source.type === 'webrtc') {
-        return source;
+        return {
+          ...source,
+          src: url.toString(),
+        };
       }
 
       // append the JWT to the query params
       if (jwt && source) {
-        const url = new URL(source.src);
         url.searchParams.append('jwt', jwt);
         return {
           ...source,
@@ -297,7 +308,6 @@ export const useSourceMimeTyped = <
 
       // append the access key to the query params
       if (accessKeyResolved && source) {
-        const url = new URL(source.src);
         url.searchParams.append('accessKey', accessKeyResolved);
         return {
           ...source,
@@ -305,7 +315,10 @@ export const useSourceMimeTyped = <
         };
       }
 
-      return source;
+      return {
+        ...source,
+        src: url.toString(),
+      };
     });
 
     // we filter by either audio or video/hls

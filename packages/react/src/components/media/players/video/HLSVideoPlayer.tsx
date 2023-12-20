@@ -36,6 +36,8 @@ export type HLSVideoPlayerProps = Omit<
   accessKey?: string | null;
 };
 
+const indexUrl = /^https?:\/\/[^/\s]+\/hls\/[^/\s]+\/index\.m3u8/g;
+
 export const HLSVideoPlayer = React.forwardRef<
   HTMLVideoElement,
   HLSVideoPlayerProps
@@ -110,11 +112,14 @@ export const HLSVideoPlayer = React.forwardRef<
         },
         {
           autoplay: autoPlay,
-          xhrSetup(xhr, _url) {
+          xhrSetup(xhr, url) {
             xhr.withCredentials = Boolean(allowCrossOriginCredentials);
-            if (accessKey)
-              xhr.setRequestHeader('Livepeer-Access-Key', accessKey);
-            else if (jwt) xhr.setRequestHeader('Livepeer-Jwt', jwt);
+
+            if (url.match(indexUrl)) {
+              if (accessKey)
+                xhr.setRequestHeader('Livepeer-Access-Key', accessKey);
+              else if (jwt) xhr.setRequestHeader('Livepeer-Jwt', jwt);
+            }
           },
           ...hlsConfig,
         },

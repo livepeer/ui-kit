@@ -238,6 +238,8 @@ export const usePlayer = <
 ) => {
   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
+  const sessionToken = React.useMemo(() => generateRandomToken(), [playbackId]);
+
   const { source, uploadStatus, jwtResolved, accessKeyResolved } =
     useSourceMimeTyped({
       src,
@@ -250,6 +252,7 @@ export const usePlayer = <
       accessKey,
       onAccessKeyRequest,
       playRecording,
+      sessionToken,
     });
 
   const [playbackError, setPlaybackError] =
@@ -404,6 +407,7 @@ export const usePlayer = <
       onClipCreated,
       onClipError,
       onClipStarted,
+      sessionToken,
     }),
     [
       autoPlay,
@@ -415,6 +419,7 @@ export const usePlayer = <
       onClipCreated,
       onClipError,
       onClipStarted,
+      sessionToken,
     ],
   );
 
@@ -498,4 +503,14 @@ export const usePlayer = <
     controlsContainerProps,
     props,
   };
+};
+
+const generateRandomToken = () => {
+  try {
+    return Math.random().toString(16).substring(2);
+  } catch (e) {
+    //
+  }
+
+  return 'none';
 };

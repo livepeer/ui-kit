@@ -104,6 +104,9 @@ export type MediaControllerState<TElement = void, TMediaStream = void> = {
   /** If media supports changing the volume */
   isVolumeChangeSupported: boolean;
 
+  /** Session token for the current playback */
+  sessionToken: string;
+
   /** The playbackId that was passed in to the media element */
   playbackId: string | null;
   /** The Source that was passed in to the Player */
@@ -335,6 +338,8 @@ export const createControllerStore = <TElement, TMediaStream>({
       persist(
         (set, get) => ({
           _element: element ?? null,
+
+          sessionToken: mediaProps.sessionToken,
 
           canPlay: false,
           hidden: false,
@@ -595,6 +600,7 @@ export type MediaPropsOptions = {
   priority?: boolean;
   viewerId?: string;
   clipLength?: ClipLength;
+  sessionToken: string;
 
   onClipStarted?: () => Promise<any> | any;
   onClipCreated?: (asset: Asset) => Promise<any> | any;

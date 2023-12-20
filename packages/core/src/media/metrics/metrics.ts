@@ -356,18 +356,6 @@ export class MetricsStatus<TElement, TMediaStream> {
   }
 }
 
-const generateRandomToken = () => {
-  try {
-    return Math.random().toString(16).substring(2);
-  } catch (e) {
-    //
-  }
-
-  return 'none';
-};
-
-const sessionToken = generateRandomToken(); // used to track playbacks across sessions
-
 const bootMs = Date.now(); // used for firstPlayback value
 
 export type MediaMetrics<TElement, TMediaStream> = {
@@ -469,7 +457,7 @@ export function addMediaMetricsToStore<TElement, TMediaStream>(
           const reportingWebsocketUrl = await getMetricsReportingUrl(
             playbackId,
             currentPlaybackUrl,
-            sessionToken,
+            store.getState().sessionToken,
           );
 
           if (reportingWebsocketUrl) {
