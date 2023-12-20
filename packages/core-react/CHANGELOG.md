@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 2.1.7
+
+### Patch Changes
+
+- [#444](https://github.com/livepeer/livepeer-react/pull/444) [`6057932`](https://github.com/livepeer/livepeer-react/commit/60579322fb387f60e86ebb93fecb289172496e64) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed an issue where all HLS requests with JWT headers will time out.
+
+- Updated dependencies [[`6057932`](https://github.com/livepeer/livepeer-react/commit/60579322fb387f60e86ebb93fecb289172496e64)]:
+  - @livepeer/core@2.1.7
+
 ## 2.1.6
 
 ### Patch Changes
 
-- [#442](https://github.com/livepeer/livepeer-react/pull/442) [`f6ddf09`](https://github.com/livepeer/livepeer-react/commit/f6ddf097290549fb360996aaa5638d7691071a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolves issue with VPNs transparently blocking WebRTC playback and failing to start. 
+- [#442](https://github.com/livepeer/livepeer-react/pull/442) [`f6ddf09`](https://github.com/livepeer/livepeer-react/commit/f6ddf097290549fb360996aaa5638d7691071a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolves issue with VPNs transparently blocking WebRTC playback and failing to start.
 
   The timeout for playback can be customized with `webrtcConfig.canPlayTimeout`:
 
