@@ -1,5 +1,15 @@
 # @livepeer/react
 
+## 3.1.7
+
+### Patch Changes
+
+- [#444](https://github.com/livepeer/livepeer-react/pull/444) [`6057932`](https://github.com/livepeer/livepeer-react/commit/60579322fb387f60e86ebb93fecb289172496e64) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed an issue where all HLS requests with JWT headers will time out.
+
+- Updated dependencies [[`6057932`](https://github.com/livepeer/livepeer-react/commit/60579322fb387f60e86ebb93fecb289172496e64)]:
+  - @livepeer/core-react@2.1.7
+  - @livepeer/core-web@3.1.7
+
 ## 3.1.6
 
 ### Patch Changes
