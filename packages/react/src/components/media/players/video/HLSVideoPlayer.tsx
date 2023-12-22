@@ -12,6 +12,7 @@ import { useMediaController } from '../../../../context';
 import { useDebounce } from '../../../system';
 
 const mediaControllerSelector = ({
+  live,
   setLive,
   onDurationChange,
   onCanPlay,
@@ -19,6 +20,7 @@ const mediaControllerSelector = ({
   _updatePlaybackOffsetMs,
   onRedirect,
 }: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
+  live,
   setLive,
   onDurationChange,
   onCanPlay,
@@ -36,7 +38,7 @@ export type HLSVideoPlayerProps = Omit<
   accessKey?: string | null;
 };
 
-const indexUrl = /^https?:\/\/[^/\s]+\/hls\/[^/\s]+\/index\.m3u8/g;
+const indexUrl = /\/hls\/[^/\s]+\/index\.m3u8/;
 
 export const HLSVideoPlayer = React.forwardRef<
   HTMLVideoElement,
@@ -61,6 +63,7 @@ export const HLSVideoPlayer = React.forwardRef<
   } = props;
 
   const {
+    live,
     setLive,
     onCanPlay,
     onDurationChange,
@@ -115,7 +118,7 @@ export const HLSVideoPlayer = React.forwardRef<
           xhrSetup(xhr, url) {
             xhr.withCredentials = Boolean(allowCrossOriginCredentials);
 
-            if (url.match(indexUrl)) {
+            if (!live || url.match(indexUrl)) {
               if (accessKey)
                 xhr.setRequestHeader('Livepeer-Access-Key', accessKey);
               else if (jwt) xhr.setRequestHeader('Livepeer-Jwt', jwt);
@@ -130,6 +133,7 @@ export const HLSVideoPlayer = React.forwardRef<
       };
     }
   }, [
+    live,
     autoPlay,
     hlsConfig,
     onDurationChange,
