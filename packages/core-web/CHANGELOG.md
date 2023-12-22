@@ -1,5 +1,14 @@
 # livepeer
 
+## 3.1.8
+
+### Patch Changes
+
+- [#446](https://github.com/livepeer/livepeer-react/pull/446) [`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added access control headers to every request for HLS VOD.
+
+- Updated dependencies [[`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064)]:
+  - @livepeer/core@2.1.8
+
 ## 3.1.7
 
 ### Patch Changes

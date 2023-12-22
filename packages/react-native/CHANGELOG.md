@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 2.0.12
+
+### Patch Changes
+
+- [#446](https://github.com/livepeer/livepeer-react/pull/446) [`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added access control headers to every request for HLS VOD.
+
+- Updated dependencies [[`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064)]:
+  - @livepeer/core-react@2.1.8
+
 ## 2.0.11
 
 ### Patch Changes
