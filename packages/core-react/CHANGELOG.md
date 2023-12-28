@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 2.1.9
+
+### Patch Changes
+
+- [#448](https://github.com/livepeer/livepeer-react/pull/448) [`26204f4`](https://github.com/livepeer/livepeer-react/commit/26204f4706798ce2db37ba11f620a867ca778b4d) Thanks [@suhailkakar](https://github.com/suhailkakar)! - Added .quicktime extension to mime.ts and src.ts to allow .quicktime video playback
+
+- Updated dependencies [[`26204f4`](https://github.com/livepeer/livepeer-react/commit/26204f4706798ce2db37ba11f620a867ca778b4d)]: 
+  - @livepeer/core@2.1.9
+
 ## 2.1.8
 
 ### Patch Changes
 
-- [#446](https://github.com/livepeer/livepeer-react/pull/446) [`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added access control headers to every request for HLS VOD. 
+- [#446](https://github.com/livepeer/livepeer-react/pull/446) [`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added access control headers to every request for HLS VOD.
 
 - Updated dependencies [[`373e3ac`](https://github.com/livepeer/livepeer-react/commit/373e3acf54d5952ac08085a0a60ea6efa73cf064)]:
   - @livepeer/core@2.1.8
