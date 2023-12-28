@@ -1,5 +1,14 @@
 # @livepeer/react-native
 
+## 2.0.13
+
+### Patch Changes
+
+- [#448](https://github.com/livepeer/livepeer-react/pull/448) [`26204f4`](https://github.com/livepeer/livepeer-react/commit/26204f4706798ce2db37ba11f620a867ca778b4d) Thanks [@suhailkakar](https://github.com/suhailkakar)! - Added .quicktime extension to mime.ts and src.ts to allow .quicktime video playback
+
+- Updated dependencies [[`26204f4`](https://github.com/livepeer/livepeer-react/commit/26204f4706798ce2db37ba11f620a867ca778b4d)]:
+  - @livepeer/core-react@2.1.9
+
 ## 2.0.12
 
 ### Patch Changes
