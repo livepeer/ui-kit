@@ -68,7 +68,7 @@ const mime = {
   'video/mp4': ['mp4', 'mp4v', 'mpg4'],
   'video/mpeg': ['mpeg', 'mpg', 'mpe', 'm1v', 'm2v'],
   'video/ogg': ['ogv'],
-  'video/quicktime': ['qt', 'mov'],
+  'video/quicktime': ['qt', 'mov', 'quicktime'],
   'video/vnd.dece.hd': ['uvh', 'uvvh'],
   'video/vnd.dece.mobile': ['uvm', 'uvvm'],
   'video/vnd.dece.pd': ['uvp', 'uvvp'],

@@ -14,7 +14,15 @@ type AudioExtension =
   | 'aac'
   | 'oga'
   | 'spx';
-type VideoExtension = 'mp4' | 'ogv' | 'webm' | 'mov' | 'm4v' | 'avi' | 'm3u8';
+type VideoExtension =
+  | 'mp4'
+  | 'ogv'
+  | 'webm'
+  | 'mov'
+  | 'm4v'
+  | 'avi'
+  | 'm3u8'
+  | 'quicktime';
 type HlsExtension = 'm3u8';
 
 type OptionalQueryParams = `?${string}` | '';
@@ -156,7 +164,7 @@ export type AudioTrackSelector = TrackSelector<SingleAudioTrackSelector>;
 
 const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;
-const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
+const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8|quicktime)($|\?)/i;
 const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
 const webrtcExtensions = /(webrtc|sdp)/i;
