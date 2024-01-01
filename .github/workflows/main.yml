@@ -181,12 +181,12 @@ jobs:
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: typescript
           queries: security-extended,security-and-quality
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
 
   security-dependency-review:
     name: Security (Dependency Review)
