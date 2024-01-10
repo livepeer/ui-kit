@@ -8,6 +8,8 @@ import { cache } from 'react';
 
 import PlayerPage from './PlayerPage';
 
+export const runtime = 'edge';
+
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 const isTrue = (b: string) =>
@@ -42,13 +44,20 @@ const { provider } = createClient({
 });
 
 const fetchPlaybackInfo = cache(async (playbackId: string) => {
-  try {
-    const playbackInfo = await provider.getPlaybackInfo({ playbackId });
+  let attempts = 0;
 
-    return playbackInfo;
-  } catch (e) {
-    console.error(e);
-    return null;
+  while (attempts < 3) {
+    try {
+      const playbackInfo = await provider.getPlaybackInfo({ playbackId });
+      return playbackInfo;
+    } catch (e) {
+      console.error(e);
+      attempts++;
+      if (attempts >= 3) {
+        return null;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000)); // Jitter up to 1 second
+    }
   }
 });
 
