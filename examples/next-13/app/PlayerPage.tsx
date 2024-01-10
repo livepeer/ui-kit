@@ -17,6 +17,10 @@ import {
 } from './toast';
 
 function isIframe() {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
   try {
     return window.self !== window.top;
   } catch {
@@ -67,7 +71,11 @@ export default (props: PlayerProps<object, any>) => {
   );
 
   useEffect(() => {
-    if (clipError || clipPlaybackId || mp4DownloadUrl) {
+    if (
+      clipError ||
+      clipPlaybackId ||
+      (mp4DownloadUrl && typeof window !== 'undefined')
+    ) {
       setOpen(true);
       timerRef.current = window.setTimeout(
         () => {
