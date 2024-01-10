@@ -72,9 +72,8 @@ export default (props: PlayerProps<object, any>) => {
 
   useEffect(() => {
     if (
-      clipError ||
-      clipPlaybackId ||
-      (mp4DownloadUrl && typeof window !== 'undefined')
+      typeof window !== 'undefined' &&
+      (clipError || clipPlaybackId || mp4DownloadUrl)
     ) {
       setOpen(true);
       timerRef.current = window.setTimeout(
