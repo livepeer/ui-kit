@@ -1,6 +1,6 @@
 {
   "functions": {
-    "*": {
+    "index": {
       "maxDuration": 200
     }
   }
