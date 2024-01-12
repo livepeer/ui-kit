@@ -6,6 +6,8 @@ import {
 import { studioProvider } from '@livepeer/core-web/providers/studio';
 import { cache } from 'react';
 
+export const maxDuration = 200;
+
 import PlayerPage from './PlayerPage';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
