@@ -1,31 +1,31 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-import { omit, pick } from './omick';
+import { omit, pick } from "./omick";
 
 const randomFunction = () => {
   return 1;
 };
 
-describe('pick', () => {
-  describe('args', () => {
-    it('picks one arg', () => {
+describe("pick", () => {
+  describe("args", () => {
+    it("picks one arg", () => {
       const stronglyTypedObject = {
-        key1: 'somekey',
-        key2: 'anotherkey',
+        key1: "somekey",
+        key2: "anotherkey",
       };
-      const result = pick(stronglyTypedObject, 'key1');
+      const result = pick(stronglyTypedObject, "key1");
       expect(result).toEqual({
-        key1: 'somekey',
+        key1: "somekey",
       });
     });
 
-    it('picks multiple args', () => {
+    it("picks multiple args", () => {
       const stronglyTypedObject = {
-        key1: 'somekey',
-        key2: 'anotherkey',
-        missingKey: 'someotherkey',
+        key1: "somekey",
+        key2: "anotherkey",
+        missingKey: "someotherkey",
       } as const;
-      const result = pick(stronglyTypedObject, 'key1', 'key2');
+      const result = pick(stronglyTypedObject, "key1", "key2");
       expect(result).toMatchInlineSnapshot(`
         {
           "key1": "somekey",
@@ -34,13 +34,13 @@ describe('pick', () => {
       `);
     });
 
-    it('picks multiple args', () => {
+    it("picks multiple args", () => {
       const stronglyTypedObject = {
-        key1: 'somekey',
-        key2: 'anotherkey',
-        missingKey: 'someotherkey',
+        key1: "somekey",
+        key2: "anotherkey",
+        missingKey: "someotherkey",
       } as const;
-      const result = pick(stronglyTypedObject, 'key1', 'key2');
+      const result = pick(stronglyTypedObject, "key1", "key2");
       expect(result).toMatchInlineSnapshot(`
           {
             "key1": "somekey",
@@ -49,13 +49,13 @@ describe('pick', () => {
         `);
     });
 
-    it('picks functions', () => {
+    it("picks functions", () => {
       const stronglyTypedObject = {
         func: randomFunction,
-        key2: 'anotherkey',
-        missingKey: 'someotherkey',
+        key2: "anotherkey",
+        missingKey: "someotherkey",
       } as const;
-      const result = pick(stronglyTypedObject, 'func', 'key2');
+      const result = pick(stronglyTypedObject, "func", "key2");
       expect(result).toMatchInlineSnapshot(`
         {
           "func": [Function],
@@ -66,16 +66,16 @@ describe('pick', () => {
   });
 });
 
-describe('omit', () => {
-  describe('args', () => {
-    it('picks one arg', () => {
+describe("omit", () => {
+  describe("args", () => {
+    it("picks one arg", () => {
       const stronglyTypedObject = {
-        key1: 'somekey',
-        key2: 'anotherkey',
+        key1: "somekey",
+        key2: "anotherkey",
       };
-      const result = omit(stronglyTypedObject, 'key2');
+      const result = omit(stronglyTypedObject, "key2");
       expect(result).toEqual({
-        key1: 'somekey',
+        key1: "somekey",
       });
     });
   });

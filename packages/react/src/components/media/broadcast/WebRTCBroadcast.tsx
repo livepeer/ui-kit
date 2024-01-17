@@ -2,19 +2,19 @@ import {
   MediaControllerCallbackState,
   MediaControllerState,
   sanitizeMediaControllerState,
-} from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
+} from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
 import {
   WebRTCConnectedPayload,
   WebRTCVideoConfig,
   changeMediaStream,
   createNewWHIP,
-} from '@livepeer/core-web/media/browser/webrtc';
+} from "@livepeer/core-web/src/media/browser/webrtc";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { BroadcastProps } from '.';
-import { MediaControllerContext, useMediaController } from '../../../context';
+import { BroadcastProps } from ".";
+import { MediaControllerContext, useMediaController } from "../../../context";
 
 const mediaControllerSelector = ({
   _element,
@@ -34,7 +34,7 @@ const mediaControllerSelector = ({
 
 export type WebRTCBroadcastProps = Omit<
   BroadcastProps<any>,
-  'onError' | 'streamKey'
+  "onError" | "streamKey"
 > & {
   webrtcConfig?: WebRTCVideoConfig;
   onBroadcastError: (error: Error | null) => void;
@@ -108,7 +108,7 @@ export const WebRTCBroadcast = React.forwardRef<
   const onErrorComposed = React.useCallback(
     (error: Error) => {
       const cleanError = new Error(
-        error?.message?.toString?.() ?? 'Error with WebRTC',
+        error?.message?.toString?.() ?? "Error with WebRTC",
       );
 
       onBroadcastError?.(cleanError);
@@ -121,7 +121,7 @@ export const WebRTCBroadcast = React.forwardRef<
       const { destroy } = createNewWHIP(
         ingestUrl,
         _element,
-        aspectRatio ?? '16to9',
+        aspectRatio ?? "16to9",
         {
           onConnected,
           onError: onErrorComposed,
@@ -155,7 +155,7 @@ export const WebRTCBroadcast = React.forwardRef<
           changeMediaStream({
             newMediaStream: state._mediaStream,
             prevMediaStream: prevState._mediaStream,
-            aspectRatio: aspectRatio ?? '16to9',
+            aspectRatio: aspectRatio ?? "16to9",
             element: state._element,
             videoTransceiver: transceivers.video,
             audioTransceiver: transceivers.audio,
@@ -169,9 +169,9 @@ export const WebRTCBroadcast = React.forwardRef<
   return (
     <video
       className={styling.media.video({
-        size: fullscreen ? 'fullscreen' : objectFit,
+        size: fullscreen ? "fullscreen" : objectFit,
       })}
-      aria-label={title ?? 'Video player'}
+      aria-label={title ?? "Video player"}
       role="video"
       width="100%"
       height="100%"

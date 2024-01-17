@@ -1,10 +1,10 @@
-import { useConditionalIcon } from '@livepeer/core-react/hooks';
-import { MediaControllerState, omit } from '@livepeer/core-web';
+import { useConditionalIcon } from "@livepeer/core-react/hooks";
+import { MediaControllerState, omit } from "@livepeer/core-web";
 
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import React, { useMemo } from 'react';
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import React, { useMemo } from "react";
 
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
 
 const DefaultOnIcon = () => (
   <svg
@@ -77,7 +77,7 @@ export const VideoToggle: React.FC<VideoToggleProps> = (props) => {
   );
 
   const title = useMemo(
-    () => (video ? 'Turn video off (v)' : 'Turn video on (v)'),
+    () => (video ? "Turn video off (v)" : "Turn video on (v)"),
     [video],
   );
 
@@ -91,7 +91,7 @@ export const VideoToggle: React.FC<VideoToggleProps> = (props) => {
       title={title}
       aria-label={title}
       onClick={onPressComposed}
-      {...omit(rest, 'size')}
+      {...omit(rest, "size")}
     >
       {children}
     </button>

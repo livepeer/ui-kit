@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { getCssText } from '@livepeer/react';
-import { useServerInsertedHTML } from 'next/navigation';
-import React from 'react';
+import { getCssText } from "@livepeer/react";
+import { useServerInsertedHTML } from "next/navigation";
+import React from "react";
 
 export const StitchesRegistry = ({
   children,

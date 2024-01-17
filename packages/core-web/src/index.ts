@@ -1,1 +1,1 @@
-export * from '@livepeer/core';
+export * from "@livepeer/core";

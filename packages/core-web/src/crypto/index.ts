@@ -1,1 +1,1 @@
-export * from '@livepeer/core/crypto';
+export * from "@livepeer/core/crypto";

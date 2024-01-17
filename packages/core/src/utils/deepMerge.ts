@@ -1,23 +1,24 @@
 // from https://github.com/voodoocreation/ts-deepmerge/blob/master/src/index.ts
 interface IObject {
+  // biome-ignore lint/suspicious/noExplicitAny: any
   [key: string]: any;
 }
 
-type TUnionToIntersection<U> = (
-  U extends any ? (k: U) => void : never
-) extends (k: infer I) => void
-  ? I
-  : never;
+type TUnionToIntersection<U> =
+  // biome-ignore lint/suspicious/noExplicitAny: any
+  (U extends any ? (k: U) => void : never) extends (k: infer I) => void
+    ? I
+    : never;
 
-// istanbul ignore next
+// biome-ignore lint/suspicious/noExplicitAny: any
 const isObject = (obj: any) => {
-  if (typeof obj === 'object' && obj !== null) {
-    if (typeof Object.getPrototypeOf === 'function') {
+  if (typeof obj === "object" && obj !== null) {
+    if (typeof Object.getPrototypeOf === "function") {
       const prototype = Object.getPrototypeOf(obj);
       return prototype === Object.prototype || prototype === null;
     }
 
-    return Object.prototype.toString.call(obj) === '[object Object]';
+    return Object.prototype.toString.call(obj) === "[object Object]";
   }
 
   return false;
@@ -29,12 +30,13 @@ const merge = <T extends IObject[]>(
   objects.reduce((result, current) => {
     if (Array.isArray(current)) {
       throw new TypeError(
-        'Arguments provided to ts-deepmerge must be objects, not arrays.',
+        "Arguments provided to ts-deepmerge must be objects, not arrays.",
       );
     }
 
+    // biome-ignore lint/complexity/noForEach: <explanation>
     Object.keys(current).forEach((key) => {
-      if (['__proto__', 'constructor', 'prototype'].includes(key)) {
+      if (["__proto__", "constructor", "prototype"].includes(key)) {
         return;
       }
 
@@ -50,6 +52,7 @@ const merge = <T extends IObject[]>(
     });
 
     return result;
+    // biome-ignore lint/suspicious/noExplicitAny: any
   }, {}) as any;
 
 export interface DeepMergeOptions {

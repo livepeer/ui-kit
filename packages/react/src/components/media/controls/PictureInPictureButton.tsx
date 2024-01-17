@@ -1,10 +1,10 @@
-import { MediaControllerState } from '@livepeer/core-web';
-import { isPictureInPictureSupported } from '@livepeer/core-web/media/browser';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { MediaControllerState } from "@livepeer/core-web";
+import { isPictureInPictureSupported } from "@livepeer/core-web/media/browser";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { useMediaController } from '../../../context';
-import { PropsOf } from '../../system';
+import { useMediaController } from "../../../context";
+import { PropsOf } from "../../system";
 
 const DefaultPictureInPictureIcon = () => (
   <svg
@@ -21,8 +21,8 @@ const DefaultPictureInPictureIcon = () => (
 );
 
 export type PictureInPictureButtonProps = Omit<
-  PropsOf<'button'>,
-  'children' | 'onClick'
+  PropsOf<"button">,
+  "children" | "onClick"
 > & {
   /**
    * The callback to trigger any logic on click/press.
@@ -74,7 +74,7 @@ export const PictureInPictureButton: React.FC<PictureInPictureButtonProps> = (
   );
 
   const title = React.useMemo(
-    () => (pictureInPicture ? 'Exit mini player (i)' : 'Mini player (i)'),
+    () => (pictureInPicture ? "Exit mini player (i)" : "Mini player (i)"),
     [pictureInPicture],
   );
 

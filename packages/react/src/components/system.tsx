@@ -1,5 +1,5 @@
-import { CSS } from '@stitches/react';
-import * as React from 'react';
+import { CSS } from "@stitches/react";
+import * as React from "react";
 
 /**
  * As prop
@@ -53,9 +53,12 @@ export const useDebounce = <T,>(value: T, delay: number) => {
 
   React.useEffect(() => {
     // add delay with jitter
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay + 1000 * Math.random());
+    const handler = setTimeout(
+      () => {
+        setDebouncedValue(value);
+      },
+      delay + 1000 * Math.random(),
+    );
 
     return () => {
       clearTimeout(handler);

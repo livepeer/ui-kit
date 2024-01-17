@@ -11,7 +11,7 @@ export type ClientStorage = {
 };
 
 export const noopStorage: BaseStorage = {
-  getItem: (_key) => '',
+  getItem: (_key) => "",
   setItem: (_key, _value) => {
     //
   },
@@ -22,7 +22,7 @@ export const noopStorage: BaseStorage = {
 
 export function createStorage({
   storage = noopStorage,
-  key: prefix = 'livepeer',
+  key: prefix = "livepeer",
 }: {
   storage?: BaseStorage;
   key?: string;

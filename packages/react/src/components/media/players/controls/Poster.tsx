@@ -1,9 +1,9 @@
-import { PosterProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { PosterProps } from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -18,10 +18,10 @@ export const Poster: React.FC<PosterProps> = (props) => {
 
   const { content, title } = props;
 
-  return typeof content === 'string' ? (
+  return typeof content === "string" ? (
     <img
       className={styling.media.poster({
-        size: fullscreen ? 'fullscreen' : 'default',
+        size: fullscreen ? "fullscreen" : "default",
       })}
       aria-label={title}
       alt={title}
@@ -30,7 +30,7 @@ export const Poster: React.FC<PosterProps> = (props) => {
   ) : React.isValidElement(content) ? (
     React.cloneElement(content as React.ReactElement, {
       className: styling.media.poster({
-        size: fullscreen ? 'fullscreen' : 'default',
+        size: fullscreen ? "fullscreen" : "default",
       }),
     })
   ) : (

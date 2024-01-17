@@ -1,19 +1,11 @@
 import {
   BroadcastProps as CoreBroadcastProps,
   useBroadcast,
-} from '@livepeer/core-react/components';
+} from "@livepeer/core-react";
 
-import { MediaControllerCallbackState, ObjectFit } from '@livepeer/core-web';
-import * as React from 'react';
+// import { MediaControllerCallbackState, ObjectFit } from "@livepeer/core-web";
+import * as React from "react";
 
-import { WebRTCBroadcast } from './WebRTCBroadcast';
-import {
-  AudioToggle,
-  BroadcastSettings,
-  Screenshare,
-  VideoToggle,
-} from './controls';
-import { MediaControllerProvider } from '../../../context';
 import {
   Container,
   ControlsContainer,
@@ -21,7 +13,14 @@ import {
   PictureInPictureButton,
   TimeDisplay,
   Title,
-} from '../controls';
+} from "../controls";
+import { WebRTCBroadcast } from "./WebRTCBroadcast";
+import {
+  AudioToggle,
+  BroadcastSettings,
+  Screenshare,
+  VideoToggle,
+} from "./controls";
 
 export type PosterSource = string | React.ReactNode;
 

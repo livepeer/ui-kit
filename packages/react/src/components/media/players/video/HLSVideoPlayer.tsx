@@ -2,14 +2,14 @@ import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   HlsSrc,
   MediaControllerState,
-} from '@livepeer/core-web';
-import { HlsError, createNewHls } from '@livepeer/core-web/media/browser/hls';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+} from "@livepeer/core-web";
+import { HlsError, createNewHls } from "@livepeer/core-web/media/browser/hls";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { VideoPlayerProps } from '.';
-import { useMediaController } from '../../../../context';
-import { useDebounce } from '../../../system';
+import { VideoPlayerProps } from ".";
+import { useMediaController } from "../../../../context";
+import { useDebounce } from "../../../system";
 
 const mediaControllerSelector = ({
   setLive,
@@ -29,7 +29,7 @@ const mediaControllerSelector = ({
 
 export type HLSVideoPlayerProps = Omit<
   VideoPlayerProps,
-  'src' | 'webrtcConfig'
+  "src" | "webrtcConfig"
 > & {
   src: HlsSrc;
   fullscreen: boolean;
@@ -93,7 +93,7 @@ export const HLSVideoPlayer = React.forwardRef<
           error?.response?.data?.toString?.() ??
             ((error?.response as any)?.code === 401
               ? ACCESS_CONTROL_ERROR_MESSAGE
-              : 'Error with HLS.js'),
+              : "Error with HLS.js"),
         );
 
         onPlaybackError?.(cleanError);
@@ -117,8 +117,8 @@ export const HLSVideoPlayer = React.forwardRef<
 
             if (url.match(indexUrl)) {
               if (accessKey)
-                xhr.setRequestHeader('Livepeer-Access-Key', accessKey);
-              else if (jwt) xhr.setRequestHeader('Livepeer-Jwt', jwt);
+                xhr.setRequestHeader("Livepeer-Access-Key", accessKey);
+              else if (jwt) xhr.setRequestHeader("Livepeer-Jwt", jwt);
             }
           },
           ...hlsConfig,
@@ -149,10 +149,10 @@ export const HLSVideoPlayer = React.forwardRef<
   return (
     <video
       className={styling.media.video({
-        size: fullscreen ? 'fullscreen' : objectFit,
+        size: fullscreen ? "fullscreen" : objectFit,
       })}
       loop={loop}
-      aria-label={title ?? 'Video player'}
+      aria-label={title ?? "Video player"}
       role="video"
       width="100%"
       height="100%"
@@ -161,10 +161,10 @@ export const HLSVideoPlayer = React.forwardRef<
       playsInline
       autoPlay={autoPlay}
       muted={muted}
-      poster={typeof poster === 'string' ? poster : undefined}
-      preload={priority ? 'auto' : 'metadata'}
+      poster={typeof poster === "string" ? poster : undefined}
+      preload={priority ? "auto" : "metadata"}
       crossOrigin={
-        allowCrossOriginCredentials ? 'use-credentials' : 'anonymous'
+        allowCrossOriginCredentials ? "use-credentials" : "anonymous"
       }
     />
   );

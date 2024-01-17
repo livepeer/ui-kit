@@ -3,28 +3,28 @@ import {
   VideoSrc,
   addMediaMetricsToStore,
   sanitizeMediaControllerState,
-} from '@livepeer/core-react';
-import { VideoPlayerProps as VideoPlayerCoreProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
-import { canPlayMediaNatively } from '@livepeer/core-web/media/browser';
+} from "@livepeer/core-react";
+import { VideoPlayerProps as VideoPlayerCoreProps } from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
+import { canPlayMediaNatively } from "@livepeer/core-web/media/browser";
 import {
   HlsVideoConfig,
   isHlsSupported,
-} from '@livepeer/core-web/media/browser/hls';
+} from "@livepeer/core-web/media/browser/hls";
 import {
   WebRTCVideoConfig,
   isWebRTCSupported,
-} from '@livepeer/core-web/media/browser/webrtc';
-import * as React from 'react';
+} from "@livepeer/core-web/media/browser/webrtc";
+import * as React from "react";
 
-import { HLSVideoPlayer } from './HLSVideoPlayer';
-import { HtmlVideoPlayer } from './HTMLVideoPlayer';
-import { WebRTCVideoPlayer } from './WebRTCVideoPlayer';
 import {
   MediaControllerContext,
   useMediaController,
-} from '../../../../context';
-import { PosterSource } from '../Player';
+} from "../../../../context";
+import { PosterSource } from "../Player";
+import { HLSVideoPlayer } from "./HLSVideoPlayer";
+import { HtmlVideoPlayer } from "./HTMLVideoPlayer";
+import { WebRTCVideoPlayer } from "./WebRTCVideoPlayer";
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -43,7 +43,7 @@ export type VideoPlayerProps = VideoPlayerCoreProps<
   allowCrossOriginCredentials?: boolean;
   hlsConfig?: HlsVideoConfig;
   webrtcConfig?: WebRTCVideoConfig;
-  lowLatency?: boolean | 'force';
+  lowLatency?: boolean | "force";
   playRecording?: boolean;
 };
 
@@ -100,30 +100,30 @@ const InternalVideoPlayer = React.forwardRef<
     () =>
       src
         ?.filter((s) =>
-          lowLatency === 'force' && src?.some((s) => s?.type === 'webrtc')
-            ? s.type === 'webrtc'
+          lowLatency === "force" && src?.some((s) => s?.type === "webrtc")
+            ? s.type === "webrtc"
             : lowLatency
-            ? true
-            : s.type !== 'webrtc',
+              ? true
+              : s.type !== "webrtc",
         )
         ?.map((s) => {
           const url = new URL(s.src);
 
           // append the JWT to the query params
           if (props.jwt) {
-            url.searchParams.append('jwt', props.jwt);
+            url.searchParams.append("jwt", props.jwt);
           }
           // append the access key to the query params
           else if (props.accessKey) {
-            url.searchParams.append('accessKey', props.accessKey);
+            url.searchParams.append("accessKey", props.accessKey);
           }
 
-          return s.type === 'hls' && !canUseHlsjs
+          return s.type === "hls" && !canUseHlsjs
             ? ({
                 ...s,
                 src: url.toString(),
-                type: 'video',
-                mime: 'application/vnd.apple.mpegurl',
+                type: "video",
+                mime: "application/vnd.apple.mpegurl",
               } as VideoSrc)
             : s;
         }),
@@ -166,8 +166,8 @@ const InternalVideoPlayer = React.forwardRef<
   // and we clear the timeout if we have a null playbackError
   React.useEffect(() => {
     if (
-      playbackError?.type === 'fallback' ||
-      playbackError?.type === 'unknown'
+      playbackError?.type === "fallback" ||
+      playbackError?.type === "unknown"
     ) {
       debouncedIncrementSourceIndexRef?.current?.();
     } else if (playbackError === null) {
@@ -180,9 +180,9 @@ const InternalVideoPlayer = React.forwardRef<
   // we auto-increment the index of the playback source if it can't be handled
   React.useEffect(() => {
     const shouldTryNextSource =
-      (currentPlaybackSource?.type === 'webrtc' && !canUseWebRTC) ||
-      (currentPlaybackSource?.type === 'hls' && !canUseHlsjs) ||
-      (currentPlaybackSource?.type === 'video' &&
+      (currentPlaybackSource?.type === "webrtc" && !canUseWebRTC) ||
+      (currentPlaybackSource?.type === "hls" && !canUseHlsjs) ||
+      (currentPlaybackSource?.type === "video" &&
         !canPlayMediaNatively(currentPlaybackSource));
 
     if (shouldTryNextSource) {
@@ -223,12 +223,12 @@ const InternalVideoPlayer = React.forwardRef<
   }, [store, currentPlaybackSource]);
 
   React.useEffect(() => {
-    if (!playbackError && currentPlaybackSource?.type === 'webrtc') {
+    if (!playbackError && currentPlaybackSource?.type === "webrtc") {
       const id = setTimeout(() => {
         if (!store.getState().canPlay) {
           onPlaybackError(
             new Error(
-              'Timeout reached for canPlay - triggering playback error.',
+              "Timeout reached for canPlay - triggering playback error.",
             ),
           );
         }
@@ -249,20 +249,20 @@ const InternalVideoPlayer = React.forwardRef<
   React.useEffect(() => {
     const { destroy } = addMediaMetricsToStore(store, (e) => {
       onPlaybackError?.(e as Error);
-      console.error('Not able to report player metrics', e);
+      console.error("Not able to report player metrics", e);
     });
 
     return destroy;
   }, [onPlaybackError, store]);
 
-  return currentPlaybackSource?.type === 'webrtc' ? (
+  return currentPlaybackSource?.type === "webrtc" ? (
     <WebRTCVideoPlayer
       {...props}
       ref={ref}
       src={currentPlaybackSource}
       fullscreen={fullscreen}
     />
-  ) : currentPlaybackSource?.type === 'hls' ? (
+  ) : currentPlaybackSource?.type === "hls" ? (
     <HLSVideoPlayer
       {...props}
       ref={ref}

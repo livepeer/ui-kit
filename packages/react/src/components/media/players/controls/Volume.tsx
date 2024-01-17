@@ -1,10 +1,10 @@
-import { VolumeProps, useVolume } from '@livepeer/core-react/components';
-import { MediaControllerState, omit } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { VolumeProps, useVolume } from "@livepeer/core-react/components";
+import { MediaControllerState, omit } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { BaseSlider } from './BaseSlider';
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
+import { BaseSlider } from "./BaseSlider";
 
 const DefaultMutedIcon = () => (
   <svg width="100%" height="100%" viewBox="0 0 36 36">
@@ -72,7 +72,7 @@ export const Volume: React.FC<VolumeProps> = (props) => {
         title={title}
         aria-label={title}
         onClick={buttonProps.onPress}
-        {...omit(buttonProps, 'onPress', 'size')}
+        {...omit(buttonProps, "onPress", "size")}
       />
 
       {progressProps.shown && (

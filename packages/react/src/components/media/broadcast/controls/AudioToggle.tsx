@@ -1,12 +1,12 @@
 import {
   VolumeProps as AudioToggleProps,
   useVolume,
-} from '@livepeer/core-react/components';
-import { MediaControllerState, omit } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+} from "@livepeer/core-react/components";
+import { MediaControllerState, omit } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
 
 const DefaultMutedIcon = () => (
   <svg width="100%" height="100%" viewBox="-320 -1270 1600 1600">
@@ -73,7 +73,7 @@ export const AudioToggle: React.FC<AudioToggleProps> = (props) => {
         title={title}
         aria-label={title}
         onClick={buttonProps.onPress}
-        {...omit(buttonProps, 'onPress', 'size')}
+        {...omit(buttonProps, "onPress", "size")}
       />
     </div>
   );

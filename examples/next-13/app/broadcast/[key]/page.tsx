@@ -1,19 +1,19 @@
-import BroadcastPage from './BroadcastPage';
+import BroadcastPage from "./BroadcastPage";
 
 export default async function Page({ params }: { params: { key?: string } }) {
   return params?.key ? (
-    <BroadcastPage streamKey={params.key} objectFit={'contain'} />
+    <BroadcastPage streamKey={params.key} objectFit={"contain"} />
   ) : (
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignContent: 'center',
+        display: "flex",
+        justifyContent: "center",
+        alignContent: "center",
       }}
     >
       <span>

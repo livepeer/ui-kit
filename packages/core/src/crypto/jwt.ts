@@ -1,11 +1,6 @@
-import ms, { StringValue } from 'ms';
-
-import { signEcdsaSha256 } from './ecdsa';
-import { importPKCS8 } from './pkcs8';
-import { getStream } from '../actions';
-import { ClientConfig, createClient } from '../client';
-import { LivepeerProvider } from '../types';
-import { b64Decode, b64UrlEncode } from '../utils';
+import { b64Decode, b64UrlEncode } from "../utils";
+import { signEcdsaSha256 } from "./ecdsa";
+import { importPKCS8 } from "./pkcs8";
 
 export type JWTPayload = {
   /**
@@ -56,7 +51,7 @@ export type JWTPayload = {
   /**
    * Allowed action for this token. `pull` is allowing playback. Custom claim.
    */
-  action: 'pull';
+  action: "pull";
 
   /** Any other JWT Claim Set member. */
   [propName: string]: unknown;
@@ -64,10 +59,10 @@ export type JWTPayload = {
 
 export type JWTHeader = {
   /** JWE "alg" (Algorithm) Header Parameter. */
-  alg: 'ES256';
+  alg: "ES256";
 
   /** "typ" (Type) Header Parameter. */
-  typ: 'JWT';
+  typ: "JWT";
 };
 
 export type SignAccessJwtOptions = {
@@ -86,16 +81,9 @@ export type SignAccessJwtOptions = {
   publicKey: string;
 
   /**
-   * The playback ID which you would like to restrict access to (required if `streamId`
-   * is not provided).
+   * The playback ID which you would like to restrict access to (required).
    */
-  playbackId?: string;
-
-  /**
-   * The stream ID which you would like to restrict access to (required if `playbackId`
-   * is not provided).
-   */
-  streamId?: string;
+  playbackId: string;
 
   /**
    * The issuer of the token. Usually a string or URL identifying your app.
@@ -103,11 +91,9 @@ export type SignAccessJwtOptions = {
   issuer: string;
 
   /**
-   * The expiration of the token in unix timestamp. If a string is passed, it must be a duration like `1d`
-   * and will be added to the current timestamp. If a number is passed, this will be used as the expiration.
-   * Defaults to `1d`.
+   * The expiration of the token in seconds. Defaults to `86400` or one day in seconds.
    */
-  expiration?: StringValue;
+  expiration?: number;
 
   /**
    * Custom properties added to the token. These can be used across your app to hold token state (user ID, etc).
@@ -115,65 +101,36 @@ export type SignAccessJwtOptions = {
   custom?: {
     [key: string]: unknown;
   };
-} & (
-  | {
-      streamId: string;
-    }
-  | {
-      playbackId: string;
-    }
-);
-
+};
 /**
  * Signs a JSON Web Token which can be used to view access-restricted media. If you have not instantiated a client yet,
  * will throw a "No livepeer client found." error if no `config` is passed.
  *
  * Throws if there is an error fetching a stream by ID.
  */
-export const signAccessJwt = async <
-  TLivepeerProvider extends LivepeerProvider = LivepeerProvider,
->(
+export const signAccessJwt = async (
   options: SignAccessJwtOptions,
-  config?: ClientConfig<TLivepeerProvider>,
 ): Promise<string> => {
   // assume strings passed are PEM-encoded PKCS8 (or base64 encoded)
   // try to coerce the input from base64, or use as-is
   const privateKey =
-    typeof options.privateKey === 'string'
+    typeof options.privateKey === "string"
       ? await importPKCS8(b64Decode(options.privateKey) ?? options.privateKey)
       : options.privateKey;
 
   if (!privateKey) {
-    throw new Error('Error importing private key.');
-  }
-
-  let playbackId = options?.playbackId;
-
-  if (options?.streamId) {
-    if (config) {
-      createClient(config);
-    }
-
-    const stream = await getStream({ streamId: options.streamId });
-
-    playbackId = stream.playbackId;
-  }
-
-  if (!playbackId) {
-    throw new Error(
-      'Playback ID was not provided and stream playback ID could not be fetched.',
-    );
+    throw new Error("Error importing private key.");
   }
 
   const issuedAtSec = Date.now() / 1000;
-  const expirationSec = issuedAtSec + ms(options.expiration ?? '1d') / 1000;
+  const expirationSec = issuedAtSec + (options.expiration ?? 86400);
 
   const payload: JWTPayload = {
-    action: 'pull',
+    action: "pull",
     iss: options.issuer,
     pub: options.publicKey,
-    sub: playbackId,
-    video: 'none',
+    sub: options.playbackId,
+    video: "none",
     exp: Number(expirationSec.toFixed(0)),
     iat: Number(issuedAtSec.toFixed(0)),
 
@@ -187,8 +144,8 @@ export const signAccessJwt = async <
   };
 
   const header: JWTHeader = {
-    alg: 'ES256',
-    typ: 'JWT',
+    alg: "ES256",
+    typ: "JWT",
   };
 
   const base64Header = b64UrlEncode(JSON.stringify(header));

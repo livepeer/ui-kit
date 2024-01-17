@@ -1,14 +1,14 @@
 import {
   BaseSliderProps,
   useBaseSlider,
-} from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import { CSS } from '@stitches/react';
+} from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import { CSS } from "@stitches/react";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
 
 const UPDATE_FREQUENCY_MS = 50;
 
@@ -31,7 +31,7 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   });
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const handleResize = () => {
         const boundingRect = ref.current?.getBoundingClientRect();
 
@@ -43,8 +43,8 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
 
       handleResize();
 
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
 
@@ -118,18 +118,18 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
         await props?.onDone?.();
       };
 
-      document?.addEventListener('mousemove', onMouseMove);
-      document?.addEventListener('mouseup', onMouseUp);
+      document?.addEventListener("mousemove", onMouseMove);
+      document?.addEventListener("mouseup", onMouseUp);
 
-      document?.addEventListener('touchmove', onTouchMove);
-      document?.addEventListener('touchend', onTouchEnd);
+      document?.addEventListener("touchmove", onTouchMove);
+      document?.addEventListener("touchend", onTouchEnd);
       // TODO handle mouse out
 
       return () => {
-        document?.removeEventListener('mousemove', onMouseMove);
-        document?.removeEventListener('mouseup', onMouseUp);
-        document?.removeEventListener('touchmove', onTouchMove);
-        document?.removeEventListener('touchend', onTouchEnd);
+        document?.removeEventListener("mousemove", onMouseMove);
+        document?.removeEventListener("mouseup", onMouseUp);
+        document?.removeEventListener("touchmove", onTouchMove);
+        document?.removeEventListener("touchend", onTouchEnd);
       };
     }
   }, [isDragging, sliderProps, props, sliderLocation, lastUpdate]);
@@ -167,7 +167,7 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
       {sliderLeftTrackProps.shown && (
         <div
           className={styling.slider.track.left({
-            size: active ? 'active' : 'default',
+            size: active ? "active" : "default",
             rounded: sliderLeftTrackProps.rounded,
             css: sliderLeftTrackProps.css,
           })}
@@ -179,7 +179,7 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
       {sliderMiddleTrackProps.shown && (
         <div
           className={styling.slider.track.middle({
-            size: active ? 'active' : 'default',
+            size: active ? "active" : "default",
             rounded: sliderMiddleTrackProps.rounded,
             css: sliderMiddleTrackProps.css,
           })}
@@ -189,7 +189,7 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
       {sliderRightTrackProps.shown && (
         <div
           className={styling.slider.track.right({
-            size: active ? 'active' : 'default',
+            size: active ? "active" : "default",
             rounded: sliderRightTrackProps.rounded,
             css: sliderRightTrackProps.css,
           })}
@@ -199,6 +199,6 @@ export const BaseSlider: React.FC<BaseSliderProps> = (props) => {
   );
 };
 
-const Thumb = ({ size, css }: { size?: 'active' | 'default'; css?: CSS }) => (
+const Thumb = ({ size, css }: { size?: "active" | "default"; css?: CSS }) => (
   <div className={styling.slider.thumb({ css, size })} />
 );

@@ -1,17 +1,17 @@
 import {
   ControlsContainerProps,
   useControlsContainer,
-} from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+} from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
+import { useMediaController } from "../../../context";
 import {
   GenericError,
   OfflineStreamError,
   PrivateStreamError,
-} from './PlaybackDisplayError';
-import { useMediaController } from '../../../context';
+} from "./PlaybackDisplayError";
 
 const mediaControllerSelector = ({
   hidden,
@@ -75,7 +75,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
       {poster ? (
         <div
           className={styling.controlsContainer.background({
-            display: hasPlayed && hidePosterOnPlayed ? 'hidden' : 'shown',
+            display: hasPlayed && hidePosterOnPlayed ? "hidden" : "shown",
           })}
           onMouseUp={containerProps.onPress}
         >
@@ -84,7 +84,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
       ) : (
         <div
           className={styling.controlsContainer.background({
-            display: 'hidden',
+            display: "hidden",
           })}
           onMouseUp={containerProps.onPress}
         />
@@ -92,7 +92,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
 
       {showLoadingSpinner &&
         !isLoaded &&
-        (!error?.type || error.type === 'fallback') && (
+        (!error?.type || error.type === "fallback") && (
           <div
             className={styling.controlsContainer.background()}
             onMouseUp={containerProps.onPress}
@@ -107,18 +107,18 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           </div>
         )}
 
-      {error?.type && error.type !== 'fallback' ? (
+      {error?.type && error.type !== "fallback" ? (
         <div
           className={styling.controlsContainer.background()}
           onMouseUp={containerProps.onPress}
         >
-          {error?.type === 'access-control' ? (
+          {error?.type === "access-control" ? (
             accessControlErrorComponent ? (
               accessControlErrorComponent
             ) : (
               <PrivateStreamError />
             )
-          ) : error?.type === 'offline' ? (
+          ) : error?.type === "offline" ? (
             streamOfflineErrorComponent ? (
               streamOfflineErrorComponent
             ) : (
@@ -135,20 +135,20 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
           <>
             <div
               className={styling.controlsContainer.gradient({
-                display: hidden ? 'hidden' : 'shown',
+                display: hidden ? "hidden" : "shown",
               })}
               onMouseUp={containerProps.onPress}
             />
             <div
               className={styling.controlsContainer.top.container({
-                display: hidden ? 'hidden' : 'shown',
+                display: hidden ? "hidden" : "shown",
               })}
             >
               {top}
             </div>
             <div
               className={styling.controlsContainer.bottom.container({
-                display: hidden ? 'hidden' : 'shown',
+                display: hidden ? "hidden" : "shown",
               })}
             >
               <div
@@ -170,7 +170,7 @@ export const ControlsContainer: React.FC<ControlsContainerProps> = (props) => {
             {children && (
               <div
                 className={styling.controlsContainer.background({
-                  display: hidden ? 'hidden' : 'shown',
+                  display: hidden ? "hidden" : "shown",
                 })}
               >
                 {children}

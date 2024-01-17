@@ -1,11 +1,11 @@
-import { MediaControllerState, omit } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as Dialog from '@radix-ui/react-dialog';
-import * as React from 'react';
+import { MediaControllerState, omit } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as Dialog from "@radix-ui/react-dialog";
+import * as React from "react";
 
-import { AudioSourceSelect } from './AudioSourceSelect';
-import { VideoSourceSelect } from './VideoSourceSelect';
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
+import { AudioSourceSelect } from "./AudioSourceSelect";
+import { VideoSourceSelect } from "./VideoSourceSelect";
 
 const DefaultSettingsIcon = () => (
   <svg width="100%" height="100%" viewBox="0 0 36 36">
@@ -53,7 +53,7 @@ export const BroadcastSettings: React.FC<BroadcastSettingsProps> = (props) => {
             className={styling.iconButton.button()}
             title="Broadcast settings"
             aria-label="Broadcast settings"
-            {...omit(props, 'icon', 'size', 'streamConstraints')}
+            {...omit(props, "icon", "size", "streamConstraints")}
           >
             {props?.icon ?? <DefaultSettingsIcon />}
           </button>

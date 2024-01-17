@@ -1,4 +1,0 @@
-{
-  "main": "dist/livepeer-react-contracts.cjs.js",
-  "module": "dist/livepeer-react-contracts.esm.js"
-}

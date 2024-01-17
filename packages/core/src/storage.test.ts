@@ -1,34 +1,34 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-import { createStorage } from './storage';
+import { createStorage } from "./storage";
 
-describe('createStorage', () => {
-  it('inits', () => {
+describe("createStorage", () => {
+  it("inits", () => {
     const storage = createStorage({ storage: window.localStorage });
     expect(storage).toBeDefined();
   });
 
-  it('getItem', () => {
+  it("getItem", () => {
     const storage = createStorage({ storage: window.localStorage });
-    storage.getItem('foo');
+    storage.getItem("foo");
     expect(window.localStorage.getItem).toHaveBeenCalledTimes(1);
-    expect(window.localStorage.getItem).toHaveBeenCalledWith('livepeer.foo');
+    expect(window.localStorage.getItem).toHaveBeenCalledWith("livepeer.foo");
   });
 
-  it('setItem', () => {
+  it("setItem", () => {
     const storage = createStorage({ storage: window.localStorage });
-    storage.setItem('foo', 'bar');
+    storage.setItem("foo", "bar");
     expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
     expect(window.localStorage.setItem).toHaveBeenCalledWith(
-      'livepeer.foo',
+      "livepeer.foo",
       '"bar"',
     );
   });
 
-  it('removeItem', () => {
+  it("removeItem", () => {
     const storage = createStorage({ storage: window.localStorage });
-    storage.removeItem('foo');
+    storage.removeItem("foo");
     expect(window.localStorage.removeItem).toHaveBeenCalledTimes(1);
-    expect(window.localStorage.removeItem).toHaveBeenCalledWith('livepeer.foo');
+    expect(window.localStorage.removeItem).toHaveBeenCalledWith("livepeer.foo");
   });
 });

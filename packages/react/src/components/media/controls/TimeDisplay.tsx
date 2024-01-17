@@ -1,9 +1,9 @@
-import { useTimeDisplay } from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { useTimeDisplay } from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { useMediaController } from '../../../context';
+import { useMediaController } from "../../../context";
 
 const mediaControllerSelector = ({
   duration,
@@ -29,7 +29,7 @@ export const TimeDisplay: React.FC = () => {
   return (
     <>
       {!isLive ? (
-        <span className={styling.time.text()} aria-label={'Playback time'}>
+        <span className={styling.time.text()} aria-label={"Playback time"}>
           {title}
         </span>
       ) : (
@@ -37,7 +37,7 @@ export const TimeDisplay: React.FC = () => {
           <div className={styling.time.liveIndicator()} />
           <span
             className={styling.time.text()}
-            aria-label={'Live streaming media'}
+            aria-label={"Live streaming media"}
           >
             LIVE
           </span>

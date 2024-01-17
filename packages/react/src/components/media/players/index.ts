@@ -1,5 +1,5 @@
-export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer';
-export { Player, type PlayerProps } from './Player';
+export { AudioPlayer, type AudioPlayerProps } from "./AudioPlayer";
+export { Player, type PlayerProps } from "./Player";
 export {
   PlayButton,
   Poster,
@@ -9,4 +9,4 @@ export {
   type PosterProps,
   type ProgressProps,
   type VolumeProps,
-} from './controls';
+} from "./controls";

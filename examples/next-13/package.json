@@ -5,28 +5,25 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "clean": "rimraf .turbo node_modules .next",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@livepeer/core-web": "^3.1.7",
-    "@livepeer/design-system": "^1.1.0",
-    "@livepeer/react": "^3.1.7",
-    "@radix-ui/react-popover": "^1.0.6",
+    "@livepeer/react": "workspace:*",
+    "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-toast": "^1.1.5",
-    "@sentry/nextjs": "^7.69.0",
-    "@types/node": "20.6.2",
-    "@types/react": "18.2.21",
-    "@types/react-dom": "18.2.7",
+    "@sentry/nextjs": "^7.93.0",
+    "@types/node": "20.11.5",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
     "encoding": "^0.1.13",
-    "eslint": "8.49.0",
-    "eslint-config-next": "13.4.19",
-    "mux-embed": "^4.28.1",
-    "next": "13.5.1",
+    "mux-embed": "^5.1.0",
+    "next": "14.0.4",
     "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.2.2",
-    "zod": "^3.22.2"
+    "typescript": "5.3.3",
+    "zod": "^3.22.4"
   }
 }

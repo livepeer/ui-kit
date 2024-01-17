@@ -1,8 +1,8 @@
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import OfflineStreamImage from './images/OfflineStreamImage';
-import PrivateStreamImage from './images/PrivateStreamImage';
+import OfflineStreamImage from "./images/OfflineStreamImage";
+import PrivateStreamImage from "./images/PrivateStreamImage";
 
 export type OfflineStreamErrorProps = {
   isBroadcast: boolean;
@@ -14,12 +14,12 @@ export const OfflineStreamError = ({
   <div className={styling.controlsContainer.error.background()}>
     <OfflineStreamImage />
     <div className={styling.controlsContainer.error.title()}>
-      {isBroadcast ? 'Stream key invalid' : 'Stream is offline'}
+      {isBroadcast ? "Stream key invalid" : "Stream is offline"}
     </div>
     <div className={styling.controlsContainer.error.text()}>
       {isBroadcast
-        ? 'The provided stream key could not be found. Please check it and try again.'
-        : 'Playback will start automatically once the stream has started.'}
+        ? "The provided stream key could not be found. Please check it and try again."
+        : "Playback will start automatically once the stream has started."}
     </div>
   </div>
 );
@@ -44,11 +44,11 @@ export const GenericError = ({ isBroadcast }: GenericErrorProps) => (
   <div className={styling.controlsContainer.error.background()}>
     <OfflineStreamImage />
     <div className={styling.controlsContainer.error.title()}>
-      {isBroadcast ? 'Broadcast failed' : 'Playback failed'}
+      {isBroadcast ? "Broadcast failed" : "Playback failed"}
     </div>
     <div className={styling.controlsContainer.error.text()}>
       {isBroadcast
-        ? 'There was an error with broadcasting - please try again later.'
+        ? "There was an error with broadcasting - please try again later."
         : `There was an error with playback - please wait while we are retrying in the background.`}
     </div>
   </div>

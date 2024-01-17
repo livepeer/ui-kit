@@ -1,6 +1,4 @@
-import fetch from 'cross-fetch';
-
-const LP_DOMAINS = ['livepeer', 'livepeercdn', 'lp-playback'];
+const LP_DOMAINS = ["livepeer", "livepeercdn", "lp-playback"];
 
 // Finds the metrics reporting URL from a playback ID and a playback domain
 export const getMetricsReportingUrl = async (
@@ -18,32 +16,32 @@ export const getMetricsReportingUrl = async (
     // wss://mdw-staging-staging-catalyst-0.livepeer.monster/json_video+{playbackId}.js?tkn=adb42a8f47438
     const parsedUrl = new URL(playbackUrl);
 
-    const splitHost = parsedUrl.host.split('.');
+    const splitHost = parsedUrl.host.split(".");
     const includesDomain = LP_DOMAINS.includes(
-      splitHost?.[splitHost.length - 2] ?? '',
+      splitHost?.[splitHost.length - 2] ?? "",
     );
     const tld = (splitHost?.[splitHost?.length - 1] ?? null) as
-      | 'com'
-      | 'studio'
-      | 'fun'
-      | 'monster'
+      | "com"
+      | "studio"
+      | "fun"
+      | "monster"
       | null;
 
     // map to known TLDs, with .com => .studio
     const tldMapped =
-      tld === 'com'
-        ? 'studio'
-        : tld === 'studio'
-        ? 'studio'
-        : tld === 'fun'
-        ? 'fun:20443'
-        : tld === 'monster'
-        ? 'monster'
-        : null;
+      tld === "com"
+        ? "studio"
+        : tld === "studio"
+          ? "studio"
+          : tld === "fun"
+            ? "fun:20443"
+            : tld === "monster"
+              ? "monster"
+              : null;
 
     // if not a known TLD, then do not return a URL
     if (playbackId && includesDomain && tldMapped) {
-      const isCatalystPlayback = parsedUrl.host.includes('catalyst');
+      const isCatalystPlayback = parsedUrl.host.includes("catalyst");
 
       try {
         const getRedirectedUrl = async (): Promise<string | null> => {
@@ -59,17 +57,17 @@ export const getMetricsReportingUrl = async (
           : await getRedirectedUrl();
 
         // parse the url which we're redirected to
-        const redirectedUrl = finalUrl?.replace('https:', 'wss:');
+        const redirectedUrl = finalUrl?.replace("https:", "wss:");
 
         const url = redirectedUrl ? new URL(redirectedUrl) : null;
 
         if (url && sessionToken) {
-          url.searchParams.set('tkn', sessionToken);
+          url.searchParams.set("tkn", sessionToken);
         }
 
         return url?.toString?.() ?? null;
       } catch (error) {
-        console.log(`Could not fetch metrics reporting URL.`, error);
+        console.log("Could not fetch metrics reporting URL.", error);
       }
     }
   } catch (error) {
@@ -80,14 +78,14 @@ export const getMetricsReportingUrl = async (
   return null;
 };
 
-const ASSET_URL_PART_VALUE = 'hls';
-const WEBRTC_URL_PART_VALUE = 'webrtc';
-const RECORDING_URL_PART_VALUE = 'recordings';
+const ASSET_URL_PART_VALUE = "hls";
+const WEBRTC_URL_PART_VALUE = "webrtc";
+const RECORDING_URL_PART_VALUE = "recordings";
 
 export const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
   const parsedUrl = new URL(sourceUrl);
 
-  const parts = parsedUrl.pathname.split('/');
+  const parts = parsedUrl.pathname.split("/");
 
   const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
   const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
@@ -97,16 +95,16 @@ export const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
   const playbackId = includesWebRtcUrl
     ? parts?.[(parts?.length ?? 0) - 1]
     : includesRecording || includesAssetUrl
-    ? parts?.[(parts?.length ?? 0) - 2] ?? null
-    : null;
+      ? parts?.[(parts?.length ?? 0) - 2] ?? null
+      : null;
 
-  if (playbackId?.includes('+')) {
-    const split = playbackId.split('+')?.[1];
+  if (playbackId?.includes("+")) {
+    const split = playbackId.split("+")?.[1];
 
     if (split) {
       return split;
     }
   }
 
-  return playbackId;
+  return playbackId ?? null;
 };

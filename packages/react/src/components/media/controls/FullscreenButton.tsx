@@ -1,12 +1,12 @@
 import {
   FullscreenButtonProps,
   useFullscreenButton,
-} from '@livepeer/core-react/components';
-import { MediaControllerState, omit } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+} from "@livepeer/core-react/components";
+import { MediaControllerState, omit } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { useMediaController } from '../../../context';
+import { useMediaController } from "../../../context";
 
 const DefaultEnterFullscreenIcon = () => (
   <svg
@@ -106,7 +106,7 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = (props) => {
       title={title}
       aria-label={title}
       onClick={buttonProps.onPress}
-      {...omit(buttonProps, 'onPress', 'size')}
+      {...omit(buttonProps, "onPress", "size")}
     />
   );
 };

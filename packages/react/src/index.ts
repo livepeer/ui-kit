@@ -1,17 +1,5 @@
-export * from '@livepeer/core-react';
-export { type ThemeConfig } from '@livepeer/core-web/media';
-export {
-  defaultTheme,
-  getCssText,
-  styling,
-} from '@livepeer/core-web/media/browser/styling';
-export type { WebRTCVideoConfig } from '@livepeer/core-web/media/browser/webrtc';
-export {
-  studioProvider,
-  type StudioLivepeerProviderConfig,
-} from '@livepeer/core-web/providers/studio';
-export { createReactClient, defaultQueryClient } from './client';
-export type { CreateReactClientConfig, ReactClient } from './client';
+export * from "@livepeer/core-react";
+
 export {
   AudioSourceSelect,
   AudioToggle,
@@ -48,39 +36,4 @@ export {
   type VideoSourceSelectProps,
   type VideoToggleProps,
   type VolumeProps,
-} from './components';
-export {
-  Context,
-  LivepeerConfig,
-  MediaControllerProvider,
-  ThemeProvider,
-  useClient,
-  useMediaController,
-  useTheme,
-} from './context';
-export type {
-  LivepeerConfigProps,
-  MediaControllerProviderProps,
-  ThemeProviderProps,
-} from './context';
-export {
-  prefetchAsset,
-  prefetchAssetMetrics,
-  prefetchPlaybackInfo,
-  prefetchPlayer,
-  prefetchStream,
-  prefetchStreamSession,
-  prefetchStreamSessions,
-  useAsset,
-  useAssetMetrics,
-  useCreateAsset,
-  useCreateClip,
-  useCreateStream,
-  useLivepeerProvider,
-  usePlaybackInfo,
-  useStream,
-  useStreamSession,
-  useStreamSessions,
-  useUpdateAsset,
-  useUpdateStream,
-} from './hooks';
+} from "./components";

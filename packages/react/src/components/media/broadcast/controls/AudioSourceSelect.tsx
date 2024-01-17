@@ -1,12 +1,12 @@
-import { MediaControllerState } from '@livepeer/core-web';
+import { MediaControllerState } from "@livepeer/core-web";
 import {
   getMediaDevices,
   getUserMedia,
-} from '@livepeer/core-web/media/browser/webrtc';
-import * as React from 'react';
+} from "@livepeer/core-web/src/media/browser/webrtc";
+import * as React from "react";
 
-import { AVSelect } from './AVSelect';
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
+import { AVSelect } from "./AVSelect";
 
 const mediaControllerSelector = ({
   deviceIds,
@@ -42,7 +42,7 @@ export const AudioSourceSelect: React.FC<AudioSourceSelectProps> = ({
 
   React.useEffect(() => {
     const destroy = getMediaDevices((devices) => {
-      setMediaDevices(devices.filter((device) => device.kind === 'audioinput'));
+      setMediaDevices(devices.filter((device) => device.kind === "audioinput"));
     });
 
     return destroy;

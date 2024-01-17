@@ -1,1 +1,1 @@
-declare module 'mux-embed';
+declare module "mux-embed";

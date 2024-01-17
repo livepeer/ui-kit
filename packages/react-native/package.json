@@ -1,92 +1,34 @@
 {
   "name": "@livepeer/react-native",
-  "description": "React Native components & hooks for mobile apps built with Livepeer.",
+  "description": "React Native components & hooks for mobile apps built with Livepeer. (deprecated)",
   "license": "MIT",
-  "version": "2.0.11",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer-react.git",
     "directory": "packages/react-native"
   },
   "homepage": "https://docs.livepeer.org",
-  "main": "dist/livepeer-react-native.cjs.js",
-  "module": "dist/livepeer-react-native.esm.js",
-  "types": "dist/livepeer-react-native.cjs.d.ts",
+  "files": ["dist"],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.mjs",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
-    "./package.json": "./package.json",
     ".": {
-      "module": "./dist/livepeer-react-native.esm.js",
-      "default": "./dist/livepeer-react-native.cjs.js"
-    },
-    "./components": {
-      "module": "./components/dist/livepeer-react-native-components.esm.js",
-      "default": "./components/dist/livepeer-react-native-components.cjs.js"
-    },
-    "./contracts": {
-      "module": "./contracts/dist/livepeer-react-native-contracts.esm.js",
-      "default": "./contracts/dist/livepeer-react-native-contracts.cjs.js"
-    },
-    "./hooks": {
-      "module": "./hooks/dist/livepeer-react-native-hooks.esm.js",
-      "default": "./hooks/dist/livepeer-react-native-hooks.cjs.js"
+      "import": {
+        "types": "./dist/es/index.d.mts",
+        "default": "./dist/es/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "sideEffects": false,
-  "files": [
-    "client",
-    "/components",
-    "/context",
-    "contracts",
-    "/hooks",
-    "/dist"
-  ],
-  "preconstruct": {
-    "entrypoints": [
-      "index.ts",
-      "client.ts",
-      "components/index.ts",
-      "context/index.ts",
-      "contracts.ts",
-      "hooks/index.ts"
-    ]
+  "scripts": {
+    "build": "bunchee",
+    "clean": "rimraf .turbo node_modules dist",
+    "dev": "bunchee --watch"
   },
-  "peerDependencies": {
-    "expo": "*",
-    "expo-av": ">=12.0.0",
-    "react": ">=17.0.0",
-    "react-native": ">=0.68.2",
-    "react-native-svg": ">=13.0.0"
-  },
-  "peerDependenciesMeta": {},
-  "dependencies": {
-    "@livepeer/core-react": "^2.1.7",
-    "react-native-url-polyfill": "^2.0.0",
-    "stitches-native": "^0.4.0",
-    "zustand": "^4.3.9"
-  },
-  "devDependencies": {
-    "@tanstack/react-query": "4.29.23",
-    "@testing-library/react-hooks": "^8.0.1",
-    "@testing-library/react-native": "^12.1.2",
-    "@types/react": "^18.2.15",
-    "@types/react-native": "^0.72.2",
-    "expo": "^49.0.3",
-    "expo-av": "13.4.1",
-    "react": "^18.2.0",
-    "react-native": "0.72.3",
-    "react-native-svg": "13.10.0"
-  },
-  "keywords": [
-    "dapps",
-    "eth",
-    "ethereum",
-    "hooks",
-    "livepeer",
-    "react",
-    "react-native",
-    "mobile",
-    "streaming",
-    "video",
-    "web3"
-  ]
+  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
 }

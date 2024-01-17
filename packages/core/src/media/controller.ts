@@ -2,14 +2,14 @@ import {
   createJSONStorage,
   persist,
   subscribeWithSelector,
-} from 'zustand/middleware';
-import { StoreApi, createStore } from 'zustand/vanilla';
+} from "zustand/middleware";
+import { StoreApi, createStore } from "zustand/vanilla";
 
-import { getPlaybackIdFromSourceUrl } from './metrics/utils';
-import { Src, getMediaSourceType } from './src';
-import { ClientStorage } from '../storage';
-import { Asset } from '../types';
-import { omit } from '../utils';
+import { ClientStorage } from "../storage";
+import { getPlaybackIdFromSourceUrl } from "./metrics/utils";
+import { Src, getMediaSourceType } from "./src";
+
+import { omit } from "../utils";
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
 export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
@@ -22,12 +22,91 @@ export type DeviceInformation = {
   isIos: boolean;
   isAndroid: boolean;
   userAgent: string;
+
+  /** If the media supports changing the volume */
+  isVolumeChangeSupported: boolean;
+  /** If the media supports PiP */
+  isPictureInPictureSupported: boolean;
+  /** If the media supports fullscreen */
+  isFullscreenSupported: boolean;
+
+  /** If the media supports HLS playback */
+  isHlsSupported: boolean;
+  /** If the media supports WebRTC */
+  isWebRTCSupported: boolean;
 };
 
-export type ObjectFit = 'cover' | 'contain';
+export type ControlsState = {
+  /** The last time that play/pause was requested */
+  requestedPlayPauseLastTime: number;
+  /** The last time that fullscreen was changed */
+  requestedFullscreenLastTime: number;
+  /** The last time that a clip was requested */
+  requestedClipLastTime: number;
+  /** The last time that picture in picture was changed */
+  requestedPictureInPictureLastTime: number;
+  /** Internal value when a user requests an update to the progress of the media */
+  requestedRangeToSeekTo: number;
+
+  /** The last time that a play event was received */
+  playLastTime: number;
+  /** The offset of the browser's livestream versus the server time (in ms). */
+  playbackOffsetMs: number | null;
+  /** The last time that the media was interacted with */
+  lastInteraction: number;
+  /** The parsed playbackId from the src */
+  playbackId: string | null;
+
+  /** Media sizing information */
+  size: MediaSizing | null;
+
+  /** If the volume is muted */
+  muted: boolean;
+  /** The volume, doesn't change when muted */
+  volume: number;
+};
+
+export type ObjectFit = "cover" | "contain";
+
+/**
+ * Type representing the different playback states of a video.
+ */
+export type PlaybackState =
+  /** State when the video is currently playing. Corresponds to 'playing' event. */
+  | "playing"
+  /** State when the video is paused. Corresponds to 'pause' event. */
+  | "paused"
+  /** State when the video is loading. Corresponds to 'loadstart' event. */
+  | "loading"
+  /** State when the video can be played, but might not play through completely. Corresponds to 'canplay' event. */
+  | "canPlay"
+  /** State when the video is buffering. Corresponds to 'waiting' event. */
+  | "buffering"
+  /** State when the video playback has ended. Corresponds to 'ended' event. */
+  | "ended"
+  /** State when the video playback is stalled. Corresponds to 'stalled' event. */
+  | "stalled"
+  /** State when there is an error in video playback. Corresponds to 'error' event. */
+  | "error";
+
+export type InitialProps = {
+  /** If autoPlay was passed in to the Player */
+  autoPlay: boolean;
+  /** The preload option passed in to the Player */
+  preload: "auto" | "metadata" | "none";
+  /** The viewerId for the viewer passed in to Player */
+  viewerId: string | null;
+  /** The creatorId for the broadcast component */
+  creatorId: string | null;
+
+  /** The volume that was passed in to the Player */
+  volume: number;
+  /** The playback rate that was passed in to the Player. Defaults to 1. */
+  playbackRate: number;
+};
 
 export type PlaybackError = {
-  type: 'offline' | 'access-control' | 'fallback' | 'unknown';
+  type: "offline" | "access-control" | "fallback" | "unknown";
   message: string;
 };
 
@@ -49,243 +128,162 @@ export type Metadata = {
 export type ClipLength = 90 | 60 | 45 | 30 | 15 | 10;
 
 const omittedKeys = [
-  '_lastInteraction',
-  '_requestSeekDiff',
-  '_requestedFullscreenLastTime',
-  '_requestedPictureInPictureLastTime',
-  '_requestedPlayPauseLastTime',
-  '_requestedRangeToSeekTo',
-  '_playLastTime',
-  '_setVolume',
-  '_updateBuffered',
-  '_updateLastInteraction',
-  '_updateMediaStream',
-  '_updateSource',
-  'setIsVolumeChangeSupported',
-  'setError',
-  'setWebsocketMetadata',
-  'setStalled',
-  'setWaiting',
-  'onProgress',
-  'onDurationChange',
-  'onPlay',
-  'onPause',
-  'onClipCreated',
-  'onClipError',
-  'onClipStarted',
-  '_updatePlaybackOffsetMs',
+  "__initialProps",
+  "__device",
+  "__controls",
+  "__metadata",
+  "__controlsFunctions",
 ] as const;
 
-export const sanitizeMediaControllerState = <TElement, TMediaStream>(
-  state: MediaControllerState<TElement, TMediaStream>,
-): MediaControllerCallbackState<TElement, TMediaStream> =>
-  omit(state, ...omittedKeys);
+export const sanitizeMediaControllerState = (
+  state: MediaControllerState,
+): MediaControllerCallbackState => omit(state, ...omittedKeys);
 
-export type MediaControllerCallbackState<
-  TElement = HTMLMediaElement,
-  TMediaStream = MediaStream,
-> = Omit<
-  MediaControllerState<TElement, TMediaStream>,
-  typeof omittedKeys[number]
+export type MediaControllerCallbackState = Omit<
+  MediaControllerState,
+  (typeof omittedKeys)[number]
 >;
 
-export type MediaControllerState<TElement = void, TMediaStream = void> = {
-  /** If the media has loaded and can be played */
-  canPlay: boolean;
-  /** If the controls are currently hidden */
-  hidden: boolean;
-  /** The last time that the media was interacted with */
-  _lastInteraction: number;
+const generateRandomToken = () => {
+  try {
+    return Math.random().toString(16).substring(2);
+  } catch (e) {
+    //
+  }
 
-  /** Current volume of the media */
+  return "none";
+};
+
+export type MediaControllerState = {
+  /** Current volume of the media. 0 if it is muted. */
   volume: number;
-  /** If media is muted */
-  muted: boolean;
-  /** If media supports changing the volume */
-  isVolumeChangeSupported: boolean;
+  /** The current playback rate for the media. Defaults to 1. */
+  playbackRate: number;
+  /** Current progress of the media (in seconds) */
+  progress: number;
+  /** Current total duration of the media (in seconds) */
+  duration: number;
+  /** Current buffered end time for the media (in seconds) */
+  buffered: number;
 
-  /** Session token for the current playback */
-  sessionToken: string;
-
-  /** The playbackId that was passed in to the media element */
-  playbackId: string | null;
-  /** The Source that was passed in to the Player */
-  src: Src | null;
-  /** The ingest URL that was passed in to the broadcast component */
-  ingestUrl: string | null;
-  /** If autoplay was passed in to the media element */
-  autoplay: boolean;
-  /** If priority was passed in to the media element */
-  priority: boolean;
-  /** The preload option passed in to the media element */
-  preload: 'full' | 'metadata' | 'none';
-  /** The viewerId for the viewer passed in to Player */
-  viewerId: string;
-  /** The creatorId for the broadcast component */
-  creatorId: string;
-  /** The media metadata, from the playback websocket */
-  metadata?: Metadata;
-  /** The length (in seconds) of the clip to create from instant clipping. */
-  clipLength?: ClipLength;
-
-  /** Status of the ongoing clip request. */
-  clipStatus: 'idle' | 'loading' | 'success' | 'error';
-  /** Callback when a clip is created from the clip button. */
-  onClipStarted?: () => Promise<any> | any;
-  /** Callback when a clip is created from the clip button. */
-  onClipCreated?: (asset: Asset) => Promise<any> | any;
-  /** Callback when a clip fails to be created from the clip button. */
-  onClipError?: (error: Error) => Promise<any> | any;
-
-  /** The offset of the browser's livestream versus the server time (in ms). */
-  playbackOffsetMs?: number;
-
-  /** The audio and video device IDs for broadcasting */
+  /** The audio and video device IDs currently used (only applies to broadcasting) */
   deviceIds: {
     audio?: string;
     video?: string;
   } | null;
-
-  /** If the media is current playing or paused */
-  playing: boolean;
-  /** If the media has been played yet */
-  hasPlayed: boolean;
-  /** If the media is fullscreen */
-  fullscreen: boolean;
-
-  /** The playback rate for the media */
-  playbackRate: number;
-
-  /** If the media has an error */
-  error?: string;
-  /** If the media is currently waiting for data */
-  waiting: boolean;
-  /** If the media is currently stalled */
-  stalled: boolean;
-  /** If the media is currently loading */
-  loading: boolean;
-
-  /** If the media is in picture in picture mode */
-  pictureInPicture: boolean;
-
-  /** The last time that play/pause was requested */
-  _requestedPlayPauseLastTime: number;
-
-  /** The last time that fullscreen was changed */
-  _requestedFullscreenLastTime: number;
-
-  /** The last time that a clip was requested */
-  _requestedClipLastTime: number;
-
-  /** The last time that picture in picture was changed*/
-  _requestedPictureInPictureLastTime: number;
-
-  /** The last time that a play event was received */
-  _playLastTime: number;
-
-  /** If the content is live media */
-  live: boolean;
-
-  /** Current progress of the media */
-  progress: number;
-  /** Current total duration of the media */
-  duration: number;
-
-  /** Current buffered end time for the media */
-  buffered: number;
-
-  /** Internal value when a user requests an update to the progress of the media */
-  _requestedRangeToSeekTo: number;
-
-  /** Internal element used for playing media */
-  _element: TElement | null;
-
-  /** Internal MediaStream used for broadcasting */
-  _mediaStream: TMediaStream | null;
-
   /** If video is enabled (only applies to broadcasting) */
   video: boolean | null;
 
-  /** Media sizing information */
-  size?: MediaSizing;
+  /** If the media is fullscreen. */
+  fullscreen: boolean;
+  /** If the media is in picture in picture mode */
+  pictureInPicture: boolean;
 
-  /** Device tracking set on load of the media */
-  device: DeviceInformation;
+  /** The playback state of the media. */
+  playbackState: PlaybackState;
+  /** If the media has experienced an error. */
+  error: PlaybackError | null;
 
-  /** The final playback URL for the media, after redirects. */
-  url: string | null;
+  /** If all controls are currently hidden */
+  hidden: boolean;
+  /** If the content is live media */
+  live: boolean;
+  /** Session token for the current playback */
+  sessionToken: string;
 
-  _updateSource: (source: string) => void;
-  _updateMediaStream: (
-    mediaStream: TMediaStream,
-    ids?: { audio?: string; video?: string },
-  ) => void;
+  /** If the media has been played yet. */
+  hasPlayed: boolean;
 
-  setHidden: (hidden: boolean) => void;
-  _updateLastInteraction: () => void;
+  /** The ingest URL that was passed in to the Broadcast */
+  inputIngest: string | null;
+  /** The source that was passed in to the Player */
+  inputSource: Src[] | string | null;
+  /** The current source that is playing. */
+  currentSource: Src | null;
+  /** The final playback URL for the media that is playing, after redirects. */
+  currentUrl: string | null;
 
-  _updatePlaybackOffsetMs: (offset: number) => void;
+  /** The initial props passed into the component. */
+  __initialProps: InitialProps;
+  /** The device information and support. */
+  __device: DeviceInformation;
+  /** The controls state. */
+  __controls: ControlsState;
+  /** The media metadata, from the playback websocket */
+  __metadata: Metadata | null;
 
-  setWebsocketMetadata: (metadata: Metadata) => void;
+  /** Internal element used for playing media */
+  // _element: TElement | null;
 
-  onCanPlay: () => void;
+  /** Internal MediaStream used for broadcasting */
+  // _mediaStream: TMediaStream | null;
 
-  onPlay: () => void;
-  onPause: () => void;
-  togglePlay: (force?: boolean) => void;
+  __controlsFunctions: {
+    updateSource: (source: string) => void;
+    // updateMediaStream: (
+    //   mediaStream: TMediaStream,
+    //   ids?: { audio?: string; video?: string },
+    // ) => void;
 
-  toggleVideo: () => void;
+    requestSeek: (time: number) => void;
 
-  onProgress: (time: number) => void;
-  onDurationChange: (duration: number) => void;
+    requestSeekBack: (difference?: number) => void;
+    requestSeekForward: (difference?: number) => void;
+    requestSeekDiff: (difference: number) => void;
+    togglePlay: (force?: boolean) => void;
+    toggleVideo: () => void;
 
-  _updateBuffered: (buffered: number) => void;
+    setHidden: (hidden: boolean) => void;
+    updateLastInteraction: () => void;
 
-  requestSeek: (time: number) => void;
+    updatePlaybackOffsetMs: (offset: number) => void;
 
-  requestSeekBack: (difference?: number) => void;
-  requestSeekForward: (difference?: number) => void;
-  _requestSeekDiff: (difference: number) => void;
+    setWebsocketMetadata: (metadata: Metadata) => void;
 
-  /** If the media has a playback error */
-  playbackError?: PlaybackError | null;
-  setPlaybackError: (error: PlaybackError | null) => void;
+    onPlay: () => void;
+    onPause: () => void;
+    onCanPlay: () => void;
+    onProgress: (time: number) => void;
+    onDurationChange: (duration: number) => void;
+    onWaiting: () => void;
+    onStalled: () => void;
+    onLoading: () => void;
+    onEnded: () => void;
 
-  setLive: (live: boolean) => void;
+    updateBuffered: (buffered: number) => void;
 
-  setSize: (size: MediaSizing) => void;
+    setError: (error: PlaybackError | null) => void;
 
-  setFullscreen: (fullscreen: boolean) => void;
-  setPictureInPicture: (pictureInPicture: boolean) => void;
-  requestToggleFullscreen: () => void;
-  requestTogglePictureInPicture: () => void;
-  requestClip: () => void;
+    setLive: (live: boolean) => void;
 
-  _setVolume: (volume: number) => void;
-  requestVolume: (volume: number) => void;
-  requestToggleMute: () => void;
-  setIsVolumeChangeSupported: (supported: boolean) => void;
+    setSize: (size: MediaSizing) => void;
 
-  setWaiting: (waiting: boolean) => void;
-  setError: (error: string) => void;
-  setStalled: (stalled: boolean) => void;
-  setLoading: (stalled: boolean) => void;
+    setFullscreen: (fullscreen: boolean) => void;
+    setPictureInPicture: (pictureInPicture: boolean) => void;
+    requestToggleFullscreen: () => void;
+    requestTogglePictureInPicture: () => void;
+    requestClip: () => void;
 
-  onRedirect: (url: string | null) => void;
+    setVolume: (volume: number) => void;
+    requestVolume: (volume: number) => void;
+    requestToggleMute: () => void;
+
+    generateNewPlaybackToken: () => void;
+
+    onRedirect: (url: string | null) => void;
+  };
 };
 
-export type MediaControllerStore<TElement, TMediaStream> = StoreApi<
-  MediaControllerState<TElement, TMediaStream>
-> & {
+export type MediaControllerStore = StoreApi<MediaControllerState> & {
   subscribe: {
     (
       listener: (
-        selectedState: MediaControllerState<TElement, TMediaStream>,
-        previousSelectedState: MediaControllerState<TElement, TMediaStream>,
+        selectedState: MediaControllerState,
+        previousSelectedState: MediaControllerState,
       ) => void,
     ): () => void;
     <U>(
-      selector: (state: MediaControllerState<TElement, TMediaStream>) => U,
+      selector: (state: MediaControllerState) => U,
       listener: (selectedState: U, previousSelectedState: U) => void,
       options?: {
         equalityFn?: (a: U, b: U) => boolean;
@@ -296,7 +294,7 @@ export type MediaControllerStore<TElement, TMediaStream> = StoreApi<
 };
 
 const getFilteredNaN = (value: number | undefined | null) =>
-  value && !isNaN(value) && isFinite(value) ? value : 0;
+  value && !Number.isNaN(value) && Number.isFinite(value) ? value : 0;
 
 const getBoundedSeek = (seek: number, duration: number | undefined) =>
   Math.min(
@@ -308,269 +306,311 @@ const getBoundedSeek = (seek: number, duration: number | undefined) =>
 const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 
-export const createControllerStore = <TElement, TMediaStream>({
-  element,
+export const createControllerStore = ({
   device,
   storage,
-  mediaProps,
-  opts,
+  src,
+  initialProps,
 }: {
-  element?: TElement;
   device: DeviceInformation;
   storage: ClientStorage;
-  mediaProps: MediaPropsOptions;
-  opts: ControlsOptions;
-}): MediaControllerStore<TElement, TMediaStream> => {
+  src: Src[] | string;
+  initialProps: Partial<InitialProps>;
+}): MediaControllerStore => {
+  const initialVolume = getBoundedVolume(
+    initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
+  );
+
   const store = createStore<
-    MediaControllerState<TElement, TMediaStream>,
+    MediaControllerState,
     [
-      [
-        'zustand/subscribeWithSelector',
-        Partial<MediaControllerState<TElement, TMediaStream>>,
-      ],
-      [
-        'zustand/persist',
-        Partial<MediaControllerState<TElement, TMediaStream>>,
-      ],
+      ["zustand/subscribeWithSelector", Partial<MediaControllerState>],
+      ["zustand/persist", Partial<MediaControllerState>],
     ]
   >(
     subscribeWithSelector(
       persist(
         (set, get) => ({
-          _element: element ?? null,
-
-          sessionToken: mediaProps.sessionToken ?? 'default',
-
           canPlay: false,
           hidden: false,
-          live: false,
-
-          ingestUrl: mediaProps.ingestUrl ?? null,
-          playbackId: mediaProps.playbackId ?? null,
-          src: null,
-          autoplay: Boolean(mediaProps.autoPlay),
-          muted: Boolean(mediaProps.muted),
-          priority: Boolean(mediaProps.priority),
-          preload: mediaProps.priority ? 'full' : 'none',
-          viewerId: mediaProps.viewerId ?? '',
-          creatorId: mediaProps.creatorId ?? '',
-          clipLength: mediaProps.clipLength,
-          clipStatus: 'idle',
-
-          playbackOffsetMs: 0,
-
-          deviceIds: null,
-
-          url: null,
-
-          hasPlayed: false,
-          playing: false,
-          fullscreen: false,
-          pictureInPicture: false,
-
-          waiting: false,
-          stalled: false,
-          loading: false,
+          /** Current volume of the media. 0 if it is muted. */
+          volume: initialVolume,
+          /** The playback rate for the media. Defaults to 1. */
           playbackRate: 1,
-
-          _mediaStream: null,
-          video: null,
-
-          device,
-
+          /** Current progress of the media (in seconds) */
           progress: 0,
+          /** Current total duration of the media (in seconds) */
           duration: 0,
-
+          /** Current buffered end time for the media (in seconds) */
           buffered: 0,
 
-          volume: getBoundedVolume(opts?.defaultVolume ?? DEFAULT_VOLUME_LEVEL),
-          isVolumeChangeSupported: false,
+          /** The audio and video device IDs currently used (only applies to broadcasting) */
+          deviceIds: null,
+          /** If video is enabled (only applies to broadcasting) */
+          video: null,
 
-          _lastInteraction: Date.now(),
+          /** If the media is fullscreen. */
+          fullscreen: false,
+          /** If the media is in picture in picture mode */
+          pictureInPicture: false,
 
-          _requestedRangeToSeekTo: 0,
-          _requestedClipLastTime: Date.now(),
-          _requestedFullscreenLastTime: Date.now(),
-          _requestedPictureInPictureLastTime: Date.now(),
-          _requestedPlayPauseLastTime: 0,
-          _playLastTime: 0,
+          /** The playback state of the media. */
+          playbackState: "loading",
+          /** If the media has experienced an error. */
+          error: null,
 
-          _updateMediaStream: (_mediaStream, ids) =>
-            set(({ deviceIds }) => ({
-              _mediaStream,
-              ...(ids?.video ? { video: true } : {}),
-              deviceIds: {
-                ...deviceIds,
-                ...(ids?.audio ? { audio: ids.audio } : {}),
-                ...(ids?.video ? { video: ids.video } : {}),
-              },
-            })),
+          /** If the content is live media */
+          live: false,
+          /** Session token for the current playback */
+          sessionToken: generateRandomToken(),
 
-          onClipStarted: () => {
-            mediaProps?.onClipStarted?.();
+          /** If the media has been played yet. */
+          hasPlayed: false,
 
-            return set(() => ({
-              clipStatus: 'loading',
-            }));
+          /** The ingest URL that was passed in to the Broadcast */
+          inputIngest: null,
+          /** The source that was passed in to the Player */
+          inputSource: src ?? null,
+          /** The current source that is playing. */
+          currentSource:
+            (typeof src === "string" ? getMediaSourceType(src) : src?.[0]) ??
+            null,
+          /** The final playback URL for the media that is playing, after redirects. */
+          currentUrl: null,
+
+          __initialProps: {
+            volume: initialVolume ?? null,
+            playbackRate: initialProps.playbackRate ?? 1,
+
+            autoPlay: initialProps.autoPlay ?? false,
+            creatorId: initialProps.creatorId ?? null,
+            preload: initialProps.preload ?? "none",
+            viewerId: initialProps.viewerId ?? null,
           },
-          onClipCreated: (asset: Asset) => {
-            mediaProps?.onClipCreated?.(asset);
 
-            return set(() => ({
-              clipStatus: 'success',
-            }));
+          __device: device,
+
+          __controls: {
+            requestedRangeToSeekTo: 0,
+            requestedClipLastTime: Date.now(),
+            requestedFullscreenLastTime: Date.now(),
+            requestedPictureInPictureLastTime: Date.now(),
+            requestedPlayPauseLastTime: 0,
+            playLastTime: 0,
+            playbackOffsetMs: null,
+            lastInteraction: Date.now(),
+            playbackId: null,
+            size: null,
+            volume: initialVolume,
+            muted: initialVolume === 0,
           },
-          onClipError: (error: Error) => {
-            mediaProps?.onClipError?.(error);
 
-            return set(() => ({
-              clipStatus: 'error',
-            }));
-          },
+          __metadata: null,
 
-          setHidden: (hidden: boolean) =>
-            set(({ playing }) => ({ hidden: playing ? hidden : false })),
-          _updateLastInteraction: () =>
-            set(() => ({ _lastInteraction: Date.now(), hidden: false })),
+          __controlsFunctions: {
+            // updateMediaStream: (_mediaStream, ids) =>
+            //   set(({ deviceIds }) => ({
+            //     _mediaStream,
+            //     ...(ids?.video ? { video: true } : {}),
+            //     deviceIds: {
+            //       ...deviceIds,
+            //       ...(ids?.audio ? { audio: ids.audio } : {}),
+            //       ...(ids?.video ? { video: ids.video } : {}),
+            //     },
+            //   })),
 
-          // set the src and playbackId from the source URL
-          _updateSource: (source: string) =>
-            set(({ playbackId }) => ({
-              src: getMediaSourceType(source),
-              ...(!playbackId
-                ? { playbackId: getPlaybackIdFromSourceUrl(source) }
-                : {}),
-            })),
+            setHidden: (hidden: boolean) =>
+              set(({ playbackState }) => ({
+                hidden: playbackState === "playing" ? hidden : false,
+              })),
+            updateLastInteraction: () =>
+              set(() => ({ _lastInteraction: Date.now(), hidden: false })),
 
-          _updatePlaybackOffsetMs: (offset: number) =>
-            set(() => ({
-              playbackOffsetMs: offset,
-            })),
+            // set the src and playbackId from the source URL
+            updateSource: (source: string) =>
+              set(({ __controls }) => ({
+                src: getMediaSourceType(source),
+                ...(!__controls?.playbackId
+                  ? {
+                      __controls: {
+                        ...__controls,
+                        playbackId: getPlaybackIdFromSourceUrl(source),
+                      },
+                    }
+                  : {}),
+              })),
 
-          onCanPlay: () =>
-            set(() => ({
-              canPlay: true,
-              loading: false,
-            })),
+            updatePlaybackOffsetMs: (offset: number) =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  playbackOffsetMs: offset,
+                },
+              })),
 
-          onPlay: () =>
-            set(() => ({
-              playing: true,
-              hasPlayed: true,
-              stalled: false,
-              waiting: false,
-              _playLastTime: Date.now(),
-            })),
-          onPause: () =>
-            set(() => ({
-              playing: false,
-              hidden: false,
-              // TODO check if these should be getting set when pause event is fired (this was pulled from metrics)
-              stalled: false,
-              waiting: false,
-            })),
-          togglePlay: (force?: boolean) => {
-            const { hidden, setHidden, device } = store.getState();
-            if (!force && hidden && device.isMobile) {
-              setHidden(false);
-            } else {
+            onCanPlay: () =>
               set(() => ({
-                _requestedPlayPauseLastTime: Date.now(),
-                _lastInteraction: Date.now(),
-              }));
-            }
-          },
-          toggleVideo: () =>
-            set(({ video }) => ({
-              video: !video,
-            })),
-          onProgress: (time) =>
-            set(() => ({
-              progress: getFilteredNaN(time),
-              waiting: false,
-              stalled: false,
-            })),
-          requestSeek: (time) =>
-            set(({ duration }) => ({
-              _requestedRangeToSeekTo: getBoundedSeek(time, duration),
-              progress: getBoundedSeek(time, duration),
-            })),
+                playbackState: "canPlay",
+              })),
 
-          onDurationChange: (duration) =>
-            set(({ live }) => ({
-              duration,
-              live: duration === Number.POSITIVE_INFINITY ? true : live,
-            })),
+            onPlay: () =>
+              set(({ __controls }) => ({
+                playbackState: "playing",
+                hasPlayed: true,
+                __controls: {
+                  ...__controls,
+                  playLastTime: Date.now(),
+                },
+              })),
+            onPause: () =>
+              set(() => ({
+                playbackState: "paused",
+              })),
+            togglePlay: (force?: boolean) => {
+              const { hidden, __device, __controlsFunctions } =
+                store.getState();
+              if (!force && hidden && __device.isMobile) {
+                __controlsFunctions.setHidden(false);
+              } else {
+                set(({ __controls }) => ({
+                  __controls: {
+                    ...__controls,
+                    requestedPlayPauseLastTime: Date.now(),
+                    lastInteraction: Date.now(),
+                  },
+                }));
+              }
+            },
+            toggleVideo: () =>
+              set(({ video }) => ({
+                video: !video,
+              })),
+            onProgress: (time) =>
+              set(({ playbackState }) => ({
+                progress: getFilteredNaN(time),
+                ...(playbackState !== "playing"
+                  ? { playbackState: "playing" }
+                  : {}),
+              })),
+            requestSeek: (time) =>
+              set(({ duration, __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  requestedRangeToSeekTo: getBoundedSeek(time, duration),
+                },
+                progress: getBoundedSeek(time, duration),
+              })),
 
-          setWebsocketMetadata: (metadata: Metadata) =>
-            set(() => ({ metadata })),
-
-          setPlaybackError: (playbackError: PlaybackError | null) =>
-            set(() => ({ playbackError, playing: false })),
-
-          _updateBuffered: (buffered) => set(() => ({ buffered })),
-
-          _requestSeekDiff: (difference) =>
-            set(({ progress, duration }) => ({
-              _requestedRangeToSeekTo: getBoundedSeek(
-                getFilteredNaN(progress) + difference / 1000,
+            onDurationChange: (duration) =>
+              set(({ live }) => ({
                 duration,
-              ),
-            })),
-          requestSeekBack: (difference = DEFAULT_SEEK_TIME) =>
-            get()._requestSeekDiff(-difference),
-          requestSeekForward: (difference = DEFAULT_SEEK_TIME) =>
-            get()._requestSeekDiff(difference),
+                live: duration === Number.POSITIVE_INFINITY ? true : live,
+              })),
 
-          onRedirect: (url: string | null) => set(() => ({ url: url })),
+            setWebsocketMetadata: (metadata: Metadata) =>
+              set(() => ({ __metadata: metadata })),
 
-          setSize: (size: MediaSizing) => set(() => ({ size })),
-          setWaiting: (waiting: boolean) => set(() => ({ waiting })),
-          setError: (error: string) => set(() => ({ error })),
-          setStalled: (stalled: boolean) => set(() => ({ stalled })),
-          setLoading: (loading: boolean) => set(() => ({ loading })),
+            setError: (error: PlaybackError | null) =>
+              set(() => ({
+                error,
+                playbackState: "error",
+              })),
 
-          setFullscreen: (fullscreen: boolean) => set(() => ({ fullscreen })),
-          requestToggleFullscreen: () =>
-            set(() => ({
-              _requestedFullscreenLastTime: Date.now(),
-            })),
-          requestClip: () =>
-            set(() => ({
-              _requestedClipLastTime: Date.now(),
-            })),
+            generateNewPlaybackToken: () =>
+              set(() => ({ sessionToken: generateRandomToken() })),
 
-          setPictureInPicture: (pictureInPicture: boolean) =>
-            set(() => ({ pictureInPicture })),
-          requestTogglePictureInPicture: () =>
-            set(() => ({
-              _requestedPictureInPictureLastTime: Date.now(),
-            })),
+            updateBuffered: (buffered) => set(() => ({ buffered })),
 
-          setLive: (live: boolean) => set(() => ({ live })),
+            requestSeekDiff: (difference) =>
+              set(({ progress, duration, __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  requestedRangeToSeekTo: getBoundedSeek(
+                    getFilteredNaN(progress) + difference / 1000,
+                    duration,
+                  ),
+                },
+              })),
+            requestSeekBack: (difference = DEFAULT_SEEK_TIME) =>
+              get().__controlsFunctions.requestSeekDiff(-difference),
+            requestSeekForward: (difference = DEFAULT_SEEK_TIME) =>
+              get().__controlsFunctions.requestSeekDiff(difference),
 
-          requestVolume: (newVolume) =>
-            set(({ volume }) => ({
-              volume: newVolume === 0 ? volume : getBoundedVolume(newVolume),
-              muted: newVolume === 0,
-            })),
-          _setVolume: (newVolume) =>
-            set(() => ({
-              volume: getBoundedVolume(newVolume),
-            })),
+            onRedirect: (currentUrl: string | null) =>
+              set(() => ({ currentUrl })),
 
-          requestToggleMute: () =>
-            set(({ muted }) => ({
-              muted: !muted,
-            })),
+            setSize: (size: MediaSizing) =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  size,
+                },
+              })),
+            onWaiting: () => set(() => ({ playbackState: "buffering" })),
 
-          setIsVolumeChangeSupported: (supported) =>
-            set(() => ({
-              isVolumeChangeSupported: supported,
-            })),
+            onStalled: () => set(() => ({ playbackState: "stalled" })),
+            onLoading: () => set(() => ({ playbackState: "loading" })),
+            onEnded: () => set(() => ({ playbackState: "ended" })),
+
+            setFullscreen: (fullscreen: boolean) => set(() => ({ fullscreen })),
+            requestToggleFullscreen: () =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  requestedFullscreenLastTime: Date.now(),
+                },
+              })),
+            requestClip: () =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  requestedClipLastTime: Date.now(),
+                },
+              })),
+
+            setPictureInPicture: (pictureInPicture: boolean) =>
+              set(() => ({ pictureInPicture })),
+            requestTogglePictureInPicture: () =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  requestedPictureInPictureLastTime: Date.now(),
+                },
+              })),
+
+            setLive: (live: boolean) => set(() => ({ live })),
+
+            requestVolume: (newVolume) =>
+              set(({ __controls }) => ({
+                volume: getBoundedVolume(newVolume),
+                __controls: {
+                  ...__controls,
+                  volume:
+                    newVolume === 0 ? newVolume : getBoundedVolume(newVolume),
+                  muted: newVolume === 0,
+                },
+              })),
+            setVolume: (newVolume) =>
+              set(({ __controls }) => ({
+                volume: getBoundedVolume(newVolume),
+                __controls: {
+                  ...__controls,
+                  volume: getBoundedVolume(newVolume),
+                },
+              })),
+
+            requestToggleMute: () =>
+              set(({ __controls }) => ({
+                volume: !__controls.muted ? 0 : __controls.volume,
+                __controls: {
+                  ...__controls,
+                  muted: !__controls.muted,
+                },
+              })),
+          },
         }),
         {
-          name: 'livepeer-player',
+          name: "livepeer-player",
           version: 1,
           // since these values are persisted across media, only persist volume and playbackRate
           partialize: ({ volume, playbackRate }) => ({
@@ -591,21 +631,4 @@ export type ControlsOptions = {
   autohide?: number;
   /** Sets the default volume. Must be between 0 and 1. */
   defaultVolume?: number;
-};
-
-export type MediaPropsOptions = {
-  playbackId?: string;
-  autoPlay?: boolean;
-  muted?: boolean;
-  priority?: boolean;
-  viewerId?: string;
-  clipLength?: ClipLength;
-  sessionToken?: string;
-
-  onClipStarted?: () => Promise<any> | any;
-  onClipCreated?: (asset: Asset) => Promise<any> | any;
-  onClipError?: (error: Error) => Promise<any> | any;
-
-  creatorId?: string;
-  ingestUrl?: string;
 };

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { DesignSystemProvider, getThemes } from '@livepeer/design-system';
+import { DesignSystemProvider, getThemes } from "@livepeer/design-system";
 import {
   LivepeerConfig,
   createReactClient,
   createStorage,
   noopStorage,
   studioProvider,
-} from '@livepeer/react';
-import { ThemeProvider } from 'next-themes';
-import { useMemo } from 'react';
+} from "@livepeer/react";
+import { ThemeProvider } from "next-themes";
+import { useMemo } from "react";
 
 function fromStorage(key: string): string | null {
   let apiOverride: string | null = null;
@@ -32,17 +32,17 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
         }),
         provider: studioProvider({
           apiKey:
-            fromStorage('STUDIO_API_KEY') ??
+            fromStorage("STUDIO_API_KEY") ??
             process.env.NEXT_PUBLIC_STUDIO_API_KEY ??
-            '',
+            "",
           baseUrl:
-            fromStorage('STUDIO_BASE_URL') ??
+            fromStorage("STUDIO_BASE_URL") ??
             process.env.NEXT_PUBLIC_STUDIO_BASE_URL ??
-            'https://livepeer.studio/api',
+            "https://livepeer.studio/api",
           webrtcIngestBaseUrl:
-            fromStorage('WEBRTC_INGEST_BASE_URL') ??
+            fromStorage("WEBRTC_INGEST_BASE_URL") ??
             process.env.NEXT_PUBLIC_WEBRTC_INGEST_BASE_URL ??
-            'https://playback.livepeer.studio/webrtc',
+            "https://playback.livepeer.studio/webrtc",
           ...{ origin: `https://lvpr.tv` },
         }),
       }),
@@ -53,13 +53,13 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
     <DesignSystemProvider>
       <LivepeerConfig client={livepeerClient}>
         <ThemeProvider
-          forcedTheme={'light'}
+          forcedTheme={"light"}
           disableTransitionOnChange
           attribute="class"
           value={{
             ...themes,
-            dark: 'dark-theme-green',
-            light: 'light-theme-green',
+            dark: "dark-theme-green",
+            light: "light-theme-green",
           }}
         >
           {children}

@@ -2,18 +2,18 @@ import {
   BFRAMES_ERROR_MESSAGE,
   MediaControllerState,
   WebRTCSrc,
-} from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
+} from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
 import {
   WebRTCVideoConfig,
   createNewWHEP,
-} from '@livepeer/core-web/media/browser/webrtc';
-import * as React from 'react';
+} from "@livepeer/core-web/media/browser/webrtc";
+import * as React from "react";
 
-import { VideoPlayerProps } from '.';
+import { VideoPlayerProps } from ".";
 
-import { useMediaController } from '../../../../context';
-import { useDebounce } from '../../../system';
+import { useMediaController } from "../../../../context";
+import { useDebounce } from "../../../system";
 
 const mediaControllerSelector = ({
   metadata,
@@ -21,7 +21,7 @@ const mediaControllerSelector = ({
   setLive,
   _updatePlaybackOffsetMs,
   onRedirect,
-}: MediaControllerState<HTMLMediaElement, MediaStream>) => ({
+}: MediaControllerState) => ({
   metadata,
   _element,
   setLive,
@@ -31,7 +31,7 @@ const mediaControllerSelector = ({
 
 export type WebRTCVideoPlayerProps = Omit<
   VideoPlayerProps,
-  'src' | 'hlsConfig'
+  "src" | "hlsConfig"
 > & {
   src: WebRTCSrc;
   fullscreen: boolean;
@@ -86,7 +86,7 @@ export const WebRTCVideoPlayer = React.forwardRef<
           setErrorCount((prev) => prev + 1);
 
           const cleanError = new Error(
-            error?.message?.toString?.() ?? 'Error with WebRTC',
+            error?.message?.toString?.() ?? "Error with WebRTC",
           );
 
           onPlaybackError?.(cleanError);
@@ -130,10 +130,10 @@ export const WebRTCVideoPlayer = React.forwardRef<
   return (
     <video
       className={styling.media.video({
-        size: fullscreen ? 'fullscreen' : objectFit,
+        size: fullscreen ? "fullscreen" : objectFit,
       })}
       loop={loop}
-      aria-label={title ?? 'Video player'}
+      aria-label={title ?? "Video player"}
       role="video"
       width="100%"
       height="100%"
@@ -142,8 +142,8 @@ export const WebRTCVideoPlayer = React.forwardRef<
       playsInline
       autoPlay={autoPlay}
       muted={muted}
-      poster={typeof poster === 'string' ? poster : undefined}
-      preload={priority ? 'auto' : 'metadata'}
+      poster={typeof poster === "string" ? poster : undefined}
+      preload={priority ? "auto" : "metadata"}
     />
   );
 });

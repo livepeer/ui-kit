@@ -1,11 +1,11 @@
-import { AudioPlayerProps as AudioPlayerCoreProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
-import { canPlayMediaNatively } from '@livepeer/core-web/media/browser';
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { AudioPlayerProps as AudioPlayerCoreProps } from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
+import { canPlayMediaNatively } from "@livepeer/core-web/media/browser";
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { PosterSource } from './Player';
-import { useMediaController } from '../../../context';
+import { useMediaController } from "../../../context";
+import { PosterSource } from "./Player";
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -44,10 +44,10 @@ export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
     return (
       <audio
         className={styling.media.audio({
-          size: fullscreen ? 'fullscreen' : objectFit,
+          size: fullscreen ? "fullscreen" : objectFit,
         })}
         loop={loop}
-        aria-label={title ?? 'Audio player'}
+        aria-label={title ?? "Audio player"}
         role="audio"
         autoPlay={autoPlay}
         ref={ref}
@@ -55,7 +55,7 @@ export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
         playsInline
         muted={muted}
         crossOrigin={
-          allowCrossOriginCredentials ? 'use-credentials' : 'anonymous'
+          allowCrossOriginCredentials ? "use-credentials" : "anonymous"
         }
       >
         {filteredSources.map((source) => (
@@ -69,4 +69,4 @@ export const AudioPlayer = React.forwardRef<HTMLAudioElement, AudioPlayerProps>(
   },
 );
 
-AudioPlayer.displayName = 'AudioPlayer';
+AudioPlayer.displayName = "AudioPlayer";

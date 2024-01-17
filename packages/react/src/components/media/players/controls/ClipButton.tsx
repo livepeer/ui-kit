@@ -1,11 +1,11 @@
 import {
   ClipButtonProps,
   useClipButton,
-} from '@livepeer/core-react/components';
-import { ClipLength, MediaControllerState, omit } from '@livepeer/core-web';
-import { styling } from '@livepeer/core-web/media/browser/styling';
+} from "@livepeer/core-react/components";
+import { ClipLength, MediaControllerState, omit } from "@livepeer/core-web";
+import { styling } from "@livepeer/core-web/media/browser/styling";
 
-import { useMediaController } from '../../../../context';
+import { useMediaController } from "../../../../context";
 
 const DefaultClipIcon = () => (
   <svg width="100%" height="100%" viewBox="-6 -6 36 36" focusable="false">
@@ -53,9 +53,9 @@ export const ClipButton: React.FC<ClipButtonProps> = (props) => {
       className={styling.iconButton.button()}
       title={title}
       aria-label={title}
-      disabled={status === 'loading'}
+      disabled={status === "loading"}
       onClick={buttonProps.onPress}
-      {...omit(buttonProps, 'onPress', 'size')}
+      {...omit(buttonProps, "onPress", "size")}
     />
   ) : (
     <></>

@@ -1,7 +1,7 @@
 import {
   PlayerProps as CorePlayerProps,
   usePlayer,
-} from '@livepeer/core-react/components';
+} from "@livepeer/core-react/components";
 import {
   AudioSrc,
   Base64Src,
@@ -10,18 +10,18 @@ import {
   ObjectFit,
   VideoSrc,
   WebRTCSrc,
-} from '@livepeer/core-web/media';
-import { ControlsOptions } from '@livepeer/core-web/media/browser';
+} from "@livepeer/core-web/media";
+import { ControlsOptions } from "@livepeer/core-web/media/browser";
 
-import { HlsVideoConfig } from '@livepeer/core-web/media/browser/hls';
-import { WebRTCVideoConfig } from '@livepeer/core-web/media/browser/webrtc';
-import * as React from 'react';
+import { HlsVideoConfig } from "@livepeer/core-web/media/browser/hls";
+import { WebRTCVideoConfig } from "@livepeer/core-web/media/browser/webrtc";
+import * as React from "react";
 
-import { AudioPlayer } from '.';
-import { ClipButton, PlayButton, Poster, Progress, Volume } from './controls';
-import { VideoPlayer } from './video';
-import { MediaControllerProvider } from '../../../context';
-import { useIsElementShown } from '../../useIsElementShown';
+import { AudioPlayer } from ".";
+import { MediaControllerProvider } from "../../../context";
+import { ClipButton, PlayButton, Poster, Progress, Volume } from "./controls";
+import { VideoPlayer } from "./video";
+
 import {
   Container,
   ControlsContainer,
@@ -29,7 +29,7 @@ import {
   PictureInPictureButton,
   TimeDisplay,
   Title,
-} from '../controls';
+} from "../controls";
 
 export type PosterSource = string | React.ReactNode;
 
@@ -55,7 +55,7 @@ type PlayerProps<
    *
    * Defaults to `true`.
    */
-  lowLatency?: boolean | 'force';
+  lowLatency?: boolean | "force";
   /** Configuration for the WebRTC playback */
   webrtcConfig?: WebRTCVideoConfig;
   /**
@@ -75,11 +75,9 @@ export type { ObjectFit, PlayerProps };
 export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
   props: PlayerProps<TPlaybackPolicyObject, TSlice>,
 ) => {
-  const [isCurrentlyShown, setIsCurrentlyShown] = React.useState(false);
-
   const screenWidth = React.useMemo(
     () =>
-      typeof window !== 'undefined'
+      typeof window !== "undefined"
         ? (window?.screen?.availWidth || window?.innerWidth) ?? null
         : null,
     [],
@@ -116,12 +114,6 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
     },
   );
 
-  const _isCurrentlyShown = useIsElementShown(mediaElement);
-
-  React.useEffect(() => {
-    setIsCurrentlyShown(_isCurrentlyShown);
-  }, [_isCurrentlyShown]);
-
   return (
     <MediaControllerProvider
       element={mediaElement}
@@ -133,7 +125,7 @@ export const PlayerInternal = <TPlaybackPolicyObject extends object, TSlice>(
         aspectRatio={aspectRatio}
         tabIndex={props.tabIndex}
       >
-        {source && source?.[0]?.type === 'audio' ? (
+        {source && source?.[0]?.type === "audio" ? (
           <AudioPlayer
             {...playerProps}
             src={source as AudioSrc[]}

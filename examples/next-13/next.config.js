@@ -1,13 +1,9 @@
-const { withSentryConfig } = require('@sentry/nextjs');
+const { withSentryConfig } = require("@sentry/nextjs");
 
-const disableSentry = process.env.DISABLE_SENTRY === 'true';
+const disableSentry = process.env.DISABLE_SENTRY === "true";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
-
   sentry: {
     // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
     // for client-side builds. (This will be the default starting in
@@ -19,10 +15,10 @@ const nextConfig = {
   },
 
   transpilePackages: [
-    '@livepeer/core-react',
-    '@livepeer/core',
-    '@livepeer/react-native',
-    '@livepeer/react',
+    "@livepeer/core-react",
+    "@livepeer/core",
+    "@livepeer/react-native",
+    "@livepeer/react",
   ],
 };
 

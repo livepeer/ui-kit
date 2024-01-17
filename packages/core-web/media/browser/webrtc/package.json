@@ -1,4 +1,0 @@
-{
-  "main": "dist/livepeer-core-web-media-browser-webrtc.cjs.js",
-  "module": "dist/livepeer-core-web-media-browser-webrtc.esm.js"
-}

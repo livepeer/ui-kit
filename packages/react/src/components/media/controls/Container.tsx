@@ -1,10 +1,10 @@
-import { ContainerProps as CoreContainerProps } from '@livepeer/core-react/components';
-import { MediaControllerState } from '@livepeer/core-web';
+import { ContainerProps as CoreContainerProps } from "@livepeer/core-react/components";
+import { MediaControllerState } from "@livepeer/core-web";
 
-import { styling } from '@livepeer/core-web/media/browser/styling';
-import * as React from 'react';
+import { styling } from "@livepeer/core-web/media/browser/styling";
+import * as React from "react";
 
-import { useMediaController, useTheme } from '../../../context';
+import { useMediaController, useTheme } from "../../../context";
 
 const mediaControllerSelector = ({
   fullscreen,
@@ -27,16 +27,16 @@ export const Container: React.FC<ContainerProps> = (props) => {
   return (
     <div
       style={{
-        display: 'contents',
+        display: "contents",
       }}
       className={`${
-        className ? `${className} ` : ''
+        className ? `${className} ` : ""
       }livepeer-contents-container`}
     >
       <div
         className={`${styling.container({
           aspectRatio,
-          size: fullscreen ? 'fullscreen' : 'default',
+          size: fullscreen ? "fullscreen" : "default",
         })} livepeer-aspect-ratio-container`}
         tabIndex={tabIndex ?? 0}
       >

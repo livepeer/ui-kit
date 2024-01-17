@@ -1,7 +1,7 @@
-import ClippingPage from './ClippingPage';
+import ClippingPage from "./ClippingPage";
 
 export const metadata = {
-  title: 'Clipping',
+  title: "Clipping",
 };
 
 export default async function Page({
@@ -14,7 +14,7 @@ export default async function Page({
       playbackId={params.streamKey}
       sessionId={
         params.sessionId
-          ? typeof params.sessionId === 'string'
+          ? typeof params.sessionId === "string"
             ? String(params.sessionId)
             : String(params.sessionId[0])
           : undefined
@@ -23,14 +23,14 @@ export default async function Page({
   ) : (
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignContent: 'center',
+        display: "flex",
+        justifyContent: "center",
+        alignContent: "center",
       }}
     >
       <span>

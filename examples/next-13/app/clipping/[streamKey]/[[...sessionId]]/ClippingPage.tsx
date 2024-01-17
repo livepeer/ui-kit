@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Button, Label, TextField } from '@livepeer/design-system';
+import { Button, Label, TextField } from "@livepeer/design-system";
 import {
   MediaControllerCallbackState,
   Player,
   useCreateClip,
   usePlaybackInfo,
-} from '@livepeer/react';
+} from "@livepeer/react";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ToastAction,
@@ -17,7 +17,7 @@ import {
   ToastRoot,
   ToastTitle,
   ToastViewport,
-} from '../../../toast';
+} from "../../../toast";
 
 export type ClippingPageProps = {
   playbackId: string;
@@ -98,7 +98,7 @@ export default (props: ClippingPageProps) => {
   const { data: clipPlaybackInfo } = usePlaybackInfo({
     playbackId: clipAsset?.playbackId ?? undefined,
     refetchInterval: (info) =>
-      !info?.meta?.source?.some((s) => s.hrn === 'MP4') ? 2000 : false,
+      !info?.meta?.source?.some((s) => s.hrn === "MP4") ? 2000 : false,
   });
 
   const mp4DownloadUrl = useMemo(
@@ -110,12 +110,12 @@ export default (props: ClippingPageProps) => {
 
           return sizeB - sizeA;
         })
-        ?.find((s) => s.hrn === 'MP4')?.url ?? null,
+        ?.find((s) => s.hrn === "MP4")?.url ?? null,
     [clipPlaybackInfo],
   );
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading && typeof window !== "undefined") {
       setOpen(false);
       window?.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => {
@@ -125,7 +125,7 @@ export default (props: ClippingPageProps) => {
   }, [isLoading]);
 
   useEffect(() => {
-    if (mp4DownloadUrl) {
+    if (mp4DownloadUrl && typeof window !== "undefined") {
       setOpen(false);
       window?.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => {
@@ -138,13 +138,13 @@ export default (props: ClippingPageProps) => {
     <ToastProvider>
       <div
         style={{
-          margin: '16px 20px',
+          margin: "16px 20px",
           maxWidth: 800,
         }}
       >
         <div
           style={{
-            position: 'relative',
+            position: "relative",
           }}
         >
           <Player
@@ -157,7 +157,7 @@ export default (props: ClippingPageProps) => {
             onError={onError}
             hlsConfig={hlsConfig}
           />
-          <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
+          <div style={{ position: "absolute", top: 20, right: 20, zIndex: 10 }}>
             <Button
               onClick={() => {
                 const progress = playbackStatus?.progress;
@@ -184,19 +184,19 @@ export default (props: ClippingPageProps) => {
               }}
             >
               {!startTime
-                ? 'Set clip start time'
+                ? "Set clip start time"
                 : !endTime
-                ? 'Set clip end time'
-                : 'Reset'}
+                  ? "Set clip end time"
+                  : "Reset"}
             </Button>
           </div>
         </div>
 
         <div
           style={{
-            marginTop: '20px',
-            display: 'flex',
-            gap: '10px',
+            marginTop: "20px",
+            display: "flex",
+            gap: "10px",
           }}
         >
           <div style={{ flex: 1 }}>
@@ -205,7 +205,7 @@ export default (props: ClippingPageProps) => {
               name="start"
               type="number"
               disabled
-              value={startTime?.displayTime ?? ''}
+              value={startTime?.displayTime ?? ""}
               step={0.1}
             />
           </div>
@@ -215,7 +215,7 @@ export default (props: ClippingPageProps) => {
               name="end"
               type="number"
               disabled
-              value={endTime?.displayTime ?? ''}
+              value={endTime?.displayTime ?? ""}
               step={0.1}
             />
           </div>
@@ -223,8 +223,8 @@ export default (props: ClippingPageProps) => {
 
         <div
           style={{
-            float: 'right',
-            marginTop: '10px',
+            float: "right",
+            marginTop: "10px",
           }}
         >
           <Button
@@ -237,12 +237,12 @@ export default (props: ClippingPageProps) => {
       </div>
       <ToastRoot open={open} onOpenChange={setOpen}>
         <ToastTitle>
-          {!mp4DownloadUrl ? 'Clip loading' : 'Livestream clipped'}
+          {!mp4DownloadUrl ? "Clip loading" : "Livestream clipped"}
         </ToastTitle>
         <ToastDescription>
           {!mp4DownloadUrl
-            ? 'Your clip is being processed in the background...'
-            : 'Your clip has been created.'}
+            ? "Your clip is being processed in the background..."
+            : "Your clip has been created."}
         </ToastDescription>
         {mp4DownloadUrl && (
           <ToastAction asChild altText="Download clip">

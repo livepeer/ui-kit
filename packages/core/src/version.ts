@@ -1,9 +1,7 @@
-const core = `@livepeer/core@2.1.1`;
-const react = `@livepeer/react@3.1.1`;
-const reactNative = `@livepeer/react-native@2.0.9`;
+const core = '@livepeer/core@2.1.7';
+const react = '@livepeer/react@3.1.7';
 
 export const version = {
   core,
   react,
-  reactNative,
 } as const;

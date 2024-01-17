@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Button } from '@livepeer/design-system';
-import { Asset, Player, PlayerProps, usePlaybackInfo } from '@livepeer/react';
-import * as Popover from '@radix-ui/react-popover';
+import { Button } from "@livepeer/design-system";
+import { Asset, Player, PlayerProps, usePlaybackInfo } from "@livepeer/react";
+import * as Popover from "@radix-ui/react-popover";
 
-import mux from 'mux-embed';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import mux from "mux-embed";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ToastAction,
@@ -14,26 +14,7 @@ import {
   ToastRoot,
   ToastTitle,
   ToastViewport,
-} from './toast';
-
-function isIframe() {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  try {
-    return window.self !== window.top;
-  } catch {
-    // do nothing here
-  }
-  try {
-    return window.self !== window.parent;
-  } catch {
-    // do nothing here
-  }
-  // default to true as this is only used to set a transparent background
-  return true;
-}
+} from "./toast";
 
 const controls = {
   defaultVolume: 0.7,
@@ -46,15 +27,34 @@ export default (props: PlayerProps<object, any>) => {
   const timerRef = useRef(0);
 
   useEffect(() => {
+    const isIframe = () => {
+      if (typeof window === "undefined") {
+        return false;
+      }
+
+      try {
+        return window.self !== window.top;
+      } catch {
+        // do nothing here
+      }
+      try {
+        return window.self !== window.parent;
+      } catch {
+        // do nothing here
+      }
+      // default to true as this is only used to set a transparent background
+      return true;
+    };
+
     if (!isIframe()) {
-      document.body.style.backgroundColor = 'black';
+      document.body.style.backgroundColor = "black";
     }
   }, []);
 
   const { data: clipPlaybackInfo } = usePlaybackInfo({
     playbackId: clipPlaybackId ?? undefined,
     refetchInterval: (info) =>
-      !info?.meta?.source?.some((s) => s.hrn === 'MP4') ? 2000 : false,
+      !info?.meta?.source?.some((s) => s.hrn === "MP4") ? 2000 : false,
   });
 
   const mp4DownloadUrl = useMemo(
@@ -66,13 +66,13 @@ export default (props: PlayerProps<object, any>) => {
 
           return sizeB - sizeA;
         })
-        ?.find((s) => s.hrn === 'MP4')?.url ?? null,
+        ?.find((s) => s.hrn === "MP4")?.url ?? null,
     [clipPlaybackInfo],
   );
 
   useEffect(() => {
     if (
-      typeof window !== 'undefined' &&
+      typeof window !== "undefined" &&
       (clipError || clipPlaybackId || mp4DownloadUrl)
     ) {
       setOpen(true);
@@ -92,13 +92,13 @@ export default (props: PlayerProps<object, any>) => {
   }, []);
 
   const onClipError = useCallback((error: Error) => {
-    setClipError(error?.message ?? 'Error with clip');
+    setClipError(error?.message ?? "Error with clip");
   }, []);
 
   const theme = useMemo(
     () => ({
       radii: {
-        containerBorderRadius: '0px',
+        containerBorderRadius: "0px",
       },
     }),
     [],
@@ -108,9 +108,9 @@ export default (props: PlayerProps<object, any>) => {
     mux.monitor(element, {
       debug: false,
       data: {
-        env_key: '8oj27fenun6v4ffvrgn6ehc7m',
-        player_name: 'Livepeer.TV Player v2',
-        player_env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'development',
+        env_key: "8oj27fenun6v4ffvrgn6ehc7m",
+        player_name: "Livepeer.TV Player v2",
+        player_env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? "development",
       },
     });
   }, []);
@@ -119,14 +119,14 @@ export default (props: PlayerProps<object, any>) => {
     <ToastProvider swipeDirection="right">
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           bottom: 0,
           left: 0,
           right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignContent: 'center',
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
         }}
       >
         <Player
@@ -144,27 +144,27 @@ export default (props: PlayerProps<object, any>) => {
       {props?.playbackInfo?.meta?.attestation && (
         <div
           style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
+            position: "relative",
+            width: "100%",
+            height: "100%",
             zIndex: 100,
           }}
         >
           <div
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 16,
               right: 20,
-              userSelect: 'none',
+              userSelect: "none",
             }}
           >
             <Popover.Root>
               <Popover.Trigger asChild>
                 <div
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'white',
+                    display: "flex",
+                    alignItems: "center",
+                    color: "white",
                   }}
                 >
                   <svg
@@ -186,9 +186,9 @@ export default (props: PlayerProps<object, any>) => {
               <Popover.Portal>
                 <Popover.Content
                   style={{
-                    backgroundColor: 'hsl(0, 0%, 11.0%)',
-                    color: 'white',
-                    padding: '10px 14px',
+                    backgroundColor: "hsl(0, 0%, 11.0%)",
+                    color: "white",
+                    padding: "10px 14px",
                     borderRadius: 8,
                     outline: 0,
                     zIndex: 100,
@@ -196,16 +196,16 @@ export default (props: PlayerProps<object, any>) => {
                 >
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      userSelect: 'none',
-                      fontFamily: 'Helvetica',
+                      display: "flex",
+                      flexDirection: "column",
+                      userSelect: "none",
+                      fontFamily: "Helvetica",
                       minWidth: 200,
                     }}
                   >
                     <span
                       style={{
-                        fontSize: '0.8em',
+                        fontSize: "0.8em",
                         fontWeight: 400,
                         marginBottom: 10,
                       }}
@@ -214,31 +214,31 @@ export default (props: PlayerProps<object, any>) => {
                     </span>
                     <div
                       style={{
-                        display: 'flex',
+                        display: "flex",
                         gap: 4,
-                        flexDirection: 'column',
+                        flexDirection: "column",
                       }}
                     >
                       <div
                         style={{
-                          display: 'flex',
+                          display: "flex",
                           gap: 8,
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
                         <span
                           style={{
-                            fontSize: '0.8em',
+                            fontSize: "0.8em",
                             fontWeight: 400,
-                            color: 'rgb(153, 162, 158)',
+                            color: "rgb(153, 162, 158)",
                           }}
                         >
                           Date:
                         </span>
                         <span
                           style={{
-                            fontSize: '0.8em',
+                            fontSize: "0.8em",
                             fontWeight: 600,
                           }}
                         >
@@ -252,27 +252,27 @@ export default (props: PlayerProps<object, any>) => {
                         (attestation) => (
                           <div
                             style={{
-                              display: 'flex',
+                              display: "flex",
                               gap: 8,
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
+                              justifyContent: "space-between",
+                              alignItems: "center",
                             }}
                           >
                             <span
                               style={{
-                                fontSize: '0.8em',
+                                fontSize: "0.8em",
                                 fontWeight: 400,
-                                color: 'rgb(153, 162, 158)',
+                                color: "rgb(153, 162, 158)",
                               }}
                             >
-                              {attestation.role === 'creator'
-                                ? 'Creator'
+                              {attestation.role === "creator"
+                                ? "Creator"
                                 : attestation.role}
                               :
                             </span>
                             <span
                               style={{
-                                fontSize: '0.8em',
+                                fontSize: "0.8em",
                                 fontWeight: 600,
                               }}
                             >
@@ -284,7 +284,7 @@ export default (props: PlayerProps<object, any>) => {
                     </div>
                   </div>
 
-                  <Popover.Arrow style={{ fill: '#232323' }} />
+                  <Popover.Arrow style={{ fill: "#232323" }} />
                 </Popover.Content>
               </Popover.Portal>
             </Popover.Root>
@@ -294,17 +294,17 @@ export default (props: PlayerProps<object, any>) => {
       <ToastRoot open={open} onOpenChange={setOpen}>
         <ToastTitle>
           {clipError
-            ? 'Error with clip'
+            ? "Error with clip"
             : !mp4DownloadUrl
-            ? 'Clip loading'
-            : 'Stream clipped'}
+              ? "Clip loading"
+              : "Stream clipped"}
         </ToastTitle>
         <ToastDescription>
           {clipError
-            ? 'There was an error with your clip. Please try again in a few seconds.'
+            ? "There was an error with your clip. Please try again in a few seconds."
             : !mp4DownloadUrl
-            ? 'Your clip is being processed in the background...'
-            : 'Your clip has been created.'}
+              ? "Your clip is being processed in the background..."
+              : "Your clip has been created."}
         </ToastDescription>
         {mp4DownloadUrl && (
           <ToastAction asChild altText="Download clip">
@@ -321,7 +321,7 @@ export default (props: PlayerProps<object, any>) => {
 
 function shortenAddress(address: string, front = 6, back = 4) {
   if (!address) {
-    return '';
+    return "";
   }
 
   return `${address.slice(0, front + 2)}...${address.slice(-back)}`;

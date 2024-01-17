@@ -1,11 +1,11 @@
-import './globals.css';
+import "./globals.css";
 
-import { Inter } from 'next/font/google';
+import { Inter } from "next/font/google";
 
-import { Providers } from './providers';
-import { StitchesRegistry } from './registry';
+import { Providers } from "./providers";
+import { StitchesRegistry } from "./registry";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,

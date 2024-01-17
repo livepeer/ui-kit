@@ -34,4 +34,4 @@ export {
   type VideoSourceSelectProps,
   type VideoToggleProps,
   type VolumeProps,
-} from './media';
+} from "./media";
