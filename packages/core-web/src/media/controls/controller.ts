@@ -1,7 +1,6 @@
 import {
   ControlsOptions as ControlsOptionsBase,
   DEFAULT_AUTOHIDE_TIME,
-  DEFAULT_VOLUME_LEVEL,
   MediaControllerState,
   MediaControllerStore,
 } from "@livepeer/core/media";
@@ -23,7 +22,8 @@ import {
 } from "./pictureInPicture";
 import { isVolumeChangeSupported } from "./volume";
 
-const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE = "data-controller-initialized";
+const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE =
+  "data-livepeer-player-controller-initialized";
 
 const allKeyTriggers = [
   "KeyF",
@@ -176,10 +176,7 @@ export const addEventListeners = (
   };
 
   const onError = async (e: ErrorEvent) => {
-    store.getState().__controlsFunctions.setError({
-      message: e.message,
-      type: "unknown",
-    });
+    store.getState().__controlsFunctions.onError(new Error(e?.message));
   };
 
   const onWaiting = async () => {
@@ -243,7 +240,7 @@ export const addEventListeners = (
 
     if (parentElementOrElement) {
       if (hotkeys) {
-        parentElementOrElement.addEventListener("keyup", onKeyUp);
+        element.addEventListener("keyup", onKeyUp);
       }
       if (autohide) {
         parentElementOrElement.addEventListener("mouseenter", onMouseEnter);
@@ -334,6 +331,7 @@ export const addEventListeners = (
 
 let previousPromise:
   | Promise<void>
+  // biome-ignore lint/suspicious/noExplicitAny: any
   | Promise<any>
   | Promise<null>
   | boolean

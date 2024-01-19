@@ -9,11 +9,14 @@
     "directory": "packages/react"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "import": {
         "types": "./dist/es/index.d.mts",
@@ -32,6 +35,26 @@
       "require": {
         "types": "./dist/cjs/player.d.ts",
         "default": "./dist/cjs/player.js"
+      }
+    },
+    "./assets": {
+      "import": {
+        "types": "./dist/es/assets.d.mts",
+        "default": "./dist/es/assets.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/assets.d.ts",
+        "default": "./dist/cjs/assets.js"
+      }
+    },
+    "./context": {
+      "import": {
+        "types": "./dist/es/context.d.mts",
+        "default": "./dist/es/context.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/context.d.ts",
+        "default": "./dist/cjs/context.js"
       }
     }
   },
@@ -55,10 +78,16 @@
     "@radix-ui/primitive": "^1.0.1",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-compose-refs": "^1.0.1",
+    "@radix-ui/react-context": "^1.0.1",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-presence": "^1.0.1",
+    "@radix-ui/react-primitive": "^1.0.3",
     "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-slider": "^1.1.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-use-controllable-state": "^1.0.1",
+    "@radix-ui/react-use-layout-effect": "^1.0.1",
     "core-js": "^3.35.0",
     "zustand": "^4.4.7"
   },
@@ -70,5 +99,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "react",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }

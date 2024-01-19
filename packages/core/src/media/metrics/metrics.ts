@@ -469,7 +469,7 @@ export function addMediaMetricsToStore(
           const reportingWebsocketUrl = await getMetricsReportingUrl(
             playbackId,
             currentPlaybackUrl,
-            store.getState().sessionToken,
+            store.getState().__controls.sessionToken,
           );
 
           if (reportingWebsocketUrl) {

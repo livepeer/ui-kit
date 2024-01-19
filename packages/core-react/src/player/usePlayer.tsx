@@ -1,33 +1,35 @@
+// import {
+//   ClipLength,
+//   ControlsOptions,
+//   MediaControllerCallbackState,
+//   ObjectFit,
+//   PlaybackError,
+//   Src,
+//   isAccessControlError,
+//   isBframesError,
+//   isNotAcceptableError,
+//   isStreamOfflineError,
+// } from "@livepeer/core";
+
 import {
+  Src,
   ClipLength,
   ControlsOptions,
-  MediaControllerCallbackState,
   ObjectFit,
   PlaybackError,
-  Src,
-  isAccessControlError,
-  isBframesError,
-  isNotAcceptableError,
-  isStreamOfflineError,
+  MediaControllerCallbackState,
 } from "@livepeer/core";
-import { PlaybackInfo } from "livepeer/dist/models/components";
 
-import * as React from "react";
+// import * as React from "react";
 
-import { useSourceMimeTyped } from "./useSourceMimeTyped";
-
-export type InternalPlayerProps = {
-  /** The current screen width. This is null if the screen size cannot be determined (SSR). */
-  _screenWidth: number | null;
-};
+// export type InternalPlayerProps = {
+//   /** The current screen width. This is null if the screen size cannot be determined (SSR). */
+//   _screenWidth: number | null;
+// };
 
 export type PlayerProps<TElement, TPoster, TSlice> = {
-  /** The source(s) of the media (**required** if `playbackId` or `playbackInfo` is not provided) */
-  src?: string | string[] | null | undefined;
-  /** The playback ID for the media (**required** if `src` or `playbackInfo` is not provided) */
-  // playbackId?: string | null | undefined;
-  /** The playback info for the media (**required**) */
-  playbackInfo?: PlaybackInfo | null | undefined;
+  /** The source(s) of the media (**required**) */
+  src?: Src[] | string | string[] | null | undefined;
 
   /** The title of the media */
   title?: string;
@@ -103,9 +105,9 @@ export type PlayerProps<TElement, TPoster, TSlice> = {
    *
    * Defaults to auto upload with fallback to play from dStorage until the asset is uploaded.
    */
-  autoUrlUpload?:
-    | boolean
-    | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
+  // autoUrlUpload?:
+  //   | boolean
+  //   | { fallback: true; ipfsGateway?: string; arweaveGateway?: string };
 
   /** The wallet ID of the user who is viewing the media. This is used to track viewership for specific wallet IDs. */
   viewerId?: string;
@@ -144,168 +146,152 @@ export type PlayerProps<TElement, TPoster, TSlice> = {
   /** Callback called when the broadcast status updates. **This should be used with `playbackStatusSelector` to limit state updates.** */
   onPlaybackStatusUpdate?: (state: TSlice, previousState: TSlice) => any;
   /** Selector used with `onPlaybackStatusUpdate`. */
-  playbackStatusSelector?: (
-    state: MediaControllerCallbackState<TElement, never>,
-  ) => TSlice;
+  playbackStatusSelector?: (state: MediaControllerCallbackState) => TSlice;
 };
 
-export const usePlayer = <TElement, TPoster, TSlice>(
-  {
-    autoPlay,
-    children,
-    controls,
-    muted,
+// export const usePlayer = <TElement, TPoster, TSlice>(
+//   {
+//     autoPlay,
+//     children,
+//     controls,
+//     muted,
 
-    src,
-    playbackInfo,
+//     src,
 
-    title,
-    poster,
-    loop,
+//     title,
+//     poster,
+//     loop,
 
-    onStreamStatusChange,
-    onAccessControlError,
-    onError,
-    onSourceUpdated,
-    jwt,
+//     onStreamStatusChange,
+//     onAccessControlError,
+//     onError,
+//     onSourceUpdated,
+//     jwt,
 
-    clipLength,
-    // onClipCreated,
-    // onClipError,
-    // onClipStarted,
+//     clipLength,
+//     // onClipCreated,
+//     // onClipError,
+//     // onClipStarted,
 
-    viewerId,
+//     viewerId,
 
-    refetchPlaybackInfoInterval = 5000,
-    autoUrlUpload = true,
+//     refetchPlaybackInfoInterval = 5000,
+//     autoUrlUpload = true,
 
-    accessKey,
+//     accessKey,
 
-    showLoadingSpinner = true,
-    showUploadingIndicator = true,
-    showTitle = true,
-    priority,
+//     showLoadingSpinner = true,
+//     showUploadingIndicator = true,
+//     showTitle = true,
+//     priority,
 
-    objectFit = "contain",
-    mediaElementRef,
-    _isCurrentlyShown,
+//     objectFit = "contain",
+//     mediaElementRef,
+//     _isCurrentlyShown,
 
-    playRecording,
+//     playRecording,
 
-    onPlaybackStatusUpdate,
-    playbackStatusSelector,
+//     onPlaybackStatusUpdate,
+//     playbackStatusSelector,
 
-    playbackFailedErrorComponent,
-    streamOfflineErrorComponent,
-    accessControlErrorComponent,
+//     playbackFailedErrorComponent,
+//     streamOfflineErrorComponent,
+//     accessControlErrorComponent,
 
-    onPlaybackError: onPlaybackErrorProp,
+//     onPlaybackError: onPlaybackErrorProp,
 
-    renderChildrenOutsideContainer,
-  }: PlayerProps<TElement, TPoster, TSlice>,
-  { _screenWidth }: InternalPlayerProps,
-) => {
-  const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
+//     renderChildrenOutsideContainer,
+//   }: PlayerProps<TElement, TPoster, TSlice>,
+//   { _screenWidth }: InternalPlayerProps,
+// ) => {
+//   const [mediaElement, setMediaElement] = React.useState<TElement | null>(null);
 
-  // const sessionToken = React.useMemo(
-  //   () => generateRandomToken(),
-  //   [playbackInfo],
-  // );
+//   // const sessionToken = React.useMemo(
+//   //   () => generateRandomToken(),
+//   //   [playbackInfo],
+//   // );
 
-  const source = useSourceMimeTyped({
-    playbackInfo,
-    jwt,
-    refetchPlaybackInfoInterval,
-    screenWidth: _screenWidth,
-    accessKey,
-    playRecording,
-    sessionToken: "",
-  });
+//   // const source = useSourceMimeTyped({
+//   //   src,
+//   //   jwt,
+//   //   refetchPlaybackInfoInterval,
+//   //   screenWidth: _screenWidth,
+//   //   accessKey,
+//   //   playRecording,
+//   //   sessionToken: "",
+//   // });
 
-  const [playbackError, setPlaybackError] =
-    React.useState<PlaybackError | null>(null);
+//   const [playbackError, setPlaybackError] =
+//     React.useState<PlaybackError | null>(null);
 
-  const onPlaybackError = React.useCallback(
-    (error: Error | null) => {
-      const newPlaybackError: PlaybackError | null = error
-        ? {
-            type: isAccessControlError(error)
-              ? "access-control"
-              : isBframesError(error) || isNotAcceptableError(error)
-                ? "fallback"
-                : isStreamOfflineError(error)
-                  ? "offline"
-                  : "unknown",
-            message: error?.message ?? "Error with playback.",
-          }
-        : null;
+//   // const onPlaybackError = React.useCallback(
+//   //   (error: Error | null) => {
+//   //     setPlaybackError(newPlaybackError);
 
-      setPlaybackError(newPlaybackError);
+//   //     try {
+//   //       if (newPlaybackError) {
+//   //         console.log(newPlaybackError);
+//   //       }
 
-      try {
-        if (newPlaybackError) {
-          console.log(newPlaybackError);
-        }
+//   //       onPlaybackErrorProp?.(newPlaybackError);
 
-        onPlaybackErrorProp?.(newPlaybackError);
+//   //       if (!error) {
+//   //         onStreamStatusChange?.(true);
+//   //       } else if (newPlaybackError?.type === "offline") {
+//   //         onStreamStatusChange?.(false);
+//   //       } else if (newPlaybackError?.type === "access-control") {
+//   //         onAccessControlError?.(new Error(newPlaybackError.message));
+//   //       } else if (newPlaybackError?.message) {
+//   //         onError?.(new Error(newPlaybackError.message));
+//   //       }
+//   //     } catch (e) {
+//   //       console.error(e);
+//   //     }
 
-        if (!error) {
-          onStreamStatusChange?.(true);
-        } else if (newPlaybackError?.type === "offline") {
-          onStreamStatusChange?.(false);
-        } else if (newPlaybackError?.type === "access-control") {
-          onAccessControlError?.(new Error(newPlaybackError.message));
-        } else if (newPlaybackError?.message) {
-          onError?.(new Error(newPlaybackError.message));
-        }
-      } catch (e) {
-        console.error(e);
-      }
+//   //     return newPlaybackError;
+//   //   },
 
-      return newPlaybackError;
-    },
+//   //   [onAccessControlError, onStreamStatusChange, onError, onPlaybackErrorProp],
+//   // );
 
-    [onAccessControlError, onStreamStatusChange, onError, onPlaybackErrorProp],
-  );
+//   // React.useEffect(() => {
+//   //   if (source) {
+//   //     onSourceUpdated?.(source);
+//   //     setPlaybackError(null);
+//   //   }
+//   // }, [source, onSourceUpdated]);
 
-  React.useEffect(() => {
-    if (source) {
-      onSourceUpdated?.(source);
-      setPlaybackError(null);
-    }
-  }, [source, onSourceUpdated]);
+//   // if the source is priority or currently shown on the screen, then load
+//   // const [hasBeenShown, setHasBeenShown] = React.useState(false);
 
-  // if the source is priority or currently shown on the screen, then load
-  const [hasBeenShown, setHasBeenShown] = React.useState(false);
+//   // const loaded = React.useMemo(
+//   //   () => priority || _isCurrentlyShown || hasBeenShown,
+//   //   [priority, _isCurrentlyShown, hasBeenShown],
+//   // );
 
-  const loaded = React.useMemo(
-    () => priority || _isCurrentlyShown || hasBeenShown,
-    [priority, _isCurrentlyShown, hasBeenShown],
-  );
+//   // React.useEffect(() => {
+//   //   if (_isCurrentlyShown && !hasBeenShown) {
+//   //     setHasBeenShown(true);
+//   //   }
+//   // }, [_isCurrentlyShown, hasBeenShown]);
 
-  React.useEffect(() => {
-    if (_isCurrentlyShown && !hasBeenShown) {
-      setHasBeenShown(true);
-    }
-  }, [_isCurrentlyShown, hasBeenShown]);
+//   // const hidePosterOnPlayed = React.useMemo(
+//   //   () =>
+//   //     Array.isArray(source)
+//   //       ? source?.[0]?.type !== 'audio'
+//   //         ? true
+//   //         : undefined
+//   //       : undefined,
+//   //   [source],
+//   // );
 
-  // const hidePosterOnPlayed = React.useMemo(
-  //   () =>
-  //     Array.isArray(source)
-  //       ? source?.[0]?.type !== 'audio'
-  //         ? true
-  //         : undefined
-  //       : undefined,
-  //   [source],
-  // );
+//   // const sourceWithLoaded = React.useMemo(
+//   //   () => (loaded ? source : null),
+//   //   [loaded, source],
+//   // );
 
-  const sourceWithLoaded = React.useMemo(
-    () => (loaded ? source : null),
-    [loaded, source],
-  );
-
-  return {
-    mediaElement,
-    source: sourceWithLoaded,
-  };
-};
+//   return {
+//     mediaElement,
+//     source: sourceWithLoaded,
+//   };
+// };

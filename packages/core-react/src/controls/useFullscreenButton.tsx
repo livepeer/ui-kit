@@ -6,7 +6,7 @@ import { useConditionalIcon } from "../hooks";
 
 type FullscreenButtonStateSlice = Pick<
   MediaControllerState,
-  "fullscreen" | "pictureInPicture" | "requestToggleFullscreen"
+  "fullscreen" | "pictureInPicture" | "__controlsFunctions"
 >;
 
 export type FullscreenButtonProps = {
@@ -39,7 +39,7 @@ export const useFullscreenButton = (props: FullscreenButtonCoreProps) => {
     onPress,
     fullscreen,
     pictureInPicture,
-    requestToggleFullscreen,
+    __controlsFunctions,
     defaultEnterIcon,
     defaultExitIcon,
     ...rest
@@ -47,8 +47,8 @@ export const useFullscreenButton = (props: FullscreenButtonCoreProps) => {
 
   const onPressComposed = React.useCallback(async () => {
     await onPress?.();
-    await requestToggleFullscreen();
-  }, [onPress, requestToggleFullscreen]);
+    await __controlsFunctions.requestToggleFullscreen();
+  }, [onPress, __controlsFunctions.requestToggleFullscreen]);
 
   const _children = useConditionalIcon(
     fullscreen,

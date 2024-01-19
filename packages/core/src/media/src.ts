@@ -1,6 +1,7 @@
 import { PlaybackInfo } from "livepeer/dist/models/components/playbackinfo";
 
 import { MimeType, getMimeType } from "./mime";
+import { ElementSize, MediaSizing } from "./controller";
 
 type AudioExtension =
   | "m4a"
@@ -26,6 +27,7 @@ type BaseSrc = {
   src: string;
   mime: MimeType | null;
   width: number | null;
+  height: number | null;
 };
 export interface AudioSrc extends BaseSrc {
   type: "audio";
@@ -167,20 +169,25 @@ const mimeFromBase64Pattern = /data:(.+?);base64/;
 
 export const getMediaSourceType = (
   src: string | null,
-  width?: number,
+  opts?: {
+    sizing?: ElementSize;
+  },
 ): Src | null => {
   if (!src) {
     return null;
   }
 
   const base64Mime = src.match(mimeFromBase64Pattern);
-  const resolvedWidth = width ?? null;
+  const resolvedWidth = opts?.sizing?.width ?? null;
+  const resolvedHeight = opts?.sizing?.height ?? null;
+
   return webrtcExtensions.test(src)
     ? {
         type: "webrtc",
         src: src as WebRTCSrc["src"],
         mime: "video/h264",
         width: resolvedWidth,
+        height: resolvedHeight,
       }
     : hlsExtensions.test(src)
       ? {
@@ -188,6 +195,7 @@ export const getMediaSourceType = (
           src: src as HlsSrc["src"],
           mime: getMimeType(hlsExtensions.exec(src)?.[1] ?? ""),
           width: resolvedWidth,
+          height: resolvedHeight,
         }
       : videoExtensions.test(src)
         ? {
@@ -195,6 +203,7 @@ export const getMediaSourceType = (
             src: src as VideoSrc["src"],
             mime: getMimeType(videoExtensions.exec(src)?.[1] ?? ""),
             width: resolvedWidth,
+            height: resolvedHeight,
           }
         : audioExtensions.test(src)
           ? {
@@ -202,6 +211,7 @@ export const getMediaSourceType = (
               src: src as AudioSrc["src"],
               mime: getMimeType(audioExtensions.exec(src)?.[1] ?? ""),
               width: resolvedWidth,
+              height: resolvedHeight,
             }
           : base64String.test(src)
             ? {
@@ -209,6 +219,7 @@ export const getMediaSourceType = (
                 src: src as Base64Src["src"],
                 mime: base64Mime ? (base64Mime[1] as MimeType) : "video/mp4",
                 width: resolvedWidth,
+                height: resolvedHeight,
               }
             : null;
 };
@@ -217,7 +228,17 @@ export const parsePlaybackInfo = (
   playbackInfo: PlaybackInfo | null | undefined,
 ): Src[] | null => {
   const sources = playbackInfo?.meta?.source
-    ?.map((source) => getMediaSourceType(source?.url ?? null, source?.width))
+    ?.map((s) =>
+      getMediaSourceType(s?.url ?? null, {
+        sizing:
+          s.height && s.width
+            ? {
+                width: s.width,
+                height: s.height,
+              }
+            : undefined,
+      }),
+    )
     ?.filter((source) => source?.src)
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     ?.map((source) => source!);

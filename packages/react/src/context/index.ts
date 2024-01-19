@@ -1,1 +1,1 @@
-export { PlayerProvider } from "./PlayerContext";
+export { PlayerProvider } from "../context";

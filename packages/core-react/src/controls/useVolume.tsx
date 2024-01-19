@@ -5,11 +5,7 @@ import { useConditionalIcon } from "../hooks";
 
 type VolumeStateSlice = Pick<
   MediaControllerState,
-  | "volume"
-  | "requestVolume"
-  | "requestToggleMute"
-  | "muted"
-  | "isVolumeChangeSupported"
+  "volume" | "__controlsFunctions" | "__device"
 >;
 
 export type VolumeProps = {
@@ -49,24 +45,23 @@ export const useVolume = (props: VolumeCoreProps) => {
     unmutedIcon,
     mutedIcon,
     onPress,
+    __device,
     showSlider = true,
     defaultUnmutedIcon,
+    volume,
     defaultMutedIcon,
-    requestVolume,
-    requestToggleMute,
-    isVolumeChangeSupported,
-    muted,
+    __controlsFunctions,
     ...rest
   } = props;
 
   const onPressComposed = React.useCallback(async () => {
     await onPress?.();
 
-    requestToggleMute();
-  }, [onPress, requestToggleMute]);
+    __controlsFunctions.requestToggleMute();
+  }, [onPress, __controlsFunctions]);
 
   const _children = useConditionalIcon(
-    !muted,
+    volume !== 0,
     unmutedIcon,
     defaultUnmutedIcon,
     mutedIcon,
@@ -74,15 +69,15 @@ export const useVolume = (props: VolumeCoreProps) => {
   );
 
   const title = React.useMemo(
-    () => (muted ? "Unmute (m)" : "Mute (m)"),
-    [muted],
+    () => (volume === 0 ? "Unmute (m)" : "Mute (m)"),
+    [volume],
   );
 
   const onChange = React.useCallback(
     async (value: number) => {
-      requestVolume(value);
+      __controlsFunctions.requestVolume(value);
     },
-    [requestVolume],
+    [__controlsFunctions],
   );
 
   return {
@@ -93,7 +88,7 @@ export const useVolume = (props: VolumeCoreProps) => {
       ...rest,
     },
     progressProps: {
-      shown: isVolumeChangeSupported && showSlider,
+      shown: __device.isVolumeChangeSupported && showSlider,
       onChange,
       leftCss: { backgroundColor: "$volumeLeft" },
       middleCss: { backgroundColor: "$volumeMiddle" },

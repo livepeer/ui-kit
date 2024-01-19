@@ -59,6 +59,10 @@ const iosMethods = {
 } as const;
 
 export const isFullscreenSupported = () => {
+  if (typeof document === "undefined") {
+    return true;
+  }
+
   const videoElement = document.createElement("video");
 
   const result = Boolean(getFullscreenMethods(videoElement));

@@ -113,13 +113,13 @@ export const useBaseSlider = (props: BaseSliderCoreProps) => {
 
   const { value, middleValue } = React.useMemo(() => {
     const value =
-      localX !== null ? localX : !isNaN(props.value) ? props.value : 0;
+      localX !== null ? localX : !Number.isNaN(props.value) ? props.value : 0;
     const middleValue =
       localX !== null
         ? 0
         : props.secondaryValue &&
-            !isNaN(props.value) &&
-            !isNaN(props.secondaryValue)
+            !Number.isNaN(props.value) &&
+            !Number.isNaN(props.secondaryValue)
           ? props.secondaryValue - props.value
           : 0;
 

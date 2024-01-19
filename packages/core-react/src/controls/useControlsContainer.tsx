@@ -22,30 +22,29 @@ export type ControlsContainerProps = {
 
 type ControlsContainerStateSlice = Pick<
   MediaControllerState,
-  "togglePlay" | "canPlay" | "buffered" | "_updateLastInteraction"
+  "buffered" | "__controlsFunctions" | "playbackState"
 >;
 
 type ControlsContainerCoreProps = ControlsContainerStateSlice &
   ControlsContainerProps;
 
 export const useControlsContainer = (props: ControlsContainerCoreProps) => {
-  const { togglePlay, canPlay, buffered, isBroadcast, _updateLastInteraction } =
-    props;
+  const { playbackState, buffered, isBroadcast, __controlsFunctions } = props;
 
   const isLoaded = React.useMemo(
-    () => canPlay || buffered !== 0,
-    [canPlay, buffered],
+    () => playbackState !== "buffering" || buffered !== 0,
+    [playbackState, buffered],
   );
 
   const onPressBackground = React.useCallback(() => {
     if (isLoaded) {
       if (!isBroadcast) {
-        togglePlay();
+        __controlsFunctions.togglePlay();
       } else {
-        _updateLastInteraction();
+        __controlsFunctions.updateLastInteraction();
       }
     }
-  }, [togglePlay, isLoaded, isBroadcast, _updateLastInteraction]);
+  }, [__controlsFunctions, isLoaded, isBroadcast]);
 
   return {
     isLoaded,

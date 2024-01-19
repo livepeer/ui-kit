@@ -10,6 +10,12 @@ import { getPlaybackIdFromSourceUrl } from "./metrics/utils";
 import { Src, getMediaSourceType } from "./src";
 
 import { omit } from "../utils";
+import {
+  isAccessControlError,
+  isBframesError,
+  isNotAcceptableError,
+  isStreamOfflineError,
+} from "../errors";
 
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
 export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
@@ -56,6 +62,8 @@ export type ControlsState = {
   lastInteraction: number;
   /** The parsed playbackId from the src */
   playbackId: string | null;
+  /** The last time that an error occurred */
+  lastError: number;
 
   /** Media sizing information */
   size: MediaSizing | null;
@@ -64,6 +72,9 @@ export type ControlsState = {
   muted: boolean;
   /** The volume, doesn't change when muted */
   volume: number;
+
+  /** Session token for the current playback */
+  sessionToken: string;
 };
 
 export type ObjectFit = "cover" | "contain";
@@ -103,6 +114,21 @@ export type InitialProps = {
   volume: number;
   /** The playback rate that was passed in to the Player. Defaults to 1. */
   playbackRate: number;
+  /** Whether the media should loop on completion. */
+  loop: boolean;
+  /**
+   * Whether low latency is enabled for live-streaming.
+   * `force` can be passed to force the use of WebRTC low latency playback,
+   * and disable fallback to HLS if WebRTC cannot be used.
+   * Defaults to `true`.
+   */
+  lowLatency: boolean | "force";
+  /** The JWT which is passed along to allow playback of an asset. */
+  jwt: string | null;
+  /** An access key to be used for playback. */
+  accessKey: string | null;
+  /** Callback called when there is a playback error. When `null` is passed, the error has been resolved. */
+  onError: ((error: PlaybackError | null) => void) | null;
 };
 
 export type PlaybackError = {
@@ -183,21 +209,21 @@ export type MediaControllerState = {
   playbackState: PlaybackState;
   /** If the media has experienced an error. */
   error: PlaybackError | null;
+  /** The number of errors that have occurred. */
+  errorCount: number;
 
   /** If all controls are currently hidden */
   hidden: boolean;
   /** If the content is live media */
   live: boolean;
-  /** Session token for the current playback */
-  sessionToken: string;
 
   /** If the media has been played yet. */
   hasPlayed: boolean;
 
   /** The ingest URL that was passed in to the Broadcast */
   inputIngest: string | null;
-  /** The source that was passed in to the Player */
-  inputSource: Src[] | string | null;
+  /** The sorted sources that were passed in to the Player */
+  sortedSources: Src[] | string | null;
   /** The current source that is playing. */
   currentSource: Src | null;
   /** The final playback URL for the media that is playing, after redirects. */
@@ -219,7 +245,7 @@ export type MediaControllerState = {
   // _mediaStream: TMediaStream | null;
 
   __controlsFunctions: {
-    updateSource: (source: string) => void;
+    // updateSource: (source: Src) => void;
     // updateMediaStream: (
     //   mediaStream: TMediaStream,
     //   ids?: { audio?: string; video?: string },
@@ -252,11 +278,11 @@ export type MediaControllerState = {
 
     updateBuffered: (buffered: number) => void;
 
-    setError: (error: PlaybackError | null) => void;
+    onError: (error: Error | null) => void;
 
     setLive: (live: boolean) => void;
 
-    setSize: (size: MediaSizing) => void;
+    setSize: (size: Partial<MediaSizing>) => void;
 
     setFullscreen: (fullscreen: boolean) => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
@@ -267,8 +293,6 @@ export type MediaControllerState = {
     setVolume: (volume: number) => void;
     requestVolume: (volume: number) => void;
     requestToggleMute: () => void;
-
-    generateNewPlaybackToken: () => void;
 
     onRedirect: (url: string | null) => void;
   };
@@ -306,6 +330,132 @@ const getBoundedSeek = (seek: number, duration: number | undefined) =>
 const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 
+const SCREEN_WIDTH_MULTIPLIER = 2.5;
+
+type SrcWithParentDelta = Src & {
+  parentWidthDelta: number | null;
+};
+
+const sortSources = (
+  src: Src[] | string | null | undefined,
+  parentWidth: number | null,
+) => {
+  if (!src) {
+    return null;
+  }
+
+  if (typeof src === "string") {
+    return [getMediaSourceType(src)];
+  }
+
+  const parentWidthWithDefault =
+    (parentWidth ?? 1280) * SCREEN_WIDTH_MULTIPLIER;
+
+  const sourceWithParentDelta: SrcWithParentDelta[] =
+    src?.map((s) =>
+      s.type === "hls" || s.type === "webrtc"
+        ? { ...s, parentWidthDelta: null }
+        : {
+            ...s,
+            parentWidthDelta: s?.width
+              ? Math.abs(parentWidthWithDefault - s.width)
+              : s?.src.includes("static360p") || s?.src.includes("low-bitrate")
+                ? Math.abs(parentWidthWithDefault - 480)
+                : s?.src.includes("static720p")
+                  ? Math.abs(parentWidthWithDefault - 1280)
+                  : s?.src.includes("static1080p")
+                    ? Math.abs(parentWidthWithDefault - 1920)
+                    : s?.src.includes("static2160p")
+                      ? Math.abs(parentWidthWithDefault - 3840)
+                      : null,
+          },
+    ) ?? [];
+
+  return sourceWithParentDelta.sort((a, b) => {
+    if (a.type === "video" && b.type === "video") {
+      // we sort the sources by the delta between the video width and the
+      // parent size (multiplied by a multiplier above)
+      return b?.parentWidthDelta && a?.parentWidthDelta
+        ? a.parentWidthDelta - b.parentWidthDelta
+        : 1;
+    }
+    if (a.type === "video" && (b.type === "hls" || b.type === "webrtc")) {
+      // if the type is an MP4, we prefer that to HLS/WebRTC due to better caching/less overhead
+      return -1;
+    }
+    if (a.type === "webrtc" && b.type === "hls") {
+      // if there is a webrtc source, we prefer that to HLS
+      return -1;
+    }
+
+    return 1;
+  });
+};
+
+const parseCurrentSource = ({
+  source,
+  device,
+  controls,
+  initialProps,
+}: {
+  source: Src | null;
+  device: DeviceInformation;
+  controls: ControlsState;
+  initialProps: Partial<InitialProps>;
+}) => {
+  if (!source) {
+    return null;
+  }
+
+  const url = new URL(source.src);
+
+  // append the tkn to the query params
+  if (controls.sessionToken) {
+    url.searchParams.append("tkn", controls.sessionToken);
+  }
+
+  // we use headers for HLS and WebRTC for auth
+  if (source.type !== "webrtc" && source.type !== "hls") {
+    // append the JWT to the query params
+    if (initialProps.jwt) {
+      url.searchParams.append("jwt", initialProps.jwt);
+    }
+    // or append the access key to the query params
+    else if (initialProps.accessKey) {
+      url.searchParams.append("accessKey", initialProps.accessKey);
+    }
+  }
+
+  // override the url with the new URL
+  const newSrc = {
+    ...source,
+    url: url.toString(),
+  } as const;
+
+  // if HLS is not supported, we pass it into the regular video player
+  if (newSrc.type === "hls" && !device.isHlsSupported) {
+    return {
+      currentSource: {
+        ...newSrc,
+        type: "video",
+        mime: "application/vnd.apple.mpegurl",
+      },
+      __controls: {
+        ...controls,
+        playbackId: getPlaybackIdFromSourceUrl(newSrc.src),
+      },
+    } as const satisfies Partial<MediaControllerState>;
+  }
+
+  return {
+    currentSource: newSrc,
+    __controls: {
+      ...controls,
+      playbackId: getPlaybackIdFromSourceUrl(newSrc.src),
+    },
+  } as const satisfies Partial<MediaControllerState>;
+};
+
 export const createControllerStore = ({
   device,
   storage,
@@ -321,6 +471,26 @@ export const createControllerStore = ({
     initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
   );
 
+  const initialControls: ControlsState = {
+    requestedRangeToSeekTo: 0,
+    requestedClipLastTime: Date.now(),
+    requestedFullscreenLastTime: Date.now(),
+    requestedPictureInPictureLastTime: Date.now(),
+    requestedPlayPauseLastTime: 0,
+    playLastTime: 0,
+    playbackOffsetMs: null,
+    lastInteraction: Date.now(),
+    lastError: 0,
+    playbackId: null,
+    size: null,
+
+    volume: initialVolume,
+    muted: initialVolume === 0,
+    sessionToken: generateRandomToken(),
+  };
+
+  const sortedSources = sortSources(src, null);
+
   const store = createStore<
     MediaControllerState,
     [
@@ -331,6 +501,13 @@ export const createControllerStore = ({
     subscribeWithSelector(
       persist(
         (set, get) => ({
+          ...parseCurrentSource({
+            source: sortedSources?.[0],
+            device,
+            controls: initialControls,
+            initialProps,
+          }),
+
           canPlay: false,
           hidden: false,
           /** Current volume of the media. 0 if it is muted. */
@@ -358,52 +535,41 @@ export const createControllerStore = ({
           playbackState: "loading",
           /** If the media has experienced an error. */
           error: null,
+          errorCount: 0,
 
           /** If the content is live media */
           live: false,
-          /** Session token for the current playback */
-          sessionToken: generateRandomToken(),
 
           /** If the media has been played yet. */
           hasPlayed: false,
 
           /** The ingest URL that was passed in to the Broadcast */
           inputIngest: null,
-          /** The source that was passed in to the Player */
-          inputSource: src ?? null,
-          /** The current source that is playing. */
-          currentSource:
-            (typeof src === "string" ? getMediaSourceType(src) : src?.[0]) ??
-            null,
+          /** The sorted sources that were passed in to the Player */
+          sortedSources: sortedSources ?? null,
+
           /** The final playback URL for the media that is playing, after redirects. */
           currentUrl: null,
 
           __initialProps: {
             volume: initialVolume ?? null,
             playbackRate: initialProps.playbackRate ?? 1,
+            loop: initialProps.loop ?? false,
 
             autoPlay: initialProps.autoPlay ?? false,
             creatorId: initialProps.creatorId ?? null,
             preload: initialProps.preload ?? "none",
             viewerId: initialProps.viewerId ?? null,
+            lowLatency: initialProps.lowLatency ?? true,
+
+            jwt: initialProps.jwt ?? null,
+            accessKey: initialProps.accessKey ?? null,
+            onError: initialProps?.onError ?? null,
           },
 
           __device: device,
 
-          __controls: {
-            requestedRangeToSeekTo: 0,
-            requestedClipLastTime: Date.now(),
-            requestedFullscreenLastTime: Date.now(),
-            requestedPictureInPictureLastTime: Date.now(),
-            requestedPlayPauseLastTime: 0,
-            playLastTime: 0,
-            playbackOffsetMs: null,
-            lastInteraction: Date.now(),
-            playbackId: null,
-            size: null,
-            volume: initialVolume,
-            muted: initialVolume === 0,
-          },
+          __controls: initialControls,
 
           __metadata: null,
 
@@ -427,18 +593,15 @@ export const createControllerStore = ({
               set(() => ({ _lastInteraction: Date.now(), hidden: false })),
 
             // set the src and playbackId from the source URL
-            updateSource: (source: string) =>
-              set(({ __controls }) => ({
-                src: getMediaSourceType(source),
-                ...(!__controls?.playbackId
-                  ? {
-                      __controls: {
-                        ...__controls,
-                        playbackId: getPlaybackIdFromSourceUrl(source),
-                      },
-                    }
-                  : {}),
-              })),
+            // updateSource: (source: Src) =>
+            //   set(({ __controls, __device, __initialProps }) =>
+            //     parseCurrentSource({
+            //       source,
+            //       controls: __controls,
+            //       device: __device,
+            //       initialProps: __initialProps,
+            //     }),
+            //   ),
 
             updatePlaybackOffsetMs: (offset: number) =>
               set(({ __controls }) => ({
@@ -454,14 +617,18 @@ export const createControllerStore = ({
               })),
 
             onPlay: () =>
-              set(({ __controls }) => ({
-                playbackState: "playing",
-                hasPlayed: true,
-                __controls: {
-                  ...__controls,
-                  playLastTime: Date.now(),
-                },
-              })),
+              set(({ __controls, __controlsFunctions }) => {
+                __controlsFunctions.onError(null);
+
+                return {
+                  playbackState: "playing",
+                  hasPlayed: true,
+                  __controls: {
+                    ...__controls,
+                    playLastTime: Date.now(),
+                  },
+                };
+              }),
             onPause: () =>
               set(() => ({
                 playbackState: "paused",
@@ -510,14 +677,144 @@ export const createControllerStore = ({
             setWebsocketMetadata: (metadata: Metadata) =>
               set(() => ({ __metadata: metadata })),
 
-            setError: (error: PlaybackError | null) =>
-              set(() => ({
-                error,
-                playbackState: "error",
-              })),
+            onError: (rawError: Error | null) =>
+              set(
+                ({
+                  currentSource,
+                  sortedSources,
+                  __controls,
+                  errorCount,
+                  __device,
+                  __initialProps,
+                }) => {
+                  const msSinceLastError = Date.now() - __controls.lastError;
 
-            generateNewPlaybackToken: () =>
-              set(() => ({ sessionToken: generateRandomToken() })),
+                  const error = rawError
+                    ? ({
+                        type: isAccessControlError(rawError)
+                          ? "access-control"
+                          : isBframesError(rawError) ||
+                              isNotAcceptableError(rawError)
+                            ? "fallback"
+                            : isStreamOfflineError(rawError)
+                              ? "offline"
+                              : "unknown",
+                        message: rawError?.message ?? "Error with playback.",
+                      } as const)
+                    : null;
+
+                  if (__initialProps.onError) {
+                    try {
+                      __initialProps.onError(error);
+                    } catch (e) {
+                      console.error(e);
+                    }
+                  }
+
+                  const base = {
+                    error,
+                    ...(error
+                      ? ({
+                          errorCount: errorCount + 1,
+                          playbackState: "error",
+                          __controls: {
+                            ...__controls,
+                            lastError: Date.now(),
+                          },
+                        } as const)
+                      : { __controls }),
+                  } as const;
+
+                  // we return when there is no error
+                  if (!error) {
+                    return base;
+                  }
+
+                  // we increment the source only on a bframes or unknown error
+                  if (
+                    error.type === "offline" ||
+                    error.type === "access-control"
+                  ) {
+                    return base;
+                  }
+
+                  if (
+                    typeof sortedSources === "string" ||
+                    !Array.isArray(sortedSources)
+                  ) {
+                    return base;
+                  }
+
+                  // we debounce the error fallback
+                  if (msSinceLastError < errorCount * 500) {
+                    return base;
+                  }
+
+                  const currentSourceIndex = sortedSources.findIndex(
+                    (s) => s.src === currentSource.src,
+                  );
+
+                  // Create a new array that starts from the next index and wraps around
+                  const rotatedSources = [
+                    ...sortedSources.slice(currentSourceIndex + 1),
+                    ...sortedSources.slice(0, currentSourceIndex + 1),
+                  ];
+
+                  // Function to determine if a source type can be played
+                  const canPlaySourceType = (src: Src) => {
+                    const hasOneWebRTCSource = sortedSources.some(
+                      (s) => s?.type === "webrtc",
+                    );
+
+                    // if low latency is forced, and there is at least one webrtc source, don't play non-webrtc
+                    if (
+                      __initialProps.lowLatency === "force" &&
+                      hasOneWebRTCSource &&
+                      src.type !== "webrtc"
+                    ) {
+                      return false;
+                    }
+
+                    // if low latency is turned off, do not play webrtc
+                    if (__initialProps.lowLatency === false) {
+                      return src.type !== "webrtc";
+                    }
+
+                    // else play if webrtc is supported
+                    return src.type === "webrtc"
+                      ? __device.isWebRTCSupported
+                      : true;
+                  };
+
+                  // Find the next index in the rotated array where the source can be played
+                  const nextPlayableIndex = rotatedSources.findIndex((s) =>
+                    canPlaySourceType(s),
+                  );
+
+                  // Adjust the index to account for the rotation
+                  const nextSourceIndex =
+                    nextPlayableIndex !== -1
+                      ? (currentSourceIndex + 1 + nextPlayableIndex) %
+                        sortedSources.length
+                      : -1;
+
+                  // get the next source
+                  const nextSource =
+                    nextSourceIndex !== -1
+                      ? sortedSources[nextSourceIndex]
+                      : null;
+
+                  return {
+                    ...base,
+                    ...parseCurrentSource({
+                      source: nextSource,
+                      controls: base.__controls,
+                      device: __device,
+                      initialProps: __initialProps,
+                    }),
+                  };
+                },
+              ),
 
             updateBuffered: (buffered) => set(() => ({ buffered })),
 
@@ -539,13 +836,44 @@ export const createControllerStore = ({
             onRedirect: (currentUrl: string | null) =>
               set(() => ({ currentUrl })),
 
-            setSize: (size: MediaSizing) =>
-              set(({ __controls }) => ({
-                __controls: {
-                  ...__controls,
-                  size,
-                },
-              })),
+            setSize: (size: Partial<MediaSizing>) =>
+              set(({ __controls, __device, __initialProps }) => {
+                // we re-sort the sources based on the container width
+                const newSortedSources = size?.container?.width
+                  ? sortSources(src, size.container.width)
+                  : null;
+
+                // and set a new source from the new sort
+                const newSource = newSortedSources
+                  ? newSortedSources?.[0] ?? null
+                  : null;
+
+                const base = {
+                  __controls: {
+                    ...__controls,
+                    size: {
+                      ...__controls.size,
+                      size,
+                    },
+                  },
+                } as const;
+
+                return {
+                  ...base,
+                  // we re-sort the sources based on the container width
+                  ...(newSortedSources
+                    ? {
+                        sortedSources: sortSources(src, size.container.width),
+                        ...parseCurrentSource({
+                          source: newSource,
+                          controls: base.__controls,
+                          device: __device,
+                          initialProps: __initialProps,
+                        }),
+                      }
+                    : {}),
+                };
+              }),
             onWaiting: () => set(() => ({ playbackState: "buffering" })),
 
             onStalled: () => set(() => ({ playbackState: "stalled" })),

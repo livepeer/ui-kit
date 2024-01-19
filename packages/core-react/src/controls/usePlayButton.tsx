@@ -6,10 +6,12 @@ import { useConditionalIcon } from "../hooks";
 
 type PlayButtonStateSlice = Pick<
   MediaControllerState,
-  "togglePlay" | "playing"
+  "playbackState" | "__controlsFunctions"
 >;
 
 export type PlayButtonProps = {
+  playIcon: React.ReactNode;
+  pauseIcon: React.ReactNode;
   /**
    * The callback to trigger any logic on click/press.
    */
@@ -27,8 +29,8 @@ export const usePlayButton = (props: PlayButtonCoreProps) => {
     playIcon,
     pauseIcon,
     onPress,
-    togglePlay,
-    playing,
+    __controlsFunctions,
+    playbackState,
     defaultPauseIcon,
     defaultPlayIcon,
     ...rest
@@ -36,11 +38,11 @@ export const usePlayButton = (props: PlayButtonCoreProps) => {
 
   const onPressComposed = async () => {
     await onPress?.();
-    await togglePlay();
+    await __controlsFunctions.togglePlay();
   };
 
   const _children = useConditionalIcon(
-    playing,
+    playbackState === "playing",
     pauseIcon,
     defaultPauseIcon,
     playIcon,
@@ -48,8 +50,8 @@ export const usePlayButton = (props: PlayButtonCoreProps) => {
   );
 
   const title = React.useMemo(
-    () => (playing ? "Pause (k)" : "Play (k)"),
-    [playing],
+    () => (playbackState === "playing" ? "Pause (k)" : "Play (k)"),
+    [playbackState],
   );
 
   return {

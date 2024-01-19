@@ -3,7 +3,13 @@ import { isClient } from "../utils";
 export const isPictureInPictureSupported = (
   element?: HTMLMediaElement | null,
 ) => {
-  const { apiType } = getPictureInPictureMode(element);
+  if (typeof document === "undefined") {
+    return true;
+  }
+
+  const videoElement = element ?? document.createElement("video");
+
+  const { apiType } = getPictureInPictureMode(videoElement);
 
   return Boolean(apiType);
 };

@@ -4,7 +4,7 @@ import * as React from "react";
 
 type ProgressStateSlice = Pick<
   MediaControllerState,
-  "duration" | "progress" | "requestSeek" | "buffered" | "live"
+  "duration" | "progress" | "__controlsFunctions" | "buffered" | "live"
 >;
 
 export type ProgressProps = {
@@ -29,14 +29,15 @@ export type ProgressProps = {
 type ProgressCoreProps = ProgressStateSlice & ProgressProps;
 
 export const useProgress = (props: ProgressCoreProps) => {
-  const { duration, progress, requestSeek, buffered, live, ...rest } = props;
+  const { duration, progress, __controlsFunctions, buffered, live, ...rest } =
+    props;
 
   const [min, max, current] = React.useMemo(
     () =>
       [
         0,
-        duration && !isNaN(duration) ? duration : 0,
-        progress && !isNaN(progress) ? progress : 0,
+        duration && !Number.isNaN(duration) ? duration : 0,
+        progress && !Number.isNaN(progress) ? progress : 0,
       ] as const,
     [duration, progress],
   );
@@ -51,9 +52,9 @@ export const useProgress = (props: ProgressCoreProps) => {
       const newSeek = value * (max - min);
 
       await props?.onSeek?.(newSeek);
-      requestSeek(newSeek);
+      __controlsFunctions.requestSeek(newSeek);
     },
-    [max, min, requestSeek, props],
+    [max, min, __controlsFunctions, props],
   );
 
   const durationMinutes = React.useMemo(

@@ -2,10 +2,7 @@ import { ClipLength, MediaControllerState } from "@livepeer/core";
 
 import * as React from "react";
 
-type ClipButtonStateSlice = Pick<
-  MediaControllerState,
-  "live" | "requestClip" | "playbackId" | "clipStatus"
->;
+type ClipButtonStateSlice = Pick<MediaControllerState, "live">;
 
 export type ClipButtonProps = {
   /**
@@ -34,32 +31,32 @@ export const useClipButton = (props: ClipButtonCoreProps) => {
   const {
     onPress,
     live,
-    requestClip,
-    playbackId,
+    // requestClip,
+    // playbackId,
     defaultIcon,
-    clipStatus,
+    // clipStatus,
     length,
     ...rest
   } = props;
 
-  const onPressComposed = React.useCallback(async () => {
-    await onPress?.();
-    await requestClip();
-  }, [onPress, requestClip]);
+  // const onPressComposed = React.useCallback(async () => {
+  //   await onPress?.();
+  //   // await requestClip();
+  // }, [onPress, requestClip]);
 
   const title = React.useMemo(
     () => `Clip last ${Number(length).toFixed(0)}s (x)`,
     [length],
   );
 
-  const isShown = React.useMemo(() => playbackId && live, [playbackId, live]);
+  // const isShown = React.useMemo(() => playbackId && live, [playbackId, live]);
 
   return {
     title,
-    isShown: isShown,
-    status: clipStatus,
+    // isShown: isShown,
+    // status: clipStatus,
     buttonProps: {
-      onPress: onPressComposed,
+      // onPress: onPressComposed,
       children: defaultIcon,
       ...rest,
     },

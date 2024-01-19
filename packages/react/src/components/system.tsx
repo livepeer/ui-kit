@@ -1,9 +1,10 @@
-import { CSS } from "@stitches/react";
 import * as React from "react";
 
 /**
  * As prop
  */
+
+// biome-ignore lint/suspicious/noExplicitAny: any
 export type As<Props = any> = React.ElementType<Props>;
 
 /**
@@ -11,7 +12,6 @@ export type As<Props = any> = React.ElementType<Props>;
  */
 export type PropsOf<T extends As> = React.ComponentPropsWithoutRef<T> & {
   as?: As;
-  css?: CSS;
 };
 
 export const useConditionalIcon = (
