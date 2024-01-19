@@ -52,9 +52,6 @@ export type PlayerProps<TElement, TPoster, TSlice> = {
   /** Enables/disables the dStorage uploading indicator (text and progress percentage) */
   showUploadingIndicator?: boolean;
 
-  /** The length of a clip in seconds to generate. Set to a number to enable (web only). */
-  clipLength?: ClipLength;
-
   // /** Callback when the clip button is triggered. */
   // onClipStarted?: () => Promise<any> | any;
   // /** Callback when a clip is created from the clip button. */

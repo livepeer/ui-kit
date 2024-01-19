@@ -1,20 +1,19 @@
 "use client";
 
-import type * as Radix from "@radix-ui/react-primitive";
-
 import React, { useMemo } from "react";
 
 import { getFormattedHoursMinutesSeconds } from "@livepeer/core-web/utils";
 import { useStore } from "zustand";
 import { PlayerScopedProps, usePlayerContext } from "../context";
-import { Primitive } from "./primitive";
+
+import * as Radix from "./primitive";
 
 const TIME_NAME = "Time";
 
-type TimeElement = React.ElementRef<typeof Primitive.button>;
+type TimeElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface TimeProps
-  extends Radix.ComponentPropsWithoutRef<typeof Primitive.button> {}
+  extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {}
 
 const Time = React.forwardRef<TimeElement, TimeProps>(
   (props: PlayerScopedProps<TimeProps>, forwardedRef) => {
@@ -50,7 +49,7 @@ const Time = React.forwardRef<TimeElement, TimeProps>(
     );
 
     return (
-      <Primitive.span
+      <Radix.Primitive.span
         type="button"
         aria-label={formattedTime}
         title={formattedTime}
@@ -59,7 +58,7 @@ const Time = React.forwardRef<TimeElement, TimeProps>(
         data-livepeer-player-controls-time=""
       >
         {formattedTime}
-      </Primitive.span>
+      </Radix.Primitive.span>
     );
   },
 );

@@ -49,6 +49,27 @@ const escapeInput = (input: string | undefined | null) => {
 export const getFormattedHoursMinutesSeconds = (
   valueInSeconds: number | undefined | null,
 ) => {
+  const hoursMinutesSeconds = getHoursMinutesSeconds(valueInSeconds);
+  if (hoursMinutesSeconds.seconds) {
+    if (hoursMinutesSeconds.hours > 0) {
+      return `${hoursMinutesSeconds.hours}:${hoursMinutesSeconds.minutes
+        .toString()
+        .padStart(2, "0")}:${hoursMinutesSeconds.seconds < 10 ? "0" : ""}${
+        hoursMinutesSeconds.seconds
+      }` as const;
+    }
+
+    return `${hoursMinutesSeconds.minutes}:${hoursMinutesSeconds.seconds
+      .toString()
+      .padStart(2, "0")}` as const;
+  }
+
+  return "0:00" as const;
+};
+
+export const getHoursMinutesSeconds = (
+  valueInSeconds: number | undefined | null,
+) => {
   if (
     valueInSeconds !== undefined &&
     valueInSeconds !== null &&
@@ -63,15 +84,25 @@ export const getFormattedHoursMinutesSeconds = (
     if (hours > 0) {
       const minutes = Math.floor((roundedValue % 3600) / 60);
 
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${
-        seconds < 10 ? "0" : ""
-      }${seconds}`;
+      return {
+        hours,
+        minutes,
+        seconds,
+      };
     }
 
     const minutes = Math.floor(roundedValue / 60);
 
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return {
+      hours: 0,
+      minutes,
+      seconds,
+    };
   }
 
-  return "0:00";
+  return {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  };
 };

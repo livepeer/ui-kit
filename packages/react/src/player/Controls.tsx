@@ -1,21 +1,21 @@
 "use client";
 
-import type * as Radix from "@radix-ui/react-primitive";
 import { Presence } from "@radix-ui/react-presence";
 
 import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
 import { PlayerScopedProps, usePlayerContext } from "../context";
-import { Primitive } from "./primitive";
-import { composeEventHandlers } from "@radix-ui/primitive";
+
+import * as Radix from "./primitive";
+import { useShallow } from "zustand/react/shallow";
 
 const CONTROLS_NAME = "Controls";
 
-type ControlsElement = React.ElementRef<typeof Primitive.div>;
+type ControlsElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface ControlsProps
-  extends Radix.ComponentPropsWithoutRef<typeof Primitive.div> {
+  extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
   /** Whether the gradient should be shown behind the controls. Defaults to `true`. */
   gradient?: boolean;
   /**
@@ -37,22 +37,23 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
 
     const context = usePlayerContext(CONTROLS_NAME, __scopePlayer);
 
-    const { hidden, __controlsFunctions } = useStore(
+    const { hidden, playbackState, togglePlay, error } = useStore(
       context.store,
-      ({ hidden, __controlsFunctions }) => ({
+      useShallow(({ hidden, playbackState, __controlsFunctions, error }) => ({
         hidden,
-        __controlsFunctions,
-      }),
+        playbackState,
+        togglePlay: __controlsFunctions.togglePlay,
+        error,
+      })),
     );
 
-    const togglePlay = useCallback(
-      () => __controlsFunctions.togglePlay(),
-      [__controlsFunctions],
-    );
+    const togglePlayComposed = useCallback(() => togglePlay(), [togglePlay]);
 
     return (
-      <Presence present={forceMount || !hidden}>
-        <Primitive.div
+      <Presence
+        present={forceMount || (!hidden && playbackState !== "loading")}
+      >
+        <Radix.Primitive.div
           {...controlsProps}
           ref={forwardedRef}
           data-livepeer-player-controls-gradient=""

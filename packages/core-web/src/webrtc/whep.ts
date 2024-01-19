@@ -8,6 +8,9 @@ import {
   negotiateConnectionWithClientOffer,
 } from "./shared";
 
+export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
+  "data-livepeer-player-video-webrtc-initialized";
+
 /**
  * Client that uses WHEP to play back video over WebRTC.
  *
@@ -27,6 +30,17 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
 ): {
   destroy: () => void;
 } => {
+  // do not attach twice
+  if (element.getAttribute(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE) === "true") {
+    return {
+      destroy: () => {
+        //
+      },
+    };
+  }
+
+  element.setAttribute(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE, "true");
+
   let destroyed = false;
 
   const abortController = new AbortController();
@@ -35,11 +49,11 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
   const stream = new MediaStream();
 
   const errorComposed = (e: Error) => {
+    callbacks?.onError?.(e as Error);
+
     if (element) {
       element.srcObject = null;
     }
-
-    callbacks?.onError?.(e as Error);
   };
 
   getRedirectUrl(source, abortController, config?.sdpTimeout)
@@ -162,6 +176,8 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
     destroy: () => {
       destroyed = true;
       abortController?.abort?.();
+
+      element?.removeAttribute?.(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE);
 
       // Remove the WebRTC source
       if (element) {

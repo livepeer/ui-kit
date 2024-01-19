@@ -39,15 +39,13 @@ export function addMediaMetrics(
       viewerId: null,
       creatorId: null,
       playbackRate: element.playbackRate,
+      onError,
     },
   });
 
   const { destroy: destroyListeners } = addEventListeners(element, store);
 
-  const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(
-    store,
-    onError,
-  );
+  const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
 
   return {
     metrics,

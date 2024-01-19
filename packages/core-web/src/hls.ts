@@ -2,12 +2,16 @@ import Hls, { ErrorData, HlsConfig } from "hls.js";
 
 import { isClient } from "./media/utils";
 
-export const VIDEO_HLS_INITIALIZED_ATTRIBUTE = "data-hls-initialized";
+export const VIDEO_HLS_INITIALIZED_ATTRIBUTE =
+  "data-livepeer-player-video-hls-initialized";
 
 export type HlsError = ErrorData;
 
 export type VideoConfig = { autoplay?: boolean };
-export type HlsVideoConfig = Partial<HlsConfig> & { autoplay?: boolean };
+export type HlsVideoConfig = Partial<HlsConfig> & {
+  autoplay?: boolean;
+  currentTime?: number;
+};
 
 /**
  * Checks if hls.js can play in the browser.
@@ -83,6 +87,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.loadSource(source);
 
     hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
+      if (config.currentTime) element.currentTime = config.currentTime;
       callbacks?.onCanPlay?.();
     });
   });

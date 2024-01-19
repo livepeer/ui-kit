@@ -24,46 +24,6 @@
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
-    },
-    "./components": {
-      "import": {
-        "types": "./dist/es/components.d.mts",
-        "default": "./dist/es/components.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/components.d.ts",
-        "default": "./dist/cjs/components.js"
-      }
-    },
-    "./broadcast": {
-      "import": {
-        "types": "./dist/es/broadcast.d.mts",
-        "default": "./dist/es/broadcast.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/broadcast.d.ts",
-        "default": "./dist/cjs/broadcast.js"
-      }
-    },
-    "./controls": {
-      "import": {
-        "types": "./dist/es/controls.d.mts",
-        "default": "./dist/es/controls.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/controls.d.ts",
-        "default": "./dist/cjs/controls.js"
-      }
-    },
-    "./player": {
-      "import": {
-        "types": "./dist/es/player.d.mts",
-        "default": "./dist/es/player.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/player.d.ts",
-        "default": "./dist/cjs/player.js"
-      }
     }
   },
   "scripts": {

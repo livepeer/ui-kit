@@ -1,90 +1,107 @@
 "use client";
 
-import * as SliderPrimitive from "@radix-ui/react-slider";
-import type * as Radix from "@radix-ui/react-primitive";
 import { composeEventHandlers } from "@radix-ui/primitive";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import * as SliderPrimitive from "./Slider";
+import { getHoursMinutesSeconds } from "@livepeer/core-web/utils";
 
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 
 import { useStore } from "zustand";
 import { PlayerScopedProps, usePlayerContext } from "../context";
-import { Primitive } from "./primitive";
+import { useShallow } from "zustand/react/shallow";
 
-const SEEK_FULLSCREEN_TRIGGER_NAME = "Seek";
+import * as Radix from "./primitive";
+import { Presence } from "@radix-ui/react-presence";
 
-type SeekElement = React.ElementRef<typeof Primitive.button>;
+const SEEK_TRIGGER_NAME = "Seek";
+
+type SeekElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface SeekProps
-  extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {}
+  extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
+  forceMount?: boolean;
+}
 
 const Seek = React.forwardRef<SeekElement, SeekProps>(
   (props: PlayerScopedProps<SeekProps>, forwardedRef) => {
-    const { __scopePlayer, ...seekProps } = props;
+    const { __scopePlayer, forceMount, ...seekProps } = props;
 
-    const context = usePlayerContext(
-      SEEK_FULLSCREEN_TRIGGER_NAME,
-      __scopePlayer,
-    );
+    const context = usePlayerContext(SEEK_TRIGGER_NAME, __scopePlayer);
 
-    const { duration, progress, __controlsFunctions } = useStore(
+    const { duration, progress, live, seek } = useStore(
       context.store,
-      ({ duration, progress, __controlsFunctions }) => ({
+      useShallow(({ duration, progress, live, __controlsFunctions }) => ({
         duration,
         progress,
-        __controlsFunctions,
-      }),
+        live,
+        seek: __controlsFunctions.requestSeek,
+      })),
     );
 
     const onValueChange = React.useCallback(
-      ([value]: number[]) => __controlsFunctions.requestSeek(value),
-      [__controlsFunctions],
+      ([value]: number[]) => seek(value),
+      [seek],
     );
     const onValueCommit = React.useCallback(
-      ([value]: number[]) => __controlsFunctions.requestSeek(value),
-      [__controlsFunctions],
+      ([value]: number[]) => seek(value),
+      [seek],
     );
 
-    // const [progress = [0], setProgress] = useControllableState({
-    //   prop: [0],
-    //   defaultProp: [0],
-    //   onChange: onValueChange,
-    // });
+    const progressParsed = useMemo(
+      () => getHoursMinutesSeconds(progress ?? null),
+      [progress],
+    );
 
-    // useEffect(() => {
-    //   setProgress([progressStore]);
-    // }, [setProgress, progressStore]);
+    const durationParsed = useMemo(
+      () => getHoursMinutesSeconds(duration ?? null),
+      [duration],
+    );
 
-    // const title = React.useMemo(
-    //   () => (fullscreen ? "Exit full screen (f)" : "Full screen (f)"),
-    //   [fullscreen],
-    // );
+    const title = useMemo(() => {
+      const progressText = `${
+        progressParsed.hours ? `${progressParsed.hours} hours` : ""
+      } ${progressParsed.minutes ? `${progressParsed.minutes} minutes` : ""} ${
+        progressParsed.seconds ? `${progressParsed.seconds} seconds` : ""
+      }`;
+      const durationText = `${
+        durationParsed.hours ? `${durationParsed.hours} hours` : ""
+      } ${durationParsed.minutes ? `${durationParsed.minutes} minutes` : ""} ${
+        durationParsed.seconds ? `${durationParsed.seconds} seconds` : ""
+      }`;
+
+      return live
+        ? `Live ${progressText}`
+        : `${progressText} of ${durationText}`;
+    }, [live, progressParsed, durationParsed]);
 
     return (
-      <SliderPrimitive.Root
-        // aria-label={title}
-        // title={title}
-        step={0.1}
-        max={duration}
-        value={[progress]}
-        {...seekProps}
-        onValueChange={composeEventHandlers(props.onValueChange, onValueChange)}
-        onValueCommit={composeEventHandlers(props.onValueCommit, onValueCommit)}
-        ref={forwardedRef}
-        data-livepeer-player-controls-seek=""
-        data-duration={duration}
-        data-progress={progress}
-      />
+      <Presence present={forceMount || !live}>
+        <SliderPrimitive.Root
+          aria-label={live ? "Live Seek Slider" : "Video Seek Slider"}
+          aria-valuetext={title}
+          step={0.1}
+          max={duration}
+          value={[progress]}
+          role="slider"
+          {...seekProps}
+          onValueChange={composeEventHandlers(
+            props.onValueChange,
+            onValueChange,
+          )}
+          onValueCommit={composeEventHandlers(
+            props.onValueCommit,
+            onValueCommit,
+          )}
+          ref={forwardedRef}
+          data-livepeer-player-controls-seek=""
+          data-duration={duration}
+          data-progress={progress}
+          data-live={String(live)}
+        />
+      </Presence>
     );
   },
 );
 
-type SeekTrackProps = SliderPrimitive.SliderTrackProps;
-const SeekTrack = SliderPrimitive.Track;
-type SeekRangeProps = SliderPrimitive.SliderRangeProps;
-const SeekRange = SliderPrimitive.Range;
-type SeekThumbProps = SliderPrimitive.SliderThumbProps;
-const SeekThumb = SliderPrimitive.Thumb;
-
-export { Seek, SeekTrack, SeekRange, SeekThumb };
-export type { SeekProps, SeekTrackProps, SeekRangeProps, SeekThumbProps };
+export { Seek };
+export type { SeekProps };

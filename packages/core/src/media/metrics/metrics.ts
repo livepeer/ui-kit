@@ -1,6 +1,6 @@
 import { MediaControllerStore } from "../controller";
 import { MimeType } from "../mime";
-import { getMetricsReportingUrl } from "./utils";
+import { getMetricsReportingUrl, getPlaybackIdFromSourceUrl } from "./utils";
 
 type RawMetrics = {
   preloadTime: number | null;
@@ -25,7 +25,13 @@ type RawMetrics = {
 
   playbackScore: number | null;
 
-  player: `${"audio" | "hls" | "video" | "webrtc" | "unknown"}-${string}`;
+  player: `${
+    | "audio"
+    | "hls"
+    | "video"
+    | "webrtc"
+    | "image"
+    | "unknown"}-${string}`;
 
   sourceType: MimeType | "unknown";
 
@@ -382,11 +388,9 @@ export type MediaMetrics = {
  * metrics endpoint.
  *
  * @param store Element to capture playback metrics from
- * @param onError Error callback
  */
 export function addMediaMetricsToStore(
   store: MediaControllerStore | undefined | null,
-  onError?: (error: unknown) => void,
 ): MediaMetrics {
   const defaultResponse: MediaMetrics = {
     metrics: null,
@@ -404,7 +408,7 @@ export function addMediaMetricsToStore(
     return defaultResponse;
   }
 
-  let ws: WebSocket | null;
+  let websocketPromise: Promise<WebSocket> | null;
 
   let timeOut: NodeJS.Timeout | null = null;
   let enabled = true;
@@ -412,7 +416,9 @@ export function addMediaMetricsToStore(
   const metricsStatus = new MetricsStatus(store);
   const monitor = new PlaybackMonitor(store);
 
-  const report = () => {
+  const report = async () => {
+    const ws = await websocketPromise;
+
     if (!enabled || !ws) {
       return;
     }
@@ -449,96 +455,100 @@ export function addMediaMetricsToStore(
     }, 1e3);
   };
 
-  let previousPlaybackUrl: string | null = null;
+  const createNewWebSocket = async (
+    playbackId: string,
+    currentSource: string,
+    numRetries = 0,
+  ) => {
+    try {
+      if (!playbackId || !currentSource) {
+        return;
+      }
 
-  const destroyPlaybackIdListener = store.subscribe((currentState) => {
-    const currentPlaybackUrl = currentState?.currentUrl;
-    const playbackId = currentState.__controls.playbackId;
+      const prevWebsocket = await websocketPromise;
 
-    const shouldOpenNewSocket =
-      currentPlaybackUrl &&
-      currentPlaybackUrl !== previousPlaybackUrl &&
-      playbackId &&
-      currentPlaybackUrl.includes(playbackId);
+      prevWebsocket?.close?.(3077);
 
-    if (shouldOpenNewSocket) {
-      previousPlaybackUrl = currentPlaybackUrl ?? null;
+      const reportingWebsocketUrl = await getMetricsReportingUrl(
+        playbackId,
+        currentSource,
+        store.getState().__controls.sessionToken,
+      );
 
-      try {
-        const createNewWebSocket = async (numRetries = 0) => {
-          const reportingWebsocketUrl = await getMetricsReportingUrl(
-            playbackId,
-            currentPlaybackUrl,
-            store.getState().__controls.sessionToken,
-          );
+      if (reportingWebsocketUrl) {
+        const newWebSocket = new WebSocket(reportingWebsocketUrl);
 
-          if (reportingWebsocketUrl) {
-            ws?.close(3077);
-            const newWebSocket = new WebSocket(reportingWebsocketUrl);
+        newWebSocket.addEventListener("open", async () => {
+          // enable active statistics reporting
+          report();
+        });
+        newWebSocket.addEventListener("message", (event) => {
+          try {
+            if (event?.data) {
+              const json = JSON.parse(event.data);
 
-            newWebSocket.addEventListener("open", () => {
-              // enable active statistics reporting
-              report();
-            });
-            newWebSocket.addEventListener("message", (event) => {
-              try {
-                if (event?.data) {
-                  const json = JSON.parse(event.data);
-
-                  if (json?.meta?.bframes || json?.meta?.buffer_window) {
-                    store.getState().__controlsFunctions.setWebsocketMetadata({
-                      bframes: json?.meta?.bframes
-                        ? Number(json?.meta?.bframes)
-                        : undefined,
-                      bufferWindow: json?.meta?.buffer_window
-                        ? Number(json?.meta?.buffer_window)
-                        : undefined,
-                    });
-                  }
-                }
-              } catch (e) {
-                console.warn("Failed to parse metadata from websocket.");
+              if (json?.meta?.bframes || json?.meta?.buffer_window) {
+                store.getState().__controlsFunctions.setWebsocketMetadata({
+                  bframes: json?.meta?.bframes
+                    ? Number(json?.meta?.bframes)
+                    : undefined,
+                  bufferWindow: json?.meta?.buffer_window
+                    ? Number(json?.meta?.buffer_window)
+                    : undefined,
+                });
               }
-            });
-            newWebSocket.addEventListener("close", () => {
-              // disable active statistics gathering
-              if (timeOut) {
-                clearTimeout(timeOut);
-                timeOut = null;
-                enabled = false;
-              }
-
-              // auto-reconnect with exponential backoff
-              setTimeout(
-                () => {
-                  if (enabled) {
-                    createNewWebSocket(numRetries + 1).then((websocket) => {
-                      ws = websocket;
-                    });
-                  }
-                },
-                2 ** numRetries * 1e3,
-              );
-            });
-            return newWebSocket;
+            }
+          } catch (e) {
+            console.warn("Failed to parse metadata from websocket.");
+          }
+        });
+        newWebSocket.addEventListener("close", () => {
+          // disable active statistics gathering
+          if (timeOut) {
+            clearTimeout(timeOut);
+            timeOut = null;
+            enabled = false;
           }
 
-          return null;
-        };
-
-        createNewWebSocket()
-          .then((websocket) => {
-            ws = websocket;
-          })
-          .catch((e) => {
-            console.error(e);
-            onError?.(e);
-          });
-      } catch (e) {
-        console.error(e);
+          // auto-reconnect with exponential backoff
+          setTimeout(
+            () => {
+              if (enabled) {
+                websocketPromise = createNewWebSocket(
+                  playbackId,
+                  currentSource,
+                  numRetries + 1,
+                );
+              }
+            },
+            2 ** numRetries * 1e3,
+          );
+        });
+        return newWebSocket;
       }
+    } catch (e) {
+      console.error(e);
+      store.getState().__controlsFunctions.onError?.(e);
     }
-  });
+
+    return null;
+  };
+
+  const destroyMetricsListener = store.subscribe(
+    (state) => ({
+      playbackId: state.__controls.playbackId,
+      finalUrl: state.currentUrl,
+    }),
+    (state) => {
+      websocketPromise = createNewWebSocket(state.playbackId, state.finalUrl);
+    },
+    {
+      fireImmediately: true,
+      equalityFn: (a, b) => {
+        return a.finalUrl === b.finalUrl && a.playbackId === b.playbackId;
+      },
+    },
+  );
 
   try {
     const destroyTtffListener = store.subscribe((state, prevState) => {
@@ -592,7 +602,7 @@ export function addMediaMetricsToStore(
     const destroy = () => {
       enabled = false;
 
-      destroyPlaybackIdListener?.();
+      destroyMetricsListener?.();
       destroyMonitorListener?.();
       destroyTtffListener?.();
 
@@ -603,7 +613,11 @@ export function addMediaMetricsToStore(
         clearTimeout(timeOut);
       }
 
-      ws?.close(3077);
+      if (websocketPromise) {
+        websocketPromise.then((websocket) => {
+          websocket?.close(3077);
+        });
+      }
     };
 
     return { metrics: metricsStatus, destroy };

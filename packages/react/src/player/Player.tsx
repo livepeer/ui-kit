@@ -5,35 +5,38 @@ import {
   Src,
   createControllerStore,
   createStorage,
+  noopStorage,
   version,
-  MediaSizing,
 } from "@livepeer/core-react";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 
 import * as AspectRatio from "@radix-ui/react-aspect-ratio";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import type * as Radix from "@radix-ui/react-primitive";
-import { useLayoutEffect } from "@radix-ui/react-use-layout-effect";
+import * as Radix from "./primitive";
 
 import React, { useEffect, useRef } from "react";
 
+import { addMediaMetricsToStore } from "@livepeer/core-web/media";
 import { PlayerProvider, PlayerScopedProps } from "../context";
-import { Primitive } from "./primitive";
 
-type PlayerElement = React.ElementRef<typeof Primitive.div>;
+type PlayerElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface PlayerProps
-  extends Omit<Radix.ComponentPropsWithoutRef<typeof Primitive.div>, "onError">,
+  extends Omit<
+      Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div>,
+      "onError"
+    >,
     Omit<Partial<InitialProps>, "creatorId"> {
   src: Src[] | string;
 
   /**
    * The aspect ratio of the media. Defaults to 16 / 9.
    * This significantly improves cumulative layout shift.
+   * Set to `null` to render a plain div primitive.
    *
    * @see {@link https://web.dev/cls/}
    */
-  aspectRatio?: number;
+  aspectRatio?: number | null;
 }
 
 const Player = React.forwardRef<PlayerElement, PlayerProps>(
@@ -51,10 +54,11 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
       jwt,
       accessKey,
       onError,
+      style,
       ...playerProps
     } = props;
 
-    const [mounted, setMounted] = React.useState(false);
+    // const [mounted, setMounted] = React.useState(false);
 
     const ref = React.useRef<PlayerElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
@@ -64,18 +68,18 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
     const widthRef = React.useRef<number | undefined>(0);
     const width = widthRef.current;
 
-    useEffect(() => {
-      setMounted(true);
-    }, []);
+    // useEffect(() => {
+    //   setMounted(true);
+    // }, []);
 
-    useLayoutEffect(() => {
-      const containerNode = ref.current;
+    // useLayoutEffect(() => {
+    //   const containerNode = ref.current;
 
-      // get width and height from full dimensions
-      const rect = containerNode.getBoundingClientRect();
-      heightRef.current = rect.height;
-      widthRef.current = rect.width;
-    }, [mounted, src]);
+    //   // get width and height from full dimensions
+    //   const rect = containerNode.getBoundingClientRect();
+    //   heightRef.current = rect.height;
+    //   widthRef.current = rect.width;
+    // }, [mounted, src]);
 
     const store = useRef(
       createControllerStore({
@@ -85,7 +89,9 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
             ? {
                 storage: window.localStorage,
               }
-            : {},
+            : {
+                storage: noopStorage,
+              },
         ),
         src,
         initialProps: {
@@ -104,35 +110,57 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
     );
 
     useEffect(() => {
-      if (height && width) {
-        store.current.getState().__controlsFunctions.setSize({
-          container: {
-            width,
-            height,
-          },
-        });
-      }
-    }, [height, width]);
+      const metrics = addMediaMetricsToStore(store.current);
+
+      setTimeout(() => {
+        store.current
+          .getState()
+          .__controlsFunctions.onError(new Error("fake error"));
+      }, 5000);
+
+      return () => {
+        metrics.destroy();
+      };
+    }, []);
+
+    // useEffect(() => {
+    //   if (height && width) {
+    //     store.current.getState().__controlsFunctions.setSize({
+    //       container: {
+    //         width,
+    //         height,
+    //       },
+    //     });
+    //   }
+    // }, [height, width]);
 
     return (
       <PlayerProvider store={store.current} scope={props.__scopePlayer}>
-        <AspectRatio.Root
-          ratio={aspectRatio}
-          {...playerProps}
-          ref={composedRefs}
-          style={{
-            // biome-ignore lint/suspicious/noExplicitAny: player container css var
-            ["--player-container-height" as any]: height
-              ? `${height}px`
-              : undefined,
-            // biome-ignore lint/suspicious/noExplicitAny: player container css var
-            ["--player-container-width" as any]: width
-              ? `${width}px`
-              : undefined,
-            ...props.style,
-          }}
-          data-livepeer-player-wrapper=""
-        />
+        {aspectRatio ? (
+          <AspectRatio.Root
+            ratio={aspectRatio}
+            {...playerProps}
+            ref={composedRefs}
+            style={{
+              // biome-ignore lint/suspicious/noExplicitAny: player container css var
+              ["--player-container-height" as any]: height
+                ? `${height}px`
+                : undefined,
+              // biome-ignore lint/suspicious/noExplicitAny: player container css var
+              ["--player-container-width" as any]: width
+                ? `${width}px`
+                : undefined,
+              ...style,
+            }}
+            data-livepeer-player-aspect-ratio=""
+          />
+        ) : (
+          <Radix.Primitive.div
+            {...playerProps}
+            ref={composedRefs}
+            data-livepeer-player-wrapper=""
+          />
+        )}
       </PlayerProvider>
     );
   },

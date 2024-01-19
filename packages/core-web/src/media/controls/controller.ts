@@ -54,17 +54,6 @@ export const addEventListeners = (
 ) => {
   const initializedState = store.getState();
 
-  // restore the persisted values from store
-  if (element) {
-    setTimeout(() => {
-      if (element && store.getState().__initialProps.volume !== 0) {
-        store
-          .getState()
-          .__controlsFunctions.requestVolume(initializedState.volume);
-      }
-    }, 1);
-  }
-
   try {
     isVolumeChangeSupported(
       initializedState.currentSource?.type === "audio" ? "audio" : "video",
@@ -118,9 +107,10 @@ export const addEventListeners = (
         store.getState().__controlsFunctions.requestToggleMute();
       } else if (code === "KeyV") {
         store.getState().__controlsFunctions.toggleVideo();
-      } else if (code === "KeyX") {
-        store.getState().__controlsFunctions.requestClip();
       }
+      // else if (code === "KeyX") {
+      //   store.getState().__controlsFunctions.requestClip();
+      // }
     }
   };
 
@@ -141,6 +131,7 @@ export const addEventListeners = (
   };
 
   const onVolumeChange = () => {
+    console.log("onvolumechange");
     if (
       typeof element?.volume !== "undefined" &&
       element?.volume !== store.getState().volume
@@ -373,7 +364,10 @@ const addEffectsToStore = (
         if (!current.inputIngest) {
           element.muted = current.volume === 0;
 
-          if (current.__controls.muted !== prev.__controls.muted) {
+          if (
+            !current.__controls.muted &&
+            current.__controls.muted !== prev.__controls.muted
+          ) {
             element.volume = current.__controls.volume;
           }
         } else {
@@ -438,24 +432,6 @@ const addEffectsToStore = (
             previousPromise = exitFullscreen(element);
           }
         }
-
-        // if (
-        //   current.__controls.requestedClipLastTime !==
-        //     prev.__controls.requestedClipLastTime &&
-        //   current.__controls
-        // ) {
-        //   const clipLength = current.clipLength;
-
-        //   // we get the estimated time on the server that the user "clipped"
-        //   // by subtracting the offset from the recorded clip time
-        //   const estimatedServerClipTime =
-        //     current._requestedClipLastTime - (current.playbackOffsetMs ?? 0);
-
-        //   const startTime = estimatedServerClipTime - clipLength * 1000;
-        //   const endTime = estimatedServerClipTime;
-
-        //   // TODO add callback to create clip
-        // }
 
         if (
           current.__controls.requestedPictureInPictureLastTime !==

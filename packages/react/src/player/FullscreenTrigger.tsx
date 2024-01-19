@@ -1,6 +1,6 @@
 "use client";
 
-import type * as Radix from "@radix-ui/react-primitive";
+import * as Radix from "./primitive";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 
@@ -8,14 +8,14 @@ import React, { useEffect } from "react";
 
 import { useStore } from "zustand";
 import { PlayerScopedProps, usePlayerContext } from "../context";
-import { Primitive } from "./primitive";
+import { useShallow } from "zustand/react/shallow";
 
 const FULLSCREEN_TRIGGER_NAME = "FullscreenTrigger";
 
-type FullscreenTriggerElement = React.ElementRef<typeof Primitive.button>;
+type FullscreenTriggerElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface FullscreenTriggerProps
-  extends Radix.ComponentPropsWithoutRef<typeof Primitive.button> {
+  extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
   fullscreen?: boolean;
   onFullscreenChange?(fullscreen: boolean): void;
 }
@@ -34,12 +34,12 @@ const FullscreenTrigger = React.forwardRef<
 
   const context = usePlayerContext(FULLSCREEN_TRIGGER_NAME, __scopePlayer);
 
-  const { fullscreenStore, __controlsFunctions } = useStore(
+  const { fullscreenStore, requestToggleFullscreen } = useStore(
     context.store,
-    ({ fullscreen, __controlsFunctions }) => ({
+    useShallow(({ fullscreen, __controlsFunctions }) => ({
       fullscreenStore: fullscreen,
-      __controlsFunctions,
-    }),
+      requestToggleFullscreen: __controlsFunctions.requestToggleFullscreen,
+    })),
   );
 
   const [fullscreen = false, setFullscreen] = useControllableState({
@@ -53,8 +53,8 @@ const FullscreenTrigger = React.forwardRef<
   }, [setFullscreen, fullscreenStore]);
 
   const toggleFullscreen = React.useCallback(
-    () => __controlsFunctions.requestToggleFullscreen(),
-    [__controlsFunctions],
+    () => requestToggleFullscreen(),
+    [requestToggleFullscreen],
   );
 
   const title = React.useMemo(
@@ -63,7 +63,7 @@ const FullscreenTrigger = React.forwardRef<
   );
 
   return (
-    <Primitive.button
+    <Radix.Primitive.button
       type="button"
       aria-pressed={fullscreen}
       aria-label={title}

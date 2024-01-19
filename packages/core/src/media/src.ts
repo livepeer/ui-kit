@@ -1,4 +1,4 @@
-import { PlaybackInfo } from "livepeer/dist/models/components/playbackinfo";
+import type { PlaybackInfo } from "livepeer/dist/models/components/playbackinfo";
 
 import { MimeType, getMimeType } from "./mime";
 import { ElementSize, MediaSizing } from "./controller";
@@ -23,7 +23,7 @@ type HlsExtension = "m3u8";
 type OptionalQueryParams = `?${string}` | "";
 
 type BaseSrc = {
-  type: "audio" | "video" | "hls" | "webrtc";
+  type: "audio" | "video" | "hls" | "webrtc" | "image";
   src: string;
   mime: MimeType | null;
   width: number | null;
@@ -36,6 +36,10 @@ export interface AudioSrc extends BaseSrc {
 export interface VideoSrc extends BaseSrc {
   type: "video";
   src: `${string}${VideoExtension}${OptionalQueryParams}`;
+}
+export interface ImageSrc extends BaseSrc {
+  type: "image";
+  src: `${string}${OptionalQueryParams}`;
 }
 
 export interface Base64Src extends BaseSrc {
@@ -50,7 +54,13 @@ export interface WebRTCSrc extends BaseSrc {
   type: "webrtc";
   src: `${string}${OptionalQueryParams}`;
 }
-export type Src = AudioSrc | HlsSrc | VideoSrc | Base64Src | WebRTCSrc;
+export type Src =
+  | AudioSrc
+  | HlsSrc
+  | VideoSrc
+  | Base64Src
+  | WebRTCSrc
+  | ImageSrc;
 
 export type AccessControlParams = {
   jwt?: string | null;
@@ -166,6 +176,7 @@ const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
 const webrtcExtensions = /(webrtc|sdp)/i;
 const mimeFromBase64Pattern = /data:(.+?);base64/;
+const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp)($|\?)/i;
 
 export const getMediaSourceType = (
   src: string | null,
@@ -221,7 +232,15 @@ export const getMediaSourceType = (
                 width: resolvedWidth,
                 height: resolvedHeight,
               }
-            : null;
+            : imageExtensions.test(src)
+              ? {
+                  type: "image",
+                  src: src as ImageSrc["src"],
+                  mime: getMimeType(imageExtensions.exec(src)?.[1] ?? ""),
+                  width: resolvedWidth,
+                  height: resolvedHeight,
+                }
+              : null;
 };
 
 export const parsePlaybackInfo = (
