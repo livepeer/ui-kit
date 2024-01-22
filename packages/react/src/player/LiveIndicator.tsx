@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
@@ -15,7 +15,7 @@ interface LiveIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
   forceMount?: boolean;
   /** The matcher used to determine whether the element should be shown, given the `live` state (true for live streams, and false for assets). Defaults to `true`. */
-  matcher?: boolean;
+  matcher?: boolean | ((live: boolean) => boolean);
 }
 
 const LiveIndicator = React.forwardRef<
@@ -33,19 +33,27 @@ const LiveIndicator = React.forwardRef<
 
   const live = useStore(context.store, ({ live }) => live);
 
+  const isPresent = useMemo(
+    () => (typeof matcher === "function" ? matcher(live) : matcher === live),
+    [matcher, live],
+  );
+
   return (
-    <Presence present={forceMount || live === matcher}>
+    <Presence present={forceMount || isPresent}>
       <Radix.Primitive.span
         type="button"
         aria-label="live"
         {...liveIndicatorProps}
         ref={forwardedRef}
-        data-livepeer-player-controls-time=""
-        date-live={String(live)}
+        data-livepeer-player-controls-live-indicator=""
+        data-live={String(Boolean(live))}
+        data-visible={String(isPresent)}
       />
     </Presence>
   );
 });
+
+LiveIndicator.displayName = LIVE_INDICATOR_NAME;
 
 export { LiveIndicator };
 export type { LiveIndicatorProps };

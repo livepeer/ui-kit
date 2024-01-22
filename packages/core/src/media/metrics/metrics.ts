@@ -272,8 +272,8 @@ export class MetricsStatus {
         this.currentMetrics.sourceUrl = state.currentSource?.src ?? null;
       }
 
-      if (state.playbackState !== prevState.playbackState) {
-        if (state.playbackState === "playing") {
+      if (state.playing !== prevState.playing) {
+        if (state.playing) {
           this.timeStalled.stop();
           this.timeWaiting.stop();
 
@@ -292,17 +292,11 @@ export class MetricsStatus {
         this.timeUnpaused.start();
       }
 
-      if (
-        state.playbackState !== prevState.playbackState &&
-        state.playbackState === "stalled"
-      ) {
+      if (state.stalled !== prevState.stalled && state.stalled) {
         this.timeStalled.start();
         this.timeUnpaused.stop();
       }
-      if (
-        state.playbackState !== prevState.playbackState &&
-        state.playbackState === "buffering"
-      ) {
+      if (state.waiting !== prevState.waiting && state.waiting) {
         this.timeWaiting.start();
         this.timeUnpaused.stop();
       }
@@ -553,8 +547,7 @@ export function addMediaMetricsToStore(
   try {
     const destroyTtffListener = store.subscribe((state, prevState) => {
       if (
-        state.playbackState !== prevState.playbackState &&
-        state.playbackState === "playing" &&
+        state.playing !== prevState.playing &&
         metricsStatus.getFirstPlayback() === null
       ) {
         metricsStatus.setFirstPlayback();
@@ -568,8 +561,8 @@ export function addMediaMetricsToStore(
       }
 
       if (
-        state.error?.message !== prevState.error?.message &&
-        state.error?.message
+        state.error?.message &&
+        state.error?.message !== prevState.error?.message
       ) {
         metricsStatus.addError(state.error.message);
       }
@@ -578,8 +571,8 @@ export function addMediaMetricsToStore(
     const destroyMonitorListener = store.subscribe((state, prevState) => {
       // enable
       if (
-        state.playbackState !== prevState.playbackState &&
-        state.playbackState === "playing"
+        (state.playing !== prevState.playing && state.playing) ||
+        (state.loading !== prevState.loading && state.loading)
       ) {
         monitor.init();
       }
@@ -591,10 +584,7 @@ export function addMediaMetricsToStore(
         monitor.reset();
       }
 
-      if (
-        state.playbackState !== prevState.playbackState &&
-        state.playbackState !== "playing"
-      ) {
+      if (state.playing !== prevState.playing && !state.playing) {
         monitor.destroy();
       }
     });

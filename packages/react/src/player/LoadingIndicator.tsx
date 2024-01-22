@@ -2,11 +2,10 @@
 
 import React from "react";
 
+import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { PlayerScopedProps, usePlayerContext } from "../context";
 import * as Radix from "./primitive";
-import { Presence } from "@radix-ui/react-presence";
-import { PlaybackError } from "@livepeer/core-react";
 
 const LOADING_INDICATOR_NAME = "LoadingIndicator";
 
@@ -25,22 +24,23 @@ const LoadingIndicator = React.forwardRef<
 
   const context = usePlayerContext(LOADING_INDICATOR_NAME, __scopePlayer);
 
-  const playbackState = useStore(
-    context.store,
-    ({ playbackState }) => playbackState,
-  );
+  const loading = useStore(context.store, ({ loading }) => loading);
 
   return (
-    <Presence present={forceMount || playbackState === "loading"}>
+    <Presence present={forceMount || loading}>
       <Radix.Primitive.div
         aria-label={"Loading"}
         {...offlineErrorProps}
         ref={forwardedRef}
         data-livepeer-player-loading-indicator=""
+        data-loading-state={String(Boolean(loading))}
+        data-visible={String(loading)}
       />
     </Presence>
   );
 });
+
+LoadingIndicator.displayName = LOADING_INDICATOR_NAME;
 
 export { LoadingIndicator };
 export type { LoadingIndicatorProps };

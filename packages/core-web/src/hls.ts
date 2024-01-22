@@ -10,7 +10,6 @@ export type HlsError = ErrorData;
 export type VideoConfig = { autoplay?: boolean };
 export type HlsVideoConfig = Partial<HlsConfig> & {
   autoplay?: boolean;
-  currentTime?: number;
 };
 
 /**
@@ -87,7 +86,6 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.loadSource(source);
 
     hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
-      if (config.currentTime) element.currentTime = config.currentTime;
       callbacks?.onCanPlay?.();
     });
   });

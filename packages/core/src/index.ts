@@ -18,11 +18,14 @@ export {
 } from "./media";
 export type {
   AccessControlParams,
+  AriaText,
   AudioSrc,
   AudioTrackSelector,
   Base64Src,
   ClipLength,
+  ClipParams,
   ControlsOptions,
+  ControlsState,
   DeviceInformation,
   ElementSize,
   HlsSrc,
@@ -37,7 +40,6 @@ export type {
   ObjectFit,
   PlaybackError,
   PlaybackMonitor,
-  PlaybackState,
   SingleAudioTrackSelector,
   SingleTrackSelector,
   SingleVideoTrackSelector,

@@ -2,11 +2,11 @@
 
 import React, { useMemo } from "react";
 
-import { getFormattedHoursMinutesSeconds } from "@livepeer/core-web/utils";
 import { useStore } from "zustand";
 import { PlayerScopedProps, usePlayerContext } from "../context";
 
 import * as Radix from "./primitive";
+import { useShallow } from "zustand/react/shallow";
 
 const TIME_NAME = "Time";
 
@@ -21,47 +21,35 @@ const Time = React.forwardRef<TimeElement, TimeProps>(
 
     const context = usePlayerContext(TIME_NAME, __scopePlayer);
 
-    const { progress, duration, live } = useStore(
+    const { progress, duration, live, formattedTime } = useStore(
       context.store,
-      ({ progress, duration, live }) => ({
+      useShallow(({ progress, duration, live, aria }) => ({
+        formattedTime: aria.time,
         progress,
         duration,
         live,
-      }),
-    );
-
-    const formattedTimeDisplay = useMemo(
-      () => getFormattedHoursMinutesSeconds(progress ?? null),
-      [progress],
-    );
-
-    const formattedDuration = useMemo(
-      () => getFormattedHoursMinutesSeconds(duration ?? null),
-      [duration],
-    );
-
-    const formattedTime = useMemo(
-      () =>
-        live
-          ? formattedTimeDisplay
-          : `${formattedTimeDisplay} / ${formattedDuration}`,
-      [formattedTimeDisplay, formattedDuration, live],
+      })),
     );
 
     return (
       <Radix.Primitive.span
         type="button"
-        aria-label={formattedTime}
-        title={formattedTime}
+        aria-label={formattedTime ?? undefined}
+        title={formattedTime ?? undefined}
         {...timeProps}
         ref={forwardedRef}
         data-livepeer-player-controls-time=""
+        data-duration={duration}
+        data-progress={progress}
+        data-live={String(live)}
       >
         {formattedTime}
       </Radix.Primitive.span>
     );
   },
 );
+
+Time.displayName = TIME_NAME;
 
 export { Time };
 export type { TimeProps };

@@ -20,12 +20,14 @@ import { useShallow } from "zustand/react/shallow";
 
 const VIDEO_NAME = "PlayerVideo";
 
+type OmittedProps = "src" | "poster";
+
 type VideoElement = React.ElementRef<typeof Radix.Primitive.video>;
 
 interface VideoProps
   extends Omit<
     Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.video>,
-    "src"
+    OmittedProps
   > {
   disablePoster?: boolean;
   /** Controls how often the poster image updates when playing back a livestream, in ms. Set to `0` to disable. Defaults to 20s. */
@@ -48,7 +50,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     const composedRefs = useComposedRefs(forwardedRef, ref);
 
     const {
-      playbackState,
+      playing,
       currentSource,
       isHlsSupported,
       error,
@@ -61,7 +63,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       context.store,
       useShallow(
         ({
-          playbackState,
+          playing,
           currentSource,
           __initialProps,
           __controlsFunctions,
@@ -71,7 +73,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           thumbnail,
           live,
         }) => ({
-          playbackState,
+          playing,
           currentSource,
           isHlsSupported: __device.isHlsSupported,
           error,
@@ -96,7 +98,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     );
 
     useEffect(() => {
-      if (posterLiveUpdate && live && playbackState !== "playing") {
+      if (posterLiveUpdate && live && !playing) {
         const interval = setInterval(() => {
           if (thumbnail?.src) {
             const thumbnailUrl = new URL(thumbnail.src);
@@ -108,7 +110,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         }, posterLiveUpdate);
         return () => clearInterval(interval);
       }
-    }, [posterLiveUpdate, live, thumbnail, playbackState]);
+    }, [posterLiveUpdate, live, thumbnail, playing]);
 
     const [retryCount, setRetryCount] = useState(0);
 
@@ -141,8 +143,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     // biome-ignore lint/correctness/useExhaustiveDependencies: count errors
     React.useEffect(() => {
       if (source?.src) {
-        const currentTime = context?.store?.getState?.()?.progress ?? 0;
-
         let unmounted = false;
 
         const onErrorComposed = (err: Error) => {
@@ -181,9 +181,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
 
           const id = setTimeout(
             () => {
-              console.log(context.store.getState().playbackState);
-
-              if (context.store.getState().playbackState === "loading") {
+              if (context.store.getState().loading) {
                 onErrorComposed(
                   new Error(
                     "Timeout reached for canPlay - triggering playback error.",
@@ -231,7 +229,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
               onRedirect: __controlsFunctions.onFinalUrl,
             },
             {
-              currentTime,
               autoplay: __initialProps.autoPlay,
               xhrSetup(xhr, url) {
                 // xhr.withCredentials = Boolean(allowCrossOriginCredentials);
@@ -263,18 +260,8 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
 
           ref.current.load();
 
-          const setCurrentTime = () => {
-            ref.current.currentTime = currentTime;
-          };
-
-          // Set the video to the previous time after it's loaded
-          ref.current.addEventListener("loadedmetadata", setCurrentTime, {
-            once: true,
-          });
-
           return () => {
             unmounted = true;
-            ref.current.removeEventListener("loadedmetadata", setCurrentTime);
           };
         }
       }
@@ -349,6 +336,8 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     );
   },
 );
+
+Video.displayName = VIDEO_NAME;
 
 export { Video };
 export type { VideoProps };

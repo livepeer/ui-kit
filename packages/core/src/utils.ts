@@ -6,8 +6,6 @@ export {
   b64Encode,
   b64UrlDecode,
   b64UrlEncode,
-  getFormattedHoursMinutesSeconds,
-  getHoursMinutesSeconds,
 } from "./utils/string";
 export * from "./utils/types";
 export { warn } from "./utils/warn";

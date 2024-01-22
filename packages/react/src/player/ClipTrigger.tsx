@@ -3,13 +3,13 @@
 import { composeEventHandlers } from "@radix-ui/primitive";
 import * as Radix from "./primitive";
 
-import React, { useMemo } from "react";
+import React, { useEffect } from "react";
 
-import { ClipLength } from "@livepeer/core-react";
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { PlayerScopedProps, usePlayerContext } from "../context";
+import { noPropagate } from "./shared";
 
 const CLIP_TRIGGER_NAME = "ClipTrigger";
 
@@ -18,8 +18,6 @@ type ClipTriggerElement = React.ElementRef<typeof Radix.Primitive.button>;
 interface ClipTriggerProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
   forceMount?: boolean;
-  /** The clip length when the clip button is clicked, in seconds. Defaults to 10s. */
-  clipLength?: ClipLength | null;
 
   onClip: (opts: {
     /**
@@ -39,61 +37,55 @@ interface ClipTriggerProps
 
 const ClipTrigger = React.forwardRef<ClipTriggerElement, ClipTriggerProps>(
   (props: PlayerScopedProps<ClipTriggerProps>, forwardedRef) => {
-    const {
-      __scopePlayer,
-      style,
-      clipLength = 10,
-      onClip,
-      forceMount,
-      ...clipTriggerProps
-    } = props;
+    const { __scopePlayer, style, forceMount, onClip, ...clipTriggerProps } =
+      props;
 
     const context = usePlayerContext(CLIP_TRIGGER_NAME, __scopePlayer);
 
-    const { playbackOffsetMs, playbackId } = useStore(
+    const { clipLength, requestClip, playbackId, title } = useStore(
       context.store,
-      useShallow(({ __controls }) => ({
-        playbackOffsetMs: __controls.playbackOffsetMs,
-        playbackId: __controls.playbackId,
-      })),
+      useShallow(
+        ({ __controls, __controlsFunctions, aria, __initialProps }) => ({
+          requestClip: __controlsFunctions.requestClip,
+          playbackId: __controls.playbackId,
+          clipLength: __initialProps.clipLength,
+          title: aria.clip,
+        }),
+      ),
     );
 
-    const requestClip = React.useCallback(async () => {
-      const currentTime = Date.now();
-
-      // we get the estimated time on the server that the user "clipped"
-      // by subtracting the offset from the recorded clip time
-      const estimatedServerClipTime = currentTime - (playbackOffsetMs ?? 0);
-      const startTime = estimatedServerClipTime - clipLength * 1000;
-      const endTime = estimatedServerClipTime;
-
-      await onClip({ playbackId, startTime, endTime });
-    }, [playbackOffsetMs, clipLength, onClip, playbackId]);
-
-    const title = useMemo(
-      () =>
-        clipLength
-          ? `Clip last ${Number(clipLength).toFixed(0)} seconds (x)`
-          : undefined,
-      [clipLength],
-    );
+    // biome-ignore lint/correctness/useExhaustiveDependencies: no dependencies
+    useEffect(() => {
+      return context.store.subscribe(
+        (state) => state.__controls.requestedClipParams,
+        (params) => {
+          onClip({ playbackId, ...params });
+        },
+      );
+    }, [playbackId]);
 
     return (
       <Presence present={forceMount || Boolean(clipLength)}>
         <Radix.Primitive.button
           type="button"
-          aria-label={title}
-          title={title}
-          disabled={!playbackId || !playbackOffsetMs}
+          aria-label={title ?? undefined}
+          title={title ?? undefined}
+          disabled={!playbackId || !requestClip}
           {...clipTriggerProps}
-          onClick={composeEventHandlers(props.onClick, requestClip)}
+          onClick={composeEventHandlers(
+            props.onClick,
+            noPropagate(requestClip),
+          )}
           ref={forwardedRef}
           data-livepeer-player-controls-clip-button=""
+          data-visible={String(Boolean(clipLength))}
         />
       </Presence>
     );
   },
 );
+
+ClipTrigger.displayName = CLIP_TRIGGER_NAME;
 
 export { ClipTrigger };
 export type { ClipTriggerProps };

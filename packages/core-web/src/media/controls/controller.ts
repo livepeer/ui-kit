@@ -107,10 +107,9 @@ export const addEventListeners = (
         store.getState().__controlsFunctions.requestToggleMute();
       } else if (code === "KeyV") {
         store.getState().__controlsFunctions.toggleVideo();
+      } else if (code === "KeyX") {
+        store.getState().__controlsFunctions.requestClip();
       }
-      // else if (code === "KeyX") {
-      //   store.getState().__controlsFunctions.requestClip();
-      // }
     }
   };
 
@@ -131,7 +130,6 @@ export const addEventListeners = (
   };
 
   const onVolumeChange = () => {
-    console.log("onvolumechange");
     if (
       typeof element?.volume !== "undefined" &&
       element?.volume !== store.getState().volume
@@ -231,7 +229,8 @@ export const addEventListeners = (
 
     if (parentElementOrElement) {
       if (hotkeys) {
-        element.addEventListener("keyup", onKeyUp);
+        parentElementOrElement.addEventListener("keyup", onKeyUp);
+        parentElementOrElement.setAttribute("tabindex", "0");
       }
       if (autohide) {
         parentElementOrElement.addEventListener("mouseenter", onMouseEnter);

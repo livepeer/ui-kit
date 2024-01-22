@@ -4,9 +4,10 @@ import * as Player from "@livepeer/react/player";
 
 import { createClip } from "./actions";
 import { livepeer } from "./livepeer";
+import { ClipForm } from "./ClipForm";
 
 export async function PlayerServer() {
-  const playbackInfo = await livepeer.playback.get("dd16ie2bidr1n05x");
+  const playbackInfo = await livepeer.playback.get("806dk46k6ba0dv3m");
 
   await new Promise((r) => setTimeout(r, 5000));
 
@@ -18,21 +19,19 @@ export async function PlayerServer() {
         <Player.Root
           autoPlay
           aspectRatio={16 / 9}
+          clipLength={30}
           className="w-full h-full overflow-hidden rounded-sm bg-gray-950"
           src={src}
         >
-          <Player.Video title="Live stream" muted className="w-full h-full" />
+          <Player.Video title="Live stream" className="w-full h-full" />
 
-          <Player.PlaybackStateIndicator
-            matcher="loading"
-            className="w-full relative h-full"
-          >
+          <Player.LoadingIndicator className="w-full relative h-full">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               <Assets.LoadingIcon className="w-8 h-8 animate-spin" />
             </div>
             <Player.Poster className="w-full h-full opacity-45 object-cover" />
             <PlayerLoading />
-          </Player.PlaybackStateIndicator>
+          </Player.LoadingIndicator>
 
           <Player.ErrorIndicator
             matcher="offline"
@@ -60,16 +59,16 @@ export async function PlayerServer() {
             </div>
           </Player.ErrorIndicator>
 
-          <Player.Controls className="bg-gradient-to-b gap-1 px-3 md:px-3 py-1.5 flex-col-reverse flex from-transparent via-80% via-black/30 to-black/60 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=true]:fade-out-0 data-[visible=false]:fade-in-0">
+          <Player.Controls className="bg-gradient-to-b gap-1 px-3 md:px-3 py-1.5 flex-col-reverse flex from-black/20 via-80% via-black/30 duration-1000 to-black/60 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
             <div className="flex justify-between gap-4">
               <div className="flex flex-1 items-center gap-3">
                 <Player.PlayPauseTrigger className="w-6 h-6 md:w-7 md:h-7 hover:scale-110 transition-all flex-shrink-0">
-                  <Player.PlaybackStateIndicator asChild matcher="playing">
-                    <Assets.PauseIcon className="w-full h-full" />
-                  </Player.PlaybackStateIndicator>
-                  <Player.PlaybackStateIndicator asChild matcher="not-playing">
+                  <Player.PlayingIndicator asChild matcher={false}>
                     <Assets.PlayIcon className="w-full h-full" />
-                  </Player.PlaybackStateIndicator>
+                  </Player.PlayingIndicator>
+                  <Player.PlayingIndicator asChild>
+                    <Assets.PauseIcon className="w-full h-full" />
+                  </Player.PlayingIndicator>
                 </Player.PlayPauseTrigger>
 
                 <Player.LiveIndicator className="hidden sm:flex gap-2 items-center">
@@ -98,16 +97,8 @@ export async function PlayerServer() {
                   <Player.Thumb className="block transition-all group-hover:scale-110 w-3 h-3 bg-white rounded-full" />
                 </Player.Volume>
               </div>
-              <div className="flex sm:flex-1 md:flex-[1.5] justify-end items-center gap-2">
-                <Player.LiveIndicator asChild>
-                  <Player.ClipTrigger
-                    clipLength={10}
-                    onClip={createClip}
-                    className="w-6 h-6 md:w-7 md:h-7 hover:scale-110 transition-all flex-shrink-0"
-                  >
-                    <Assets.ClipIcon className="w-full h-full" />
-                  </Player.ClipTrigger>
-                </Player.LiveIndicator>
+              <div className="flex sm:flex-1 md:flex-[1.5] justify-end items-center gap-2.5">
+                <ClipForm className="flex items-center w-6 h-6 md:w-7 md:h-7 justify-center m-0" />
 
                 <Player.PictureInPictureTrigger className="w-6 h-6 md:w-7 md:h-7 hover:scale-110 transition-all flex-shrink-0">
                   <Assets.PictureInPictureIcon className="w-full h-full" />
@@ -126,9 +117,10 @@ export async function PlayerServer() {
             </div>
             <Player.Seek className="relative group flex cursor-pointer items-center select-none touch-none w-full h-5">
               <Player.Track className="bg-white/30 relative grow rounded-full h-[2px] md:h-[3px]">
+                <Player.SeekBuffer className="absolute bg-black/30 transition-all rounded-full h-full" />
                 <Player.Range className="absolute bg-white rounded-full h-full" />
               </Player.Track>
-              <Player.Thumb className="block transition-all group-hover:scale-110 w-3 h-3 bg-white rounded-full" />
+              <Player.Thumb className="block group-hover:scale-110 w-3 h-3 bg-white rounded-full" />
             </Player.Seek>
           </Player.Controls>
         </Player.Root>

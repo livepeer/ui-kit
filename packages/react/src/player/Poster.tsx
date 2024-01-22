@@ -25,7 +25,7 @@ const Poster = React.forwardRef<PosterElement, PosterProps>(
     const thumbnail = useStore(context.store, ({ thumbnail }) => thumbnail);
 
     return (
-      <Presence present={Boolean(forceMount || src || thumbnail?.src)}>
+      <Presence present={forceMount || Boolean(src || thumbnail?.src)}>
         <Radix.Primitive.img
           alt="Poster for video"
           aria-hidden="true"
@@ -33,11 +33,14 @@ const Poster = React.forwardRef<PosterElement, PosterProps>(
           src={src || thumbnail?.src}
           ref={forwardedRef}
           data-livepeer-player-poster=""
+          data-visible={String(Boolean(src || thumbnail?.src))}
         />
       </Presence>
     );
   },
 );
+
+Poster.displayName = POSTER_NAME;
 
 export { Poster };
 export type { PosterProps };

@@ -9,16 +9,18 @@ export {
 } from "./player/ErrorIndicator";
 export {
   FullscreenIndicator,
-  type FullscreenIndicatorProps,
-} from "./player/FullscreenIndicator";
-export {
   FullscreenTrigger,
+  type FullscreenIndicatorProps,
   type FullscreenTriggerProps,
-} from "./player/FullscreenTrigger";
+} from "./player/Fullscreen";
 export {
   LiveIndicator,
   type LiveIndicatorProps,
 } from "./player/LiveIndicator";
+export {
+  LoadingIndicator,
+  type LoadingIndicatorProps,
+} from "./player/LoadingIndicator";
 export {
   MuteTrigger,
   type MuteTriggerProps,
@@ -29,12 +31,10 @@ export {
 } from "./player/PictureInPictureTrigger";
 export {
   PlayPauseTrigger,
+  PlayingIndicator,
   type PlayPauseTriggerProps,
-} from "./player/PlayPauseTrigger";
-export {
-  PlaybackStateIndicator,
-  type PlaybackStateIndicatorProps,
-} from "./player/PlaybackStateIndicator";
+  type PlayingIndicatorProps,
+} from "./player/Play";
 export { Root, type PlayerProps } from "./player/Player";
 export {
   Poster,
@@ -42,6 +42,8 @@ export {
 } from "./player/Poster";
 export {
   Seek,
+  SeekBuffer,
+  type SeekBufferProps,
   type SeekProps,
 } from "./player/Seek";
 export {
@@ -57,9 +59,7 @@ export { Time, type TimeProps } from "./player/Time";
 export { Video, type VideoProps } from "./player/Video";
 export {
   Volume,
-  type VolumeProps,
-} from "./player/Volume";
-export {
   VolumeIndicator,
   type VolumeIndicatorProps,
-} from "./player/VolumeIndicator";
+  type VolumeProps,
+} from "./player/Volume";

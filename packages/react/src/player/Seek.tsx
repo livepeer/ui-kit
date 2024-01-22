@@ -2,7 +2,6 @@
 
 import { composeEventHandlers } from "@radix-ui/primitive";
 import * as SliderPrimitive from "./Slider";
-import { getHoursMinutesSeconds } from "@livepeer/core-web/utils";
 
 import React, { useMemo } from "react";
 
@@ -12,8 +11,9 @@ import { useShallow } from "zustand/react/shallow";
 
 import * as Radix from "./primitive";
 import { Presence } from "@radix-ui/react-presence";
+import { noPropagate } from "./shared";
 
-const SEEK_TRIGGER_NAME = "Seek";
+const SEEK_NAME = "Seek";
 
 type SeekElement = React.ElementRef<typeof Radix.Primitive.button>;
 
@@ -24,18 +24,39 @@ interface SeekProps
 
 const Seek = React.forwardRef<SeekElement, SeekProps>(
   (props: PlayerScopedProps<SeekProps>, forwardedRef) => {
-    const { __scopePlayer, forceMount, ...seekProps } = props;
+    const { __scopePlayer, forceMount, style, ...seekProps } = props;
 
-    const context = usePlayerContext(SEEK_TRIGGER_NAME, __scopePlayer);
+    const context = usePlayerContext(SEEK_NAME, __scopePlayer);
 
-    const { duration, progress, live, seek } = useStore(
+    const {
+      ariaProgress,
+      duration,
+      buffered,
+      bufferedPercent,
+      progress,
+      live,
+      seek,
+    } = useStore(
       context.store,
-      useShallow(({ duration, progress, live, __controlsFunctions }) => ({
-        duration,
-        progress,
-        live,
-        seek: __controlsFunctions.requestSeek,
-      })),
+      useShallow(
+        ({
+          aria,
+          duration,
+          buffered,
+          bufferedPercent,
+          progress,
+          live,
+          __controlsFunctions,
+        }) => ({
+          ariaProgress: aria.progress,
+          duration,
+          buffered,
+          bufferedPercent,
+          progress,
+          live,
+          seek: __controlsFunctions.requestSeek,
+        }),
+      ),
     );
 
     const onValueChange = React.useCallback(
@@ -47,38 +68,11 @@ const Seek = React.forwardRef<SeekElement, SeekProps>(
       [seek],
     );
 
-    const progressParsed = useMemo(
-      () => getHoursMinutesSeconds(progress ?? null),
-      [progress],
-    );
-
-    const durationParsed = useMemo(
-      () => getHoursMinutesSeconds(duration ?? null),
-      [duration],
-    );
-
-    const title = useMemo(() => {
-      const progressText = `${
-        progressParsed.hours ? `${progressParsed.hours} hours` : ""
-      } ${progressParsed.minutes ? `${progressParsed.minutes} minutes` : ""} ${
-        progressParsed.seconds ? `${progressParsed.seconds} seconds` : ""
-      }`;
-      const durationText = `${
-        durationParsed.hours ? `${durationParsed.hours} hours` : ""
-      } ${durationParsed.minutes ? `${durationParsed.minutes} minutes` : ""} ${
-        durationParsed.seconds ? `${durationParsed.seconds} seconds` : ""
-      }`;
-
-      return live
-        ? `Live ${progressText}`
-        : `${progressText} of ${durationText}`;
-    }, [live, progressParsed, durationParsed]);
-
     return (
       <Presence present={forceMount || !live}>
         <SliderPrimitive.Root
           aria-label={live ? "Live Seek Slider" : "Video Seek Slider"}
-          aria-valuetext={title}
+          aria-valuetext={ariaProgress}
           step={0.1}
           max={duration}
           value={[progress]}
@@ -92,16 +86,67 @@ const Seek = React.forwardRef<SeekElement, SeekProps>(
             props.onValueCommit,
             onValueCommit,
           )}
+          onClick={noPropagate(() => {})}
           ref={forwardedRef}
           data-livepeer-player-controls-seek=""
           data-duration={duration}
           data-progress={progress}
           data-live={String(live)}
+          data-buffered={buffered}
+          data-visible={String(!live)}
+          style={{
+            // biome-ignore lint/suspicious/noExplicitAny: player container css var
+            ["--livepeer-player-buffering-width" as any]: `${
+              bufferedPercent ?? 0
+            }%`,
+            ...style,
+          }}
         />
       </Presence>
     );
   },
 );
 
-export { Seek };
-export type { SeekProps };
+Seek.displayName = SEEK_NAME;
+
+const SEEK_BUFFER_NAME = "SeekBuffer";
+
+type SeekBufferElement = React.ElementRef<typeof SliderPrimitive.Track>;
+
+interface SeekBufferProps
+  extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Track> {}
+
+const SeekBuffer = React.forwardRef<SeekBufferElement, SeekBufferProps>(
+  (props: PlayerScopedProps<SeekBufferProps>, forwardedRef) => {
+    const { __scopePlayer, style, ...bufferProps } = props;
+
+    const context = usePlayerContext(SEEK_BUFFER_NAME, __scopePlayer);
+
+    const { bufferedPercent, buffered } = useStore(
+      context.store,
+      useShallow(({ bufferedPercent, buffered }) => ({
+        buffered,
+        bufferedPercent,
+      })),
+    );
+
+    return (
+      <SliderPrimitive.Track
+        {...bufferProps}
+        ref={forwardedRef}
+        style={{
+          left: 0,
+          right: `${100 - (bufferedPercent ?? 0)}%`,
+          ...style,
+        }}
+        data-livepeer-player-controls-seek-buffer=""
+        data-buffered={buffered}
+      />
+    );
+  },
+);
+
+SeekBuffer.displayName = SEEK_BUFFER_NAME;
+
+export { Seek, SeekBuffer };
+export type { SeekProps, SeekBufferProps };

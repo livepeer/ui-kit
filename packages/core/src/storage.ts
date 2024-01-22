@@ -29,13 +29,16 @@ export function createStorage({
 }): ClientStorage {
   return {
     getItem: async (key, defaultState = null) => {
-      try {
-        const value = await storage.getItem(`${prefix}.${key}`);
-        return value ? JSON.parse(value) : defaultState;
-      } catch (error) {
-        console.warn(error);
-        return defaultState;
-      }
+      // biome-ignore lint/suspicious/noAsyncPromiseExecutor: force promise
+      return new Promise(async (resolve) => {
+        try {
+          const value = await storage.getItem(`${prefix}.${key}`);
+          resolve(value ? JSON.parse(value) : defaultState);
+        } catch (error) {
+          console.warn(error);
+          resolve(defaultState); // Resolve with defaultState in case of error
+        }
+      });
     },
     setItem: async (key, value) => {
       if (value === null) {

@@ -5,8 +5,11 @@ export {
   sanitizeMediaControllerState,
 } from "./media/controller";
 export type {
+  AriaText,
   ClipLength,
+  ClipParams,
   ControlsOptions,
+  ControlsState,
   DeviceInformation,
   ElementSize,
   InitialProps,
@@ -17,7 +20,6 @@ export type {
   Metadata,
   ObjectFit,
   PlaybackError,
-  PlaybackState,
 } from "./media/controller";
 export { addMediaMetricsToStore } from "./media/metrics";
 export type {

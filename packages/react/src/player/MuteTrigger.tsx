@@ -9,6 +9,7 @@ import { PlayerScopedProps, usePlayerContext } from "../context";
 
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "./primitive";
+import { noPropagate } from "./shared";
 
 const MUTE_TRIGGER_NAME = "MuteTrigger";
 
@@ -31,11 +32,6 @@ const MuteTrigger = React.forwardRef<MuteTriggerElement, MuteTriggerProps>(
       })),
     );
 
-    const toggleMuteComposed = React.useCallback(
-      () => toggleMute(),
-      [toggleMute],
-    );
-
     const title = React.useMemo(
       () => (volume === 0 ? "Unmute (m)" : "Mute (m)"),
       [volume],
@@ -48,14 +44,16 @@ const MuteTrigger = React.forwardRef<MuteTriggerElement, MuteTriggerProps>(
         aria-label={title}
         title={title}
         {...playProps}
-        onClick={composeEventHandlers(props.onClick, toggleMuteComposed)}
+        onClick={composeEventHandlers(props.onClick, noPropagate(toggleMute))}
         ref={forwardedRef}
-        data-livepeer-player-controls-play-button=""
+        data-livepeer-player-controls-mute-trigger=""
         data-muted={String(volume === 0)}
       />
     );
   },
 );
+
+MuteTrigger.displayName = MUTE_TRIGGER_NAME;
 
 export { MuteTrigger };
 export type { MuteTriggerProps };

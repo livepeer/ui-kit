@@ -54,32 +54,13 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
       jwt,
       accessKey,
       onError,
+      clipLength,
       style,
       ...playerProps
     } = props;
 
-    // const [mounted, setMounted] = React.useState(false);
-
     const ref = React.useRef<PlayerElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
-
-    const heightRef = React.useRef<number | undefined>(0);
-    const height = heightRef.current;
-    const widthRef = React.useRef<number | undefined>(0);
-    const width = widthRef.current;
-
-    // useEffect(() => {
-    //   setMounted(true);
-    // }, []);
-
-    // useLayoutEffect(() => {
-    //   const containerNode = ref.current;
-
-    //   // get width and height from full dimensions
-    //   const rect = containerNode.getBoundingClientRect();
-    //   heightRef.current = rect.height;
-    //   widthRef.current = rect.width;
-    // }, [mounted, src]);
 
     const store = useRef(
       createControllerStore({
@@ -105,6 +86,7 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
           loop,
           jwt,
           accessKey,
+          clipLength,
         },
       }),
     );
@@ -112,27 +94,10 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
     useEffect(() => {
       const metrics = addMediaMetricsToStore(store.current);
 
-      setTimeout(() => {
-        store.current
-          .getState()
-          .__controlsFunctions.onError(new Error("fake error"));
-      }, 5000);
-
       return () => {
         metrics.destroy();
       };
     }, []);
-
-    // useEffect(() => {
-    //   if (height && width) {
-    //     store.current.getState().__controlsFunctions.setSize({
-    //       container: {
-    //         width,
-    //         height,
-    //       },
-    //     });
-    //   }
-    // }, [height, width]);
 
     return (
       <PlayerProvider store={store.current} scope={props.__scopePlayer}>
@@ -141,17 +106,6 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
             ratio={aspectRatio}
             {...playerProps}
             ref={composedRefs}
-            style={{
-              // biome-ignore lint/suspicious/noExplicitAny: player container css var
-              ["--player-container-height" as any]: height
-                ? `${height}px`
-                : undefined,
-              // biome-ignore lint/suspicious/noExplicitAny: player container css var
-              ["--player-container-width" as any]: width
-                ? `${width}px`
-                : undefined,
-              ...style,
-            }}
             data-livepeer-player-aspect-ratio=""
           />
         ) : (
@@ -165,6 +119,8 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
     );
   },
 );
+
+Player.displayName = "Player";
 
 const Root = Player;
 

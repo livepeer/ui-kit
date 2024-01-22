@@ -44,12 +44,16 @@ const ErrorIndicator = React.forwardRef<
       <Radix.Primitive.div
         {...offlineErrorProps}
         ref={forwardedRef}
-        data-livepeer-player-error={error?.type ?? ""}
         data-livepeer-player-error-indicator=""
+        data-error-state={String(Boolean(error))}
+        data-error-type={error?.type ?? "none"}
+        data-visible={String(isPresent)}
       />
     </Presence>
   );
 });
+
+ErrorIndicator.displayName = ERROR_INDICATOR_NAME;
 
 export { ErrorIndicator };
 export type { ErrorIndicatorProps };
