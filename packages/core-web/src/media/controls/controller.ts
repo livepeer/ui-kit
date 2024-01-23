@@ -89,7 +89,6 @@ export const addEventListeners = (
     e.stopPropagation();
 
     const code = e.code as KeyTrigger;
-
     store.getState().__controlsFunctions.updateLastInteraction();
 
     if (allKeyTriggers.includes(code)) {
