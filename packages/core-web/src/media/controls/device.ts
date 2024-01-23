@@ -1,10 +1,10 @@
 import { DeviceInformation } from "@livepeer/core";
 
 import { isHlsSupported } from "../../hls";
+import { isWebRTCSupported } from "../../webrtc";
 import { isAndroid, isIos, isMobile } from "../utils";
 import { isFullscreenSupported } from "./fullscreen";
 import { isPictureInPictureSupported } from "./pictureInPicture";
-import { isWebRTCSupported } from "../../webrtc";
 
 export const getDeviceInfo = (version: string): DeviceInformation => ({
   version,

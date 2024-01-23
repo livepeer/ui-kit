@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 import * as Radix from "./primitive";
 
 const LIVE_INDICATOR_NAME = "LiveIndicator";
@@ -21,15 +21,15 @@ interface LiveIndicatorProps
 const LiveIndicator = React.forwardRef<
   LiveIndicatorElement,
   LiveIndicatorProps
->((props: PlayerScopedProps<LiveIndicatorProps>, forwardedRef) => {
+>((props: MediaScopedProps<LiveIndicatorProps>, forwardedRef) => {
   const {
-    __scopePlayer,
+    __scopeMedia,
     forceMount,
     matcher = true,
     ...liveIndicatorProps
   } = props;
 
-  const context = usePlayerContext(LIVE_INDICATOR_NAME, __scopePlayer);
+  const context = useMediaContext(LIVE_INDICATOR_NAME, __scopeMedia);
 
   const live = useStore(context.store, ({ live }) => live);
 
@@ -45,7 +45,7 @@ const LiveIndicator = React.forwardRef<
         aria-label="live"
         {...liveIndicatorProps}
         ref={forwardedRef}
-        data-livepeer-player-controls-live-indicator=""
+        data-livepeer-controls-live-indicator=""
         data-live={String(Boolean(live))}
         data-visible={String(isPresent)}
       />

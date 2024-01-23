@@ -5,11 +5,11 @@ import { composeEventHandlers } from "@radix-ui/primitive";
 import React from "react";
 
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "./primitive";
-import { noPropagate } from "./shared";
+import { noPropagate } from "./utils";
 
 const MUTE_TRIGGER_NAME = "MuteTrigger";
 
@@ -19,10 +19,10 @@ interface MuteTriggerProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {}
 
 const MuteTrigger = React.forwardRef<MuteTriggerElement, MuteTriggerProps>(
-  (props: PlayerScopedProps<MuteTriggerProps>, forwardedRef) => {
-    const { __scopePlayer, ...playProps } = props;
+  (props: MediaScopedProps<MuteTriggerProps>, forwardedRef) => {
+    const { __scopeMedia, ...playProps } = props;
 
-    const context = usePlayerContext(MUTE_TRIGGER_NAME, __scopePlayer);
+    const context = useMediaContext(MUTE_TRIGGER_NAME, __scopeMedia);
 
     const { volume, toggleMute } = useStore(
       context.store,
@@ -46,7 +46,7 @@ const MuteTrigger = React.forwardRef<MuteTriggerElement, MuteTriggerProps>(
         {...playProps}
         onClick={composeEventHandlers(props.onClick, noPropagate(toggleMute))}
         ref={forwardedRef}
-        data-livepeer-player-controls-mute-trigger=""
+        data-livepeer-controls-mute-trigger=""
         data-muted={String(volume === 0)}
       />
     );

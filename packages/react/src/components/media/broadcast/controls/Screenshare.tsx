@@ -4,7 +4,7 @@ import { styling } from "@livepeer/core-web/media/browser/styling";
 import { getDisplayMedia } from "@livepeer/core-web/src/media/browser/webrtc";
 import React, { useCallback } from "react";
 
-import { useMediaController } from "../../../../context";
+import { useMediaController } from "../../../../player/context";
 
 const DefaultScreenshareIcon = () => (
   <svg width="100%" height="100%" viewBox="-340 -1265 1600 1600">

@@ -1,7 +1,7 @@
 import type { PlaybackInfo } from "livepeer/dist/models/components/playbackinfo";
 
+import { ElementSize } from "./controller";
 import { MimeType, getMimeType } from "./mime";
-import { ElementSize, MediaSizing } from "./controller";
 
 type AudioExtension =
   | "m4a"
@@ -171,12 +171,12 @@ export type AudioTrackSelector = TrackSelector<SingleAudioTrackSelector>;
 
 const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;
-const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
 const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
-const webrtcExtensions = /(webrtc|sdp)/i;
-const mimeFromBase64Pattern = /data:(.+?);base64/;
 const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp)($|\?)/i;
+const mimeFromBase64Pattern = /data:(.+?);base64/;
+const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
+const webrtcExtensions = /(webrtc|sdp)/i;
 
 export const getMediaSourceType = (
   src: string | null,
@@ -259,7 +259,7 @@ export const parsePlaybackInfo = (
       }),
     )
     ?.filter((source) => source?.src)
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: filtered
     ?.map((source) => source!);
 
   return sources ?? null;

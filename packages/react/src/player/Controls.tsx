@@ -2,15 +2,15 @@
 
 import { Presence } from "@radix-ui/react-presence";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
 
-import * as Radix from "./primitive";
-import { useShallow } from "zustand/react/shallow";
 import { composeEventHandlers } from "@radix-ui/primitive";
-import { noPropagate } from "./shared";
+import { useShallow } from "zustand/react/shallow";
+import { MediaScopedProps, useMediaContext } from "../context";
+import * as Radix from "../shared/primitive";
+import { noPropagate } from "../shared/utils";
 
 const CONTROLS_NAME = "Controls";
 
@@ -26,29 +26,33 @@ interface ControlsProps
 }
 
 const Controls = React.forwardRef<ControlsElement, ControlsProps>(
-  (props: PlayerScopedProps<ControlsProps>, forwardedRef) => {
-    const { forceMount, __scopePlayer, onClick, style, ...controlsProps } =
+  (props: MediaScopedProps<ControlsProps>, forwardedRef) => {
+    const { forceMount, __scopeMedia, onClick, style, ...controlsProps } =
       props;
 
-    const context = usePlayerContext(CONTROLS_NAME, __scopePlayer);
+    const context = useMediaContext(CONTROLS_NAME, __scopeMedia);
 
-    const { hidden, loading, togglePlay } = useStore(
+    const { hidden, loading, togglePlay, error } = useStore(
       context.store,
-      useShallow(({ hidden, loading, __controlsFunctions }) => ({
+      useShallow(({ hidden, loading, __controlsFunctions, error }) => ({
         hidden,
         loading,
         togglePlay: __controlsFunctions.togglePlay,
+        error: error?.type ?? null,
       })),
     );
 
-    const shown = useMemo(() => !hidden && !loading, [hidden, loading]);
+    const shown = useMemo(
+      () => !hidden && !loading && !error,
+      [hidden, loading, error],
+    );
 
     return (
       <Presence present={forceMount || shown}>
         <Radix.Primitive.div
           {...controlsProps}
           ref={forwardedRef}
-          data-livepeer-player-controls-gradient=""
+          data-livepeer-controls=""
           data-visible={String(shown)}
           onClick={composeEventHandlers(onClick, noPropagate(togglePlay))}
           style={{

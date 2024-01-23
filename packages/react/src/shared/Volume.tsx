@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
@@ -12,7 +12,7 @@ import * as Radix from "./primitive";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import * as SliderPrimitive from "./Slider";
 
-import { noPropagate } from "./shared";
+import { noPropagate } from "./utils";
 
 /**
  * Volume
@@ -26,10 +26,10 @@ interface VolumeProps
   extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {}
 
 const Volume = React.forwardRef<VolumeElement, VolumeProps>(
-  (props: PlayerScopedProps<VolumeProps>, forwardedRef) => {
-    const { __scopePlayer, ...volumeProps } = props;
+  (props: MediaScopedProps<VolumeProps>, forwardedRef) => {
+    const { __scopeMedia, ...volumeProps } = props;
 
-    const context = usePlayerContext(VOLUME_NAME, __scopePlayer);
+    const context = useMediaContext(VOLUME_NAME, __scopeMedia);
 
     const { volume, requestVolume } = useStore(
       context.store,
@@ -60,7 +60,7 @@ const Volume = React.forwardRef<VolumeElement, VolumeProps>(
         onValueChange={composeEventHandlers(props.onValueChange, onValueChange)}
         onValueCommit={composeEventHandlers(props.onValueCommit, onValueCommit)}
         ref={forwardedRef}
-        data-livepeer-player-controls-volume=""
+        data-livepeer-controls-volume=""
         data-livepeer-muted={String(volume === 0)}
         data-livepeer-volume={String((100 * volume).toFixed(0))}
       />
@@ -88,15 +88,15 @@ interface VolumeIndicatorProps
 const VolumeIndicator = React.forwardRef<
   VolumeIndicatorElement,
   VolumeIndicatorProps
->((props: PlayerScopedProps<VolumeIndicatorProps>, forwardedRef) => {
+>((props: MediaScopedProps<VolumeIndicatorProps>, forwardedRef) => {
   const {
-    __scopePlayer,
+    __scopeMedia,
     forceMount,
     matcher = false,
     ...volumeIndicatorProps
   } = props;
 
-  const context = usePlayerContext(VOLUME_INDICATOR_NAME, __scopePlayer);
+  const context = useMediaContext(VOLUME_INDICATOR_NAME, __scopeMedia);
 
   const volume = useStore(
     context.store,
@@ -122,7 +122,7 @@ const VolumeIndicator = React.forwardRef<
         ref={forwardedRef}
         data-livepeer-muted={String(volume === 0)}
         data-livepeer-volume={String((100 * volume).toFixed(0))}
-        data-livepeer-player-controls-volume-indicator=""
+        data-livepeer-controls-volume-indicator=""
         data-visible={String(isPresent)}
       />
     </Presence>

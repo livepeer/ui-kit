@@ -23,7 +23,7 @@ import {
 import { isVolumeChangeSupported } from "./volume";
 
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE =
-  "data-livepeer-player-controller-initialized";
+  "data-livepeer-controller-initialized";
 
 const allKeyTriggers = [
   "KeyF",
@@ -89,6 +89,7 @@ export const addEventListeners = (
     e.stopPropagation();
 
     const code = e.code as KeyTrigger;
+
     store.getState().__controlsFunctions.updateLastInteraction();
 
     if (allKeyTriggers.includes(code)) {
@@ -104,8 +105,6 @@ export const addEventListeners = (
         store.getState().__controlsFunctions.requestSeekBack();
       } else if (code === "KeyM") {
         store.getState().__controlsFunctions.requestToggleMute();
-      } else if (code === "KeyV") {
-        store.getState().__controlsFunctions.toggleVideo();
       } else if (code === "KeyX") {
         store.getState().__controlsFunctions.requestClip();
       }
@@ -359,29 +358,16 @@ const addEffectsToStore = (
           element.volume = current.volume;
         }
 
-        if (!current.inputIngest) {
-          element.muted = current.volume === 0;
+        // if (!current.__initialProps.streamKey) {
+        element.muted = current.volume === 0;
 
-          if (
-            !current.__controls.muted &&
-            current.__controls.muted !== prev.__controls.muted
-          ) {
-            element.volume = current.__controls.volume;
-          }
-        } else {
-          // if (current.__controls.muted !== prev.__controls.muted) {
-          //   const audioTracks = current?.mediaStream?.getAudioTracks?.() ?? [];
-          //   for (const audioTrack of audioTracks) {
-          //     audioTrack.enabled = !current.muted;
-          //   }
-          // }
-          // if (current.video !== prev.video) {
-          //   const videoTracks = current?.mediaStream?.getVideoTracks?.() ?? [];
-          //   for (const videoTrack of videoTracks) {
-          //     videoTrack.enabled = Boolean(current.video);
-          //   }
-          // }
+        if (
+          !current.__controls.muted &&
+          current.__controls.muted !== prev.__controls.muted
+        ) {
+          element.volume = current.__controls.volume;
         }
+        // }
 
         if (
           current.__controls.requestedRangeToSeekTo !==

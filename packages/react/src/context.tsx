@@ -1,20 +1,19 @@
-import { MediaControllerStore } from "@livepeer/core-react";
+import { MediaControllerStore } from "@livepeer/core";
 import { createContextScope } from "@radix-ui/react-context";
 
 import type { Scope } from "@radix-ui/react-context";
 
-const PLAYER_NAME = "Player";
+const MEDIA_NAME = "Media";
 
-type PlayerScopedProps<P> = P & { __scopePlayer?: Scope };
-const [createPlayerContext, createPlayerScope] =
-  createContextScope(PLAYER_NAME);
+type MediaScopedProps<P> = P & { __scopeMedia?: Scope };
+const [createMediaContext, createMediaScope] = createContextScope(MEDIA_NAME);
 
-type PlayerContextValue = {
+type MediaContextValue = {
   store: MediaControllerStore;
 };
 
-const [PlayerProvider, usePlayerContext] =
-  createPlayerContext<PlayerContextValue>(PLAYER_NAME);
+const [MediaProvider, useMediaContext] =
+  createMediaContext<MediaContextValue>(MEDIA_NAME);
 
-export { PlayerProvider, createPlayerScope, usePlayerContext };
-export type { PlayerContextValue, PlayerScopedProps };
+export { MediaProvider, createMediaScope, useMediaContext };
+export type { MediaContextValue, MediaScopedProps };

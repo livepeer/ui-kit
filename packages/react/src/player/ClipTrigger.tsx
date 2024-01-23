@@ -1,15 +1,15 @@
 "use client";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
-import * as Radix from "./primitive";
+import * as Radix from "../shared/primitive";
 
 import React, { useEffect } from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { PlayerScopedProps, usePlayerContext } from "../context";
-import { noPropagate } from "./shared";
+import { noPropagate } from "../shared/utils";
+import { MediaScopedProps, useMediaContext } from "../context";
 
 const CLIP_TRIGGER_NAME = "ClipTrigger";
 
@@ -36,11 +36,11 @@ interface ClipTriggerProps
 }
 
 const ClipTrigger = React.forwardRef<ClipTriggerElement, ClipTriggerProps>(
-  (props: PlayerScopedProps<ClipTriggerProps>, forwardedRef) => {
-    const { __scopePlayer, style, forceMount, onClip, ...clipTriggerProps } =
+  (props: MediaScopedProps<ClipTriggerProps>, forwardedRef) => {
+    const { __scopeMedia, style, forceMount, onClip, ...clipTriggerProps } =
       props;
 
-    const context = usePlayerContext(CLIP_TRIGGER_NAME, __scopePlayer);
+    const context = useMediaContext(CLIP_TRIGGER_NAME, __scopeMedia);
 
     const { clipLength, requestClip, playbackId, title } = useStore(
       context.store,
@@ -56,12 +56,16 @@ const ClipTrigger = React.forwardRef<ClipTriggerElement, ClipTriggerProps>(
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: no dependencies
     useEffect(() => {
-      return context.store.subscribe(
-        (state) => state.__controls.requestedClipParams,
-        (params) => {
-          onClip({ playbackId, ...params });
-        },
-      );
+      if (playbackId) {
+        return context.store.subscribe(
+          (state) => state.__controls.requestedClipParams,
+          (params) => {
+            if (params) {
+              onClip({ playbackId, ...params });
+            }
+          },
+        );
+      }
     }, [playbackId]);
 
     return (
@@ -77,7 +81,7 @@ const ClipTrigger = React.forwardRef<ClipTriggerElement, ClipTriggerProps>(
             noPropagate(requestClip),
           )}
           ref={forwardedRef}
-          data-livepeer-player-controls-clip-button=""
+          data-livepeer-controls-clip-button=""
           data-visible={String(Boolean(clipLength))}
         />
       </Presence>

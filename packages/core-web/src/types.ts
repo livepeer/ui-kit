@@ -1,1 +1,1 @@
-export * from "@livepeer/core/types";
+export type { Address, Hash } from "@livepeer/core/types";

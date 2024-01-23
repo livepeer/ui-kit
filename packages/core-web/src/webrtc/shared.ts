@@ -1,8 +1,6 @@
 import {
   AccessControlParams,
-  AudioTrackSelector,
   NOT_ACCEPTABLE_ERROR_MESSAGE,
-  VideoTrackSelector,
 } from "@livepeer/core";
 import { isClient } from "../media/utils";
 
@@ -68,38 +66,7 @@ export function createPeerConnection(
   return null;
 }
 
-export type WebRTCVideoConfig = {
-  /**
-   * The timeout of the network requests made for the SDP negotiation, in ms.
-   *
-   * @default 20000
-   */
-  sdpTimeout?: number;
-  /**
-   * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
-   */
-  constant?: boolean;
-  /**
-   * The track selector used when choosing the video track for playback.
-   *
-   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
-   */
-  videoTrackSelector?: VideoTrackSelector;
-  /**
-   * The track selector used when choosing the audio track for playback.
-   *
-   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
-   */
-  audioTrackSelector?: AudioTrackSelector;
-  /**
-   * The timeout of the time to wait for WebRTC `canPlay`, in ms.
-   *
-   * @default 7000
-   */
-  canPlayTimeout?: number;
-};
-
-const DEFAULT_TIMEOUT = 20000;
+const DEFAULT_TIMEOUT = 5000;
 
 /**
  * Performs the actual SDP exchange.
@@ -117,8 +84,8 @@ export async function negotiateConnectionWithClientOffer(
   endpoint: string | null | undefined,
   ofr: RTCSessionDescription | null,
   controller: AbortController,
-  config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
+  accessControl: AccessControlParams,
+  sdpTimeout: number | null,
 ): Promise<Date> {
   if (peerConnection && endpoint && ofr) {
     /**
@@ -130,8 +97,8 @@ export async function negotiateConnectionWithClientOffer(
       endpoint,
       ofr.sdp,
       controller,
-      config,
       accessControl,
+      sdpTimeout,
     );
     if (response.ok) {
       const answerSDP = await response.text();
@@ -195,12 +162,12 @@ async function postSDPOffer(
   endpoint: string,
   data: string,
   controller: AbortController,
-  config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
+  accessControl: AccessControlParams,
+  sdpTimeout: number | null,
 ) {
   const id = setTimeout(
     () => controller.abort(),
-    config?.sdpTimeout ?? DEFAULT_TIMEOUT,
+    sdpTimeout ?? DEFAULT_TIMEOUT,
   );
 
   const url = new URL(endpoint);
@@ -217,18 +184,6 @@ async function postSDPOffer(
       REPLACE_PLACEHOLDER,
       parsedMatches[2],
     );
-  }
-
-  if (config?.constant) {
-    url.searchParams.append("constant", "true");
-  }
-
-  if (config?.audioTrackSelector) {
-    url.searchParams.append("audio", config.audioTrackSelector);
-  }
-
-  if (config?.videoTrackSelector) {
-    url.searchParams.append("video", config.videoTrackSelector);
   }
 
   const response = await fetch(url.toString(), {
@@ -259,7 +214,7 @@ async function postSDPOffer(
 export async function getRedirectUrl(
   endpoint: string,
   abortController: AbortController,
-  timeout?: number,
+  timeout: number | null,
 ) {
   try {
     if (cachedRedirectUrl) {

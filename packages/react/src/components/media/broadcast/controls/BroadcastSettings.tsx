@@ -3,7 +3,7 @@ import { styling } from "@livepeer/core-web/media/browser/styling";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as React from "react";
 
-import { useMediaController } from "../../../../context";
+import { useMediaController } from "../../../../player/context";
 import { AudioSourceSelect } from "./AudioSourceSelect";
 import { VideoSourceSelect } from "./VideoSourceSelect";
 

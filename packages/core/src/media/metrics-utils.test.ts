@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { getMetricsReportingUrl, getPlaybackIdFromSourceUrl } from "./utils";
+import {
+  getMetricsReportingUrl,
+  getPlaybackIdFromSourceUrl,
+} from "./metrics-utils";
 
 describe("getMetricsReportingUrl", () => {
   describe("asset url", () => {

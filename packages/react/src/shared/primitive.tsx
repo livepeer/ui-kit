@@ -25,6 +25,7 @@ const NODES = [
 
 // Temporary while we await merge of this fix:
 // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/55396
+// biome-ignore lint/suspicious/noExplicitAny: any
 type PropsWithoutRef<P> = P extends any
   ? "ref" extends keyof P
     ? Pick<P, Exclude<keyof P, "ref">>
@@ -51,11 +52,14 @@ interface PrimitiveForwardRefComponent<E extends React.ElementType>
 
 const Primitive = NODES.reduce((primitive, node) => {
   const Node = React.forwardRef(
+    // biome-ignore lint/suspicious/noExplicitAny: any
     (props: PrimitivePropsWithRef<typeof node>, forwardedRef: any) => {
       const { asChild, ...primitiveProps } = props;
+      // biome-ignore lint/suspicious/noExplicitAny: any
       const Comp: any = asChild ? Slot : node;
 
       React.useEffect(() => {
+        // biome-ignore lint/suspicious/noExplicitAny: any
         (window as any)[Symbol.for("radix-ui")] = true;
       }, []);
 
@@ -79,7 +83,7 @@ const Primitive = NODES.reduce((primitive, node) => {
  *
  * React batches *all* event handlers since version 18, this introduces certain considerations when using custom event types.
  *
- * Internally, React prioritises events in the following order:
+ * Internally, React prioritizes events in the following order:
  *  - discrete
  *  - continuous
  *  - default
@@ -93,7 +97,7 @@ const Primitive = NODES.reduce((primitive, node) => {
  *
  * In order to ensure that updates from custom events are applied predictably, we need to manually flush the batch.
  * This utility should be used when dispatching a custom event from within another `discrete` event, this utility
- * is not nessesary when dispatching known event types, or if dispatching a custom type inside a non-discrete event.
+ * is not necessary when dispatching known event types, or if dispatching a custom type inside a non-discrete event.
  * For example:
  *
  * dispatching a known click 👎

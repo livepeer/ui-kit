@@ -14,7 +14,10 @@ import {
 import * as React from "react";
 
 import { BroadcastProps } from ".";
-import { MediaControllerContext, useMediaController } from "../../../context";
+import {
+  MediaControllerContext,
+  useMediaController,
+} from "../../../player/context";
 
 const mediaControllerSelector = ({
   _element,

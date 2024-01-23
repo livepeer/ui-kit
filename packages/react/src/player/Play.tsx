@@ -6,11 +6,11 @@ import React, { useMemo } from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 
 import { useShallow } from "zustand/react/shallow";
-import * as Radix from "./primitive";
-import { noPropagate } from "./shared";
+import * as Radix from "../shared/primitive";
+import { noPropagate } from "../shared/utils";
 
 /**
  * PlayPauseTrigger
@@ -26,10 +26,10 @@ interface PlayPauseTriggerProps
 const PlayPauseTrigger = React.forwardRef<
   PlayPauseTriggerElement,
   PlayPauseTriggerProps
->((props: PlayerScopedProps<PlayPauseTriggerProps>, forwardedRef) => {
-  const { __scopePlayer, ...playProps } = props;
+>((props: MediaScopedProps<PlayPauseTriggerProps>, forwardedRef) => {
+  const { __scopeMedia, ...playProps } = props;
 
-  const context = usePlayerContext(PLAY_PAUSE_TRIGGER_NAME, __scopePlayer);
+  const context = useMediaContext(PLAY_PAUSE_TRIGGER_NAME, __scopeMedia);
 
   const { playing, togglePlay, title } = useStore(
     context.store,
@@ -49,7 +49,7 @@ const PlayPauseTrigger = React.forwardRef<
       {...playProps}
       onClick={composeEventHandlers(props.onClick, noPropagate(togglePlay))}
       ref={forwardedRef}
-      data-livepeer-player-controls-play-pause-trigger=""
+      data-livepeer-controls-play-pause-trigger=""
       data-playing={String(playing)}
     />
   );
@@ -75,15 +75,15 @@ interface PlayingIndicatorProps
 const PlayingIndicator = React.forwardRef<
   PlayingIndicatorElement,
   PlayingIndicatorProps
->((props: PlayerScopedProps<PlayingIndicatorProps>, forwardedRef) => {
+>((props: MediaScopedProps<PlayingIndicatorProps>, forwardedRef) => {
   const {
-    __scopePlayer,
+    __scopeMedia,
     forceMount,
     matcher = true,
     ...playPauseIndicatorProps
   } = props;
 
-  const context = usePlayerContext(PLAYING_INDICATOR_NAME, __scopePlayer);
+  const context = useMediaContext(PLAYING_INDICATOR_NAME, __scopeMedia);
 
   const playing = useStore(
     context.store,
@@ -101,7 +101,7 @@ const PlayingIndicator = React.forwardRef<
       <Radix.Primitive.div
         {...playPauseIndicatorProps}
         ref={forwardedRef}
-        data-livepeer-player-controls-play-pause-indicator=""
+        data-livepeer-controls-play-pause-indicator=""
         data-playing={String(playing)}
         data-visible={String(isPresent)}
       />
@@ -111,5 +111,5 @@ const PlayingIndicator = React.forwardRef<
 
 PlayingIndicator.displayName = PLAYING_INDICATOR_NAME;
 
-export { PlayingIndicator, PlayPauseTrigger };
-export type { PlayingIndicatorProps, PlayPauseTriggerProps };
+export { PlayPauseTrigger, PlayingIndicator };
+export type { PlayPauseTriggerProps, PlayingIndicatorProps };

@@ -4,7 +4,6 @@ import {
   render as defaultRender,
   queries,
 } from "@testing-library/react";
-// import from @testing-library/react-hooks for React 17
 
 import * as React from "react";
 

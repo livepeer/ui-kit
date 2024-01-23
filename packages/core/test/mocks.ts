@@ -1,8 +1,8 @@
 import { vi } from "vitest";
 
-import crypto from "node:crypto";
+import { getSubtleCrypto } from "../src/crypto/getSubtleCrypto";
 
-vi.stubGlobal("crypto", { subtle: crypto.webcrypto.subtle });
+vi.stubGlobal("crypto", { subtle: getSubtleCrypto() });
 
 // make dates stable across runs and increment each call
 export const resetDateNow = () => {
@@ -28,11 +28,6 @@ export const waitForWebsocketOpen = async (_websocket: WebSocket | null) =>
 
 export class MockedVideoElement extends HTMLVideoElement {
   listeners: { [key: string]: EventListenerOrEventListenerObject[] } = {};
-
-  constructor() {
-    // Always call super first in constructor
-    super();
-  }
 
   load = vi.fn(() => {
     return true;

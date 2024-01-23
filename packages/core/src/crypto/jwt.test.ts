@@ -2,13 +2,8 @@
 import { importSPKI, jwtVerify } from "jose";
 import { describe, expect, it } from "vitest";
 
-import { setupClient } from "../../test";
-import { studioProvider } from "../providers/studio";
 import { b64UrlDecode } from "../utils";
 import { signAccessJwt } from "./jwt";
-
-// stream ID which was generated previously for tests
-const streamId = "d7ae985a-7a27-4c18-a00c-22a5b5ea7e10";
 
 const commonOptions = {
   privateKey:
@@ -50,66 +45,6 @@ describe("signAccessJwt", () => {
     expect(decoded.payload.video).toEqual("none");
   });
 
-  it("fails to signs with streamId and no client", async () => {
-    await expect(
-      signAccessJwt({
-        ...commonOptions,
-        streamId,
-      }),
-    ).rejects.toMatchInlineSnapshot("[Error: No livepeer client found.]");
-  });
-
-  it("signs with streamId", async () => {
-    const token = await signAccessJwt(
-      {
-        ...commonOptions,
-        streamId,
-      },
-      {
-        provider: studioProvider({
-          apiKey: process.env.STUDIO_API_KEY ?? "",
-        }),
-      },
-    );
-
-    const decoded = await verifyJwt(token);
-
-    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
-      {
-        "alg": "ES256",
-        "typ": "JWT",
-      }
-    `);
-    expect(decoded.payload.action).toEqual("pull");
-    expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
-    expect(decoded.payload.iss).toEqual("https://docs.livepeer.org");
-    expect(decoded.payload.sub).toEqual("d7aer9qx8act4lfd");
-    expect(decoded.payload.video).toEqual("none");
-  });
-
-  it("signs with streamId and a global client", async () => {
-    setupClient();
-
-    const token = await signAccessJwt({
-      ...commonOptions,
-      streamId,
-    });
-
-    const decoded = await verifyJwt(token);
-
-    expect(decoded.protectedHeader).toMatchInlineSnapshot(`
-      {
-        "alg": "ES256",
-        "typ": "JWT",
-      }
-    `);
-    expect(decoded.payload.action).toEqual("pull");
-    expect(decoded.payload.pub).toEqual(commonOptions.publicKey);
-    expect(decoded.payload.iss).toEqual("https://docs.livepeer.org");
-    expect(decoded.payload.sub).toEqual("d7aer9qx8act4lfd");
-    expect(decoded.payload.video).toEqual("none");
-  });
-
   it("signs with a default duration", async () => {
     const token = await signAccessJwt({
       ...commonOptions,
@@ -134,7 +69,7 @@ describe("signAccessJwt", () => {
     const token = await signAccessJwt({
       ...commonOptions,
       playbackId: "abcd1234",
-      expiration: "300s",
+      expiration: 300,
     });
 
     const decoded = await verifyJwt(token);

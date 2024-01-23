@@ -4,7 +4,7 @@ import { MediaControllerState, omit } from "@livepeer/core-web";
 import { styling } from "@livepeer/core-web/media/browser/styling";
 import React, { useMemo } from "react";
 
-import { useMediaController } from "../../../../context";
+import { useMediaController } from "../../../../player/context";
 
 const DefaultOnIcon = () => (
   <svg

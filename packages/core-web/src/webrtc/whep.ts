@@ -1,7 +1,6 @@
 import { AccessControlParams } from "@livepeer/core";
 
 import {
-  WebRTCVideoConfig,
   constructClientOffer,
   createPeerConnection,
   getRedirectUrl,
@@ -9,25 +8,31 @@ import {
 } from "./shared";
 
 export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
-  "data-livepeer-player-video-webrtc-initialized";
+  "data-livepeer-video-whep-initialized";
 
 /**
  * Client that uses WHEP to play back video over WebRTC.
  *
  * https://www.ietf.org/id/draft-murillo-whep-00.html
  */
-export const createNewWHEP = <TElement extends HTMLMediaElement>(
-  source: string,
-  element: TElement,
-  callbacks?: {
+export const createNewWHEP = <TElement extends HTMLMediaElement>({
+  source,
+  element,
+  callbacks,
+  accessControl,
+  sdpTimeout,
+}: {
+  source: string;
+  element: TElement;
+  callbacks: {
     onConnected?: () => void;
     onPlaybackOffsetUpdated?: (d: number) => void;
     onError?: (data: Error) => void;
     onRedirect?: (url: string | null) => void;
-  },
-  config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
-): {
+  };
+  accessControl: AccessControlParams;
+  sdpTimeout: number | null;
+}): {
   destroy: () => void;
 } => {
   // do not attach twice
@@ -56,7 +61,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
     }
   };
 
-  getRedirectUrl(source, abortController, config?.sdpTimeout)
+  getRedirectUrl(source, abortController, sdpTimeout)
     .then((redirectUrl) => {
       if (destroyed || !redirectUrl) {
         return;
@@ -153,8 +158,8 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
               source,
               ofr,
               abortController,
-              config,
               accessControl,
+              sdpTimeout,
             );
 
             const currentDate = Date.now();
@@ -177,13 +182,13 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>(
       destroyed = true;
       abortController?.abort?.();
 
-      element?.removeAttribute?.(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE);
-
       // Remove the WebRTC source
       if (element) {
         element.srcObject = null;
       }
       peerConnection?.close?.();
+
+      element?.removeAttribute?.(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE);
     },
   };
 };

@@ -6,7 +6,7 @@ import {
 import { StoreApi, createStore } from "zustand/vanilla";
 
 import { ClientStorage } from "../storage";
-import { ImageSrc, Src } from "./src";
+import { AudioTrackSelector, ImageSrc, Src, VideoTrackSelector } from "./src";
 
 import {
   isAccessControlError,
@@ -30,6 +30,44 @@ const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when s
 export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
+
+export type WebRTCPlaybackConfig = {
+  /**
+   * The timeout of the network requests made for the SDP negotiation, in ms.
+   *
+   * @default 5000
+   */
+  sdpTimeout?: number;
+  /**
+   * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
+   */
+  constant?: boolean;
+  /**
+   * The track selector used when choosing the video track for playback.
+   *
+   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
+   */
+  videoTrackSelector?: VideoTrackSelector;
+  /**
+   * The track selector used when choosing the audio track for playback.
+   *
+   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
+   */
+  audioTrackSelector?: AudioTrackSelector;
+  /**
+   * The timeout of the time to wait for WebRTC `canPlay`, in ms.
+   *
+   * @default 7000
+   */
+  canPlayTimeout?: number;
+};
+
+export type ControlsOptions = {
+  /** Auto-hide controls after a set amount of time (in milliseconds). Defaults to 3000. Set to 0 for no hiding. */
+  autohide?: number;
+  /** Sets the default volume. Must be between 0 and 1. */
+  defaultVolume?: number;
+};
 
 export type DeviceInformation = {
   version: string;
@@ -94,14 +132,15 @@ export type ControlsState = {
 export type ObjectFit = "cover" | "contain";
 
 export type InitialProps = {
+  /** The aspect ratio for the container element */
+  aspectRatio: number | null;
+
   /** If autoPlay was passed in to the Player */
   autoPlay: boolean;
   /** The preload option passed in to the Player */
   preload: "auto" | "metadata" | "none";
   /** The viewerId for the viewer passed in to Player */
   viewerId: string | null;
-  /** The creatorId for the broadcast component */
-  creatorId: string | null;
 
   /** The volume that was passed in to the Player */
   volume: number;
@@ -166,140 +205,125 @@ export type MediaControllerCallbackState = Omit<
 >;
 
 export type AriaText = {
-  progress: string | null;
-  pictureInPicture: string | null;
-  fullscreen: string | null;
-  playPause: string | null;
+  progress: string;
+  pictureInPicture: string;
+  fullscreen: string;
+  playPause: string;
   clip: string | null;
-  time: string | null;
+  time: string;
 };
 
 export type MediaControllerState = {
-  /** Current volume of the media. 0 if it is muted. */
-  volume: number;
-  /** The current playback rate for the media. Defaults to 1. */
-  playbackRate: number;
-  /** Current progress of the media (in seconds) */
-  progress: number;
   /** The ARIA text for the current state */
   aria: AriaText;
-  /** Current total duration of the media (in seconds) */
-  duration: number;
+
   /** Current buffered end time for the media (in seconds) */
   buffered: number;
   /** Current buffered percent */
   bufferedPercent: number;
 
-  /** The audio and video device IDs currently used (only applies to broadcasting) */
-  deviceIds: {
-    audio?: string;
-    video?: string;
-  } | null;
-  /** If video is enabled (only applies to broadcasting) */
-  video: boolean | null;
-
-  /** The thumbnail URL for the media. */
-  thumbnail: ImageSrc | null;
-  /** If the media is fullscreen. */
-  fullscreen: boolean;
-  /** If the media is in picture in picture mode */
-  pictureInPicture: boolean;
-
   /** If the media has loaded and can be played */
   canPlay: boolean;
-  /** If the media is current playing or paused */
-  playing: boolean;
-  /** If the media has been played yet */
-  hasPlayed: boolean;
-  /** If the media is currently waiting for data */
-  waiting: boolean;
-  /** If the media is currently stalled */
-  stalled: boolean;
-  /** If the media is currently loading */
-  loading: boolean;
-  /** If the media has ended */
-  ended: boolean;
+
+  /** The current source that is playing. */
+  currentSource: Src | null;
+  /** The final playback URL for the media that is playing, after redirects. */
+  currentUrl: string | null;
+
+  /** Current total duration of the media (in seconds) */
+  duration: number;
 
   /** If the media has experienced an error. */
   error: PlaybackError | null;
   /** The number of errors that have occurred. */
   errorCount: number;
 
+  /** If the media is currently stalled */
+  stalled: boolean;
+  /** If the media is fullscreen. */
+  fullscreen: boolean;
+
+  /** If the media has been played yet */
+  hasPlayed: boolean;
+
   /** If all controls are currently hidden */
   hidden: boolean;
+
   /** If the content is live media */
   live: boolean;
 
-  /** The ingest URL that was passed in to the Broadcast */
-  inputIngest: string | null;
+  /** If the media is currently loading */
+  loading: boolean;
+
+  /** The current playback rate for the media. Defaults to 1. */
+  playbackRate: number;
+
+  /** If the media is in picture in picture mode */
+  pictureInPicture: boolean;
+
+  /** Current progress of the media (in seconds) */
+  progress: number;
+
+  /** If the media is current playing or paused */
+  playing: boolean;
+
   /** The sorted sources that were passed in to the Player */
   sortedSources: Src[] | string | null;
-  /** The current source that is playing. */
-  currentSource: Src | null;
-  /** The final playback URL for the media that is playing, after redirects. */
-  currentUrl: string | null;
+
+  /** The thumbnail URL for the media. */
+  thumbnail: ImageSrc | null;
+
+  /** Current volume of the media. 0 if it is muted. */
+  volume: number;
+
+  /** If the media is currently waiting for data */
+  waiting: boolean;
+
+  /** If the media has ended */
+  ended: boolean;
+
+  __controls: ControlsState;
+  __controlsFunctions: {
+    setHidden: (hidden: boolean) => void;
+    onCanPlay: () => void;
+    onDurationChange: (duration: number) => void;
+    onEnded: () => void;
+    onError: (error: Error | null) => void;
+    onFinalUrl: (url: string | null) => void;
+    onLoading: () => void;
+    onPause: () => void;
+    onPlay: () => void;
+    onProgress: (time: number) => void;
+    onStalled: () => void;
+    onWaiting: () => void;
+    requestClip: () => void;
+    requestSeek: (time: number) => void;
+    requestSeekBack: (difference?: number) => void;
+    requestSeekDiff: (difference: number) => void;
+    requestSeekForward: (difference?: number) => void;
+    requestToggleFullscreen: () => void;
+    requestToggleMute: () => void;
+    requestTogglePictureInPicture: () => void;
+    requestVolume: (volume: number) => void;
+    setFullscreen: (fullscreen: boolean) => void;
+    setLive: (live: boolean) => void;
+    setPictureInPicture: (pictureInPicture: boolean) => void;
+    setSize: (size: Partial<MediaSizing>) => void;
+    setVolume: (volume: number) => void;
+    setWebsocketMetadata: (metadata: Metadata) => void;
+    togglePlay: (force?: boolean) => void;
+    updateBuffered: (buffered: number) => void;
+    updateLastInteraction: () => void;
+    updatePlaybackOffsetMs: (offset: number) => void;
+  };
+
+  /** The device information and support. */
+  __device: DeviceInformation;
 
   /** The initial props passed into the component. */
   __initialProps: InitialProps;
-  /** The device information and support. */
-  __device: DeviceInformation;
-  /** The controls state. */
-  __controls: ControlsState;
-  /** The media metadata, from the playback websocket */
+
   __metadata: Metadata | null;
-
-  __controlsFunctions: {
-    // updateSource: (source: Src) => void;
-    // updateMediaStream: (
-    //   mediaStream: TMediaStream,
-    //   ids?: { audio?: string; video?: string },
-    // ) => void;
-
-    requestSeek: (time: number) => void;
-
-    requestSeekBack: (difference?: number) => void;
-    requestSeekForward: (difference?: number) => void;
-    requestSeekDiff: (difference: number) => void;
-    togglePlay: (force?: boolean) => void;
-    toggleVideo: () => void;
-
-    setHidden: (hidden: boolean) => void;
-    updateLastInteraction: () => void;
-
-    updatePlaybackOffsetMs: (offset: number) => void;
-
-    setWebsocketMetadata: (metadata: Metadata) => void;
-
-    onPlay: () => void;
-    onPause: () => void;
-    onCanPlay: () => void;
-    onProgress: (time: number) => void;
-    onDurationChange: (duration: number) => void;
-    onWaiting: () => void;
-    onStalled: () => void;
-    onLoading: () => void;
-    onEnded: () => void;
-
-    updateBuffered: (buffered: number) => void;
-
-    onError: (error: Error | null) => void;
-
-    setLive: (live: boolean) => void;
-
-    setSize: (size: Partial<MediaSizing>) => void;
-
-    setFullscreen: (fullscreen: boolean) => void;
-    setPictureInPicture: (pictureInPicture: boolean) => void;
-    requestToggleFullscreen: () => void;
-    requestTogglePictureInPicture: () => void;
-    requestClip: () => void;
-
-    setVolume: (volume: number) => void;
-    requestVolume: (volume: number) => void;
-    requestToggleMute: () => void;
-
-    onFinalUrl: (url: string | null) => void;
-  };
 };
 
 export type MediaControllerStore = StoreApi<MediaControllerState> & {
@@ -326,11 +350,13 @@ export const createControllerStore = ({
   storage,
   src,
   initialProps,
+  webrtcConfig,
 }: {
   device: DeviceInformation;
   storage: ClientStorage;
-  src: Src[] | string;
+  src: Src[] | string | null;
   initialProps: Partial<InitialProps>;
+  webrtcConfig?: WebRTCPlaybackConfig;
 }): MediaControllerStore => {
   const initialVolume = getBoundedVolume(
     initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
@@ -346,10 +372,13 @@ export const createControllerStore = ({
   const sortedSources = sortSources(src, null);
 
   const parsedSource = parseCurrentSourceAndPlaybackId({
-    source: sortedSources?.[0],
-    jwt: initialProps.jwt,
-    accessKey: initialProps.accessKey,
+    source: sortedSources?.[0] ?? null,
+    jwt: initialProps?.jwt ?? null,
+    accessKey: initialProps?.accessKey ?? null,
     sessionToken,
+    audioTrackSelector: webrtcConfig?.audioTrackSelector,
+    videoTrackSelector: webrtcConfig?.videoTrackSelector,
+    constant: webrtcConfig?.constant,
   });
 
   const initialControls: ControlsState = {
@@ -362,7 +391,7 @@ export const createControllerStore = ({
     requestedClipParams: null,
     lastInteraction: Date.now(),
     lastError: 0,
-    playbackId: parsedSource.playbackId,
+    playbackId: parsedSource?.playbackId ?? null,
     size: null,
 
     volume: initialVolume,
@@ -380,7 +409,7 @@ export const createControllerStore = ({
     subscribeWithSelector(
       persist(
         (set, get) => ({
-          currentSource: parsedSource.currentSource,
+          currentSource: parsedSource?.currentSource ?? null,
 
           canPlay: false,
           hidden: false,
@@ -399,11 +428,6 @@ export const createControllerStore = ({
 
           thumbnail: thumbnailSrc ?? null,
 
-          /** The audio and video device IDs currently used (only applies to broadcasting) */
-          deviceIds: null,
-          /** If video is enabled (only applies to broadcasting) */
-          video: null,
-
           /** If the media is fullscreen. */
           fullscreen: false,
           /** If the media is in picture in picture mode */
@@ -412,7 +436,7 @@ export const createControllerStore = ({
           playing: false,
           waiting: false,
           stalled: false,
-          loading: false,
+          loading: true,
           ended: false,
 
           /** If the media has experienced an error. */
@@ -425,8 +449,6 @@ export const createControllerStore = ({
           /** If the media has been played yet. */
           hasPlayed: false,
 
-          /** The ingest URL that was passed in to the Broadcast */
-          inputIngest: null,
           /** The sorted sources that were passed in to the Player */
           sortedSources: sortedSources ?? null,
 
@@ -434,25 +456,26 @@ export const createControllerStore = ({
           currentUrl: null,
 
           aria: {
-            progress: null,
-            fullscreen: null,
-            pictureInPicture: null,
-            playPause: null,
+            progress: "No progress, content is loading",
+            fullscreen: "Full screen (f)",
+            pictureInPicture: "Mini player (i)",
+            playPause: "Play (k)",
             clip: initialProps.clipLength
               ? `Clip last ${Number(initialProps.clipLength).toFixed(
                   0,
                 )} seconds (x)`
               : null,
-            time: null,
+            time: "0:00",
           },
 
           __initialProps: {
+            aspectRatio: initialProps?.aspectRatio ?? null,
+
             volume: initialVolume ?? null,
             playbackRate: initialProps.playbackRate ?? 1,
             loop: initialProps.loop ?? false,
 
             autoPlay: initialProps.autoPlay ?? false,
-            creatorId: initialProps.creatorId ?? null,
             preload: initialProps.preload ?? "none",
             viewerId: initialProps.viewerId ?? null,
             lowLatency: initialProps.lowLatency ?? true,
@@ -470,17 +493,6 @@ export const createControllerStore = ({
           __metadata: null,
 
           __controlsFunctions: {
-            // updateMediaStream: (_mediaStream, ids) =>
-            //   set(({ deviceIds }) => ({
-            //     _mediaStream,
-            //     ...(ids?.video ? { video: true } : {}),
-            //     deviceIds: {
-            //       ...deviceIds,
-            //       ...(ids?.audio ? { audio: ids.audio } : {}),
-            //       ...(ids?.video ? { video: ids.video } : {}),
-            //     },
-            //   })),
-
             setHidden: (hidden: boolean) =>
               set(({ playing }) => ({
                 hidden: playing ? hidden : false,
@@ -558,10 +570,6 @@ export const createControllerStore = ({
                 }));
               }
             },
-            toggleVideo: () =>
-              set(({ video }) => ({
-                video: !video,
-              })),
             onProgress: (time) =>
               set(({ aria, progress, duration, live }) => {
                 const progressAria = getProgressAria({
@@ -704,11 +712,13 @@ export const createControllerStore = ({
                 __controls: {
                   ...__controls,
 
-                  requestedClipParams: getClipParams({
-                    requestedTime: Date.now(),
-                    clipLength: __initialProps.clipLength,
-                    playbackOffsetMs: __controls.playbackOffsetMs,
-                  }),
+                  requestedClipParams: __initialProps.clipLength
+                    ? getClipParams({
+                        requestedTime: Date.now(),
+                        clipLength: __initialProps.clipLength,
+                        playbackOffsetMs: __controls.playbackOffsetMs,
+                      })
+                    : null,
                 },
               })),
             requestVolume: (newVolume) =>
@@ -814,10 +824,14 @@ export const createControllerStore = ({
                     return base;
                   }
 
-                  const currentSourceBaseUrl = new URL(currentSource.src);
+                  const currentSourceBaseUrl = currentSource
+                    ? new URL(currentSource.src)
+                    : "";
 
-                  // Clear the search parameters
-                  currentSourceBaseUrl.search = "";
+                  if (currentSourceBaseUrl) {
+                    // Clear the search parameters
+                    currentSourceBaseUrl.search = "";
+                  }
 
                   const currentSourceIndex = sortedSources.findIndex(
                     (s) => s.src === currentSourceBaseUrl.toString(),
@@ -878,14 +892,17 @@ export const createControllerStore = ({
                     jwt: __initialProps.jwt,
                     accessKey: __initialProps.accessKey,
                     sessionToken: __controls.sessionToken,
+                    audioTrackSelector: webrtcConfig?.audioTrackSelector,
+                    videoTrackSelector: webrtcConfig?.videoTrackSelector,
+                    constant: webrtcConfig?.constant,
                   });
 
                   return {
                     ...base,
-                    currentSource: parsedSourceNew.currentSource,
+                    currentSource: parsedSourceNew?.currentSource ?? null,
                     __controls: {
                       ...base.__controls,
-                      playbackId: parsedSourceNew.playbackId,
+                      playbackId: parsedSourceNew?.playbackId ?? null,
                     },
                   };
                 },
@@ -893,7 +910,7 @@ export const createControllerStore = ({
           },
         }),
         {
-          name: "livepeer-player-controller",
+          name: "livepeer-media-controller",
           version: 2,
           // since these values are persisted across media, only persist volume and playbackRate
           partialize: ({ volume, playbackRate }) => ({
@@ -907,11 +924,4 @@ export const createControllerStore = ({
   );
 
   return store;
-};
-
-export type ControlsOptions = {
-  /** Auto-hide controls after a set amount of time (in milliseconds). Defaults to 3000. Set to 0 for no hiding. */
-  autohide?: number;
-  /** Sets the default volume. Must be between 0 and 1. */
-  defaultVolume?: number;
 };

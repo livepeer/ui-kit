@@ -35,6 +35,26 @@
         "default": "./dist/cjs/browser.js"
       }
     },
+    "./broadcast": {
+      "import": {
+        "types": "./dist/es/broadcast.d.mts",
+        "default": "./dist/es/broadcast.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/broadcast.d.ts",
+        "default": "./dist/cjs/broadcast.js"
+      }
+    },
+    "./crypto": {
+      "import": {
+        "types": "./dist/es/crypto.d.mts",
+        "default": "./dist/es/crypto.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/crypto.d.ts",
+        "default": "./dist/cjs/crypto.js"
+      }
+    },
     "./hls": {
       "import": {
         "types": "./dist/es/hls.d.mts",
@@ -101,14 +121,9 @@
   },
   "dependencies": {
     "@livepeer/core": "workspace:*",
-    "core-js": "^3.35.0",
     "hls.js": "^1.5.1",
-    "ms": "^3.0.0-canary.1",
-    "zustand": "^4.4.7"
+    "zustand": "^4.5.0"
   },
-  "devDependencies": {
-    "@types/ms": "^0.7.31",
-    "jose": "^5.2.0"
-  },
+  "devDependencies": {},
   "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

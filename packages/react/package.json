@@ -9,9 +9,7 @@
     "directory": "packages/react"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -25,6 +23,26 @@
       "require": {
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
+      }
+    },
+    "./crypto": {
+      "import": {
+        "types": "./dist/es/crypto.d.mts",
+        "default": "./dist/es/crypto.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/crypto.d.ts",
+        "default": "./dist/cjs/crypto.js"
+      }
+    },
+    "./broadcast": {
+      "import": {
+        "types": "./dist/es/broadcast.d.mts",
+        "default": "./dist/es/broadcast.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/broadcast.d.ts",
+        "default": "./dist/cjs/broadcast.js"
       }
     },
     "./player": {
@@ -73,6 +91,7 @@
     }
   },
   "dependencies": {
+    "@livepeer/core": "workspace:*",
     "@livepeer/core-react": "workspace:*",
     "@livepeer/core-web": "workspace:*",
     "@radix-ui/primitive": "^1.0.1",
@@ -88,8 +107,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-use-controllable-state": "^1.0.1",
     "@radix-ui/react-use-layout-effect": "^1.0.1",
-    "core-js": "^3.35.0",
-    "zustand": "^4.4.7"
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
@@ -99,11 +117,5 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": [
-    "livepeer",
-    "react",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
 }

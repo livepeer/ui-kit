@@ -24,6 +24,16 @@
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
+    },
+    "./crypto": {
+      "import": {
+        "types": "./dist/es/crypto.d.mts",
+        "default": "./dist/es/crypto.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/crypto.d.ts",
+        "default": "./dist/cjs/crypto.js"
+      }
     }
   },
   "scripts": {
@@ -37,15 +47,13 @@
   "peerDependenciesMeta": {},
   "dependencies": {
     "@livepeer/core": "workspace:*",
-    "use-sync-external-store": "^1.2.0",
-    "zustand": "^4.4.7"
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
-    "@types/use-sync-external-store": "^0.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

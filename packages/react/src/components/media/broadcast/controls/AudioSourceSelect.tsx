@@ -5,7 +5,7 @@ import {
 } from "@livepeer/core-web/src/media/browser/webrtc";
 import * as React from "react";
 
-import { useMediaController } from "../../../../context";
+import { useMediaController } from "../../../../player/context";
 import { AVSelect } from "./AVSelect";
 
 const mediaControllerSelector = ({

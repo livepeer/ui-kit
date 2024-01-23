@@ -4,32 +4,6 @@ export {
 } from "./player/ClipTrigger";
 export { Controls, type ControlsProps } from "./player/Controls";
 export {
-  ErrorIndicator,
-  type ErrorIndicatorProps,
-} from "./player/ErrorIndicator";
-export {
-  FullscreenIndicator,
-  FullscreenTrigger,
-  type FullscreenIndicatorProps,
-  type FullscreenTriggerProps,
-} from "./player/Fullscreen";
-export {
-  LiveIndicator,
-  type LiveIndicatorProps,
-} from "./player/LiveIndicator";
-export {
-  LoadingIndicator,
-  type LoadingIndicatorProps,
-} from "./player/LoadingIndicator";
-export {
-  MuteTrigger,
-  type MuteTriggerProps,
-} from "./player/MuteTrigger";
-export {
-  PictureInPictureTrigger,
-  type PictureInPictureTriggerProps,
-} from "./player/PictureInPictureTrigger";
-export {
   PlayPauseTrigger,
   PlayingIndicator,
   type PlayPauseTriggerProps,
@@ -46,6 +20,33 @@ export {
   type SeekBufferProps,
   type SeekProps,
 } from "./player/Seek";
+export { Video, type VideoProps } from "./player/Video";
+export {
+  ErrorIndicator,
+  type ErrorIndicatorProps,
+} from "./shared/ErrorIndicator";
+export {
+  FullscreenIndicator,
+  FullscreenTrigger,
+  type FullscreenIndicatorProps,
+  type FullscreenTriggerProps,
+} from "./shared/Fullscreen";
+export {
+  LiveIndicator,
+  type LiveIndicatorProps,
+} from "./shared/LiveIndicator";
+export {
+  LoadingIndicator,
+  type LoadingIndicatorProps,
+} from "./shared/LoadingIndicator";
+export {
+  MuteTrigger,
+  type MuteTriggerProps,
+} from "./shared/MuteTrigger";
+export {
+  PictureInPictureTrigger,
+  type PictureInPictureTriggerProps,
+} from "./shared/PictureInPictureTrigger";
 export {
   Range,
   Thumb,
@@ -54,12 +55,11 @@ export {
   type SliderProps,
   type ThumbProps,
   type TrackProps,
-} from "./player/Slider";
-export { Time, type TimeProps } from "./player/Time";
-export { Video, type VideoProps } from "./player/Video";
+} from "./shared/Slider";
+export { Time, type TimeProps } from "./shared/Time";
 export {
   Volume,
   VolumeIndicator,
   type VolumeIndicatorProps,
   type VolumeProps,
-} from "./player/Volume";
+} from "./shared/Volume";

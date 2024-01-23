@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
@@ -11,7 +11,7 @@ import * as Radix from "./primitive";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
 
-import { noPropagate } from "./shared";
+import { noPropagate } from "./utils";
 
 /**
  * FullscreenIndicator
@@ -31,15 +31,15 @@ interface FullscreenIndicatorProps
 const FullscreenIndicator = React.forwardRef<
   FullscreenIndicatorElement,
   FullscreenIndicatorProps
->((props: PlayerScopedProps<FullscreenIndicatorProps>, forwardedRef) => {
+>((props: MediaScopedProps<FullscreenIndicatorProps>, forwardedRef) => {
   const {
-    __scopePlayer,
+    __scopeMedia,
     forceMount,
     matcher = true,
     ...fullscreenIndicatorProps
   } = props;
 
-  const context = usePlayerContext(FULLSCREEN_INDICATOR_NAME, __scopePlayer);
+  const context = useMediaContext(FULLSCREEN_INDICATOR_NAME, __scopeMedia);
 
   const fullscreen = useStore(
     context.store,
@@ -59,7 +59,7 @@ const FullscreenIndicator = React.forwardRef<
       <Radix.Primitive.div
         {...fullscreenIndicatorProps}
         ref={forwardedRef}
-        data-livepeer-player-controls-fullscreen-indicator=""
+        data-livepeer-controls-fullscreen-indicator=""
         data-fullscreen={String(Boolean(fullscreen))}
         data-visible={String(isPresent)}
       />
@@ -83,10 +83,10 @@ interface FullscreenTriggerProps
 const FullscreenTrigger = React.forwardRef<
   FullscreenTriggerElement,
   FullscreenTriggerProps
->((props: PlayerScopedProps<FullscreenTriggerProps>, forwardedRef) => {
-  const { __scopePlayer, style, ...fullscreenProps } = props;
+>((props: MediaScopedProps<FullscreenTriggerProps>, forwardedRef) => {
+  const { __scopeMedia, style, ...fullscreenProps } = props;
 
-  const context = usePlayerContext(FULLSCREEN_TRIGGER_NAME, __scopePlayer);
+  const context = useMediaContext(FULLSCREEN_TRIGGER_NAME, __scopeMedia);
 
   const { title, fullscreen, requestToggleFullscreen } = useStore(
     context.store,
@@ -109,7 +109,7 @@ const FullscreenTrigger = React.forwardRef<
         noPropagate(requestToggleFullscreen),
       )}
       ref={forwardedRef}
-      data-livepeer-player-controls-fullscreen-trigger=""
+      data-livepeer-controls-fullscreen-trigger=""
       data-fullscreen-state={String(Boolean(fullscreen))}
     />
   );

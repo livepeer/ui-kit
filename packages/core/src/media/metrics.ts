@@ -1,6 +1,6 @@
-import { MediaControllerStore } from "../controller";
-import { MimeType } from "../mime";
-import { getMetricsReportingUrl, getPlaybackIdFromSourceUrl } from "./utils";
+import { MediaControllerStore } from "./controller";
+import { getMetricsReportingUrl } from "./metrics-utils";
+import { MimeType } from "./mime";
 
 type RawMetrics = {
   preloadTime: number | null;
@@ -402,7 +402,7 @@ export function addMediaMetricsToStore(
     return defaultResponse;
   }
 
-  let websocketPromise: Promise<WebSocket> | null;
+  let websocketPromise: Promise<WebSocket | null> | null = null;
 
   let timeOut: NodeJS.Timeout | null = null;
   let enabled = true;
@@ -456,7 +456,7 @@ export function addMediaMetricsToStore(
   ) => {
     try {
       if (!playbackId || !currentSource) {
-        return;
+        return null;
       }
 
       const prevWebsocket = await websocketPromise;
@@ -522,7 +522,7 @@ export function addMediaMetricsToStore(
       }
     } catch (e) {
       console.error(e);
-      store.getState().__controlsFunctions.onError?.(e);
+      store.getState().__controlsFunctions.onError?.(e as Error);
     }
 
     return null;
@@ -534,7 +534,9 @@ export function addMediaMetricsToStore(
       finalUrl: state.currentUrl,
     }),
     (state) => {
-      websocketPromise = createNewWebSocket(state.playbackId, state.finalUrl);
+      if (state?.playbackId && state?.finalUrl) {
+        websocketPromise = createNewWebSocket(state.playbackId, state.finalUrl);
+      }
     },
     {
       fireImmediately: true,

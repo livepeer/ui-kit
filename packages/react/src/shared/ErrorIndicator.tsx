@@ -2,11 +2,11 @@
 
 import React, { useMemo } from "react";
 
-import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
-import * as Radix from "./primitive";
+import { PlaybackError } from "@livepeer/core";
 import { Presence } from "@radix-ui/react-presence";
-import { PlaybackError } from "@livepeer/core-react";
+import { useStore } from "zustand";
+import { MediaScopedProps, useMediaContext } from "../context";
+import * as Radix from "./primitive";
 
 const ERROR_INDICATOR_NAME = "ErrorIndicator";
 
@@ -22,10 +22,10 @@ interface ErrorIndicatorProps
 const ErrorIndicator = React.forwardRef<
   ErrorIndicatorElement,
   ErrorIndicatorProps
->((props: PlayerScopedProps<ErrorIndicatorProps>, forwardedRef) => {
-  const { __scopePlayer, forceMount, matcher, ...offlineErrorProps } = props;
+>((props: MediaScopedProps<ErrorIndicatorProps>, forwardedRef) => {
+  const { __scopeMedia, forceMount, matcher, ...offlineErrorProps } = props;
 
-  const context = usePlayerContext(ERROR_INDICATOR_NAME, __scopePlayer);
+  const context = useMediaContext(ERROR_INDICATOR_NAME, __scopeMedia);
 
   const error = useStore(context.store, ({ error }) => error);
 
@@ -44,7 +44,7 @@ const ErrorIndicator = React.forwardRef<
       <Radix.Primitive.div
         {...offlineErrorProps}
         ref={forwardedRef}
-        data-livepeer-player-error-indicator=""
+        data-livepeer-error-indicator=""
         data-error-state={String(Boolean(error))}
         data-error-type={error?.type ?? "none"}
         data-visible={String(isPresent)}

@@ -1,12 +1,12 @@
-import { AccessControlParams } from "@livepeer/core/media";
-
 import {
-  WebRTCVideoConfig,
   constructClientOffer,
   createPeerConnection,
   getRedirectUrl,
   negotiateConnectionWithClientOffer,
 } from "./shared";
+
+export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
+  "data-livepeer-video-whip-initialized";
 
 export type WebRTCTrackConstraints = {
   /**
@@ -36,19 +36,35 @@ export type WebRTCConnectedPayload = {
  *
  * https://www.ietf.org/archive/id/draft-ietf-wish-whip-01.html
  */
-export const createNewWHIP = <TElement extends HTMLMediaElement>(
-  ingestUrl: string,
-  element: TElement,
-  aspectRatio?: number,
-  callbacks?: {
+export const createNewWHIP = <TElement extends HTMLMediaElement>({
+  ingestUrl,
+  element,
+  aspectRatio,
+  callbacks,
+  sdpTimeout,
+}: {
+  ingestUrl: string;
+  element: TElement;
+  aspectRatio: number | null;
+  callbacks: {
     onConnected?: (payload: WebRTCConnectedPayload) => void;
     onError?: (data: Error) => void;
-  },
-  config?: WebRTCVideoConfig,
-  accessControl?: AccessControlParams,
-): {
+  };
+  sdpTimeout: number | null;
+}): {
   destroy: () => void;
 } => {
+  // do not attach twice
+  if (element.getAttribute(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE) === "true") {
+    return {
+      destroy: () => {
+        //
+      },
+    };
+  }
+
+  element.setAttribute(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE, "true");
+
   let destroyed = false;
   const abortController = new AbortController();
 
@@ -57,7 +73,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
   let videoTransceiver: RTCRtpTransceiver | null = null;
   let audioTransceiver: RTCRtpTransceiver | null = null;
 
-  getRedirectUrl(ingestUrl, abortController, config?.sdpTimeout)
+  getRedirectUrl(ingestUrl, abortController, sdpTimeout)
     .then((redirectUrl) => {
       if (destroyed || !redirectUrl) {
         return;
@@ -85,8 +101,8 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
               ingestUrl,
               ofr,
               abortController,
-              config,
-              accessControl,
+              {},
+              sdpTimeout,
             );
           } catch (e) {
             callbacks?.onError?.(e as Error);
@@ -127,8 +143,14 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
          *
          * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
          */
-        navigator.mediaDevices
-          .getUserMedia({ video: true, audio: true })
+        getUserMedia({
+          source: {
+            streamConstraints: {
+              audio: true,
+              video: true,
+            },
+          },
+        })
           .then(async (mediaStream) => {
             const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
             const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
@@ -175,6 +197,8 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>(
       for (const track of tracks) {
         track?.stop?.();
       }
+
+      element?.removeAttribute?.(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE);
     },
   };
 };
@@ -197,7 +221,7 @@ export const changeMediaStream = async <TElement extends HTMLMediaElement>({
   newMediaStream: MediaStream;
   prevMediaStream: MediaStream | null;
 
-  aspectRatio: number;
+  aspectRatio: number | null;
   element: TElement;
 
   onConnected: (payload: WebRTCConnectedPayload) => void;
@@ -231,6 +255,31 @@ export const changeMediaStream = async <TElement extends HTMLMediaElement>({
 };
 
 /**
+ * Ask for camera and microphone permissions, and attach it to the media element.
+ */
+export const attachUserMediaToElement = <TElement extends HTMLMediaElement>({
+  element,
+  source,
+  callbacks,
+}: {
+  element: TElement;
+  source: WebRTCTrackConstraints;
+  callbacks: {
+    onMedia?: (stream: MediaStream) => void;
+    onError?: (data: Error) => void;
+  };
+}) => {
+  return getUserMedia({ source })
+    .then((stream) => {
+      if (stream) {
+        callbacks?.onMedia?.(stream);
+        element.srcObject = stream;
+      }
+    })
+    .catch((e) => callbacks?.onError?.(e as Error));
+};
+
+/**
  * Ask for camera and microphone permissions and get the MediaStream for the given constraints.
  *
  * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -240,38 +289,33 @@ export const getUserMedia = async ({
 }: {
   source: WebRTCTrackConstraints;
 }) => {
-  try {
-    const newMediaStream = await navigator?.mediaDevices?.getUserMedia({
-      ...(typeof source.streamConstraints === "object"
-        ? source.streamConstraints
+  const newMediaStream = await navigator?.mediaDevices?.getUserMedia({
+    ...(typeof source.streamConstraints === "object"
+      ? source.streamConstraints
+      : {}),
+    video: {
+      ...(typeof source.streamConstraints?.video !== "boolean"
+        ? source.streamConstraints?.video
         : {}),
-      video: {
-        ...(typeof source.streamConstraints?.video !== "boolean"
-          ? source.streamConstraints?.video
-          : {}),
-        ...(source?.videoDeviceId
-          ? {
-              deviceId: source?.videoDeviceId,
-            }
-          : {}),
-      },
-      audio: {
-        ...(typeof source.streamConstraints?.audio !== "boolean"
-          ? source.streamConstraints?.audio
-          : {}),
-        ...(source?.audioDeviceId
-          ? {
-              deviceId: source?.audioDeviceId,
-            }
-          : {}),
-      },
-    });
+      ...(source?.videoDeviceId
+        ? {
+            deviceId: source?.videoDeviceId,
+          }
+        : {}),
+    },
+    audio: {
+      ...(typeof source.streamConstraints?.audio !== "boolean"
+        ? source.streamConstraints?.audio
+        : {}),
+      ...(source?.audioDeviceId
+        ? {
+            deviceId: source?.audioDeviceId,
+          }
+        : {}),
+    },
+  });
 
-    return newMediaStream ?? null;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+  return newMediaStream ?? null;
 };
 
 export const getMediaDevices = (
@@ -321,7 +365,7 @@ export const getDisplayMedia = async (options?: DisplayMediaStreamOptions) => {
   return null;
 };
 
-const getConstraints = (aspectRatio: number) => {
+const getConstraints = (aspectRatio: number | null) => {
   const constraints: MediaTrackConstraints = {
     width: {
       ideal: 1280,
@@ -330,7 +374,7 @@ const getConstraints = (aspectRatio: number) => {
       ideal: 720,
     },
     aspectRatio: {
-      ideal: aspectRatio,
+      ideal: aspectRatio ?? 16 / 9,
     },
   };
 

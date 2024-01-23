@@ -20,6 +20,7 @@ export type {
   Metadata,
   ObjectFit,
   PlaybackError,
+  WebRTCPlaybackConfig,
 } from "./media/controller";
 export { addMediaMetricsToStore } from "./media/metrics";
 export type {
@@ -42,3 +43,4 @@ export type {
   VideoTrackSelector,
   WebRTCSrc,
 } from "./media/src";
+export { getBoundedVolume } from "./media/utils";

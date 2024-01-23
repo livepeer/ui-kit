@@ -4,8 +4,8 @@ import React from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
-import * as Radix from "./primitive";
+import { MediaScopedProps, useMediaContext } from "../context";
+import * as Radix from "../shared/primitive";
 
 const POSTER_NAME = "Poster";
 
@@ -17,10 +17,10 @@ interface PosterProps
 }
 
 const Poster = React.forwardRef<PosterElement, PosterProps>(
-  (props: PlayerScopedProps<PosterProps>, forwardedRef) => {
-    const { __scopePlayer, forceMount, src, ...posterProps } = props;
+  (props: MediaScopedProps<PosterProps>, forwardedRef) => {
+    const { __scopeMedia, forceMount, src, ...posterProps } = props;
 
-    const context = usePlayerContext(POSTER_NAME, __scopePlayer);
+    const context = useMediaContext(POSTER_NAME, __scopeMedia);
 
     const thumbnail = useStore(context.store, ({ thumbnail }) => thumbnail);
 
@@ -32,7 +32,7 @@ const Poster = React.forwardRef<PosterElement, PosterProps>(
           {...posterProps}
           src={src || thumbnail?.src}
           ref={forwardedRef}
-          data-livepeer-player-poster=""
+          data-livepeer-poster=""
           data-visible={String(Boolean(src || thumbnail?.src))}
         />
       </Presence>

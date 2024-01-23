@@ -3,9 +3,9 @@ import {
   addMediaMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
-import { addEventListeners, getDeviceInfo } from "./controls";
-import { version } from "@livepeer/core/version";
 import { createStorage } from "@livepeer/core/storage";
+import { version } from "@livepeer/core/version";
+import { addEventListeners, getDeviceInfo } from "./controls";
 
 /**
  * Gather playback metrics from a generic HTML5 video/audio element and
@@ -22,36 +22,42 @@ export function addMediaMetrics(
   element: HTMLMediaElement | undefined | null,
   onError?: (error: unknown) => void,
 ): MediaMetrics {
-  const store = createControllerStore({
-    src: element.src,
-    device: getDeviceInfo(version.core),
-    storage: createStorage(
-      typeof window !== "undefined"
-        ? {
-            storage: window.localStorage,
-          }
-        : {},
-    ),
-    initialProps: {
-      autoPlay: Boolean(element?.autoplay),
-      volume: element.muted ? 0 : element?.volume,
-      preload: element.preload === "" ? "auto" : element.preload,
-      viewerId: null,
-      creatorId: null,
-      playbackRate: element.playbackRate,
-      onError,
-    },
-  });
+  if (element) {
+    const store = createControllerStore({
+      src: element?.src ?? null,
+      device: getDeviceInfo(version.core),
+      storage: createStorage(
+        typeof window !== "undefined"
+          ? {
+              storage: window.localStorage,
+            }
+          : {},
+      ),
+      initialProps: {
+        autoPlay: Boolean(element?.autoplay),
+        volume: element?.muted ? 0 : element?.volume,
+        preload: element?.preload === "" ? "auto" : element?.preload,
+        viewerId: null,
+        playbackRate: element?.playbackRate,
+        onError,
+      },
+    });
 
-  const { destroy: destroyListeners } = addEventListeners(element, store);
+    const { destroy: destroyListeners } = addEventListeners(element, store);
 
-  const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
+    const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
+
+    return {
+      metrics,
+      destroy: () => {
+        destroyListeners?.();
+        destroyMetrics?.();
+      },
+    };
+  }
 
   return {
-    metrics,
-    destroy: () => {
-      destroyListeners?.();
-      destroyMetrics?.();
-    },
+    metrics: null,
+    destroy: () => {},
   };
 }

@@ -7,9 +7,9 @@ import * as Player from "@livepeer/react/player";
 
 import { ClipPayload } from "livepeer/dist/models/components";
 import { useCallback, useTransition } from "react";
-import { createClip } from "./actions";
+import { createClip } from "../actions";
 
-export function ClipForm({ className }: { className?: string }) {
+export function Clip({ className }: { className?: string }) {
   const [isPending, startTransition] = useTransition();
 
   const createClipComposed = useCallback((opts: ClipPayload) => {
@@ -46,7 +46,7 @@ export function ClipForm({ className }: { className?: string }) {
       <Player.ClipTrigger
         onClip={createClipComposed}
         disabled={isPending}
-        className="hover:scale-110 h-full w-full transition-all flex-shrink-0"
+        className="hover:scale-110 transition-all flex-shrink-0"
       >
         {isPending ? (
           <Assets.LoadingIcon className="h-full w-full animate-spin" />

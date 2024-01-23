@@ -7,26 +7,30 @@ import {
   createStorage,
   noopStorage,
   version,
-} from "@livepeer/core-react";
+} from "@livepeer/core";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 
 import * as AspectRatio from "@radix-ui/react-aspect-ratio";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import * as Radix from "./primitive";
+import * as Radix from "../shared/primitive";
 
 import React, { useEffect, useRef } from "react";
 
 import { addMediaMetricsToStore } from "@livepeer/core-web/media";
-import { PlayerProvider, PlayerScopedProps } from "../context";
+import { MediaProvider, MediaScopedProps } from "../context";
 
 type PlayerElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface PlayerProps
   extends Omit<
       Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div>,
-      "onError"
+      "onError" | "accessKey"
     >,
     Omit<Partial<InitialProps>, "creatorId"> {
+  /**
+   * The source for the Player. The `Src[]` can be created from calling `parsePlaybackInfo`
+   * with the response from the playback info API.
+   */
   src: Src[] | string;
 
   /**
@@ -40,7 +44,7 @@ interface PlayerProps
 }
 
 const Player = React.forwardRef<PlayerElement, PlayerProps>(
-  (props: PlayerScopedProps<PlayerProps>, forwardedRef) => {
+  (props: MediaScopedProps<PlayerProps>, forwardedRef) => {
     const {
       aspectRatio = 16 / 9,
       src,
@@ -76,6 +80,7 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
         ),
         src,
         initialProps: {
+          aspectRatio,
           autoPlay,
           preload,
           viewerId,
@@ -100,22 +105,22 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
     }, []);
 
     return (
-      <PlayerProvider store={store.current} scope={props.__scopePlayer}>
+      <MediaProvider store={store.current} scope={props.__scopeMedia}>
         {aspectRatio ? (
           <AspectRatio.Root
             ratio={aspectRatio}
             {...playerProps}
             ref={composedRefs}
-            data-livepeer-player-aspect-ratio=""
+            data-livepeer-aspect-ratio=""
           />
         ) : (
           <Radix.Primitive.div
             {...playerProps}
             ref={composedRefs}
-            data-livepeer-player-wrapper=""
+            data-livepeer-wrapper=""
           />
         )}
-      </PlayerProvider>
+      </MediaProvider>
     );
   },
 );

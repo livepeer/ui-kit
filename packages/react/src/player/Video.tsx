@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useStore } from "zustand";
 
-import { composeEventHandlers } from "@radix-ui/primitive";
 import { addEventListeners } from "@livepeer/core-web/browser";
-import { createNewWHEP } from "@livepeer/core-web/webrtc";
 import { HlsError, createNewHls } from "@livepeer/core-web/hls";
+import { createNewWHEP } from "@livepeer/core-web/webrtc";
+import { composeEventHandlers } from "@radix-ui/primitive";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 
-import * as Radix from "./primitive";
 import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
-} from "@livepeer/core-react";
+} from "@livepeer/core";
 import { useShallow } from "zustand/react/shallow";
+import * as Radix from "../shared/primitive";
 
-const VIDEO_NAME = "PlayerVideo";
+const VIDEO_NAME = "Video";
 
 type OmittedProps = "src" | "poster";
 
@@ -35,18 +35,18 @@ interface VideoProps
 }
 
 const Video = React.forwardRef<VideoElement, VideoProps>(
-  (props: PlayerScopedProps<VideoProps>, forwardedRef) => {
+  (props: MediaScopedProps<VideoProps>, forwardedRef) => {
     const {
-      __scopePlayer,
+      __scopeMedia,
       style,
       disablePoster,
       posterLiveUpdate = 20000,
-      ...contentProps
+      ...videoProps
     } = props;
 
-    const context = usePlayerContext(VIDEO_NAME, __scopePlayer);
+    const context = useMediaContext(VIDEO_NAME, __scopeMedia);
 
-    const ref = React.useRef<VideoElement>(null);
+    const ref = React.useRef<VideoElement | null>(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
 
     const {
@@ -86,12 +86,13 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       ),
     );
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: store
     useEffect(() => {
-      const { destroy } = addEventListeners(ref.current, context.store);
+      if (ref.current) {
+        const { destroy } = addEventListeners(ref.current, context.store);
 
-      return destroy;
-    }, []);
+        return destroy;
+      }
+    }, [context?.store]);
 
     const [posterUrl, setPosterUrl] = useState<string | null>(
       thumbnail?.src ?? null,
@@ -130,7 +131,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const source = useMemo(() => {
-      if (currentSource.type === "hls" && !isHlsSupported) {
+      if (currentSource?.type === "hls" && !isHlsSupported) {
         return {
           ...currentSource,
           type: "video",
@@ -138,11 +139,11 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       }
 
       return currentSource;
-    }, [currentSource.src]);
+    }, [currentSource?.src]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: count errors
     React.useEffect(() => {
-      if (source?.src) {
+      if (source?.src && ref.current) {
         let unmounted = false;
 
         const onErrorComposed = (err: Error) => {
@@ -161,23 +162,22 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
             },
           );
 
-          const { destroy } = createNewWHEP(
-            source.src,
-            ref.current,
-            {
+          const { destroy } = createNewWHEP({
+            source: source.src,
+            element: ref.current,
+            callbacks: {
               onConnected: () => __controlsFunctions.setLive(true),
               onError: onErrorComposed,
               onPlaybackOffsetUpdated:
                 __controlsFunctions.updatePlaybackOffsetMs,
               onRedirect: __controlsFunctions.onFinalUrl,
             },
-            {},
-            // webrtcConfig,
-            {
+            accessControl: {
               jwt: __initialProps.jwt,
               accessKey: __initialProps.accessKey,
             },
-          );
+            sdpTimeout: null,
+          });
 
           const id = setTimeout(
             () => {
@@ -253,7 +253,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           };
         }
 
-        if (currentSource.type === "video") {
+        if (currentSource?.type === "video") {
           __controlsFunctions.onFinalUrl(source.src);
 
           ref.current.src = source.src;
@@ -270,7 +270,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
       React.useCallback(
         async (e) => {
-          if (source.type === "video") {
+          if (source?.type === "video") {
             const sourceElement = e.target;
             const parentElement = (sourceElement as HTMLSourceElement)
               ?.parentElement;
@@ -317,12 +317,12 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         loop={Boolean(__initialProps.loop)}
         playsInline
         muted={__initialProps.volume === 0}
-        poster={disablePoster ? undefined : posterUrl}
-        {...contentProps}
+        poster={!disablePoster && posterUrl ? posterUrl : undefined}
+        {...videoProps}
         onError={composeEventHandlers(props.onError, onVideoError)}
         ref={composedRefs}
-        data-livepeer-player-video=""
-        data-livepeer-player-source-type={source.type}
+        data-livepeer-video=""
+        data-livepeer-source-type={source?.type ?? "none"}
         style={{
           ...style,
           // ensures video expands in ratio

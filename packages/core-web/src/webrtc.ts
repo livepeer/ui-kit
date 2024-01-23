@@ -1,9 +1,7 @@
-export {
-  isWebRTCSupported,
-  type WebRTCVideoConfig,
-} from "./webrtc/shared";
+export { isWebRTCSupported } from "./webrtc/shared";
 export { createNewWHEP } from "./webrtc/whep";
 export {
+  attachUserMediaToElement,
   changeMediaStream,
   createNewWHIP,
   getDisplayMedia,

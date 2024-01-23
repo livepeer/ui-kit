@@ -1,6 +1,11 @@
 import { ClipParams, InitialProps } from "./controller";
-import { getPlaybackIdFromSourceUrl } from "./metrics/utils";
-import { Src, getMediaSourceType } from "./src";
+import { getPlaybackIdFromSourceUrl } from "./metrics-utils";
+import {
+  AudioTrackSelector,
+  Src,
+  VideoTrackSelector,
+  getMediaSourceType,
+} from "./src";
 
 export const getFilteredNaN = (value: number | undefined | null) =>
   value && !Number.isNaN(value) && Number.isFinite(value) ? value : 0;
@@ -22,7 +27,7 @@ export const generateRandomToken = () => {
     //
   }
 
-  return "none";
+  return "none" as const;
 };
 
 export const getClipParams = ({
@@ -64,16 +69,16 @@ export const getProgressAria = ({
     progressParsed.hours ? `${progressParsed.hours} hours` : ""
   } ${progressParsed.minutes ? `${progressParsed.minutes} minutes` : ""} ${
     progressParsed.seconds ? `${progressParsed.seconds} seconds` : ""
-  }`;
+  }` as const;
   const durationText = `${
     durationParsed.hours ? `${durationParsed.hours} hours` : ""
   } ${durationParsed.minutes ? `${durationParsed.minutes} minutes` : ""} ${
     durationParsed.seconds ? `${durationParsed.seconds} seconds` : ""
-  }`;
+  }` as const;
 
   const progressDisplay = live
-    ? `Live ${progressText}`
-    : `${progressText} of ${durationText}`;
+    ? (`Live ${progressText}` as const)
+    : (`${progressText} of ${durationText}` as const);
 
   const formattedTimeDisplay = getFormattedHoursMinutesSeconds(
     progress ?? null,
@@ -83,7 +88,7 @@ export const getProgressAria = ({
 
   const formattedTime = live
     ? formattedTimeDisplay
-    : `${formattedTimeDisplay} / ${formattedDuration}`;
+    : (`${formattedTimeDisplay} / ${formattedDuration}` as const);
 
   return {
     progress: progressDisplay,
@@ -106,7 +111,8 @@ export const sortSources = (
   }
 
   if (typeof src === "string") {
-    return [getMediaSourceType(src)];
+    const mediaSourceType = getMediaSourceType(src);
+    return mediaSourceType ? [mediaSourceType] : null;
   }
 
   const filteredVideoSources = src.filter((s) => s.type !== "image");
@@ -158,15 +164,21 @@ export const sortSources = (
 };
 
 export const parseCurrentSourceAndPlaybackId = ({
-  source,
-  sessionToken,
-  jwt,
   accessKey,
+  audioTrackSelector,
+  constant,
+  jwt,
+  sessionToken,
+  source,
+  videoTrackSelector,
 }: {
-  source: Src | null;
-  sessionToken: string;
-  jwt: InitialProps["jwt"];
   accessKey: InitialProps["accessKey"];
+  audioTrackSelector: AudioTrackSelector | undefined;
+  constant: boolean | undefined;
+  jwt: InitialProps["jwt"];
+  sessionToken: string;
+  source: Src | null;
+  videoTrackSelector: VideoTrackSelector | undefined;
 }) => {
   if (!source) {
     return null;
@@ -190,6 +202,21 @@ export const parseCurrentSourceAndPlaybackId = ({
     // or append the access key to the query params
     else if (accessKey) {
       url.searchParams.append("accessKey", accessKey);
+    }
+  }
+
+  // for webrtc, we append specific parameters to control the config
+  if (source.type === "webrtc") {
+    if (constant) {
+      url.searchParams.append("constant", "true");
+    }
+
+    if (audioTrackSelector) {
+      url.searchParams.append("audio", audioTrackSelector);
+    }
+
+    if (videoTrackSelector) {
+      url.searchParams.append("video", videoTrackSelector);
     }
   }
 
@@ -251,7 +278,7 @@ export const getHoursMinutesSeconds = (
         hours,
         minutes,
         seconds,
-      };
+      } as const;
     }
 
     const minutes = Math.floor(roundedValue / 60);
@@ -260,12 +287,12 @@ export const getHoursMinutesSeconds = (
       hours: 0,
       minutes,
       seconds,
-    };
+    } as const;
   }
 
   return {
     hours: 0,
     minutes: 0,
     seconds: 0,
-  };
+  } as const;
 };

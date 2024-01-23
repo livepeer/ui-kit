@@ -2,16 +2,15 @@
 
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { Presence } from "@radix-ui/react-presence";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../context";
 
-import * as Radix from "./primitive";
 import { useShallow } from "zustand/react/shallow";
-import { noPropagate } from "./shared";
+import * as Radix from "./primitive";
+import { noPropagate } from "./utils";
 
 const PICTURE_IN_PICTURE_TRIGGER_NAME = "PictureInPictureTrigger";
 
@@ -27,12 +26,12 @@ interface PictureInPictureTriggerProps
 const PictureInPictureTrigger = React.forwardRef<
   PictureInPictureTriggerElement,
   PictureInPictureTriggerProps
->((props: PlayerScopedProps<PictureInPictureTriggerProps>, forwardedRef) => {
-  const { __scopePlayer, forceMount, ...pictureInPictureProps } = props;
+>((props: MediaScopedProps<PictureInPictureTriggerProps>, forwardedRef) => {
+  const { __scopeMedia, forceMount, ...pictureInPictureProps } = props;
 
-  const context = usePlayerContext(
+  const context = useMediaContext(
     PICTURE_IN_PICTURE_TRIGGER_NAME,
-    __scopePlayer,
+    __scopeMedia,
   );
 
   const {
@@ -77,7 +76,7 @@ const PictureInPictureTrigger = React.forwardRef<
           noPropagate(requestTogglePictureInPicture),
         )}
         ref={forwardedRef}
-        data-livepeer-player-controls-picture-in-picture-trigger=""
+        data-livepeer-controls-picture-in-picture-trigger=""
         data-picture-in-picture={String(Boolean(pictureInPicture))}
         data-visible={String(isPictureInPictureSupported && !fullscreen)}
       />

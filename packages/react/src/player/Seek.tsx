@@ -1,17 +1,17 @@
 "use client";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
-import * as SliderPrimitive from "./Slider";
+import * as SliderPrimitive from "../shared/Slider";
 
-import React, { useMemo } from "react";
+import React from "react";
 
 import { useStore } from "zustand";
-import { PlayerScopedProps, usePlayerContext } from "../context";
 import { useShallow } from "zustand/react/shallow";
+import { MediaScopedProps, useMediaContext } from "../context";
 
-import * as Radix from "./primitive";
 import { Presence } from "@radix-ui/react-presence";
-import { noPropagate } from "./shared";
+import * as Radix from "../shared/primitive";
+import { noPropagate } from "../shared/utils";
 
 const SEEK_NAME = "Seek";
 
@@ -23,10 +23,10 @@ interface SeekProps
 }
 
 const Seek = React.forwardRef<SeekElement, SeekProps>(
-  (props: PlayerScopedProps<SeekProps>, forwardedRef) => {
-    const { __scopePlayer, forceMount, style, ...seekProps } = props;
+  (props: MediaScopedProps<SeekProps>, forwardedRef) => {
+    const { __scopeMedia, forceMount, style, ...seekProps } = props;
 
-    const context = usePlayerContext(SEEK_NAME, __scopePlayer);
+    const context = useMediaContext(SEEK_NAME, __scopeMedia);
 
     const {
       ariaProgress,
@@ -72,7 +72,7 @@ const Seek = React.forwardRef<SeekElement, SeekProps>(
       <Presence present={forceMount || !live}>
         <SliderPrimitive.Root
           aria-label={live ? "Live Seek Slider" : "Video Seek Slider"}
-          aria-valuetext={ariaProgress}
+          aria-valuetext={ariaProgress ?? undefined}
           step={0.1}
           max={duration}
           value={[progress]}
@@ -88,7 +88,7 @@ const Seek = React.forwardRef<SeekElement, SeekProps>(
           )}
           onClick={noPropagate(() => {})}
           ref={forwardedRef}
-          data-livepeer-player-controls-seek=""
+          data-livepeer-controls-seek=""
           data-duration={duration}
           data-progress={progress}
           data-live={String(live)}
@@ -117,10 +117,10 @@ interface SeekBufferProps
   extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Track> {}
 
 const SeekBuffer = React.forwardRef<SeekBufferElement, SeekBufferProps>(
-  (props: PlayerScopedProps<SeekBufferProps>, forwardedRef) => {
-    const { __scopePlayer, style, ...bufferProps } = props;
+  (props: MediaScopedProps<SeekBufferProps>, forwardedRef) => {
+    const { __scopeMedia, style, ...bufferProps } = props;
 
-    const context = usePlayerContext(SEEK_BUFFER_NAME, __scopePlayer);
+    const context = useMediaContext(SEEK_BUFFER_NAME, __scopeMedia);
 
     const { bufferedPercent, buffered } = useStore(
       context.store,
@@ -139,7 +139,7 @@ const SeekBuffer = React.forwardRef<SeekBufferElement, SeekBufferProps>(
           right: `${100 - (bufferedPercent ?? 0)}%`,
           ...style,
         }}
-        data-livepeer-player-controls-seek-buffer=""
+        data-livepeer-controls-seek-buffer=""
         data-buffered={buffered}
       />
     );
@@ -149,4 +149,4 @@ const SeekBuffer = React.forwardRef<SeekBufferElement, SeekBufferProps>(
 SeekBuffer.displayName = SEEK_BUFFER_NAME;
 
 export { Seek, SeekBuffer };
-export type { SeekProps, SeekBufferProps };
+export type { SeekBufferProps, SeekProps };

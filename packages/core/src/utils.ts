@@ -7,5 +7,5 @@ export {
   b64UrlDecode,
   b64UrlEncode,
 } from "./utils/string";
-export * from "./utils/types";
+export { noop } from "./utils/types";
 export { warn } from "./utils/warn";

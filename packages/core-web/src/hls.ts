@@ -3,7 +3,7 @@ import Hls, { ErrorData, HlsConfig } from "hls.js";
 import { isClient } from "./media/utils";
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE =
-  "data-livepeer-player-video-hls-initialized";
+  "data-livepeer-video-hls-initialized";
 
 export type HlsError = ErrorData;
 
@@ -87,6 +87,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
 
     hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
       callbacks?.onCanPlay?.();
+      element?.play?.();
     });
   });
 
@@ -131,6 +132,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     destroy: () => {
       onDestroy?.();
       clearInterval?.(updateOffsetInterval);
+      element?.removeAttribute?.(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
     },
   };
 };

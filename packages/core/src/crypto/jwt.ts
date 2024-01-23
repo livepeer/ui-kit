@@ -103,10 +103,9 @@ export type SignAccessJwtOptions = {
   };
 };
 /**
- * Signs a JSON Web Token which can be used to view access-restricted media. If you have not instantiated a client yet,
- * will throw a "No livepeer client found." error if no `config` is passed.
+ * Signs a JSON Web Token which can be used to view access-restricted media.
  *
- * Throws if there is an error fetching a stream by ID.
+ * Throws if it cannot find SubtleCrypto in the environment.
  */
 export const signAccessJwt = async (
   options: SignAccessJwtOptions,

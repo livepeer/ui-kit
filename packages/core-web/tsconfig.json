@@ -5,6 +5,8 @@
     "target": "ESNext",
     "typeRoots": [
       "./global-browser"
-    ]
+    ],
+    "strict": true,
+    "strictNullChecks": true
   }
 }

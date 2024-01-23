@@ -18,7 +18,7 @@ import { WebRTCVideoConfig } from "@livepeer/core-web/media/browser/webrtc";
 import * as React from "react";
 
 import { AudioPlayer } from ".";
-import { MediaControllerProvider } from "../../../context";
+import { MediaControllerProvider } from "../../../player/context";
 import { ClipButton, PlayButton, Poster, Progress, Volume } from "./controls";
 import { VideoPlayer } from "./video";
 
