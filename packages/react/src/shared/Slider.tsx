@@ -11,5 +11,5 @@ const Range = SliderPrimitive.Range;
 type ThumbProps = SliderPrimitive.SliderThumbProps;
 const Thumb = SliderPrimitive.Thumb;
 
-export { Root, Range, Thumb, Track };
-export type { SliderProps, RangeProps, ThumbProps, TrackProps };
+export { Range, Root, Thumb, Track };
+export type { RangeProps, SliderProps, ThumbProps, TrackProps };

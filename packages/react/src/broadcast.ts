@@ -8,6 +8,10 @@ export {
 } from "./broadcast/Enabled";
 export { Video, type VideoProps } from "./broadcast/Video";
 export {
+  Container,
+  type ContainerProps,
+} from "./shared/Container";
+export {
   ErrorIndicator,
   type ErrorIndicatorProps,
 } from "./shared/ErrorIndicator";
@@ -33,6 +37,44 @@ export {
   PictureInPictureTrigger,
   type PictureInPictureTriggerProps,
 } from "./shared/PictureInPictureTrigger";
+export {
+  Portal,
+  type PortalProps,
+} from "./shared/Portal";
+export {
+  SelectArrow,
+  SelectContent,
+  SelectGroup,
+  SelectIcon,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectLabel,
+  SelectPortal,
+  SelectRoot,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  SelectViewport,
+  type SelectArrowProps,
+  type SelectContentProps,
+  type SelectGroupProps,
+  type SelectIconProps,
+  type SelectItemIndicatorProps,
+  type SelectItemProps,
+  type SelectItemTextProps,
+  type SelectLabelProps,
+  type SelectPortalProps,
+  type SelectProps,
+  type SelectScrollDownButtonProps,
+  type SelectScrollUpButtonProps,
+  type SelectSeparatorProps,
+  type SelectTriggerProps,
+  type SelectValueProps,
+  type SelectViewportProps,
+} from "./shared/Select";
 export {
   Range,
   Thumb,

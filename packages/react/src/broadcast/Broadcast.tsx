@@ -7,11 +7,10 @@ import {
   version,
 } from "@livepeer/core";
 
-import * as AspectRatio from "@radix-ui/react-aspect-ratio";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import * as Radix from "../shared/primitive";
 
-import React, { useEffect, useRef } from "react";
+import React, { PropsWithChildren, useEffect, useRef } from "react";
 
 import {
   InitialBroadcastProps,
@@ -25,11 +24,9 @@ import { BroadcastProvider, BroadcastScopedProps } from "./context";
 type BroadcastElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface BroadcastProps
-  extends Omit<
-      Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div>,
-      "onError" | "accessKey"
-    >,
-    Omit<Partial<InitialBroadcastProps>, "streamKey" | "aspectRatio"> {
+  extends PropsWithChildren<
+    Omit<Partial<InitialBroadcastProps>, "streamKey" | "aspectRatio">
+  > {
   /**
    * The stream key to use for the broadcast.
    */
@@ -54,9 +51,9 @@ const Broadcast = React.forwardRef<BroadcastElement, BroadcastProps>(
       aspectRatio = 16 / 9,
       streamKey,
       ingestUrl,
-      volume,
-      style,
-      ...broadcastProps
+      volume = 0,
+      forceEnabled,
+      children,
     } = props;
 
     const ref = React.useRef<BroadcastElement>(null);
@@ -96,8 +93,9 @@ const Broadcast = React.forwardRef<BroadcastElement, BroadcastProps>(
         ),
         initialProps: {
           aspectRatio,
+          forceEnabled,
           streamKey,
-          ingestUrl: ingestUrl,
+          ingestUrl,
           volume,
         },
       }),
@@ -117,20 +115,7 @@ const Broadcast = React.forwardRef<BroadcastElement, BroadcastProps>(
           store={broadcastStore.current}
           scope={props.__scopeBroadcast}
         >
-          {aspectRatio ? (
-            <AspectRatio.Root
-              ratio={aspectRatio}
-              {...broadcastProps}
-              ref={composedRefs}
-              data-livepeer-aspect-ratio=""
-            />
-          ) : (
-            <Radix.Primitive.div
-              {...broadcastProps}
-              ref={composedRefs}
-              data-livepeer-wrapper=""
-            />
-          )}
+          {children}
         </BroadcastProvider>
       </MediaProvider>
     );

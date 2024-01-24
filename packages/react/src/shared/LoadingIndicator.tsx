@@ -13,7 +13,11 @@ type LoadingIndicatorElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface LoadingIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
   /** The matcher used to determine whether the element should be shown, given the `loading` state. Defaults to `true`. */
   matcher?: boolean | ((live: boolean) => boolean);
 }

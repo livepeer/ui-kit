@@ -17,6 +17,16 @@ export const getBoundedSeek = (seek: number, duration: number | undefined) =>
     getFilteredNaN(duration) ? getFilteredNaN(duration) - 0.01 : 0,
   );
 
+export const getBoundedRate = (rate: string | number) => {
+  if (typeof rate === "number") {
+    return Math.min(Math.max(0, getFilteredNaN(rate)), 20);
+  }
+  const match = String(rate).match(/(\d+(\.\d+)?)/);
+  return match
+    ? Math.min(Math.max(0, getFilteredNaN(parseFloat(match[0]))), 20)
+    : 1;
+};
+
 export const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 

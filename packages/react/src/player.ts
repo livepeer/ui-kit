@@ -15,12 +15,24 @@ export {
   type PosterProps,
 } from "./player/Poster";
 export {
+  QualitySelect,
+  type QualitySelectProps,
+} from "./player/QualitySelect";
+export {
+  RateSelect,
+  type RateSelectProps,
+} from "./player/RateSelect";
+export {
   Seek,
   SeekBuffer,
   type SeekBufferProps,
   type SeekProps,
 } from "./player/Seek";
 export { Video, type VideoProps } from "./player/Video";
+export {
+  Container,
+  type ContainerProps,
+} from "./shared/Container";
 export {
   ErrorIndicator,
   type ErrorIndicatorProps,
@@ -47,6 +59,42 @@ export {
   PictureInPictureTrigger,
   type PictureInPictureTriggerProps,
 } from "./shared/PictureInPictureTrigger";
+export {
+  Portal,
+  type PortalProps,
+} from "./shared/Portal";
+export {
+  SelectArrow,
+  SelectContent,
+  SelectGroup,
+  SelectIcon,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectLabel,
+  SelectPortal,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  SelectViewport,
+  type SelectArrowProps,
+  type SelectContentProps,
+  type SelectGroupProps,
+  type SelectIconProps,
+  type SelectItemIndicatorProps,
+  type SelectItemProps,
+  type SelectItemTextProps,
+  type SelectLabelProps,
+  type SelectPortalProps,
+  type SelectScrollDownButtonProps,
+  type SelectScrollUpButtonProps,
+  type SelectSeparatorProps,
+  type SelectTriggerProps,
+  type SelectValueProps,
+  type SelectViewportProps,
+} from "./shared/Select";
 export {
   Range,
   Thumb,

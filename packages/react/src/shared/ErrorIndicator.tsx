@@ -14,9 +14,20 @@ type ErrorIndicatorElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface ErrorIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
-  forceMount?: boolean;
-  /** The matcher used to determine whether the element should be shown, given the error state. */
-  matcher: PlaybackError["type"] | ((state: PlaybackError["type"]) => boolean);
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
+  /**
+   * The matcher used to determine whether the element should be shown, given the error state.
+   *
+   * Passing `all` means it will display on all errors.
+   */
+  matcher:
+    | "all"
+    | PlaybackError["type"]
+    | ((state: PlaybackError["type"]) => boolean);
 }
 
 const ErrorIndicator = React.forwardRef<
@@ -33,7 +44,9 @@ const ErrorIndicator = React.forwardRef<
     () =>
       error
         ? typeof matcher === "string"
-          ? matcher === error.type
+          ? matcher === "all"
+            ? true
+            : matcher === error.type
           : matcher(error.type)
         : false,
     [error, matcher],

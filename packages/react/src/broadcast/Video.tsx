@@ -4,10 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useStore } from "zustand";
 
 import { addEventListeners } from "@livepeer/core-web/browser";
-import {
-  attachUserMediaToElement,
-  createNewWHIP,
-} from "@livepeer/core-web/webrtc";
+import { createNewWHIP } from "@livepeer/core-web/webrtc";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import { MediaScopedProps, useMediaContext } from "../context";
@@ -27,7 +24,18 @@ interface VideoProps
   extends Omit<
     Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.video>,
     OmittedProps
-  > {}
+  > {
+  /**
+   * Whether the element should request permissions for the video/audio
+   * input from the user. This defaults to `true`, which means on component mount,
+   * the user will receive a permissions request asking for access to their microphone
+   * and camera.
+   *
+   * This can be used as a controlled input to determine when this request should be made,
+   * and toggled on after mount.
+   */
+  enableUserMedia?: boolean;
+}
 
 const Video = React.forwardRef<VideoElement, VideoProps>(
   (props: MediaScopedProps<BroadcastScopedProps<VideoProps>>, forwardedRef) => {
@@ -36,6 +44,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       __scopeBroadcast,
       style,
       muted = true,
+      enableUserMedia = true,
       ...broadcastProps
     } = props;
 
@@ -45,26 +54,30 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     const ref = React.useRef<VideoElement | null>(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
 
-    const { error, errorCount, __controlsFunctions, __initialProps } = useStore(
+    const { error, errorCount } = useStore(
       context.store,
-      useShallow(
-        ({ __initialProps, __controlsFunctions, error, errorCount }) => ({
-          error,
-          errorCount,
-          __controlsFunctions,
-          __initialProps,
-        }),
-      ),
+      useShallow(({ error, errorCount }) => ({
+        error,
+        errorCount,
+      })),
     );
 
-    const enabled = useStore(broadcastContext.store, ({ enabled }) => enabled);
+    const isEnabled = useStore(
+      broadcastContext.store,
+      ({ enabled }) => enabled,
+    );
 
-    const broadcast = useStore(
+    const { streamKey, ingestUrl } = useStore(
       broadcastContext.store,
       useShallow(({ __initialProps }) => ({
         streamKey: __initialProps.streamKey,
         ingestUrl: __initialProps.ingestUrl,
       })),
+    );
+
+    const mediaStream = useStore(
+      broadcastContext.store,
+      ({ mediaStream }) => mediaStream,
     );
 
     useEffect(() => {
@@ -75,20 +88,20 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       }
     }, [context?.store]);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: context
     useEffect(() => {
       if (ref.current) {
         const { destroy } = addBroadcastEventListeners(
           ref.current,
           broadcastContext.store,
+          context.store,
         );
 
         return destroy;
       }
-    }, [broadcastContext?.store]);
+    }, []);
 
     const [retryCount, setRetryCount] = useState(0);
-
-    console.log({ error });
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: error count
     useEffect(() => {
@@ -103,79 +116,46 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: context
     React.useEffect(() => {
-      if (ref.current) {
-        const unmounted = false;
-
-        const onErrorComposed = (err: Error) => {
-          if (!unmounted) {
-            __controlsFunctions?.onError?.(err);
-          }
-        };
-
-        // const onConnected = () => {
-        //   // _updateMediaStream(payload.stream, {
-        //   //   audio:
-        //   //     payload?.audioTransceiver?.sender?.track?.getSettings()?.deviceId,
-        //   //   video:
-        //   //     payload?.videoTransceiver?.sender?.track?.getSettings()?.deviceId,
-        //   // });
-        //   // setTransceivers({
-        //   //   audio: payload.audioTransceiver,
-        //   //   video: payload.videoTransceiver,
-        //   // });
-        //   context.store.getState().__controlsFunctions.togglePlay?.(true);
-        //   context.store.getState().__controlsFunctions.setLive(true);
-        // };
-
-        attachUserMediaToElement({
-          element: ref.current,
-          source: {},
-          callbacks: {
-            onError: onErrorComposed,
-            onMedia(stream) {
-              console.log(stream);
-              context.store.getState().__controlsFunctions.togglePlay?.(true);
-              context.store.getState().__controlsFunctions.setLive(false);
-            },
-          },
-        });
-
-        return () => {};
+      if (ref.current && enableUserMedia) {
+        broadcastContext.store
+          .getState()
+          .__controlsFunctions.requestUserMedia();
       }
-    }, [__controlsFunctions?.onError, enabled]);
+    }, [enableUserMedia]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: count errors
     React.useEffect(() => {
-      if (enabled && broadcast?.streamKey && ref.current) {
+      if (enableUserMedia && isEnabled && streamKey && ref.current) {
         const unmounted = false;
 
         const onErrorComposed = (err: Error) => {
           if (!unmounted) {
-            __controlsFunctions?.onError?.(err);
+            context.store.getState().__controlsFunctions?.onError?.(err);
           }
         };
 
-        const onConnected = () => {
-          // _updateMediaStream(payload.stream, {
-          //   audio:
-          //     payload?.audioTransceiver?.sender?.track?.getSettings()?.deviceId,
-          //   video:
-          //     payload?.videoTransceiver?.sender?.track?.getSettings()?.deviceId,
-          // });
-          // setTransceivers({
-          //   audio: payload.audioTransceiver,
-          //   video: payload.videoTransceiver,
-          // });
-          context.store.getState().__controlsFunctions.togglePlay?.(true);
-          context.store.getState().__controlsFunctions.setLive(true);
-        };
-
         const { destroy } = createNewWHIP({
-          ingestUrl: `${broadcast.ingestUrl}/${broadcast.streamKey}`,
+          ingestUrl: `${ingestUrl}/${streamKey}`,
           element: ref.current,
           aspectRatio: context.store.getState().__initialProps.aspectRatio,
           callbacks: {
-            onConnected,
+            onConnected: (payload) => {
+              broadcastContext.store
+                .getState()
+                .__controlsFunctions.updateMediaStream(payload.stream);
+              // _updateMediaStream(payload.stream, {
+              //   audio:
+              //     payload?.audioTransceiver?.sender?.track?.getSettings()?.deviceId,
+              //   video:
+              //     payload?.videoTransceiver?.sender?.track?.getSettings()?.deviceId,
+              // });
+              // setTransceivers({
+              //   audio: payload.audioTransceiver,
+              //   video: payload.videoTransceiver,
+              // });
+
+              context.store.getState().__controlsFunctions.setLive(true);
+            },
             onError: onErrorComposed,
           },
           sdpTimeout: null,
@@ -185,17 +165,17 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           destroy?.();
         };
       }
-    }, [broadcast, retryCount, enabled]);
+    }, [streamKey, ingestUrl, retryCount, enableUserMedia, isEnabled]);
 
     const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
-      React.useCallback(
-        async (_e) => {
-          return __controlsFunctions?.onError?.(
+      // biome-ignore lint/correctness/useExhaustiveDependencies: context
+      React.useCallback(async (_e) => {
+        return context.store
+          .getState()
+          .__controlsFunctions?.onError?.(
             new Error("Unknown error loading video"),
           );
-        },
-        [__controlsFunctions?.onError],
-      );
+      }, []);
 
     return (
       <Radix.Primitive.video

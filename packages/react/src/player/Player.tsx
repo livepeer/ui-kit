@@ -10,11 +10,9 @@ import {
 } from "@livepeer/core";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 
-import * as AspectRatio from "@radix-ui/react-aspect-ratio";
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import * as Radix from "../shared/primitive";
 
-import React, { useEffect, useRef } from "react";
+import React, { PropsWithChildren, useEffect, useRef } from "react";
 
 import { addMediaMetricsToStore } from "@livepeer/core-web/media";
 import { MediaProvider, MediaScopedProps } from "../context";
@@ -22,11 +20,7 @@ import { MediaProvider, MediaScopedProps } from "../context";
 type PlayerElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface PlayerProps
-  extends Omit<
-      Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div>,
-      "onError" | "accessKey"
-    >,
-    Omit<Partial<InitialProps>, "creatorId"> {
+  extends PropsWithChildren<Omit<Partial<InitialProps>, "creatorId">> {
   /**
    * The source for the Player. The `Src[]` can be created from calling `parsePlaybackInfo`
    * with the response from the playback info API.
@@ -59,12 +53,10 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
       accessKey,
       onError,
       clipLength,
-      style,
-      ...playerProps
+      children,
     } = props;
 
     const ref = React.useRef<PlayerElement>(null);
-    const composedRefs = useComposedRefs(forwardedRef, ref);
 
     const store = useRef(
       createControllerStore({
@@ -106,20 +98,7 @@ const Player = React.forwardRef<PlayerElement, PlayerProps>(
 
     return (
       <MediaProvider store={store.current} scope={props.__scopeMedia}>
-        {aspectRatio ? (
-          <AspectRatio.Root
-            ratio={aspectRatio}
-            {...playerProps}
-            ref={composedRefs}
-            data-livepeer-aspect-ratio=""
-          />
-        ) : (
-          <Radix.Primitive.div
-            {...playerProps}
-            ref={composedRefs}
-            data-livepeer-wrapper=""
-          />
-        )}
+        {children}
       </MediaProvider>
     );
   },

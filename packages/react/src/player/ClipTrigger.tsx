@@ -8,8 +8,8 @@ import React, { useEffect } from "react";
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { noPropagate } from "../shared/utils";
 import { MediaScopedProps, useMediaContext } from "../context";
+import { noPropagate } from "../shared/utils";
 
 const CLIP_TRIGGER_NAME = "ClipTrigger";
 
@@ -17,7 +17,11 @@ type ClipTriggerElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface ClipTriggerProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
 
   onClip: (opts: {
     /**
@@ -37,8 +41,7 @@ interface ClipTriggerProps
 
 const ClipTrigger = React.forwardRef<ClipTriggerElement, ClipTriggerProps>(
   (props: MediaScopedProps<ClipTriggerProps>, forwardedRef) => {
-    const { __scopeMedia, style, forceMount, onClip, ...clipTriggerProps } =
-      props;
+    const { __scopeMedia, forceMount, onClip, ...clipTriggerProps } = props;
 
     const context = useMediaContext(CLIP_TRIGGER_NAME, __scopeMedia);
 

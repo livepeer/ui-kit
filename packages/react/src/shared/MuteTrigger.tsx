@@ -24,30 +24,30 @@ const MuteTrigger = React.forwardRef<MuteTriggerElement, MuteTriggerProps>(
 
     const context = useMediaContext(MUTE_TRIGGER_NAME, __scopeMedia);
 
-    const { volume, toggleMute } = useStore(
+    const { muted, toggleMute } = useStore(
       context.store,
-      useShallow(({ volume, __controlsFunctions }) => ({
-        volume,
+      useShallow(({ __controls, __controlsFunctions }) => ({
+        muted: __controls.muted,
         toggleMute: __controlsFunctions.requestToggleMute,
       })),
     );
 
     const title = React.useMemo(
-      () => (volume === 0 ? "Unmute (m)" : "Mute (m)"),
-      [volume],
+      () => (muted ? "Unmute (m)" : "Mute (m)"),
+      [muted],
     );
 
     return (
       <Radix.Primitive.button
         type="button"
-        aria-pressed={volume === 0}
+        aria-pressed={muted}
         aria-label={title}
         title={title}
         {...playProps}
         onClick={composeEventHandlers(props.onClick, noPropagate(toggleMute))}
         ref={forwardedRef}
         data-livepeer-controls-mute-trigger=""
-        data-muted={String(volume === 0)}
+        data-muted={String(muted)}
       />
     );
   },

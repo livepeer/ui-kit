@@ -17,6 +17,7 @@ import {
 import { omit } from "../utils";
 import {
   generateRandomToken,
+  getBoundedRate,
   getBoundedSeek,
   getBoundedVolume,
   getClipParams,
@@ -163,6 +164,8 @@ export type InitialProps = {
   accessKey: string | null;
   /** Callback called when there is a playback error. When `null` is passed, the error has been resolved. */
   onError: ((error: PlaybackError | null) => void) | null;
+  /** Whether hotkeys are enabled. Defaults to `true`. */
+  hotkeys: boolean;
 };
 
 export type PlaybackError = {
@@ -308,6 +311,7 @@ export type MediaControllerState = {
     setFullscreen: (fullscreen: boolean) => void;
     setLive: (live: boolean) => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
+    setPlaybackRate: (rate: number | string) => void;
     setSize: (size: Partial<MediaSizing>) => void;
     setVolume: (volume: number) => void;
     setWebsocketMetadata: (metadata: Metadata) => void;
@@ -361,6 +365,8 @@ export const createControllerStore = ({
   const initialVolume = getBoundedVolume(
     initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
   );
+
+  const initialPlaybackRate = initialProps.playbackRate ?? 1;
 
   const sessionToken = generateRandomToken();
 
@@ -416,7 +422,7 @@ export const createControllerStore = ({
           /** Current volume of the media. 0 if it is muted. */
           volume: initialVolume,
           /** The playback rate for the media. Defaults to 1. */
-          playbackRate: 1,
+          playbackRate: initialPlaybackRate,
           /** Current progress of the media (in seconds) */
           progress: 0,
           /** Current total duration of the media (in seconds) */
@@ -472,7 +478,7 @@ export const createControllerStore = ({
             aspectRatio: initialProps?.aspectRatio ?? null,
 
             volume: initialVolume ?? null,
-            playbackRate: initialProps.playbackRate ?? 1,
+            playbackRate: initialPlaybackRate,
             loop: initialProps.loop ?? false,
 
             autoPlay: initialProps.autoPlay ?? false,
@@ -484,6 +490,7 @@ export const createControllerStore = ({
             jwt: initialProps.jwt ?? null,
             accessKey: initialProps.accessKey ?? null,
             onError: initialProps?.onError ?? null,
+            hotkeys: initialProps?.hotkeys ?? true,
           },
 
           __device: device,
@@ -626,6 +633,11 @@ export const createControllerStore = ({
                 };
               }),
 
+            setPlaybackRate: (rate) =>
+              set(() => ({
+                playbackRate: getBoundedRate(rate ?? 1),
+              })),
+
             requestSeekDiff: (difference) =>
               set(({ progress, duration, __controls }) => ({
                 __controls: {
@@ -736,13 +748,13 @@ export const createControllerStore = ({
                 volume: getBoundedVolume(newVolume),
                 __controls: {
                   ...__controls,
-                  volume: getBoundedVolume(newVolume),
+                  muted: newVolume === 0,
                 },
               })),
 
             requestToggleMute: () =>
-              set(({ volume, __controls }) => ({
-                volume: volume !== 0 ? 0 : __controls.volume,
+              set(({ __controls }) => ({
+                volume: !__controls.muted ? 0 : __controls.volume,
                 __controls: {
                   ...__controls,
                   muted: !__controls.muted,

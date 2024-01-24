@@ -66,7 +66,7 @@ export function createPeerConnection(
   return null;
 }
 
-const DEFAULT_TIMEOUT = 5000;
+const DEFAULT_TIMEOUT = 10000;
 
 /**
  * Performs the actual SDP exchange.

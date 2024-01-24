@@ -13,7 +13,11 @@ type LiveIndicatorElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface LiveIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
   /** The matcher used to determine whether the element should be shown, given the `live` state (true for live streams, and false for assets). Defaults to `true`. */
   matcher?: boolean | ((live: boolean) => boolean);
 }

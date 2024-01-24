@@ -13,7 +13,11 @@ type PosterElement = React.ElementRef<typeof Radix.Primitive.img>;
 
 interface PosterProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.img> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
 }
 
 const Poster = React.forwardRef<PosterElement, PosterProps>(

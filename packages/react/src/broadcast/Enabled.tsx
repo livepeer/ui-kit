@@ -71,10 +71,14 @@ type EnabledIndicatorElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface EnabledIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
   /**
    * The matcher used to determine whether the element should be shown, given the `enabled` state.
-   * Defaults to `true`, which means "broadcasting is enabled".
+   * Defaults to `true`, which means "shown when broadcasting is enabled".
    */
   matcher?: boolean | ((state: boolean) => boolean);
 }

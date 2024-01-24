@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useStore } from "zustand";
 import { MediaScopedProps, useMediaContext } from "../context";
@@ -12,6 +12,7 @@ import * as Radix from "./primitive";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import * as SliderPrimitive from "./Slider";
 
+import { warn } from "@livepeer/core/utils";
 import { noPropagate } from "./utils";
 
 /**
@@ -23,19 +24,26 @@ const VOLUME_NAME = "Volume";
 type VolumeElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface VolumeProps
-  extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {}
+  extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
+}
 
 const Volume = React.forwardRef<VolumeElement, VolumeProps>(
   (props: MediaScopedProps<VolumeProps>, forwardedRef) => {
-    const { __scopeMedia, ...volumeProps } = props;
+    const { __scopeMedia, forceMount, ...volumeProps } = props;
 
     const context = useMediaContext(VOLUME_NAME, __scopeMedia);
 
-    const { volume, requestVolume } = useStore(
+    const { volume, requestVolume, isVolumeChangeSupported } = useStore(
       context.store,
-      useShallow(({ volume, __controlsFunctions }) => ({
+      useShallow(({ volume, __controlsFunctions, __device }) => ({
         volume,
         requestVolume: __controlsFunctions.requestVolume,
+        isVolumeChangeSupported: __device.isVolumeChangeSupported,
       })),
     );
 
@@ -49,21 +57,29 @@ const Volume = React.forwardRef<VolumeElement, VolumeProps>(
     );
 
     return (
-      <SliderPrimitive.Root
-        aria-label="Volume Slider"
-        // aria-valuetext={title}
-        step={0.01}
-        max={1}
-        value={[volume]}
-        {...volumeProps}
-        onClick={noPropagate(() => {})}
-        onValueChange={composeEventHandlers(props.onValueChange, onValueChange)}
-        onValueCommit={composeEventHandlers(props.onValueCommit, onValueCommit)}
-        ref={forwardedRef}
-        data-livepeer-controls-volume=""
-        data-livepeer-muted={String(volume === 0)}
-        data-livepeer-volume={String((100 * volume).toFixed(0))}
-      />
+      <Presence present={forceMount || isVolumeChangeSupported}>
+        <SliderPrimitive.Root
+          aria-label="Volume Slider"
+          // aria-valuetext={title}
+          step={0.01}
+          max={1}
+          value={[volume]}
+          {...volumeProps}
+          onClick={noPropagate(() => {})}
+          onValueChange={composeEventHandlers(
+            props.onValueChange,
+            onValueChange,
+          )}
+          onValueCommit={composeEventHandlers(
+            props.onValueCommit,
+            onValueCommit,
+          )}
+          ref={forwardedRef}
+          data-livepeer-controls-volume=""
+          data-livepeer-muted={String(volume === 0)}
+          data-livepeer-volume={String((100 * volume).toFixed(0))}
+        />
+      </Presence>
     );
   },
 );
@@ -80,7 +96,11 @@ type VolumeIndicatorElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface VolumeIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
   /** The matcher used to determine whether the element should be shown, given the volume. Defaults to match `false`, which is muted. */
   matcher?: boolean | ((volume: number) => boolean);
 }
@@ -98,9 +118,13 @@ const VolumeIndicator = React.forwardRef<
 
   const context = useMediaContext(VOLUME_INDICATOR_NAME, __scopeMedia);
 
-  const volume = useStore(
+  const { volume, muted, isVolumeChangeSupported } = useStore(
     context.store,
-    useShallow(({ volume }) => volume),
+    useShallow(({ volume, __device, __controls }) => ({
+      volume,
+      muted: __controls.muted,
+      isVolumeChangeSupported: __device.isVolumeChangeSupported,
+    })),
   );
 
   const isPresent = useMemo(
@@ -108,19 +132,25 @@ const VolumeIndicator = React.forwardRef<
       matcher !== undefined
         ? typeof matcher === "boolean"
           ? matcher
-            ? volume !== 0
-            : volume === 0
+            ? !muted
+            : muted
           : matcher(volume)
-        : volume === 0,
-    [volume, matcher],
+        : muted,
+    [volume, matcher, muted],
   );
+
+  useEffect(() => {
+    if (isVolumeChangeSupported && typeof matcher !== "boolean") {
+      warn("Volume change is not supported on this device.");
+    }
+  }, [isVolumeChangeSupported, matcher]);
 
   return (
     <Presence present={forceMount || isPresent}>
       <Radix.Primitive.div
         {...volumeIndicatorProps}
         ref={forwardedRef}
-        data-livepeer-muted={String(volume === 0)}
+        data-livepeer-muted={String(muted)}
         data-livepeer-volume={String((100 * volume).toFixed(0))}
         data-livepeer-controls-volume-indicator=""
         data-visible={String(isPresent)}

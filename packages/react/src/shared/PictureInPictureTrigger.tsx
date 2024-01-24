@@ -20,7 +20,11 @@ type PictureInPictureTriggerElement = React.ElementRef<
 
 interface PictureInPictureTriggerProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
 }
 
 const PictureInPictureTrigger = React.forwardRef<

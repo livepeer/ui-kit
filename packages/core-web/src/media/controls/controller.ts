@@ -116,7 +116,7 @@ export const addEventListeners = (
   };
   const onMouseLeave = () => {
     if (autohide) {
-      store.getState().__controlsFunctions.setHidden(true);
+      // store.getState().__controlsFunctions.updateLastInteraction();
     }
   };
   const onMouseMove = async () => {
@@ -128,12 +128,13 @@ export const addEventListeners = (
   };
 
   const onVolumeChange = () => {
-    if (
-      typeof element?.volume !== "undefined" &&
-      element?.volume !== store.getState().volume
-    ) {
-      store.getState().__controlsFunctions.setVolume(element.volume);
-    }
+    store
+      .getState()
+      .__controlsFunctions.setVolume(element.muted ? 0 : element.volume ?? 0);
+  };
+
+  const onRateChange = () => {
+    store.getState().__controlsFunctions.setPlaybackRate(element.playbackRate);
   };
 
   const onTimeUpdate = () => {
@@ -212,6 +213,7 @@ export const addEventListeners = (
 
   if (element) {
     element.addEventListener("volumechange", onVolumeChange);
+    element.addEventListener("ratechange", onRateChange);
 
     element.addEventListener("loadedmetadata", onLoadedMetadata);
     element.addEventListener("play", onPlay);
@@ -282,6 +284,7 @@ export const addEventListeners = (
     removeEnterPictureInPictureListener?.();
     removeExitPictureInPictureListener?.();
 
+    element?.removeEventListener?.("ratechange", onRateChange);
     element?.removeEventListener?.("volumechange", onVolumeChange);
     element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
     element?.removeEventListener?.("play", onPlay);
@@ -354,20 +357,34 @@ const addEffectsToStore = (
           }
         }
 
-        if (current.volume !== prev.volume) {
+        if (current.playbackRate !== element.playbackRate) {
+          element.playbackRate = current.playbackRate;
+        }
+
+        console.log({
+          v: current.volume,
+          muted: current.__controls.muted,
+          vv: current.__controls.volume,
+        });
+
+        if (
+          current.volume !== element.volume &&
+          current.__device.isVolumeChangeSupported
+        ) {
           element.volume = current.volume;
         }
 
-        // if (!current.__initialProps.streamKey) {
-        element.muted = current.volume === 0;
+        if (current.__controls.muted !== element.muted) {
+          element.muted = current.__controls.muted;
+        }
 
         if (
           !current.__controls.muted &&
-          current.__controls.muted !== prev.__controls.muted
+          current.__controls.muted !== prev.__controls.muted &&
+          current.__device.isVolumeChangeSupported
         ) {
           element.volume = current.__controls.volume;
         }
-        // }
 
         if (
           current.__controls.requestedRangeToSeekTo !==

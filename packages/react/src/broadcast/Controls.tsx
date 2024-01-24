@@ -2,7 +2,7 @@
 
 import { Presence } from "@radix-ui/react-presence";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useStore } from "zustand";
 import { MediaScopedProps, useMediaContext } from "../context";
@@ -54,11 +54,23 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
       __scopeBroadcast,
     );
 
-    const enabled = useStore(broadcastContext.store, ({ enabled }) => enabled);
+    const { enabled, isWebRTCSupported } = useStore(
+      broadcastContext.store,
+      useShallow(({ enabled, __device }) => ({
+        enabled,
+        isWebRTCSupported: __device.isWebRTCSupported,
+      })),
+    );
+
+    useEffect(() => {
+      if (!isWebRTCSupported) {
+        console.error("WebRTC is not supported on this device.");
+      }
+    }, [isWebRTCSupported]);
 
     const shown = useMemo(
-      () => !hidden && !loading && !error && enabled,
-      [hidden, loading, error, enabled],
+      () => !hidden && !loading && !error && enabled && isWebRTCSupported,
+      [hidden, loading, error, enabled, isWebRTCSupported],
     );
 
     return (

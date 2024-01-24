@@ -67,7 +67,11 @@ type PlayingIndicatorElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface PlayingIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
   /** The matcher used to determine whether the element should be shown, given the playing state. Defaults to `true`, which equals playing. */
   matcher?: boolean | ((state: boolean) => boolean);
 }

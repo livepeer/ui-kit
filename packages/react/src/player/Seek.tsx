@@ -19,7 +19,11 @@ type SeekElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface SeekProps
   extends Radix.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
 }
 
 const Seek = React.forwardRef<SeekElement, SeekProps>(

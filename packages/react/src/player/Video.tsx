@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from "zustand";
 
 import { addEventListeners } from "@livepeer/core-web/browser";
@@ -14,6 +14,7 @@ import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
+  Src,
 } from "@livepeer/core";
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "../shared/primitive";
@@ -129,17 +130,18 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       }
     }, [errorCount]);
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    const source = useMemo(() => {
+    const [source, setSource] = useState<Src | null>(null);
+
+    useEffect(() => {
       if (currentSource?.type === "hls" && !isHlsSupported) {
-        return {
+        setSource({
           ...currentSource,
           type: "video",
-        } as const;
+        } as const);
+      } else {
+        setSource(currentSource);
       }
-
-      return currentSource;
-    }, [currentSource?.src]);
+    }, [currentSource, isHlsSupported]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: count errors
     React.useEffect(() => {
@@ -309,6 +311,8 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         },
         [__controlsFunctions?.onError, source?.type],
       );
+
+    console.log({ source });
 
     return (
       <Radix.Primitive.video

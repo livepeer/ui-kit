@@ -255,31 +255,6 @@ export const changeMediaStream = async <TElement extends HTMLMediaElement>({
 };
 
 /**
- * Ask for camera and microphone permissions, and attach it to the media element.
- */
-export const attachUserMediaToElement = <TElement extends HTMLMediaElement>({
-  element,
-  source,
-  callbacks,
-}: {
-  element: TElement;
-  source: WebRTCTrackConstraints;
-  callbacks: {
-    onMedia?: (stream: MediaStream) => void;
-    onError?: (data: Error) => void;
-  };
-}) => {
-  return getUserMedia({ source })
-    .then((stream) => {
-      if (stream) {
-        callbacks?.onMedia?.(stream);
-        element.srcObject = stream;
-      }
-    })
-    .catch((e) => callbacks?.onError?.(e as Error));
-};
-
-/**
  * Ask for camera and microphone permissions and get the MediaStream for the given constraints.
  *
  * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia

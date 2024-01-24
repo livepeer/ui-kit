@@ -2,6 +2,7 @@ import { omit } from "@livepeer/core";
 import {
   DEFAULT_VOLUME_LEVEL,
   DeviceInformation,
+  MediaControllerStore,
   getBoundedVolume,
 } from "@livepeer/core/media";
 import { ClientStorage } from "@livepeer/core/storage";
@@ -11,13 +12,13 @@ import {
   subscribeWithSelector,
 } from "zustand/middleware";
 import { StoreApi, createStore } from "zustand/vanilla";
-import { ControlsOptions } from "./browser";
+import { getUserMedia } from "./webrtc";
 
 const defaultIngestUrl = "https://playback.livepeer.studio/webrtc";
 
 export type BroadcastControlsState = {
-  /** The last time that play/pause was requested */
-  // requestedPlayPauseLastTime: number;
+  /** The last time that the user media was requested */
+  requestedUserMediaLastTime: number;
 
   /** The offset of the browser's livestream versus the server time (in ms). */
   // playbackOffsetMs: number | null;
@@ -47,6 +48,14 @@ export type InitialBroadcastProps = {
 
   /** The volume that was passed in to the Player */
   volume: number;
+  /**
+   * Whether the WebRTC stream should attempt to initialize immediately after the user grants
+   * permission to their video/audio input.
+   *
+   * Defaults to `false`, where preview is shown and then once the stream is enabled, it sends
+   * media to the server.
+   */
+  forceEnabled?: boolean;
 };
 
 const omittedKeys = [
@@ -83,6 +92,9 @@ export type BroadcastState = {
   /** Whether the broadcast is currently enabled, or in "preview" mode. */
   enabled: boolean;
 
+  /** The MediaStream for the current broadcast. */
+  mediaStream: MediaStream | null;
+
   /** If video is enabled (only applies to broadcasting) */
   video: boolean | null;
 
@@ -99,8 +111,9 @@ export type BroadcastState = {
   __controlsFunctions: {
     updateMediaStream: (
       mediaStream: MediaStream,
-      ids?: { audio?: string; video?: string },
+      // ids?: { audio?: string; video?: string },
     ) => void;
+    requestUserMedia: () => void;
     toggleVideo: () => void;
     requestVolume: (volume: number) => void;
     setVolume: (volume: number) => void;
@@ -144,6 +157,7 @@ export const createBroadcastStore = ({
   const initialControls: BroadcastControlsState = {
     volume: initialVolume,
     muted: initialVolume === 0,
+    requestedUserMediaLastTime: 0,
   };
 
   const store = createStore<
@@ -158,7 +172,9 @@ export const createBroadcastStore = ({
         (set, get) => ({
           volume: initialVolume,
 
-          enabled: false,
+          enabled: initialProps?.forceEnabled ?? false,
+
+          mediaStream: null,
 
           /** The audio and video device IDs currently used (only applies to broadcasting) */
           deviceIds: null,
@@ -179,6 +195,7 @@ export const createBroadcastStore = ({
 
             streamKey: initialProps?.streamKey ?? null,
             ingestUrl: initialProps?.ingestUrl ?? defaultIngestUrl,
+            forceEnabled: initialProps?.forceEnabled ?? false,
           },
 
           __device: device,
@@ -188,14 +205,22 @@ export const createBroadcastStore = ({
           __metadata: null,
 
           __controlsFunctions: {
-            updateMediaStream: (_mediaStream, ids) =>
-              set(({ deviceIds }) => ({
-                _mediaStream,
-                ...(ids?.video ? { video: true } : {}),
-                deviceIds: {
-                  ...deviceIds,
-                  ...(ids?.audio ? { audio: ids.audio } : {}),
-                  ...(ids?.video ? { video: ids.video } : {}),
+            updateMediaStream: (mediaStream) =>
+              set(() => ({
+                mediaStream,
+                // ...(ids?.video ? { video: true } : {}),
+                // deviceIds: {
+                //   ...deviceIds,
+                //   ...(ids?.audio ? { audio: ids.audio } : {}),
+                //   ...(ids?.video ? { video: ids.video } : {}),
+                // },
+              })),
+
+            requestUserMedia: () =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  requestedUserMediaLastTime: Date.now(),
                 },
               })),
 
@@ -253,7 +278,7 @@ export const createBroadcastStore = ({
         {
           name: "livepeer-broadcast-controller",
           version: 1,
-          // since these values are persisted across media, only persist volume and playbackRate
+          // since these values are persisted across media, only persist volume
           partialize: ({ volume }) => ({
             volume,
           }),
@@ -275,7 +300,7 @@ type KeyTrigger = (typeof allKeyTriggers)[number];
 export const addBroadcastEventListeners = (
   element: HTMLMediaElement,
   store: BroadcastStore,
-  { hotkeys = true }: ControlsOptions = {},
+  mediaStore: MediaControllerStore,
 ) => {
   const onKeyUp = (e: KeyboardEvent) => {
     e.preventDefault();
@@ -298,19 +323,17 @@ export const addBroadcastEventListeners = (
 
   if (element) {
     if (parentElementOrElement) {
-      if (hotkeys) {
+      if (mediaStore.getState().__initialProps.hotkeys) {
         parentElementOrElement.addEventListener("keyup", onKeyUp);
         parentElementOrElement.setAttribute("tabindex", "0");
       }
     }
 
-    element.load();
-
     element.setAttribute(MEDIA_BROADCAST_INITIALIZED_ATTRIBUTE, "true");
   }
 
   // add effects
-  const removeEffectsFromStore = addEffectsToStore(element, store);
+  const removeEffectsFromStore = addEffectsToStore(element, store, mediaStore);
 
   const destroy = () => {
     parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
@@ -338,6 +361,7 @@ let previousPromise:
 const addEffectsToStore = (
   element: HTMLMediaElement,
   store: StoreApi<BroadcastState>,
+  mediaStore: MediaControllerStore,
 ) => {
   // add effects to store changes
   return store.subscribe(async (current, prev) => {
@@ -352,19 +376,50 @@ const addEffectsToStore = (
           }
         }
 
-        if (current.volume !== prev.volume) {
-          element.volume = current.volume;
-        }
+        // attach the media stream to the video element
+        if (current.mediaStream?.id !== prev.mediaStream?.id) {
+          if (current.mediaStream) {
+            element.srcObject = current.mediaStream;
 
-        // if (!current.__initialProps.streamKey) {
-        element.muted = current.volume === 0;
+            element.onloadedmetadata = () => {
+              console.log("toggling play ");
+              mediaStore.getState().__controlsFunctions.togglePlay(true);
+            };
+
+            // mediaStore.getState().__controlsFunctions.setLive(false);
+          } else {
+            element.srcObject = null;
+          }
+        }
 
         if (
-          !current.__controls.muted &&
-          current.__controls.muted !== prev.__controls.muted
+          current.__controls.requestedUserMediaLastTime !==
+          prev.__controls.requestedUserMediaLastTime
         ) {
-          element.volume = current.__controls.volume;
+          const stream = getUserMedia({
+            source: {},
+          });
+
+          previousPromise = stream;
+
+          const streamAwaited = await stream;
+
+          store.getState().__controlsFunctions.updateMediaStream(streamAwaited);
         }
+
+        // if (current.volume !== prev.volume) {
+        //   element.volume = current.volume;
+        // }
+
+        // // if (!current.__initialProps.streamKey) {
+        // element.muted = current.volume === 0;
+
+        // if (
+        //   !current.__controls.muted &&
+        //   current.__controls.muted !== prev.__controls.muted
+        // ) {
+        //   element.volume = current.__controls.volume;
+        // }
         // }
       }
     } catch (e) {

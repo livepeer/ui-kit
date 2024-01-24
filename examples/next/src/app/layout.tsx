@@ -1,7 +1,8 @@
+import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { Toaster } from "sonner";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={cn(
+          inter.className,
+          "dark-theme text-white bg-black min-h-screen-safe pb-[env(safe-area-inset-bottom)]",
+        )}
+      >
         <Toaster />
         {children}
       </body>

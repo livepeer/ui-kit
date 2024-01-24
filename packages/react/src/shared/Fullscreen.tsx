@@ -23,7 +23,11 @@ type FullscreenIndicatorElement = React.ElementRef<typeof Radix.Primitive.div>;
 
 interface FullscreenIndicatorProps
   extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.div> {
-  forceMount?: boolean;
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
   /** The matcher used to determine whether the element should be shown, given the fullscreen state. Defaults to `true`. */
   matcher?: boolean | ((fullscreen: boolean) => boolean);
 }
@@ -84,7 +88,7 @@ const FullscreenTrigger = React.forwardRef<
   FullscreenTriggerElement,
   FullscreenTriggerProps
 >((props: MediaScopedProps<FullscreenTriggerProps>, forwardedRef) => {
-  const { __scopeMedia, style, ...fullscreenProps } = props;
+  const { __scopeMedia, ...fullscreenProps } = props;
 
   const context = useMediaContext(FULLSCREEN_TRIGGER_NAME, __scopeMedia);
 
