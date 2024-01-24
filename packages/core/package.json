@@ -112,12 +112,12 @@
     }
   },
   "dependencies": {
+    "livepeer": "^3.0.1",
     "multiformats": "^13.0.1",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "jose": "^5.2.0",
-    "livepeer": "^3.0.1"
+    "jose": "^5.2.0"
   },
   "keywords": [
     "livepeer",

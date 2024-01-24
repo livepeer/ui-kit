@@ -31,6 +31,7 @@ type RawMetrics = {
     | "video"
     | "webrtc"
     | "image"
+    | "vtt"
     | "unknown"}-${string}`;
 
   sourceType: MimeType | "unknown";

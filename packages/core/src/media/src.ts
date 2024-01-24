@@ -1,7 +1,6 @@
-import type { PlaybackInfo } from "livepeer/dist/models/components/playbackinfo";
-
-import { ElementSize } from "./controller";
-import { MimeType, getMimeType } from "./mime";
+import type { PlaybackInfo } from "livepeer/dist/models/components";
+import type { ElementSize } from "./controller";
+import { getMimeType, type MimeType } from "./mime";
 
 type AudioExtension =
   | "m4a"
@@ -19,11 +18,12 @@ type AudioExtension =
   | "spx";
 type VideoExtension = "mp4" | "ogv" | "webm" | "mov" | "m4v" | "avi" | "m3u8";
 type HlsExtension = "m3u8";
+type VideoTextTrackExtension = "vtt";
 
 type OptionalQueryParams = `?${string}` | "";
 
 type BaseSrc = {
-  type: "audio" | "video" | "hls" | "webrtc" | "image";
+  type: "audio" | "video" | "hls" | "webrtc" | "image" | "vtt";
   src: string;
   mime: MimeType | null;
   width: number | null;
@@ -40,6 +40,10 @@ export interface VideoSrc extends BaseSrc {
 export interface ImageSrc extends BaseSrc {
   type: "image";
   src: `${string}${OptionalQueryParams}`;
+}
+export interface VideoTextTrackSrc extends BaseSrc {
+  type: "vtt";
+  src: `${string}${VideoTextTrackExtension}${OptionalQueryParams}`;
 }
 
 export interface Base64Src extends BaseSrc {
@@ -60,7 +64,8 @@ export type Src =
   | VideoSrc
   | Base64Src
   | WebRTCSrc
-  | ImageSrc;
+  | ImageSrc
+  | VideoTextTrackSrc;
 
 export type AccessControlParams = {
   jwt?: string | null;
@@ -174,6 +179,7 @@ const audioExtensions =
 const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
 const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp)($|\?)/i;
+const vttExtensions = /\.(vtt)($|\?)/i;
 const mimeFromBase64Pattern = /data:(.+?);base64/;
 const videoExtensions = /\.(mp4|ogv|webm|mov|m4v|avi|m3u8)($|\?)/i;
 const webrtcExtensions = /(webrtc|sdp)/i;
@@ -240,7 +246,15 @@ export const getMediaSourceType = (
                   width: resolvedWidth,
                   height: resolvedHeight,
                 }
-              : null;
+              : vttExtensions.test(src)
+                ? {
+                    type: "vtt",
+                    src: src as VideoTextTrackSrc["src"],
+                    mime: getMimeType(vttExtensions.exec(src)?.[1] ?? ""),
+                    width: null,
+                    height: null,
+                  }
+                : null;
 };
 
 export const parsePlaybackInfo = (

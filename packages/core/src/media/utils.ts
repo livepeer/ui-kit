@@ -125,7 +125,9 @@ export const sortSources = (
     return mediaSourceType ? [mediaSourceType] : null;
   }
 
-  const filteredVideoSources = src.filter((s) => s.type !== "image");
+  const filteredVideoSources = src.filter(
+    (s) => s.type !== "vtt" && s.type !== "image",
+  );
 
   const parentWidthWithDefault =
     (parentWidth ?? 1280) * SCREEN_WIDTH_MULTIPLIER;
