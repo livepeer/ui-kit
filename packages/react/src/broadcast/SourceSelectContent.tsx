@@ -13,59 +13,54 @@ import { BroadcastScopedProps, useBroadcastContext } from "./context";
 
 const SOURCE_SELECT_NAME = "SourceSelect";
 
-type SourceSelectElement = React.ElementRef<typeof SelectPrimitive.Root>;
-
 interface SourceSelectProps
-  extends Radix.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {
+  extends Radix.ComponentPropsWithoutRef<typeof SelectPrimitive.SelectRoot> {
   /**
    *
    */
   type: "video" | "audio";
 }
 
-const SourceSelect = React.forwardRef<SourceSelectElement, SourceSelectProps>(
-  (
-    props: MediaScopedProps<BroadcastScopedProps<SourceSelectProps>>,
-    forwardedRef,
-  ) => {
-    const { __scopeMedia, __scopeBroadcast, type, ...controlsProps } = props;
+const SourceSelect = (
+  props: MediaScopedProps<BroadcastScopedProps<SourceSelectProps>>,
+) => {
+  const { __scopeMedia, __scopeBroadcast, type, ...controlsProps } = props;
 
-    const context = useMediaContext(SOURCE_SELECT_NAME, __scopeMedia);
+  const context = useMediaContext(SOURCE_SELECT_NAME, __scopeMedia);
 
-    const broadcastContext = useBroadcastContext(
-      SOURCE_SELECT_NAME,
-      __scopeBroadcast,
-    );
+  const broadcastContext = useBroadcastContext(
+    SOURCE_SELECT_NAME,
+    __scopeBroadcast,
+  );
 
-    const { enabled, isWebRTCSupported } = useStore(
-      broadcastContext.store,
-      useShallow(({ enabled, __device }) => ({
-        enabled,
-        isWebRTCSupported: __device.isWebRTCSupported,
-      })),
-    );
+  const { enabled, isWebRTCSupported } = useStore(
+    broadcastContext.store,
+    useShallow(({ enabled, __device }) => ({
+      enabled,
+      isWebRTCSupported: __device.isWebRTCSupported,
+    })),
+  );
 
-    useEffect(() => {
-      if (!isWebRTCSupported) {
-        console.error("WebRTC is not supported on this device.");
-      }
-    }, [isWebRTCSupported]);
+  useEffect(() => {
+    if (!isWebRTCSupported) {
+      console.error("WebRTC is not supported on this device.");
+    }
+  }, [isWebRTCSupported]);
 
-    const shown = useMemo(
-      () => enabled && isWebRTCSupported,
-      [enabled, isWebRTCSupported],
-    );
+  const shown = useMemo(
+    () => enabled && isWebRTCSupported,
+    [enabled, isWebRTCSupported],
+  );
 
-    return (
-      <SelectPrimitive.Root
-        {...controlsProps}
-        data-livepeer-source-select=""
-        data-type={type}
-        data-visible={String(shown)}
-      />
-    );
-  },
-);
+  return (
+    <SelectPrimitive.SelectRoot
+      {...controlsProps}
+      data-livepeer-source-select=""
+      data-type={type}
+      data-visible={String(shown)}
+    />
+  );
+};
 
 SourceSelect.displayName = SOURCE_SELECT_NAME;
 

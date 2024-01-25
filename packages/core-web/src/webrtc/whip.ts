@@ -37,12 +37,14 @@ export type WebRTCConnectedPayload = {
  * https://www.ietf.org/archive/id/draft-ietf-wish-whip-01.html
  */
 export const createNewWHIP = <TElement extends HTMLMediaElement>({
+  stream,
   ingestUrl,
   element,
   aspectRatio,
   callbacks,
   sdpTimeout,
 }: {
+  stream: MediaStream;
   ingestUrl: string;
   element: TElement;
   aspectRatio: number | null;
@@ -69,7 +71,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   const abortController = new AbortController();
 
   let peerConnection: RTCPeerConnection | null = null;
-  let stream: MediaStream | null = null;
+
   let videoTransceiver: RTCRtpTransceiver | null = null;
   let audioTransceiver: RTCRtpTransceiver | null = null;
 
@@ -137,45 +139,26 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
           },
         );
 
-        /**
-         * While the connection is being initialized, ask for camera and microphone permissions and
-         * add video and audio tracks to the peerConnection.
-         *
-         * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-         */
-        getUserMedia({
-          source: {
-            streamConstraints: {
-              audio: true,
-              video: true,
-            },
-          },
-        })
-          .then(async (mediaStream) => {
-            const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
-            const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
+        const newVideoTrack = stream?.getVideoTracks?.()?.[0] ?? null;
+        const newAudioTrack = stream?.getAudioTracks?.()?.[0] ?? null;
 
-            if (newVideoTrack) {
-              await newVideoTrack.applyConstraints(
-                getConstraints(aspectRatio ?? 16 / 9),
-              );
+        if (newVideoTrack) {
+          // await newVideoTrack.applyConstraints(
+          //   getConstraints(aspectRatio ?? 16 / 9),
+          // );
 
-              videoTransceiver =
-                peerConnection?.addTransceiver(newVideoTrack, {
-                  direction: "sendonly",
-                }) ?? null;
-            }
+          videoTransceiver =
+            peerConnection?.addTransceiver(newVideoTrack, {
+              direction: "sendonly",
+            }) ?? null;
+        }
 
-            if (newAudioTrack) {
-              audioTransceiver =
-                peerConnection?.addTransceiver(newAudioTrack, {
-                  direction: "sendonly",
-                }) ?? null;
-            }
-
-            stream = mediaStream;
-          })
-          .catch((e) => callbacks?.onError?.(e as Error));
+        if (newAudioTrack) {
+          audioTransceiver =
+            peerConnection?.addTransceiver(newAudioTrack, {
+              direction: "sendonly",
+            }) ?? null;
+        }
       }
     })
     .catch((e) => callbacks?.onError?.(e as Error));

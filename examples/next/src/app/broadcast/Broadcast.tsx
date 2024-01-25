@@ -46,8 +46,8 @@ export function BroadcastWithControls() {
                 <div className="flex flex-col gap-1">
                   <div className="text-2xl font-bold">Broadcast failed</div>
                   <div className="text-sm text-gray-100">
-                    There was an error with broadcasting - please try again
-                    later.
+                    There was an error with broadcasting - it is retrying in the
+                    background.
                   </div>
                 </div>
               </Broadcast.ErrorIndicator>

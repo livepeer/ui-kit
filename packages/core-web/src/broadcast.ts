@@ -350,80 +350,42 @@ export const addBroadcastEventListeners = (
   };
 };
 
-let previousPromise:
-  | Promise<void>
-  // biome-ignore lint/suspicious/noExplicitAny: any
-  | Promise<any>
-  | Promise<null>
-  | boolean
-  | null;
-
 const addEffectsToStore = (
   element: HTMLMediaElement,
-  store: StoreApi<BroadcastState>,
+  store: BroadcastStore,
   mediaStore: MediaControllerStore,
 ) => {
-  // add effects to store changes
-  return store.subscribe(async (current, prev) => {
-    try {
-      if (element) {
-        if (previousPromise) {
-          try {
-            // wait for the previous promise to execute before handling the next effect
-            await previousPromise;
-          } catch (e) {
-            console.warn(e);
-          }
-        }
+  // Subscribe to mediastream changes
+  const destroyMediaStream = store.subscribe(
+    (state) => state.mediaStream,
+    (mediaStream) => {
+      if (mediaStream) {
+        element.srcObject = mediaStream;
 
-        // attach the media stream to the video element
-        if (current.mediaStream?.id !== prev.mediaStream?.id) {
-          if (current.mediaStream) {
-            element.srcObject = current.mediaStream;
-
-            element.onloadedmetadata = () => {
-              console.log("toggling play ");
-              mediaStore.getState().__controlsFunctions.togglePlay(true);
-            };
-
-            // mediaStore.getState().__controlsFunctions.setLive(false);
-          } else {
-            element.srcObject = null;
-          }
-        }
-
-        if (
-          current.__controls.requestedUserMediaLastTime !==
-          prev.__controls.requestedUserMediaLastTime
-        ) {
-          const stream = getUserMedia({
-            source: {},
-          });
-
-          previousPromise = stream;
-
-          const streamAwaited = await stream;
-
-          store.getState().__controlsFunctions.updateMediaStream(streamAwaited);
-        }
-
-        // if (current.volume !== prev.volume) {
-        //   element.volume = current.volume;
-        // }
-
-        // // if (!current.__initialProps.streamKey) {
-        // element.muted = current.volume === 0;
-
-        // if (
-        //   !current.__controls.muted &&
-        //   current.__controls.muted !== prev.__controls.muted
-        // ) {
-        //   element.volume = current.__controls.volume;
-        // }
-        // }
+        element.onloadedmetadata = () => {
+          console.log("toggling play");
+          mediaStore.getState().__controlsFunctions.togglePlay(true);
+        };
+      } else {
+        element.srcObject = null;
       }
-    } catch (e) {
-      console.warn(e);
-    }
-  });
+    },
+  );
+
+  // Subscribe to request user media
+  const destroyAutohide = store.subscribe(
+    (state) => state.__controls.requestedUserMediaLastTime,
+    async () => {
+      const stream = await getUserMedia({
+        source: {},
+      });
+
+      store.getState().__controlsFunctions.updateMediaStream(stream);
+    },
+  );
+
+  return () => {
+    destroyMediaStream?.();
+    destroyAutohide?.();
+  };
 };

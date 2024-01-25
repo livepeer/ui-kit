@@ -116,16 +116,18 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: context
     React.useEffect(() => {
-      if (ref.current && enableUserMedia) {
+      if (ref.current && enableUserMedia && !isEnabled) {
         broadcastContext.store
           .getState()
           .__controlsFunctions.requestUserMedia();
       }
-    }, [enableUserMedia]);
+    }, [enableUserMedia, isEnabled]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: count errors
     React.useEffect(() => {
-      if (enableUserMedia && isEnabled && streamKey && ref.current) {
+      const element = ref.current;
+
+      if (mediaStream && isEnabled && streamKey && element) {
         const unmounted = false;
 
         const onErrorComposed = (err: Error) => {
@@ -136,23 +138,14 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
 
         const { destroy } = createNewWHIP({
           ingestUrl: `${ingestUrl}/${streamKey}`,
-          element: ref.current,
+          element,
+          stream: mediaStream,
           aspectRatio: context.store.getState().__initialProps.aspectRatio,
           callbacks: {
             onConnected: (payload) => {
               broadcastContext.store
                 .getState()
                 .__controlsFunctions.updateMediaStream(payload.stream);
-              // _updateMediaStream(payload.stream, {
-              //   audio:
-              //     payload?.audioTransceiver?.sender?.track?.getSettings()?.deviceId,
-              //   video:
-              //     payload?.videoTransceiver?.sender?.track?.getSettings()?.deviceId,
-              // });
-              // setTransceivers({
-              //   audio: payload.audioTransceiver,
-              //   video: payload.videoTransceiver,
-              // });
 
               context.store.getState().__controlsFunctions.setLive(true);
             },
@@ -165,7 +158,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           destroy?.();
         };
       }
-    }, [streamKey, ingestUrl, retryCount, enableUserMedia, isEnabled]);
+    }, [streamKey, ingestUrl, retryCount, isEnabled]);
 
     const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
       // biome-ignore lint/correctness/useExhaustiveDependencies: context
