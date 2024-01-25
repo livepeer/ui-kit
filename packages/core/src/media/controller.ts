@@ -5,8 +5,8 @@ import {
 } from "zustand/middleware";
 import { StoreApi, createStore } from "zustand/vanilla";
 
-import { ClientStorage } from "../storage";
-import { AudioTrackSelector, ImageSrc, Src, VideoTrackSelector } from "./src";
+import { ClientStorage, createStorage, noopStorage } from "../storage";
+import { ImageSrc, Src, VideoQuality } from "./src";
 
 import {
   isAccessControlError,
@@ -32,35 +32,103 @@ export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
 
-export type WebRTCPlaybackConfig = {
+export type InitialProps = {
   /**
-   * The timeout of the network requests made for the SDP negotiation, in ms.
+   * An access key to be used for playback. This key grants permission to play access key protected media.
+   */
+  accessKey: string | null;
+
+  /** The aspect ratio for the container element. Defines the width to height ratio of the player, like 16:9 or 4:3. */
+  aspectRatio: number | null;
+
+  /**
+   * If `autoPlay` was passed in to the Player. Determines if the media should attempt to start playing automatically on load.
    *
-   * @default 5000
-   */
-  sdpTimeout?: number;
-  /**
-   * Disables the speedup/slowdown mechanic in WebRTC, to allow for non-distorted audio.
-   */
-  constant?: boolean;
-  /**
-   * The track selector used when choosing the video track for playback.
+   * Autoplay for videos in modern browsers typically works only if the video is muted or if the user has previously interacted with the website.
    *
-   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
+   * @link https://developer.chrome.com/blog/autoplay/
    */
-  videoTrackSelector?: VideoTrackSelector;
+  autoPlay: boolean;
+
   /**
-   * The track selector used when choosing the audio track for playback.
+   * The length of the clip. This is usually used alongside `ClipTrigger`. Specifies the duration of the media clip, in seconds.
    *
-   * @docs https://docs.mistserver.org/mistserver/concepts/track_selectors/
+   * Set to `null` to disable the ClipTrigger.
    */
-  audioTrackSelector?: AudioTrackSelector;
+  clipLength: ClipLength | null;
+
   /**
-   * The timeout of the time to wait for WebRTC `canPlay`, in ms.
+   * Whether hotkeys are enabled. Defaults to `true`. Allows users to use keyboard shortcuts for player control.
    *
-   * @default 7000
+   * This is highly recommended to adhere to ARIA guidelines.
    */
-  canPlayTimeout?: number;
+  hotkeys: boolean;
+
+  /**
+   * The JWT (JSON Web Token) which is passed along to allow playback of an asset. Used for authentication and information exchange.
+   */
+  jwt: string | null;
+
+  /**
+   * Whether low latency is enabled for live-streaming. `force` can be used to require low latency playback using WebRTC, with no fallback to HLS. Defaults to `true`,
+   * which means that WebRTC is enabled by default, with fallback to HLS.
+   */
+  lowLatency: boolean | "force";
+
+  /**
+   * Callback called when there is an error. When `null` is passed, it indicates that the error has been resolved.
+   */
+  onError: ((error: PlaybackError | null) => void) | null;
+
+  /**
+   * The default playback rate for the media. Determines the speed at which the media is played, e.g., 0.5 for half-speed, 2 for double speed.
+   *
+   * This can be overridden during playback by the user with `RateSelect`.
+   *
+   * `constant` means the speed of live stream playback will remain consistent, instead of speeding up to catch up with the head of the stream.
+   */
+  playbackRate: PlaybackRate;
+
+  /**
+   * The preload option passed in to the Player. Specifies how the media should be preloaded: 'auto', 'metadata', or 'none'.
+   *
+   * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
+   */
+  preload: "auto" | "metadata" | "none";
+
+  /**
+   * The timeout for playback before falling back to the next source. This includes SDP negotiation for WebRTC, waiting for WebRTC to play,
+   * and responses from the server.
+   *
+   * In milliseconds - defaults to 10000.
+   */
+  timeout: number;
+
+  /**
+   * The storage option for saving persistent state, like volume and video quality.
+   *
+   * Defaults to `localStorage` in the browser. Pass `null` to disable storage.
+   */
+  storage: ClientStorage | null;
+
+  /**
+   * The default video quality for playback.
+   *
+   * This is overridden when a user changes it, and their preferences are, by default, saved to storage.
+   */
+  videoQuality: VideoQuality;
+
+  /**
+   * The default volume level of the media, ranging from 0 (muted) to 1 (maximum volume).
+   *
+   * This is overridden when a user changes it, and their preferences are, by default, saved to storage.
+   */
+  volume: number;
+
+  /**
+   * The viewerId for the viewer. A unique identifier for the user or session watching the media.
+   */
+  viewerId: string | null;
 };
 
 export type ControlsOptions = {
@@ -76,6 +144,7 @@ export type DeviceInformation = {
   isIos: boolean;
   isAndroid: boolean;
   userAgent: string;
+  screenWidth: number | null;
 
   /** If the media supports changing the volume */
   isVolumeChangeSupported: boolean;
@@ -132,42 +201,6 @@ export type ControlsState = {
 
 export type ObjectFit = "cover" | "contain";
 
-export type InitialProps = {
-  /** The aspect ratio for the container element */
-  aspectRatio: number | null;
-
-  /** If autoPlay was passed in to the Player */
-  autoPlay: boolean;
-  /** The preload option passed in to the Player */
-  preload: "auto" | "metadata" | "none";
-  /** The viewerId for the viewer passed in to Player */
-  viewerId: string | null;
-
-  /** The volume that was passed in to the Player */
-  volume: number;
-  /** The playback rate that was passed in to the Player. Defaults to 1. */
-  playbackRate: number;
-  /** Whether the media should loop on completion. */
-  loop: boolean;
-  /** The length of the clip. */
-  clipLength: ClipLength | null;
-  /**
-   * Whether low latency is enabled for live-streaming.
-   * `force` can be passed to force the use of WebRTC low latency playback,
-   * and disable fallback to HLS if WebRTC cannot be used.
-   * Defaults to `true`.
-   */
-  lowLatency: boolean | "force";
-  /** The JWT which is passed along to allow playback of an asset. */
-  jwt: string | null;
-  /** An access key to be used for playback. */
-  accessKey: string | null;
-  /** Callback called when there is a playback error. When `null` is passed, the error has been resolved. */
-  onError: ((error: PlaybackError | null) => void) | null;
-  /** Whether hotkeys are enabled. Defaults to `true`. */
-  hotkeys: boolean;
-};
-
 export type PlaybackError = {
   type: "offline" | "access-control" | "fallback" | "unknown";
   message: string;
@@ -189,6 +222,11 @@ export type Metadata = {
 };
 
 export type ClipLength = 90 | 60 | 45 | 30 | 15 | 10;
+
+/**
+ * The playback rate. `constant` means playing WebRTC playback at a constant pace and not speeding up.
+ */
+export type PlaybackRate = number | "constant";
 
 const omittedKeys = [
   "__initialProps",
@@ -259,7 +297,7 @@ export type MediaControllerState = {
   loading: boolean;
 
   /** The current playback rate for the media. Defaults to 1. */
-  playbackRate: number;
+  playbackRate: PlaybackRate;
 
   /** If the media is in picture in picture mode */
   pictureInPicture: boolean;
@@ -281,6 +319,9 @@ export type MediaControllerState = {
 
   /** If the media is currently waiting for data */
   waiting: boolean;
+
+  /** The quality of the video playback. */
+  videoQuality: VideoQuality;
 
   /** If the media has ended */
   ended: boolean;
@@ -312,6 +353,7 @@ export type MediaControllerState = {
     setLive: (live: boolean) => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
     setPlaybackRate: (rate: number | string) => void;
+    setVideoQuality: (videoQuality: VideoQuality) => void;
     setSize: (size: Partial<MediaSizing>) => void;
     setVolume: (volume: number) => void;
     setWebsocketMetadata: (metadata: Metadata) => void;
@@ -354,19 +396,24 @@ export const createControllerStore = ({
   storage,
   src,
   initialProps,
-  webrtcConfig,
 }: {
   device: DeviceInformation;
   storage: ClientStorage;
   src: Src[] | string | null;
   initialProps: Partial<InitialProps>;
-  webrtcConfig?: WebRTCPlaybackConfig;
 }): MediaControllerStore => {
+  const resolvedStorage =
+    initialProps?.storage === null
+      ? createStorage({
+          storage: noopStorage,
+        })
+      : initialProps?.storage ?? storage;
+
+  const initialPlaybackRate = initialProps?.playbackRate ?? 1;
   const initialVolume = getBoundedVolume(
     initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
   );
-
-  const initialPlaybackRate = initialProps.playbackRate ?? 1;
+  const initialVideoQuality = initialProps.videoQuality ?? "auto";
 
   const sessionToken = generateRandomToken();
 
@@ -375,16 +422,21 @@ export const createControllerStore = ({
       ? null
       : (src?.find?.((s) => s.type === "image") as ImageSrc | null | undefined);
 
-  const sortedSources = sortSources(src, null);
+  const sortedSources = sortSources({
+    src,
+    screenWidth: device.screenWidth,
+    videoQuality: initialVideoQuality,
+    aspectRatio: initialProps.aspectRatio ?? 16 / 9,
+  });
 
   const parsedSource = parseCurrentSourceAndPlaybackId({
-    source: sortedSources?.[0] ?? null,
-    jwt: initialProps?.jwt ?? null,
     accessKey: initialProps?.accessKey ?? null,
+    aspectRatio: initialProps?.aspectRatio ?? null,
+    constant: initialPlaybackRate === "constant",
+    jwt: initialProps?.jwt ?? null,
     sessionToken,
-    audioTrackSelector: webrtcConfig?.audioTrackSelector,
-    videoTrackSelector: webrtcConfig?.videoTrackSelector,
-    constant: webrtcConfig?.constant,
+    source: sortedSources?.[0] ?? null,
+    videoQuality: initialVideoQuality,
   });
 
   const initialControls: ControlsState = {
@@ -419,10 +471,13 @@ export const createControllerStore = ({
 
           canPlay: false,
           hidden: false,
+
           /** Current volume of the media. 0 if it is muted. */
           volume: initialVolume,
           /** The playback rate for the media. Defaults to 1. */
           playbackRate: initialPlaybackRate,
+          videoQuality: "auto",
+
           /** Current progress of the media (in seconds) */
           progress: 0,
           /** Current total duration of the media (in seconds) */
@@ -475,22 +530,21 @@ export const createControllerStore = ({
           },
 
           __initialProps: {
-            aspectRatio: initialProps?.aspectRatio ?? null,
-
-            volume: initialVolume ?? null,
-            playbackRate: initialPlaybackRate,
-            loop: initialProps.loop ?? false,
-
-            autoPlay: initialProps.autoPlay ?? false,
-            preload: initialProps.preload ?? "none",
-            viewerId: initialProps.viewerId ?? null,
-            lowLatency: initialProps.lowLatency ?? true,
-            clipLength: initialProps.clipLength ?? null,
-
-            jwt: initialProps.jwt ?? null,
             accessKey: initialProps.accessKey ?? null,
-            onError: initialProps?.onError ?? null,
+            aspectRatio: initialProps?.aspectRatio ?? null,
+            autoPlay: initialProps.autoPlay ?? false,
+            clipLength: initialProps.clipLength ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
+            jwt: initialProps.jwt ?? null,
+            lowLatency: initialProps.lowLatency ?? true,
+            onError: initialProps?.onError ?? null,
+            playbackRate: initialPlaybackRate,
+            preload: initialProps.preload ?? "none",
+            storage: resolvedStorage,
+            timeout: initialProps.timeout ?? 10000,
+            videoQuality: initialVideoQuality,
+            viewerId: initialProps.viewerId ?? null,
+            volume: initialVolume ?? null,
           },
 
           __device: device,
@@ -505,7 +559,9 @@ export const createControllerStore = ({
                 hidden: playing ? hidden : false,
               })),
             updateLastInteraction: () =>
-              set(() => ({ _lastInteraction: Date.now(), hidden: false })),
+              set(({ __controls }) => ({
+                __controls: { ...__controls, lastInteraction: Date.now() },
+              })),
 
             updatePlaybackOffsetMs: (offset: number) =>
               set(({ __controls }) => ({
@@ -630,6 +686,37 @@ export const createControllerStore = ({
                 return {
                   buffered,
                   bufferedPercent: Number(percent.toFixed(2)),
+                };
+              }),
+
+            setVideoQuality: (videoQuality) =>
+              set(({ __initialProps, __controls, playbackRate }) => {
+                const sortedSources = sortSources({
+                  src,
+                  screenWidth: device.screenWidth,
+                  videoQuality,
+                  aspectRatio: __initialProps.aspectRatio ?? 16 / 9,
+                });
+
+                const parsedSourceNew = parseCurrentSourceAndPlaybackId({
+                  accessKey: __initialProps?.accessKey ?? null,
+                  aspectRatio: __initialProps?.aspectRatio ?? null,
+                  constant: playbackRate === "constant",
+                  jwt: __initialProps?.jwt ?? null,
+                  sessionToken: __controls.sessionToken,
+                  source: sortedSources?.[0] ?? null,
+                  videoQuality,
+                });
+
+                return {
+                  sortedSources,
+                  videoQuality,
+
+                  currentSource: parsedSourceNew?.currentSource ?? null,
+                  __controls: {
+                    ...__controls,
+                    playbackId: parsedSourceNew?.playbackId ?? null,
+                  },
                 };
               }),
 
@@ -770,6 +857,8 @@ export const createControllerStore = ({
                   errorCount,
                   __device,
                   __initialProps,
+                  videoQuality,
+                  playbackRate,
                 }) => {
                   const msSinceLastError = Date.now() - __controls.lastError;
 
@@ -900,13 +989,13 @@ export const createControllerStore = ({
                       : null;
 
                   const parsedSourceNew = parseCurrentSourceAndPlaybackId({
-                    source: nextSource,
-                    jwt: __initialProps.jwt,
-                    accessKey: __initialProps.accessKey,
+                    accessKey: __initialProps?.accessKey ?? null,
+                    aspectRatio: __initialProps?.aspectRatio ?? null,
+                    constant: playbackRate === "constant",
+                    jwt: __initialProps?.jwt ?? null,
                     sessionToken: __controls.sessionToken,
-                    audioTrackSelector: webrtcConfig?.audioTrackSelector,
-                    videoTrackSelector: webrtcConfig?.videoTrackSelector,
-                    constant: webrtcConfig?.constant,
+                    source: nextSource,
+                    videoQuality,
                   });
 
                   return {
@@ -924,16 +1013,25 @@ export const createControllerStore = ({
         {
           name: "livepeer-media-controller",
           version: 2,
-          // since these values are persisted across media, only persist volume and playbackRate
-          partialize: ({ volume, playbackRate }) => ({
+          // since these values are persisted across media, only persist volume, playbackRate, videoQuality
+          partialize: ({ volume, videoQuality }) => ({
             volume,
-            playbackRate,
+            videoQuality,
           }),
-          storage: createJSONStorage(() => storage),
+          storage: createJSONStorage(() => resolvedStorage),
         },
       ),
     ),
   );
+
+  store.persist.onFinishHydration(({ videoQuality, volume }) => {
+    if (videoQuality !== initialVideoQuality) {
+      store.getState().__controlsFunctions.setVideoQuality(videoQuality);
+    }
+    if (volume !== initialVolume) {
+      store.getState().__controlsFunctions.setVolume(volume);
+    }
+  });
 
   return store;
 };

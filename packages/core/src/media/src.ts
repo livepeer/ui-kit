@@ -1,4 +1,3 @@
-import type { PlaybackInfo } from "livepeer/dist/models/components";
 import type { ElementSize } from "./controller";
 import { getMimeType, type MimeType } from "./mime";
 
@@ -71,6 +70,15 @@ export type AccessControlParams = {
   jwt?: string | null;
   accessKey?: string | null;
 };
+
+export type VideoQuality =
+  | "1080p"
+  | "720p"
+  | "480p"
+  | "360p"
+  | "240p"
+  | "144p"
+  | "auto";
 
 /**
  * Represents a single track selector
@@ -255,26 +263,4 @@ export const getMediaSourceType = (
                     height: null,
                   }
                 : null;
-};
-
-export const parsePlaybackInfo = (
-  playbackInfo: PlaybackInfo | null | undefined,
-): Src[] | null => {
-  const sources = playbackInfo?.meta?.source
-    ?.map((s) =>
-      getMediaSourceType(s?.url ?? null, {
-        sizing:
-          s.height && s.width
-            ? {
-                width: s.width,
-                height: s.height,
-              }
-            : undefined,
-      }),
-    )
-    ?.filter((source) => source?.src)
-    // biome-ignore lint/style/noNonNullAssertion: filtered
-    ?.map((source) => source!);
-
-  return sources ?? null;
 };

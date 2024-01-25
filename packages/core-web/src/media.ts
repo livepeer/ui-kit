@@ -4,7 +4,6 @@ export {
   addMediaMetricsToStore,
   createControllerStore,
   getMediaSourceType,
-  parsePlaybackInfo,
   sanitizeMediaControllerState,
 } from "@livepeer/core/media";
 export type {
@@ -31,10 +30,12 @@ export type {
   ObjectFit,
   PlaybackError,
   PlaybackMonitor,
+  PlaybackRate,
   SingleAudioTrackSelector,
   SingleTrackSelector,
   SingleVideoTrackSelector,
   Src,
+  VideoQuality,
   VideoSrc,
   VideoTrackSelector,
   WebRTCSrc,

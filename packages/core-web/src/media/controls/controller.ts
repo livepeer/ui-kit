@@ -1,11 +1,8 @@
 import {
   ControlsOptions as ControlsOptionsBase,
   DEFAULT_AUTOHIDE_TIME,
-  MediaControllerState,
   MediaControllerStore,
 } from "@livepeer/core/media";
-
-import { StoreApi } from "zustand/vanilla";
 
 import {
   addFullscreenEventListener,
@@ -111,18 +108,9 @@ export const addEventListeners = (
     }
   };
 
-  const onMouseEnter = () => {
+  const onMouseUpdate = () => {
     store.getState().__controlsFunctions.updateLastInteraction();
   };
-  const onMouseLeave = () => {
-    if (autohide) {
-      // store.getState().__controlsFunctions.updateLastInteraction();
-    }
-  };
-  const onMouseMove = async () => {
-    store.getState().__controlsFunctions.updateLastInteraction();
-  };
-
   const onTouchUpdate = async () => {
     store.getState().__controlsFunctions.updateLastInteraction();
   };
@@ -227,19 +215,21 @@ export const addEventListeners = (
     element.addEventListener("resize", onResize);
     element.addEventListener("ended", onEnded);
 
+    if (autohide) {
+      parentElementOrElement.addEventListener("mouseover", onMouseUpdate);
+      parentElementOrElement.addEventListener("mouseenter", onMouseUpdate);
+      parentElementOrElement.addEventListener("mouseout", onMouseUpdate);
+      parentElementOrElement.addEventListener("mousemove", onMouseUpdate);
+
+      parentElementOrElement.addEventListener("touchstart", onTouchUpdate);
+      parentElementOrElement.addEventListener("touchend", onTouchUpdate);
+      parentElementOrElement.addEventListener("touchmove", onTouchUpdate);
+    }
+
     if (parentElementOrElement) {
       if (hotkeys) {
         parentElementOrElement.addEventListener("keyup", onKeyUp);
         parentElementOrElement.setAttribute("tabindex", "0");
-      }
-      if (autohide) {
-        parentElementOrElement.addEventListener("mouseenter", onMouseEnter);
-        parentElementOrElement.addEventListener("mouseleave", onMouseLeave);
-        parentElementOrElement.addEventListener("mousemove", onMouseMove);
-
-        parentElementOrElement.addEventListener("touchstart", onTouchUpdate);
-        parentElementOrElement.addEventListener("touchend", onTouchUpdate);
-        parentElementOrElement.addEventListener("touchmove", onTouchUpdate);
       }
     }
 
@@ -298,15 +288,16 @@ export const addEventListeners = (
     element?.removeEventListener?.("resize", onResize);
     element?.removeEventListener?.("ended", onEnded);
 
+    parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
+    parentElementOrElement?.removeEventListener?.("mouseenter", onMouseUpdate);
+    parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
+    parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
+
+    parentElementOrElement?.removeEventListener?.("touchstart", onTouchUpdate);
+    parentElementOrElement?.removeEventListener?.("touchend", onTouchUpdate);
+    parentElementOrElement?.removeEventListener?.("touchmove", onTouchUpdate);
+
     parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
-
-    parentElementOrElement?.removeEventListener?.("mouseenter", onMouseEnter);
-    parentElementOrElement?.removeEventListener?.("mouseleave", onMouseLeave);
-    parentElementOrElement?.removeEventListener?.("mousemove", onMouseMove);
-
-    parentElementOrElement?.addEventListener?.("touchstart", onTouchUpdate);
-    parentElementOrElement?.addEventListener?.("touchend", onTouchUpdate);
-    parentElementOrElement?.addEventListener?.("touchmove", onTouchUpdate);
 
     removeEffectsFromStore?.();
 
@@ -320,135 +311,114 @@ export const addEventListeners = (
   };
 };
 
-let previousPromise:
-  | Promise<void>
-  // biome-ignore lint/suspicious/noExplicitAny: any
-  | Promise<any>
-  | Promise<null>
-  | boolean
-  | null;
-
 const addEffectsToStore = (
   element: HTMLMediaElement,
-  store: StoreApi<MediaControllerState>,
+  store: MediaControllerStore,
   options: Required<Pick<ControlsOptions, "autohide">>,
 ) => {
-  // add effects to store changes
-  return store.subscribe(async (current, prev) => {
-    try {
-      if (element) {
-        if (previousPromise) {
-          try {
-            // wait for the previous promise to execute before handling the next effect
-            await previousPromise;
-          } catch (e) {
-            console.warn(e);
-          }
+  // Subscribe to play/pause changes
+  const destroyPlayPause = store.subscribe(
+    (state) => state.__controls.requestedPlayPauseLastTime,
+    async () => {
+      if (element.paused) {
+        await element.play();
+      } else {
+        await element.pause();
+      }
+    },
+  );
+
+  // Subscribe to playback rate changes
+  const destroyPlaybackRate = store.subscribe(
+    (state) => state.playbackRate,
+    (current) => {
+      element.playbackRate = current === "constant" ? 1 : current;
+    },
+  );
+
+  // Subscribe to volume changes
+  const destroyVolume = store.subscribe(
+    (state) => ({
+      volume: state.volume,
+      isVolumeChangeSupported: state.__device.isVolumeChangeSupported,
+    }),
+    (current) => {
+      if (current.isVolumeChangeSupported) {
+        element.volume = current.volume;
+      }
+    },
+  );
+
+  // Subscribe to mute changes
+  const destroyMute = store.subscribe(
+    (state) => state.__controls.muted,
+    (current, prev) => {
+      if (current !== prev) {
+        element.muted = current;
+      }
+    },
+  );
+
+  // Subscribe to seeking changes
+  const destroySeeking = store.subscribe(
+    (state) => state.__controls.requestedRangeToSeekTo,
+    (current) => {
+      if (typeof element.readyState === "undefined" || element.readyState > 0) {
+        element.currentTime = current;
+      }
+    },
+  );
+
+  // Subscribe to fullscreen changes
+  const destroyFullscreen = store.subscribe(
+    (state) => state.__controls.requestedFullscreenLastTime,
+    async () => {
+      const isFullscreen = isCurrentlyFullscreen(element);
+      if (isFullscreen) exitFullscreen(element);
+      else enterFullscreen(element);
+    },
+  );
+
+  // Subscribe to picture-in-picture changes
+  const destroyPictureInPicture = store.subscribe(
+    (state) => state.__controls.requestedPictureInPictureLastTime,
+    async () => {
+      const isPictureInPicture = isCurrentlyPictureInPicture(element);
+      if (isPictureInPicture) exitPictureInPicture(element);
+      else enterPictureInPicture(element);
+    },
+  );
+
+  // Subscribe to autohide interactions
+  const destroyAutohide = store.subscribe(
+    (state) => state.__controls.lastInteraction,
+    async (lastInteraction) => {
+      if (options.autohide && lastInteraction) {
+        const { __device } = store.getState();
+        if (!__device.isMobile) {
+          store.getState().__controlsFunctions.setHidden(false);
         }
+
+        await delay(options.autohide);
 
         if (
-          current.__controls.requestedPlayPauseLastTime !==
-          prev.__controls.requestedPlayPauseLastTime
+          !store.getState().hidden &&
+          lastInteraction === store.getState().__controls.lastInteraction
         ) {
-          if (element.paused) {
-            previousPromise = element.play();
-          } else {
-            element.pause();
-          }
-        }
-
-        if (current.playbackRate !== element.playbackRate) {
-          element.playbackRate = current.playbackRate;
-        }
-
-        console.log({
-          v: current.volume,
-          muted: current.__controls.muted,
-          vv: current.__controls.volume,
-        });
-
-        if (
-          current.volume !== element.volume &&
-          current.__device.isVolumeChangeSupported
-        ) {
-          element.volume = current.volume;
-        }
-
-        if (current.__controls.muted !== element.muted) {
-          element.muted = current.__controls.muted;
-        }
-
-        if (
-          !current.__controls.muted &&
-          current.__controls.muted !== prev.__controls.muted &&
-          current.__device.isVolumeChangeSupported
-        ) {
-          element.volume = current.__controls.volume;
-        }
-
-        if (
-          current.__controls.requestedRangeToSeekTo !==
-          prev.__controls.requestedRangeToSeekTo
-        ) {
-          // Can't set the time before the media is ready
-          // Ignore if readyState isn't supported
-          if (
-            typeof element.readyState === "undefined" ||
-            element.readyState > 0
-          ) {
-            element.currentTime = current.__controls.requestedRangeToSeekTo;
-          }
-        }
-
-        // user has interacted with element
-        if (
-          options.autohide &&
-          current.__controls.lastInteraction !== prev.__controls.lastInteraction
-        ) {
-          const { __device } = store.getState();
-          if (!__device.isMobile) {
-            store.getState().__controlsFunctions.setHidden(false);
-          }
-
-          await delay(options.autohide);
-
-          if (
-            !store.getState().hidden &&
-            current.__controls.lastInteraction ===
-              store.getState().__controls.lastInteraction
-          ) {
-            store.getState().__controlsFunctions.setHidden(true);
-          }
-        }
-
-        if (
-          current.__controls.requestedFullscreenLastTime !==
-          prev.__controls.requestedFullscreenLastTime
-        ) {
-          const isFullscreen = isCurrentlyFullscreen(element);
-
-          if (!isFullscreen) {
-            previousPromise = enterFullscreen(element);
-          } else {
-            previousPromise = exitFullscreen(element);
-          }
-        }
-
-        if (
-          current.__controls.requestedPictureInPictureLastTime !==
-          prev.__controls.requestedPictureInPictureLastTime
-        ) {
-          const isPictureInPicture = isCurrentlyPictureInPicture(element);
-
-          if (!isPictureInPicture) {
-            previousPromise = enterPictureInPicture(element);
-          } else {
-            previousPromise = exitPictureInPicture(element);
-          }
+          store.getState().__controlsFunctions.setHidden(true);
         }
       }
-    } catch (e) {
-      console.warn(e);
-    }
-  });
+    },
+  );
+
+  return () => {
+    destroyAutohide?.();
+    destroyFullscreen?.();
+    destroyMute?.();
+    destroyPictureInPicture?.();
+    destroyPlaybackRate?.();
+    destroyPlayPause?.();
+    destroySeeking?.();
+    destroyVolume?.();
+  };
 };

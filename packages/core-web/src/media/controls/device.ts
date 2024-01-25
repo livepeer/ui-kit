@@ -15,6 +15,10 @@ export const getDeviceInfo = (version: string): DeviceInformation => ({
     typeof navigator !== "undefined"
       ? navigator.userAgent
       : "Node.js or unknown",
+  screenWidth:
+    typeof window !== "undefined" && window?.screen
+      ? window?.screen?.width ?? null
+      : null,
 
   isFullscreenSupported: isFullscreenSupported(),
   isWebRTCSupported: isWebRTCSupported(),

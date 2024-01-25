@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useStore } from "zustand";
 
 import { addEventListeners } from "@livepeer/core-web/browser";
-import { HlsError, createNewHls } from "@livepeer/core-web/hls";
+import { HlsError, HlsVideoConfig, createNewHls } from "@livepeer/core-web/hls";
 import { createNewWHEP } from "@livepeer/core-web/webrtc";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
@@ -30,8 +30,17 @@ interface VideoProps
     Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.video>,
     OmittedProps
   > {
+  /**
+   * Disables the default poster element, which uses thumbnails from the Src input.
+   */
   disablePoster?: boolean;
-  /** Controls how often the poster image updates when playing back a livestream, in ms. Set to `0` to disable. Defaults to 20s. */
+  /**
+   * Configures the HLS.js options, for advanced usage of the Player.
+   */
+  hlsConfig?: Omit<HlsVideoConfig, "autoplay">;
+  /**
+   * Controls how often the poster image updates when playing back a livestream, in ms. Set to `0` to disable. Defaults to 30s.
+   */
   posterLiveUpdate?: number;
 }
 
@@ -41,7 +50,8 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       __scopeMedia,
       style,
       disablePoster,
-      posterLiveUpdate = 20000,
+      hlsConfig,
+      posterLiveUpdate = 30000,
       ...videoProps
     } = props;
 
@@ -51,7 +61,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     const composedRefs = useComposedRefs(forwardedRef, ref);
 
     const {
-      playing,
       currentSource,
       isHlsSupported,
       error,
@@ -64,7 +73,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       context.store,
       useShallow(
         ({
-          playing,
           currentSource,
           __initialProps,
           __controlsFunctions,
@@ -74,7 +82,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           thumbnail,
           live,
         }) => ({
-          playing,
           currentSource,
           isHlsSupported: __device.isHlsSupported,
           error,
@@ -100,35 +107,37 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     );
 
     useEffect(() => {
-      if (posterLiveUpdate && live && !playing) {
+      if (posterLiveUpdate && live) {
         const interval = setInterval(() => {
           if (thumbnail?.src) {
             const thumbnailUrl = new URL(thumbnail.src);
 
-            thumbnailUrl.searchParams.set("p", Date.now().toFixed(0));
+            thumbnailUrl.searchParams.set("v", Date.now().toFixed(0));
 
             setPosterUrl(thumbnailUrl.toString());
           }
         }, posterLiveUpdate);
         return () => clearInterval(interval);
       }
-    }, [posterLiveUpdate, live, thumbnail, playing]);
+    }, [posterLiveUpdate, live, thumbnail]);
 
-    const [retryCount, setRetryCount] = useState(0);
+    const [retryCount, setRetryCount] = useState(-1);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: error count
     useEffect(() => {
-      if (
-        error &&
-        (error.type === "offline" || error.type === "access-control")
-      ) {
+      if (error) {
         const timeout = setTimeout(
           () => setRetryCount((retries) => retries + 1),
-          errorCount * 500,
+          errorCount * 1000,
         );
         return () => clearTimeout(timeout);
       }
     }, [errorCount]);
+
+    useEffect(() => {
+      // we run this on mount to make sure that re-renders of the main useEffect only happen on errors
+      setRetryCount(0);
+    }, []);
 
     const [source, setSource] = useState<Src | null>(null);
 
@@ -164,6 +173,8 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
             },
           );
 
+          const timeout = context.store.getState().__initialProps.timeout;
+
           const { destroy } = createNewWHEP({
             source: source.src,
             element: ref.current,
@@ -178,22 +189,18 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
               jwt: __initialProps.jwt,
               accessKey: __initialProps.accessKey,
             },
-            sdpTimeout: null,
+            sdpTimeout: timeout,
           });
 
-          const id = setTimeout(
-            () => {
-              if (context.store.getState().loading) {
-                onErrorComposed(
-                  new Error(
-                    "Timeout reached for canPlay - triggering playback error.",
-                  ),
-                );
-              }
-            },
-            // webrtcConfig?.canPlayTimeout ??
-            7000,
-          );
+          const id = setTimeout(() => {
+            if (context.store.getState().loading) {
+              onErrorComposed(
+                new Error(
+                  "Timeout reached for canPlay - triggering playback error.",
+                ),
+              );
+            }
+          }, timeout);
 
           return () => {
             clearTimeout(id);
@@ -218,10 +225,13 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
             onErrorComposed?.(cleanError);
           };
 
-          const { destroy } = createNewHls(
-            source?.src,
-            ref.current,
-            {
+          const { destroy, setQuality } = createNewHls({
+            source: source?.src,
+            element: ref.current,
+            initialQuality: context.store.getState().videoQuality,
+            aspectRatio:
+              context.store.getState().__initialProps.aspectRatio ?? 16 / 9,
+            callbacks: {
               onLive: __controlsFunctions.setLive,
               onDuration: __controlsFunctions.onDurationChange,
               onCanPlay: __controlsFunctions.onCanPlay,
@@ -230,10 +240,10 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
                 __controlsFunctions.updatePlaybackOffsetMs,
               onRedirect: __controlsFunctions.onFinalUrl,
             },
-            {
-              autoplay: __initialProps.autoPlay,
-              xhrSetup(xhr, url) {
-                // xhr.withCredentials = Boolean(allowCrossOriginCredentials);
+            config: {
+              ...hlsConfig,
+              async xhrSetup(xhr, url) {
+                await hlsConfig?.xhrSetup?.(xhr, url);
 
                 if (url.match(indexUrl)) {
                   if (__initialProps.accessKey)
@@ -245,13 +255,21 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
                     xhr.setRequestHeader("Livepeer-Jwt", __initialProps.jwt);
                 }
               },
-              // ...hlsConfig,
+              autoplay: __initialProps.autoPlay,
+            },
+          });
+
+          const unsubscribe = context.store.subscribe(
+            (state) => state.videoQuality,
+            (newQuality) => {
+              setQuality(newQuality);
             },
           );
 
           return () => {
             unmounted = true;
             destroy?.();
+            unsubscribe?.();
           };
         }
 
@@ -267,7 +285,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           };
         }
       }
-    }, [source, retryCount]);
+    }, [retryCount]);
 
     const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
       React.useCallback(
@@ -312,13 +330,9 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         [__controlsFunctions?.onError, source?.type],
       );
 
-    console.log({ source });
-
     return (
       <Radix.Primitive.video
-        src={source?.type === "video" ? source.src : undefined}
         autoPlay={Boolean(__initialProps.autoPlay)}
-        loop={Boolean(__initialProps.loop)}
         playsInline
         muted={__initialProps.volume === 0}
         poster={!disablePoster && posterUrl ? posterUrl : undefined}
@@ -331,10 +345,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           ...style,
           // ensures video expands in ratio
           position: "absolute",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
+          inset: 0,
         }}
       />
     );

@@ -9,9 +9,7 @@
     "directory": "packages/react"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -27,14 +25,14 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./crypto": {
+    "./assets": {
       "import": {
-        "types": "./dist/es/crypto.d.mts",
-        "default": "./dist/es/crypto.mjs"
+        "types": "./dist/es/assets.d.mts",
+        "default": "./dist/es/assets.mjs"
       },
       "require": {
-        "types": "./dist/cjs/crypto.d.ts",
-        "default": "./dist/cjs/crypto.js"
+        "types": "./dist/cjs/assets.d.ts",
+        "default": "./dist/cjs/assets.js"
       }
     },
     "./broadcast": {
@@ -47,26 +45,6 @@
         "default": "./dist/cjs/broadcast.js"
       }
     },
-    "./player": {
-      "import": {
-        "types": "./dist/es/player.d.mts",
-        "default": "./dist/es/player.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/player.d.ts",
-        "default": "./dist/cjs/player.js"
-      }
-    },
-    "./assets": {
-      "import": {
-        "types": "./dist/es/assets.d.mts",
-        "default": "./dist/es/assets.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/assets.d.ts",
-        "default": "./dist/cjs/assets.js"
-      }
-    },
     "./context": {
       "import": {
         "types": "./dist/es/context.d.mts",
@@ -75,6 +53,36 @@
       "require": {
         "types": "./dist/cjs/context.d.ts",
         "default": "./dist/cjs/context.js"
+      }
+    },
+    "./crypto": {
+      "import": {
+        "types": "./dist/es/crypto.d.mts",
+        "default": "./dist/es/crypto.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/crypto.d.ts",
+        "default": "./dist/cjs/crypto.js"
+      }
+    },
+    "./external": {
+      "import": {
+        "types": "./dist/es/external.d.mts",
+        "default": "./dist/es/external.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/external.d.ts",
+        "default": "./dist/cjs/external.js"
+      }
+    },
+    "./player": {
+      "import": {
+        "types": "./dist/es/player.d.mts",
+        "default": "./dist/es/player.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/player.d.ts",
+        "default": "./dist/cjs/player.js"
       }
     }
   },
@@ -120,11 +128,5 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": [
-    "livepeer",
-    "react",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
 }

@@ -4,7 +4,7 @@ import { BroadcastLoading, BroadcastWithControls } from "./Broadcast";
 
 export default async function Home() {
   return (
-    <main className="flex relative min-h-screen flex-col items-center bg-black gap-8 py-4 p-4">
+    <main className="flex relative min-h-screen flex-col items-center bg-black gap-8 py-12 md:py-8 p-4">
       <Link
         className="absolute font-medium hover:text-white/70 text-white/80 text-sm top-4 left-6"
         href="/"

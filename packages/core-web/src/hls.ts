@@ -1,5 +1,7 @@
 import Hls, { ErrorData, HlsConfig } from "hls.js";
 
+import { calculateVideoQualityDimensions } from "@livepeer/core/media";
+import { VideoQuality } from ".";
 import { isClient } from "./media/utils";
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE =
@@ -20,24 +22,37 @@ export const isHlsSupported = () => (isClient() ? Hls.isSupported() : true);
 /**
  * Create an hls.js instance and attach to the provided media element.
  */
-export const createNewHls = <TElement extends HTMLMediaElement>(
-  source: string,
-  element: TElement,
-  callbacks?: {
+export const createNewHls = <TElement extends HTMLMediaElement>({
+  source,
+  element,
+  callbacks,
+  aspectRatio,
+  config,
+  initialQuality,
+}: {
+  source: string;
+  element: TElement;
+  initialQuality: VideoQuality;
+  aspectRatio: number;
+  callbacks: {
     onLive?: (v: boolean) => void;
     onPlaybackOffsetUpdated?: (d: number) => void;
     onDuration?: (v: number) => void;
     onCanPlay?: () => void;
     onError?: (data: HlsError) => void;
     onRedirect?: (url: string | null) => void;
-  },
-  config?: HlsVideoConfig,
-): {
+  };
+  config: HlsVideoConfig;
+}): {
+  setQuality: (quality: VideoQuality) => void;
   destroy: () => void;
 } => {
   // do not attach twice
   if (element.getAttribute(VIDEO_HLS_INITIALIZED_ATTRIBUTE) === "true") {
     return {
+      setQuality: () => {
+        //
+      },
       destroy: () => {
         //
       },
@@ -86,6 +101,12 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
     hls.loadSource(source);
 
     hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
+      setQuality({
+        hls: hls ?? null,
+        quality: initialQuality,
+        aspectRatio,
+      });
+
       callbacks?.onCanPlay?.();
       element?.play?.();
     });
@@ -94,8 +115,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
   hls.on(Hls.Events.ERROR, async (_event, data) => {
     const { details, fatal } = data;
 
-    const isManifestParsingError =
-      Hls.ErrorTypes.NETWORK_ERROR && details === "manifestParsingError";
+    const isManifestParsingError = details === "manifestParsingError";
 
     if (!fatal && !isManifestParsingError) return;
     callbacks?.onError?.(data);
@@ -134,5 +154,46 @@ export const createNewHls = <TElement extends HTMLMediaElement>(
       clearInterval?.(updateOffsetInterval);
       element?.removeAttribute?.(VIDEO_HLS_INITIALIZED_ATTRIBUTE);
     },
+    setQuality: (videoQuality) => {
+      setQuality({
+        hls: hls ?? null,
+        quality: videoQuality,
+        aspectRatio,
+      });
+    },
   };
+};
+
+const setQuality = ({
+  hls,
+  quality,
+  aspectRatio,
+}: { hls: Hls | null; quality: VideoQuality; aspectRatio: number }) => {
+  if (hls) {
+    const { width } = calculateVideoQualityDimensions(quality, aspectRatio);
+
+    if (!width || quality === "auto") {
+      hls.currentLevel = -1; // Auto level
+      return;
+    }
+
+    if (hls.levels && hls.levels.length > 0) {
+      // Sort levels by the absolute difference between their width and the desired width
+      const sortedLevels = hls.levels
+        .map((level, index) => ({ ...level, index }))
+        .sort(
+          (a, b) =>
+            Math.abs((width ?? 0) - a.width) - Math.abs((width ?? 0) - b.width),
+        );
+
+      // Choose the level with the smallest difference in width
+      const bestMatchLevel = sortedLevels?.[0];
+
+      if ((bestMatchLevel?.index ?? -1) >= 0) {
+        hls.currentLevel = bestMatchLevel.index;
+      } else {
+        hls.currentLevel = -1;
+      }
+    }
+  }
 };

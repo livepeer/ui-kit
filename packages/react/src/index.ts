@@ -4,7 +4,6 @@ export {
   deepMerge,
   getMediaSourceType,
   noopStorage,
-  parsePlaybackInfo,
   version,
 } from "@livepeer/core";
 export type {
@@ -33,11 +32,13 @@ export type {
   ObjectFit,
   PlaybackError,
   PlaybackMonitor,
+  PlaybackRate,
   SingleAudioTrackSelector,
   SingleTrackSelector,
   SingleVideoTrackSelector,
   Src,
   Storage,
+  VideoQuality,
   VideoSrc,
   VideoTrackSelector,
   WebRTCSrc,

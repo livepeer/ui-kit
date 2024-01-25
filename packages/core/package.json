@@ -9,9 +9,7 @@
     "directory": "packages/core"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -45,6 +43,16 @@
       "require": {
         "types": "./dist/cjs/crypto.d.ts",
         "default": "./dist/cjs/crypto.js"
+      }
+    },
+    "./external": {
+      "import": {
+        "types": "./dist/es/external.d.mts",
+        "default": "./dist/es/external.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/external.d.ts",
+        "default": "./dist/cjs/external.js"
       }
     },
     "./media": {
@@ -112,17 +120,11 @@
     }
   },
   "dependencies": {
-    "livepeer": "^3.0.1",
     "multiformats": "^13.0.1",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
     "jose": "^5.2.0"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

@@ -1,8 +1,8 @@
 import { ClipParams, InitialProps } from "./controller";
 import { getPlaybackIdFromSourceUrl } from "./metrics-utils";
 import {
-  AudioTrackSelector,
   Src,
+  VideoQuality,
   VideoTrackSelector,
   getMediaSourceType,
 } from "./src";
@@ -76,13 +76,13 @@ export const getProgressAria = ({
   const durationParsed = getHoursMinutesSeconds(duration ?? null);
 
   const progressText = `${
-    progressParsed.hours ? `${progressParsed.hours} hours` : ""
-  } ${progressParsed.minutes ? `${progressParsed.minutes} minutes` : ""} ${
+    progressParsed.hours ? `${progressParsed.hours} hours ` : ""
+  }${progressParsed.minutes ? `${progressParsed.minutes} minutes ` : ""}${
     progressParsed.seconds ? `${progressParsed.seconds} seconds` : ""
   }` as const;
   const durationText = `${
-    durationParsed.hours ? `${durationParsed.hours} hours` : ""
-  } ${durationParsed.minutes ? `${durationParsed.minutes} minutes` : ""} ${
+    durationParsed.hours ? `${durationParsed.hours} hours ` : ""
+  }${durationParsed.minutes ? `${durationParsed.minutes} minutes ` : ""}${
     durationParsed.seconds ? `${durationParsed.seconds} seconds` : ""
   }` as const;
 
@@ -106,16 +106,21 @@ export const getProgressAria = ({
   };
 };
 
-const SCREEN_WIDTH_MULTIPLIER = 2.5;
-
 type SrcWithParentDelta = Src & {
   parentWidthDelta: number | null;
 };
 
-export const sortSources = (
-  src: Src[] | string | null | undefined,
-  parentWidth: number | null,
-) => {
+export const sortSources = ({
+  src,
+  videoQuality,
+  screenWidth,
+  aspectRatio,
+}: {
+  src: Src[] | string | null | undefined;
+  videoQuality: VideoQuality;
+  screenWidth: number | null;
+  aspectRatio: number;
+}) => {
   if (!src) {
     return null;
   }
@@ -126,11 +131,19 @@ export const sortSources = (
   }
 
   const filteredVideoSources = src.filter(
-    (s) => s.type !== "vtt" && s.type !== "image",
+    (s) =>
+      s.type === "audio" ||
+      s.type === "hls" ||
+      s.type === "webrtc" ||
+      s.type === "video",
   );
 
-  const parentWidthWithDefault =
-    (parentWidth ?? 1280) * SCREEN_WIDTH_MULTIPLIER;
+  const videoQualityDimensions = calculateVideoQualityDimensions(
+    videoQuality,
+    aspectRatio,
+  );
+
+  const targetWidth = videoQualityDimensions?.width ?? screenWidth ?? 1280;
 
   const sourceWithParentDelta: SrcWithParentDelta[] =
     filteredVideoSources?.map((s) =>
@@ -138,17 +151,26 @@ export const sortSources = (
         ? { ...s, parentWidthDelta: null }
         : {
             ...s,
-            parentWidthDelta: s?.width
-              ? Math.abs(parentWidthWithDefault - s.width)
-              : s?.src.includes("static360p") || s?.src.includes("low-bitrate")
-                ? Math.abs(parentWidthWithDefault - 480)
-                : s?.src.includes("static720p")
-                  ? Math.abs(parentWidthWithDefault - 1280)
-                  : s?.src.includes("static1080p")
-                    ? Math.abs(parentWidthWithDefault - 1920)
-                    : s?.src.includes("static2160p")
-                      ? Math.abs(parentWidthWithDefault - 3840)
-                      : null,
+            parentWidthDelta:
+              // first we check if the URL contains the video quality selector
+              videoQuality &&
+              videoQuality !== "auto" &&
+              s?.src?.includes(videoQuality)
+                ? 0
+                : // otherwise use the width of the src
+                  s?.width
+                  ? Math.abs(targetWidth - s.width)
+                  : // otherwise guess the width of the src based on the url
+                    s?.src.includes("static360p") ||
+                      s?.src.includes("low-bitrate")
+                    ? Math.abs(targetWidth - 480)
+                    : s?.src.includes("static720p")
+                      ? Math.abs(targetWidth - 1280)
+                      : s?.src.includes("static1080p")
+                        ? Math.abs(targetWidth - 1920)
+                        : s?.src.includes("static2160p")
+                          ? Math.abs(targetWidth - 3840)
+                          : null,
           },
     ) ?? [];
 
@@ -156,7 +178,7 @@ export const sortSources = (
     if (a.type === "video" && b.type === "video") {
       // we sort the sources by the delta between the video width and the
       // parent size (multiplied by a multiplier above)
-      return b?.parentWidthDelta && a?.parentWidthDelta
+      return b?.parentWidthDelta !== null && a?.parentWidthDelta !== null
         ? a.parentWidthDelta - b.parentWidthDelta
         : 1;
     }
@@ -177,20 +199,20 @@ export const sortSources = (
 
 export const parseCurrentSourceAndPlaybackId = ({
   accessKey,
-  audioTrackSelector,
+  aspectRatio,
   constant,
   jwt,
   sessionToken,
   source,
-  videoTrackSelector,
+  videoQuality,
 }: {
   accessKey: InitialProps["accessKey"];
-  audioTrackSelector: AudioTrackSelector | undefined;
+  aspectRatio: InitialProps["aspectRatio"];
   constant: boolean | undefined;
   jwt: InitialProps["jwt"];
   sessionToken: string;
   source: Src | null;
-  videoTrackSelector: VideoTrackSelector | undefined;
+  videoQuality: VideoQuality;
 }) => {
   if (!source) {
     return null;
@@ -223,9 +245,10 @@ export const parseCurrentSourceAndPlaybackId = ({
       url.searchParams.append("constant", "true");
     }
 
-    if (audioTrackSelector) {
-      url.searchParams.append("audio", audioTrackSelector);
-    }
+    const videoTrackSelector = getVideoTrackSelectorForQuality(
+      videoQuality,
+      aspectRatio,
+    );
 
     if (videoTrackSelector) {
       url.searchParams.append("video", videoTrackSelector);
@@ -243,6 +266,52 @@ export const parseCurrentSourceAndPlaybackId = ({
     playbackId,
   } as const;
 };
+
+export const getVideoTrackSelectorForQuality = (
+  videoQuality: VideoQuality,
+  aspectRatio: InitialProps["aspectRatio"],
+): VideoTrackSelector | null => {
+  if (videoQuality === "auto") {
+    return null;
+  }
+
+  const videoQualityDimensions = calculateVideoQualityDimensions(
+    videoQuality,
+    aspectRatio,
+  );
+
+  if (videoQualityDimensions?.width && videoQualityDimensions?.height) {
+    return `~${videoQualityDimensions.width}x${videoQualityDimensions.height}`;
+  }
+
+  return null;
+};
+
+export function calculateVideoQualityDimensions(
+  videoQuality: VideoQuality,
+  aspectRatio: InitialProps["aspectRatio"],
+) {
+  const height =
+    videoQuality === "1080p"
+      ? 1080
+      : videoQuality === "720p"
+        ? 720
+        : videoQuality === "480p"
+          ? 480
+          : videoQuality === "360p"
+            ? 360
+            : videoQuality === "240p"
+              ? 240
+              : videoQuality === "144p"
+                ? 144
+                : null;
+
+  return {
+    width:
+      height !== null ? Math.round(height * (aspectRatio ?? 16 / 9)) : null,
+    height,
+  };
+}
 
 export const getFormattedHoursMinutesSeconds = (
   valueInSeconds: number | undefined | null,

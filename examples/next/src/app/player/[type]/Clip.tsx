@@ -7,7 +7,7 @@ import * as Player from "@livepeer/react/player";
 
 import { ClipPayload } from "livepeer/dist/models/components";
 import { useCallback, useTransition } from "react";
-import { createClip } from "../actions";
+import { createClip } from "../../actions";
 
 export function Clip({ className }: { className?: string }) {
   const [isPending, startTransition] = useTransition();

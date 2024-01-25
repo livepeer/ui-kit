@@ -1,20 +1,18 @@
-import { parsePlaybackInfo } from "@livepeer/react";
 import * as Assets from "@livepeer/react/assets";
 import * as Player from "@livepeer/react/player";
 
+import { getSrc } from "@livepeer/react/external";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { livepeer } from "../livepeer";
+import { livepeer } from "../../livepeer";
 import { Clip } from "./Clip";
 import { Settings } from "./Settings";
-
-const playbackId = "561bbgj8fgnk61l7";
 
 const getPlaybackInfo = cache(async (playbackId: string) => {
   try {
     const playbackInfo = await livepeer.playback.get(playbackId);
 
-    const src = parsePlaybackInfo(playbackInfo.playbackInfo);
+    const src = getSrc(playbackInfo.playbackInfo);
 
     return src;
   } catch (e) {
@@ -23,8 +21,12 @@ const getPlaybackInfo = cache(async (playbackId: string) => {
   }
 });
 
-export async function PlayerWithControls() {
-  const src = await getPlaybackInfo(playbackId);
+export async function PlayerWithControls({
+  type,
+}: { type: "asset" | "livestream" }) {
+  const src = await getPlaybackInfo(
+    type === "asset" ? "b85a9g6v7qfli104" : "806dk46k6ba0dv3m",
+  );
 
   if (!src) {
     return notFound();
@@ -33,19 +35,19 @@ export async function PlayerWithControls() {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Player.Root
+        playbackRate={type === "livestream" ? "constant" : undefined}
         autoPlay
         aspectRatio={16 / 9}
-        // playbackRate={1.5}
         clipLength={30}
         src={src}
       >
-        <Player.Container className="w-full h-full overflow-hidden rounded-md bg-gray-950 outline-white/50 outline outline-1">
+        <Player.Container className="w-full h-full overflow-hidden rounded-md bg-gray-950 outline-white/50 outline outline-1 data-[playing=true]:outline-white/80 data-[playing=true]:outline-2 data-[fullscreen=true]:outline-none data-[fullscreen=true]:rounded-none transition-all">
           <Player.Video
             title="Live stream"
             className="w-full h-full object-contain"
           />
 
-          <Player.LoadingIndicator className="w-full relative h-full">
+          <Player.LoadingIndicator className="w-full relative h-full data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               <Assets.LoadingIcon className="w-8 h-8 animate-spin" />
             </div>
@@ -55,7 +57,7 @@ export async function PlayerWithControls() {
 
           <Player.ErrorIndicator
             matcher="offline"
-            className="absolute select-none animate-in fade-in-0 inset-0 text-center bg-gray-950 flex flex-col items-center justify-center gap-4"
+            className="absolute select-none animate-in fade-in-0 inset-0 text-center bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
           >
             <Assets.OfflineErrorIcon className="h-[120px] w-full sm:flex hidden" />
             <div className="flex flex-col gap-1">
@@ -68,7 +70,7 @@ export async function PlayerWithControls() {
 
           <Player.ErrorIndicator
             matcher="access-control"
-            className="absolute select-none animate-in fade-in-0 inset-0 text-center bg-gray-950 flex flex-col items-center justify-center gap-4"
+            className="absolute select-none inset-0 text-center bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
           >
             <Assets.PrivateErrorIcon className="h-[120px] w-full sm:flex hidden" />
             <div className="flex flex-col gap-1">
@@ -111,7 +113,7 @@ export async function PlayerWithControls() {
                   </Player.VolumeIndicator>
                 </Player.MuteTrigger>
                 <Player.Volume className="relative mr-1 flex-1 group flex cursor-pointer items-center select-none touch-none max-w-full h-5">
-                  <Player.Track className="bg-white/30 relative grow rounded-full h-[2px] md:h-[3px]">
+                  <Player.Track className="bg-white/30 relative grow rounded-full transition-all h-[2px] md:h-[3px] group-hover:h-[3px] group-hover:md:h-[4px]">
                     <Player.Range className="absolute bg-white rounded-full h-full" />
                   </Player.Track>
                   <Player.Thumb className="block transition-all group-hover:scale-110 w-3 h-3 bg-white rounded-full" />
@@ -137,11 +139,11 @@ export async function PlayerWithControls() {
               </div>
             </div>
             <Player.Seek className="relative group flex cursor-pointer items-center select-none touch-none w-full h-5">
-              <Player.Track className="bg-white/30 relative grow rounded-full h-[2px] md:h-[3px]">
-                <Player.SeekBuffer className="absolute bg-black/30 transition-all rounded-full h-full" />
+              <Player.Track className="bg-white/30 relative grow rounded-full transition-all h-[2px] md:h-[3px] group-hover:h-[3px] group-hover:md:h-[4px]">
+                <Player.SeekBuffer className="absolute bg-black/30 transition-all duration-1000 rounded-full h-full" />
                 <Player.Range className="absolute bg-white rounded-full h-full" />
               </Player.Track>
-              <Player.Thumb className="block group-hover:scale-110 w-3 h-3 bg-white rounded-full" />
+              <Player.Thumb className="block group-hover:scale-110 w-3 h-3 bg-white transition-all rounded-full" />
             </Player.Seek>
           </Player.Controls>
         </Player.Container>
@@ -151,7 +153,7 @@ export async function PlayerWithControls() {
 }
 
 export const PlayerLoading = () => (
-  <div className="w-full px-3 md:px-3 py-3 gap-3 flex-col-reverse flex aspect-video max-w-2xl mx-auto animate-pulse bg-white/10 overflow-hidden rounded-sm">
+  <div className="w-full px-3 py-2 gap-3 flex-col-reverse flex aspect-video max-w-2xl mx-auto animate-pulse bg-white/10 overflow-hidden rounded-sm">
     <div className="flex justify-between">
       <div className="flex items-center gap-2">
         <div className="w-6 h-6 animate-pulse bg-white/5 overflow-hidden rounded-lg" />

@@ -10,22 +10,19 @@ import {
 } from "@livepeer/core";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 
-import * as Radix from "../shared/primitive";
-
 import React, { PropsWithChildren, useEffect, useRef } from "react";
 
 import { addMediaMetricsToStore } from "@livepeer/core-web/media";
 import { MediaProvider, MediaScopedProps } from "../context";
 
-type PlayerElement = React.ElementRef<typeof Radix.Primitive.div>;
-
 interface PlayerProps
   extends PropsWithChildren<Omit<Partial<InitialProps>, "creatorId">> {
   /**
-   * The source for the Player. The `Src[]` can be created from calling `parsePlaybackInfo`
-   * with the response from the playback info API.
+   * The source for the Player. The `Src[]` can be created from calling `getSrc`
+   * with the response from the playback info API, or a string or array of string
+   * source URLs.
    */
-  src: Src[] | string;
+  src: Src[] | null;
 
   /**
    * The aspect ratio of the media. Defaults to 16 / 9.
@@ -37,72 +34,43 @@ interface PlayerProps
   aspectRatio?: number | null;
 }
 
-const Player = React.forwardRef<PlayerElement, PlayerProps>(
-  (props: MediaScopedProps<PlayerProps>, forwardedRef) => {
-    const {
-      aspectRatio = 16 / 9,
+const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
+  const { aspectRatio = 16 / 9, src, children, ...rest } = props;
+
+  const store = useRef(
+    createControllerStore({
+      device: getDeviceInfo(version.react),
+      storage: createStorage(
+        typeof window !== "undefined"
+          ? {
+              storage: window.localStorage,
+            }
+          : {
+              storage: noopStorage,
+            },
+      ),
       src,
-      autoPlay,
-      preload,
-      viewerId,
-      volume,
-      playbackRate,
-      lowLatency,
-      loop,
-      jwt,
-      accessKey,
-      onError,
-      clipLength,
-      children,
-    } = props;
+      initialProps: {
+        aspectRatio,
+        ...rest,
+      },
+    }),
+  );
 
-    const ref = React.useRef<PlayerElement>(null);
+  useEffect(() => {
+    const metrics = addMediaMetricsToStore(store.current);
 
-    const store = useRef(
-      createControllerStore({
-        device: getDeviceInfo(version.react),
-        storage: createStorage(
-          typeof window !== "undefined"
-            ? {
-                storage: window.localStorage,
-              }
-            : {
-                storage: noopStorage,
-              },
-        ),
-        src,
-        initialProps: {
-          aspectRatio,
-          autoPlay,
-          preload,
-          viewerId,
-          volume,
-          playbackRate,
-          lowLatency,
-          onError,
-          loop,
-          jwt,
-          accessKey,
-          clipLength,
-        },
-      }),
-    );
+    return () => {
+      metrics.destroy();
+    };
+  }, []);
 
-    useEffect(() => {
-      const metrics = addMediaMetricsToStore(store.current);
-
-      return () => {
-        metrics.destroy();
-      };
-    }, []);
-
-    return (
-      <MediaProvider store={store.current} scope={props.__scopeMedia}>
-        {children}
-      </MediaProvider>
-    );
-  },
-);
+  return (
+    <MediaProvider store={store.current} scope={props.__scopeMedia}>
+      {children}
+    </MediaProvider>
+  );
+});
 
 Player.displayName = "Player";
 

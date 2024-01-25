@@ -12,7 +12,6 @@ export {
 export {
   createControllerStore,
   getMediaSourceType,
-  parsePlaybackInfo,
   sanitizeMediaControllerState,
 } from "./media";
 export type {
@@ -39,13 +38,14 @@ export type {
   ObjectFit,
   PlaybackError,
   PlaybackMonitor,
+  PlaybackRate,
   SingleAudioTrackSelector,
   SingleTrackSelector,
   SingleVideoTrackSelector,
   Src,
+  VideoQuality,
   VideoSrc,
   VideoTrackSelector,
-  WebRTCPlaybackConfig,
   WebRTCSrc,
 } from "./media";
 export { createStorage, noopStorage } from "./storage";

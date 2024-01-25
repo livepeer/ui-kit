@@ -144,7 +144,7 @@ export class PlaybackMonitor {
     return (
       (b?.mediaTime ?? this.store.getState().progress - a.mediaTime) /
       (b?.clockTime ?? Date.now() * 1e-3 - a.clockTime) /
-      rate
+      (rate === "constant" ? 1 : rate)
     );
   }
 }
@@ -533,6 +533,7 @@ export function addMediaMetricsToStore(
     (state) => ({
       playbackId: state.__controls.playbackId,
       finalUrl: state.currentUrl,
+      type: state.currentSource?.type,
     }),
     (state) => {
       if (state?.playbackId && state?.finalUrl) {
@@ -542,7 +543,11 @@ export function addMediaMetricsToStore(
     {
       fireImmediately: true,
       equalityFn: (a, b) => {
-        return a.finalUrl === b.finalUrl && a.playbackId === b.playbackId;
+        return (
+          a.type === b.type &&
+          a.playbackId === b.playbackId &&
+          Boolean(a.finalUrl)
+        );
       },
     },
   );

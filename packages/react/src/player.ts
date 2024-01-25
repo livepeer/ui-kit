@@ -15,11 +15,9 @@ export {
   type PosterProps,
 } from "./player/Poster";
 export {
-  QualitySelect,
-  type QualitySelectProps,
-} from "./player/QualitySelect";
-export {
   RateSelect,
+  RateSelectItem,
+  type RateSelectItemProps,
   type RateSelectProps,
 } from "./player/RateSelect";
 export {
@@ -29,6 +27,12 @@ export {
   type SeekProps,
 } from "./player/Seek";
 export { Video, type VideoProps } from "./player/Video";
+export {
+  VideoQualitySelect,
+  VideoQualitySelectItem,
+  type VideoQualitySelectItemProps,
+  type VideoQualitySelectProps,
+} from "./player/VideoQualitySelect";
 export {
   Container,
   type ContainerProps,
@@ -68,7 +72,6 @@ export {
   SelectContent,
   SelectGroup,
   SelectIcon,
-  SelectItem,
   SelectItemIndicator,
   SelectItemText,
   SelectLabel,
@@ -84,7 +87,6 @@ export {
   type SelectGroupProps,
   type SelectIconProps,
   type SelectItemIndicatorProps,
-  type SelectItemProps,
   type SelectItemTextProps,
   type SelectLabelProps,
   type SelectPortalProps,
