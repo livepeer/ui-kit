@@ -15,16 +15,6 @@
   "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
-    "./errors": {
-      "import": {
-        "types": "./dist/es/errors.d.mts",
-        "default": "./dist/es/errors.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/errors.d.ts",
-        "default": "./dist/cjs/errors.js"
-      }
-    },
     ".": {
       "import": {
         "types": "./dist/es/index.d.mts",
@@ -43,6 +33,16 @@
       "require": {
         "types": "./dist/cjs/crypto.d.ts",
         "default": "./dist/cjs/crypto.js"
+      }
+    },
+    "./errors": {
+      "import": {
+        "types": "./dist/es/errors.d.mts",
+        "default": "./dist/es/errors.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/errors.d.ts",
+        "default": "./dist/cjs/errors.js"
       }
     },
     "./external": {

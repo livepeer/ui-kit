@@ -1,4 +1,4 @@
-import { b64Decode, b64UrlEncode } from "../utils";
+import { b64Decode, b64UrlEncode } from "../utils/string";
 import { signEcdsaSha256 } from "./ecdsa";
 import { importPKCS8 } from "./pkcs8";
 

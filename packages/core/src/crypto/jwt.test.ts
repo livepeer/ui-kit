@@ -1,8 +1,7 @@
 // use jose to test
 import { importSPKI, jwtVerify } from "jose";
 import { describe, expect, it } from "vitest";
-
-import { b64UrlDecode } from "../utils";
+import { b64UrlDecode } from "../utils/string";
 import { signAccessJwt } from "./jwt";
 
 const commonOptions = {
