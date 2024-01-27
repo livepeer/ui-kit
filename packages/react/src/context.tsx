@@ -1,5 +1,6 @@
 import { MediaControllerStore } from "@livepeer/core";
 import { createContextScope } from "@radix-ui/react-context";
+import { useStore as useStoreZustand } from "zustand";
 
 import type { Scope } from "@radix-ui/react-context";
 
@@ -15,5 +16,7 @@ type MediaContextValue = {
 const [MediaProvider, useMediaContext] =
   createMediaContext<MediaContextValue>(MEDIA_NAME);
 
-export { MediaProvider, createMediaScope, useMediaContext };
+const useStore = useStoreZustand;
+
+export { MediaProvider, createMediaScope, useMediaContext, useStore };
 export type { MediaContextValue, MediaScopedProps };

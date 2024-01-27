@@ -26,18 +26,18 @@ const Poster = React.forwardRef<PosterElement, PosterProps>(
 
     const context = useMediaContext(POSTER_NAME, __scopeMedia);
 
-    const thumbnail = useStore(context.store, ({ thumbnail }) => thumbnail);
+    const poster = useStore(context.store, ({ poster }) => poster);
 
     return (
-      <Presence present={forceMount || Boolean(src || thumbnail?.src)}>
+      <Presence present={forceMount || Boolean(src || poster)}>
         <Radix.Primitive.img
           alt="Poster for video"
           aria-hidden="true"
           {...posterProps}
-          src={src || thumbnail?.src}
+          src={src || poster || undefined}
           ref={forwardedRef}
           data-livepeer-poster=""
-          data-visible={String(Boolean(src || thumbnail?.src))}
+          data-visible={String(Boolean(src || poster))}
         />
       </Presence>
     );

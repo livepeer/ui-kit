@@ -7,25 +7,21 @@ import {
   version,
 } from "@livepeer/core";
 
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import * as Radix from "../shared/primitive";
-
 import React, { PropsWithChildren, useEffect, useRef } from "react";
 
 import {
   InitialBroadcastProps,
   createBroadcastStore,
+  getBroadcastDeviceInfo,
 } from "@livepeer/core-web/broadcast";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import { addMediaMetricsToStore } from "@livepeer/core-web/media";
 import { MediaProvider, MediaScopedProps } from "../context";
 import { BroadcastProvider, BroadcastScopedProps } from "./context";
 
-type BroadcastElement = React.ElementRef<typeof Radix.Primitive.div>;
-
 interface BroadcastProps
   extends PropsWithChildren<
-    Omit<Partial<InitialBroadcastProps>, "streamKey" | "aspectRatio">
+    Omit<Partial<InitialBroadcastProps>, "aspectRatio">
   > {
   /**
    * The stream key to use for the broadcast.
@@ -42,85 +38,84 @@ interface BroadcastProps
   aspectRatio?: number | null;
 }
 
-const Broadcast = React.forwardRef<BroadcastElement, BroadcastProps>(
-  (
-    props: MediaScopedProps<BroadcastScopedProps<BroadcastProps>>,
-    forwardedRef,
-  ) => {
-    const {
-      aspectRatio = 16 / 9,
+const Broadcast = (
+  props: MediaScopedProps<BroadcastScopedProps<BroadcastProps>>,
+) => {
+  const {
+    aspectRatio = 16 / 9,
+    volume = 0,
+    children,
+    streamKey,
+    ...rest
+  } = props;
+
+  const store = useRef(
+    createControllerStore({
+      device: getDeviceInfo(version.react),
+      storage: createStorage(
+        typeof window !== "undefined"
+          ? {
+              storage: window.localStorage,
+            }
+          : {
+              storage: noopStorage,
+            },
+      ),
+      src: null,
+      initialProps: {
+        aspectRatio,
+        volume,
+      },
+    }),
+  );
+
+  const broadcastStore = useRef(
+    createBroadcastStore({
+      device: getBroadcastDeviceInfo(version.react),
+      storage: createStorage(
+        typeof window !== "undefined"
+          ? {
+              storage: window.localStorage,
+            }
+          : {
+              storage: noopStorage,
+            },
+      ),
       streamKey,
-      ingestUrl,
-      volume = 0,
-      forceEnabled,
-      children,
-    } = props;
+      initialProps: {
+        aspectRatio,
+        ...rest,
+      },
+    }),
+  );
 
-    const ref = React.useRef<BroadcastElement>(null);
-    const composedRefs = useComposedRefs(forwardedRef, ref);
+  useEffect(() => {
+    if (streamKey) {
+      broadcastStore.current
+        .getState()
+        .__controlsFunctions.setStreamKey(streamKey);
+    }
+  }, [streamKey]);
 
-    const store = useRef(
-      createControllerStore({
-        device: getDeviceInfo(version.react),
-        storage: createStorage(
-          typeof window !== "undefined"
-            ? {
-                storage: window.localStorage,
-              }
-            : {
-                storage: noopStorage,
-              },
-        ),
-        src: null,
-        initialProps: {
-          aspectRatio,
-          volume,
-        },
-      }),
-    );
+  useEffect(() => {
+    const metrics = addMediaMetricsToStore(store.current);
 
-    const broadcastStore = useRef(
-      createBroadcastStore({
-        device: getDeviceInfo(version.react),
-        storage: createStorage(
-          typeof window !== "undefined"
-            ? {
-                storage: window.localStorage,
-              }
-            : {
-                storage: noopStorage,
-              },
-        ),
-        initialProps: {
-          aspectRatio,
-          forceEnabled,
-          streamKey,
-          ingestUrl,
-          volume,
-        },
-      }),
-    );
+    return () => {
+      metrics.destroy();
+    };
+  }, []);
 
-    useEffect(() => {
-      const metrics = addMediaMetricsToStore(store.current);
-
-      return () => {
-        metrics.destroy();
-      };
-    }, []);
-
-    return (
-      <MediaProvider store={store.current} scope={props.__scopeMedia}>
-        <BroadcastProvider
-          store={broadcastStore.current}
-          scope={props.__scopeBroadcast}
-        >
-          {children}
-        </BroadcastProvider>
-      </MediaProvider>
-    );
-  },
-);
+  return (
+    <MediaProvider store={store.current} scope={props.__scopeMedia}>
+      <BroadcastProvider
+        store={broadcastStore.current}
+        scope={props.__scopeBroadcast}
+      >
+        {children}
+      </BroadcastProvider>
+    </MediaProvider>
+  );
+};
 
 Broadcast.displayName = "Broadcast";
 

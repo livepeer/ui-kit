@@ -5,65 +5,49 @@ import {
 import { isClient } from "../media/utils";
 
 /**
- * Checks if WebRTC is supported.
+ * Checks if WebRTC is supported and returns the appropriate RTCPeerConnection constructor.
  */
-export const isWebRTCSupported = () => {
+export const getRTCPeerConnectionConstructor = () => {
+  // Check if the current environment is a client (browser)
   if (!isClient()) {
-    return false;
+    return null; // If not a client, WebRTC is not supported
   }
 
-  const hasRTCPeerConnection = !!(
-    window?.RTCPeerConnection ||
-    window?.webkitRTCPeerConnection ||
-    window?.mozRTCPeerConnection
+  // Return the constructor for RTCPeerConnection with any vendor prefixes
+  return (
+    window.RTCPeerConnection ||
+    window.webkitRTCPeerConnection ||
+    window.mozRTCPeerConnection ||
+    null // Return null if none of the constructors are available
   );
-
-  const hasGetUserMedia = !!(
-    navigator?.getUserMedia ||
-    navigator?.mediaDevices?.getUserMedia ||
-    navigator?.webkitGetUserMedia ||
-    navigator?.mozGetUserMedia ||
-    navigator?.msGetUserMedia
-  );
-
-  const hasRTCDataChannel = !!(
-    window?.RTCDataChannel ||
-    window?.webkitRTCDataChannel ||
-    window?.mozRTCDataChannel
-  );
-
-  return hasRTCPeerConnection && hasGetUserMedia && hasRTCDataChannel;
 };
 
 export function createPeerConnection(
   host: string | null,
 ): RTCPeerConnection | null {
-  const RTCPeerConnectionConstructor =
-    window?.RTCPeerConnection ||
-    window?.webkitRTCPeerConnection ||
-    window?.mozRTCPeerConnection;
-
-  // strip non-standard port number if present
-  const hostNoPort = host?.split(":")[0];
-
-  const iceServers = host
-    ? [
-        {
-          urls: `stun:${hostNoPort}`,
-        },
-        {
-          urls: `turn:${hostNoPort}`,
-          username: "livepeer",
-          credential: "livepeer",
-        },
-      ]
-    : [];
+  const RTCPeerConnectionConstructor = getRTCPeerConnectionConstructor();
 
   if (RTCPeerConnectionConstructor) {
+    // strip non-standard port number if present
+    const hostNoPort = host?.split(":")[0];
+
+    const iceServers = host
+      ? [
+          {
+            urls: `stun:${hostNoPort}`,
+          },
+          {
+            urls: `turn:${hostNoPort}`,
+            username: "livepeer",
+            credential: "livepeer",
+          },
+        ]
+      : [];
+
     return new RTCPeerConnectionConstructor({ iceServers });
   }
 
-  return null;
+  throw new Error("No RTCPeerConnection constructor found in this browser.");
 }
 
 const DEFAULT_TIMEOUT = 10000;

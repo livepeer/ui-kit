@@ -1,11 +1,9 @@
-export { isWebRTCSupported } from "./webrtc/shared";
 export { createNewWHEP } from "./webrtc/whep";
 export {
-  changeMediaStream,
+  attachMediaStreamToPeerConnection,
   createNewWHIP,
   getDisplayMedia,
   getMediaDevices,
   getUserMedia,
   type WebRTCConnectedPayload,
-  type WebRTCTrackConstraints,
 } from "./webrtc/whip";

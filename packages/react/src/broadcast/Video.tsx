@@ -1,16 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useStore } from "zustand";
 
 import { addEventListeners } from "@livepeer/core-web/browser";
-import { createNewWHIP } from "@livepeer/core-web/webrtc";
-import { composeEventHandlers } from "@radix-ui/primitive";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import { MediaScopedProps, useMediaContext } from "../context";
 
 import { addBroadcastEventListeners } from "@livepeer/core-web/broadcast";
-import { useShallow } from "zustand/react/shallow";
 import * as Radix from "../shared/primitive";
 import { BroadcastScopedProps, useBroadcastContext } from "./context";
 
@@ -54,30 +51,9 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     const ref = React.useRef<VideoElement | null>(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
 
-    const { error, errorCount } = useStore(
-      context.store,
-      useShallow(({ error, errorCount }) => ({
-        error,
-        errorCount,
-      })),
-    );
-
     const isEnabled = useStore(
       broadcastContext.store,
       ({ enabled }) => enabled,
-    );
-
-    const { streamKey, ingestUrl } = useStore(
-      broadcastContext.store,
-      useShallow(({ __initialProps }) => ({
-        streamKey: __initialProps.streamKey,
-        ingestUrl: __initialProps.ingestUrl,
-      })),
-    );
-
-    const mediaStream = useStore(
-      broadcastContext.store,
-      ({ mediaStream }) => mediaStream,
     );
 
     useEffect(() => {
@@ -101,84 +77,20 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       }
     }, []);
 
-    const [retryCount, setRetryCount] = useState(0);
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: error count
-    useEffect(() => {
-      if (error) {
-        const timeout = setTimeout(
-          () => setRetryCount((retries) => retries + 1),
-          errorCount * 2000,
-        );
-        return () => clearTimeout(timeout);
-      }
-    }, [errorCount]);
-
     // biome-ignore lint/correctness/useExhaustiveDependencies: context
     React.useEffect(() => {
-      if (ref.current && enableUserMedia && !isEnabled) {
-        broadcastContext.store
-          .getState()
-          .__controlsFunctions.requestUserMedia();
-      }
-    }, [enableUserMedia, isEnabled]);
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: count errors
-    React.useEffect(() => {
-      const element = ref.current;
-
-      if (mediaStream && isEnabled && streamKey && element) {
-        const unmounted = false;
-
-        const onErrorComposed = (err: Error) => {
-          if (!unmounted) {
-            context.store.getState().__controlsFunctions?.onError?.(err);
-          }
-        };
-
-        const { destroy } = createNewWHIP({
-          ingestUrl: `${ingestUrl}/${streamKey}`,
-          element,
-          stream: mediaStream,
-          aspectRatio: context.store.getState().__initialProps.aspectRatio,
-          callbacks: {
-            onConnected: (payload) => {
-              broadcastContext.store
-                .getState()
-                .__controlsFunctions.updateMediaStream(payload.stream);
-
-              context.store.getState().__controlsFunctions.setLive(true);
-            },
-            onError: onErrorComposed,
-          },
-          sdpTimeout: null,
-        });
-
-        return () => {
-          destroy?.();
-        };
-      }
-    }, [streamKey, ingestUrl, retryCount, isEnabled]);
-
-    const onVideoError: React.ReactEventHandler<HTMLVideoElement> =
-      // biome-ignore lint/correctness/useExhaustiveDependencies: context
-      React.useCallback(async (_e) => {
-        return context.store
-          .getState()
-          .__controlsFunctions?.onError?.(
-            new Error("Unknown error loading video"),
-          );
-      }, []);
+      context.store.getState().__controlsFunctions.setMounted();
+      context.store.getState().__controlsFunctions.onCanPlay();
+    }, []);
 
     return (
       <Radix.Primitive.video
         playsInline
         muted={muted}
         {...broadcastProps}
-        onError={composeEventHandlers(props.onError, onVideoError)}
         ref={composedRefs}
         data-livepeer-video=""
-        // data-livepeer-source-type={source?.type ?? "none"}
+        data-enabled={Boolean(isEnabled)}
         style={{
           ...style,
           // ensures video expands in ratio

@@ -1,7 +1,7 @@
 import { DeviceInformation } from "@livepeer/core";
 
 import { isHlsSupported } from "../../hls";
-import { isWebRTCSupported } from "../../webrtc";
+import { getRTCPeerConnectionConstructor } from "../../webrtc/shared";
 import { isAndroid, isIos, isMobile } from "../utils";
 import { isFullscreenSupported } from "./fullscreen";
 import { isPictureInPictureSupported } from "./pictureInPicture";
@@ -21,7 +21,7 @@ export const getDeviceInfo = (version: string): DeviceInformation => ({
       : null,
 
   isFullscreenSupported: isFullscreenSupported(),
-  isWebRTCSupported: isWebRTCSupported(),
+  isWebRTCSupported: Boolean(getRTCPeerConnectionConstructor()),
   isPictureInPictureSupported: isPictureInPictureSupported(),
   isHlsSupported: isHlsSupported(),
   isVolumeChangeSupported: true,

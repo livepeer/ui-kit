@@ -1,8 +1,8 @@
 import {
   Queries,
   RenderOptions,
-  render as defaultRender,
   queries,
+  render as defaultRender,
 } from "@testing-library/react";
 
 import * as React from "react";

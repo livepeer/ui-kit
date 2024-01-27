@@ -201,6 +201,7 @@ export const parseCurrentSourceAndPlaybackId = ({
   accessKey,
   aspectRatio,
   constant,
+  isHlsSupported,
   jwt,
   sessionToken,
   source,
@@ -209,6 +210,7 @@ export const parseCurrentSourceAndPlaybackId = ({
   accessKey: InitialProps["accessKey"];
   aspectRatio: InitialProps["aspectRatio"];
   constant: boolean | undefined;
+  isHlsSupported: boolean;
   jwt: InitialProps["jwt"];
   sessionToken: string;
   source: Src | null;
@@ -261,8 +263,16 @@ export const parseCurrentSourceAndPlaybackId = ({
     src: url.toString(),
   } as Src;
 
+  const videoSourceIfHlsUnsupported =
+    newSrc?.type === "hls" && !isHlsSupported
+      ? ({
+          ...newSrc,
+          type: "video",
+        } as const)
+      : newSrc;
+
   return {
-    currentSource: newSrc,
+    currentSource: videoSourceIfHlsUnsupported,
     playbackId,
   } as const;
 };

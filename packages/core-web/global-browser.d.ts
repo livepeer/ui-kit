@@ -20,6 +20,27 @@ declare global {
     webkitGetUserMedia?: MediaDevices["getUserMedia"];
     mozGetUserMedia?: MediaDevices["getUserMedia"];
     msGetUserMedia?: MediaDevices["getUserMedia"];
+
+    // Adding mediaDevices with standardized and prefixed versions
+    webkitMediaDevices?: MediaDevices;
+    mozMediaDevices?: MediaDevices;
+    msMediaDevices?: MediaDevices;
+
+    // Adding getDisplayMedia for screen capture
+    getDisplayMedia?: (
+      constraints: MediaStreamConstraints,
+    ) => Promise<MediaStream>;
+
+    // WebRTC Interfaces
+    RTCPeerConnection?: typeof RTCPeerConnection;
+    webkitRTCPeerConnection?: typeof RTCPeerConnection;
+    mozRTCPeerConnection?: typeof RTCPeerConnection;
+    msRTCPeerConnection?: typeof RTCPeerConnection;
+
+    RTCDataChannel?: typeof RTCDataChannel;
+    webkitRTCDataChannel?: typeof RTCDataChannel;
+    mozRTCDataChannel?: typeof RTCDataChannel;
+    msRTCDataChannel?: typeof RTCDataChannel;
   }
 
   interface HTMLElement {

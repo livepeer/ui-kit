@@ -5,6 +5,14 @@ import {
 } from "@livepeer/core/media";
 
 import {
+  ACCESS_CONTROL_ERROR_MESSAGE,
+  BFRAMES_ERROR_MESSAGE,
+  STREAM_OFFLINE_ERROR_MESSAGE,
+} from "@livepeer/core";
+import { warn } from "@livepeer/core/utils";
+import { HlsError, HlsVideoConfig, createNewHls } from "../../hls";
+import { createNewWHEP } from "../../webrtc";
+import {
   addFullscreenEventListener,
   enterFullscreen,
   exitFullscreen,
@@ -42,12 +50,21 @@ const delay = (ms: number) => {
 export type ControlsOptions = ControlsOptionsBase & {
   /** If hotkeys should be enabled on the media element (arrows to seek, etc) */
   hotkeys?: boolean;
+
+  /**
+   * Configures the HLS.js options, for advanced usage of the Player.
+   */
+  hlsConfig?: Omit<HlsVideoConfig, "autoplay">;
 };
 
 export const addEventListeners = (
   element: HTMLMediaElement,
   store: MediaControllerStore,
-  { hotkeys = true, autohide = DEFAULT_AUTOHIDE_TIME }: ControlsOptions = {},
+  {
+    hotkeys = true,
+    autohide = DEFAULT_AUTOHIDE_TIME,
+    hlsConfig = {},
+  }: ControlsOptions = {},
 ) => {
   const initializedState = store.getState();
 
@@ -152,6 +169,52 @@ export const addEventListeners = (
   };
 
   const onError = async (e: ErrorEvent) => {
+    const source = store.getState().currentSource;
+
+    if (source?.type === "video") {
+      const sourceElement = e.target;
+      const parentElement = (sourceElement as HTMLSourceElement)?.parentElement;
+      const videoUrl =
+        (parentElement as HTMLVideoElement)?.currentSrc ??
+        (sourceElement as HTMLVideoElement)?.currentSrc;
+
+      if (videoUrl) {
+        try {
+          const response = await fetch(videoUrl);
+          if (response.status === 404) {
+            console.warn("Video not found");
+            return store
+              .getState()
+              .__controlsFunctions?.onError?.(
+                new Error(STREAM_OFFLINE_ERROR_MESSAGE),
+              );
+          }
+          if (response.status === 401) {
+            console.warn("Unauthorized to view video");
+            return store
+              .getState()
+              .__controlsFunctions?.onError?.(
+                new Error(ACCESS_CONTROL_ERROR_MESSAGE),
+              );
+          }
+        } catch (err) {
+          console.warn(err);
+          return store
+            .getState()
+            .__controlsFunctions?.onError?.(
+              new Error("Error fetching video URL"),
+            );
+        }
+      }
+
+      console.warn("Unknown error loading video");
+      return store
+        .getState()
+        .__controlsFunctions?.onError?.(
+          new Error("Unknown error loading video"),
+        );
+    }
+
     store.getState().__controlsFunctions.onError(new Error(e?.message));
   };
 
@@ -253,7 +316,9 @@ export const addEventListeners = (
 
   // add effects
   const removeEffectsFromStore = addEffectsToStore(element, store, {
+    hotkeys,
     autohide,
+    hlsConfig,
   });
 
   // add fullscreen listener
@@ -311,11 +376,256 @@ export const addEventListeners = (
   };
 };
 
+type Cleanup = () => void | Promise<void>;
+
+// Cleanup function for src side effects
+let cleanupSource: Cleanup = () => {};
+// Cleanup function for poster image side effects
+let cleanupPosterImage: Cleanup = () => {};
+
 const addEffectsToStore = (
   element: HTMLMediaElement,
   store: MediaControllerStore,
-  options: Required<Pick<ControlsOptions, "autohide">>,
+  options: ControlsOptions,
 ) => {
+  // Subscribe to source changes (and trigger playback based on these)
+  const destroySource = store.subscribe(
+    ({
+      __initialProps,
+      currentSource,
+      errorCount,
+      live,
+      progress,
+      mounted,
+      videoQuality,
+    }) => ({
+      accessKey: __initialProps.accessKey,
+      aspectRatio: __initialProps.aspectRatio,
+      autoPlay: __initialProps.autoPlay,
+      errorCount,
+      jwt: __initialProps.jwt,
+      live,
+      mounted,
+      progress,
+      source: currentSource,
+      timeout: __initialProps.timeout,
+      videoQuality,
+    }),
+    async ({
+      accessKey,
+      aspectRatio,
+      autoPlay,
+      errorCount,
+      jwt,
+      live,
+      mounted,
+      progress,
+      source,
+      timeout,
+      videoQuality,
+    }) => {
+      if (!mounted) {
+        return;
+      }
+
+      await cleanupSource?.();
+
+      if (errorCount > 0) {
+        const delayTime = 500 * 2 ** (errorCount - 1);
+        await delay(delayTime);
+      }
+
+      let unmounted = false;
+
+      if (!source) {
+        warn("No playback source detected.");
+
+        return;
+      }
+
+      let jumped = false;
+
+      const jumpToPreviousPosition = () => {
+        if (!live && progress && !jumped) {
+          element.currentTime = progress;
+
+          jumped = true;
+        }
+      };
+
+      const onErrorComposed = (err: Error) => {
+        if (!unmounted) {
+          store.getState().__controlsFunctions?.onError?.(err);
+        }
+      };
+
+      if (source.type === "webrtc") {
+        const unsubscribeBframes = store.subscribe(
+          (state) => Boolean(state?.__metadata?.bframes),
+          (bframes) => {
+            if (bframes) {
+              onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
+            }
+          },
+        );
+
+        const { destroy } = createNewWHEP({
+          source: source.src,
+          element,
+          callbacks: {
+            onConnected: () => {
+              store.getState().__controlsFunctions.setLive(true);
+              jumpToPreviousPosition();
+            },
+            onError: onErrorComposed,
+            onPlaybackOffsetUpdated:
+              store.getState().__controlsFunctions.updatePlaybackOffsetMs,
+            onRedirect: store.getState().__controlsFunctions.onFinalUrl,
+          },
+          accessControl: {
+            jwt,
+            accessKey,
+          },
+          sdpTimeout: timeout,
+        });
+
+        const id = setTimeout(() => {
+          if (!store.getState().canPlay) {
+            onErrorComposed(
+              new Error(
+                "Timeout reached for canPlay - triggering playback error.",
+              ),
+            );
+          }
+        }, timeout);
+
+        cleanupSource = () => {
+          clearTimeout(id);
+
+          unmounted = true;
+          unsubscribeBframes?.();
+          destroy?.();
+        };
+
+        return;
+      }
+
+      if (source.type === "hls") {
+        const indexUrl = /^https?:\/\/[^/\s]+\/hls\/[^/\s]+\/index\.m3u8/g;
+
+        const onErrorCleaned = (error: HlsError) => {
+          const cleanError = new Error(
+            error?.response?.data?.toString?.() ??
+              (error?.response?.code === 401
+                ? ACCESS_CONTROL_ERROR_MESSAGE
+                : "Error with HLS.js"),
+          );
+
+          onErrorComposed?.(cleanError);
+        };
+
+        const { destroy, setQuality } = createNewHls({
+          source: source?.src,
+          element,
+          initialQuality: videoQuality,
+          aspectRatio: aspectRatio ?? 16 / 9,
+          callbacks: {
+            onLive: store.getState().__controlsFunctions.setLive,
+            onDuration: store.getState().__controlsFunctions.onDurationChange,
+            onCanPlay: () => {
+              store.getState().__controlsFunctions.onCanPlay();
+              jumpToPreviousPosition();
+            },
+            onError: onErrorCleaned,
+            onPlaybackOffsetUpdated:
+              store.getState().__controlsFunctions.updatePlaybackOffsetMs,
+            onRedirect: store.getState().__controlsFunctions.onFinalUrl,
+          },
+          config: {
+            ...options?.hlsConfig,
+            async xhrSetup(xhr, url) {
+              await options?.hlsConfig?.xhrSetup?.(xhr, url);
+
+              if (url.match(indexUrl)) {
+                if (accessKey)
+                  xhr.setRequestHeader("Livepeer-Access-Key", accessKey);
+                else if (jwt) xhr.setRequestHeader("Livepeer-Jwt", jwt);
+              }
+            },
+            autoPlay,
+          },
+        });
+
+        const unsubscribeQualityUpdate = store.subscribe(
+          (state) => state.videoQuality,
+          (newQuality) => {
+            setQuality(newQuality);
+          },
+        );
+
+        cleanupSource = () => {
+          console.log("cleaning up prev hls");
+          unmounted = true;
+          destroy?.();
+          unsubscribeQualityUpdate?.();
+        };
+
+        return;
+      }
+
+      if (source?.type === "video") {
+        store.getState().__controlsFunctions.onFinalUrl(source.src);
+
+        element.addEventListener("canplay", jumpToPreviousPosition);
+
+        element.src = source.src;
+        element.load();
+
+        cleanupSource = () => {
+          unmounted = true;
+
+          element?.removeEventListener?.("canplay", jumpToPreviousPosition);
+        };
+
+        return;
+      }
+    },
+    {
+      equalityFn: (a, b) =>
+        a.errorCount === b.errorCount &&
+        a.source?.src === b.source?.src &&
+        a.mounted === b.mounted,
+    },
+  );
+
+  // Subscribe to poster image changes
+  const destroyPosterImage = store.subscribe(
+    ({ __controls, live, __controlsFunctions, __initialProps }) => ({
+      thumbnail: __controls.thumbnail?.src,
+      live,
+      setPoster: __controlsFunctions.setPoster,
+      posterLiveUpdate: __initialProps.posterLiveUpdate,
+    }),
+    async ({ thumbnail, live, setPoster, posterLiveUpdate }) => {
+      cleanupPosterImage?.();
+
+      if (thumbnail && live) {
+        const interval = setInterval(() => {
+          const thumbnailUrl = new URL(thumbnail);
+
+          thumbnailUrl.searchParams.set("v", Date.now().toFixed(0));
+
+          setPoster(thumbnailUrl.toString());
+        }, posterLiveUpdate);
+
+        cleanupPosterImage = () => clearInterval(interval);
+      }
+    },
+    {
+      equalityFn: (a, b) => a.thumbnail === b.thumbnail && a.live === b.live,
+    },
+  );
+
   // Subscribe to play/pause changes
   const destroyPlayPause = store.subscribe(
     (state) => state.__controls.requestedPlayPauseLastTime,
@@ -346,6 +656,11 @@ const addEffectsToStore = (
       if (current.isVolumeChangeSupported) {
         element.volume = current.volume;
       }
+    },
+    {
+      equalityFn: (a, b) =>
+        a.volume === b.volume &&
+        a.isVolumeChangeSupported === b.isVolumeChangeSupported,
     },
   );
 
@@ -418,7 +733,12 @@ const addEffectsToStore = (
     destroyPictureInPicture?.();
     destroyPlaybackRate?.();
     destroyPlayPause?.();
+    destroyPosterImage?.();
     destroySeeking?.();
     destroyVolume?.();
+    destroySource?.();
+
+    cleanupPosterImage?.();
+    cleanupSource?.();
   };
 };

@@ -11,7 +11,7 @@ export type HlsError = ErrorData;
 
 export type VideoConfig = { autoplay?: boolean };
 export type HlsVideoConfig = Partial<HlsConfig> & {
-  autoplay?: boolean;
+  autoPlay?: boolean;
 };
 
 /**
@@ -63,6 +63,10 @@ export const createNewHls = <TElement extends HTMLMediaElement>({
 
   const hls = new Hls({
     backBufferLength: 60 * 1.5,
+    manifestLoadingMaxRetry: 0,
+    fragLoadingMaxRetry: 0,
+    levelLoadingMaxRetry: 0,
+    appendErrorMaxRetry: 0,
     ...config,
     ...(config?.liveSyncDurationCount
       ? {

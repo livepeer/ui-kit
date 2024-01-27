@@ -90,6 +90,11 @@ export type InitialProps = {
   playbackRate: PlaybackRate;
 
   /**
+   * Controls how often the poster image updates when playing back a livestream, in ms. Set to `0` to disable. Defaults to 30s.
+   */
+  posterLiveUpdate: number;
+
+  /**
    * The preload option passed in to the Player. Specifies how the media should be preloaded: 'auto', 'metadata', or 'none'.
    *
    * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
@@ -175,6 +180,9 @@ export type ControlsState = {
   requestedRangeToSeekTo: number;
   /** The params for the latest clip request. */
   requestedClipParams: ClipParams | null;
+
+  /** The parsed thumbnail URL for the media. */
+  thumbnail: ImageSrc | null;
 
   /** The last time that a play event was received */
   playLastTime: number;
@@ -296,11 +304,17 @@ export type MediaControllerState = {
   /** If the media is currently loading */
   loading: boolean;
 
+  /** If the video element is mounted on the DOM - this is used for initialization logic */
+  mounted: boolean;
+
   /** The current playback rate for the media. Defaults to 1. */
   playbackRate: PlaybackRate;
 
   /** If the media is in picture in picture mode */
   pictureInPicture: boolean;
+
+  /** The poster image URL for the media. */
+  poster: string | null;
 
   /** Current progress of the media (in seconds) */
   progress: number;
@@ -310,9 +324,6 @@ export type MediaControllerState = {
 
   /** The sorted sources that were passed in to the Player */
   sortedSources: Src[] | string | null;
-
-  /** The thumbnail URL for the media. */
-  thumbnail: ImageSrc | null;
 
   /** Current volume of the media. 0 if it is muted. */
   volume: number;
@@ -351,8 +362,10 @@ export type MediaControllerState = {
     requestVolume: (volume: number) => void;
     setFullscreen: (fullscreen: boolean) => void;
     setLive: (live: boolean) => void;
+    setMounted: () => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
     setPlaybackRate: (rate: number | string) => void;
+    setPoster: (poster: string | null) => void;
     setVideoQuality: (videoQuality: VideoQuality) => void;
     setSize: (size: Partial<MediaSizing>) => void;
     setVolume: (volume: number) => void;
@@ -433,6 +446,7 @@ export const createControllerStore = ({
     accessKey: initialProps?.accessKey ?? null,
     aspectRatio: initialProps?.aspectRatio ?? null,
     constant: initialPlaybackRate === "constant",
+    isHlsSupported: device.isHlsSupported,
     jwt: initialProps?.jwt ?? null,
     sessionToken,
     source: sortedSources?.[0] ?? null,
@@ -440,21 +454,21 @@ export const createControllerStore = ({
   });
 
   const initialControls: ControlsState = {
-    requestedRangeToSeekTo: 0,
+    lastError: 0,
+    lastInteraction: Date.now(),
+    muted: initialVolume === 0,
+    playbackId: parsedSource?.playbackId ?? null,
+    playbackOffsetMs: null,
+    playLastTime: 0,
+    requestedClipParams: null,
     requestedFullscreenLastTime: 0,
     requestedPictureInPictureLastTime: 0,
     requestedPlayPauseLastTime: 0,
-    playLastTime: 0,
-    playbackOffsetMs: null,
-    requestedClipParams: null,
-    lastInteraction: Date.now(),
-    lastError: 0,
-    playbackId: parsedSource?.playbackId ?? null,
-    size: null,
-
-    volume: initialVolume,
-    muted: initialVolume === 0,
+    requestedRangeToSeekTo: 0,
     sessionToken,
+    size: null,
+    thumbnail: thumbnailSrc ?? null,
+    volume: initialVolume,
   };
 
   const store = createStore<
@@ -487,7 +501,10 @@ export const createControllerStore = ({
           /** Current buffered percent */
           bufferedPercent: 0,
 
-          thumbnail: thumbnailSrc ?? null,
+          poster: thumbnailSrc?.src ?? null,
+
+          /** If the video element is mounted on the DOM */
+          mounted: false,
 
           /** If the media is fullscreen. */
           fullscreen: false,
@@ -539,6 +556,7 @@ export const createControllerStore = ({
             lowLatency: initialProps.lowLatency ?? true,
             onError: initialProps?.onError ?? null,
             playbackRate: initialPlaybackRate,
+            posterLiveUpdate: initialProps.posterLiveUpdate ?? 30000,
             preload: initialProps.preload ?? "none",
             storage: resolvedStorage,
             timeout: initialProps.timeout ?? 10000,
@@ -554,6 +572,15 @@ export const createControllerStore = ({
           __metadata: null,
 
           __controlsFunctions: {
+            setMounted: () =>
+              set(() => ({
+                mounted: true,
+              })),
+            setPoster: (poster: string | null) =>
+              set(() => ({
+                poster,
+              })),
+
             setHidden: (hidden: boolean) =>
               set(({ playing }) => ({
                 hidden: playing ? hidden : false,
@@ -690,7 +717,7 @@ export const createControllerStore = ({
               }),
 
             setVideoQuality: (videoQuality) =>
-              set(({ __initialProps, __controls, playbackRate }) => {
+              set(({ __initialProps, __controls, playbackRate, __device }) => {
                 const sortedSources = sortSources({
                   src,
                   screenWidth: device.screenWidth,
@@ -702,6 +729,7 @@ export const createControllerStore = ({
                   accessKey: __initialProps?.accessKey ?? null,
                   aspectRatio: __initialProps?.aspectRatio ?? null,
                   constant: playbackRate === "constant",
+                  isHlsSupported: __device.isHlsSupported,
                   jwt: __initialProps?.jwt ?? null,
                   sessionToken: __controls.sessionToken,
                   source: sortedSources?.[0] ?? null,
@@ -992,6 +1020,7 @@ export const createControllerStore = ({
                     accessKey: __initialProps?.accessKey ?? null,
                     aspectRatio: __initialProps?.aspectRatio ?? null,
                     constant: playbackRate === "constant",
+                    isHlsSupported: __device.isHlsSupported,
                     jwt: __initialProps?.jwt ?? null,
                     sessionToken: __controls.sessionToken,
                     source: nextSource,

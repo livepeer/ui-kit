@@ -1,3 +1,4 @@
+import { warn } from "../utils";
 import {
   constructClientOffer,
   createPeerConnection,
@@ -8,22 +9,22 @@ import {
 export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
   "data-livepeer-video-whip-initialized";
 
-export type WebRTCTrackConstraints = {
-  /**
-   * The constraints applied to the broadcast media track.
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
-   */
-  streamConstraints?: MediaStreamConstraints;
-  /**
-   * The device ID used to constrain the video track.
-   */
-  videoDeviceId?: string;
-  /**
-   * The device ID used to constrain the video track.
-   */
-  audioDeviceId?: string;
-};
+// export type WebRTCTrackConstraints = {
+//   /**
+//    * The constraints applied to the broadcast media track.
+//    *
+//    * https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
+//    */
+//   streamConstraints?: MediaStreamConstraints;
+//   /**
+//    * The device ID used to constrain the video track.
+//    */
+//   videoDeviceId?: string;
+//   /**
+//    * The device ID used to constrain the video track.
+//    */
+//   audioDeviceId?: string;
+// };
 
 export type WebRTCConnectedPayload = {
   stream: MediaStream;
@@ -37,19 +38,16 @@ export type WebRTCConnectedPayload = {
  * https://www.ietf.org/archive/id/draft-ietf-wish-whip-01.html
  */
 export const createNewWHIP = <TElement extends HTMLMediaElement>({
-  stream,
   ingestUrl,
   element,
-  aspectRatio,
   callbacks,
   sdpTimeout,
 }: {
-  stream: MediaStream;
   ingestUrl: string;
   element: TElement;
-  aspectRatio: number | null;
   callbacks: {
-    onConnected?: (payload: WebRTCConnectedPayload) => void;
+    onRTCPeerConnection?: (payload: RTCPeerConnection) => void;
+    onConnected?: () => void;
     onError?: (data: Error) => void;
   };
   sdpTimeout: number | null;
@@ -71,9 +69,6 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   const abortController = new AbortController();
 
   let peerConnection: RTCPeerConnection | null = null;
-
-  let videoTransceiver: RTCRtpTransceiver | null = null;
-  let audioTransceiver: RTCRtpTransceiver | null = null;
 
   getRedirectUrl(ingestUrl, abortController, sdpTimeout)
     .then((redirectUrl) => {
@@ -116,22 +111,11 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
           async (_ev) => {
             try {
               if (peerConnection?.connectionState === "failed") {
-                throw new Error("Failed to connect to peer.");
+                callbacks?.onError?.(new Error("Failed to connect to peer."));
               }
 
-              if (
-                peerConnection?.connectionState === "connected" &&
-                stream &&
-                audioTransceiver &&
-                videoTransceiver
-              ) {
-                element.srcObject = stream;
-
-                callbacks?.onConnected?.({
-                  stream,
-                  videoTransceiver,
-                  audioTransceiver,
-                });
+              if (peerConnection?.connectionState === "connected") {
+                callbacks?.onConnected?.();
               }
             } catch (e) {
               callbacks?.onError?.(e as Error);
@@ -139,26 +123,9 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
           },
         );
 
-        const newVideoTrack = stream?.getVideoTracks?.()?.[0] ?? null;
-        const newAudioTrack = stream?.getAudioTracks?.()?.[0] ?? null;
-
-        if (newVideoTrack) {
-          // await newVideoTrack.applyConstraints(
-          //   getConstraints(aspectRatio ?? 16 / 9),
-          // );
-
-          videoTransceiver =
-            peerConnection?.addTransceiver(newVideoTrack, {
-              direction: "sendonly",
-            }) ?? null;
-        }
-
-        if (newAudioTrack) {
-          audioTransceiver =
-            peerConnection?.addTransceiver(newAudioTrack, {
-              direction: "sendonly",
-            }) ?? null;
-        }
+        callbacks?.onRTCPeerConnection?.(peerConnection);
+      } else {
+        warn("Could not create peer connection.");
       }
     })
     .catch((e) => callbacks?.onError?.(e as Error));
@@ -169,158 +136,110 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
 
       abortController?.abort?.();
 
-      // Remove the WebRTC source
-      if (element) {
-        element.srcObject = null;
-      }
       peerConnection?.close?.();
-
-      // Stop using the local camera and microphone
-      const tracks = stream?.getTracks?.() ?? [];
-      for (const track of tracks) {
-        track?.stop?.();
-      }
 
       element?.removeAttribute?.(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE);
     },
   };
 };
 
-/**
- * Ask for camera and microphone permissions and add video and audio tracks to the peerConnection.
- * If a media stream is passed in, use this for the connection.
- *
- * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
- */
-export const changeMediaStream = async <TElement extends HTMLMediaElement>({
-  newMediaStream,
-  prevMediaStream,
-  aspectRatio,
-  element,
-  onConnected,
-  videoTransceiver,
-  audioTransceiver,
-}: {
-  newMediaStream: MediaStream;
-  prevMediaStream: MediaStream | null;
+export const attachMediaStreamToPeerConnection = async ({
+  mediaStream,
+  peerConnection,
+}: { mediaStream: MediaStream; peerConnection: RTCPeerConnection }) => {
+  const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
+  const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
 
-  aspectRatio: number | null;
-  element: TElement;
+  const transceivers = peerConnection.getTransceivers();
 
-  onConnected: (payload: WebRTCConnectedPayload) => void;
-  videoTransceiver: RTCRtpTransceiver;
-  audioTransceiver: RTCRtpTransceiver;
-}) => {
-  const prevVideoTrack = prevMediaStream?.getVideoTracks?.()?.[0] ?? null;
-  const prevAudioTrack = prevMediaStream?.getAudioTracks?.()?.[0] ?? null;
-
-  const newVideoTrack = newMediaStream?.getVideoTracks?.()?.[0] ?? null;
-  const newAudioTrack = newMediaStream?.getAudioTracks?.()?.[0] ?? null;
+  let videoTransceiver = transceivers.find(
+    (t) => t.receiver.track.kind === "video",
+  );
+  let audioTransceiver = transceivers.find(
+    (t) => t.receiver.track.kind === "audio",
+  );
 
   if (newVideoTrack) {
-    await newVideoTrack.applyConstraints(getConstraints(aspectRatio));
-    await videoTransceiver.sender.replaceTrack(newVideoTrack);
-    newVideoTrack.enabled = prevVideoTrack?.enabled ?? true;
+    if (videoTransceiver) {
+      // Replace existing video track
+      await videoTransceiver.sender.replaceTrack(newVideoTrack);
+    } else {
+      // Add new video transceiver
+      videoTransceiver = await peerConnection.addTransceiver(newVideoTrack, {
+        direction: "sendonly",
+      });
+    }
   }
 
   if (newAudioTrack) {
-    await audioTransceiver.sender.replaceTrack(newAudioTrack);
-    newAudioTrack.enabled = prevAudioTrack?.enabled ?? true;
-  }
-
-  element.srcObject = newMediaStream;
-
-  onConnected({
-    stream: newMediaStream,
-    videoTransceiver,
-    audioTransceiver,
-  });
-};
-
-/**
- * Ask for camera and microphone permissions and get the MediaStream for the given constraints.
- *
- * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
- */
-export const getUserMedia = async ({
-  source,
-}: {
-  source: WebRTCTrackConstraints;
-}) => {
-  const newMediaStream = await navigator?.mediaDevices?.getUserMedia({
-    ...(typeof source.streamConstraints === "object"
-      ? source.streamConstraints
-      : {}),
-    video: {
-      ...(typeof source.streamConstraints?.video !== "boolean"
-        ? source.streamConstraints?.video
-        : {}),
-      ...(source?.videoDeviceId
-        ? {
-            deviceId: source?.videoDeviceId,
-          }
-        : {}),
-    },
-    audio: {
-      ...(typeof source.streamConstraints?.audio !== "boolean"
-        ? source.streamConstraints?.audio
-        : {}),
-      ...(source?.audioDeviceId
-        ? {
-            deviceId: source?.audioDeviceId,
-          }
-        : {}),
-    },
-  });
-
-  return newMediaStream ?? null;
-};
-
-export const getMediaDevices = (
-  onDevicesUpdated: (devices: MediaDeviceInfo[]) => void,
-) => {
-  if (
-    typeof navigator !== "undefined" &&
-    navigator?.mediaDevices?.enumerateDevices
-  ) {
-    const onDeviceChange = () => {
-      navigator.mediaDevices
-        .enumerateDevices()
-        .then((devices) => onDevicesUpdated(devices));
-    };
-
-    navigator.mediaDevices.addEventListener("devicechange", onDeviceChange);
-
-    onDeviceChange();
-
-    return () => {
-      navigator.mediaDevices.removeEventListener(
-        "devicechange",
-        onDeviceChange,
-      );
-    };
-  }
-
-  return () => {
-    //
-  };
-};
-
-export const getDisplayMedia = async (options?: DisplayMediaStreamOptions) => {
-  try {
-    if (
-      typeof navigator !== "undefined" &&
-      navigator?.mediaDevices?.getDisplayMedia
-    ) {
-      const mediaStream = await navigator.mediaDevices.getDisplayMedia(options);
-
-      return mediaStream;
+    if (audioTransceiver) {
+      // Replace existing audio track
+      await audioTransceiver.sender.replaceTrack(newAudioTrack);
+    } else {
+      // Add new audio transceiver
+      audioTransceiver = await peerConnection.addTransceiver(newAudioTrack, {
+        direction: "sendonly",
+      });
     }
-  } catch (e) {
-    console.error(e);
   }
+};
+
+export const getUserMedia = (constraints?: MediaStreamConstraints) => {
+  if (typeof navigator === "undefined") {
+    return null;
+  }
+
+  if (navigator?.mediaDevices?.getUserMedia) {
+    // Modern browsers
+    return navigator.mediaDevices.getUserMedia(constraints);
+  }
+  if (navigator?.getUserMedia) {
+    // Older standard
+    return navigator.getUserMedia(constraints);
+  }
+  if (navigator?.webkitGetUserMedia) {
+    // Webkit browsers
+    return navigator.webkitGetUserMedia(constraints);
+  }
+  if (navigator?.mozGetUserMedia) {
+    // Mozilla browsers
+    return navigator.mozGetUserMedia(constraints);
+  }
+  if (navigator?.msGetUserMedia) {
+    // IE browsers
+    return navigator.msGetUserMedia(constraints);
+  }
+
+  warn(
+    "getUserMedia is not supported in this environment. Check if you are in a secure (HTTPS) context - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia",
+  );
 
   return null;
+};
+
+export const getMediaDevices = () => {
+  if (typeof navigator === "undefined" || !navigator.mediaDevices) {
+    warn(
+      "mediaDevices was not found in this environment. Check if you are in a secure (HTTPS) context - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia",
+    );
+    return null;
+  }
+
+  return navigator.mediaDevices;
+};
+
+export const getDisplayMedia = (options?: DisplayMediaStreamOptions) => {
+  if (typeof navigator === "undefined") {
+    return null;
+  }
+
+  if (!navigator?.mediaDevices?.getDisplayMedia) {
+    warn("getDisplayMedia does not exist in this environment.");
+
+    return null;
+  }
+
+  return navigator.mediaDevices.getDisplayMedia(options);
 };
 
 const getConstraints = (aspectRatio: number | null) => {

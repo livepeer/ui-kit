@@ -1,5 +1,5 @@
 import type { ElementSize } from "./controller";
-import { getMimeType, type MimeType } from "./mime";
+import { type MimeType, getMimeType } from "./mime";
 
 type AudioExtension =
   | "m4a"

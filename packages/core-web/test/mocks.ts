@@ -29,11 +29,6 @@ export const waitForWebsocketOpen = async (_websocket: WebSocket | null) =>
 export class MockedVideoElement extends HTMLVideoElement {
   listeners: { [key: string]: EventListenerOrEventListenerObject[] } = {};
 
-  constructor() {
-    // Always call super first in constructor
-    super();
-  }
-
   load = vi.fn(() => {
     return true;
   });

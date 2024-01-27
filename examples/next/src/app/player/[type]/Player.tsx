@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { livepeer } from "../../livepeer";
 import { Clip } from "./Clip";
+import { CurrentSource } from "./CurrentSource";
+import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 
 const getPlaybackInfo = cache(async (playbackId: string) => {
@@ -22,11 +24,13 @@ const getPlaybackInfo = cache(async (playbackId: string) => {
 });
 
 export async function PlayerWithControls({
+  playbackId,
   type,
-}: { type: "asset" | "livestream" }) {
-  const src = await getPlaybackInfo(
-    type === "asset" ? "b85a9g6v7qfli104" : "806dk46k6ba0dv3m",
-  );
+}: {
+  playbackId: string;
+  type: "asset-short" | "asset-long" | "livestream" | "unknown";
+}) {
+  const src = await getPlaybackInfo(playbackId);
 
   if (!src) {
     return notFound();
@@ -47,11 +51,10 @@ export async function PlayerWithControls({
             className="w-full h-full object-contain"
           />
 
-          <Player.LoadingIndicator className="w-full relative h-full data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
+          <Player.LoadingIndicator className="w-full relative h-full bg-black/50 backdrop-blur data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               <Assets.LoadingIcon className="w-8 h-8 animate-spin" />
             </div>
-            <Player.Poster className="w-full h-full opacity-45 object-cover" />
             <PlayerLoading />
           </Player.LoadingIndicator>
 
@@ -79,6 +82,16 @@ export async function PlayerWithControls({
                 It looks like you don't have permission to view this content
               </div>
             </div>
+          </Player.ErrorIndicator>
+
+          <Player.ErrorIndicator
+            matcher="all"
+            className="absolute select-none inset-0 text-center bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <Assets.LoadingIcon className="w-8 h-8 animate-spin" />
+            </div>
+            <PlayerLoading />
           </Player.ErrorIndicator>
 
           <Player.Controls className="bg-gradient-to-b gap-1 px-3 md:px-3 py-2 flex-col-reverse flex from-black/20 via-80% via-black/30 duration-1000 to-black/60 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
@@ -147,6 +160,12 @@ export async function PlayerWithControls({
             </Player.Seek>
           </Player.Controls>
         </Player.Container>
+
+        <CurrentSource className="mt-6" />
+
+        <div className="flex mt-4">
+          <ForceError className="mx-auto" />
+        </div>
       </Player.Root>
     </div>
   );

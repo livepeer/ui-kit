@@ -1,14 +1,17 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import * as Assets from "@livepeer/react/assets";
 import * as Broadcast from "@livepeer/react/broadcast";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import React from "react";
 
 import { useRef, useState } from "react";
 
 export function BroadcastWithControls() {
   const portalRef = useRef<HTMLDivElement | null>(null);
   const [streamKey, setStreamKey] = useState<string | null>(
-    "806d-bdx4-q6re-k1h0",
+    "398d-5x6h-0yy6-zhq2",
   );
 
   return (
@@ -127,6 +130,15 @@ export function BroadcastWithControls() {
                 </Broadcast.EnabledIndicator>
               </Broadcast.EnabledTrigger>
             </Broadcast.LoadingIndicator>
+
+            <Broadcast.ScreenshareTrigger>
+              Share screen
+            </Broadcast.ScreenshareTrigger>
+
+            <div className="w-full flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <SourceSelectComposed type="videoinput" className="w-[200px]" />
+              <SourceSelectComposed type="audioinput" className="w-[200px]" />
+            </div>
           </Broadcast.Root>
         </>
       ) : (
@@ -152,3 +164,74 @@ export const BroadcastLoading = () => (
     <div className="w-full h-2 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
   </div>
 );
+
+const SourceSelectComposed = ({
+  type,
+  className,
+}: { type: "audioinput" | "videoinput"; className?: string }) => (
+  <Broadcast.SourceSelect name="videoSource" type={type}>
+    {(devices) =>
+      devices ? (
+        <>
+          <Broadcast.SelectTrigger
+            className={cn(
+              "flex w-full items-center overflow-hidden justify-between rounded-sm px-1 outline-1 outline-white/50 text-xs leading-none h-7 gap-1 outline-none",
+              className,
+            )}
+            aria-label={type === "audioinput" ? "Audio input" : "Video input"}
+          >
+            <Broadcast.SelectValue
+              placeholder={
+                type === "audioinput"
+                  ? "Select an audio input"
+                  : "Select a video input"
+              }
+            />
+            <Broadcast.SelectIcon>
+              <ChevronDownIcon className="h-4 w-4" />
+            </Broadcast.SelectIcon>
+          </Broadcast.SelectTrigger>
+          <Broadcast.SelectPortal>
+            <Broadcast.SelectContent className="overflow-hidden bg-black rounded-sm">
+              <Broadcast.SelectViewport className="p-1">
+                <Broadcast.SelectGroup>
+                  {devices?.map((device) => (
+                    <RateSelectItem
+                      key={device.deviceId}
+                      value={device.deviceId}
+                    >
+                      {device.friendlyName}
+                    </RateSelectItem>
+                  ))}
+                </Broadcast.SelectGroup>
+              </Broadcast.SelectViewport>
+            </Broadcast.SelectContent>
+          </Broadcast.SelectPortal>
+        </>
+      ) : (
+        <span>There was an error fetching the available devices.</span>
+      )
+    }
+  </Broadcast.SourceSelect>
+);
+
+const RateSelectItem = React.forwardRef<
+  HTMLDivElement,
+  Broadcast.SelectItemProps
+>(({ children, className, ...props }, forwardedRef) => {
+  return (
+    <Broadcast.SelectItem
+      className={cn(
+        "text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20",
+        className,
+      )}
+      {...props}
+      ref={forwardedRef}
+    >
+      <Broadcast.SelectItemText>{children}</Broadcast.SelectItemText>
+      <Broadcast.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+        <CheckIcon className="w-4 h-4" />
+      </Broadcast.SelectItemIndicator>
+    </Broadcast.SelectItem>
+  );
+});

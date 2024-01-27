@@ -7,12 +7,12 @@
     "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "clean": "turbo run clean && rimraf node_modules",
-    "dev": "pnpm dev:next",
-    "dev:next": "dotenv -- turbo dev --filter \"@livepeer/*\" --filter \"example-next\"",
+    "dev": "pnpm dev:packages",
+    "dev:next": "dotenv -- turbo dev --filter \"example-next\"",
+    "dev:packages": "dotenv -- turbo dev --filter \"@livepeer/*\"",
     "generate-version": "tsm generate-version.ts",
     "lint": "pnpm dlx @biomejs/biome lint ./",
-    "lint:fix": "pnpm lint --fix",
-    "lint:format": "pnpm dlx @biomejs/biome check --apply ./",
+    "lint:fix": "pnpm dlx @biomejs/biome check --apply ./",
     "lint:types": "tsc --noEmit",
     "list-browsers": "pnpx browserslist && pnpx browserslist --coverage",
     "postinstall": "pnpm run generate-version",
@@ -53,12 +53,8 @@
     "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "pnpm lint:fix"
-    ],
-    "*.{json,md,mdx,yml}": [
-      "pnpm lint:format"
-    ]
+    "*.{js,ts,tsx}": ["pnpm lint:fix"],
+    "*.{json,md,mdx,yml}": ["pnpm lint:fix"]
   },
   "packageManager": "pnpm@8.14.1",
   "engines": {
