@@ -25,7 +25,7 @@ jobs:
       - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
           node-version: ${{ matrix.node-version }}
       - name: Cache pnpm
         uses: actions/cache@v3
@@ -52,38 +52,6 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
         run: pnpm dev
 
-  lint:
-    name: Lint
-    needs: install
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18]
-        pnpm-version: [8]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2.4.0
-        with:
-          version: ${{ matrix.pnpm-version }}
-      - name: Set up Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          cache: 'pnpm'
-          node-version: ${{ matrix.node-version }}
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            examples/*/node_modules
-            packages/*/node_modules
-            packages/**/dist
-          key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: Lint code
-        run: pnpm lint
-      - name: Check types
-        run: pnpm lint:types
-
   build:
     name: Build
     needs: install
@@ -100,7 +68,7 @@ jobs:
       - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
         uses: actions/cache@v3
@@ -115,6 +83,38 @@ jobs:
         run: pnpm build
       - name: Build Examples
         run: pnpm build:examples
+
+        lint:
+          name: Lint
+          needs: install
+          runs-on: ubuntu-latest
+          strategy:
+            matrix:
+              node-version: [18]
+              pnpm-version: [8]
+          steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v2.4.0
+              with:
+                version: ${{ matrix.pnpm-version }}
+            - name: Set up Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                cache: "pnpm"
+                node-version: ${{ matrix.node-version }}
+            - name: Cache node_modules
+              uses: actions/cache@v3
+              with:
+                path: |
+                  node_modules
+                  examples/*/node_modules
+                  packages/*/node_modules
+                  packages/**/dist
+                key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+            - name: Lint code
+              run: pnpm lint
+            - name: Check types
+              run: pnpm lint:types
 
   test:
     name: Test
@@ -133,7 +133,7 @@ jobs:
       - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
         uses: actions/cache@v3
@@ -169,7 +169,7 @@ jobs:
       - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
         uses: actions/cache@v3
@@ -208,7 +208,7 @@ jobs:
       - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
         uses: actions/cache@v3

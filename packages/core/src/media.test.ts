@@ -8,8 +8,9 @@ it("should expose correct exports", () => {
       "DEFAULT_AUTOHIDE_TIME",
       "DEFAULT_VOLUME_LEVEL",
       "addMediaMetricsToStore",
-      "aspectRatios",
+      "calculateVideoQualityDimensions",
       "createControllerStore",
+      "getBoundedVolume",
       "getMediaSourceType",
       "sanitizeMediaControllerState",
     ]
