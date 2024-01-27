@@ -10,8 +10,8 @@ import {
 
 fs.writeFileSync(
   "./packages/core/src/version.ts",
-  `const core = '${coreName}@${coreVersion}';
-const react = '${reactName}@${reactVersion}';
+  `const core = "${coreName}@${coreVersion}";
+const react = "${reactName}@${reactVersion}";
 
 export const version = {
   core,
