@@ -2,14 +2,16 @@
   "name": "@livepeer/react",
   "description": "React components & hooks for web apps built with Livepeer.",
   "license": "MIT",
-  "version": "3.1.9",
+  "version": "4.0.0-next.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer-react.git",
     "directory": "packages/react"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -128,5 +130,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "react",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }
