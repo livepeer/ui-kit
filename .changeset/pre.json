@@ -10,5 +10,7 @@
     "@livepeer/react": "3.1.7",
     "@livepeer/react-native": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "poor-eggs-accept"
+  ]
 }

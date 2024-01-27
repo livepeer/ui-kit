@@ -2,14 +2,16 @@
   "name": "@livepeer/react-native",
   "description": "React Native components & hooks for mobile apps built with Livepeer. (deprecated)",
   "license": "MIT",
-  "version": "0.0.0",
+  "version": "0.0.1-next.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer-react.git",
     "directory": "packages/react-native"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -30,5 +32,11 @@
     "clean": "rimraf .turbo node_modules dist",
     "dev": "bunchee --watch"
   },
-  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "react",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }
