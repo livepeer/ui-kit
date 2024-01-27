@@ -83,6 +83,26 @@ jobs:
         run: pnpm build
       - name: Build Examples
         run: pnpm build:examples
+      - name: Upload Core dist as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: core-dist
+          path: packages/core/dist
+      - name: Upload Core-React dist as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: core-react-dist
+          path: packages/core-react/dist
+      - name: Upload Core-Web dist as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: core-web-dist
+          path: packages/core-web/dist
+      - name: Upload React dist as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: react-dist
+          path: packages/react/dist
 
   lint:
     name: Lint
@@ -111,6 +131,22 @@ jobs:
             packages/*/node_modules
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+      - uses: actions/download-artifact@v2
+        with:
+          name: core-dist
+          path: packages/core/dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: core-react-dist
+          path: packages/core-react/dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: core-web-dist
+          path: packages/core-web/dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: react-dist
+          path: packages/react/dist
       - name: Lint code
         run: pnpm lint
       - name: Check types
@@ -144,6 +180,22 @@ jobs:
             packages/*/node_modules
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+      - uses: actions/download-artifact@v2
+        with:
+          name: core-dist
+          path: packages/core/dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: core-react-dist
+          path: packages/core-react/dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: core-web-dist
+          path: packages/core-web/dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: react-dist
+          path: packages/react/dist
       - name: Test React 18
         run: pnpm test:coverage
         env:
