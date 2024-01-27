@@ -1,29 +1,6 @@
 export {
-  createAsset,
-  createClip,
-  createStream,
-  getAsset,
-  getAssetMetrics,
-  getLivepeerProvider,
-  getPlaybackInfo,
-  getStream,
-  getStreamSession,
-  getStreamSessions,
-  updateAsset,
-  updateStream,
-  watchLivepeerProvider,
-} from './actions';
-export type {
-  GetLivepeerProviderResult,
-  WatchLivepeerProviderCallback,
-} from './actions';
-export { Client, clearClient, createClient } from './client';
-export type { ClientConfig } from './client';
-export { defaultStudioConfig, defaultTranscodingProfiles } from './constants';
-export {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
-  HttpError,
   NOT_ACCEPTABLE_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
   STREAM_OPEN_ERROR_MESSAGE,
@@ -31,87 +8,49 @@ export {
   isBframesError,
   isNotAcceptableError,
   isStreamOfflineError,
-} from './errors';
+} from "./errors";
 export {
   createControllerStore,
   getMediaSourceType,
   sanitizeMediaControllerState,
-} from './media';
+} from "./media";
 export type {
   AccessControlParams,
+  AriaText,
   AudioSrc,
   AudioTrackSelector,
   Base64Src,
   ClipLength,
+  ClipParams,
   ControlsOptions,
+  ControlsState,
   DeviceInformation,
   ElementSize,
   HlsSrc,
+  InitialProps,
   MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
   MediaMetrics,
-  MediaPropsOptions,
   MediaSizing,
   Metadata,
   MetricsStatus,
   ObjectFit,
   PlaybackError,
   PlaybackMonitor,
+  PlaybackRate,
   SingleAudioTrackSelector,
   SingleTrackSelector,
   SingleVideoTrackSelector,
   Src,
+  VideoQuality,
   VideoSrc,
   VideoTrackSelector,
   WebRTCSrc,
-} from './media';
-export { createStorage, noopStorage } from './storage';
-export type { ClientStorage as Storage } from './storage';
-export type {
-  Address,
-  Asset,
-  Attestation,
-  AttestationRole,
-  CreateAssetArgs,
-  CreateAssetFileProgress,
-  CreateAssetProgress,
-  CreateAssetProgressBase,
-  CreateAssetSourceFile,
-  CreateAssetSourceType,
-  CreateAssetSourceUrl,
-  CreateAssetUrlProgress,
-  CreateClipArgs,
-  CreateStreamArgs,
-  CreatorId,
-  Domain,
-  GetAssetArgs,
-  GetAssetMetricsArgs,
-  GetPlaybackInfoArgs,
-  GetStreamArgs,
-  GetStreamSessionArgs,
-  GetStreamSessionsArgs,
-  Hash,
-  JwtOrPublicPlaybackPolicy,
-  LivepeerProvider,
-  LivepeerProviderConfig,
-  Message,
-  Metrics,
-  MirrorSizeArray,
-  MultistreamTarget,
-  MultistreamTargetRef,
-  NativeFile,
-  PlaybackAccessControlRequest,
-  PlaybackInfo,
-  PlaybackPolicy,
-  Stream,
-  StreamSession,
-  TranscodingProfile,
-  UpdateAssetArgs,
-  UpdateStreamArgs,
-  ViewsMetrics,
-  WebhookPlaybackPolicy,
-} from './types';
+} from "./media";
+export { createStorage, noopStorage } from "./storage";
+export type { ClientStorage as Storage } from "./storage";
+export type { Address, Hash } from "./types";
 export {
   b64Decode,
   b64Encode,
@@ -120,5 +59,5 @@ export {
   deepMerge,
   omit,
   pick,
-} from './utils';
-export { version } from './version';
+} from "./utils";
+export { version } from "./version";

@@ -11,10 +11,8 @@
 
 ## Features
 
-- 📺 Player for video/audio with built-in low-latency WebRTC/HLS support, accessibility, keyboard shortcuts, and customizable controls
+- 📺 Composable player for video/audio with built-in low-latency WebRTC/HLS support, accessibility, keyboard shortcuts, and customizable controls
 - 🎥 Broadcast component for streaming low-latency video from the browser
-- 🪝 React hooks for working with Livepeer providers and the Livepeer protocol
-- 💾 Response caching, request deduplication, and persistence
 - 🐼 TypeScript ready
 - 🧪 Tests across core and React components
 

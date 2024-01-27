@@ -1,6 +1,6 @@
-const withPreconstruct = require('@preconstruct/next');
-
 /** @type {import('next').NextConfig} */
-module.exports = withPreconstruct({
+const nextConfig = {
   reactStrictMode: true,
-});
+};
+
+module.exports = nextConfig;

@@ -1,4 +1,4 @@
-import { CID } from 'multiformats/cid';
+import { CID } from "multiformats/cid";
 
 // IPFS CID (naive check for lack of URL indicators)
 const ipfsCidPattern = /^([^/?#]+)$/;
@@ -66,7 +66,7 @@ const isCid = (
       return false;
     }
 
-    if (typeof hash === 'string') {
+    if (typeof hash === "string") {
       return Boolean(CID.parse(hash));
     }
 
@@ -81,7 +81,7 @@ const isCid = (
 };
 
 const formatReturnCid = (cid: string, urlIndicators?: string) => {
-  const cidWithUrlIndicators = `${cid}${urlIndicators ?? ''}`;
+  const cidWithUrlIndicators = `${cid}${urlIndicators ?? ""}`;
   return {
     url: `ipfs://${cidWithUrlIndicators}`,
     id: cidWithUrlIndicators,

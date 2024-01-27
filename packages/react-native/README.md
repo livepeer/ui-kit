@@ -1,21 +1,9 @@
 # @livepeer/react-native
 
-## Documentation
+## Maintenance Status
 
-The `@livepeer/react-native` package contains React Native-specific hooks/components for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
+**This package has been deprecated.**
 
-## Installation
-
-Install `@livepeer/react-native` using a package manager.
-
-```bash
-npm install @livepeer/react-native
-```
-
-## Community
-
-Check out the following places for more livepeer-related content:
-
-- Join the [discussions on GitHub](https://github.com/livepeer/livepeer-react/discussions)
-- Follow [@livepeer](https://twitter.com/livepeer) on Twitter
-- Jump into our [Discord](https://discord.gg/livepeer)
+Please see [react-native-video](https://github.com/react-native-video/react-native-video)
+for a full-featured HLS player, or [react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc)
+for a low-latency WebRTC player.

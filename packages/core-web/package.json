@@ -9,102 +9,117 @@
     "directory": "packages/core-web"
   },
   "homepage": "https://docs.livepeer.org",
-  "main": "dist/livepeer-core-web.cjs.js",
-  "module": "dist/livepeer-core-web.esm.js",
-  "types": "dist/livepeer-core-web.cjs.d.ts",
+  "files": ["dist"],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.mjs",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "module": "./dist/livepeer-core-web.esm.js",
-      "default": "./dist/livepeer-core-web.cjs.js"
+      "import": {
+        "types": "./dist/es/index.d.mts",
+        "default": "./dist/es/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
-    "./actions": {
-      "module": "./actions/dist/livepeer-core-web-actions.esm.js",
-      "default": "./actions/dist/livepeer-core-web-actions.cjs.js"
+    "./browser": {
+      "import": {
+        "types": "./dist/es/browser.d.mts",
+        "default": "./dist/es/browser.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/browser.d.ts",
+        "default": "./dist/cjs/browser.js"
+      }
     },
-    "./client": {
-      "module": "./client/dist/livepeer-core-web-client.esm.js",
-      "default": "./client/dist/livepeer-core-web-client.cjs.js"
-    },
-    "./constants": {
-      "module": "./constants/dist/livepeer-core-web-constants.esm.js",
-      "default": "./constants/dist/livepeer-core-web-constants.cjs.js"
-    },
-    "./contracts": {
-      "module": "./contracts/dist/livepeer-core-web-contracts.esm.js",
-      "default": "./contracts/dist/livepeer-core-web-contracts.cjs.js"
+    "./broadcast": {
+      "import": {
+        "types": "./dist/es/broadcast.d.mts",
+        "default": "./dist/es/broadcast.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/broadcast.d.ts",
+        "default": "./dist/cjs/broadcast.js"
+      }
     },
     "./crypto": {
-      "module": "./crypto/dist/livepeer-core-web-crypto.esm.js",
-      "default": "./crypto/dist/livepeer-core-web-crypto.cjs.js"
+      "import": {
+        "types": "./dist/es/crypto.d.mts",
+        "default": "./dist/es/crypto.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/crypto.d.ts",
+        "default": "./dist/cjs/crypto.js"
+      }
     },
-    "./errors": {
-      "module": "./errors/dist/livepeer-core-web-errors.esm.js",
-      "default": "./errors/dist/livepeer-core-web-errors.cjs.js"
+    "./external": {
+      "import": {
+        "types": "./dist/es/external.d.mts",
+        "default": "./dist/es/external.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/external.d.ts",
+        "default": "./dist/cjs/external.js"
+      }
+    },
+    "./hls": {
+      "import": {
+        "types": "./dist/es/hls.d.mts",
+        "default": "./dist/es/hls.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/hls.d.ts",
+        "default": "./dist/cjs/hls.js"
+      }
     },
     "./media": {
-      "module": "./media/dist/livepeer-core-web-media.esm.js",
-      "default": "./media/dist/livepeer-core-web-media.cjs.js"
-    },
-    "./media/browser": {
-      "module": "./media/browser/dist/livepeer-core-web-media-browser.esm.js",
-      "default": "./media/browser/dist/livepeer-core-web-media-browser.cjs.js"
-    },
-    "./media/browser/hls": {
-      "module": "./media/browser/hls/dist/livepeer-core-web-media-browser-hls.esm.js",
-      "default": "./media/browser/hls/dist/livepeer-core-web-media-browser-hls.cjs.js"
-    },
-    "./media/browser/styling": {
-      "module": "./media/browser/styling/dist/livepeer-core-web-media-browser-styling.esm.js",
-      "default": "./media/browser/styling/dist/livepeer-core-web-media-browser-styling.cjs.js"
-    },
-    "./media/browser/webrtc": {
-      "module": "./media/browser/webrtc/dist/livepeer-core-web-media-browser-webrtc.esm.js",
-      "default": "./media/browser/webrtc/dist/livepeer-core-web-media-browser-webrtc.cjs.js"
-    },
-    "./providers/studio": {
-      "module": "./providers/studio/dist/livepeer-core-web-providers-studio.esm.js",
-      "default": "./providers/studio/dist/livepeer-core-web-providers-studio.cjs.js"
+      "import": {
+        "types": "./dist/es/media.d.mts",
+        "default": "./dist/es/media.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/media.d.ts",
+        "default": "./dist/cjs/media.js"
+      }
     },
     "./types": {
-      "module": "./types/dist/livepeer-core-web-types.esm.js",
-      "default": "./types/dist/livepeer-core-web-types.cjs.js"
+      "import": {
+        "types": "./dist/es/types.d.mts",
+        "default": "./dist/es/types.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/types.d.ts",
+        "default": "./dist/cjs/types.js"
+      }
     },
     "./utils": {
-      "module": "./utils/dist/livepeer-core-web-utils.esm.js",
-      "default": "./utils/dist/livepeer-core-web-utils.cjs.js"
+      "import": {
+        "types": "./dist/es/utils.d.mts",
+        "default": "./dist/es/utils.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/utils.d.ts",
+        "default": "./dist/cjs/utils.js"
+      }
+    },
+    "./webrtc": {
+      "import": {
+        "types": "./dist/es/webrtc.d.mts",
+        "default": "./dist/es/webrtc.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/webrtc.d.ts",
+        "default": "./dist/cjs/webrtc.js"
+      }
     }
   },
-  "sideEffects": false,
-  "files": [
-    "/actions",
-    "/client",
-    "/constants",
-    "/contracts",
-    "/crypto",
-    "/media",
-    "/providers",
-    "/types",
-    "/utils",
-    "/dist"
-  ],
-  "preconstruct": {
-    "entrypoints": [
-      "index.ts",
-      "actions/index.ts",
-      "client/index.ts",
-      "constants/index.ts",
-      "contracts/index.ts",
-      "crypto/index.ts",
-      "media/index.ts",
-      "media/browser/index.ts",
-      "media/browser/hls/index.ts",
-      "media/browser/styling/index.ts",
-      "media/browser/webrtc/index.ts",
-      "providers/studio/index.ts",
-      "types/index.ts",
-      "utils/index.ts"
-    ]
+  "scripts": {
+    "build": "bunchee",
+    "clean": "rimraf .turbo node_modules dist",
+    "dev": "bunchee --watch"
   },
   "peerDependencies": {
     "react": ">=17.0.0"
@@ -115,25 +130,9 @@
     }
   },
   "dependencies": {
-    "@livepeer/core": "^2.1.9",
-    "@stitches/core": "^1.2.8",
-    "core-js": "^3.31.1",
-    "cross-fetch": "^4.0.0",
-    "hls.js": "^1.4.12",
-    "ms": "^3.0.0-canary.1",
-    "tus-js-client": "^3.1.0",
-    "zustand": "^4.3.9"
+    "@livepeer/core": "workspace:*",
+    "hls.js": "^1.5.2",
+    "zustand": "^4.5.0"
   },
-  "devDependencies": {
-    "@types/ms": "^0.7.31",
-    "jose": "^4.14.4"
-  },
-  "keywords": [
-    "eth",
-    "ethereum",
-    "livepeer",
-    "streaming",
-    "video",
-    "web3"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

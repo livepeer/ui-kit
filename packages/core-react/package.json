@@ -9,81 +9,53 @@
     "directory": "packages/core-react"
   },
   "homepage": "https://docs.livepeer.org",
-  "main": "dist/livepeer-core-react.cjs.js",
-  "module": "dist/livepeer-core-react.esm.js",
-  "types": "dist/livepeer-core-react.cjs.d.ts",
+  "files": ["dist"],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.mjs",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "module": "./dist/livepeer-core-react.esm.js",
-      "default": "./dist/livepeer-core-react.cjs.js"
+      "import": {
+        "types": "./dist/es/index.d.mts",
+        "default": "./dist/es/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
-    "./client": {
-      "module": "./client/dist/livepeer-core-react-client.esm.js",
-      "default": "./client/dist/livepeer-core-react-client.cjs.js"
-    },
-    "./components": {
-      "module": "./components/dist/livepeer-core-react-components.esm.js",
-      "default": "./components/dist/livepeer-core-react-components.cjs.js"
-    },
-    "./context": {
-      "module": "./context/dist/livepeer-core-react-context.esm.js",
-      "default": "./context/dist/livepeer-core-react-context.cjs.js"
-    },
-    "./contracts": {
-      "module": "./contracts/dist/livepeer-core-react-contracts.esm.js",
-      "default": "./contracts/dist/livepeer-core-react-contracts.cjs.js"
-    },
-    "./hooks": {
-      "module": "./hooks/dist/livepeer-core-react-hooks.esm.js",
-      "default": "./hooks/dist/livepeer-core-react-hooks.cjs.js"
-    },
-    "./utils": {
-      "module": "./utils/dist/livepeer-core-react-utils.esm.js",
-      "default": "./utils/dist/livepeer-core-react-utils.cjs.js"
+    "./crypto": {
+      "import": {
+        "types": "./dist/es/crypto.d.mts",
+        "default": "./dist/es/crypto.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/crypto.d.ts",
+        "default": "./dist/cjs/crypto.js"
+      }
     }
   },
-  "sideEffects": false,
-  "files": [
-    "client",
-    "/components",
-    "/context",
-    "/contracts",
-    "/hooks",
-    "/utils",
-    "/dist"
-  ],
-  "preconstruct": {
-    "entrypoints": [
-      "index.ts",
-      "client.ts",
-      "components/index.ts",
-      "context/index.ts",
-      "contracts/index.ts",
-      "hooks/index.ts",
-      "utils/index.ts"
-    ]
+  "scripts": {
+    "build": "bunchee",
+    "clean": "rimraf .turbo node_modules dist",
+    "dev": "bunchee --watch"
   },
   "peerDependencies": {
     "react": ">=17.0.0"
   },
   "peerDependenciesMeta": {},
   "dependencies": {
-    "@livepeer/core": "^2.1.9",
-    "@tanstack/query-async-storage-persister": "4.29.23",
-    "@tanstack/query-core": "4.29.23",
-    "@tanstack/react-query": "4.29.23",
-    "@tanstack/react-query-persist-client": "4.29.23",
-    "use-sync-external-store": "^1.2.0",
-    "zustand": "^4.3.9"
+    "@livepeer/core": "workspace:*",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  }
+  },
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

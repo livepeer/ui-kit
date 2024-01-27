@@ -1,5 +1,4 @@
 *.local
-.eslintcache
 .next
 .pnpm-debug.log*
 cache

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "target": "ESNext",
+    "lib": ["es2015", "dom"],
+    "strict": true,
+    "strictNullChecks": true
+  }
+}

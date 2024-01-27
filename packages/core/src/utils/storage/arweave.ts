@@ -59,7 +59,7 @@ export const parseArweaveTxId = (
 };
 
 const formatReturnHash = (hash: string, urlIndicators?: string) => {
-  const hashWithUrlIndicators = `${hash}${urlIndicators ?? ''}`;
+  const hashWithUrlIndicators = `${hash}${urlIndicators ?? ""}`;
   return {
     url: `ar://${hashWithUrlIndicators}`,
     id: hashWithUrlIndicators,

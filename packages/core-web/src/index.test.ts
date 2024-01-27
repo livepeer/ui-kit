@@ -1,9 +1,8 @@
-import { expect, it } from 'vitest';
+import { expect, it } from "vitest";
 
-// eslint-disable-next-line import/namespace
-import * as Exports from '.';
+import * as Exports from ".";
 
-it('should expose correct exports', () => {
+it("should expose correct exports", () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
       "ACCESS_CONTROL_ERROR_MESSAGE",
