@@ -2,16 +2,14 @@
   "name": "@livepeer/core-web",
   "description": "Livepeer's vanilla JS library.",
   "license": "MIT",
-  "version": "3.1.7",
+  "version": "3.1.9",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer-react.git",
     "directory": "packages/core-web"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -136,10 +134,5 @@
     "hls.js": "^1.5.2",
     "zustand": "^4.5.0"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }
