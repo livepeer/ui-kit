@@ -54,7 +54,7 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
       __scopeBroadcast,
     );
 
-    const { enabled, isWebRTCSupported } = useStore(
+    const { isWebRTCSupported } = useStore(
       broadcastContext.store,
       useShallow(({ enabled, __device }) => ({
         enabled,
@@ -63,8 +63,8 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
     );
 
     const shown = useMemo(
-      () => !hidden && !loading && !error && enabled && isWebRTCSupported,
-      [hidden, loading, error, enabled, isWebRTCSupported],
+      () => !hidden && !loading && !error && isWebRTCSupported,
+      [hidden, loading, error, isWebRTCSupported],
     );
 
     return (

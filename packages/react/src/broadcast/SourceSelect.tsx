@@ -7,7 +7,10 @@ import React, { useCallback } from "react";
 import { useStore } from "zustand";
 import { MediaScopedProps } from "../context";
 
-import { MediaDeviceInfoExtended } from "@livepeer/core-web/broadcast";
+import {
+  AudioDeviceId,
+  MediaDeviceInfoExtended,
+} from "@livepeer/core-web/broadcast";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "../shared/primitive";
@@ -23,7 +26,7 @@ interface SourceSelectProps
   /**
    * The type of media device to filter the list by.
    */
-  type: MediaDeviceKind;
+  type: "audioinput" | "videoinput";
 
   /**
    * Children which consume the media device info passed down via a function.
@@ -45,21 +48,36 @@ const SourceSelect = (
     __scopeBroadcast,
   );
 
-  const { mediaDevices, isSupported, mediaDeviceIds, requestMediaDeviceId } =
-    useStore(
-      broadcastContext.store,
-      useShallow(
-        ({ mediaDevices, __device, mediaDeviceIds, __controlsFunctions }) => ({
-          mediaDevices: mediaDevices?.filter((d) => d.kind === type) ?? null,
-          isSupported: __device.isMediaDevicesSupported,
-          requestMediaDeviceId: __controlsFunctions.requestMediaDeviceId,
-          mediaDeviceIds,
-        }),
-      ),
-    );
+  const {
+    video,
+    audio,
+    mediaDevices,
+    isSupported,
+    mediaDeviceIds,
+    requestMediaDeviceId,
+  } = useStore(
+    broadcastContext.store,
+    useShallow(
+      ({
+        video,
+        audio,
+        mediaDevices,
+        __device,
+        mediaDeviceIds,
+        __controlsFunctions,
+      }) => ({
+        video,
+        audio,
+        mediaDevices: mediaDevices?.filter((d) => d.kind === type) ?? null,
+        isSupported: __device.isMediaDevicesSupported,
+        requestMediaDeviceId: __controlsFunctions.requestMediaDeviceId,
+        mediaDeviceIds,
+      }),
+    ),
+  );
 
   const setMediaDeviceIdComposed = useCallback(
-    (deviceId: string) => {
+    (deviceId: AudioDeviceId) => {
       requestMediaDeviceId(deviceId, type);
     },
     [requestMediaDeviceId, type],
@@ -68,6 +86,7 @@ const SourceSelect = (
   return (
     isSupported && (
       <SelectPrimitive.SelectRoot
+        disabled={type === "audioinput" ? !audio : !video}
         {...controlsProps}
         value={mediaDeviceIds[type] ?? undefined}
         onValueChange={composeEventHandlers(

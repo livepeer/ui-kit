@@ -8,8 +8,8 @@ import { useStore } from "zustand";
 import { MediaScopedProps, useMediaContext } from "../context";
 
 import { useShallow } from "zustand/react/shallow";
-import * as Radix from "./primitive";
-import { noPropagate } from "./utils";
+import * as Radix from "../shared/primitive";
+import { noPropagate } from "../shared/utils";
 
 const MUTE_TRIGGER_NAME = "MuteTrigger";
 

@@ -215,19 +215,9 @@ export enum PlaybackInfoType {
   Vod = "vod",
   Recording = "recording",
 }
-export enum Hrn {
-  HlsTs = "HLS (TS)",
-  Mp4 = "MP4",
-  WebRTCH264 = "WebRTC (H264)",
-}
-export enum PlaybackInfoSchemasType {
-  Html5ApplicationVndAppleMpegurl = "html5/application/vnd.apple.mpegurl",
-  Html5VideoMp4 = "html5/video/mp4",
-  Html5VideoH264 = "html5/video/h264",
-}
 export interface Source {
-  hrn: Hrn;
-  type: PlaybackInfoSchemasType;
+  hrn: string;
+  type: string;
   url: string;
   size?: number;
   width?: number;

@@ -1,9 +1,5 @@
 import { omit } from "@livepeer/core";
-import {
-  DEFAULT_VOLUME_LEVEL,
-  MediaControllerStore,
-  getBoundedVolume,
-} from "@livepeer/core/media";
+import { MediaControllerStore } from "@livepeer/core/media";
 import { ClientStorage } from "@livepeer/core/storage";
 import {
   createJSONStorage,
@@ -12,6 +8,7 @@ import {
 } from "zustand/middleware";
 import { StoreApi, createStore } from "zustand/vanilla";
 
+import { warn } from "./utils";
 import { getRTCPeerConnectionConstructor } from "./webrtc/shared";
 import {
   attachMediaStreamToPeerConnection,
@@ -27,15 +24,12 @@ const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export type MediaDeviceIds = {
-  [key in MediaDeviceKind]: string | null;
-} & {
-  screeninput: string | null;
-};
+export type AudioDeviceId = "default" | `ID${string}`;
+export type VideoDeviceId = "default" | "screen" | `ID${string}`;
 
-export type RTCRtpSenders = {
-  audio: RTCRtpSender | null;
-  video: RTCRtpSender | null;
+export type MediaDeviceIds = {
+  audioinput: AudioDeviceId;
+  videoinput: VideoDeviceId;
 };
 
 export type MediaDeviceInfoExtended = Omit<
@@ -81,23 +75,23 @@ export type BroadcastDeviceInformation = {
 };
 
 export type BroadcastControlsState = {
-  /** The last time that display media was requested */
-  requestedDisplayMediaLastTime: number;
-  /** The last time that a force update was requested */
-  requestedForceUpdateLastTime: number;
+  /** The last time that a force renegotiation was requested (this is triggered on an error) */
+  requestedForceRenegotiateLastTime: number;
   /** The last time that the device list was requested */
   requestedUpdateDeviceListLastTime: number;
-  /** The last time that the user media was requested */
-  requestedUserMediaLastTime: number;
-  /** The requested audio input device ID */
-  requestedAudioInputDeviceId: string | null;
-  /** The requested video input device ID */
-  requestedVideoInputDeviceId: string | null;
 
-  /** If the volume is muted */
-  muted: boolean;
-  /** The volume, doesn't change when muted */
-  volume: number;
+  /** The requested audio input device ID */
+  requestedAudioInputDeviceId: AudioDeviceId;
+  /** The requested video input device ID */
+  requestedVideoInputDeviceId: VideoDeviceId | null;
+
+  /** The previous video input device ID, used when screenshare ends */
+  previousVideoInputDeviceId: VideoDeviceId | null;
+
+  /**
+   * The internal list of the current media devices from the browser.
+   */
+  mediaDevices: MediaDeviceInfo[] | null;
 };
 
 export type InitialBroadcastProps = {
@@ -107,16 +101,31 @@ export type InitialBroadcastProps = {
   aspectRatio: number | null;
 
   /**
+   * Whether audio is initially enabled for the broadcast.
+   *
+   * Set to false to initialize the broadcast to not request an audio track.
+   */
+  audio: boolean;
+
+  /**
+   * The creatorId for the current broadcast.
+   */
+  creatorId: string | null;
+
+  /**
+   * Whether hotkeys are enabled. Defaults to `true`. Allows users to use keyboard shortcuts for broadcast control.
+   *
+   * This is highly recommended to adhere to ARIA guidelines.
+   */
+  hotkeys: boolean;
+
+  /**
    * The ingest URL for the WHIP WebRTC broadcast.
    *
    * Defaults to Livepeer Studio (`https://playback.livepeer.studio/webrtc`).
    */
   ingestUrl: string;
-  /** The creatorId for the broadcast component */
-  creatorId: string | null;
 
-  /** The volume that was passed in to the Player */
-  volume: number;
   /**
    * Whether the WebRTC stream should attempt to initialize immediately after the user grants
    * permission to their video/audio input.
@@ -125,6 +134,13 @@ export type InitialBroadcastProps = {
    * media to the server.
    */
   forceEnabled?: boolean;
+
+  /**
+   * Whether video is initially enabled for the broadcast.
+   *
+   * Set to false to initialize the broadcast to not request a video track.
+   */
+  video: boolean;
 };
 
 const omittedKeys = [
@@ -144,25 +160,36 @@ export type BroadcastCallbackState = Omit<
 >;
 
 export type BroadcastAriaText = {
+  audioTrigger: string;
   start: string;
   screenshareTrigger: string;
   videoTrigger: string;
 };
 
 export type BroadcastState = {
-  /** The ARIA text for the current state */
+  /** The ARIA text for the current state. */
   aria: BroadcastAriaText;
+
+  /** If the broadcast audio track is turned on. */
+  audio: boolean;
 
   /** Whether the broadcast is currently enabled, or in "preview" mode. */
   enabled: boolean;
 
+  /** Whether the broadcast store is hydrated. */
+  hydrated: boolean;
+
   /**
-   * A list of the current media devices. This will change when permissions change.
+   * A list of the current media devices. This will change when permissions change, or when
+   * a user starts sharing their display.
    */
   mediaDevices: MediaDeviceInfoExtended[] | null;
 
   /** The MediaStream for the current broadcast. */
   mediaStream: MediaStream | null;
+
+  /** Whether the broadcast component is mounted. */
+  mounted: boolean;
 
   /** The RTCPeerConnection for the current broadcast. */
   peerConnection: RTCPeerConnection | null;
@@ -172,11 +199,8 @@ export type BroadcastState = {
    */
   streamKey: string | null;
 
-  /** If video is enabled (only applies to broadcasting) */
-  video: boolean | null;
-
-  /** Current volume of the broadcast. 0 if it is muted. */
-  volume: number;
+  /** If the broadcast video track is turned on. */
+  video: boolean;
 
   /** The currently selected media devices. */
   mediaDeviceIds: MediaDeviceIds;
@@ -190,22 +214,26 @@ export type BroadcastState = {
 
   __controlsFunctions: {
     requestDeviceListInfo: () => void;
-    requestDisplayMedia: () => void;
-    requestForceUpdate: () => void;
+    requestForceRenegotiate: () => void;
     requestMediaDeviceId: (
-      deviceId: string,
+      deviceId: AudioDeviceId,
       type: keyof MediaDeviceIds,
     ) => void;
-    requestToggleMute: () => void;
-    requestUserMedia: () => void;
-    requestVolume: (volume: number) => void;
+    rotateAudioSource: () => void;
+    rotateVideoSource: () => void;
+    setInitialState: (
+      ids: MediaDeviceIds,
+      audio: boolean,
+      video: boolean,
+    ) => void;
     setPeerConnection: (peerConnection: RTCPeerConnection) => void;
-    setMediaDeviceId: (deviceId: string, type: keyof MediaDeviceIds) => void;
+    setMediaDeviceIds: (mediaDevices: Partial<MediaDeviceIds>) => void;
     setStreamKey: (streamKey: string) => void;
-    setVolume: (volume: number) => void;
+    toggleAudio: () => void;
+    toggleDisplayMedia: () => void;
     toggleEnabled: () => void;
     toggleVideo: () => void;
-    updateDeviceList: (mediaDevices: MediaDeviceInfoExtended[]) => void;
+    updateDeviceList: (mediaDevices: MediaDeviceInfo[]) => void;
     updateMediaStream: (mediaStream: MediaStream) => void;
   };
 };
@@ -227,6 +255,9 @@ export type BroadcastStore = StoreApi<BroadcastState> & {
       },
     ): () => void;
   };
+  persist: {
+    onFinishHydration: (fn: (state: BroadcastState) => void) => () => void;
+  };
 };
 
 export const createBroadcastStore = ({
@@ -239,20 +270,14 @@ export const createBroadcastStore = ({
   device: BroadcastDeviceInformation;
   storage: ClientStorage;
   initialProps: Partial<InitialBroadcastProps>;
-}): BroadcastStore => {
-  const initialVolume = getBoundedVolume(
-    initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
-  );
-
+}): { store: BroadcastStore; destroy: () => void } => {
   const initialControls: BroadcastControlsState = {
-    volume: initialVolume,
-    muted: initialVolume === 0,
-    requestedUserMediaLastTime: 0,
     requestedUpdateDeviceListLastTime: 0,
-    requestedForceUpdateLastTime: 0,
-    requestedDisplayMediaLastTime: 0,
-    requestedAudioInputDeviceId: null,
+    requestedForceRenegotiateLastTime: 0,
+    requestedAudioInputDeviceId: "default",
     requestedVideoInputDeviceId: null,
+    previousVideoInputDeviceId: null,
+    mediaDevices: null,
   };
 
   const store = createStore<
@@ -265,48 +290,46 @@ export const createBroadcastStore = ({
     subscribeWithSelector(
       persist(
         (set, get) => ({
-          volume: initialVolume,
+          audio: initialProps?.audio !== false,
+          video: initialProps?.video !== false,
+
+          hydrated: false,
+          mounted: false,
 
           enabled: initialProps?.forceEnabled ?? false,
 
           mediaStream: null,
-
           mediaDevices: null,
-
           peerConnection: null,
 
           streamKey: streamKey ?? null,
 
-          /** If video is enabled (only applies to broadcasting) */
-          video: null,
-
           mediaDeviceIds: {
-            audioinput: null,
-            videoinput: null,
-            audiooutput: null,
-            screeninput: null,
-          },
-
-          senders: {
-            audio: null,
-            video: null,
+            audioinput: "default",
+            videoinput: "default",
           },
 
           aria: {
+            audioTrigger:
+              initialProps?.audio === false
+                ? "Turn audio on (space)"
+                : "Turn audio off (space)",
             start: "Start broadcasting (b)",
-            screenshareTrigger: "Share screen ()",
-            videoTrigger: "Turn video off (v)",
+            screenshareTrigger: "Share screen (d)",
+            videoTrigger:
+              initialProps?.video === false
+                ? "Turn video on (v)"
+                : "Turn video off (v)",
           },
 
           __initialProps: {
             aspectRatio: initialProps?.aspectRatio ?? null,
-
-            volume: initialVolume ?? null,
-
+            audio: initialProps?.video ?? true,
             creatorId: initialProps.creatorId ?? null,
-
-            ingestUrl: initialProps?.ingestUrl ?? defaultIngestUrl,
             forceEnabled: initialProps?.forceEnabled ?? false,
+            hotkeys: initialProps.hotkeys ?? true,
+            ingestUrl: initialProps?.ingestUrl ?? defaultIngestUrl,
+            video: initialProps?.video ?? true,
           },
 
           __device: device,
@@ -331,19 +354,127 @@ export const createBroadcastStore = ({
                 streamKey,
               })),
 
-            requestForceUpdate: () =>
+            requestForceRenegotiate: () =>
               set(({ __controls }) => ({
                 __controls: {
                   ...__controls,
-                  requestedForceUpdateLastTime: Date.now(),
+                  requestedForceRenegotiateLastTime: Date.now(),
                 },
               })),
 
-            requestDisplayMedia: () =>
+            rotateAudioSource: () =>
+              set(({ mediaDeviceIds, mediaDevices, __controls }) => {
+                if (!mediaDevices) {
+                  warn(
+                    "Could not rotate audio source, no audio media devices detected.",
+                  );
+
+                  return {};
+                }
+
+                const audioDevices = mediaDevices.filter(
+                  (m) => m.kind === "audioinput",
+                );
+
+                const currentAudioInputIndex = audioDevices.findIndex(
+                  (s) => s.deviceId === mediaDeviceIds.audioinput,
+                );
+
+                // Get the next audio input device
+                const nextAudioInputDevice =
+                  audioDevices[
+                    (currentAudioInputIndex + 1) % audioDevices.length
+                  ] ?? null;
+
+                return {
+                  __controls: {
+                    ...__controls,
+                    requestedAudioInputDeviceId:
+                      nextAudioInputDevice.deviceId as AudioDeviceId,
+                  },
+                };
+              }),
+
+            rotateVideoSource: () =>
+              set(({ mediaDeviceIds, mediaDevices, __controls }) => {
+                if (!mediaDevices) {
+                  warn(
+                    "Could not rotate video source, no video media devices detected.",
+                  );
+
+                  return {};
+                }
+
+                const videoDevices = mediaDevices.filter(
+                  (m) => m.kind === "videoinput",
+                );
+
+                const currentVideoInputIndex = videoDevices.findIndex(
+                  (s) => s.deviceId === mediaDeviceIds.videoinput,
+                );
+
+                // Get the next video input device
+                const nextVideoInputDevice =
+                  videoDevices[
+                    (currentVideoInputIndex + 1) % videoDevices.length
+                  ] ?? null;
+
+                return {
+                  __controls: {
+                    ...__controls,
+                    requestedVideoInputDeviceId:
+                      nextVideoInputDevice.deviceId as VideoDeviceId,
+                  },
+                };
+              }),
+
+            toggleDisplayMedia: () =>
+              set(({ __controls, mediaDeviceIds, aria }) => {
+                console.log({
+                  prev: __controls.previousVideoInputDeviceId,
+                  mediaDeviceIds,
+                });
+
+                if (mediaDeviceIds.videoinput === "screen") {
+                  return {
+                    aria: {
+                      ...aria,
+                      screenshareTrigger: "Share screen (d)",
+                    },
+                    __controls: {
+                      ...__controls,
+                      requestedVideoInputDeviceId:
+                        __controls.previousVideoInputDeviceId,
+                    },
+                  };
+                }
+
+                return {
+                  aria: {
+                    ...aria,
+                    screenshareTrigger: "Stop sharing screen (d)",
+                  },
+                  __controls: {
+                    ...__controls,
+                    previousVideoInputDeviceId: mediaDeviceIds.videoinput,
+                    requestedVideoInputDeviceId: "screen",
+                  },
+                };
+              }),
+
+            setInitialState: (deviceIds, audio, video) =>
               set(({ __controls }) => ({
+                hydrated: true,
+                audio,
+                video,
                 __controls: {
                   ...__controls,
-                  requestedDisplayMediaLastTime: Date.now(),
+                  requestedAudioInputDeviceId:
+                    deviceIds?.audioinput ?? "default",
+                  requestedVideoInputDeviceId:
+                    deviceIds?.videoinput === "screen"
+                      ? "default"
+                      : deviceIds?.videoinput ?? "default",
                 },
               })),
 
@@ -363,17 +494,20 @@ export const createBroadcastStore = ({
                 },
               })),
 
-            setMediaDeviceId: (deviceId, type) =>
+            setMediaDeviceIds: (newMediaDeviceIds) =>
               set(({ mediaDeviceIds }) => ({
                 mediaDeviceIds: {
                   ...mediaDeviceIds,
-                  [type]: deviceId,
+                  ...newMediaDeviceIds,
                 },
               })),
 
             updateDeviceList: (mediaDevices) =>
-              set(() => ({
-                mediaDevices,
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  mediaDevices,
+                },
               })),
 
             requestDeviceListInfo: () =>
@@ -381,14 +515,6 @@ export const createBroadcastStore = ({
                 __controls: {
                   ...__controls,
                   requestedUpdateDeviceListLastTime: Date.now(),
-                },
-              })),
-
-            requestUserMedia: () =>
-              set(({ __controls }) => ({
-                __controls: {
-                  ...__controls,
-                  requestedUserMediaLastTime: Date.now(),
                 },
               })),
 
@@ -403,31 +529,14 @@ export const createBroadcastStore = ({
                 },
               })),
 
-            requestVolume: (newVolume) =>
-              set(({ __controls }) => ({
-                volume: getBoundedVolume(newVolume),
-                __controls: {
-                  ...__controls,
-                  volume:
-                    newVolume === 0 ? newVolume : getBoundedVolume(newVolume),
-                  muted: newVolume === 0,
-                },
-              })),
-            setVolume: (newVolume) =>
-              set(({ __controls }) => ({
-                volume: getBoundedVolume(newVolume),
-                __controls: {
-                  ...__controls,
-                  volume: getBoundedVolume(newVolume),
-                },
-              })),
-
-            requestToggleMute: () =>
-              set(({ volume, __controls }) => ({
-                volume: volume !== 0 ? 0 : __controls.volume,
-                __controls: {
-                  ...__controls,
-                  muted: !__controls.muted,
+            toggleAudio: () =>
+              set(({ audio, aria }) => ({
+                audio: !audio,
+                aria: {
+                  ...aria,
+                  audioTrigger: !audio
+                    ? "Turn audio off (space)"
+                    : "Turn audio on (space)",
                 },
               })),
 
@@ -446,9 +555,11 @@ export const createBroadcastStore = ({
         {
           name: "livepeer-broadcast-controller",
           version: 1,
-          // since these values are persisted across media, only persist volume
-          partialize: ({ volume }) => ({
-            volume,
+          // these values are persisted across broadcasts
+          partialize: ({ audio, video, mediaDeviceIds }) => ({
+            audio,
+            video,
+            mediaDeviceIds,
           }),
           storage: createJSONStorage(() => storage),
         },
@@ -456,13 +567,29 @@ export const createBroadcastStore = ({
     ),
   );
 
-  return store;
+  const destroy = store.persist.onFinishHydration(
+    ({ mediaDeviceIds, audio, video }) => {
+      store
+        .getState()
+        .__controlsFunctions.setInitialState(mediaDeviceIds, audio, video);
+    },
+  );
+
+  return { store, destroy };
 };
 
 const MEDIA_BROADCAST_INITIALIZED_ATTRIBUTE =
   "data-livepeer-broadcast-initialized";
 
-const allKeyTriggers = ["KeyL", "KeyV", "KeyB", "Space"] as const;
+const allKeyTriggers = [
+  "KeyL",
+  "KeyV",
+  "KeyB",
+  "Space",
+  "KeyD",
+  "KeyC",
+  "KeyM",
+] as const;
 type KeyTrigger = (typeof allKeyTriggers)[number];
 
 export const addBroadcastEventListeners = (
@@ -478,11 +605,17 @@ export const addBroadcastEventListeners = (
 
     if (allKeyTriggers.includes(code)) {
       if (code === "Space" || code === "KeyL") {
-        store.getState().__controlsFunctions.requestToggleMute();
+        store.getState().__controlsFunctions.toggleAudio();
       } else if (code === "KeyV") {
         store.getState().__controlsFunctions.toggleVideo();
       } else if (code === "KeyB") {
         store.getState().__controlsFunctions.toggleEnabled();
+      } else if (code === "KeyD") {
+        store.getState().__controlsFunctions.toggleDisplayMedia();
+      } else if (code === "KeyC") {
+        store.getState().__controlsFunctions.rotateVideoSource();
+      } else if (code === "KeyM") {
+        store.getState().__controlsFunctions.rotateAudioSource();
       }
     }
   };
@@ -499,7 +632,7 @@ export const addBroadcastEventListeners = (
 
   if (element) {
     if (parentElementOrElement) {
-      if (mediaStore.getState().__initialProps.hotkeys) {
+      if (store.getState().__initialProps.hotkeys) {
         parentElementOrElement.addEventListener("keyup", onKeyUp);
         parentElementOrElement.setAttribute("tabindex", "0");
       }
@@ -511,19 +644,25 @@ export const addBroadcastEventListeners = (
   // add effects
   const removeEffectsFromStore = addEffectsToStore(element, store, mediaStore);
 
-  const destroy = () => {
-    parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
-
-    mediaDevices?.removeEventListener?.("devicechange", onDeviceChange);
-
-    removeEffectsFromStore?.();
-
-    element?.removeAttribute?.(MEDIA_BROADCAST_INITIALIZED_ATTRIBUTE);
-  };
+  const removeHydrationListener = store.persist.onFinishHydration(
+    ({ mediaDeviceIds, audio, video }) => {
+      store
+        .getState()
+        .__controlsFunctions.setInitialState(mediaDeviceIds, audio, video);
+    },
+  );
 
   return {
     destroy: () => {
-      destroy?.();
+      removeHydrationListener?.();
+
+      parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
+
+      mediaDevices?.removeEventListener?.("devicechange", onDeviceChange);
+
+      removeEffectsFromStore?.();
+
+      element?.removeAttribute?.(MEDIA_BROADCAST_INITIALIZED_ATTRIBUTE);
     },
   };
 };
@@ -540,13 +679,44 @@ const addEffectsToStore = (
   store: BroadcastStore,
   mediaStore: MediaControllerStore,
 ) => {
+  /** MEDIA STORE SYNC LISTENERS - these one-way synchronize the playback state with the broadcast state */
+
+  // Subscribe to error count
+  const destroyErrorCount = mediaStore.subscribe(
+    ({ errorCount }) => errorCount,
+    async (errorCount) => {
+      if (errorCount > 0) {
+        const delayTime = 500 * 2 ** (errorCount - 1);
+        await delay(delayTime);
+
+        store.getState().__controlsFunctions.requestForceRenegotiate();
+      }
+    },
+  );
+
+  // Subscribe to sync the mounted states
+  const destroyMediaSyncMounted = mediaStore.subscribe(
+    ({ mounted }) => mounted,
+    async (mounted) => {
+      if (mounted) {
+        console.log("mounted!");
+
+        // we use setState here so it's clear this isn't an external function
+        store.setState({ mounted: true });
+      }
+    },
+  );
+
+  /** STORE LISTENERS - handle broadcast state */
+
   // Subscribe to request user media
   const destroyWhip = store.subscribe(
     ({ enabled, streamKey, __controls, __initialProps }) => ({
       enabled,
       ingestUrl: __initialProps.ingestUrl,
       streamKey,
-      requestedForceUpdateLastTime: __controls.requestedForceUpdateLastTime,
+      requestedForceRenegotiateLastTime:
+        __controls.requestedForceRenegotiateLastTime,
     }),
     async ({ enabled, streamKey, ingestUrl }) => {
       await cleanupWhip?.();
@@ -555,13 +725,7 @@ const addEffectsToStore = (
         return;
       }
 
-      const unmounted = false;
-
-      // if (!mediaStream) {
-      //   warn("No media stream detected.");
-
-      //   return;
-      // }
+      let unmounted = false;
 
       const onErrorComposed = (err: Error) => {
         if (!unmounted) {
@@ -589,14 +753,153 @@ const addEffectsToStore = (
       });
 
       cleanupWhip = () => {
+        unmounted = true;
         destroy?.();
       };
     },
     {
       equalityFn: (a, b) =>
-        a.requestedForceUpdateLastTime === b.requestedForceUpdateLastTime &&
+        a.requestedForceRenegotiateLastTime ===
+          b.requestedForceRenegotiateLastTime &&
         a.streamKey === b.streamKey &&
         a.enabled === b.enabled,
+    },
+  );
+
+  // Subscribe to request user media
+  const destroyRequestUserMedia = store.subscribe(
+    (state) => ({
+      hydrated: state.hydrated,
+      mounted: state.mounted,
+      video: state.video,
+      audio: state.audio,
+      requestedAudioDeviceId: state.__controls.requestedAudioInputDeviceId,
+      requestedVideoDeviceId: state.__controls.requestedVideoInputDeviceId,
+    }),
+    async ({
+      hydrated,
+      mounted,
+      audio,
+      video,
+      requestedAudioDeviceId,
+      requestedVideoDeviceId,
+    }) => {
+      if (!mounted || !hydrated) {
+        console.log("not mounted...");
+        return;
+      }
+
+      if (!audio && !video) {
+        warn("Audio and video are both not enabled.");
+
+        return;
+      }
+
+      const stream = await (requestedVideoDeviceId === "screen"
+        ? getDisplayMedia({
+            // for now, only the microphone audio track is supported - we don't support multiple
+            // discrete audio tracks
+            audio: false,
+
+            // we assume that if the user is requested to share screen, they want to enable video,
+            // and we don't listen to the `video` enabled state
+            video: true,
+          })
+        : getUserMedia({
+            audio:
+              audio &&
+              requestedAudioDeviceId &&
+              requestedAudioDeviceId !== "default"
+                ? {
+                    deviceId: {
+                      // we pass ideal here, so we don't get overconstrained errors
+                      ideal: requestedAudioDeviceId,
+                    },
+                  }
+                : Boolean(audio),
+            video:
+              video &&
+              requestedVideoDeviceId &&
+              requestedVideoDeviceId !== "default"
+                ? {
+                    deviceId: {
+                      // we pass ideal here, so we don't get overconstrained errors
+                      ideal: requestedVideoDeviceId,
+                    },
+                  }
+                : Boolean(video),
+          }));
+
+      if (stream) {
+        // we get the device ID from the MediaStream and update those
+        const allTracks = stream?.getTracks() ?? [];
+
+        const allAudioDeviceIds = allTracks
+          .filter((track) => track.kind === "audio")
+          .map((track) => track?.getSettings()?.deviceId);
+        const allVideoDeviceIds = allTracks
+          .filter((track) => track.kind === "video")
+          .map((track) => track?.getSettings()?.deviceId);
+
+        const firstAudioDeviceId = (allAudioDeviceIds?.[0] ??
+          null) as AudioDeviceId | null;
+        const firstVideoDeviceId = (allVideoDeviceIds?.[0] ??
+          null) as VideoDeviceId | null;
+
+        store.getState().__controlsFunctions.setMediaDeviceIds({
+          ...(firstAudioDeviceId ? { audioinput: firstAudioDeviceId } : {}),
+          ...(firstVideoDeviceId
+            ? {
+                videoinput:
+                  requestedVideoDeviceId === "screen"
+                    ? "screen"
+                    : firstVideoDeviceId,
+              }
+            : {}),
+        });
+
+        store.getState().__controlsFunctions.updateMediaStream(stream);
+      }
+    },
+    {
+      equalityFn: (a, b) =>
+        a.hydrated === b.hydrated &&
+        a.mounted === b.mounted &&
+        a.requestedAudioDeviceId === b.requestedAudioDeviceId &&
+        a.requestedVideoDeviceId === b.requestedVideoDeviceId,
+    },
+  );
+
+  // Subscribe to audio & video enabled
+  const destroyAudioVideoEnabled = store.subscribe(
+    (state) => ({
+      audio: state.audio,
+      video: state.video,
+      mediaStream: state.mediaStream,
+    }),
+    async ({ audio, video, mediaStream }) => {
+      if (mediaStream) {
+        // we get the device ID from the MediaStream and update those
+        const allTracks = mediaStream?.getTracks() ?? [];
+
+        for (const audioTrack of allTracks.filter(
+          (track) => track.kind === "audio",
+        )) {
+          audioTrack.enabled = Boolean(audio);
+        }
+
+        for (const videoTrack of allTracks.filter(
+          (track) => track.kind === "video",
+        )) {
+          videoTrack.enabled = Boolean(video);
+        }
+      }
+    },
+    {
+      equalityFn: (a, b) =>
+        a.audio === b.audio &&
+        a.video === b.video &&
+        a.mediaStream?.id === b.mediaStream?.id,
     },
   );
 
@@ -620,38 +923,6 @@ const addEffectsToStore = (
     },
   );
 
-  // Subscribe to error count & mounted
-  const destroyErrorCount = mediaStore.subscribe(
-    ({ errorCount, mounted }) => ({ errorCount, mounted }),
-    async ({ mounted, errorCount }) => {
-      if (!mounted) {
-        return;
-      }
-
-      if (errorCount > 0) {
-        const delayTime = 500 * 2 ** (errorCount - 1);
-        await delay(delayTime);
-      }
-
-      store.getState().__controlsFunctions.requestForceUpdate();
-    },
-    {
-      equalityFn: (a, b) =>
-        a.mounted === b.mounted && a.errorCount === b.errorCount,
-    },
-  );
-
-  // Subscribe to mounted
-  const destroyMounted = mediaStore.subscribe(
-    ({ mounted }) => mounted,
-    async (mounted) => {
-      if (mounted) {
-        store.getState().__controlsFunctions.requestDeviceListInfo();
-        store.getState().__controlsFunctions.requestUserMedia();
-      }
-    },
-  );
-
   // Subscribe to mediastream changes
   const destroyMediaStream = store.subscribe(
     (state) => state.mediaStream,
@@ -665,13 +936,15 @@ const addEffectsToStore = (
           mediaStore.getState().__controlsFunctions.togglePlay(true);
         };
 
-        element.addEventListener("loadedmetadata", togglePlay, { once: true });
+        element.addEventListener("loadedmetadata", togglePlay);
 
         cleanupMediaStream = () => {
           element?.removeEventListener?.("loadedmetadata", togglePlay);
 
           element.srcObject = null;
         };
+      } else {
+        element.srcObject = null;
       }
     },
     {
@@ -680,29 +953,41 @@ const addEffectsToStore = (
   );
 
   // Subscribe to media devices
-  const destroyDisplayMedia = store.subscribe(
-    (state) => state.__controls.requestedDisplayMediaLastTime,
-    async () => {
-      const displayMedia = await getDisplayMedia({
-        video: true,
-        audio: true,
-      });
-
-      if (displayMedia) {
-        store.getState().__controlsFunctions.updateMediaStream(displayMedia);
-      }
-    },
-  );
-
-  // Subscribe to media devices
   const destroyUpdateDeviceList = store.subscribe(
-    (state) => state.__controls.requestedUpdateDeviceListLastTime,
-    async () => {
+    (state) => ({
+      mounted: state.mounted,
+      requestedUpdateDeviceListLastTime:
+        state.__controls.requestedUpdateDeviceListLastTime,
+    }),
+    async ({ mounted }) => {
+      if (!mounted) {
+        return;
+      }
+
       const mediaDevices = getMediaDevices();
       const devices = await mediaDevices?.enumerateDevices();
 
       if (devices) {
-        const extendedDevices: MediaDeviceInfoExtended[] = devices.map(
+        store.getState().__controlsFunctions.updateDeviceList(devices);
+      }
+    },
+    {
+      equalityFn: (a, b) =>
+        a.mounted === b.mounted &&
+        a.requestedUpdateDeviceListLastTime ===
+          b.requestedUpdateDeviceListLastTime,
+    },
+  );
+
+  // Subscribe to media devices and map to friendly names
+  const destroyMapDeviceListToFriendly = store.subscribe(
+    (state) => ({
+      mediaDeviceIds: state.mediaDeviceIds,
+      mediaDevices: state.__controls.mediaDevices,
+    }),
+    async ({ mediaDeviceIds, mediaDevices }) => {
+      if (mediaDevices) {
+        const extendedDevices: MediaDeviceInfoExtended[] = mediaDevices.map(
           (device, i) => ({
             deviceId: device.deviceId,
             kind: device.kind,
@@ -711,7 +996,11 @@ const addEffectsToStore = (
             friendlyName:
               device.label ??
               `${
-                device.kind === "audioinput" ? "Audio Source" : "Video Source"
+                device.kind === "audioinput"
+                  ? "Audio Source"
+                  : device.kind === "audiooutput"
+                    ? "Audio Output"
+                    : "Video Source"
               } ${i + 1} (${
                 device.deviceId === "default"
                   ? "default"
@@ -720,83 +1009,36 @@ const addEffectsToStore = (
           }),
         );
 
-        store.getState().__controlsFunctions.updateDeviceList(extendedDevices);
-      }
-    },
-  );
+        const isScreenshare = mediaDeviceIds.videoinput === "screen";
 
-  // Subscribe to request user media
-  const destroyRequestUserMedia = store.subscribe(
-    (state) => ({
-      lastTime: state.__controls.requestedUserMediaLastTime,
-      requestedAudioDeviceId: state.__controls.requestedAudioInputDeviceId,
-      requestedVideoDeviceId: state.__controls.requestedVideoInputDeviceId,
-    }),
-    async ({ requestedAudioDeviceId, requestedVideoDeviceId }) => {
-      const stream = await getUserMedia({
-        video: requestedVideoDeviceId
-          ? {
-              deviceId: requestedVideoDeviceId,
-            }
-          : true,
-        audio: requestedAudioDeviceId
-          ? {
-              deviceId: requestedAudioDeviceId,
-            }
-          : true,
-      });
-
-      const allTracks = stream?.getTracks() ?? [];
-
-      const allAudioDeviceIds = allTracks
-        .filter((track) => track.kind === "audio")
-        .map((track) => track?.getSettings()?.deviceId);
-      const allVideoDeviceIds = allTracks
-        .filter((track) => track.kind === "video")
-        .map((track) => track?.getSettings()?.deviceId);
-
-      const firstAudioDeviceId = allAudioDeviceIds?.[0] ?? null;
-      const firstVideoDeviceId = allVideoDeviceIds?.[0] ?? null;
-
-      const deviceIds = stream
-        ?.getTracks()
-        .map((track) => track?.getSettings()?.deviceId);
-
-      console.log({ stream, deviceIds, tracks: stream?.getTracks() });
-
-      if (stream) {
-        store.getState().__controlsFunctions.updateMediaStream(stream);
-        if (firstAudioDeviceId) {
-          store
-            .getState()
-            .__controlsFunctions.setMediaDeviceId(
-              firstAudioDeviceId,
-              "audioinput",
-            );
+        if (isScreenshare) {
+          extendedDevices.push({
+            deviceId: mediaDeviceIds.videoinput,
+            label: "Screen share",
+            groupId: "none",
+            kind: "videoinput",
+            friendlyName: "Screen share",
+          });
         }
-        if (firstVideoDeviceId) {
-          store
-            .getState()
-            .__controlsFunctions.setMediaDeviceId(
-              firstVideoDeviceId,
-              "videoinput",
-            );
-        }
+
+        store.setState({
+          mediaDevices: extendedDevices,
+        });
       }
     },
     {
       equalityFn: (a, b) =>
-        a.lastTime === b.lastTime &&
-        a.requestedAudioDeviceId === b.requestedAudioDeviceId &&
-        a.requestedVideoDeviceId === b.requestedVideoDeviceId,
+        a.mediaDeviceIds === b.mediaDeviceIds &&
+        a.mediaDevices === b.mediaDevices,
     },
   );
 
   return () => {
-    destroyDisplayMedia?.();
+    destroyAudioVideoEnabled?.();
     destroyErrorCount?.();
+    destroyMapDeviceListToFriendly?.();
     destroyMediaStream?.();
-    destroyMounted?.();
+    destroyMediaSyncMounted?.();
     destroyPeerConnectionAndMediaStream?.();
     destroyRequestUserMedia?.();
     destroyUpdateDeviceList?.();

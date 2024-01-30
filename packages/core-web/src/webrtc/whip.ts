@@ -9,23 +9,6 @@ import {
 export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
   "data-livepeer-video-whip-initialized";
 
-// export type WebRTCTrackConstraints = {
-//   /**
-//    * The constraints applied to the broadcast media track.
-//    *
-//    * https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
-//    */
-//   streamConstraints?: MediaStreamConstraints;
-//   /**
-//    * The device ID used to constrain the video track.
-//    */
-//   videoDeviceId?: string;
-//   /**
-//    * The device ID used to constrain the video track.
-//    */
-//   audioDeviceId?: string;
-// };
-
 export type WebRTCConnectedPayload = {
   stream: MediaStream;
   videoTransceiver: RTCRtpTransceiver;
@@ -218,7 +201,11 @@ export const getUserMedia = (constraints?: MediaStreamConstraints) => {
 };
 
 export const getMediaDevices = () => {
-  if (typeof navigator === "undefined" || !navigator.mediaDevices) {
+  if (typeof navigator === "undefined") {
+    return null;
+  }
+
+  if (!navigator.mediaDevices) {
     warn(
       "mediaDevices was not found in this environment. Check if you are in a secure (HTTPS) context - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia",
     );

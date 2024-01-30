@@ -4,6 +4,10 @@ export {
 } from "./player/ClipTrigger";
 export { Controls, type ControlsProps } from "./player/Controls";
 export {
+  MuteTrigger,
+  type MuteTriggerProps,
+} from "./player/MuteTrigger";
+export {
   PlayPauseTrigger,
   PlayingIndicator,
   type PlayPauseTriggerProps,
@@ -34,6 +38,12 @@ export {
   type VideoQualitySelectProps,
 } from "./player/VideoQualitySelect";
 export {
+  Volume,
+  VolumeIndicator,
+  type VolumeIndicatorProps,
+  type VolumeProps,
+} from "./player/Volume";
+export {
   Container,
   type ContainerProps,
 } from "./shared/Container";
@@ -55,10 +65,6 @@ export {
   LoadingIndicator,
   type LoadingIndicatorProps,
 } from "./shared/LoadingIndicator";
-export {
-  MuteTrigger,
-  type MuteTriggerProps,
-} from "./shared/MuteTrigger";
 export {
   PictureInPictureTrigger,
   type PictureInPictureTriggerProps,
@@ -107,9 +113,3 @@ export {
   type TrackProps,
 } from "./shared/Slider";
 export { Time, type TimeProps } from "./shared/Time";
-export {
-  Volume,
-  VolumeIndicator,
-  type VolumeIndicatorProps,
-  type VolumeProps,
-} from "./shared/Volume";

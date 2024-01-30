@@ -41,15 +41,9 @@ interface BroadcastProps
 const Broadcast = (
   props: MediaScopedProps<BroadcastScopedProps<BroadcastProps>>,
 ) => {
-  const {
-    aspectRatio = 16 / 9,
-    volume = 0,
-    children,
-    streamKey,
-    ...rest
-  } = props;
+  const { aspectRatio = 16 / 9, children, streamKey, ...rest } = props;
 
-  const store = useRef(
+  const mediaStore = useRef(
     createControllerStore({
       device: getDeviceInfo(version.react),
       storage: createStorage(
@@ -63,8 +57,9 @@ const Broadcast = (
       ),
       src: null,
       initialProps: {
+        hotkeys: false,
         aspectRatio,
-        volume,
+        volume: 0,
       },
     }),
   );
@@ -90,15 +85,22 @@ const Broadcast = (
   );
 
   useEffect(() => {
+    return () => {
+      mediaStore?.current?.destroy?.();
+      broadcastStore?.current?.destroy?.();
+    };
+  }, []);
+
+  useEffect(() => {
     if (streamKey) {
-      broadcastStore.current
+      broadcastStore.current.store
         .getState()
         .__controlsFunctions.setStreamKey(streamKey);
     }
   }, [streamKey]);
 
   useEffect(() => {
-    const metrics = addMediaMetricsToStore(store.current);
+    const metrics = addMediaMetricsToStore(mediaStore.current.store);
 
     return () => {
       metrics.destroy();
@@ -106,9 +108,9 @@ const Broadcast = (
   }, []);
 
   return (
-    <MediaProvider store={store.current} scope={props.__scopeMedia}>
+    <MediaProvider store={mediaStore.current.store} scope={props.__scopeMedia}>
       <BroadcastProvider
-        store={broadcastStore.current}
+        store={broadcastStore.current.store}
         scope={props.__scopeBroadcast}
       >
         {children}

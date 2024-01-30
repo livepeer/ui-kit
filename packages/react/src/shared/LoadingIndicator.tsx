@@ -50,7 +50,7 @@ const LoadingIndicator = React.forwardRef<
         {...offlineErrorProps}
         ref={forwardedRef}
         data-livepeer-loading-indicator=""
-        data-loading-state={String(Boolean(loading))}
+        data-loading={String(Boolean(loading))}
         data-visible={String(isPresent)}
       />
     </Presence>

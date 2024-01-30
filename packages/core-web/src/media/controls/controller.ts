@@ -9,7 +9,6 @@ import {
   BFRAMES_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
 } from "@livepeer/core";
-import { warn } from "@livepeer/core/utils";
 import { HlsError, HlsVideoConfig, createNewHls } from "../../hls";
 import { createNewWHEP } from "../../webrtc";
 import {
@@ -48,9 +47,6 @@ const delay = (ms: number) => {
 };
 
 export type ControlsOptions = ControlsOptionsBase & {
-  /** If hotkeys should be enabled on the media element (arrows to seek, etc) */
-  hotkeys?: boolean;
-
   /**
    * Configures the HLS.js options, for advanced usage of the Player.
    */
@@ -60,11 +56,7 @@ export type ControlsOptions = ControlsOptionsBase & {
 export const addEventListeners = (
   element: HTMLMediaElement,
   store: MediaControllerStore,
-  {
-    hotkeys = true,
-    autohide = DEFAULT_AUTOHIDE_TIME,
-    hlsConfig = {},
-  }: ControlsOptions = {},
+  { autohide = DEFAULT_AUTOHIDE_TIME, hlsConfig = {} }: ControlsOptions = {},
 ) => {
   const initializedState = store.getState();
 
@@ -290,7 +282,7 @@ export const addEventListeners = (
     }
 
     if (parentElementOrElement) {
-      if (hotkeys) {
+      if (store.getState().__initialProps.hotkeys) {
         parentElementOrElement.addEventListener("keyup", onKeyUp);
         parentElementOrElement.setAttribute("tabindex", "0");
       }
@@ -316,7 +308,6 @@ export const addEventListeners = (
 
   // add effects
   const removeEffectsFromStore = addEffectsToStore(element, store, {
-    hotkeys,
     autohide,
     hlsConfig,
   });
@@ -333,45 +324,49 @@ export const addEventListeners = (
   const removeExitPictureInPictureListener =
     addExitPictureInPictureEventListener(element, onExitPictureInPicture);
 
-  const destroy = () => {
-    removeFullscreenListener?.();
-
-    removeEnterPictureInPictureListener?.();
-    removeExitPictureInPictureListener?.();
-
-    element?.removeEventListener?.("ratechange", onRateChange);
-    element?.removeEventListener?.("volumechange", onVolumeChange);
-    element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
-    element?.removeEventListener?.("play", onPlay);
-    element?.removeEventListener?.("pause", onPause);
-    element?.removeEventListener?.("durationchange", onDurationChange);
-    element?.removeEventListener?.("timeupdate", onTimeUpdate);
-    element?.removeEventListener?.("error", onError);
-    element?.removeEventListener?.("waiting", onWaiting);
-    element?.removeEventListener?.("stalled", onStalled);
-    element?.removeEventListener?.("loadstart", onLoadStart);
-    element?.removeEventListener?.("resize", onResize);
-    element?.removeEventListener?.("ended", onEnded);
-
-    parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
-    parentElementOrElement?.removeEventListener?.("mouseenter", onMouseUpdate);
-    parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
-    parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
-
-    parentElementOrElement?.removeEventListener?.("touchstart", onTouchUpdate);
-    parentElementOrElement?.removeEventListener?.("touchend", onTouchUpdate);
-    parentElementOrElement?.removeEventListener?.("touchmove", onTouchUpdate);
-
-    parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
-
-    removeEffectsFromStore?.();
-
-    element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
-  };
-
   return {
     destroy: () => {
-      destroy?.();
+      removeFullscreenListener?.();
+
+      removeEnterPictureInPictureListener?.();
+      removeExitPictureInPictureListener?.();
+
+      element?.removeEventListener?.("ratechange", onRateChange);
+      element?.removeEventListener?.("volumechange", onVolumeChange);
+      element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
+      element?.removeEventListener?.("play", onPlay);
+      element?.removeEventListener?.("pause", onPause);
+      element?.removeEventListener?.("durationchange", onDurationChange);
+      element?.removeEventListener?.("timeupdate", onTimeUpdate);
+      element?.removeEventListener?.("error", onError);
+      element?.removeEventListener?.("waiting", onWaiting);
+      element?.removeEventListener?.("stalled", onStalled);
+      element?.removeEventListener?.("loadstart", onLoadStart);
+      element?.removeEventListener?.("resize", onResize);
+      element?.removeEventListener?.("ended", onEnded);
+
+      parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
+      parentElementOrElement?.removeEventListener?.(
+        "mouseenter",
+        onMouseUpdate,
+      );
+      parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
+      parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
+
+      parentElementOrElement?.removeEventListener?.(
+        "touchstart",
+        onTouchUpdate,
+      );
+      parentElementOrElement?.removeEventListener?.("touchend", onTouchUpdate);
+      parentElementOrElement?.removeEventListener?.("touchmove", onTouchUpdate);
+
+      if (store.getState().__initialProps.hotkeys) {
+        parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
+      }
+
+      removeEffectsFromStore?.();
+
+      element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
     },
   };
 };
@@ -438,8 +433,6 @@ const addEffectsToStore = (
       let unmounted = false;
 
       if (!source) {
-        warn("No playback source detected.");
-
         return;
       }
 

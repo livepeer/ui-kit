@@ -402,6 +402,11 @@ export type MediaControllerStore = StoreApi<MediaControllerState> & {
       },
     ): () => void;
   };
+  persist: {
+    onFinishHydration: (
+      fn: (state: MediaControllerState) => void,
+    ) => () => void;
+  };
 };
 
 export const createControllerStore = ({
@@ -414,7 +419,7 @@ export const createControllerStore = ({
   storage: ClientStorage;
   src: Src[] | string | null;
   initialProps: Partial<InitialProps>;
-}): MediaControllerStore => {
+}): { store: MediaControllerStore; destroy: () => void } => {
   const resolvedStorage =
     initialProps?.storage === null
       ? createStorage({
@@ -614,6 +619,7 @@ export const createControllerStore = ({
                   playing: true,
                   hasPlayed: true,
                   error: null,
+                  errorCount: 0,
 
                   stalled: false,
                   waiting: false,
@@ -1053,14 +1059,16 @@ export const createControllerStore = ({
     ),
   );
 
-  store.persist.onFinishHydration(({ videoQuality, volume }) => {
-    if (videoQuality !== initialVideoQuality) {
-      store.getState().__controlsFunctions.setVideoQuality(videoQuality);
-    }
-    if (volume !== initialVolume) {
-      store.getState().__controlsFunctions.setVolume(volume);
-    }
-  });
+  const destroy = store.persist.onFinishHydration(
+    ({ videoQuality, volume }) => {
+      if (videoQuality !== store.getState().videoQuality) {
+        store.getState().__controlsFunctions.setVideoQuality(videoQuality);
+      }
+      if (volume !== store.getState().volume) {
+        store.getState().__controlsFunctions.setVolume(volume);
+      }
+    },
+  );
 
-  return store;
+  return { store, destroy };
 };

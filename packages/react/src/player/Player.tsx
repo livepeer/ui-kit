@@ -58,7 +58,13 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
   );
 
   useEffect(() => {
-    const metrics = addMediaMetricsToStore(store.current);
+    return () => {
+      store?.current?.destroy?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    const metrics = addMediaMetricsToStore(store.current.store);
 
     return () => {
       metrics.destroy();
@@ -66,7 +72,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
   }, []);
 
   return (
-    <MediaProvider store={store.current} scope={props.__scopeMedia}>
+    <MediaProvider store={store.current.store} scope={props.__scopeMedia}>
       {children}
     </MediaProvider>
   );

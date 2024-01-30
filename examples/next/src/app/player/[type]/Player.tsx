@@ -133,7 +133,7 @@ export async function PlayerWithControls({
                 </Player.Volume>
               </div>
               <div className="flex sm:flex-1 md:flex-[1.5] justify-end items-center gap-2.5">
-                <Settings className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0" />
+                <Settings className="w-6 h-6 transition-all flex-shrink-0" />
                 <Clip className="flex items-center w-6 h-6 justify-center" />
 
                 <Player.PictureInPictureTrigger className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0">
