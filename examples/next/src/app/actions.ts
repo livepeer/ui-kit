@@ -9,11 +9,11 @@ export const createClip = async (opts: ClipPayload) => {
       ...opts,
     });
 
-    if (!result.data?.asset?.playbackId) {
+    if (!result.object?.asset?.playbackId) {
       return { success: false, error: "PLAYBACK_ID_MISSING" } as const;
     }
 
-    return { success: true, data: result.data?.asset?.playbackId } as const;
+    return { success: true, data: result.object?.asset?.playbackId } as const;
   } catch (e) {
     console.error(e);
 
