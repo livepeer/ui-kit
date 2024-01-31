@@ -8,6 +8,8 @@ export const BFRAMES_ERROR_MESSAGE =
   "metadata indicates that webrtc playback contains bframes";
 export const NOT_ACCEPTABLE_ERROR_MESSAGE =
   "response indicates unacceptable playback protocol";
+export const PERMISSIONS_ERROR_MESSAGE =
+  "user did not allow the permissions request";
 
 export const isStreamOfflineError = (error: Error): boolean =>
   error.message.toLowerCase().includes(STREAM_OPEN_ERROR_MESSAGE) ||
@@ -22,3 +24,6 @@ export const isBframesError = (error: Error): boolean =>
 
 export const isNotAcceptableError = (error: Error): boolean =>
   error.message.toLowerCase().includes(NOT_ACCEPTABLE_ERROR_MESSAGE);
+
+export const isPermissionsError = (error: Error): boolean =>
+  error.message.toLowerCase().includes(PERMISSIONS_ERROR_MESSAGE);

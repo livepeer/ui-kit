@@ -76,8 +76,14 @@ export const addEventListeners = (
     console.error(e);
   }
 
-  const onLoadedMetadata = () =>
+  const onLoadedMetadata = () => {
     store.getState().__controlsFunctions.onCanPlay();
+    store.getState().__controlsFunctions.requestMeasure();
+  };
+
+  const onLoadedData = () => {
+    store.getState().__controlsFunctions.requestMeasure();
+  };
 
   const onPlay = () => {
     store.getState().__controlsFunctions.onPlay();
@@ -99,21 +105,24 @@ export const addEventListeners = (
 
     store.getState().__controlsFunctions.updateLastInteraction();
 
+    const isNotBroadcast =
+      store.getState().__initialProps.hotkeys !== "broadcast";
+
     if (allKeyTriggers.includes(code)) {
-      if (code === "Space" || code === "KeyK") {
+      if ((code === "Space" || code === "KeyK") && isNotBroadcast) {
         store.getState().__controlsFunctions.togglePlay();
+      } else if (code === "ArrowRight" && isNotBroadcast) {
+        store.getState().__controlsFunctions.requestSeekForward();
+      } else if (code === "ArrowLeft" && isNotBroadcast) {
+        store.getState().__controlsFunctions.requestSeekBack();
+      } else if (code === "KeyM" && isNotBroadcast) {
+        store.getState().__controlsFunctions.requestToggleMute();
+      } else if (code === "KeyX" && isNotBroadcast) {
+        store.getState().__controlsFunctions.requestClip();
       } else if (code === "KeyF") {
         store.getState().__controlsFunctions.requestToggleFullscreen();
       } else if (code === "KeyI") {
         store.getState().__controlsFunctions.requestTogglePictureInPicture();
-      } else if (code === "ArrowRight") {
-        store.getState().__controlsFunctions.requestSeekForward();
-      } else if (code === "ArrowLeft") {
-        store.getState().__controlsFunctions.requestSeekBack();
-      } else if (code === "KeyM") {
-        store.getState().__controlsFunctions.requestToggleMute();
-      } else if (code === "KeyX") {
-        store.getState().__controlsFunctions.requestClip();
       }
     }
   };
@@ -228,30 +237,8 @@ export const addEventListeners = (
   };
 
   const onResize = async () => {
-    store.getState().__controlsFunctions.setSize({
-      ...((element as unknown as HTMLVideoElement)?.videoHeight &&
-      (element as unknown as HTMLVideoElement)?.videoWidth
-        ? {
-            media: {
-              height: (element as unknown as HTMLVideoElement).videoHeight,
-              width: (element as unknown as HTMLVideoElement).videoWidth,
-            },
-          }
-        : {}),
-      ...(element?.clientHeight && element?.clientWidth
-        ? {
-            container: {
-              height: element.clientHeight,
-              width: element.clientWidth,
-            },
-          }
-        : {}),
-    });
+    store.getState().__controlsFunctions.requestMeasure();
   };
-
-  if (element) {
-    onResize();
-  }
 
   const parentElementOrElement = element?.parentElement ?? element;
 
@@ -260,6 +247,7 @@ export const addEventListeners = (
     element.addEventListener("ratechange", onRateChange);
 
     element.addEventListener("loadedmetadata", onLoadedMetadata);
+    element.addEventListener("loadeddata", onLoadedData);
     element.addEventListener("play", onPlay);
     element.addEventListener("pause", onPause);
     element.addEventListener("durationchange", onDurationChange);
@@ -268,7 +256,6 @@ export const addEventListeners = (
     element.addEventListener("waiting", onWaiting);
     element.addEventListener("stalled", onStalled);
     element.addEventListener("loadstart", onLoadStart);
-    element.addEventListener("resize", onResize);
     element.addEventListener("ended", onEnded);
 
     if (autohide) {
@@ -280,6 +267,10 @@ export const addEventListeners = (
       parentElementOrElement.addEventListener("touchstart", onTouchUpdate);
       parentElementOrElement.addEventListener("touchend", onTouchUpdate);
       parentElementOrElement.addEventListener("touchmove", onTouchUpdate);
+    }
+
+    if (typeof window !== "undefined") {
+      window?.addEventListener?.("resize", onResize);
     }
 
     if (parentElementOrElement) {
@@ -335,6 +326,7 @@ export const addEventListeners = (
       element?.removeEventListener?.("ratechange", onRateChange);
       element?.removeEventListener?.("volumechange", onVolumeChange);
       element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
+      element?.removeEventListener?.("loadeddata", onLoadedData);
       element?.removeEventListener?.("play", onPlay);
       element?.removeEventListener?.("pause", onPause);
       element?.removeEventListener?.("durationchange", onDurationChange);
@@ -343,8 +335,11 @@ export const addEventListeners = (
       element?.removeEventListener?.("waiting", onWaiting);
       element?.removeEventListener?.("stalled", onStalled);
       element?.removeEventListener?.("loadstart", onLoadStart);
-      element?.removeEventListener?.("resize", onResize);
       element?.removeEventListener?.("ended", onEnded);
+
+      if (typeof window !== "undefined") {
+        window?.removeEventListener?.("resize", onResize);
+      }
 
       if (autohide) {
         parentElementOrElement?.removeEventListener?.(
@@ -575,7 +570,6 @@ const addEffectsToStore = (
         );
 
         cleanupSource = () => {
-          console.log("cleaning up prev hls");
           unmounted = true;
           destroy?.();
           unsubscribeQualityUpdate?.();
@@ -745,14 +739,110 @@ const addEffectsToStore = (
     },
   );
 
+  // Subscribe to sizing requests
+  const destroyRequestSizing = store.subscribe(
+    (state) => ({
+      lastTime: state.__controls.requestedMeasureLastTime,
+      fullscreen: state.fullscreen,
+    }),
+    async () => {
+      store.getState().__controlsFunctions.setSize({
+        ...((element as unknown as HTMLVideoElement)?.videoHeight &&
+        (element as unknown as HTMLVideoElement)?.videoWidth
+          ? {
+              media: {
+                height: (element as unknown as HTMLVideoElement).videoHeight,
+                width: (element as unknown as HTMLVideoElement).videoWidth,
+              },
+            }
+          : {}),
+        ...(element?.clientHeight && element?.clientWidth
+          ? {
+              container: {
+                height: element.clientHeight,
+                width: element.clientWidth,
+              },
+            }
+          : {}),
+        ...(typeof window !== "undefined" &&
+        window?.innerHeight &&
+        window?.innerWidth
+          ? {
+              window: {
+                height: window.innerHeight,
+                width: window.innerWidth,
+              },
+            }
+          : {}),
+      });
+    },
+    {
+      equalityFn: (a, b) =>
+        a?.fullscreen === b?.fullscreen && a?.lastTime === b?.lastTime,
+    },
+  );
+
+  // Subscribe to media sizing changes
+  const destroyMediaSizing = store.subscribe(
+    (state) => state.__controls.size?.media,
+    async (media) => {
+      const parentElementOrElement = element?.parentElement ?? element;
+
+      if (parentElementOrElement) {
+        if (media?.height && media?.width) {
+          const elementStyle = parentElementOrElement.style;
+          elementStyle.setProperty(
+            "--livepeer-media-height",
+            `${media.height}px`,
+          );
+          elementStyle.setProperty(
+            "--livepeer-media-width",
+            `${media.width}px`,
+          );
+        }
+      }
+    },
+    {
+      equalityFn: (a, b) => a?.height === b?.height && a?.width === b?.width,
+    },
+  );
+
+  // Subscribe to container sizing changes
+  const destroyContainerSizing = store.subscribe(
+    (state) => state.__controls.size?.container,
+    async (container) => {
+      const parentElementOrElement = element?.parentElement ?? element;
+
+      if (parentElementOrElement) {
+        if (container?.height && container?.width) {
+          const elementStyle = parentElementOrElement.style;
+          elementStyle.setProperty(
+            "--livepeer-container-height",
+            `${container.height}px`,
+          );
+          elementStyle.setProperty(
+            "--livepeer-container-width",
+            `${container.width}px`,
+          );
+        }
+      }
+    },
+    {
+      equalityFn: (a, b) => a?.height === b?.height && a?.width === b?.width,
+    },
+  );
+
   return () => {
     destroyAutohide?.();
+    destroyContainerSizing?.();
     destroyFullscreen?.();
+    destroyMediaSizing?.();
     destroyMute?.();
     destroyPictureInPicture?.();
     destroyPlaybackRate?.();
     destroyPlayPause?.();
     destroyPosterImage?.();
+    destroyRequestSizing?.();
     destroySeeking?.();
     destroyVolume?.();
     destroySource?.();

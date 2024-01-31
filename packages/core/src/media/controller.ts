@@ -12,6 +12,7 @@ import {
   isAccessControlError,
   isBframesError,
   isNotAcceptableError,
+  isPermissionsError,
   isStreamOfflineError,
 } from "../errors";
 import { omit } from "../utils";
@@ -62,7 +63,7 @@ export type InitialProps = {
    *
    * This is highly recommended to adhere to ARIA guidelines.
    */
-  hotkeys: boolean;
+  hotkeys: boolean | "broadcast";
 
   /**
    * The JWT (JSON Web Token) which is passed along to allow playback of an asset. Used for authentication and information exchange.
@@ -176,6 +177,8 @@ export type ControlsState = {
   requestedFullscreenLastTime: number;
   /** The last time that picture in picture was changed */
   requestedPictureInPictureLastTime: number;
+  /** The last time that the element was measured */
+  requestedMeasureLastTime: number;
   /** Internal value when a user requests an update to the progress of the media */
   requestedRangeToSeekTo: number;
   /** The params for the latest clip request. */
@@ -210,13 +213,14 @@ export type ControlsState = {
 export type ObjectFit = "cover" | "contain";
 
 export type PlaybackError = {
-  type: "offline" | "access-control" | "fallback" | "unknown";
+  type: "offline" | "access-control" | "fallback" | "permissions" | "unknown";
   message: string;
 };
 
 export type MediaSizing = {
   container?: ElementSize;
   media?: ElementSize;
+  window?: ElementSize;
 };
 
 export type ElementSize = {
@@ -352,6 +356,7 @@ export type MediaControllerState = {
     onStalled: () => void;
     onWaiting: () => void;
     requestClip: () => void;
+    requestMeasure: () => void;
     requestSeek: (time: number) => void;
     requestSeekBack: (difference?: number) => void;
     requestSeekDiff: (difference: number) => void;
@@ -461,6 +466,7 @@ export const createControllerStore = ({
   const initialControls: ControlsState = {
     lastError: 0,
     lastInteraction: Date.now(),
+    requestedMeasureLastTime: 0,
     muted: initialVolume === 0,
     playbackId: parsedSource?.playbackId ?? null,
     playbackOffsetMs: null,
@@ -641,7 +647,6 @@ export const createControllerStore = ({
                 return {
                   playing: false,
                   hidden: false,
-                  // TODO check if these should be getting set when pause event is fired (this was pulled from metrics)
                   stalled: false,
                   waiting: false,
                   ended: false,
@@ -777,6 +782,16 @@ export const createControllerStore = ({
             onFinalUrl: (currentUrl: string | null) =>
               set(() => ({ currentUrl })),
 
+            requestMeasure: () =>
+              set(({ __controls }) => {
+                return {
+                  __controls: {
+                    ...__controls,
+                    requestedMeasureLastTime: Date.now(),
+                  },
+                } as const;
+              }),
+
             setSize: (size: Partial<MediaSizing>) =>
               set(({ __controls }) => {
                 return {
@@ -784,7 +799,7 @@ export const createControllerStore = ({
                     ...__controls,
                     size: {
                       ...__controls.size,
-                      size,
+                      ...size,
                     },
                   },
                 } as const;
@@ -905,7 +920,9 @@ export const createControllerStore = ({
                             ? "fallback"
                             : isStreamOfflineError(rawError)
                               ? "offline"
-                              : "unknown",
+                              : isPermissionsError(rawError)
+                                ? "permissions"
+                                : "unknown",
                         message: rawError?.message ?? "Error with playback.",
                       } as const)
                     : null;
@@ -942,7 +959,8 @@ export const createControllerStore = ({
                   // we increment the source only on a bframes or unknown error
                   if (
                     error.type === "offline" ||
-                    error.type === "access-control"
+                    error.type === "access-control" ||
+                    error.type === "permissions"
                   ) {
                     return base;
                   }

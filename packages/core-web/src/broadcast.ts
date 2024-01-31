@@ -1,4 +1,4 @@
-import { omit } from "@livepeer/core";
+import { PERMISSIONS_ERROR_MESSAGE, omit } from "@livepeer/core";
 import { MediaControllerStore } from "@livepeer/core/media";
 import { ClientStorage } from "@livepeer/core/storage";
 import {
@@ -18,6 +18,7 @@ import {
   getDisplayMediaExists,
   getMediaDevices,
   getUserMedia,
+  setMediaStreamTracksStatus,
 } from "./webrtc/whip";
 
 const defaultIngestUrl = "https://playback.livepeer.studio/webrtc";
@@ -435,11 +436,6 @@ export const createBroadcastStore = ({
 
             toggleDisplayMedia: () =>
               set(({ __controls, mediaDeviceIds, aria }) => {
-                console.log({
-                  prev: __controls.previousVideoInputDeviceId,
-                  mediaDeviceIds,
-                });
-
                 if (mediaDeviceIds.videoinput === "screen") {
                   return {
                     aria: {
@@ -704,10 +700,24 @@ const addEffectsToStore = (
     ({ mounted }) => mounted,
     async (mounted) => {
       if (mounted) {
-        console.log("mounted!");
-
         // we use setState here so it's clear this isn't an external function
         store.setState({ mounted: true });
+      }
+    },
+  );
+
+  // Subscribe to sync the error states
+  const destroyMediaSyncError = mediaStore.subscribe(
+    ({ error }) => error,
+    async (error) => {
+      if (error?.type === "permissions") {
+        // we use setState here so it's clear this isn't an external function
+        store.setState((state) => ({
+          __controls: {
+            ...state.__controls,
+            requestedVideoInputDeviceId: state.mediaDeviceIds.videoinput,
+          },
+        }));
       }
     },
   );
@@ -717,8 +727,6 @@ const addEffectsToStore = (
     (state) => state.mediaStream,
     async () => {
       const isPipSupported = isPictureInPictureSupported(element);
-
-      console.log({ isPipSupported });
 
       if (!isPipSupported) {
         mediaStore.setState((state) => ({
@@ -802,6 +810,7 @@ const addEffectsToStore = (
       audio: state.audio,
       requestedAudioDeviceId: state.__controls.requestedAudioInputDeviceId,
       requestedVideoDeviceId: state.__controls.requestedVideoInputDeviceId,
+      previousMediaStream: state.mediaStream,
     }),
     async ({
       hydrated,
@@ -810,82 +819,110 @@ const addEffectsToStore = (
       video,
       requestedAudioDeviceId,
       requestedVideoDeviceId,
+      previousMediaStream,
     }) => {
-      if (!mounted || !hydrated) {
-        console.log("not mounted...");
-        return;
-      }
+      try {
+        if (!mounted || !hydrated) {
+          return;
+        }
 
-      if (!audio && !video) {
-        warn("Audio and video are both not enabled.");
+        if (!audio && !video) {
+          warn("Audio and video are both not enabled.");
 
-        return;
-      }
+          return;
+        }
 
-      const stream = await (requestedVideoDeviceId === "screen"
-        ? getDisplayMedia({
-            // for now, only the microphone audio track is supported - we don't support multiple
-            // discrete audio tracks
-            audio: false,
+        const stream = await (requestedVideoDeviceId === "screen"
+          ? getDisplayMedia({
+              // for now, only the microphone audio track is supported - we don't support multiple
+              // discrete audio tracks
+              audio: false,
 
-            // we assume that if the user is requested to share screen, they want to enable video,
-            // and we don't listen to the `video` enabled state
-            video: true,
-          })
-        : getUserMedia({
-            audio:
-              audio &&
-              requestedAudioDeviceId &&
-              requestedAudioDeviceId !== "default"
-                ? {
-                    deviceId: {
-                      // we pass ideal here, so we don't get overconstrained errors
-                      ideal: requestedAudioDeviceId,
-                    },
-                  }
-                : Boolean(audio),
-            video:
-              video &&
-              requestedVideoDeviceId &&
-              requestedVideoDeviceId !== "default"
-                ? {
-                    deviceId: {
-                      // we pass ideal here, so we don't get overconstrained errors
-                      ideal: requestedVideoDeviceId,
-                    },
-                  }
-                : Boolean(video),
-          }));
+              // we assume that if the user is requested to share screen, they want to enable video,
+              // and we don't listen to the `video` enabled state
+              video: true,
+            })
+          : getUserMedia({
+              audio:
+                audio &&
+                requestedAudioDeviceId &&
+                requestedAudioDeviceId !== "default"
+                  ? {
+                      deviceId: {
+                        // we pass ideal here, so we don't get overconstrained errors
+                        ideal: requestedAudioDeviceId,
+                      },
+                    }
+                  : Boolean(audio),
+              video:
+                video &&
+                requestedVideoDeviceId &&
+                requestedVideoDeviceId !== "default"
+                  ? {
+                      deviceId: {
+                        // we pass ideal here, so we don't get overconstrained errors
+                        ideal: requestedVideoDeviceId,
+                      },
+                    }
+                  : Boolean(video),
+            }));
 
-      if (stream) {
-        // we get the device ID from the MediaStream and update those
-        const allTracks = stream?.getTracks() ?? [];
+        if (stream) {
+          // we get the device ID from the MediaStream and update those
+          const allAudioTracks = stream?.getAudioTracks() ?? [];
+          const allVideoTracks = stream?.getVideoTracks() ?? [];
 
-        const allAudioDeviceIds = allTracks
-          .filter((track) => track.kind === "audio")
-          .map((track) => track?.getSettings()?.deviceId);
-        const allVideoDeviceIds = allTracks
-          .filter((track) => track.kind === "video")
-          .map((track) => track?.getSettings()?.deviceId);
+          const allAudioDeviceIds = allAudioTracks.map(
+            (track) => track?.getSettings()?.deviceId,
+          );
+          const allVideoDeviceIds = allVideoTracks.map(
+            (track) => track?.getSettings()?.deviceId,
+          );
 
-        const firstAudioDeviceId = (allAudioDeviceIds?.[0] ??
-          null) as AudioDeviceId | null;
-        const firstVideoDeviceId = (allVideoDeviceIds?.[0] ??
-          null) as VideoDeviceId | null;
+          const firstAudioDeviceId = (allAudioDeviceIds?.[0] ??
+            null) as AudioDeviceId | null;
+          const firstVideoDeviceId = (allVideoDeviceIds?.[0] ??
+            null) as VideoDeviceId | null;
 
-        store.getState().__controlsFunctions.setMediaDeviceIds({
-          ...(firstAudioDeviceId ? { audioinput: firstAudioDeviceId } : {}),
-          ...(firstVideoDeviceId
-            ? {
-                videoinput:
-                  requestedVideoDeviceId === "screen"
-                    ? "screen"
-                    : firstVideoDeviceId,
-              }
-            : {}),
-        });
+          store.getState().__controlsFunctions.setMediaDeviceIds({
+            ...(firstAudioDeviceId ? { audioinput: firstAudioDeviceId } : {}),
+            ...(firstVideoDeviceId
+              ? {
+                  videoinput:
+                    requestedVideoDeviceId === "screen"
+                      ? "screen"
+                      : firstVideoDeviceId,
+                }
+              : {}),
+          });
 
-        store.getState().__controlsFunctions.updateMediaStream(stream);
+          // merge the new audio and/or video and the old media stream
+          const mergedMediaStream = new MediaStream();
+
+          const mergedAudioTrack =
+            allAudioTracks?.[0] ??
+            previousMediaStream?.getAudioTracks?.()?.[0] ??
+            null;
+          const mergedVideoTrack =
+            allVideoTracks?.[0] ??
+            previousMediaStream?.getVideoTracks?.()?.[0] ??
+            null;
+
+          if (mergedAudioTrack) mergedMediaStream.addTrack(mergedAudioTrack);
+          if (mergedVideoTrack) mergedMediaStream.addTrack(mergedVideoTrack);
+
+          store
+            .getState()
+            .__controlsFunctions.updateMediaStream(mergedMediaStream);
+        }
+      } catch (e) {
+        if ((e as Error)?.name === "NotAllowedError") {
+          mediaStore
+            .getState()
+            .__controlsFunctions.onError(new Error(PERMISSIONS_ERROR_MESSAGE));
+        } else {
+          warn((e as Error)?.message);
+        }
       }
     },
     {
@@ -897,7 +934,7 @@ const addEffectsToStore = (
     },
   );
 
-  // Subscribe to audio & video enabled
+  // Subscribe to audio & video enabled, and media stream
   const destroyAudioVideoEnabled = store.subscribe(
     (state) => ({
       audio: state.audio,
@@ -906,20 +943,11 @@ const addEffectsToStore = (
     }),
     async ({ audio, video, mediaStream }) => {
       if (mediaStream) {
-        // we get the device ID from the MediaStream and update those
-        const allTracks = mediaStream?.getTracks() ?? [];
-
-        for (const audioTrack of allTracks.filter(
-          (track) => track.kind === "audio",
-        )) {
-          audioTrack.enabled = Boolean(audio);
-        }
-
-        for (const videoTrack of allTracks.filter(
-          (track) => track.kind === "video",
-        )) {
-          videoTrack.enabled = Boolean(video);
-        }
+        await setMediaStreamTracksStatus({
+          mediaStream,
+          enableAudio: Boolean(audio),
+          enableVideo: Boolean(video),
+        });
       }
     },
     {
@@ -995,7 +1023,11 @@ const addEffectsToStore = (
       const devices = await mediaDevices?.enumerateDevices();
 
       if (devices) {
-        store.getState().__controlsFunctions.updateDeviceList(devices);
+        store
+          .getState()
+          .__controlsFunctions.updateDeviceList(
+            devices.filter((d) => d.deviceId),
+          );
       }
     },
     {
@@ -1014,8 +1046,9 @@ const addEffectsToStore = (
     }),
     async ({ mediaDeviceIds, mediaDevices }) => {
       if (mediaDevices) {
-        const extendedDevices: MediaDeviceInfoExtended[] = mediaDevices.map(
-          (device, i) => ({
+        const extendedDevices: MediaDeviceInfoExtended[] = mediaDevices
+          .filter((d) => d.deviceId)
+          .map((device, i) => ({
             deviceId: device.deviceId,
             kind: device.kind,
             groupId: device.groupId,
@@ -1033,8 +1066,7 @@ const addEffectsToStore = (
                   ? "default"
                   : device.deviceId.slice(0, 6)
               })`,
-          }),
-        );
+          }));
 
         const isScreenshare = mediaDeviceIds.videoinput === "screen";
 
@@ -1065,6 +1097,7 @@ const addEffectsToStore = (
     destroyErrorCount?.();
     destroyMapDeviceListToFriendly?.();
     destroyMediaStream?.();
+    destroyMediaSyncError?.();
     destroyMediaSyncMounted?.();
     destroyPeerConnectionAndMediaStream?.();
     destroyPictureInPictureSupportedMonitor?.();

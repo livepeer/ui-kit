@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Suspense } from "react";
-import { BroadcastLoading, BroadcastWithControls } from "./Broadcast";
+import { BroadcastWithControls } from "./Broadcast";
 
 export default async function Home() {
   return (
@@ -21,9 +20,7 @@ export default async function Home() {
 
       <span className="h-px w-full max-w-md bg-gradient-to-r from-white/5 via-white/60 to-white/5" />
 
-      <Suspense fallback={<BroadcastLoading />}>
-        <BroadcastWithControls />
-      </Suspense>
+      <BroadcastWithControls />
     </main>
   );
 }

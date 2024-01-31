@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  InitialProps,
   createControllerStore,
   createStorage,
   noopStorage,
@@ -21,7 +22,11 @@ import { BroadcastProvider, BroadcastScopedProps } from "./context";
 
 interface BroadcastProps
   extends PropsWithChildren<
-    Omit<Partial<InitialBroadcastProps>, "aspectRatio">
+    Omit<Partial<InitialBroadcastProps>, "aspectRatio"> &
+      Pick<
+        Partial<InitialProps>,
+        "onError" | "storage" | "timeout" | "videoQuality"
+      >
   > {
   /**
    * The stream key to use for the broadcast.
@@ -41,7 +46,16 @@ interface BroadcastProps
 const Broadcast = (
   props: MediaScopedProps<BroadcastScopedProps<BroadcastProps>>,
 ) => {
-  const { aspectRatio = 16 / 9, children, streamKey, ...rest } = props;
+  const {
+    aspectRatio = 16 / 9,
+    children,
+    streamKey,
+    onError,
+    storage,
+    timeout,
+    videoQuality,
+    ...rest
+  } = props;
 
   const mediaStore = useRef(
     createControllerStore({
@@ -57,9 +71,13 @@ const Broadcast = (
       ),
       src: null,
       initialProps: {
-        hotkeys: false,
+        hotkeys: "broadcast",
         aspectRatio,
         volume: 0,
+        onError,
+        storage,
+        timeout,
+        videoQuality,
       },
     }),
   );

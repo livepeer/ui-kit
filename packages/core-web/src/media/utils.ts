@@ -64,7 +64,6 @@ export const canAutoplay = (
  */
 export const canPlayMediaNatively = (src: Src): boolean => {
   if (isClient() && src?.mime) {
-    // TODO fix this to better support audio mime types
     if (src?.type?.includes("audio")) {
       const audio = document.createElement("audio");
       return audio.canPlayType(src.mime).length > 0;
