@@ -87,7 +87,7 @@ importers:
   examples/next:
     dependencies:
       '@livepeer/react':
-        specifier: 4.0.0-next.0
+        specifier: 4.0.0-next.1
         version: link:../../packages/react
       '@radix-ui/react-popover':
         specifier: ^1.0.7

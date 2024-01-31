@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 3.0.0-next.1
+
+### Patch Changes
+
+- [#460](https://github.com/livepeer/livepeer-react/pull/460) [`4847132`](https://github.com/livepeer/livepeer-react/commit/4847132c1ce5acbf3cb8b5a9526f7149ec86063f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the broadcast experience to handle display media and included a settings popover in the demo Next.js app.
+
+- Updated dependencies [[`4847132`](https://github.com/livepeer/livepeer-react/commit/4847132c1ce5acbf3cb8b5a9526f7149ec86063f)]:
+  - @livepeer/core@3.0.0-next.1
+
 ## 3.0.0-next.0
 
 ### Major Changes
