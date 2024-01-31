@@ -2,12 +2,12 @@
 
 import { toast } from "sonner";
 
-import * as Assets from "@livepeer/react/assets";
 import * as Player from "@livepeer/react/player";
 
+import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
 import { ClipPayload } from "livepeer/dist/models/components";
 import { useCallback, useTransition } from "react";
-import { createClip } from "../../actions";
+import { createClip } from "./actions";
 
 export function Clip({ className }: { className?: string }) {
   const [isPending, startTransition] = useTransition();
@@ -23,7 +23,7 @@ export function Clip({ className }: { className?: string }) {
               "You have created a new clip - in a few minutes, you will be able to view it at "
             }
             <a
-              href={`https://lvpr.tv?v=${result.data}`}
+              href={`/player/${result.playbackId}`}
               target="_blank"
               rel="noreferrer"
               className="font-semibold"
@@ -49,9 +49,9 @@ export function Clip({ className }: { className?: string }) {
         className="hover:scale-110 transition-all flex-shrink-0"
       >
         {isPending ? (
-          <Assets.LoadingIcon className="h-full w-full animate-spin" />
+          <LoadingIcon className="h-full w-full animate-spin" />
         ) : (
-          <Assets.ClipIcon className="w-full h-full" />
+          <ClipIcon className="w-full h-full" />
         )}
       </Player.ClipTrigger>
     </Player.LiveIndicator>

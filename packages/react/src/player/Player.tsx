@@ -16,7 +16,9 @@ import { addMediaMetricsToStore } from "@livepeer/core-web/media";
 import { MediaProvider, MediaScopedProps } from "../context";
 
 interface PlayerProps
-  extends PropsWithChildren<Omit<Partial<InitialProps>, "creatorId">> {
+  extends PropsWithChildren<
+    Omit<Partial<InitialProps>, "creatorId" | "hotkeys">
+  > {
   /**
    * The source for the Player. The `Src[]` can be created from calling `getSrc`
    * with the response from the playback info API, or a string or array of string
@@ -32,6 +34,13 @@ interface PlayerProps
    * @see {@link https://web.dev/cls/}
    */
   aspectRatio?: number | null;
+
+  /**
+   * Whether hotkeys are enabled. Defaults to `true`. Allows users to use keyboard shortcuts for player control.
+   *
+   * This is highly recommended to adhere to ARIA guidelines.
+   */
+  hotkeys?: boolean;
 }
 
 const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {

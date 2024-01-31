@@ -22,10 +22,12 @@ interface ErrorIndicatorProps
   /**
    * The matcher used to determine whether the element should be shown, given the error state.
    *
-   * Passing `all` means it will display on all errors.
+   * Passing `all` means it will display on all errors, and `not-permissions` is only errors
+   * that are not failed camera, audio, or display permissions requests.
    */
   matcher:
     | "all"
+    | "not-permissions"
     | PlaybackError["type"]
     | ((state: PlaybackError["type"]) => boolean);
 }
@@ -46,7 +48,9 @@ const ErrorIndicator = React.forwardRef<
         ? typeof matcher === "string"
           ? matcher === "all"
             ? true
-            : matcher === error.type
+            : matcher === "not-permissions"
+              ? error.type !== "permissions"
+              : matcher === error.type
           : matcher(error.type)
         : false,
     [error, matcher],

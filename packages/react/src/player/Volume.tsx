@@ -60,7 +60,6 @@ const Volume = React.forwardRef<VolumeElement, VolumeProps>(
       <Presence present={forceMount || isVolumeChangeSupported}>
         <SliderPrimitive.Root
           aria-label="Volume Slider"
-          // aria-valuetext={title}
           step={0.01}
           max={1}
           value={[volume]}
@@ -78,6 +77,7 @@ const Volume = React.forwardRef<VolumeElement, VolumeProps>(
           data-livepeer-controls-volume=""
           data-livepeer-muted={String(volume === 0)}
           data-livepeer-volume={String((100 * volume).toFixed(0))}
+          data-visible={String(Boolean(isVolumeChangeSupported))}
         />
       </Presence>
     );

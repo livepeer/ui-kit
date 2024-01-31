@@ -1,7 +1,7 @@
 "use server";
 
 import { ClipPayload } from "livepeer/dist/models/components";
-import { livepeer } from "./livepeer";
+import { livepeer } from "../../livepeer";
 
 export const createClip = async (opts: ClipPayload) => {
   try {
@@ -13,7 +13,10 @@ export const createClip = async (opts: ClipPayload) => {
       return { success: false, error: "PLAYBACK_ID_MISSING" } as const;
     }
 
-    return { success: true, data: result.object?.asset?.playbackId } as const;
+    return {
+      success: true,
+      playbackId: result.object?.asset?.playbackId,
+    } as const;
   } catch (e) {
     console.error(e);
 

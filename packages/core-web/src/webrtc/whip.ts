@@ -167,6 +167,23 @@ export const attachMediaStreamToPeerConnection = async ({
   }
 };
 
+export const setMediaStreamTracksStatus = async ({
+  enableVideo,
+  enableAudio,
+  mediaStream,
+}: {
+  enableVideo: boolean;
+  enableAudio: boolean;
+  mediaStream: MediaStream;
+}) => {
+  for (const videoTrack of mediaStream.getVideoTracks()) {
+    videoTrack.enabled = enableVideo;
+  }
+  for (const audioTrack of mediaStream.getAudioTracks()) {
+    audioTrack.enabled = enableAudio;
+  }
+};
+
 export const getUserMedia = (constraints?: MediaStreamConstraints) => {
   if (typeof navigator === "undefined") {
     return null;
