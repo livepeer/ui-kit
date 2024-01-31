@@ -53,8 +53,8 @@ const EnabledTrigger = React.forwardRef<
       {...playProps}
       onClick={composeEventHandlers(props.onClick, noPropagate(toggleEnabled))}
       ref={forwardedRef}
-      data-livepeer-controls-start-trigger=""
-      data-started={String(enabled)}
+      data-livepeer-controls-enabled-trigger=""
+      data-enabled={String(enabled)}
     />
   );
 });
@@ -122,7 +122,7 @@ const EnabledIndicator = React.forwardRef<
         <Radix.Primitive.div
           {...playPauseIndicatorProps}
           ref={forwardedRef}
-          data-livepeer-controls-play-pause-indicator=""
+          data-livepeer-controls-enabled-indicator=""
           data-enabled={String(enabled)}
           data-visible={String(isPresent)}
         />

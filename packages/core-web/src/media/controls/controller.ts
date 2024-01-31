@@ -48,9 +48,6 @@ const delay = (ms: number) => {
 };
 
 export type ControlsOptions = ControlsOptionsBase & {
-  /** If hotkeys should be enabled on the media element (arrows to seek, etc) */
-  hotkeys?: boolean;
-
   /**
    * Configures the HLS.js options, for advanced usage of the Player.
    */
@@ -60,11 +57,7 @@ export type ControlsOptions = ControlsOptionsBase & {
 export const addEventListeners = (
   element: HTMLMediaElement,
   store: MediaControllerStore,
-  {
-    hotkeys = true,
-    autohide = DEFAULT_AUTOHIDE_TIME,
-    hlsConfig = {},
-  }: ControlsOptions = {},
+  { autohide = DEFAULT_AUTOHIDE_TIME, hlsConfig = {} }: ControlsOptions = {},
 ) => {
   const initializedState = store.getState();
 
@@ -290,7 +283,7 @@ export const addEventListeners = (
     }
 
     if (parentElementOrElement) {
-      if (hotkeys) {
+      if (store.getState().__initialProps.hotkeys) {
         parentElementOrElement.addEventListener("keyup", onKeyUp);
         parentElementOrElement.setAttribute("tabindex", "0");
       }
@@ -316,7 +309,6 @@ export const addEventListeners = (
 
   // add effects
   const removeEffectsFromStore = addEffectsToStore(element, store, {
-    hotkeys,
     autohide,
     hlsConfig,
   });
@@ -333,45 +325,66 @@ export const addEventListeners = (
   const removeExitPictureInPictureListener =
     addExitPictureInPictureEventListener(element, onExitPictureInPicture);
 
-  const destroy = () => {
-    removeFullscreenListener?.();
-
-    removeEnterPictureInPictureListener?.();
-    removeExitPictureInPictureListener?.();
-
-    element?.removeEventListener?.("ratechange", onRateChange);
-    element?.removeEventListener?.("volumechange", onVolumeChange);
-    element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
-    element?.removeEventListener?.("play", onPlay);
-    element?.removeEventListener?.("pause", onPause);
-    element?.removeEventListener?.("durationchange", onDurationChange);
-    element?.removeEventListener?.("timeupdate", onTimeUpdate);
-    element?.removeEventListener?.("error", onError);
-    element?.removeEventListener?.("waiting", onWaiting);
-    element?.removeEventListener?.("stalled", onStalled);
-    element?.removeEventListener?.("loadstart", onLoadStart);
-    element?.removeEventListener?.("resize", onResize);
-    element?.removeEventListener?.("ended", onEnded);
-
-    parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
-    parentElementOrElement?.removeEventListener?.("mouseenter", onMouseUpdate);
-    parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
-    parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
-
-    parentElementOrElement?.removeEventListener?.("touchstart", onTouchUpdate);
-    parentElementOrElement?.removeEventListener?.("touchend", onTouchUpdate);
-    parentElementOrElement?.removeEventListener?.("touchmove", onTouchUpdate);
-
-    parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
-
-    removeEffectsFromStore?.();
-
-    element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
-  };
-
   return {
     destroy: () => {
-      destroy?.();
+      removeFullscreenListener?.();
+
+      removeEnterPictureInPictureListener?.();
+      removeExitPictureInPictureListener?.();
+
+      element?.removeEventListener?.("ratechange", onRateChange);
+      element?.removeEventListener?.("volumechange", onVolumeChange);
+      element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
+      element?.removeEventListener?.("play", onPlay);
+      element?.removeEventListener?.("pause", onPause);
+      element?.removeEventListener?.("durationchange", onDurationChange);
+      element?.removeEventListener?.("timeupdate", onTimeUpdate);
+      element?.removeEventListener?.("error", onError);
+      element?.removeEventListener?.("waiting", onWaiting);
+      element?.removeEventListener?.("stalled", onStalled);
+      element?.removeEventListener?.("loadstart", onLoadStart);
+      element?.removeEventListener?.("resize", onResize);
+      element?.removeEventListener?.("ended", onEnded);
+
+      if (autohide) {
+        parentElementOrElement?.removeEventListener?.(
+          "mouseover",
+          onMouseUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "mouseenter",
+          onMouseUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "mouseout",
+          onMouseUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "mousemove",
+          onMouseUpdate,
+        );
+
+        parentElementOrElement?.removeEventListener?.(
+          "touchstart",
+          onTouchUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "touchend",
+          onTouchUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "touchmove",
+          onTouchUpdate,
+        );
+      }
+
+      if (store.getState().__initialProps.hotkeys) {
+        parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
+      }
+
+      removeEffectsFromStore?.();
+
+      element?.removeAttribute?.(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE);
     },
   };
 };
@@ -438,8 +451,6 @@ const addEffectsToStore = (
       let unmounted = false;
 
       if (!source) {
-        warn("No playback source detected.");
-
         return;
       }
 
@@ -698,9 +709,20 @@ const addEffectsToStore = (
   const destroyPictureInPicture = store.subscribe(
     (state) => state.__controls.requestedPictureInPictureLastTime,
     async () => {
-      const isPictureInPicture = isCurrentlyPictureInPicture(element);
-      if (isPictureInPicture) exitPictureInPicture(element);
-      else enterPictureInPicture(element);
+      try {
+        const isPictureInPicture = await isCurrentlyPictureInPicture(element);
+        if (isPictureInPicture) await exitPictureInPicture(element);
+        else await enterPictureInPicture(element);
+      } catch (e) {
+        warn((e as Error)?.message ?? "Picture in picture is not supported");
+
+        store.setState((state) => ({
+          __device: {
+            ...state.__device,
+            isPictureInPictureSupported: false,
+          },
+        }));
+      }
     },
   );
 
@@ -709,10 +731,7 @@ const addEffectsToStore = (
     (state) => state.__controls.lastInteraction,
     async (lastInteraction) => {
       if (options.autohide && lastInteraction) {
-        const { __device } = store.getState();
-        if (!__device.isMobile) {
-          store.getState().__controlsFunctions.setHidden(false);
-        }
+        store.getState().__controlsFunctions.setHidden(false);
 
         await delay(options.autohide);
 

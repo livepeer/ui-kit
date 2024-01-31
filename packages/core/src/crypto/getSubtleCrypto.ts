@@ -3,6 +3,10 @@ export const getSubtleCrypto = async () => {
     return crypto.subtle;
   }
 
+  if (typeof globalThis?.crypto !== "undefined" && globalThis?.crypto?.subtle) {
+    return globalThis.crypto.subtle;
+  }
+
   if (typeof window !== "undefined") {
     if (window?.crypto?.subtle) {
       return window.crypto.subtle;

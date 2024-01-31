@@ -7,13 +7,13 @@ import { MediaScopedProps, useMediaContext } from "../context";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
-import * as Radix from "./primitive";
+import * as Radix from "../shared/primitive";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
-import * as SliderPrimitive from "./Slider";
+import * as SliderPrimitive from "../shared/Slider";
 
 import { warn } from "@livepeer/core/utils";
-import { noPropagate } from "./utils";
+import { noPropagate } from "../shared/utils";
 
 /**
  * Volume

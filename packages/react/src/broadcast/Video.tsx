@@ -80,7 +80,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     // biome-ignore lint/correctness/useExhaustiveDependencies: context
     React.useEffect(() => {
       context.store.getState().__controlsFunctions.setMounted();
-      context.store.getState().__controlsFunctions.onCanPlay();
     }, []);
 
     return (

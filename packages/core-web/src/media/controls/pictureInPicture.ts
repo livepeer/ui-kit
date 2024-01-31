@@ -9,9 +9,13 @@ export const isPictureInPictureSupported = (
 
   const videoElement = element ?? document.createElement("video");
 
+  const isPiPDisabled = Boolean(
+    (videoElement as HTMLVideoElement).disablePictureInPicture,
+  );
+
   const { apiType } = getPictureInPictureMode(videoElement);
 
-  return Boolean(apiType);
+  return Boolean(apiType) && !isPiPDisabled;
 };
 
 export const isCurrentlyPictureInPicture = (
@@ -34,14 +38,10 @@ export const enterPictureInPicture = async (
 ) => {
   const { apiType, element } = getPictureInPictureMode(inputElement);
 
-  try {
-    if (apiType === "w3c") {
-      await element?.requestPictureInPicture?.();
-    } else if (apiType === "webkit") {
-      await element?.webkitSetPresentationMode?.("picture-in-picture");
-    }
-  } catch (e) {
-    console.warn(e);
+  if (apiType === "w3c") {
+    await element?.requestPictureInPicture?.();
+  } else if (apiType === "webkit") {
+    await element?.webkitSetPresentationMode?.("picture-in-picture");
   }
 
   return null;

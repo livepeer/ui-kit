@@ -23,7 +23,7 @@ export function addMediaMetrics(
   onError?: (error: unknown) => void,
 ): MediaMetrics {
   if (element) {
-    const store = createControllerStore({
+    const { store, destroy } = createControllerStore({
       src: element?.src ?? null,
       device: getDeviceInfo(version.core),
       storage: createStorage(
@@ -50,6 +50,7 @@ export function addMediaMetrics(
     return {
       metrics,
       destroy: () => {
+        destroy?.();
         destroyListeners?.();
         destroyMetrics?.();
       },

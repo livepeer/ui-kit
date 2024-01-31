@@ -1,15 +1,12 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import * as Assets from "@livepeer/react/assets";
 import * as Broadcast from "@livepeer/react/broadcast";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
-import React from "react";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { Settings } from "./Settings";
 
 export function BroadcastWithControls() {
-  const portalRef = useRef<HTMLDivElement | null>(null);
   const [streamKey, setStreamKey] = useState<string | null>(
     "398d-5x6h-0yy6-zhq2",
   );
@@ -58,27 +55,41 @@ export function BroadcastWithControls() {
               <Broadcast.Controls className="bg-gradient-to-b gap-1 px-3 md:px-3 py-1.5 flex-col-reverse flex from-black/20 via-80% via-black/30 duration-1000 to-black/60 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
                 <div className="flex justify-between gap-4">
                   <div className="flex flex-1 items-center gap-3">
-                    <Broadcast.MuteTrigger className="w-6 h-6 md:w-7 md:h-7 hover:scale-110 transition-all flex-shrink-0">
-                      <Broadcast.VolumeIndicator asChild matcher={false}>
-                        <Assets.MuteIcon className="w-full h-full" />
-                      </Broadcast.VolumeIndicator>
-                      <Broadcast.VolumeIndicator asChild matcher={true}>
-                        <Assets.UnmuteIcon className="w-full h-full" />
-                      </Broadcast.VolumeIndicator>
-                    </Broadcast.MuteTrigger>
-                    <Broadcast.Volume className="relative mr-1 flex-1 group flex cursor-pointer items-center select-none touch-none max-w-full h-5">
-                      <Broadcast.Track className="bg-white/30 relative grow rounded-full h-[2px] md:h-[3px]">
-                        <Broadcast.Range className="absolute bg-white rounded-full h-full" />
-                      </Broadcast.Track>
-                      <Broadcast.Thumb className="block transition-all group-hover:scale-110 w-3 h-3 bg-white rounded-full" />
-                    </Broadcast.Volume>
+                    <Broadcast.VideoEnabledTrigger className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0">
+                      <Broadcast.VideoEnabledIndicator asChild matcher={false}>
+                        <Assets.DisableVideoIcon className="w-full h-full" />
+                      </Broadcast.VideoEnabledIndicator>
+                      <Broadcast.VideoEnabledIndicator asChild matcher={true}>
+                        <Assets.EnableVideoIcon className="w-full h-full" />
+                      </Broadcast.VideoEnabledIndicator>
+                    </Broadcast.VideoEnabledTrigger>
+                    <Broadcast.AudioEnabledTrigger className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0">
+                      <Broadcast.AudioEnabledIndicator asChild matcher={false}>
+                        <Assets.DisableAudioIcon className="w-full h-full" />
+                      </Broadcast.AudioEnabledIndicator>
+                      <Broadcast.AudioEnabledIndicator asChild matcher={true}>
+                        <Assets.EnableAudioIcon className="w-full h-full" />
+                      </Broadcast.AudioEnabledIndicator>
+                    </Broadcast.AudioEnabledTrigger>
                   </div>
                   <div className="flex sm:flex-1 md:flex-[1.5] justify-end items-center gap-2.5">
-                    <Broadcast.PictureInPictureTrigger className="w-6 h-6 md:w-7 md:h-7 hover:scale-110 transition-all flex-shrink-0">
+                    <Settings className="w-6 h-6 transition-all flex-shrink-0" />
+
+                    <Broadcast.ScreenshareTrigger className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0">
+                      <Broadcast.ScreenshareIndicator asChild>
+                        <Assets.StopScreenshareIcon className="w-full h-full" />
+                      </Broadcast.ScreenshareIndicator>
+
+                      <Broadcast.ScreenshareIndicator matcher={false} asChild>
+                        <Assets.StartScreenshareIcon className="w-full h-full" />
+                      </Broadcast.ScreenshareIndicator>
+                    </Broadcast.ScreenshareTrigger>
+
+                    <Broadcast.PictureInPictureTrigger className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0">
                       <Assets.PictureInPictureIcon className="w-full h-full" />
                     </Broadcast.PictureInPictureTrigger>
 
-                    <Broadcast.FullscreenTrigger className="w-6 h-6 md:w-7 md:h-7 hover:scale-110 transition-all flex-shrink-0">
+                    <Broadcast.FullscreenTrigger className="w-6 h-6 hover:scale-110 transition-all flex-shrink-0">
                       <Broadcast.FullscreenIndicator asChild>
                         <Assets.ExitFullscreenIcon className="w-full h-full" />
                       </Broadcast.FullscreenIndicator>
@@ -106,13 +117,13 @@ export function BroadcastWithControls() {
                     matcher={false}
                   >
                     <div className="bg-white/80 h-1.5 w-1.5 rounded-full" />
-                    <span className="text-xs select-none">OFF</span>
+                    <span className="text-xs select-none">PREVIEW</span>
                   </Broadcast.EnabledIndicator>
                 </div>
               </Broadcast.LoadingIndicator>
             </Broadcast.Container>
 
-            <Broadcast.LoadingIndicator asChild matcher={false}>
+            <Broadcast.LoadingIndicator matcher={false}>
               <Broadcast.EnabledTrigger className="rounded-md px-4 py-2 bg-white/5 hover:bg-white/10">
                 <Broadcast.EnabledIndicator
                   className="gap-1 flex items-center justify-center"
@@ -129,16 +140,11 @@ export function BroadcastWithControls() {
                   <span className="text-sm">Stop broadcast</span>
                 </Broadcast.EnabledIndicator>
               </Broadcast.EnabledTrigger>
+
+              <div className="w-full flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <Settings />
+              </div>
             </Broadcast.LoadingIndicator>
-
-            <Broadcast.ScreenshareTrigger>
-              Share screen
-            </Broadcast.ScreenshareTrigger>
-
-            <div className="w-full flex flex-col sm:flex-row gap-4 items-center justify-center">
-              <SourceSelectComposed type="videoinput" className="w-[200px]" />
-              <SourceSelectComposed type="audioinput" className="w-[200px]" />
-            </div>
           </Broadcast.Root>
         </>
       ) : (
@@ -152,86 +158,15 @@ export const BroadcastLoading = () => (
   <div className="w-full px-3 md:px-3 py-3 gap-3 flex-col-reverse flex aspect-video max-w-2xl mx-auto animate-pulse bg-white/10 overflow-hidden rounded-sm">
     <div className="flex justify-between">
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 md:w-7 md:h-7 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
+        <div className="w-6 h-6 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
         <div className="w-16 h-6 md:w-20 md:h-7 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 md:w-7 md:h-7 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
-        <div className="w-6 h-6 md:w-7 md:h-7 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
+        <div className="w-6 h-6 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
+        <div className="w-6 h-6 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
       </div>
     </div>
     <div className="w-full h-2 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
   </div>
 );
-
-const SourceSelectComposed = ({
-  type,
-  className,
-}: { type: "audioinput" | "videoinput"; className?: string }) => (
-  <Broadcast.SourceSelect name="videoSource" type={type}>
-    {(devices) =>
-      devices ? (
-        <>
-          <Broadcast.SelectTrigger
-            className={cn(
-              "flex w-full items-center overflow-hidden justify-between rounded-sm px-1 outline-1 outline-white/50 text-xs leading-none h-7 gap-1 outline-none",
-              className,
-            )}
-            aria-label={type === "audioinput" ? "Audio input" : "Video input"}
-          >
-            <Broadcast.SelectValue
-              placeholder={
-                type === "audioinput"
-                  ? "Select an audio input"
-                  : "Select a video input"
-              }
-            />
-            <Broadcast.SelectIcon>
-              <ChevronDownIcon className="h-4 w-4" />
-            </Broadcast.SelectIcon>
-          </Broadcast.SelectTrigger>
-          <Broadcast.SelectPortal>
-            <Broadcast.SelectContent className="overflow-hidden bg-black rounded-sm">
-              <Broadcast.SelectViewport className="p-1">
-                <Broadcast.SelectGroup>
-                  {devices?.map((device) => (
-                    <RateSelectItem
-                      key={device.deviceId}
-                      value={device.deviceId}
-                    >
-                      {device.friendlyName}
-                    </RateSelectItem>
-                  ))}
-                </Broadcast.SelectGroup>
-              </Broadcast.SelectViewport>
-            </Broadcast.SelectContent>
-          </Broadcast.SelectPortal>
-        </>
-      ) : (
-        <span>There was an error fetching the available devices.</span>
-      )
-    }
-  </Broadcast.SourceSelect>
-);
-
-const RateSelectItem = React.forwardRef<
-  HTMLDivElement,
-  Broadcast.SelectItemProps
->(({ children, className, ...props }, forwardedRef) => {
-  return (
-    <Broadcast.SelectItem
-      className={cn(
-        "text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20",
-        className,
-      )}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Broadcast.SelectItemText>{children}</Broadcast.SelectItemText>
-      <Broadcast.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-        <CheckIcon className="w-4 h-4" />
-      </Broadcast.SelectItemIndicator>
-    </Broadcast.SelectItem>
-  );
-});
