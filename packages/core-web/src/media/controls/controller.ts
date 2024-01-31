@@ -9,6 +9,7 @@ import {
   BFRAMES_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
 } from "@livepeer/core";
+import { warn } from "@livepeer/core/utils";
 import { HlsError, HlsVideoConfig, createNewHls } from "../../hls";
 import { createNewWHEP } from "../../webrtc";
 import {
@@ -345,20 +346,37 @@ export const addEventListeners = (
       element?.removeEventListener?.("resize", onResize);
       element?.removeEventListener?.("ended", onEnded);
 
-      parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
-      parentElementOrElement?.removeEventListener?.(
-        "mouseenter",
-        onMouseUpdate,
-      );
-      parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
-      parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
+      if (autohide) {
+        parentElementOrElement?.removeEventListener?.(
+          "mouseover",
+          onMouseUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "mouseenter",
+          onMouseUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "mouseout",
+          onMouseUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "mousemove",
+          onMouseUpdate,
+        );
 
-      parentElementOrElement?.removeEventListener?.(
-        "touchstart",
-        onTouchUpdate,
-      );
-      parentElementOrElement?.removeEventListener?.("touchend", onTouchUpdate);
-      parentElementOrElement?.removeEventListener?.("touchmove", onTouchUpdate);
+        parentElementOrElement?.removeEventListener?.(
+          "touchstart",
+          onTouchUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "touchend",
+          onTouchUpdate,
+        );
+        parentElementOrElement?.removeEventListener?.(
+          "touchmove",
+          onTouchUpdate,
+        );
+      }
 
       if (store.getState().__initialProps.hotkeys) {
         parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
@@ -691,9 +709,20 @@ const addEffectsToStore = (
   const destroyPictureInPicture = store.subscribe(
     (state) => state.__controls.requestedPictureInPictureLastTime,
     async () => {
-      const isPictureInPicture = isCurrentlyPictureInPicture(element);
-      if (isPictureInPicture) exitPictureInPicture(element);
-      else enterPictureInPicture(element);
+      try {
+        const isPictureInPicture = await isCurrentlyPictureInPicture(element);
+        if (isPictureInPicture) await exitPictureInPicture(element);
+        else await enterPictureInPicture(element);
+      } catch (e) {
+        warn((e as Error)?.message ?? "Picture in picture is not supported");
+
+        store.setState((state) => ({
+          __device: {
+            ...state.__device,
+            isPictureInPictureSupported: false,
+          },
+        }));
+      }
     },
   );
 
@@ -702,10 +731,7 @@ const addEffectsToStore = (
     (state) => state.__controls.lastInteraction,
     async (lastInteraction) => {
       if (options.autohide && lastInteraction) {
-        const { __device } = store.getState();
-        if (!__device.isMobile) {
-          store.getState().__controlsFunctions.setHidden(false);
-        }
+        store.getState().__controlsFunctions.setHidden(false);
 
         await delay(options.autohide);
 

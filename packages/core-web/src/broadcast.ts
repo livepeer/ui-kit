@@ -8,12 +8,14 @@ import {
 } from "zustand/middleware";
 import { StoreApi, createStore } from "zustand/vanilla";
 
+import { isPictureInPictureSupported } from "./media/controls";
 import { warn } from "./utils";
 import { getRTCPeerConnectionConstructor } from "./webrtc/shared";
 import {
   attachMediaStreamToPeerConnection,
   createNewWHIP,
   getDisplayMedia,
+  getDisplayMediaExists,
   getMediaDevices,
   getUserMedia,
 } from "./webrtc/whip";
@@ -63,6 +65,7 @@ export const getBroadcastDeviceInfo = (
 
   isMediaDevicesSupported: Boolean(getMediaDevices()),
   isRTCPeerConnectionSupported: Boolean(getRTCPeerConnectionConstructor()),
+  isDisplayMediaSupported: Boolean(getDisplayMediaExists()),
 });
 
 export type BroadcastDeviceInformation = {
@@ -72,6 +75,8 @@ export type BroadcastDeviceInformation = {
   isMediaDevicesSupported: boolean;
   /** If the environment supports RTCPeerConnection */
   isRTCPeerConnectionSupported: boolean;
+  /** If the environment supports sharing display media */
+  isDisplayMediaSupported: boolean;
 };
 
 export type BroadcastControlsState = {
@@ -707,6 +712,28 @@ const addEffectsToStore = (
     },
   );
 
+  // Subscribe to media stream changes
+  const destroyPictureInPictureSupportedMonitor = store.subscribe(
+    (state) => state.mediaStream,
+    async () => {
+      const isPipSupported = isPictureInPictureSupported(element);
+
+      console.log({ isPipSupported });
+
+      if (!isPipSupported) {
+        mediaStore.setState((state) => ({
+          __device: {
+            ...state.__device,
+            isPictureInPictureSupported: isPipSupported,
+          },
+        }));
+      }
+    },
+    {
+      equalityFn: (a, b) => a?.id === b?.id,
+    },
+  );
+
   /** STORE LISTENERS - handle broadcast state */
 
   // Subscribe to request user media
@@ -1040,6 +1067,7 @@ const addEffectsToStore = (
     destroyMediaStream?.();
     destroyMediaSyncMounted?.();
     destroyPeerConnectionAndMediaStream?.();
+    destroyPictureInPictureSupportedMonitor?.();
     destroyRequestUserMedia?.();
     destroyUpdateDeviceList?.();
     destroyWhip?.();

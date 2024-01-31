@@ -23,43 +23,53 @@ type ScreenshareTriggerElement = React.ElementRef<
 >;
 
 interface ScreenshareTriggerProps
-  extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {}
+  extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
+}
 
 const ScreenshareTrigger = React.forwardRef<
   ScreenshareTriggerElement,
   ScreenshareTriggerProps
 >((props: BroadcastScopedProps<ScreenshareTriggerProps>, forwardedRef) => {
-  const { __scopeBroadcast, ...screenshareProps } = props;
+  const { __scopeBroadcast, forceMount, ...screenshareProps } = props;
 
   const broadcastContext = useBroadcastContext(
     SCREENSHARE_TRIGGER_NAME,
     __scopeBroadcast,
   );
 
-  const { isActive, title, toggleDisplayMedia } = useStore(
+  const { isSupported, isActive, title, toggleDisplayMedia } = useStore(
     broadcastContext.store,
-    useShallow(({ mediaDeviceIds, aria, __controlsFunctions }) => ({
+    useShallow(({ mediaDeviceIds, aria, __device, __controlsFunctions }) => ({
       isActive: mediaDeviceIds.videoinput === "screen",
       title: aria.screenshareTrigger,
       toggleDisplayMedia: __controlsFunctions.toggleDisplayMedia,
+      isSupported: __device.isDisplayMediaSupported,
     })),
   );
 
   return (
-    <Radix.Primitive.button
-      type="button"
-      aria-pressed={isActive}
-      aria-label={title}
-      title={title}
-      {...screenshareProps}
-      onClick={composeEventHandlers(
-        props.onClick,
-        noPropagate(toggleDisplayMedia),
-      )}
-      ref={forwardedRef}
-      data-livepeer-controls-screenshare-trigger=""
-      data-active={String(isActive)}
-    />
+    <Presence present={forceMount || isSupported}>
+      <Radix.Primitive.button
+        type="button"
+        aria-pressed={isActive}
+        aria-label={title}
+        title={title}
+        {...screenshareProps}
+        onClick={composeEventHandlers(
+          props.onClick,
+          noPropagate(toggleDisplayMedia),
+        )}
+        ref={forwardedRef}
+        data-livepeer-controls-screenshare-trigger=""
+        data-active={String(isActive)}
+        data-visible={String(isSupported)}
+      />
+    </Presence>
   );
 });
 
@@ -103,15 +113,22 @@ const ScreenshareIndicator = React.forwardRef<
     __scopeBroadcast,
   );
 
-  const isActive = useStore(
+  const { isActive, isSupported } = useStore(
     broadcastContext.store,
-    ({ mediaDeviceIds }) => mediaDeviceIds.videoinput === "screen",
+    ({ mediaDeviceIds, __device }) => ({
+      isActive: mediaDeviceIds.videoinput === "screen",
+      isSupported: __device.isDisplayMediaSupported,
+    }),
   );
 
   const isPresent = useMemo(
     () =>
-      typeof matcher === "boolean" ? matcher === isActive : matcher(isActive),
-    [isActive, matcher],
+      isSupported
+        ? typeof matcher === "boolean"
+          ? matcher === isActive
+          : matcher(isActive)
+        : false,
+    [isSupported, isActive, matcher],
   );
 
   return (

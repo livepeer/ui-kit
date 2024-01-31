@@ -12,6 +12,7 @@ import {
   MediaDeviceInfoExtended,
 } from "@livepeer/core-web/broadcast";
 import { composeEventHandlers } from "@radix-ui/primitive";
+import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "../shared/primitive";
 import { BroadcastScopedProps, useBroadcastContext } from "./context";
@@ -23,6 +24,12 @@ interface SourceSelectProps
     Radix.ComponentPropsWithoutRef<typeof SelectPrimitive.SelectRoot>,
     "children"
   > {
+  /**
+   * Used to force mounting when more control is needed. Useful when
+   * controlling animation with React animation libraries.
+   */
+  forceMount?: true;
+
   /**
    * The type of media device to filter the list by.
    */
@@ -40,8 +47,14 @@ interface SourceSelectProps
 const SourceSelect = (
   props: MediaScopedProps<BroadcastScopedProps<SourceSelectProps>>,
 ) => {
-  const { __scopeMedia, __scopeBroadcast, type, children, ...controlsProps } =
-    props;
+  const {
+    __scopeMedia,
+    __scopeBroadcast,
+    forceMount,
+    type,
+    children,
+    ...controlsProps
+  } = props;
 
   const broadcastContext = useBroadcastContext(
     SOURCE_SELECT_NAME,
@@ -84,7 +97,7 @@ const SourceSelect = (
   );
 
   return (
-    isSupported && (
+    <Presence present={forceMount || isSupported}>
       <SelectPrimitive.SelectRoot
         disabled={type === "audioinput" ? !audio : !video}
         {...controlsProps}
@@ -95,10 +108,11 @@ const SourceSelect = (
         )}
         data-livepeer-source-select=""
         data-type={type}
+        data-visible={String(isSupported)}
       >
         {children(mediaDevices)}
       </SelectPrimitive.SelectRoot>
-    )
+    </Presence>
   );
 };
 

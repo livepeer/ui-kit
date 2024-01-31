@@ -215,8 +215,22 @@ export const getMediaDevices = () => {
   return navigator.mediaDevices;
 };
 
+export const getDisplayMediaExists = () => {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+
+  if (!navigator?.mediaDevices?.getDisplayMedia) {
+    return false;
+  }
+
+  return true;
+};
+
 export const getDisplayMedia = (options?: DisplayMediaStreamOptions) => {
   if (typeof navigator === "undefined") {
+    warn("getDisplayMedia does not exist in this environment.");
+
     return null;
   }
 
