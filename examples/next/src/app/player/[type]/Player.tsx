@@ -78,6 +78,16 @@ export async function PlayerWithControls({
           </Player.LoadingIndicator>
 
           <Player.ErrorIndicator
+            matcher="all"
+            className="absolute select-none inset-0 text-center bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <LoadingIcon className="w-8 h-8 animate-spin" />
+            </div>
+            <PlayerLoading />
+          </Player.ErrorIndicator>
+
+          <Player.ErrorIndicator
             matcher="offline"
             className="absolute select-none animate-in fade-in-0 inset-0 text-center bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
           >
@@ -101,16 +111,6 @@ export async function PlayerWithControls({
                 It looks like you don't have permission to view this content
               </div>
             </div>
-          </Player.ErrorIndicator>
-
-          <Player.ErrorIndicator
-            matcher="all"
-            className="absolute select-none inset-0 text-center bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
-          >
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <LoadingIcon className="w-8 h-8 animate-spin" />
-            </div>
-            <PlayerLoading />
           </Player.ErrorIndicator>
 
           <Player.Controls className="bg-gradient-to-b gap-1 px-3 md:px-3 py-2 flex-col-reverse flex from-black/20 via-80% via-black/30 duration-1000 to-black/60 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
@@ -144,7 +144,7 @@ export async function PlayerWithControls({
                     <UnmuteIcon className="w-full h-full" />
                   </Player.VolumeIndicator>
                 </Player.MuteTrigger>
-                <Player.Volume className="relative mr-1 flex-1 group flex cursor-pointer items-center select-none touch-none max-w-full h-5">
+                <Player.Volume className="relative mr-1 flex-1 group flex cursor-pointer items-center select-none touch-none max-w-[120px] h-5">
                   <Player.Track className="bg-white/30 relative grow rounded-full transition-all h-[2px] md:h-[3px] group-hover:h-[3px] group-hover:md:h-[4px]">
                     <Player.Range className="absolute bg-white rounded-full h-full" />
                   </Player.Track>

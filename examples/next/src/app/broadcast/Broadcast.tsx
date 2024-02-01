@@ -165,10 +165,6 @@ export function BroadcastWithControls() {
                   <span className="text-sm">Stop broadcast</span>
                 </Broadcast.EnabledIndicator>
               </Broadcast.EnabledTrigger>
-
-              <div className="w-full flex flex-col sm:flex-row gap-4 items-center justify-center">
-                <Settings />
-              </div>
             </Broadcast.LoadingIndicator>
           </Broadcast.Root>
         </>

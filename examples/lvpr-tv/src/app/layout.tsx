@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Livepeer w/ App Router",
-  description: "Livepeer React with the Next.JS App Router",
+  title: "Livepeer TV",
+  description: "Video hosted on Livepeer Studio.",
 };
 
 export default function RootLayout({
@@ -17,11 +17,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html className="w-full h-full m-0" lang="en">
       <body
         className={cn(
           inter.className,
-          "dark-theme text-white bg-black min-h-screen-safe pb-[env(safe-area-inset-bottom)]",
+          "dark-theme relative h-full w-full text-white bg-black m-0",
         )}
       >
         {children}

@@ -654,6 +654,7 @@ const addEffectsToStore = (
   // Subscribe to volume changes
   const destroyVolume = store.subscribe(
     (state) => ({
+      playing: state.playing,
       volume: state.volume,
       isVolumeChangeSupported: state.__device.isVolumeChangeSupported,
     }),
@@ -665,6 +666,7 @@ const addEffectsToStore = (
     {
       equalityFn: (a, b) =>
         a.volume === b.volume &&
+        a.playing === b.playing &&
         a.isVolumeChangeSupported === b.isVolumeChangeSupported,
     },
   );

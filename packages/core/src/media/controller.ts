@@ -82,7 +82,7 @@ export type InitialProps = {
   onError: ((error: PlaybackError | null) => void) | null;
 
   /**
-   * The default playback rate for the media. Determines the speed at which the media is played, e.g., 0.5 for half-speed, 2 for double speed.
+   * The default playback rate for the media. Determines the speed at which the media is played, e.g. 0.5 for half-speed, 2 for double speed.
    *
    * This can be overridden during playback by the user with `RateSelect`.
    *
