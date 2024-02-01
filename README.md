@@ -11,8 +11,8 @@
 
 ## Features
 
-- 📺 Composable player for video/audio with built-in low-latency WebRTC/HLS support, accessibility, keyboard shortcuts, and customizable controls
-- 🎥 Broadcast component for streaming low-latency video from the browser
+- 📺 Composable components for video/audio with built-in low-latency WebRTC/HLS support, WAI-ARIA with keyboard shortcuts, and primitives for building advanced media players
+- 🎥 Broadcast primitives for building applications with low-latency WebRTC video streaming from the browser
 - 🐼 TypeScript ready
 - 🧪 Tests across core and React components
 
