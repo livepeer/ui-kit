@@ -28,13 +28,13 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
       - name: Cache pnpm
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: pnpm-
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cache-node-modules
         with:
           path: |
@@ -71,7 +71,7 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -103,7 +103,7 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -136,7 +136,7 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -172,7 +172,7 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -211,7 +211,7 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
