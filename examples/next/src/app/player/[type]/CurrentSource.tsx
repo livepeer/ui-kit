@@ -4,7 +4,7 @@ import {
   MediaScopedProps,
   useMediaContext,
   useStore,
-} from "@livepeer/react/context";
+} from "@livepeer/react/player";
 
 const CURRENT_SOURCE_NAME = "CurrentSource";
 

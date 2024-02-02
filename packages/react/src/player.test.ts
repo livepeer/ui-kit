@@ -13,6 +13,7 @@ it("should expose correct exports", () => {
       "FullscreenTrigger",
       "LiveIndicator",
       "LoadingIndicator",
+      "MediaProvider",
       "MuteTrigger",
       "PictureInPictureTrigger",
       "PlayPauseTrigger",
@@ -47,6 +48,9 @@ it("should expose correct exports", () => {
       "VideoQualitySelectItem",
       "Volume",
       "VolumeIndicator",
+      "createMediaScope",
+      "useMediaContext",
+      "useStore",
     ]
   `);
 });

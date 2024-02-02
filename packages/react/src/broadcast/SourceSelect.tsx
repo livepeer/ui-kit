@@ -5,7 +5,7 @@ import * as SelectPrimitive from "../shared/Select";
 import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
-import { MediaScopedProps } from "../context";
+import { MediaScopedProps } from "../shared/context";
 
 import {
   AudioDeviceId,

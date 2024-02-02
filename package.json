@@ -3,18 +3,17 @@
   "type": "module",
   "scripts": {
     "build": "pnpm build:packages",
-    "build:examples": "pnpm run generate-version && pnpm --filter \"example-*\" build",
+    "build:examples": "pnpm run generate-version && pnpm build && pnpm --filter \"example-*\" build",
     "build:packages": "pnpm run generate-version && pnpm --filter \"@livepeer/*\" build",
     "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
-    "clean": "turbo run clean && rimraf node_modules",
+    "clean": "turbo run clean && rimraf node_modules coverage .turbo",
     "dev": "pnpm dev:packages",
     "dev:next": "dotenv -- turbo dev --filter \"example-next\"",
     "dev:packages": "dotenv -- turbo dev --filter \"@livepeer/*\"",
     "generate-version": "tsm generate-version.ts",
-    "lint": "pnpm dlx @biomejs/biome lint ./",
+    "lint": "pnpm dlx @biomejs/biome lint ./ && turbo run lint --filter \"@livepeer/*\"",
     "lint:fix": "pnpm dlx @biomejs/biome check --apply ./",
-    "lint:types": "tsc --noEmit",
     "list-browsers": "pnpx browserslist && pnpx browserslist --coverage",
     "postinstall": "pnpm run generate-version",
     "preinstall": "npx only-allow pnpm",
@@ -34,7 +33,7 @@
     "@biomejs/biome": "^1.5.3",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
-    "@types/node": "20.11.13",
+    "@types/node": "20.11.2",
     "@vitest/coverage-c8": "^0.33.0",
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/ui": "^1.1.3",
@@ -49,19 +48,15 @@
     "tsm": "^2.3.0",
     "turbo": "^1.12.1",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12",
+    "vite": "^5.0.11",
     "vitest": "^1.1.3"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "pnpm lint:fix"
-    ],
-    "*.{json,md,mdx,yml}": [
-      "pnpm lint:fix"
-    ]
+    "*.{js,ts,tsx}": ["pnpm lint:fix"],
+    "*.{json,md,mdx,yml}": ["pnpm lint:fix"]
   },
   "packageManager": "pnpm@8.14.1",
   "engines": {

@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import { useStore } from "zustand";
-import { MediaScopedProps, useMediaContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "./context";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";

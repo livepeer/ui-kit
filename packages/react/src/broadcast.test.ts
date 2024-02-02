@@ -7,6 +7,7 @@ it("should expose correct exports", () => {
     [
       "AudioEnabledIndicator",
       "AudioEnabledTrigger",
+      "BroadcastProvider",
       "Container",
       "Controls",
       "EnabledIndicator",
@@ -16,6 +17,7 @@ it("should expose correct exports", () => {
       "FullscreenTrigger",
       "LiveIndicator",
       "LoadingIndicator",
+      "MediaProvider",
       "PictureInPictureTrigger",
       "Portal",
       "Range",
@@ -45,6 +47,11 @@ it("should expose correct exports", () => {
       "Video",
       "VideoEnabledIndicator",
       "VideoEnabledTrigger",
+      "createBroadcastScope",
+      "createMediaScope",
+      "useBroadcastContext",
+      "useMediaContext",
+      "useStore",
     ]
   `);
 });

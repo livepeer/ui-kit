@@ -66,7 +66,7 @@ declare global {
     requestPictureInPicture?(): void;
   }
 
-  interface HTMLVideoElement extends HTMLVideoElement {
+  interface HTMLVideoElement {
     /**
      * A Boolean value indicating whether the video is displaying in fullscreen mode.
      *
@@ -133,7 +133,7 @@ declare global {
     webkitSetPresentationMode?(mode: WebKitPresentationMode): Promise<void>;
   }
 
-  interface Document extends Document {
+  interface Document {
     /** Exits fullscreen mode. Used in old Safari. */
     webkitExitFullscreen?(): void;
     /** Exits fullscreen mode. Used in old Firefox. */

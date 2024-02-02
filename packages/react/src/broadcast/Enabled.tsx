@@ -8,7 +8,7 @@ import { useStore } from "zustand";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
-import { MediaScopedProps, useMediaContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
 import { BroadcastScopedProps, useBroadcastContext } from "./context";

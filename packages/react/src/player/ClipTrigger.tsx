@@ -8,7 +8,7 @@ import React, { useEffect } from "react";
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { MediaScopedProps, useMediaContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../shared/context";
 import { noPropagate } from "../shared/utils";
 
 const CLIP_TRIGGER_NAME = "ClipTrigger";

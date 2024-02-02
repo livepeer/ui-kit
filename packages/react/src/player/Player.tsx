@@ -12,7 +12,7 @@ import {
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
-import { MediaProvider, MediaScopedProps } from "../context";
+import { MediaProvider, MediaScopedProps } from "../shared/context";
 
 interface PlayerProps
   extends PropsWithChildren<

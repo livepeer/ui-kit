@@ -45,16 +45,6 @@
         "default": "./dist/cjs/broadcast.js"
       }
     },
-    "./context": {
-      "import": {
-        "types": "./dist/es/context.d.mts",
-        "default": "./dist/es/context.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/context.d.ts",
-        "default": "./dist/cjs/context.js"
-      }
-    },
     "./crypto": {
       "import": {
         "types": "./dist/es/crypto.d.mts",
@@ -89,7 +79,8 @@
   "scripts": {
     "build": "bunchee",
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "bunchee --watch"
+    "dev": "bunchee --watch",
+    "lint": "tsc --noEmit"
   },
   "peerDependencies": {
     "react": ">=17.0.0",
@@ -123,7 +114,7 @@
   "devDependencies": {
     "@testing-library/react": "^14.2.0",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.2.48",
+    "@types/react": "^18.2.51",
     "@types/react-dom": "^18.2.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

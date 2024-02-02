@@ -27,6 +27,15 @@ export {
   type VideoEnabledTriggerProps,
 } from "./broadcast/VideoEnabled";
 export {
+  BroadcastProvider,
+  createBroadcastScope,
+  useBroadcastContext,
+} from "./broadcast/context";
+export type {
+  BroadcastContextValue,
+  BroadcastScopedProps,
+} from "./broadcast/context";
+export {
   Container,
   type ContainerProps,
 } from "./shared/Container";
@@ -100,3 +109,10 @@ export {
   type TrackProps,
 } from "./shared/Slider";
 export { Time, type TimeProps } from "./shared/Time";
+export {
+  MediaProvider,
+  createMediaScope,
+  useMediaContext,
+  useStore,
+} from "./shared/context";
+export type { MediaContextValue, MediaScopedProps } from "./shared/context";
