@@ -2,7 +2,7 @@
   "name": "@livepeer/react-native",
   "description": "React Native components & hooks for mobile apps built with Livepeer. (deprecated)",
   "license": "MIT",
-  "version": "0.0.1-next.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeer-react.git",
