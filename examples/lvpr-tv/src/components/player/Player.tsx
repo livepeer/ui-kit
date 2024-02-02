@@ -11,6 +11,7 @@ import {
   UnmuteIcon,
 } from "@livepeer/react/assets";
 import { getSrc } from "@livepeer/react/external";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { Clip } from "./Clip";
 import { CurrentSource } from "./CurrentSource";
@@ -36,7 +37,7 @@ export type PlayerProps = Partial<{
   debug: boolean;
 }>;
 
-const getPlaybackInfo = cache(async (playbackId: string) => {
+const getPlaybackInfoUncached = cache(async (playbackId: string) => {
   try {
     const playbackInfo = await livepeer.playback.get(playbackId);
 
@@ -52,6 +53,14 @@ const getPlaybackInfo = cache(async (playbackId: string) => {
     return null;
   }
 });
+
+const getPlaybackInfo = unstable_cache(
+  async (id: string) => getPlaybackInfoUncached(id),
+  ["get-playback-info"],
+  {
+    revalidate: 120,
+  },
+);
 
 export async function PlayerWithControls(props: PlayerProps) {
   if (!props.playbackId && !props.url) {

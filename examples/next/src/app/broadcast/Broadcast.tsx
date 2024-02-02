@@ -16,6 +16,7 @@ import {
 } from "@livepeer/react/assets";
 import * as Broadcast from "@livepeer/react/broadcast";
 
+import { getIngest } from "@livepeer/react/external";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Settings } from "./Settings";
@@ -27,7 +28,7 @@ export function BroadcastWithControls() {
     <div className="w-full max-w-2xl gap-4 flex flex-col items-center mx-auto">
       <div className="flex flex-col items-center gap-1">
         <label className="text-xs text-white/80" htmlFor="streamKey">
-          Stream Key
+          Stream Key or WHIP URL
         </label>
         <input
           name="streamKey"
@@ -35,10 +36,10 @@ export function BroadcastWithControls() {
           className="focus:outline-none font-light text-white/90 text-sm focus:ring-1 focus:ring-white/30 px-1 rounded-sm bg-white/5"
           onChange={(e) => setStreamKey(e.target.value)}
           value={streamKey ?? undefined}
-          placeholder="Paste your stream key..."
+          placeholder="Paste your stream key or a WHIP URL..."
         />
       </div>
-      {streamKey && (streamKey?.length ?? 0) === 19 ? (
+      {streamKey ? (
         <>
           <Broadcast.Root
             onError={(error) =>
@@ -49,7 +50,7 @@ export function BroadcastWithControls() {
                 : null
             }
             aspectRatio={16 / 9}
-            streamKey={streamKey}
+            ingestUrl={getIngest(streamKey)}
           >
             <Broadcast.Container className="w-full h-full overflow-hidden rounded-sm bg-gray-950">
               <Broadcast.Video title="Live stream" className="w-full h-full" />

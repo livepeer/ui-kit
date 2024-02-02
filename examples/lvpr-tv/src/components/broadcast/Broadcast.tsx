@@ -20,14 +20,9 @@ import { toast } from "sonner";
 import { Settings } from "./Settings";
 
 export function BroadcastWithControls({
-  streamKey,
-}: { streamKey: string | null }) {
-  return !streamKey ? (
-    <BroadcastLoading
-      title="No stream key found"
-      description="There was no stream key provided in the URL. Please check and try again."
-    />
-  ) : (streamKey?.length ?? 0) < 17 ? (
+  ingestUrl,
+}: { ingestUrl: string | null }) {
+  return !ingestUrl ? (
     <BroadcastLoading
       title="Invalid stream key"
       description="The stream key provided was invalid. Please check and try again."
@@ -43,7 +38,7 @@ export function BroadcastWithControls({
             : null
         }
         aspectRatio={16 / 9}
-        streamKey={streamKey}
+        ingestUrl={ingestUrl}
       >
         <Broadcast.Container className="w-full h-full overflow-hidden rounded-sm bg-gray-950">
           <Broadcast.Video title="Live stream" className="w-full h-full" />

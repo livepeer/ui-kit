@@ -202,11 +202,13 @@ export const getMediaSourceType = (
     return null;
   }
 
-  const base64Mime = src.match(mimeFromBase64Pattern);
+  const sourceTest = src?.toLowerCase();
+
+  const base64Mime = sourceTest.match(mimeFromBase64Pattern);
   const resolvedWidth = opts?.sizing?.width ?? null;
   const resolvedHeight = opts?.sizing?.height ?? null;
 
-  return webrtcExtensions.test(src)
+  return webrtcExtensions.test(sourceTest)
     ? {
         type: "webrtc",
         src: src as WebRTCSrc["src"],
@@ -214,31 +216,31 @@ export const getMediaSourceType = (
         width: resolvedWidth,
         height: resolvedHeight,
       }
-    : hlsExtensions.test(src)
+    : hlsExtensions.test(sourceTest)
       ? {
           type: "hls",
           src: src as HlsSrc["src"],
-          mime: getMimeType(hlsExtensions.exec(src)?.[1] ?? ""),
+          mime: getMimeType(hlsExtensions.exec(sourceTest)?.[1] ?? ""),
           width: resolvedWidth,
           height: resolvedHeight,
         }
-      : videoExtensions.test(src)
+      : videoExtensions.test(sourceTest)
         ? {
             type: "video",
             src: src as VideoSrc["src"],
-            mime: getMimeType(videoExtensions.exec(src)?.[1] ?? ""),
+            mime: getMimeType(videoExtensions.exec(sourceTest)?.[1] ?? ""),
             width: resolvedWidth,
             height: resolvedHeight,
           }
-        : audioExtensions.test(src)
+        : audioExtensions.test(sourceTest)
           ? {
               type: "audio",
               src: src as AudioSrc["src"],
-              mime: getMimeType(audioExtensions.exec(src)?.[1] ?? ""),
+              mime: getMimeType(audioExtensions.exec(sourceTest)?.[1] ?? ""),
               width: resolvedWidth,
               height: resolvedHeight,
             }
-          : base64String.test(src)
+          : base64String.test(sourceTest)
             ? {
                 type: "video",
                 src: src as Base64Src["src"],
@@ -246,19 +248,23 @@ export const getMediaSourceType = (
                 width: resolvedWidth,
                 height: resolvedHeight,
               }
-            : imageExtensions.test(src)
+            : imageExtensions.test(sourceTest)
               ? {
                   type: "image",
                   src: src as ImageSrc["src"],
-                  mime: getMimeType(imageExtensions.exec(src)?.[1] ?? ""),
+                  mime: getMimeType(
+                    imageExtensions.exec(sourceTest)?.[1] ?? "",
+                  ),
                   width: resolvedWidth,
                   height: resolvedHeight,
                 }
-              : vttExtensions.test(src)
+              : vttExtensions.test(sourceTest)
                 ? {
                     type: "vtt",
                     src: src as VideoTextTrackSrc["src"],
-                    mime: getMimeType(vttExtensions.exec(src)?.[1] ?? ""),
+                    mime: getMimeType(
+                      vttExtensions.exec(sourceTest)?.[1] ?? "",
+                    ),
                     width: null,
                     height: null,
                   }
