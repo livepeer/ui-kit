@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm build:packages",
-    "build:examples": "pnpm run generate-version && pnpm --filter \"example-*\" build",
+    "build:examples": "pnpm run generate-version && pnpm build && pnpm --filter \"example-*\" build",
     "build:packages": "pnpm run generate-version && pnpm --filter \"@livepeer/*\" build",
     "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",

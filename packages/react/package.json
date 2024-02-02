@@ -45,16 +45,6 @@
         "default": "./dist/cjs/broadcast.js"
       }
     },
-    "./context": {
-      "import": {
-        "types": "./dist/es/context.d.mts",
-        "default": "./dist/es/context.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/context.d.ts",
-        "default": "./dist/cjs/context.js"
-      }
-    },
     "./crypto": {
       "import": {
         "types": "./dist/es/crypto.d.mts",

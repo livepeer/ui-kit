@@ -5,7 +5,7 @@ import {
   MediaScopedProps,
   useMediaContext,
   useStore,
-} from "@livepeer/react/context";
+} from "@livepeer/react/player";
 
 const FORCE_ERROR_NAME = "ForceError";
 
