@@ -1,4 +1,4 @@
-import { warn } from "../utils";
+import { warn } from "@livepeer/core/utils";
 import {
   constructClientOffer,
   createPeerConnection,

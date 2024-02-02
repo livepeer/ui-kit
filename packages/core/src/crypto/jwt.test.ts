@@ -4,6 +4,9 @@ import { describe, expect, it } from "vitest";
 import { b64UrlDecode } from "../utils/string";
 import { signAccessJwt } from "./jwt";
 
+globalThis.crypto = crypto as Crypto;
+globalThis.window.crypto = crypto as Crypto;
+
 const commonOptions = {
   privateKey:
     "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZzlkeWpDWVI4RWl0UzBqUUoKQkNxbUJqMXdxVFhWeVZ6L3NCQmQ3WkxVcUIyaFJBTkNBQVRKQVpKVjN3Z3F5RkMwNk1qajNIc1NVbks0Z0RyZQpFMjFNNU8xWFRjNFM0dHdJbkwxV29zRi9JLzAzblhQQU5lVEV3dmk0dWpnL0FHNzg5VEk2UFJPMAotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg==",

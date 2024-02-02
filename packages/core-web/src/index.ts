@@ -5,28 +5,18 @@ export {
   PERMISSIONS_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
   STREAM_OPEN_ERROR_MESSAGE,
-  b64Decode,
-  b64Encode,
-  b64UrlDecode,
-  b64UrlEncode,
-  createControllerStore,
-  createStorage,
-  deepMerge,
-  getMediaSourceType,
   isAccessControlError,
   isBframesError,
   isNotAcceptableError,
   isPermissionsError,
   isStreamOfflineError,
-  noopStorage,
-  omit,
-  pick,
-  sanitizeMediaControllerState,
-  version,
-} from "@livepeer/core";
+} from "@livepeer/core/errors";
+export {
+  createControllerStore,
+  getMediaSourceType,
+} from "@livepeer/core/media";
 export type {
   AccessControlParams,
-  Address,
   AriaText,
   AudioSrc,
   AudioTrackSelector,
@@ -37,10 +27,8 @@ export type {
   ControlsState,
   DeviceInformation,
   ElementSize,
-  Hash,
   HlsSrc,
   InitialProps,
-  MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
   MediaMetrics,
@@ -55,9 +43,27 @@ export type {
   SingleTrackSelector,
   SingleVideoTrackSelector,
   Src,
-  Storage,
   VideoQuality,
   VideoSrc,
   VideoTrackSelector,
   WebRTCSrc,
-} from "@livepeer/core";
+} from "@livepeer/core/media";
+export {
+  createStorage,
+  noopStorage,
+} from "@livepeer/core/storage";
+export type { ClientStorage } from "@livepeer/core/storage";
+export type {
+  Address,
+  Hash,
+} from "@livepeer/core/types";
+export {
+  b64Decode,
+  b64Encode,
+  b64UrlDecode,
+  b64UrlEncode,
+  deepMerge,
+  omit,
+  pick,
+} from "@livepeer/core/utils";
+export { version } from "@livepeer/core/version";

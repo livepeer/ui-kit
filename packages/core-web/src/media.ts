@@ -1,10 +1,6 @@
 export {
-  DEFAULT_AUTOHIDE_TIME,
-  DEFAULT_VOLUME_LEVEL,
-  addMediaMetricsToStore,
   createControllerStore,
   getMediaSourceType,
-  sanitizeMediaControllerState,
 } from "@livepeer/core/media";
 export type {
   AccessControlParams,
@@ -20,7 +16,6 @@ export type {
   ElementSize,
   HlsSrc,
   InitialProps,
-  MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
   MediaMetrics,

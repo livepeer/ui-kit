@@ -1,4 +1,3 @@
-import { PERMISSIONS_ERROR_MESSAGE, omit } from "@livepeer/core";
 import { MediaControllerStore } from "@livepeer/core/media";
 import { ClientStorage } from "@livepeer/core/storage";
 import {
@@ -8,8 +7,9 @@ import {
 } from "zustand/middleware";
 import { StoreApi, createStore } from "zustand/vanilla";
 
+import { PERMISSIONS_ERROR_MESSAGE } from "@livepeer/core/errors";
+import { warn } from "@livepeer/core/utils";
 import { isPictureInPictureSupported } from "./media/controls";
-import { warn } from "./utils";
 import { getRTCPeerConnectionConstructor } from "./webrtc/shared";
 import {
   attachMediaStreamToPeerConnection,
@@ -148,22 +148,6 @@ export type InitialBroadcastProps = {
    */
   video: boolean;
 };
-
-const omittedKeys = [
-  "__initialProps",
-  "__device",
-  "__controls",
-  "__controlsFunctions",
-] as const;
-
-export const sanitizeBroadcastState = (
-  state: BroadcastState,
-): BroadcastCallbackState => omit(state, ...omittedKeys);
-
-export type BroadcastCallbackState = Omit<
-  BroadcastState,
-  (typeof omittedKeys)[number]
->;
 
 export type BroadcastAriaText = {
   audioTrigger: string;

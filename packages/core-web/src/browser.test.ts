@@ -9,7 +9,6 @@ it("should expose correct exports", () => {
       "addMediaMetrics",
       "canPlayMediaNatively",
       "getDeviceInfo",
-      "isPictureInPictureSupported",
     ]
   `);
 });

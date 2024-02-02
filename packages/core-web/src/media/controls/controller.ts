@@ -8,10 +8,10 @@ import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
-} from "@livepeer/core";
+} from "@livepeer/core/errors";
 import { warn } from "@livepeer/core/utils";
-import { HlsError, HlsVideoConfig, createNewHls } from "../../hls";
-import { createNewWHEP } from "../../webrtc";
+import { HlsError, HlsVideoConfig, createNewHls } from "../../hls/hls";
+import { createNewWHEP } from "../../webrtc/whep";
 import {
   addFullscreenEventListener,
   enterFullscreen,

@@ -1,4 +1,4 @@
-import { MediaControllerStore } from "@livepeer/core";
+import { MediaControllerStore } from "@livepeer/core/media";
 import { createContextScope } from "@radix-ui/react-context";
 import { useStore as useStoreZustand } from "zustand";
 

@@ -5,7 +5,6 @@ import {
 } from "zustand/middleware";
 import { StoreApi, createStore } from "zustand/vanilla";
 
-import { ClientStorage, createStorage, noopStorage } from "../storage";
 import { ImageSrc, Src, VideoQuality } from "./src";
 
 import {
@@ -14,8 +13,8 @@ import {
   isNotAcceptableError,
   isPermissionsError,
   isStreamOfflineError,
-} from "../errors";
-import { omit } from "../utils";
+} from "./errors";
+import { ClientStorage, createStorage, noopStorage } from "./storage";
 import {
   generateRandomToken,
   getBoundedRate,
@@ -239,23 +238,6 @@ export type ClipLength = 90 | 60 | 45 | 30 | 15 | 10;
  * The playback rate. `constant` means playing WebRTC playback at a constant pace and not speeding up.
  */
 export type PlaybackRate = number | "constant";
-
-const omittedKeys = [
-  "__initialProps",
-  "__device",
-  "__controls",
-  "__metadata",
-  "__controlsFunctions",
-] as const;
-
-export const sanitizeMediaControllerState = (
-  state: MediaControllerState,
-): MediaControllerCallbackState => omit(state, ...omittedKeys);
-
-export type MediaControllerCallbackState = Omit<
-  MediaControllerState,
-  (typeof omittedKeys)[number]
->;
 
 export type AriaText = {
   progress: string;

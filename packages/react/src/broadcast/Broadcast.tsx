@@ -1,13 +1,5 @@
 "use client";
 
-import {
-  InitialProps,
-  createControllerStore,
-  createStorage,
-  noopStorage,
-  version,
-} from "@livepeer/core";
-
 import React, { PropsWithChildren, useEffect, useRef } from "react";
 
 import {
@@ -16,7 +8,13 @@ import {
   getBroadcastDeviceInfo,
 } from "@livepeer/core-web/broadcast";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
-import { addMediaMetricsToStore } from "@livepeer/core-web/media";
+import {
+  InitialProps,
+  addMediaMetricsToStore,
+  createControllerStore,
+} from "@livepeer/core/media";
+import { createStorage, noopStorage } from "@livepeer/core/storage";
+import { version } from "@livepeer/core/version";
 import { MediaProvider, MediaScopedProps } from "../context";
 import { BroadcastProvider, BroadcastScopedProps } from "./context";
 

@@ -12,7 +12,6 @@ it("should expose correct exports", () => {
       "createControllerStore",
       "getBoundedVolume",
       "getMediaSourceType",
-      "sanitizeMediaControllerState",
     ]
   `);
 });

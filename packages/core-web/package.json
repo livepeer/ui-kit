@@ -9,9 +9,7 @@
     "directory": "packages/core-web"
   },
   "homepage": "https://docs.livepeer.org",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.mjs",
   "types": "./dist/cjs/index.d.ts",
@@ -87,26 +85,6 @@
         "default": "./dist/cjs/media.js"
       }
     },
-    "./types": {
-      "import": {
-        "types": "./dist/es/types.d.mts",
-        "default": "./dist/es/types.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/types.d.ts",
-        "default": "./dist/cjs/types.js"
-      }
-    },
-    "./utils": {
-      "import": {
-        "types": "./dist/es/utils.d.mts",
-        "default": "./dist/es/utils.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/utils.d.ts",
-        "default": "./dist/cjs/utils.js"
-      }
-    },
     "./webrtc": {
       "import": {
         "types": "./dist/es/webrtc.d.mts",
@@ -136,10 +114,5 @@
     "hls.js": "^1.5.2",
     "zustand": "^4.5.0"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }
