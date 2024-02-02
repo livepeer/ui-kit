@@ -1,4 +1,0 @@
-{
-  "main": "dist/livepeer-react-native-context.cjs.js",
-  "module": "dist/livepeer-react-native-context.esm.js"
-}

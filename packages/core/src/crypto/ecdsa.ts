@@ -1,4 +1,4 @@
-import { getSubtleCrypto } from './getSubtleCrypto';
+import { getSubtleCrypto } from "./getSubtleCrypto";
 
 export const signEcdsaSha256 = async (
   privateKey: CryptoKey,
@@ -8,8 +8,8 @@ export const signEcdsaSha256 = async (
 
   return subtleCrypto.sign(
     {
-      name: 'ECDSA',
-      hash: { name: 'SHA-256' },
+      name: "ECDSA",
+      hash: { name: "SHA-256" },
     },
     privateKey,
     data,

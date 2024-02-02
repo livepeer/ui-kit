@@ -1,5 +1,4 @@
 *.local
-.eslintcache
 .next
 .pnpm-debug.log*
 cache
@@ -11,6 +10,7 @@ logs
 *.log
 pnpm-debug.log*
 build/
+.turbo
 
 # Sentry
 .sentryclirc

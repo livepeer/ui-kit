@@ -1,8 +1,8 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
-import crypto from 'node:crypto';
+import crypto from "node:crypto";
 
-vi.stubGlobal('crypto', { subtle: crypto.webcrypto.subtle });
+vi.stubGlobal("crypto", { subtle: crypto.webcrypto.subtle });
 
 // make dates stable across runs and increment each call
 export const resetDateNow = () => {
@@ -19,7 +19,7 @@ export const MockedWebSocket = vi.fn(() => ({
   send: vi.fn(),
 }));
 
-vi.stubGlobal('WebSocket', MockedWebSocket);
+vi.stubGlobal("WebSocket", MockedWebSocket);
 
 export const waitForWebsocketOpen = async (_websocket: WebSocket | null) =>
   new Promise<void>((resolve, _reject) => {
@@ -28,11 +28,6 @@ export const waitForWebsocketOpen = async (_websocket: WebSocket | null) =>
 
 export class MockedVideoElement extends HTMLVideoElement {
   listeners: { [key: string]: EventListenerOrEventListenerObject[] } = {};
-
-  constructor() {
-    // Always call super first in constructor
-    super();
-  }
 
   load = vi.fn(() => {
     return true;
@@ -52,7 +47,7 @@ export class MockedVideoElement extends HTMLVideoElement {
   dispatchEvent = vi.fn((e: Event) => {
     if (this.listeners[e.type]) {
       for (const listener of this.listeners[e.type] ?? []) {
-        if (typeof listener === 'function') {
+        if (typeof listener === "function") {
           listener?.(e);
         } else {
           listener?.handleEvent(e);
@@ -64,7 +59,7 @@ export class MockedVideoElement extends HTMLVideoElement {
   });
 
   getAttribute = vi.fn(() => {
-    return 'false';
+    return "false";
   });
   setAttribute = vi.fn(() => {
     return true;
@@ -76,6 +71,6 @@ export class MockedVideoElement extends HTMLVideoElement {
 }
 
 // register the custom element
-customElements.define('mocked-video', MockedVideoElement, {
-  extends: 'video',
+customElements.define("mocked-video", MockedVideoElement, {
+  extends: "video",
 });

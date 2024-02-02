@@ -12,13 +12,14 @@ export const pick = <T extends object, K extends keyof T>(
       .filter((key) => objectKeys.includes(key as string))
       .reduce(
         (prev, curr) => ({
+          // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
           ...prev,
           [curr]: obj[curr],
         }),
         {},
       ) as Pick<T, K>;
   } catch (e) {
-    throw new Error('Could not pick keys for object.');
+    throw new Error("Could not pick keys for object.");
   }
 };
 
@@ -36,12 +37,13 @@ export function omit<T extends object, K extends keyof T>(
       .filter((objectKey) => !keys.some((key) => String(key) === objectKey))
       .reduce(
         (prev, curr) => ({
+          // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
           ...prev,
           [curr]: obj[curr as K],
         }),
         {},
       ) as Omit<T, K>;
   } catch (e) {
-    throw new Error('Could not omit keys for object.');
+    throw new Error("Could not omit keys for object.");
   }
 }

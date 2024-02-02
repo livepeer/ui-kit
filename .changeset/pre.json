@@ -1,0 +1,19 @@
+{
+  "mode": "exit",
+  "tag": "next",
+  "initialVersions": {
+    "example-next": "0.0.1",
+    "example-lvpr-tv": "0.0.1",
+    "@livepeer/core": "2.1.7",
+    "@livepeer/core-react": "2.1.7",
+    "@livepeer/core-web": "3.1.7",
+    "@livepeer/react": "3.1.7",
+    "@livepeer/react-native": "0.0.0"
+  },
+  "changesets": [
+    "cool-moles-whisper",
+    "cyan-flowers-cheer",
+    "poor-eggs-accept",
+    "silly-waves-worry"
+  ]
+}

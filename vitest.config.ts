@@ -1,14 +1,21 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ["text", "json", "html"],
+      exclude: [
+        ...configDefaults.exclude,
+        "**/examples/**",
+        "**/test/**",
+        "**/*.d.ts",
+        "**/generate-version.ts",
+      ],
     },
-    environment: 'jsdom',
+    environment: "jsdom",
     setupFiles: [
-      './packages/core/test/setup.ts',
-      './packages/react/test/setup.ts',
+      "./packages/core/test/setup.ts",
+      "./packages/react/test/setup.ts",
     ],
   },
 });

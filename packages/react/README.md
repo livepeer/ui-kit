@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The `@livepeer/react` package contains React-specific hooks/components for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
+The `@livepeer/react` package contains React-specific components for the livepeer ecosystem. For full documentation and examples, visit [docs.livepeer.org](https://docs.livepeer.org).
 
 ## Installation
 
