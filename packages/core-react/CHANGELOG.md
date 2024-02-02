@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 3.0.1
+
+### Patch Changes
+
+- [#470](https://github.com/livepeer/livepeer-react/pull/470) [`81ead35`](https://github.com/livepeer/livepeer-react/commit/81ead3529e3522993cbf2ca6737c601e735ad2ec) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the interface for broadcasting (and player) to be vendor agnostic. This now uses `getIngest` similar to the `getSrc` for Player, which attempts to parse out a WHIP ingest URL. 
+  This has been tested against Cloudflare's WHIP/WHEP offering.
+- Updated dependencies [[`81ead35`](https://github.com/livepeer/livepeer-react/commit/81ead3529e3522993cbf2ca6737c601e735ad2ec)]:
+  - @livepeer/core@3.0.1
+
 ## 3.0.0
 
 ### Major Changes
