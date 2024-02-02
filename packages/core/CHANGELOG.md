@@ -1,5 +1,13 @@
 # @livepeer/core
 
+## 3.0.0-next.2
+
+### Patch Changes
+
+- [#465](https://github.com/livepeer/livepeer-react/pull/465) [`158f13f`](https://github.com/livepeer/livepeer-react/commit/158f13fd3d883ea71aeb80fdec2185f558de1267) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** small fixes for ARIA keyboard shortcuts, resizing CSS variables, permissions errors in broadcasting, and usability fixes.
+
+- [#463](https://github.com/livepeer/livepeer-react/pull/463) [`cea94f5`](https://github.com/livepeer/livepeer-react/commit/cea94f50bea84c81f0049bd9aeb3c20f2db38631) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed syncing of MediaStream with audio/video enabled, UI tweaks, CSS variables for media width/height, and more.
+
 ## 3.0.0-next.1
 
 ### Patch Changes
