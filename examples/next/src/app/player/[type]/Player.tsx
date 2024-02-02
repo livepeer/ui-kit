@@ -13,6 +13,7 @@ import {
   UnmuteIcon,
 } from "@livepeer/react/assets";
 import { getSrc } from "@livepeer/react/external";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { livepeer } from "../../livepeer";
 import { Clip } from "./Clip";
@@ -20,18 +21,30 @@ import { CurrentSource } from "./CurrentSource";
 import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 
-const getPlaybackInfo = cache(async (playbackId: string) => {
+const getPlaybackInfoUncached = cache(async (playbackId: string) => {
   try {
     const playbackInfo = await livepeer.playback.get(playbackId);
 
-    const src = getSrc(playbackInfo.playbackInfo);
+    if (!playbackInfo.playbackInfo) {
+      console.error("Error fetching playback info", playbackInfo);
 
-    return src;
+      return null;
+    }
+
+    return playbackInfo.playbackInfo;
   } catch (e) {
     console.error(e);
     return null;
   }
 });
+
+const getPlaybackInfo = unstable_cache(
+  async (id: string) => getPlaybackInfoUncached(id),
+  ["get-playback-info"],
+  {
+    revalidate: 120,
+  },
+);
 
 export async function PlayerWithControls({
   playbackId,
@@ -40,7 +53,9 @@ export async function PlayerWithControls({
   playbackId: string;
   type: "asset-short" | "asset-long" | "livestream" | "unknown";
 }) {
-  const src = await getPlaybackInfo(playbackId);
+  const inputSource = await getPlaybackInfo(playbackId);
+
+  const src = getSrc(inputSource);
 
   if (!src) {
     return (

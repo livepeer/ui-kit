@@ -20,8 +20,7 @@ interface PlayerProps
   > {
   /**
    * The source for the Player. The `Src[]` can be created from calling `getSrc`
-   * with the response from the playback info API, or a string or array of string
-   * source URLs.
+   * with Livepeer playback info, Cloudflare stream data, Mux URLs, `string[]`, or `string`.
    */
   src: Src[] | null;
 

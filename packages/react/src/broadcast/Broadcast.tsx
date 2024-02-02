@@ -20,16 +20,18 @@ import { BroadcastProvider, BroadcastScopedProps } from "./context";
 
 interface BroadcastProps
   extends PropsWithChildren<
-    Omit<Partial<InitialBroadcastProps>, "aspectRatio"> &
+    Omit<Partial<InitialBroadcastProps>, "aspectRatio" | "ingestUrl"> &
       Pick<
         Partial<InitialProps>,
         "onError" | "storage" | "timeout" | "videoQuality"
       >
   > {
   /**
-   * The stream key to use for the broadcast.
+   * The WHIP WebRTC ingest URL for the Broadcast. The ingestUrl can be created using `getIngest`
+   * from a string (assumed to be stream keys or URLs), Cloudflare stream data, Cloudflare URL data,
+   * or Livepeer stream data.
    */
-  streamKey: string;
+  ingestUrl: string | null;
 
   /**
    * The aspect ratio of the media. Defaults to 16 / 9.
@@ -47,7 +49,7 @@ const Broadcast = (
   const {
     aspectRatio = 16 / 9,
     children,
-    streamKey,
+    ingestUrl,
     onError,
     storage,
     timeout,
@@ -92,7 +94,7 @@ const Broadcast = (
               storage: noopStorage,
             },
       ),
-      streamKey,
+      ingestUrl,
       initialProps: {
         aspectRatio,
         ...rest,
@@ -108,12 +110,12 @@ const Broadcast = (
   }, []);
 
   useEffect(() => {
-    if (streamKey) {
+    if (ingestUrl) {
       broadcastStore.current.store
         .getState()
-        .__controlsFunctions.setStreamKey(streamKey);
+        .__controlsFunctions.setIngestUrl(ingestUrl);
     }
-  }, [streamKey]);
+  }, [ingestUrl]);
 
   useEffect(() => {
     const metrics = addMediaMetricsToStore(mediaStore.current.store);

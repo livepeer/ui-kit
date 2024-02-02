@@ -21,8 +21,6 @@ import {
   setMediaStreamTracksStatus,
 } from "./webrtc/whip";
 
-const defaultIngestUrl = "https://playback.livepeer.studio/webrtc";
-
 const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -126,13 +124,6 @@ export type InitialBroadcastProps = {
   hotkeys: boolean;
 
   /**
-   * The ingest URL for the WHIP WebRTC broadcast.
-   *
-   * Defaults to Livepeer Studio (`https://playback.livepeer.studio/webrtc`).
-   */
-  ingestUrl: string;
-
-  /**
    * Whether the WebRTC stream should attempt to initialize immediately after the user grants
    * permission to their video/audio input.
    *
@@ -185,9 +176,9 @@ export type BroadcastState = {
   peerConnection: RTCPeerConnection | null;
 
   /**
-   * The stream key to use for the broadcast.
+   * The WHIP ingest URL to use for the broadcast.
    */
-  streamKey: string | null;
+  ingestUrl: string | null;
 
   /** If the broadcast video track is turned on. */
   video: boolean;
@@ -211,6 +202,7 @@ export type BroadcastState = {
     ) => void;
     rotateAudioSource: () => void;
     rotateVideoSource: () => void;
+    setIngestUrl: (ingestUrl: string) => void;
     setInitialState: (
       ids: MediaDeviceIds,
       audio: boolean,
@@ -218,7 +210,6 @@ export type BroadcastState = {
     ) => void;
     setPeerConnection: (peerConnection: RTCPeerConnection) => void;
     setMediaDeviceIds: (mediaDevices: Partial<MediaDeviceIds>) => void;
-    setStreamKey: (streamKey: string) => void;
     toggleAudio: () => void;
     toggleDisplayMedia: () => void;
     toggleEnabled: () => void;
@@ -251,12 +242,12 @@ export type BroadcastStore = StoreApi<BroadcastState> & {
 };
 
 export const createBroadcastStore = ({
-  streamKey,
+  ingestUrl,
   device,
   storage,
   initialProps,
 }: {
-  streamKey: string;
+  ingestUrl: string | null | undefined;
   device: BroadcastDeviceInformation;
   storage: ClientStorage;
   initialProps: Partial<InitialBroadcastProps>;
@@ -292,7 +283,7 @@ export const createBroadcastStore = ({
           mediaDevices: null,
           peerConnection: null,
 
-          streamKey: streamKey ?? null,
+          ingestUrl: ingestUrl ?? null,
 
           mediaDeviceIds: {
             audioinput: "default",
@@ -318,7 +309,7 @@ export const createBroadcastStore = ({
             creatorId: initialProps.creatorId ?? null,
             forceEnabled: initialProps?.forceEnabled ?? false,
             hotkeys: initialProps.hotkeys ?? true,
-            ingestUrl: initialProps?.ingestUrl ?? defaultIngestUrl,
+            ingestUrl: ingestUrl ?? null,
             video: initialProps?.video ?? true,
           },
 
@@ -339,9 +330,9 @@ export const createBroadcastStore = ({
                 peerConnection,
               })),
 
-            setStreamKey: (streamKey) =>
+            setIngestUrl: (ingestUrl) =>
               set(() => ({
-                streamKey,
+                ingestUrl,
               })),
 
             requestForceRenegotiate: () =>
@@ -730,17 +721,23 @@ const addEffectsToStore = (
 
   // Subscribe to request user media
   const destroyWhip = store.subscribe(
-    ({ enabled, streamKey, __controls, __initialProps }) => ({
+    ({ enabled, ingestUrl, __controls, __initialProps }) => ({
       enabled,
-      ingestUrl: __initialProps.ingestUrl,
-      streamKey,
+      ingestUrl,
       requestedForceRenegotiateLastTime:
         __controls.requestedForceRenegotiateLastTime,
     }),
-    async ({ enabled, streamKey, ingestUrl }) => {
+    async ({ enabled, ingestUrl }) => {
       await cleanupWhip?.();
 
       if (!enabled) {
+        return;
+      }
+
+      if (!ingestUrl) {
+        warn(
+          "No ingest URL provided, cannot start stream. Please check the configuration passed to the Broadcast component.",
+        );
         return;
       }
 
@@ -754,7 +751,7 @@ const addEffectsToStore = (
       };
 
       const { destroy } = createNewWHIP({
-        ingestUrl: `${ingestUrl}/${streamKey}`,
+        ingestUrl,
         element,
         callbacks: {
           onConnected: () => {
@@ -780,7 +777,7 @@ const addEffectsToStore = (
       equalityFn: (a, b) =>
         a.requestedForceRenegotiateLastTime ===
           b.requestedForceRenegotiateLastTime &&
-        a.streamKey === b.streamKey &&
+        a.ingestUrl === b.ingestUrl &&
         a.enabled === b.enabled,
     },
   );
