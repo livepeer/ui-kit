@@ -335,8 +335,6 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
 
-  packages/react-native: {}
-
 packages:
 
   /@alloc/quick-lru@5.2.0:
