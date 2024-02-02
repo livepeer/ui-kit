@@ -2,7 +2,6 @@ export {
   DEFAULT_AUTOHIDE_TIME,
   DEFAULT_VOLUME_LEVEL,
   createControllerStore,
-  sanitizeMediaControllerState,
 } from "./media/controller";
 export type {
   AriaText,
@@ -13,7 +12,6 @@ export type {
   DeviceInformation,
   ElementSize,
   InitialProps,
-  MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
   MediaSizing,

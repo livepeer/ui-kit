@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 
-import { PlaybackError } from "@livepeer/core";
+import { PlaybackError } from "@livepeer/core/media";
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { MediaScopedProps, useMediaContext } from "../context";

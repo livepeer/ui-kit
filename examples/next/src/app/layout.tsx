@@ -24,8 +24,8 @@ export default function RootLayout({
           "dark-theme text-white bg-black min-h-screen-safe pb-[env(safe-area-inset-bottom)]",
         )}
       >
-        <Toaster />
         {children}
+        <Toaster theme="dark" />
       </body>
     </html>
   );

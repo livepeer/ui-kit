@@ -1,6 +1,6 @@
-import { DeviceInformation } from "@livepeer/core";
+import { DeviceInformation } from "@livepeer/core/media";
 
-import { isHlsSupported } from "../../hls";
+import { isHlsSupported } from "../../hls/hls";
 import { getRTCPeerConnectionConstructor } from "../../webrtc/shared";
 import { isAndroid, isIos, isMobile } from "../utils";
 import { isFullscreenSupported } from "./fullscreen";

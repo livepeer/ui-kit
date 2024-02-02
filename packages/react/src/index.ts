@@ -1,14 +1,9 @@
 export {
   createControllerStore,
-  createStorage,
-  deepMerge,
   getMediaSourceType,
-  noopStorage,
-  version,
-} from "@livepeer/core";
+} from "@livepeer/core/media";
 export type {
   AccessControlParams,
-  Address,
   AriaText,
   AudioSrc,
   AudioTrackSelector,
@@ -19,10 +14,8 @@ export type {
   ControlsState,
   DeviceInformation,
   ElementSize,
-  Hash,
   HlsSrc,
   InitialProps,
-  MediaControllerCallbackState,
   MediaControllerState,
   MediaControllerStore,
   MediaMetrics,
@@ -37,9 +30,14 @@ export type {
   SingleTrackSelector,
   SingleVideoTrackSelector,
   Src,
-  Storage,
   VideoQuality,
   VideoSrc,
   VideoTrackSelector,
   WebRTCSrc,
-} from "@livepeer/core";
+} from "@livepeer/core/media";
+export {
+  createStorage,
+  noopStorage,
+} from "@livepeer/core/storage";
+export type { ClientStorage } from "@livepeer/core/storage";
+export { version } from "@livepeer/core/version";
