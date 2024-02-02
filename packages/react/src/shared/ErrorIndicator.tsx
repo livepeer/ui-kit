@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { PlaybackError } from "@livepeer/core/media";
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { MediaScopedProps, useMediaContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "./context";
 import * as Radix from "./primitive";
 
 const ERROR_INDICATOR_NAME = "ErrorIndicator";

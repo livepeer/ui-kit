@@ -149,8 +149,6 @@ jobs:
           path: packages/react/dist
       - name: Lint code
         run: pnpm lint
-      - name: Check types
-        run: pnpm lint:types
 
   test:
     name: Test

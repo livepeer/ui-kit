@@ -99,7 +99,8 @@
   "scripts": {
     "build": "bunchee",
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "bunchee --watch"
+    "dev": "bunchee --watch",
+    "lint": "tsc --noEmit"
   },
   "peerDependencies": {
     "react": ">=17.0.0"

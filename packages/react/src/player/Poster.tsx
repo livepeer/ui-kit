@@ -4,7 +4,7 @@ import React from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { MediaScopedProps, useMediaContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
 
 const POSTER_NAME = "Poster";

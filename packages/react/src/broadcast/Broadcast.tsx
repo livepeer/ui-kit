@@ -15,7 +15,7 @@ import {
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
-import { MediaProvider, MediaScopedProps } from "../context";
+import { MediaProvider, MediaScopedProps } from "../shared/context";
 import { BroadcastProvider, BroadcastScopedProps } from "./context";
 
 interface BroadcastProps

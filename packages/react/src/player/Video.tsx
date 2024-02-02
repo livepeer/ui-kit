@@ -5,7 +5,7 @@ import { useStore } from "zustand";
 
 import { addEventListeners } from "@livepeer/core-web/browser";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { MediaScopedProps, useMediaContext } from "../context";
+import { MediaScopedProps, useMediaContext } from "../shared/context";
 
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "../shared/primitive";
