@@ -495,7 +495,7 @@ const addEffectsToStore = (
           onErrorComposed?.(cleanError);
         };
 
-        const hlsConfigResolved = hlsConfig as Partial<HlsConfig>;
+        const hlsConfigResolved = hlsConfig as Partial<HlsConfig> | null;
 
         const { destroy, setQuality } = createNewHls({
           source: source?.src,
@@ -515,7 +515,7 @@ const addEffectsToStore = (
             onRedirect: store.getState().__controlsFunctions.onFinalUrl,
           },
           config: {
-            ...hlsConfigResolved,
+            ...(hlsConfigResolved ?? {}),
             async xhrSetup(xhr, url) {
               await hlsConfigResolved?.xhrSetup?.(xhr, url);
 

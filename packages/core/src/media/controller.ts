@@ -204,14 +204,14 @@ export type ControlsState = {
    * Configures the HLS options, for advanced usage of the Player.
    */
   // biome-ignore lint/suspicious/noExplicitAny: we use any here because of the lack of dependency on HLS.js
-  hlsConfig?: any;
+  hlsConfig: any | null;
 
   /**
    * Auto-hide controls after a set amount of time (in milliseconds).
    *
    * Defaults to 3000. Set to 0 for no hiding.
    */
-  autohide?: number;
+  autohide: number;
 };
 
 export type ObjectFit = "cover" | "contain";
@@ -454,6 +454,8 @@ export const createControllerStore = ({
   });
 
   const initialControls: ControlsState = {
+    hlsConfig: null,
+    autohide: DEFAULT_AUTOHIDE_TIME,
     lastError: 0,
     lastInteraction: Date.now(),
     requestedMeasureLastTime: 0,
