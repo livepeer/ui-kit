@@ -114,7 +114,7 @@ export const createNewHls = <TElement extends HTMLMediaElement>({
       });
 
       callbacks?.onCanPlay?.();
-      element?.play?.();
+      if (config.autoPlay) element?.play?.();
     });
   });
 
