@@ -11,7 +11,7 @@ export default async function Home() {
         Go back
       </Link>
       <div className="flex gap-2 max-w-lg text-center flex-col">
-        <span className="text-2xl font-semibold">Livepeer React Broadcast</span>
+        <span className="text-2xl font-semibold">Livepeer Kit Broadcast</span>
         <span className="text-sm text-white/90">
           The component below demonstrates how to compose a Broadcast with the
           standard controls found on most broadcast interfaces.

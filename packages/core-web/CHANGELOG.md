@@ -15,7 +15,7 @@
 
 - [#459](https://github.com/livepeer/livepeer-react/pull/459) [`8463de1`](https://github.com/livepeer/livepeer-react/commit/8463de1dfb77394e009ce4938cf8ea94cefce250) Thanks [@0xcadams](https://github.com/0xcadams)! - **Major release:** first preview release of the unstyled, composable `<Player />` and `<Broadcast />` primitives based on [Radix UI](https://www.radix-ui.com/primitives/docs/overview/introduction).
 
-  ### The motivation
+### The motivation
 
   This is a ground-up rewrite of most of the `@livepeer/react` library. In this release, we had some problems we wanted to solve:
 
@@ -24,7 +24,7 @@
   3. The styling is difficult and hard to rework as a developer (and not compatible with Server Components).
   4. The react native package is under-maintained and far behind the web player in terms of features/support.
 
-  ### Our approach
+### Our approach
 
   1. Break out the logic of the components to be more composable. Instead of a single `<Player />`, there is now a `<Player.Root />`, `<Player.Container />`, `<Player.Video />`, `<Player.LoadingIndicator />`, `<Player.FullscreenTrigger />`, `<Player.FullscreenIndicator />`, etc. Very similar to Radix, which we use under the hood.
      - This means that instead of one giant component with a lot of logic baked into it, we have a bunch of composable primitives which you can build your apps on top of. We hope you like it!
@@ -38,14 +38,14 @@
   4. We deprecated the React Native package, for now. It would have been a huge lift to bring it up to feature parity with the React package, and is less straightforward than web to do the WebRTC/HLS fallback and all of the advanced features in the React web package.
      - We want to have first-class support for React Native in the future, but for now, we want to only ship software that we're 100% confident our users will benefit from.
 
-  ### New features & fixes
+### New features & fixes
 
   - **Composable components** - all components are extremely narrow in their scope, and support the [`asChild` pattern](https://www.radix-ui.com/primitives/docs/guides/composition) popularized by Radix UI. When `asChild` is set to true, we will not render a default DOM element, instead cloning the part's child and passing it the props and behavior required to make it functional.
   - **Automatic poster images** - if you pass in the playback info response directly into `getSrc`, it will automatically parse the thumbnail image and pass it into the `poster` for the video.
   - **Resume progress on fallback** - now, when an error happens during playback for any reason, we resume playback where it left off.
   - **BYOC** - bring your own components. `useMediaContext` is now much easier to use - since the `<Player.Root />` is now just a simple React Context provider, you can build out your own components inside of it which consume the video controller. We have some examples to help avoid the footgunning.
 
-  ### Callouts
+### Callouts
 
   - We are dropping support for `autoUrlUpload` and the fallback to playing directly from IPFS. We understand some users rely on that, and we will work with them to provide docs for how to implement that outside of the player.
   - We moved to a new build system which includes `use client` and `use server` directives in the output. If you don't use React Server Components, this doesn't affect you. But this means that you can directly import the client components into a RSC and you don't need to wrap them.
@@ -87,7 +87,7 @@
 
 - [#456](https://github.com/livepeer/livepeer-react/pull/456) [`4669aaf`](https://github.com/livepeer/livepeer-react/commit/4669aaff3c142fbad99c1ae350eda0229f33df72) Thanks [@0xcadams](https://github.com/0xcadams)! - **Major release:** first preview release of the unstyled, composable `<Player />` and `<Broadcast />` primitives based on [Radix UI](https://www.radix-ui.com/primitives/docs/overview/introduction).
 
-  ### The motivation
+### The motivation
 
   This is a ground-up rewrite of most of the `@livepeer/react` library. In this release, we had some problems we wanted to solve:
 
@@ -96,7 +96,7 @@
   3. The styling is difficult and hard to rework as a developer (and not compatible with Server Components).
   4. The react native package is under-maintained and far behind the web player in terms of features/support.
 
-  ### Our approach
+### Our approach
 
   1. Break out the logic of the components to be more composable. Instead of a single `<Player />`, there is now a `<Player.Root />`, `<Player.Container />`, `<Player.Video />`, `<Player.LoadingIndicator />`, `<Player.FullscreenTrigger />`, `<Player.FullscreenIndicator />`, etc. Very similar to Radix, which we use under the hood.
      - This means that instead of one giant component with a lot of logic baked into it, we have a bunch of composable primitives which you can build your apps on top of. We hope you like it!
@@ -110,14 +110,14 @@
   4. We deprecated the React Native package, for now. It would have been a huge lift to bring it up to feature parity with the React package, and is less straightforward than web to do the WebRTC/HLS fallback and all of the advanced features in the React web package.
      - We want to have first-class support for React Native in the future, but for now, we want to only ship software that we're 100% confident our users will benefit from.
 
-  ### New features & fixes
+### New features & fixes
 
   - **Composable components** - all components are extremely narrow in their scope, and support the [`asChild` pattern](https://www.radix-ui.com/primitives/docs/guides/composition) popularized by Radix UI. When `asChild` is set to true, we will not render a default DOM element, instead cloning the part's child and passing it the props and behavior required to make it functional.
   - **Automatic poster images** - if you pass in the playback info response directly into `getSrc`, it will automatically parse the thumbnail image and pass it into the `poster` for the video.
   - **Resume progress on fallback** - now, when an error happens during playback for any reason, we resume playback where it left off.
   - **BYOC** - bring your own components. `useMediaContext` is now much easier to use - since the `<Player.Root />` is now just a simple React Context provider, you can build out your own components inside of it which consume the video controller. We have some examples to help avoid the footgunning.
 
-  ### Callouts
+### Callouts
 
   - We are dropping support for `autoUrlUpload` and the fallback to playing directly from IPFS. We understand some users rely on that, and we will work with them to provide docs for how to implement that outside of the player.
   - We moved to a new build system which includes `use client` and `use server` directives in the output. If you don't use React Server Components, this doesn't affect you. But this means that you can directly import the client components into a RSC and you don't need to wrap them.
@@ -603,7 +603,7 @@
 
 ### Patch Changes
 
-- [#345](https://github.com/livepeer/livepeer-react/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific Livepeer React releases.
+- [#345](https://github.com/livepeer/livepeer-react/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific Livepeer Kit releases.
 
 - Updated dependencies [[`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513)]:
   - @livepeer/core@1.5.6
@@ -1701,7 +1701,7 @@
   - **actions:** functions to write/read from Livepeer Media Server (LPMS) providers and the Livepeer protocol smart contracts
   - **client:** the singleton LPMS provider with persistence to local storage and global state management
   - **constants:** constants for the Studio LPMS provider (and future providers) and protocol contract addresses/ABIs/chain IDs
-  - **errors:** custom errors for Livepeer React
+  - **errors:** custom errors for Livepeer Kit
   - **types:** Typescript typings for the LPMS provider interface, Typechain-generated types for protocol contracts, and utility types
 
 ### Actions
