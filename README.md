@@ -6,7 +6,7 @@
 </p>
 
 <h3 align="center">
-  Livepeer React
+  Livepeer Kit
 <h3>
 
 ## Features

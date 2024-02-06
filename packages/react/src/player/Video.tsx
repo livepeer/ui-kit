@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useStore } from "zustand";
 
-import { addEventListeners } from "@livepeer/core-web/browser";
+import { HlsConfig, addEventListeners } from "@livepeer/core-web/browser";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import { MediaScopedProps, useMediaContext } from "../shared/context";
 
@@ -27,11 +27,16 @@ interface VideoProps
    * Set to null to disable the default poster image from the Src.
    */
   poster?: string | null;
+
+  /**
+   * Configures the HLS.js options, for advanced usage of the Player.
+   */
+  hlsConfig?: HlsConfig;
 }
 
 const Video = React.forwardRef<VideoElement, VideoProps>(
   (props: MediaScopedProps<VideoProps>, forwardedRef) => {
-    const { __scopeMedia, style, poster, ...videoProps } = props;
+    const { __scopeMedia, style, poster, hlsConfig, ...videoProps } = props;
 
     const context = useMediaContext(VIDEO_NAME, __scopeMedia);
 
@@ -66,6 +71,13 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         return destroy;
       }
     }, [context?.store]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: only set once to prevent flashing
+    useEffect(() => {
+      if (hlsConfig) {
+        context.store.getState().__controlsFunctions.setHlsConfig(hlsConfig);
+      }
+    }, []);
 
     useEffect(() => {
       // we run this on mount to initialize playback

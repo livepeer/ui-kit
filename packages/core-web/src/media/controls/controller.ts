@@ -1,8 +1,4 @@
-import {
-  ControlsOptions as ControlsOptionsBase,
-  DEFAULT_AUTOHIDE_TIME,
-  MediaControllerStore,
-} from "@livepeer/core/media";
+import { MediaControllerStore } from "@livepeer/core/media";
 
 import {
   ACCESS_CONTROL_ERROR_MESSAGE,
@@ -10,7 +6,8 @@ import {
   STREAM_OFFLINE_ERROR_MESSAGE,
 } from "@livepeer/core/errors";
 import { warn } from "@livepeer/core/utils";
-import { HlsError, HlsVideoConfig, createNewHls } from "../../hls/hls";
+import { HlsConfig as HlsJsConfig } from "hls.js";
+import { HlsError, createNewHls } from "../../hls/hls";
 import { createNewWHEP } from "../../webrtc/whep";
 import {
   addFullscreenEventListener,
@@ -26,6 +23,8 @@ import {
   isCurrentlyPictureInPicture,
 } from "./pictureInPicture";
 import { isVolumeChangeSupported } from "./volume";
+
+export type HlsConfig = Partial<HlsJsConfig>;
 
 const MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE =
   "data-livepeer-controller-initialized";
@@ -47,17 +46,9 @@ const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export type ControlsOptions = ControlsOptionsBase & {
-  /**
-   * Configures the HLS.js options, for advanced usage of the Player.
-   */
-  hlsConfig?: Omit<HlsVideoConfig, "autoplay">;
-};
-
 export const addEventListeners = (
   element: HTMLMediaElement,
   store: MediaControllerStore,
-  { autohide = DEFAULT_AUTOHIDE_TIME, hlsConfig = {} }: ControlsOptions = {},
 ) => {
   const initializedState = store.getState();
 
@@ -258,27 +249,21 @@ export const addEventListeners = (
     element.addEventListener("loadstart", onLoadStart);
     element.addEventListener("ended", onEnded);
 
-    if (autohide) {
-      parentElementOrElement.addEventListener("mouseover", onMouseUpdate);
-      parentElementOrElement.addEventListener("mouseenter", onMouseUpdate);
-      parentElementOrElement.addEventListener("mouseout", onMouseUpdate);
-      parentElementOrElement.addEventListener("mousemove", onMouseUpdate);
+    parentElementOrElement?.addEventListener("mouseover", onMouseUpdate);
+    parentElementOrElement?.addEventListener("mouseenter", onMouseUpdate);
+    parentElementOrElement?.addEventListener("mouseout", onMouseUpdate);
+    parentElementOrElement?.addEventListener("mousemove", onMouseUpdate);
 
-      parentElementOrElement.addEventListener("touchstart", onTouchUpdate);
-      parentElementOrElement.addEventListener("touchend", onTouchUpdate);
-      parentElementOrElement.addEventListener("touchmove", onTouchUpdate);
-    }
+    parentElementOrElement?.addEventListener("touchstart", onTouchUpdate);
+    parentElementOrElement?.addEventListener("touchend", onTouchUpdate);
+    parentElementOrElement?.addEventListener("touchmove", onTouchUpdate);
 
     if (typeof window !== "undefined") {
       window?.addEventListener?.("resize", onResize);
     }
 
-    if (parentElementOrElement) {
-      if (store.getState().__initialProps.hotkeys) {
-        parentElementOrElement.addEventListener("keyup", onKeyUp);
-        parentElementOrElement.setAttribute("tabindex", "0");
-      }
-    }
+    parentElementOrElement?.addEventListener("keyup", onKeyUp);
+    parentElementOrElement?.setAttribute("tabindex", "0");
 
     element.load();
 
@@ -299,10 +284,7 @@ export const addEventListeners = (
   };
 
   // add effects
-  const removeEffectsFromStore = addEffectsToStore(element, store, {
-    autohide,
-    hlsConfig,
-  });
+  const removeEffectsFromStore = addEffectsToStore(element, store);
 
   // add fullscreen listener
   const removeFullscreenListener = addFullscreenEventListener(
@@ -341,41 +323,22 @@ export const addEventListeners = (
         window?.removeEventListener?.("resize", onResize);
       }
 
-      if (autohide) {
-        parentElementOrElement?.removeEventListener?.(
-          "mouseover",
-          onMouseUpdate,
-        );
-        parentElementOrElement?.removeEventListener?.(
-          "mouseenter",
-          onMouseUpdate,
-        );
-        parentElementOrElement?.removeEventListener?.(
-          "mouseout",
-          onMouseUpdate,
-        );
-        parentElementOrElement?.removeEventListener?.(
-          "mousemove",
-          onMouseUpdate,
-        );
+      parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
+      parentElementOrElement?.removeEventListener?.(
+        "mouseenter",
+        onMouseUpdate,
+      );
+      parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
+      parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
 
-        parentElementOrElement?.removeEventListener?.(
-          "touchstart",
-          onTouchUpdate,
-        );
-        parentElementOrElement?.removeEventListener?.(
-          "touchend",
-          onTouchUpdate,
-        );
-        parentElementOrElement?.removeEventListener?.(
-          "touchmove",
-          onTouchUpdate,
-        );
-      }
+      parentElementOrElement?.removeEventListener?.(
+        "touchstart",
+        onTouchUpdate,
+      );
+      parentElementOrElement?.removeEventListener?.("touchend", onTouchUpdate);
+      parentElementOrElement?.removeEventListener?.("touchmove", onTouchUpdate);
 
-      if (store.getState().__initialProps.hotkeys) {
-        parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
-      }
+      parentElementOrElement?.removeEventListener?.("keyup", onKeyUp);
 
       removeEffectsFromStore?.();
 
@@ -394,12 +357,12 @@ let cleanupPosterImage: Cleanup = () => {};
 const addEffectsToStore = (
   element: HTMLMediaElement,
   store: MediaControllerStore,
-  options: ControlsOptions,
 ) => {
   // Subscribe to source changes (and trigger playback based on these)
   const destroySource = store.subscribe(
     ({
       __initialProps,
+      __controls,
       currentSource,
       errorCount,
       live,
@@ -411,6 +374,7 @@ const addEffectsToStore = (
       aspectRatio: __initialProps.aspectRatio,
       autoPlay: __initialProps.autoPlay,
       errorCount,
+      hlsConfig: __controls.hlsConfig,
       jwt: __initialProps.jwt,
       live,
       mounted,
@@ -424,6 +388,7 @@ const addEffectsToStore = (
       aspectRatio,
       autoPlay,
       errorCount,
+      hlsConfig,
       jwt,
       live,
       mounted,
@@ -530,6 +495,8 @@ const addEffectsToStore = (
           onErrorComposed?.(cleanError);
         };
 
+        const hlsConfigResolved = hlsConfig as Partial<HlsConfig> | null;
+
         const { destroy, setQuality } = createNewHls({
           source: source?.src,
           element,
@@ -548,9 +515,9 @@ const addEffectsToStore = (
             onRedirect: store.getState().__controlsFunctions.onFinalUrl,
           },
           config: {
-            ...options?.hlsConfig,
+            ...(hlsConfigResolved ?? {}),
             async xhrSetup(xhr, url) {
-              await options?.hlsConfig?.xhrSetup?.(xhr, url);
+              await hlsConfigResolved?.xhrSetup?.(xhr, url);
 
               if (url.match(indexUrl)) {
                 if (accessKey)
@@ -724,12 +691,15 @@ const addEffectsToStore = (
 
   // Subscribe to autohide interactions
   const destroyAutohide = store.subscribe(
-    (state) => state.__controls.lastInteraction,
-    async (lastInteraction) => {
-      if (options.autohide && lastInteraction) {
+    (state) => ({
+      lastInteraction: state.__controls.lastInteraction,
+      autohide: state.__controls.autohide,
+    }),
+    async ({ lastInteraction, autohide }) => {
+      if (autohide && lastInteraction) {
         store.getState().__controlsFunctions.setHidden(false);
 
-        await delay(options.autohide);
+        await delay(autohide);
 
         if (
           !store.getState().hidden &&
@@ -738,6 +708,11 @@ const addEffectsToStore = (
           store.getState().__controlsFunctions.setHidden(true);
         }
       }
+    },
+    {
+      equalityFn: (a, b) =>
+        a?.lastInteraction === b?.lastInteraction &&
+        a?.autohide === b?.autohide,
     },
   );
 

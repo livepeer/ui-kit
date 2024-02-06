@@ -27,10 +27,9 @@ import {
   sortSources,
 } from "./utils";
 
+const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
 const DEFAULT_SEEK_TIME = 5000; // milliseconds which the media will skip when seeking with arrows/buttons
-export const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
-
-export const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
+const DEFAULT_VOLUME_LEVEL = 1; // 0-1 for how loud the audio is
 
 export type InitialProps = {
   /**
@@ -136,13 +135,6 @@ export type InitialProps = {
   viewerId: string | null;
 };
 
-export type ControlsOptions = {
-  /** Auto-hide controls after a set amount of time (in milliseconds). Defaults to 3000. Set to 0 for no hiding. */
-  autohide?: number;
-  /** Sets the default volume. Must be between 0 and 1. */
-  defaultVolume?: number;
-};
-
 export type DeviceInformation = {
   version: string;
   isMobile: boolean;
@@ -207,6 +199,19 @@ export type ControlsState = {
 
   /** Session token for the current playback */
   sessionToken: string;
+
+  /**
+   * Configures the HLS options, for advanced usage of the Player.
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: we use any here because of the lack of dependency on HLS.js
+  hlsConfig: any | null;
+
+  /**
+   * Auto-hide controls after a set amount of time (in milliseconds).
+   *
+   * Defaults to 3000. Set to 0 for no hiding.
+   */
+  autohide: number;
 };
 
 export type ObjectFit = "cover" | "contain";
@@ -347,7 +352,10 @@ export type MediaControllerState = {
     requestToggleMute: () => void;
     requestTogglePictureInPicture: () => void;
     requestVolume: (volume: number) => void;
+    setAutohide: (autohide: number) => void;
     setFullscreen: (fullscreen: boolean) => void;
+    // biome-ignore lint/suspicious/noExplicitAny: no hls.js
+    setHlsConfig: (hlsConfig: any) => void;
     setLive: (live: boolean) => void;
     setMounted: () => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
@@ -446,6 +454,8 @@ export const createControllerStore = ({
   });
 
   const initialControls: ControlsState = {
+    hlsConfig: null,
+    autohide: DEFAULT_AUTOHIDE_TIME,
     lastError: 0,
     lastInteraction: Date.now(),
     requestedMeasureLastTime: 0,
@@ -572,6 +582,22 @@ export const createControllerStore = ({
             setPoster: (poster: string | null) =>
               set(() => ({
                 poster,
+              })),
+
+            setAutohide: (autohide) =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  autohide,
+                },
+              })),
+
+            setHlsConfig: (hlsConfig) =>
+              set(({ __controls }) => ({
+                __controls: {
+                  ...__controls,
+                  hlsConfig,
+                },
               })),
 
             setHidden: (hidden: boolean) =>
