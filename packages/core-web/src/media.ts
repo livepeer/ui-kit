@@ -10,7 +10,6 @@ export type {
   Base64Src,
   ClipLength,
   ClipParams,
-  ControlsOptions,
   ControlsState,
   DeviceInformation,
   ElementSize,

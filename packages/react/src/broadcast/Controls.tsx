@@ -2,7 +2,7 @@
 
 import { Presence } from "@radix-ui/react-presence";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useStore } from "zustand";
 
@@ -22,6 +22,12 @@ interface ControlsProps
    * controlling animation with React animation libraries.
    */
   forceMount?: true;
+  /**
+   * Auto-hide the controls after a mouse or touch interaction (in milliseconds).
+   *
+   * Defaults to 3000. Set to 0 for no hiding.
+   */
+  autohide?: number;
 }
 
 const Controls = React.forwardRef<ControlsElement, ControlsProps>(
@@ -35,6 +41,7 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
       __scopeBroadcast,
       onClick,
       style,
+      autohide,
       ...controlsProps
     } = props;
 
@@ -66,6 +73,13 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
       () => !hidden && !loading && !error && isWebRTCSupported,
       [hidden, loading, error, isWebRTCSupported],
     );
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: only set once to prevent flashing
+    useEffect(() => {
+      if (autohide !== undefined) {
+        context.store.getState().__controlsFunctions.setAutohide(autohide);
+      }
+    }, []);
 
     return (
       <Presence present={forceMount || shown}>

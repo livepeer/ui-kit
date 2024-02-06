@@ -1,13 +1,8 @@
-export {
-  DEFAULT_AUTOHIDE_TIME,
-  DEFAULT_VOLUME_LEVEL,
-  createControllerStore,
-} from "./media/controller";
+export { createControllerStore } from "./media/controller";
 export type {
   AriaText,
   ClipLength,
   ClipParams,
-  ControlsOptions,
   ControlsState,
   DeviceInformation,
   ElementSize,
