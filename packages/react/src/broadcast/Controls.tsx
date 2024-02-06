@@ -27,7 +27,7 @@ interface ControlsProps
    *
    * Defaults to 3000. Set to 0 for no hiding.
    */
-  autohide?: number;
+  autoHide?: number;
 }
 
 const Controls = React.forwardRef<ControlsElement, ControlsProps>(
@@ -41,7 +41,7 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
       __scopeBroadcast,
       onClick,
       style,
-      autohide,
+      autoHide,
       ...controlsProps
     } = props;
 
@@ -76,8 +76,8 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: only set once to prevent flashing
     useEffect(() => {
-      if (autohide !== undefined) {
-        context.store.getState().__controlsFunctions.setAutohide(autohide);
+      if (autoHide !== undefined) {
+        context.store.getState().__controlsFunctions.setAutohide(autoHide);
       }
     }, []);
 
