@@ -33,7 +33,6 @@ const Time = React.forwardRef<TimeElement, TimeProps>(
 
     return (
       <Radix.Primitive.span
-        type="button"
         aria-label={formattedTime ?? undefined}
         title={formattedTime ?? undefined}
         {...timeProps}

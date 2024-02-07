@@ -47,7 +47,6 @@ const LiveIndicator = React.forwardRef<
   return (
     <Presence present={forceMount || isPresent}>
       <Radix.Primitive.span
-        type="button"
         aria-label="live"
         {...liveIndicatorProps}
         ref={forwardedRef}

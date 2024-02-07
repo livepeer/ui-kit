@@ -56,7 +56,6 @@ const StatusIndicator = React.forwardRef<
   return (
     <Presence present={forceMount || isPresent}>
       <Radix.Primitive.span
-        type="button"
         aria-label={status}
         {...statusIndicatorProps}
         ref={forwardedRef}
