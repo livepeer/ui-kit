@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to Livepeer Kit! Please take a moment to review this document **before submitting a pull request.**
+Thanks for your interest in contributing to Livepeer UI Kit! Please take a moment to review this document **before submitting a pull request.**
 
 If you want to contribute, but aren't sure where to start, you can create a [new discussion](https://github.com/livepeer/livepeer-react/discussions).
 
@@ -56,7 +56,7 @@ gh repo clone livepeer/livepeer-react
 
 ## Installing Node.js and pnpm
 
-Livepeer Kit uses [pnpm workspaces](https://pnpm.io/workspaces) to manage multiple projects. You need to install **Node.js v16 or higher** and **pnpm v7 or higher**.
+Livepeer UI Kit uses [pnpm workspaces](https://pnpm.io/workspaces) to manage multiple projects. You need to install **Node.js v16 or higher** and **pnpm v7 or higher**.
 
 You can run the following commands in your terminal to check your local Node.js and npm versions:
 
@@ -105,7 +105,7 @@ Once the Next.js dev server is running, you can make changes to any of the packa
 
 ## Running the test suite
 
-Livepeer Kit uses a real backend to execute tests. Add the following to your environment (recommended to use [`direnv`](https://github.com/direnv/direnv)):
+Livepeer UI Kit uses a real backend to execute tests. Add the following to your environment (recommended to use [`direnv`](https://github.com/direnv/direnv)):
 
 ```bash
 STUDIO_API_KEY=<apiKey>
@@ -137,7 +137,7 @@ When you submit a pull request, GitHub will automatically lint, build, and test 
 ---
 
 <div align="center">
-  ✅ Now you're ready to contribute to Livepeer Kit! Follow the next steps if you need more advanced instructions.
+  ✅ Now you're ready to contribute to Livepeer UI Kit! Follow the next steps if you need more advanced instructions.
 </div>
 
 ---
@@ -182,7 +182,7 @@ If a PR has changesets, you can create a [snapshot release](https://github.com/c
 
 ## Testing against React 17
 
-Livepeer Kit supports both React 17 and React 18. If you want to run tests against React 17, you can run the following commands.
+Livepeer UI Kit supports both React 17 and React 18. If you want to run tests against React 17, you can run the following commands.
 
 ```bash
 cd packages/react

@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#472](https://github.com/livepeer/livepeer-kit/pull/472) [`89aec9c`](https://github.com/livepeer/livepeer-kit/commit/89aec9c5cf0deecf483130dae2036980bd456c97) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `hlsConfig` to `<Player.Video />`, `autohide` to `<Controls />`, and miscellaneous fixes for player and broadcast. 
+- [#472](https://github.com/livepeer/livepeer-kit/pull/472) [`89aec9c`](https://github.com/livepeer/livepeer-kit/commit/89aec9c5cf0deecf483130dae2036980bd456c97) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `hlsConfig` to `<Player.Video />`, `autohide` to `<Controls />`, and miscellaneous fixes for player and broadcast.
 
 - Updated dependencies [[`89aec9c`](https://github.com/livepeer/livepeer-kit/commit/89aec9c5cf0deecf483130dae2036980bd456c97)]:
   - @livepeer/core@3.0.2
@@ -603,7 +603,7 @@ This is a ground-up rewrite of most of the `@livepeer/react` library. In this re
 
 ### Patch Changes
 
-- [#345](https://github.com/livepeer/livepeer-react/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific Livepeer Kit releases.
+- [#345](https://github.com/livepeer/livepeer-react/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific Livepeer UI Kit releases.
 
 - Updated dependencies [[`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513)]:
   - @livepeer/core@1.5.6

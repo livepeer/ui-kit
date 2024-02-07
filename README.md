@@ -6,7 +6,7 @@
 </p>
 
 <h3 align="center">
-  Livepeer Kit
+  Livepeer UI Kit
 <h3>
 
 ## Features

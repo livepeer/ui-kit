@@ -54,7 +54,7 @@ export default async function PlayerPage({
         <ArrowLeft className="w-4 h-4" /> Go back
       </Link>
       <div className="flex gap-2 max-w-lg text-center flex-col">
-        <span className="text-2xl font-semibold">Livepeer Kit Player</span>
+        <span className="text-2xl font-semibold">Livepeer UI Kit Player</span>
         <span className="text-sm text-white/90">
           The Player below demonstrates how to compose a Player with the
           standard controls found on most players. The playback information is

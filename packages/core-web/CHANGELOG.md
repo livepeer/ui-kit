@@ -612,7 +612,7 @@ This is a ground-up rewrite of most of the `@livepeer/react` library. In this re
 
 ### Patch Changes
 
-- [#345](https://github.com/livepeer/livepeer-react/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific Livepeer Kit releases.
+- [#345](https://github.com/livepeer/livepeer-react/pull/345) [`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513) Thanks [@0xcadams](https://github.com/0xcadams)! - **Chore:** added version identifiers to the playback websocket to help narrow issues related to specific Livepeer UI Kit releases.
 
 - Updated dependencies [[`af16f6d`](https://github.com/livepeer/livepeer-react/commit/af16f6dda2360f0734a224fce8ef6326a7e2e513)]:
   - @livepeer/core@1.5.6
@@ -1710,7 +1710,7 @@ This is a ground-up rewrite of most of the `@livepeer/react` library. In this re
   - **actions:** functions to write/read from Livepeer Media Server (LPMS) providers and the Livepeer protocol smart contracts
   - **client:** the singleton LPMS provider with persistence to local storage and global state management
   - **constants:** constants for the Studio LPMS provider (and future providers) and protocol contract addresses/ABIs/chain IDs
-  - **errors:** custom errors for Livepeer Kit
+  - **errors:** custom errors for Livepeer UI Kit
   - **types:** Typescript typings for the LPMS provider interface, Typechain-generated types for protocol contracts, and utility types
 
 ### Actions

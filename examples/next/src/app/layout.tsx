@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Livepeer w/ App Router",
-  description: "Livepeer Kit with the Next.JS App Router",
+  description: "Livepeer UI Kit with the Next.JS App Router",
 };
 
 export default function RootLayout({
