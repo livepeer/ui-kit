@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { MediaScopedProps, useMediaContext } from "./context";
-import * as Radix from "./primitive";
+import { MediaScopedProps, useMediaContext } from "../shared/context";
+import * as Radix from "../shared/primitive";
 
 const LIVE_INDICATOR_NAME = "LiveIndicator";
 
@@ -37,6 +37,8 @@ const LiveIndicator = React.forwardRef<
 
   const live = useStore(context.store, ({ live }) => live);
 
+  console.log({ liveIndicator: live });
+
   const isPresent = useMemo(
     () => (typeof matcher === "function" ? matcher(live) : matcher === live),
     [matcher, live],
@@ -45,7 +47,6 @@ const LiveIndicator = React.forwardRef<
   return (
     <Presence present={forceMount || isPresent}>
       <Radix.Primitive.span
-        type="button"
         aria-label="live"
         {...liveIndicatorProps}
         ref={forwardedRef}

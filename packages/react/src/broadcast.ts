@@ -19,6 +19,10 @@ export {
   type ScreenshareTriggerProps,
 } from "./broadcast/Screenshare";
 export { SourceSelect, type SourceSelectProps } from "./broadcast/SourceSelect";
+export {
+  StatusIndicator,
+  type StatusIndicatorProps,
+} from "./broadcast/StatusIndicator";
 export { Video, type VideoProps } from "./broadcast/Video";
 export {
   VideoEnabledIndicator,
@@ -49,10 +53,6 @@ export {
   type FullscreenIndicatorProps,
   type FullscreenTriggerProps,
 } from "./shared/Fullscreen";
-export {
-  LiveIndicator,
-  type LiveIndicatorProps,
-} from "./shared/LiveIndicator";
 export {
   LoadingIndicator,
   type LoadingIndicatorProps,
