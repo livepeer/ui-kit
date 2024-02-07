@@ -42,7 +42,6 @@ export function BroadcastWithControls() {
       {streamKey ? (
         <>
           <Broadcast.Root
-            forceEnabled
             onError={(error) =>
               error?.type === "permissions"
                 ? toast.error(

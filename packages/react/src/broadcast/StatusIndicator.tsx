@@ -60,7 +60,6 @@ const StatusIndicator = React.forwardRef<
         {...statusIndicatorProps}
         ref={forwardedRef}
         data-livepeer-controls-status-indicator=""
-        data-live={String(status === "live")}
         data-status={String(status)}
         data-visible={String(isPresent)}
       />
