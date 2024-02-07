@@ -1,3 +1,16 @@
+export type {
+  AudioDeviceId,
+  BroadcastAriaText,
+  BroadcastControlsState,
+  BroadcastDeviceInformation,
+  BroadcastState,
+  BroadcastStatus,
+  BroadcastStore,
+  InitialBroadcastProps,
+  MediaDeviceIds,
+  MediaDeviceInfoExtended,
+  VideoDeviceId,
+} from "@livepeer/core-web/broadcast";
 export {
   createControllerStore,
   getMediaSourceType,

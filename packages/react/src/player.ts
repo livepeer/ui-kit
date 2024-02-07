@@ -4,6 +4,10 @@ export {
 } from "./player/ClipTrigger";
 export { Controls, type ControlsProps } from "./player/Controls";
 export {
+  LiveIndicator,
+  type LiveIndicatorProps,
+} from "./player/LiveIndicator";
+export {
   MuteTrigger,
   type MuteTriggerProps,
 } from "./player/MuteTrigger";
@@ -57,10 +61,6 @@ export {
   type FullscreenIndicatorProps,
   type FullscreenTriggerProps,
 } from "./shared/Fullscreen";
-export {
-  LiveIndicator,
-  type LiveIndicatorProps,
-} from "./shared/LiveIndicator";
 export {
   LoadingIndicator,
   type LoadingIndicatorProps,

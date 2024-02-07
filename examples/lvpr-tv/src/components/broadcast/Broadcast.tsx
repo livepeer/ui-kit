@@ -133,21 +133,29 @@ export function BroadcastWithControls({
 
           <Broadcast.LoadingIndicator asChild matcher={false}>
             <div className="absolute overflow-hidden py-1 px-2 rounded-full top-1 left-1 bg-black/50 flex items-center backdrop-blur">
-              <Broadcast.EnabledIndicator
-                matcher={true}
+              <Broadcast.StatusIndicator
+                matcher="live"
                 className="flex gap-2 items-center"
               >
                 <div className="bg-red-500 animate-pulse h-1.5 w-1.5 rounded-full" />
                 <span className="text-xs select-none">LIVE</span>
-              </Broadcast.EnabledIndicator>
+              </Broadcast.StatusIndicator>
 
-              <Broadcast.EnabledIndicator
+              <Broadcast.StatusIndicator
                 className="flex gap-2 items-center"
-                matcher={false}
+                matcher="pending"
+              >
+                <div className="bg-white/80 h-1.5 w-1.5 rounded-full animate-pulse" />
+                <span className="text-xs select-none">PENDING</span>
+              </Broadcast.StatusIndicator>
+
+              <Broadcast.StatusIndicator
+                className="flex gap-2 items-center"
+                matcher="idle"
               >
                 <div className="bg-white/80 h-1.5 w-1.5 rounded-full" />
-                <span className="text-xs select-none">PREVIEW</span>
-              </Broadcast.EnabledIndicator>
+                <span className="text-xs select-none">IDLE</span>
+              </Broadcast.StatusIndicator>
             </div>
           </Broadcast.LoadingIndicator>
         </Broadcast.Container>

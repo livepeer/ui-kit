@@ -25,6 +25,7 @@ const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+export type BroadcastStatus = "live" | "pending" | "idle";
 export type AudioDeviceId = "default" | `ID${string}`;
 export type VideoDeviceId = "default" | "screen" | `ID${string}`;
 
@@ -175,6 +176,9 @@ export type BroadcastState = {
   /** The RTCPeerConnection for the current broadcast. */
   peerConnection: RTCPeerConnection | null;
 
+  /** The status of the current broadcast. */
+  status: BroadcastStatus;
+
   /**
    * The WHIP ingest URL to use for the broadcast.
    */
@@ -209,6 +213,7 @@ export type BroadcastState = {
       video: boolean,
     ) => void;
     setPeerConnection: (peerConnection: RTCPeerConnection) => void;
+    setStatus: (status: BroadcastStatus) => void;
     setMediaDeviceIds: (mediaDevices: Partial<MediaDeviceIds>) => void;
     toggleAudio: () => void;
     toggleDisplayMedia: () => void;
@@ -278,6 +283,8 @@ export const createBroadcastStore = ({
           mounted: false,
 
           enabled: initialProps?.forceEnabled ?? false,
+
+          status: "idle",
 
           mediaStream: null,
           mediaDevices: null,
@@ -468,6 +475,11 @@ export const createBroadcastStore = ({
                         }
                       : {}),
                 },
+              })),
+
+            setStatus: (status) =>
+              set(() => ({
+                status,
               })),
 
             setMediaDeviceIds: (newMediaDeviceIds) =>
@@ -674,10 +686,8 @@ const addEffectsToStore = (
   const destroyMediaSyncMounted = mediaStore.subscribe(
     ({ mounted }) => mounted,
     async (mounted) => {
-      if (mounted) {
-        // we use setState here so it's clear this isn't an external function
-        store.setState({ mounted: true });
-      }
+      // we use setState here so it's clear this isn't an external function
+      store.setState({ mounted });
     },
   );
 
@@ -721,11 +731,12 @@ const addEffectsToStore = (
 
   // Subscribe to request user media
   const destroyWhip = store.subscribe(
-    ({ enabled, ingestUrl, __controls, __initialProps }) => ({
+    ({ enabled, ingestUrl, __controls, mounted }) => ({
       enabled,
       ingestUrl,
       requestedForceRenegotiateLastTime:
         __controls.requestedForceRenegotiateLastTime,
+      mounted,
     }),
     async ({ enabled, ingestUrl }) => {
       await cleanupWhip?.();
@@ -750,18 +761,20 @@ const addEffectsToStore = (
         }
       };
 
+      store.getState().__controlsFunctions.setStatus("pending");
+
       const { destroy } = createNewWHIP({
         ingestUrl,
         element,
         callbacks: {
-          onConnected: () => {
-            mediaStore.getState().__controlsFunctions.setLive(true);
-            mediaStore.getState().__controlsFunctions.onError(null);
-          },
           onRTCPeerConnection: (peerConnection) => {
             store
               .getState()
               .__controlsFunctions.setPeerConnection(peerConnection);
+          },
+          onConnected: () => {
+            store.getState().__controlsFunctions.setStatus("live");
+            mediaStore.getState().__controlsFunctions.onError(null);
           },
           onError: onErrorComposed,
         },
@@ -771,6 +784,7 @@ const addEffectsToStore = (
       cleanupWhip = () => {
         unmounted = true;
         destroy?.();
+        store.getState().__controlsFunctions.setStatus("idle");
       };
     },
     {
@@ -778,7 +792,8 @@ const addEffectsToStore = (
         a.requestedForceRenegotiateLastTime ===
           b.requestedForceRenegotiateLastTime &&
         a.ingestUrl === b.ingestUrl &&
-        a.enabled === b.enabled,
+        a.enabled === b.enabled &&
+        a.mounted === b.mounted,
     },
   );
 
