@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.1.0-next.1
+
+### Patch Changes
+
+- [`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `browser` entrypoint for web and react packages for maximum `moduleResolution` compatibility.
+
+- Updated dependencies [[`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9)]:
+  - @livepeer/core@3.1.0-next.1
+
 ## 4.1.0-next.0
 
 ### Minor Changes

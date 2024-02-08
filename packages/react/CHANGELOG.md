@@ -1,10 +1,21 @@
 # @livepeer/react
 
+## 4.1.0-next.1
+
+### Patch Changes
+
+- [`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `browser` entrypoint for web and react packages for maximum `moduleResolution` compatibility.
+
+- Updated dependencies [[`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9)]:
+  - @livepeer/core-react@3.1.0-next.1
+  - @livepeer/core-web@4.1.0-next.1
+  - @livepeer/core@3.1.0-next.1
+
 ## 4.1.0-next.0
 
 ### Minor Changes
 
-- [#477](https://github.com/livepeer/ui-kit/pull/477) [`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9)  Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
+- [#477](https://github.com/livepeer/ui-kit/pull/477) [`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9) Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
 
 ### Patch Changes
 

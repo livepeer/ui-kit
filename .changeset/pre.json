@@ -9,5 +9,8 @@
     "@livepeer/core-web": "4.0.2",
     "@livepeer/react": "4.0.2"
   },
-  "changesets": ["tough-dragons-walk"]
+  "changesets": [
+    "tough-dragons-walk",
+    "warm-poems-bathe"
+  ]
 }
