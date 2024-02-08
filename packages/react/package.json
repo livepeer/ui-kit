@@ -10,55 +10,41 @@
     "directory": "packages/react"
   },
   "homepage": "https://docs.livepeer.org",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
   "exports": {
     "./package.json": "./package.json",
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./assets": {
+      "types": "./dist/assets/index.d.ts",
       "import": "./dist/assets/index.js",
       "require": "./dist/assets/index.cjs"
     },
     "./broadcast": {
+      "types": "./dist/broadcast/index.d.ts",
       "import": "./dist/broadcast/index.js",
       "require": "./dist/broadcast/index.cjs"
     },
     "./crypto": {
+      "types": "./dist/crypto/index.d.ts",
       "import": "./dist/crypto/index.js",
       "require": "./dist/crypto/index.cjs"
     },
     "./external": {
+      "types": "./dist/external/index.d.ts",
       "import": "./dist/external/index.js",
       "require": "./dist/external/index.cjs"
     },
     "./player": {
+      "types": "./dist/player/index.d.ts",
       "import": "./dist/player/index.js",
       "require": "./dist/player/index.cjs"
-    }
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "./assets": [
-        "dist/assets/index.d.ts"
-      ],
-      "./broadcast": [
-        "dist/broadcast/index.d.ts"
-      ],
-      "./crypto": [
-        "dist/crypto/index.d.ts"
-      ],
-      "./external": [
-        "dist/external/index.d.ts"
-      ],
-      "./player": [
-        "dist/player/index.d.ts"
-      ],
-      "*": [
-        "dist/index.d.ts"
-      ]
     }
   },
   "scripts": {
@@ -104,11 +90,5 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": [
-    "livepeer",
-    "react",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
 }
