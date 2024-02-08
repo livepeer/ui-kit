@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.1.0-next.2
+
+### Patch Changes
+
+- [`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed type entrypoints for `node` resolution.
+
+- Updated dependencies [[`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d)]:
+  - @livepeer/core-react@3.1.0-next.2
+  - @livepeer/core-web@4.1.0-next.2
+  - @livepeer/core@3.1.0-next.2
+
 ## 4.1.0-next.1
 
 ### Patch Changes
@@ -28,7 +39,7 @@
 
 ### Patch Changes
 
-- [#475](https://github.com/livepeer/ui-kit/pull/475) [`a922f9b`](https://github.com/livepeer/ui-kit/commit/a922f9bd7afe3995fcf59bbc3f6e8fb25ba76f5b)  Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `Broadcast.StatusIndicator` and moved `LiveIndicator` as a Player-only primitive.
+- [#475](https://github.com/livepeer/ui-kit/pull/475) [`a922f9b`](https://github.com/livepeer/ui-kit/commit/a922f9bd7afe3995fcf59bbc3f6e8fb25ba76f5b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `Broadcast.StatusIndicator` and moved `LiveIndicator` as a Player-only primitive.
 
   The `LiveIndicator` was not providing an accurate representation of the stream state, and `Broadcast.StatusIndicator` was
   added to represent the third possible state, `pending`, which is when the stream is pending negotiation

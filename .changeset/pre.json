@@ -10,6 +10,7 @@
     "@livepeer/react": "4.0.2"
   },
   "changesets": [
+    "sixty-buses-collect",
     "tough-dragons-walk",
     "warm-poems-bathe"
   ]

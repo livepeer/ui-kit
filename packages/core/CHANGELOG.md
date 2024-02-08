@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 3.1.0-next.2
+
+### Patch Changes
+
+- [`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed type entrypoints for `node` resolution.
+
 ## 3.1.0-next.1
 
 ### Patch Changes

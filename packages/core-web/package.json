@@ -2,7 +2,7 @@
   "name": "@livepeer/core-web",
   "description": "Livepeer UI Kit's core web library, for adding reactive stores to video elements.",
   "license": "MIT",
-  "version": "4.1.0-next.1",
+  "version": "4.1.0-next.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -13,7 +13,9 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -71,5 +73,10 @@
     "hls.js": "^1.5.2",
     "zustand": "^4.5.0"
   },
-  "keywords": ["livepeer", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }
