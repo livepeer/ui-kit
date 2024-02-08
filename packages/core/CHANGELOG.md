@@ -1,5 +1,19 @@
 # @livepeer/core
 
+## 3.1.0
+
+### Minor Changes
+
+- [#481](https://github.com/livepeer/ui-kit/pull/481) [`44420a5`](https://github.com/livepeer/ui-kit/commit/44420a584920cbd4ebcd2b3d26cce4e7f401f557) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
+
+### Patch Changes
+
+- [#481](https://github.com/livepeer/ui-kit/pull/481) [`44420a5`](https://github.com/livepeer/ui-kit/commit/44420a584920cbd4ebcd2b3d26cce4e7f401f557) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed type entrypoints for `node` resolution.
+
+- [#481](https://github.com/livepeer/ui-kit/pull/481) [`44420a5`](https://github.com/livepeer/ui-kit/commit/44420a584920cbd4ebcd2b3d26cce4e7f401f557) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added back `typesVersions` for node module resolution.
+
+- [#481](https://github.com/livepeer/ui-kit/pull/481) [`44420a5`](https://github.com/livepeer/ui-kit/commit/44420a584920cbd4ebcd2b3d26cce4e7f401f557) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `browser` entrypoint for web and react packages for maximum `moduleResolution` compatibility.
+
 ## 3.1.0-next.3
 
 ### Patch Changes
