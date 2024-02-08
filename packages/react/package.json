@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React primitives for video apps.",
   "license": "MIT",
-  "version": "4.1.0-next.1",
+  "version": "4.1.0-next.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -13,7 +13,9 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -90,5 +92,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "react",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }
