@@ -1,12 +1,23 @@
 # @livepeer/core-react
 
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#477](https://github.com/livepeer/ui-kit/pull/477) [`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9) Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
+
+### Patch Changes
+
+- Updated dependencies [[`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9)]:
+  - @livepeer/core@3.1.0-next.0
+
 ## 3.0.3
 
 ### Patch Changes
 
 - [#475](https://github.com/livepeer/ui-kit/pull/475) [`a922f9b`](https://github.com/livepeer/ui-kit/commit/a922f9bd7afe3995fcf59bbc3f6e8fb25ba76f5b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `Broadcast.StatusIndicator` and moved `LiveIndicator` as a Player-only primitive.
 
-  The `LiveIndicator` was not providing an accurate representation of the stream state, and `Broadcast.StatusIndicator` was 
+  The `LiveIndicator` was not providing an accurate representation of the stream state, and `Broadcast.StatusIndicator` was
   added to represent the third possible state, `pending`, which is when the stream is pending negotiation
   with the WebRTC WHIP endpoint. `LiveIndicator` is now `Player.LiveIndicator` since this only applies to live/not-live
   playback.

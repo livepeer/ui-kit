@@ -9,5 +9,7 @@
     "@livepeer/core-web": "4.0.2",
     "@livepeer/react": "4.0.2"
   },
-  "changesets": []
+  "changesets": [
+    "tough-dragons-walk"
+  ]
 }
