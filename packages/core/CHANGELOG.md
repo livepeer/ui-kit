@@ -1,5 +1,29 @@
 # @livepeer/core
 
+## 3.1.0-next.3
+
+### Patch Changes
+
+- [`4f0303c`](https://github.com/livepeer/ui-kit/commit/4f0303c7e0ed2088d34a6ec98b4ea50342dba387) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added back `typesVersions` for node module resolution.
+
+## 3.1.0-next.2
+
+### Patch Changes
+
+- [`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed type entrypoints for `node` resolution.
+
+## 3.1.0-next.1
+
+### Patch Changes
+
+- [`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `browser` entrypoint for web and react packages for maximum `moduleResolution` compatibility.
+
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#477](https://github.com/livepeer/ui-kit/pull/477) [`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9) Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
+
 ## 3.0.3
 
 ### Patch Changes

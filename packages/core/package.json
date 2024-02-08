@@ -1,107 +1,88 @@
 {
   "name": "@livepeer/core",
-  "description": "Livepeer's core vanilla JS library.",
+  "description": "Livepeer UI Kit's core vanilla JS library.",
   "license": "MIT",
-  "version": "3.0.3",
+  "type": "module",
+  "version": "3.1.0-next.3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/livepeer/livepeer-react.git",
+    "url": "https://github.com/livepeer/ui-kit.git",
     "directory": "packages/core"
   },
   "homepage": "https://docs.livepeer.org",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.mjs",
-  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
     "./crypto": {
-      "import": {
-        "types": "./dist/es/crypto.d.mts",
-        "default": "./dist/es/crypto.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/crypto.d.ts",
-        "default": "./dist/cjs/crypto.js"
-      }
+      "types": "./dist/crypto/index.d.ts",
+      "import": "./dist/crypto/index.js",
+      "require": "./dist/crypto/index.cjs"
     },
     "./errors": {
-      "import": {
-        "types": "./dist/es/errors.d.mts",
-        "default": "./dist/es/errors.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/errors.d.ts",
-        "default": "./dist/cjs/errors.js"
-      }
-    },
-    "./external": {
-      "import": {
-        "types": "./dist/es/external.d.mts",
-        "default": "./dist/es/external.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/external.d.ts",
-        "default": "./dist/cjs/external.js"
-      }
+      "types": "./dist/errors/index.d.ts",
+      "import": "./dist/errors/index.js",
+      "require": "./dist/errors/index.cjs"
     },
     "./media": {
-      "import": {
-        "types": "./dist/es/media.d.mts",
-        "default": "./dist/es/media.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/media.d.ts",
-        "default": "./dist/cjs/media.js"
-      }
+      "types": "./dist/media/index.d.ts",
+      "import": "./dist/media/index.js",
+      "require": "./dist/media/index.cjs"
     },
     "./storage": {
-      "import": {
-        "types": "./dist/es/storage.d.mts",
-        "default": "./dist/es/storage.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/storage.d.ts",
-        "default": "./dist/cjs/storage.js"
-      }
-    },
-    "./types": {
-      "import": {
-        "types": "./dist/es/types.d.mts",
-        "default": "./dist/es/types.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/types.d.ts",
-        "default": "./dist/cjs/types.js"
-      }
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js",
+      "require": "./dist/storage/index.cjs"
     },
     "./utils": {
-      "import": {
-        "types": "./dist/es/utils.d.mts",
-        "default": "./dist/es/utils.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/utils.d.ts",
-        "default": "./dist/cjs/utils.js"
-      }
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs"
     },
     "./version": {
-      "import": {
-        "types": "./dist/es/version.d.mts",
-        "default": "./dist/es/version.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/version.d.ts",
-        "default": "./dist/cjs/version.js"
-      }
+      "types": "./dist/version/index.d.ts",
+      "import": "./dist/version/index.js",
+      "require": "./dist/version/index.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "crypto": [
+        "./dist/crypto/index.d.ts"
+      ],
+      "errors": [
+        "./dist/errors/index.d.ts"
+      ],
+      "media": [
+        "./dist/media/index.d.ts"
+      ],
+      "storage": [
+        "./dist/storage/index.d.ts"
+      ],
+      "utils": [
+        "./dist/utils/index.d.ts"
+      ],
+      "version": [
+        "./dist/version/index.d.ts"
+      ],
+      "*": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "scripts": {
-    "build": "bunchee",
+    "build": "tsup",
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "bunchee --watch",
+    "dev": "tsup --watch",
     "lint": "tsc --noEmit"
   },
   "peerDependencies": {

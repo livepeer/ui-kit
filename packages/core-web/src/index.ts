@@ -1,3 +1,7 @@
+export type {
+  Address,
+  Hash,
+} from "@livepeer/core";
 export {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
@@ -52,10 +56,6 @@ export {
   noopStorage,
 } from "@livepeer/core/storage";
 export type { ClientStorage } from "@livepeer/core/storage";
-export type {
-  Address,
-  Hash,
-} from "@livepeer/core/types";
 export {
   b64Decode,
   b64Encode,

@@ -2,86 +2,79 @@
   "name": "@livepeer/react",
   "description": "React primitives for video apps.",
   "license": "MIT",
-  "version": "4.0.3",
+  "version": "4.1.0-next.3",
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/livepeer/livepeer-react.git",
+    "url": "https://github.com/livepeer/ui-kit.git",
     "directory": "packages/react"
   },
   "homepage": "https://docs.livepeer.org",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.mjs",
-  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "types": "./dist/es/index.d.mts",
-        "default": "./dist/es/index.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./assets": {
-      "import": {
-        "types": "./dist/es/assets.d.mts",
-        "default": "./dist/es/assets.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/assets.d.ts",
-        "default": "./dist/cjs/assets.js"
-      }
+      "types": "./dist/assets/index.d.ts",
+      "import": "./dist/assets/index.js",
+      "require": "./dist/assets/index.cjs"
     },
     "./broadcast": {
-      "import": {
-        "types": "./dist/es/broadcast.d.mts",
-        "default": "./dist/es/broadcast.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/broadcast.d.ts",
-        "default": "./dist/cjs/broadcast.js"
-      }
+      "types": "./dist/broadcast/index.d.ts",
+      "import": "./dist/broadcast/index.js",
+      "require": "./dist/broadcast/index.cjs"
     },
     "./crypto": {
-      "import": {
-        "types": "./dist/es/crypto.d.mts",
-        "default": "./dist/es/crypto.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/crypto.d.ts",
-        "default": "./dist/cjs/crypto.js"
-      }
+      "types": "./dist/crypto/index.d.ts",
+      "import": "./dist/crypto/index.js",
+      "require": "./dist/crypto/index.cjs"
     },
     "./external": {
-      "import": {
-        "types": "./dist/es/external.d.mts",
-        "default": "./dist/es/external.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/external.d.ts",
-        "default": "./dist/cjs/external.js"
-      }
+      "types": "./dist/external/index.d.ts",
+      "import": "./dist/external/index.js",
+      "require": "./dist/external/index.cjs"
     },
     "./player": {
-      "import": {
-        "types": "./dist/es/player.d.mts",
-        "default": "./dist/es/player.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/player.d.ts",
-        "default": "./dist/cjs/player.js"
-      }
+      "types": "./dist/player/index.d.ts",
+      "import": "./dist/player/index.js",
+      "require": "./dist/player/index.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "assets": [
+        "./dist/assets/index.d.ts"
+      ],
+      "broadcast": [
+        "./dist/broadcast/index.d.ts"
+      ],
+      "crypto": [
+        "./dist/crypto/index.d.ts"
+      ],
+      "external": [
+        "./dist/external/index.d.ts"
+      ],
+      "player": [
+        "./dist/player/index.d.ts"
+      ],
+      "*": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "scripts": {
-    "build": "bunchee",
+    "build": "tsup",
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "bunchee --watch",
+    "dev": "tsup --watch",
     "lint": "tsc --noEmit"
   },
   "peerDependencies": {

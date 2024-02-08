@@ -2,46 +2,47 @@
   "name": "@livepeer/core-react",
   "description": "Internal library used for livepeer react primitives.",
   "license": "MIT",
-  "version": "3.0.3",
+  "version": "3.1.0-next.3",
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/livepeer/livepeer-react.git",
+    "url": "https://github.com/livepeer/ui-kit.git",
     "directory": "packages/core-react"
   },
   "homepage": "https://docs.livepeer.org",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.mjs",
-  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "types": "./dist/es/index.d.mts",
-        "default": "./dist/es/index.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./crypto": {
-      "import": {
-        "types": "./dist/es/crypto.d.mts",
-        "default": "./dist/es/crypto.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/crypto.d.ts",
-        "default": "./dist/cjs/crypto.js"
-      }
+      "types": "./dist/crypto/index.d.ts",
+      "import": "./dist/crypto/index.js",
+      "require": "./dist/crypto/index.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "crypto": [
+        "./dist/crypto/index.d.ts"
+      ],
+      "*": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "scripts": {
-    "build": "bunchee",
+    "build": "tsup",
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "bunchee --watch",
+    "dev": "tsup --watch",
     "lint": "tsc --noEmit"
   },
   "peerDependencies": {

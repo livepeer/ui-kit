@@ -1,3 +1,6 @@
+export type Address = `0x${string}`;
+export type Hash = `0x${string}`;
+
 export { getIngest, getSrc } from "./media/external";
 export type {
   CloudflareStreamData,

@@ -1,107 +1,88 @@
 {
   "name": "@livepeer/core-web",
-  "description": "Livepeer's vanilla JS library.",
+  "description": "Livepeer UI Kit's core web library, for adding reactive stores to video elements.",
   "license": "MIT",
-  "version": "4.0.3",
+  "version": "4.1.0-next.3",
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/livepeer/livepeer-react.git",
+    "url": "https://github.com/livepeer/ui-kit.git",
     "directory": "packages/core-web"
   },
   "homepage": "https://docs.livepeer.org",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.mjs",
-  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "types": "./dist/es/index.d.mts",
-        "default": "./dist/es/index.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      }
-    },
-    "./browser": {
-      "import": {
-        "types": "./dist/es/browser.d.mts",
-        "default": "./dist/es/browser.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/browser.d.ts",
-        "default": "./dist/cjs/browser.js"
-      }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./broadcast": {
-      "import": {
-        "types": "./dist/es/broadcast.d.mts",
-        "default": "./dist/es/broadcast.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/broadcast.d.ts",
-        "default": "./dist/cjs/broadcast.js"
-      }
+      "types": "./dist/broadcast/index.d.ts",
+      "import": "./dist/broadcast/index.js",
+      "require": "./dist/broadcast/index.cjs"
     },
-    "./crypto": {
-      "import": {
-        "types": "./dist/es/crypto.d.mts",
-        "default": "./dist/es/crypto.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/crypto.d.ts",
-        "default": "./dist/cjs/crypto.js"
-      }
+    "./browser": {
+      "types": "./dist/browser/index.d.ts",
+      "import": "./dist/browser/index.js",
+      "require": "./dist/browser/index.cjs"
     },
     "./external": {
-      "import": {
-        "types": "./dist/es/external.d.mts",
-        "default": "./dist/es/external.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/external.d.ts",
-        "default": "./dist/cjs/external.js"
-      }
+      "types": "./dist/external/index.d.ts",
+      "import": "./dist/external/index.js",
+      "require": "./dist/external/index.cjs"
     },
     "./hls": {
-      "import": {
-        "types": "./dist/es/hls.d.mts",
-        "default": "./dist/es/hls.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/hls.d.ts",
-        "default": "./dist/cjs/hls.js"
-      }
+      "types": "./dist/hls/index.d.ts",
+      "import": "./dist/hls/index.js",
+      "require": "./dist/hls/index.cjs"
     },
     "./media": {
-      "import": {
-        "types": "./dist/es/media.d.mts",
-        "default": "./dist/es/media.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/media.d.ts",
-        "default": "./dist/cjs/media.js"
-      }
+      "types": "./dist/media/index.d.ts",
+      "import": "./dist/media/index.js",
+      "require": "./dist/media/index.cjs"
     },
     "./webrtc": {
-      "import": {
-        "types": "./dist/es/webrtc.d.mts",
-        "default": "./dist/es/webrtc.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/webrtc.d.ts",
-        "default": "./dist/cjs/webrtc.js"
-      }
+      "types": "./dist/webrtc/index.d.ts",
+      "import": "./dist/webrtc/index.js",
+      "require": "./dist/webrtc/index.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "broadcast": [
+        "./dist/broadcast/index.d.ts"
+      ],
+      "browser": [
+        "./dist/browser/index.d.ts"
+      ],
+      "external": [
+        "./dist/external/index.d.ts"
+      ],
+      "hls": [
+        "./dist/hls/index.d.ts"
+      ],
+      "media": [
+        "./dist/media/index.d.ts"
+      ],
+      "webrtc": [
+        "./dist/webrtc/index.d.ts"
+      ],
+      "*": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "scripts": {
-    "build": "bunchee",
+    "build": "tsup",
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "bunchee --watch",
+    "dev": "tsup --watch",
     "lint": "tsc --noEmit"
   },
   "peerDependencies": {

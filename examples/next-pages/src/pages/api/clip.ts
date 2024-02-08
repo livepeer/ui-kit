@@ -1,8 +1,16 @@
-"use server";
+import { livepeer } from "@/lib/livepeer";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 
-import { ClipPayload } from "livepeer/dist/models/components";
-import z from "zod";
-import { livepeer } from "../../livepeer";
+type ResponseData =
+  | {
+      success: true;
+      playbackId: string;
+    }
+  | {
+      success: false;
+      error: string;
+    };
 
 const isValidUnixTimestamp = (timestamp: number) => {
   const now = Date.now();
@@ -33,31 +41,38 @@ const clipPayloadSchema = z
     },
   );
 
-export const createClip = async (opts: ClipPayload) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>,
+) {
   try {
-    const clipPayloadParsed = await clipPayloadSchema.safeParseAsync(opts);
+    const clipPayloadParsed = await clipPayloadSchema.safeParseAsync(req.body);
 
     if (!clipPayloadParsed.success) {
       console.error(clipPayloadParsed.error);
 
-      return { success: false, error: "PARAMS_ERROR" } as const;
+      return res
+        .status(400)
+        .json({ success: false, error: "PARAMS_ERROR" } as const);
     }
 
-    const result = await livepeer.stream.createClip({
-      ...opts,
-    });
+    const result = await livepeer.stream.createClip(clipPayloadParsed.data);
 
     if (!result.object?.asset?.playbackId) {
-      return { success: false, error: "PLAYBACK_ID_MISSING" } as const;
+      return res
+        .status(400)
+        .json({ success: false, error: "PLAYBACK_ID_MISSING" } as const);
     }
 
-    return {
+    return res.status(200).json({
       success: true,
       playbackId: result.object?.asset?.playbackId,
-    } as const;
+    });
   } catch (e) {
     console.error(e);
 
-    return { success: false, error: "CLIP_ERROR" } as const;
+    return res
+      .status(500)
+      .json({ success: false, error: "CLIP_ERROR" } as const);
   }
-};
+}
