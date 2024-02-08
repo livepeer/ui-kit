@@ -26,7 +26,7 @@ For full documentation and examples, visit [docs.livepeer.org](https://docs.live
 
 Check out the following places for more livepeer-related content:
 
-- Join the [discussions on GitHub](https://github.com/livepeer/livepeer-react/discussions)
+- Join the [discussions on GitHub](https://github.com/livepeer/ui-kit/discussions)
 - Follow [@livepeer](https://twitter.com/livepeer) on Twitter for project updates
 - Jump into our [Discord](https://discord.gg/livepeer)
 

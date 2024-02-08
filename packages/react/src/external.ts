@@ -1,4 +1,4 @@
-export { getIngest, getSrc } from "@livepeer/core/external";
+export { getIngest, getSrc } from "@livepeer/core";
 export type {
   CloudflareStreamData,
   CloudflareUrlData,
@@ -22,4 +22,4 @@ export type {
   LivepeerTasks,
   LivepeerTypeT,
   LivepeerVersion,
-} from "@livepeer/core/external";
+} from "@livepeer/core";

@@ -1,0 +1,13 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "example-lvpr-tv": "0.0.1",
+    "example-next": "0.0.1",
+    "@livepeer/core": "3.0.2",
+    "@livepeer/core-react": "3.0.2",
+    "@livepeer/core-web": "4.0.2",
+    "@livepeer/react": "4.0.2"
+  },
+  "changesets": []
+}
