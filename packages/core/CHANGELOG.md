@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 3.1.0-next.3
+
+### Patch Changes
+
+- [`4f0303c`](https://github.com/livepeer/ui-kit/commit/4f0303c7e0ed2088d34a6ec98b4ea50342dba387) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added back `typesVersions` for node module resolution.
+
 ## 3.1.0-next.2
 
 ### Patch Changes
