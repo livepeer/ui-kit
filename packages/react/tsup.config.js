@@ -2,7 +2,7 @@ import { defineConfig } from "tsup";
 
 /** @type {import('tsup').Options} */
 const options = {
-  // splitting: false,
+  splitting: false,
   clean: true,
   sourcemap: true,
   dts: true,

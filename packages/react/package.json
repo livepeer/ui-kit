@@ -22,9 +22,9 @@
       "require": "./dist/assets/index.cjs"
     },
     "./broadcast": {
-      "browser": "./dist/browser/index.js",
-      "import": "./dist/browser/index.js",
-      "require": "./dist/browser/index.cjs"
+      "browser": "./dist/broadcast/index.js",
+      "import": "./dist/broadcast/index.js",
+      "require": "./dist/broadcast/index.cjs"
     },
     "./crypto": {
       "import": "./dist/crypto/index.js",
