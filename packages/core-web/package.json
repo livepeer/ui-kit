@@ -13,37 +13,30 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "browser": "./dist/index.js",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./broadcast": {
-      "browser": "./dist/broadcast/index.js",
       "import": "./dist/broadcast/index.js",
       "require": "./dist/broadcast/index.cjs"
     },
     "./browser": {
-      "browser": "./dist/browser/index.js",
       "import": "./dist/browser/index.js",
       "require": "./dist/browser/index.cjs"
     },
     "./external": {
-      "browser": "./dist/external/index.js",
       "import": "./dist/external/index.js",
       "require": "./dist/external/index.cjs"
     },
     "./hls": {
-      "browser": "./dist/hls/index.js",
       "import": "./dist/hls/index.js",
       "require": "./dist/hls/index.cjs"
     },
     "./media": {
-      "browser": "./dist/media/index.js",
       "import": "./dist/media/index.js",
       "require": "./dist/media/index.cjs"
     },
     "./webrtc": {
-      "browser": "./dist/webrtc/index.js",
       "import": "./dist/webrtc/index.js",
       "require": "./dist/webrtc/index.cjs"
     }
@@ -52,27 +45,13 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "./broadcast": [
-        "dist/broadcast/index.d.ts"
-      ],
-      "./browser": [
-        "dist/browser/index.d.ts"
-      ],
-      "./external": [
-        "dist/external/index.d.ts"
-      ],
-      "./hls": [
-        "dist/hls/index.d.ts"
-      ],
-      "./media": [
-        "dist/media/index.d.ts"
-      ],
-      "./webrtc": [
-        "dist/webrtc/index.d.ts"
-      ],
-      "*": [
-        "dist/index.d.ts"
-      ]
+      "./broadcast": ["dist/broadcast/index.d.ts"],
+      "./browser": ["dist/browser/index.d.ts"],
+      "./external": ["dist/external/index.d.ts"],
+      "./hls": ["dist/hls/index.d.ts"],
+      "./media": ["dist/media/index.d.ts"],
+      "./webrtc": ["dist/webrtc/index.d.ts"],
+      "*": ["dist/index.d.ts"]
     }
   },
   "scripts": {
@@ -94,10 +73,5 @@
     "hls.js": "^1.5.2",
     "zustand": "^4.5.0"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }
