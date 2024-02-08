@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.1.0-next.3
+
+### Patch Changes
+
+- [`4f0303c`](https://github.com/livepeer/ui-kit/commit/4f0303c7e0ed2088d34a6ec98b4ea50342dba387) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added back `typesVersions` for node module resolution.
+
+- Updated dependencies [[`4f0303c`](https://github.com/livepeer/ui-kit/commit/4f0303c7e0ed2088d34a6ec98b4ea50342dba387)]:
+  - @livepeer/core-react@3.1.0-next.3
+  - @livepeer/core-web@4.1.0-next.3
+  - @livepeer/core@3.1.0-next.3
+
 ## 4.1.0-next.2
 
 ### Patch Changes
@@ -15,7 +26,7 @@
 
 ### Patch Changes
 
-- [`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `browser` entrypoint for web and react packages for maximum `moduleResolution` compatibility.
+- [`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9)  Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `browser` entrypoint for web and react packages for maximum `moduleResolution` compatibility.
 
 - Updated dependencies [[`b618eb6`](https://github.com/livepeer/ui-kit/commit/b618eb60e90e41703d90d0e993dc10d6cced39e9)]:
   - @livepeer/core-react@3.1.0-next.1
