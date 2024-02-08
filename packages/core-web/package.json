@@ -10,12 +10,10 @@
     "directory": "packages/core-web"
   },
   "homepage": "https://docs.livepeer.org",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -54,6 +52,17 @@
       "require": "./dist/webrtc/index.cjs"
     }
   },
+  "typesVersions": {
+    "*": {
+      "broadcast": ["./dist/broadcast/index.d.ts"],
+      "browser": ["./dist/browser/index.d.ts"],
+      "external": ["./dist/external/index.d.ts"],
+      "hls": ["./dist/hls/index.d.ts"],
+      "media": ["./dist/media/index.d.ts"],
+      "webrtc": ["./dist/webrtc/index.d.ts"],
+      "*": ["./dist/index.d.ts"]
+    }
+  },
   "scripts": {
     "build": "tsup",
     "clean": "rimraf .turbo node_modules dist",
@@ -73,10 +82,5 @@
     "hls.js": "^1.5.2",
     "zustand": "^4.5.0"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

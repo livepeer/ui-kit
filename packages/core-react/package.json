@@ -10,12 +10,10 @@
     "directory": "packages/core-react"
   },
   "homepage": "https://docs.livepeer.org",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -27,6 +25,12 @@
       "types": "./dist/crypto/index.d.ts",
       "import": "./dist/crypto/index.js",
       "require": "./dist/crypto/index.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "crypto": ["./dist/crypto/index.d.ts"],
+      "*": ["./dist/index.d.ts"]
     }
   },
   "scripts": {
@@ -51,10 +55,5 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }
