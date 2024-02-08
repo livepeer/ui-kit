@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- [#477](https://github.com/livepeer/ui-kit/pull/477) [`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9) Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
+- [#477](https://github.com/livepeer/ui-kit/pull/477) [`1e670ae`](https://github.com/livepeer/ui-kit/commit/1e670ae160afd347fd8234ee24c473d86f7fe8f9)  Thanks [@github-actions](https://github.com/apps/github-actions)! - **Fix:** moved back to `tsup` from `bunchee` for the build system, due to import issues across various projects.
 
 ### Patch Changes
 
