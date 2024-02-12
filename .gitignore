@@ -1,31 +1,57 @@
+# General
 *.local
-.next
-.pnpm-debug.log*
-cache
-coverage
-dist
-node_modules
-tsconfig.tsbuildinfo
+.cache
 logs
 *.log
-pnpm-debug.log*
+.DS_Store
+*.pem
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Build outputs
+dist
+dist-ssr
 build/
 .turbo
 
-# Sentry
-.sentryclirc
+# TypeScript
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+next-env.d.ts
 
-# local env files
-.env
-.envrc
-# svelte
-dist-ssr
-
-# editor directories and files
+# Editor directories and files
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment files
+.env
+.envrc
+.env*.local
+
+# Debug logs
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sentry
+.sentryclirc
+
+# Testing
+coverage/
+/coverage
+
+# Next.js
+.next/
+/out/
+
+# Vercel
+.vercel

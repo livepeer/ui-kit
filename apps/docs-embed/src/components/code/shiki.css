@@ -1,0 +1,3 @@
+.shiki {
+  @apply overflow-y-auto p-5;
+}

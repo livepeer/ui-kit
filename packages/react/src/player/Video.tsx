@@ -43,26 +43,34 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
     const ref = React.useRef<VideoElement | null>(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
 
-    const { currentSource, setMounted, autoPlay, preload, thumbnailPoster } =
-      useStore(
-        context.store,
-        useShallow(
-          ({
-            __controlsFunctions,
-            __initialProps,
-            currentSource,
-            live,
-            poster,
-          }) => ({
-            autoPlay: __initialProps.autoPlay,
-            currentSource,
-            live,
-            preload: __initialProps.preload,
-            setMounted: __controlsFunctions.setMounted,
-            thumbnailPoster: poster,
-          }),
-        ),
-      );
+    const {
+      currentSource,
+      setMounted,
+      autoPlay,
+      preload,
+      thumbnailPoster,
+      volume,
+    } = useStore(
+      context.store,
+      useShallow(
+        ({
+          __controlsFunctions,
+          __initialProps,
+          currentSource,
+          live,
+          poster,
+          volume,
+        }) => ({
+          autoPlay: __initialProps.autoPlay,
+          currentSource,
+          live,
+          preload: __initialProps.preload,
+          setMounted: __controlsFunctions.setMounted,
+          thumbnailPoster: poster,
+          volume,
+        }),
+      ),
+    );
 
     useEffect(() => {
       if (ref.current) {
@@ -90,6 +98,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         poster={
           poster === null ? undefined : poster ?? thumbnailPoster ?? undefined
         }
+        muted={volume === 0}
         {...videoProps}
         autoPlay={autoPlay}
         preload={preload}

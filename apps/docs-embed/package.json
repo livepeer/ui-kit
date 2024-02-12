@@ -1,11 +1,14 @@
 {
-  "name": "example-next",
+  "name": "app-docs-embed",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "clean": "rimraf .turbo node_modules .next",
+    "generate": "tsm components-to-string.ts",
+    "prebuild": "pnpm run generate",
+    "postinstall": "pnpm run generate",
     "start": "next start",
     "lint": "next lint"
   },
@@ -18,10 +21,10 @@
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
+    "shiki": "^1.1.2",
     "sonner": "^1.3.1",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
