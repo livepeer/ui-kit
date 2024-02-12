@@ -3,19 +3,20 @@
   "type": "module",
   "scripts": {
     "build": "pnpm build:packages",
-    "build:examples": "pnpm run generate-version && pnpm build && pnpm --filter \"example-*\" build",
-    "build:packages": "pnpm run generate-version && pnpm --filter \"@livepeer/*\" build",
+    "build:apps": "pnpm run generate && pnpm build && pnpm --filter \"app-*\" build",
+    "build:examples": "pnpm run generate && pnpm build && pnpm --filter \"example-*\" build",
+    "build:packages": "pnpm run generate && pnpm --filter \"@livepeer/*\" build",
     "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "clean": "turbo run clean && rimraf node_modules coverage .turbo",
     "dev": "pnpm dev:packages",
     "dev:next": "dotenv -- turbo dev --filter \"example-next\"",
     "dev:packages": "dotenv -- turbo dev --filter \"@livepeer/*\"",
-    "generate-version": "tsm generate-version.ts",
+    "generate": "tsm generate-version.ts && turbo run generate",
     "lint": "pnpm dlx @biomejs/biome lint ./ && turbo run lint --filter \"@livepeer/*\"",
     "lint:fix": "pnpm dlx @biomejs/biome check --apply ./",
     "list-browsers": "pnpx browserslist && pnpx browserslist --coverage",
-    "postinstall": "pnpm run generate-version",
+    "postinstall": "pnpm run generate",
     "preinstall": "npx only-allow pnpm",
     "prepare": "simple-git-hooks",
     "test": "vitest",
@@ -25,15 +26,10 @@
     "test:update": "vitest --update"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "@babel/preset-env": "^7.23.9",
-    "@babel/preset-react": "^7.23.3",
-    "@babel/preset-typescript": "^7.23.3",
-    "@babel/runtime": "^7.23.9",
     "@biomejs/biome": "^1.5.3",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
-    "@types/node": "20.11.2",
+    "@types/node": "20.11.17",
     "@vitest/coverage-c8": "^0.33.0",
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/ui": "^1.1.3",
@@ -41,26 +37,21 @@
     "dotenv-cli": "^7.3.0",
     "jsdom": "^24.0.0",
     "lint-staged": "^15.2.1",
-    "regjsgen": "^0.8.0",
     "rimraf": "^5.0.5",
     "simple-git-hooks": "^2.9.0",
     "tsm": "^2.3.0",
-    "tsup": "^8.0.1",
+    "tsup": "^8.0.2",
     "turbo": "^1.12.1",
     "typescript": "^5.3.3",
-    "vite": "^5.0.11",
+    "vite": "^5.1.1",
     "vitest": "^1.1.3"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "pnpm lint:fix"
-    ],
-    "*.{json,md,mdx,yml}": [
-      "pnpm lint:fix"
-    ]
+    "*.{js,ts,tsx}": ["pnpm lint:fix"],
+    "*.{json,md,mdx,yml}": ["pnpm lint:fix"]
   },
   "packageManager": "pnpm@8.14.1",
   "engines": {

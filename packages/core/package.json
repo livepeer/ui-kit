@@ -98,7 +98,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "jose": "^5.2.0"
+    "jose": "^5.2.2"
   },
   "keywords": [
     "livepeer",

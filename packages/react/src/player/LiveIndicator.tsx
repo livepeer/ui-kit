@@ -37,8 +37,6 @@ const LiveIndicator = React.forwardRef<
 
   const live = useStore(context.store, ({ live }) => live);
 
-  console.log({ liveIndicator: live });
-
   const isPresent = useMemo(
     () => (typeof matcher === "function" ? matcher(live) : matcher === live),
     [matcher, live],
