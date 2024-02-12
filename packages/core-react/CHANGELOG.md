@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 3.1.1
+
+### Patch Changes
+
+- [#483](https://github.com/livepeer/ui-kit/pull/483) [`5406f98`](https://github.com/livepeer/ui-kit/commit/5406f989e89d6959fdc734d798152d79430dc265) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** usability fixes for muted state.
+
+- Updated dependencies [[`5406f98`](https://github.com/livepeer/ui-kit/commit/5406f989e89d6959fdc734d798152d79430dc265)]:
+  - @livepeer/core@3.1.1
+
 ## 3.1.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.1.1
+
+### Patch Changes
+
+- [#483](https://github.com/livepeer/ui-kit/pull/483) [`5406f98`](https://github.com/livepeer/ui-kit/commit/5406f989e89d6959fdc734d798152d79430dc265) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** usability fixes for muted state.
+
+- Updated dependencies [[`5406f98`](https://github.com/livepeer/ui-kit/commit/5406f989e89d6959fdc734d798152d79430dc265)]:
+  - @livepeer/core@3.1.1
+  - @livepeer/core-react@3.1.1
+  - @livepeer/core-web@4.1.1
+
 ## 4.1.0
 
 ### Minor Changes
@@ -34,7 +45,7 @@
 
 ### Patch Changes
 
-- [`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d) Thanks [@0xcadams](https://github.com/0xcadams)!  - **Fix:** fixed type entrypoints for `node` resolution.
+- [`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed type entrypoints for `node` resolution.
 
 - Updated dependencies [[`bddfbdc`](https://github.com/livepeer/ui-kit/commit/bddfbdc8ee77bae8b6ac45924ccc32288b238a2d)]:
   - @livepeer/core-react@3.1.0-next.2
