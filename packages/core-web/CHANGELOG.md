@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.1.2
+
+### Patch Changes
+
+- [#485](https://github.com/livepeer/ui-kit/pull/485) [`8ff0b19`](https://github.com/livepeer/ui-kit/commit/8ff0b1943aad7d804ec1ead8c8b9ea70d5c5eab1) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** usability fixes for muted state.
+
+- Updated dependencies [[`8ff0b19`](https://github.com/livepeer/ui-kit/commit/8ff0b1943aad7d804ec1ead8c8b9ea70d5c5eab1)]:
+  - @livepeer/core@3.1.2
+
 ## 4.1.1
 
 ### Patch Changes
