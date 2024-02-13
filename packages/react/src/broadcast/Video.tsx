@@ -31,7 +31,7 @@ interface VideoProps
    * This can be used as a controlled input to determine when this request should be made,
    * and toggled on after mount.
    */
-  enableUserMedia?: boolean;
+  // enableUserMedia?: boolean;
 }
 
 const Video = React.forwardRef<VideoElement, VideoProps>(
@@ -41,7 +41,6 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       __scopeBroadcast,
       style,
       muted = true,
-      enableUserMedia = true,
       ...broadcastProps
     } = props;
 

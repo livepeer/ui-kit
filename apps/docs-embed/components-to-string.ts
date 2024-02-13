@@ -2,8 +2,6 @@ import { promises as fs } from "fs";
 import * as path from "path";
 import { glob } from "glob";
 
-const outputFile = "src/lib/components.ts";
-
 function escapeComponentContent(content: string): string {
   return content
     .replace(/\\/g, "\\\\")
@@ -20,20 +18,34 @@ function fileNameToExportName(fileName: string): string {
 
 async function componentsToString() {
   const files = await glob("src/components/**/*.ts*");
-
-  let exportsContent = "";
+  const groupedFiles: Record<string, string[]> = {};
 
   for (const file of files) {
-    const content = await fs.readFile(file, "utf8");
-    const exportName = fileNameToExportName(file);
-    // Create an export statement for each component
-    exportsContent += `export const ${exportName} = \`${escapeComponentContent(
-      content,
-    )}\`;\n\n`;
+    const dirname = path.dirname(file).split(path.sep).pop();
+
+    if (dirname) {
+      if (!groupedFiles[dirname]) {
+        groupedFiles[dirname] = [];
+      }
+      groupedFiles[dirname].push(file);
+    }
   }
 
-  await fs.writeFile(outputFile, exportsContent);
-  console.log(`Components written to ${outputFile}`);
+  for (const [dirname, files] of Object.entries(groupedFiles)) {
+    let exportsContent = "";
+
+    for (const file of files) {
+      const content = await fs.readFile(file, "utf8");
+      const exportName = fileNameToExportName(file);
+      exportsContent += `export const ${exportName} = \`${escapeComponentContent(
+        content,
+      )}\`;\n\n`;
+    }
+
+    const outputFileName = `src/lib/${dirname}-components.ts`;
+    await fs.writeFile(outputFileName, exportsContent);
+    console.log(`Components for ${dirname} written to ${outputFileName}`);
+  }
 }
 
 componentsToString().catch((e) => console.error(e));

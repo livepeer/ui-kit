@@ -9,72 +9,77 @@ import { vodSource } from "./source";
 export default () => {
   return (
     <Player.Root src={getSrc(vodSource)} autoPlay>
-      <Player.Video style={{ height: "100%", width: "100%" }} />
-      <div
-        style={{
-          position: "absolute",
-          left: 20,
-          top: 20,
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          width: "100%",
-        }}
-      >
-        <Player.MuteTrigger
+      <Player.Container>
+        <Player.Video
+          title="Agent 327"
+          style={{ height: "100%", width: "100%" }}
+        />
+        <div
           style={{
-            width: 25,
-            height: 25,
-          }}
-        >
-          <Player.VolumeIndicator asChild matcher={false}>
-            <MuteIcon />
-          </Player.VolumeIndicator>
-          <Player.VolumeIndicator asChild matcher={true}>
-            <UnmuteIcon />
-          </Player.VolumeIndicator>
-        </Player.MuteTrigger>
-        <Player.Volume
-          style={{
-            position: "relative",
+            position: "absolute",
+            left: 20,
+            bottom: 20,
             display: "flex",
-            flex: "1 1 0%",
-            height: 20,
             alignItems: "center",
-            maxWidth: 120,
-            touchAction: "none",
-            userSelect: "none",
+            gap: 10,
+            width: "100%",
           }}
         >
-          <Player.Track
+          <Player.MuteTrigger
             style={{
-              position: "relative",
-              borderRadius: 1000,
-              height: 3,
-              flexGrow: 1,
-              backgroundColor: "#ffffff40",
+              width: 25,
+              height: 25,
             }}
           >
-            <Player.Range
+            <Player.VolumeIndicator asChild matcher={false}>
+              <MuteIcon />
+            </Player.VolumeIndicator>
+            <Player.VolumeIndicator asChild matcher={true}>
+              <UnmuteIcon />
+            </Player.VolumeIndicator>
+          </Player.MuteTrigger>
+          <Player.Volume
+            style={{
+              position: "relative",
+              display: "flex",
+              flexGrow: 1,
+              height: 20,
+              alignItems: "center",
+              maxWidth: 120,
+              touchAction: "none",
+              userSelect: "none",
+            }}
+          >
+            <Player.Track
               style={{
-                position: "absolute",
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                position: "relative",
+                flexGrow: 1,
+                borderRadius: 9999,
+                height: "2px",
+              }}
+            >
+              <Player.Range
+                style={{
+                  position: "absolute",
+                  backgroundColor: "white",
+                  borderRadius: 9999,
+                  height: "100%",
+                }}
+              />
+            </Player.Track>
+            <Player.Thumb
+              style={{
+                display: "block",
+                width: 12,
+                height: 12,
                 backgroundColor: "white",
-                borderRadius: 1000,
-                height: "100%",
+                borderRadius: 9999,
               }}
             />
-          </Player.Track>
-          <Player.Thumb
-            style={{
-              display: "block",
-              backgroundColor: "white",
-              borderRadius: 1000,
-              height: 10,
-              width: 10,
-            }}
-          />
-        </Player.Volume>
-      </div>
+          </Player.Volume>
+        </div>
+      </Player.Container>
     </Player.Root>
   );
 };
