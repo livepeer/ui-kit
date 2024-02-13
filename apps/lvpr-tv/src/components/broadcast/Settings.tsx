@@ -112,12 +112,12 @@ export const SourceSelectComposed = React.forwardRef(
                 <Broadcast.SelectViewport className="p-1">
                   <Broadcast.SelectGroup>
                     {devices?.map((device) => (
-                      <RateSelectItem
+                      <SourceSelectItem
                         key={device.deviceId}
                         value={device.deviceId}
                       >
                         {device.friendlyName}
-                      </RateSelectItem>
+                      </SourceSelectItem>
                     ))}
                   </Broadcast.SelectGroup>
                 </Broadcast.SelectViewport>
@@ -132,7 +132,7 @@ export const SourceSelectComposed = React.forwardRef(
   ),
 );
 
-const RateSelectItem = React.forwardRef<
+const SourceSelectItem = React.forwardRef<
   HTMLDivElement,
   Broadcast.SelectItemProps
 >(({ children, className, ...props }, forwardedRef) => {

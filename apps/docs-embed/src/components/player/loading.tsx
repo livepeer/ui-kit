@@ -13,16 +13,19 @@ export default () => {
           title="Agent 327"
           style={{ height: "100%", width: "100%" }}
         />
-        <Player.LiveIndicator
-          matcher={false}
+
+        <Player.LoadingIndicator
           style={{
-            position: "absolute",
-            left: 20,
-            bottom: 20,
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "black",
           }}
         >
-          STATIC ASSET
-        </Player.LiveIndicator>
+          Loading...
+        </Player.LoadingIndicator>
       </Player.Container>
     </Player.Root>
   );

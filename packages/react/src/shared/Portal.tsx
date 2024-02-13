@@ -4,19 +4,12 @@ import React from "react";
 
 import * as RadixPortal from "@radix-ui/react-portal";
 
-const PORTAL_NAME = "SelectPortal";
+const PORTAL_NAME = "Portal";
 
-type RootPortalProps = React.ComponentPropsWithoutRef<typeof RadixPortal.Root>;
-interface PortalProps {
-  children?: React.ReactNode;
-  /**
-   * Specify a container element to portal the content into.
-   */
-  container?: RootPortalProps["container"];
-}
+type PortalProps = React.ComponentPropsWithoutRef<typeof RadixPortal.Root>;
 
 const Portal: React.FC<PortalProps> = (props: PortalProps) => {
-  return <RadixPortal.Root asChild {...props} />;
+  return <RadixPortal.Root {...props} />;
 };
 
 Portal.displayName = PORTAL_NAME;

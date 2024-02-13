@@ -897,13 +897,21 @@ export const createControllerStore = ({
               })),
 
             requestToggleMute: () =>
-              set(({ __controls }) => ({
-                volume: !__controls.muted ? 0 : __controls.volume,
-                __controls: {
-                  ...__controls,
-                  muted: !__controls.muted,
-                },
-              })),
+              set(({ __controls }) => {
+                const previousVolume = getBoundedVolume(__controls.volume) || 0;
+
+                return {
+                  volume: !__controls.muted
+                    ? 0
+                    : previousVolume > 0.01
+                      ? previousVolume
+                      : DEFAULT_VOLUME_LEVEL,
+                  __controls: {
+                    ...__controls,
+                    muted: !__controls.muted,
+                  },
+                };
+              }),
 
             onError: (rawError: Error | null) =>
               set(

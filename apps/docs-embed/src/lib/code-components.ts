@@ -1,4 +1,19 @@
-import * as broadcastComponents from "@/lib/broadcast-components";
+export const code = `import { cn } from "@/lib/utils";
+import "./shiki.css";
+
+export const ExpandableCode = ({ code }: { code: string }) => {
+  return (
+    <div
+      className={cn("flex flex-col relative overflow-hidden")}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+      dangerouslySetInnerHTML={{
+        __html: code,
+      }}
+    />
+  );
+};`;
+
+export const code_server = `import * as broadcastComponents from "@/lib/broadcast-components";
 import * as playerComponents from "@/lib/player-components";
 import { codeToHtml } from "@/lib/shiki";
 import { notFound } from "next/navigation";
@@ -51,4 +66,4 @@ export const CodeWithExampleServer = async ({
       <ExpandableCode code={result} />
     </div>
   );
-};
+};`;

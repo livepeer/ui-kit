@@ -23,15 +23,23 @@ const vodSourceWithThumbnail = {
 export default () => {
   return (
     <Player.Root src={getSrc(vodSourceWithThumbnail)} autoPlay volume={0}>
-      <Player.Video style={{ height: "100%", width: "100%" }} />
-      <Player.PlayingIndicator asChild matcher={false}>
-        <Player.Poster
-          style={{
-            position: "absolute",
-            inset: 0,
-          }}
+      <Player.Container>
+        <Player.Video
+          title="Agent 327"
+          style={{ height: "100%", width: "100%" }}
+          poster={null}
         />
-      </Player.PlayingIndicator>
+
+        <Player.LoadingIndicator asChild>
+          <Player.Poster
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </Player.LoadingIndicator>
+      </Player.Container>
     </Player.Root>
   );
 };

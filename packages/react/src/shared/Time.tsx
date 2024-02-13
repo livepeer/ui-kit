@@ -13,7 +13,10 @@ const TIME_NAME = "Time";
 type TimeElement = React.ElementRef<typeof Radix.Primitive.button>;
 
 interface TimeProps
-  extends Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button> {}
+  extends Omit<
+    Radix.ComponentPropsWithoutRef<typeof Radix.Primitive.button>,
+    "children"
+  > {}
 
 const Time = React.forwardRef<TimeElement, TimeProps>(
   (props: MediaScopedProps<TimeProps>, forwardedRef) => {

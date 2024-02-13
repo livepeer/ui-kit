@@ -13,16 +13,6 @@ export default () => {
           title="Agent 327"
           style={{ height: "100%", width: "100%" }}
         />
-        <Player.LiveIndicator
-          matcher={false}
-          style={{
-            position: "absolute",
-            left: 20,
-            bottom: 20,
-          }}
-        >
-          STATIC ASSET
-        </Player.LiveIndicator>
       </Player.Container>
     </Player.Root>
   );
