@@ -19,6 +19,7 @@ import Rate from "@/components/player/rate";
 import Root from "@/components/player/root";
 import Seek from "@/components/player/seek";
 import Time from "@/components/player/time";
+import UseMediaContext from "@/components/player/use-media-context";
 import Video from "@/components/player/video";
 import VideoQuality from "@/components/player/video-quality";
 import Volume from "@/components/player/volume";
@@ -71,6 +72,8 @@ export default ({
           <Play />
         ) : params.key === "poster" ? (
           <Poster />
+        ) : params.key === "use_media_context" ? (
+          <UseMediaContext />
         ) : params.key === "rate" ? (
           <Rate />
         ) : params.key === "seek" ? (
