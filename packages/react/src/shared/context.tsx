@@ -6,7 +6,8 @@ import type { Scope } from "@radix-ui/react-context";
 
 const MEDIA_NAME = "Media";
 
-type MediaScopedProps<P> = P & { __scopeMedia?: Scope };
+// biome-ignore lint/complexity/noBannedTypes: allow {}
+type MediaScopedProps<P = {}> = P & { __scopeMedia?: Scope };
 const [createMediaContext, createMediaScope] = createContextScope(MEDIA_NAME);
 
 type MediaContextValue = {

@@ -12,6 +12,8 @@ import Portal from "@/components/broadcast/portal";
 import Root from "@/components/broadcast/root";
 import Screenshare from "@/components/broadcast/screenshare";
 import Source from "@/components/broadcast/source";
+import Status from "@/components/broadcast/status";
+import UseBroadcastContext from "@/components/broadcast/use-broadcast-context";
 import Video from "@/components/broadcast/video";
 import {
   BroadcastComponentKey,
@@ -59,10 +61,14 @@ export default ({
           <Portal />
         ) : params.key === "error" ? (
           <PlayerError />
+        ) : params.key === "use_broadcast_context" ? (
+          <UseBroadcastContext />
         ) : params.key === "fullscreen" ? (
           <Fullscreen />
         ) : params.key === "pip" ? (
           <Pip />
+        ) : params.key === "status" ? (
+          <Status />
         ) : params.key === "root" ? (
           <Root />
         ) : params.key === "controls" ? (

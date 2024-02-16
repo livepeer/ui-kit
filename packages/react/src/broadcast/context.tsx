@@ -5,7 +5,8 @@ import type { Scope } from "@radix-ui/react-context";
 
 const MEDIA_NAME = "Broadcast";
 
-type BroadcastScopedProps<P> = P & { __scopeBroadcast?: Scope };
+// biome-ignore lint/complexity/noBannedTypes: allow {}
+type BroadcastScopedProps<P = {}> = P & { __scopeBroadcast?: Scope };
 const [createBroadcastContext, createBroadcastScope] =
   createContextScope(MEDIA_NAME);
 
