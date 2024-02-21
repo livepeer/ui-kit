@@ -4,7 +4,7 @@ import { getSrc } from "@livepeer/react/external";
 
 import type { InferGetServerSidePropsType } from "next";
 
-const playbackId = "be1e4f7z0yfw88wd";
+const playbackId = "9491n0th73i8hlpi";
 
 export const getServerSideProps = async () => {
   const playbackInfo = await livepeer.playback.get(playbackId);
@@ -19,7 +19,7 @@ export default function Page({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <main className="flex flex-col md:flex-row min-h-screen justify-center items-center bg-black gap-12 p-10">
-      <PlayerWithControls src={src} />
+      <PlayerWithControls src={src} playbackId={playbackId} />
     </main>
   );
 }

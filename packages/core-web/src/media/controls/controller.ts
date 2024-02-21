@@ -370,13 +370,10 @@ const addEffectsToStore = (
       mounted,
       videoQuality,
     }) => ({
-      accessKey: __initialProps.accessKey,
       aspectRatio: __initialProps.aspectRatio,
       autoPlay: __initialProps.autoPlay,
       errorCount,
       hlsConfig: __controls.hlsConfig,
-      jwt: __initialProps.jwt,
-      live,
       mounted,
       progress,
       source: currentSource,
@@ -384,13 +381,10 @@ const addEffectsToStore = (
       videoQuality,
     }),
     async ({
-      accessKey,
       aspectRatio,
       autoPlay,
       errorCount,
       hlsConfig,
-      jwt,
-      live,
       mounted,
       progress,
       source,
@@ -417,6 +411,8 @@ const addEffectsToStore = (
       let jumped = false;
 
       const jumpToPreviousPosition = () => {
+        const live = store.getState().live;
+
         if (!live && progress && !jumped) {
           element.currentTime = progress;
 
@@ -454,8 +450,8 @@ const addEffectsToStore = (
             onRedirect: store.getState().__controlsFunctions.onFinalUrl,
           },
           accessControl: {
-            jwt,
-            accessKey,
+            jwt: store.getState().__initialProps.jwt,
+            accessKey: store.getState().__initialProps.accessKey,
           },
           sdpTimeout: timeout,
         });
@@ -508,6 +504,7 @@ const addEffectsToStore = (
             onCanPlay: () => {
               store.getState().__controlsFunctions.onCanPlay();
               jumpToPreviousPosition();
+              store.getState().__controlsFunctions.onError(null);
             },
             onError: onErrorCleaned,
             onPlaybackOffsetUpdated:
@@ -520,7 +517,12 @@ const addEffectsToStore = (
               if (hlsConfigResolved?.xhrSetup) {
                 await hlsConfigResolved?.xhrSetup?.(xhr, url);
               } else {
+                const live = store.getState().live;
+
                 if (!live || url.match(indexUrl)) {
+                  const jwt = store.getState().__initialProps.jwt;
+                  const accessKey = store.getState().__initialProps.accessKey;
+
                   if (accessKey)
                     xhr.setRequestHeader("Livepeer-Access-Key", accessKey);
                   else if (jwt) xhr.setRequestHeader("Livepeer-Jwt", jwt);

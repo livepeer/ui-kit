@@ -1,3 +1,4 @@
+import type { ApiError, CreateSignedPlaybackResponse } from "@/pages/api/jwt";
 import { Src } from "@livepeer/react";
 import {
   EnterFullscreenIcon,
@@ -12,15 +13,58 @@ import {
   UnmuteIcon,
 } from "@livepeer/react/assets";
 import * as Player from "@livepeer/react/player";
+import { useEffect, useState } from "react";
 import { Clip } from "./Clip";
 import { Settings } from "./Settings";
 
 export function PlayerWithControls({
   src,
+  playbackId,
 }: {
   src: Src[] | null;
+  playbackId: string;
 }) {
-  if (!src) {
+  const [jwt, setJwt] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const requestBody = {
+        playbackId,
+      };
+
+      try {
+        const response = await fetch("/api/jwt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch the token");
+        }
+
+        const data: CreateSignedPlaybackResponse | ApiError =
+          await response.json();
+
+        if (data.success) {
+          setJwt(data.token);
+        }
+      } catch (error) {
+        console.error("Error fetching token:", error);
+        setJwt(null);
+      }
+    };
+
+    fetchToken();
+
+    const intervalId = setInterval(fetchToken, 20000);
+
+    return () => clearInterval(intervalId);
+  }, [playbackId]);
+
+  if (!src || !jwt) {
     return (
       <PlayerLoading>
         <div className="absolute flex flex-col inset-0 justify-center items-center">
@@ -35,7 +79,13 @@ export function PlayerWithControls({
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <Player.Root autoPlay aspectRatio={16 / 9} clipLength={30} src={src}>
+      <Player.Root
+        autoPlay
+        aspectRatio={16 / 9}
+        clipLength={30}
+        src={src}
+        jwt={jwt}
+      >
         <Player.Container className="h-full w-full overflow-hidden rounded-md bg-gray-950 outline-white/50 outline outline-1 data-[playing=true]:outline-white/80 data-[playing=true]:outline-2 data-[fullscreen=true]:outline-none data-[fullscreen=true]:rounded-none transition-all">
           <Player.Video
             title="Live stream"

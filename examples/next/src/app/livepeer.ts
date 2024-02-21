@@ -9,8 +9,8 @@ const livepeer = new Livepeer({
   apiKey: process.env.STUDIO_API_KEY ?? "",
 });
 
-const livepeerPrivateKey = process.env.LIVEPEER_JWT_PRIVATE_KEY;
-const livepeerPublicKey = process.env.LIVEPEER_JWT_PUBLIC_KEY;
+const livepeerPrivateKey = process.env.LIVEPEER_JWT_PRIVATE_KEY ?? "";
+const livepeerPublicKey = process.env.LIVEPEER_JWT_PUBLIC_KEY ?? "";
 
 if (process.env.VERCEL_ENV && (!livepeerPrivateKey || !livepeerPublicKey)) {
   throw new Error("No private/public key configured.");

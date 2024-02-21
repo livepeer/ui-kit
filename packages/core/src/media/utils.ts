@@ -7,6 +7,8 @@ import {
   getMediaSourceType,
 } from "./src";
 
+export const DEFAULT_ASPECT_RATIO = 16 / 9;
+
 export const getFilteredNaN = (value: number | undefined | null) =>
   value && !Number.isNaN(value) && Number.isFinite(value) ? value : 0;
 
@@ -110,16 +112,18 @@ type SrcWithParentDelta = Src & {
   parentWidthDelta: number | null;
 };
 
-export const sortSources = ({
+const sortSources = ({
   src,
   videoQuality,
   screenWidth,
   aspectRatio,
+  lowLatency,
 }: {
   src: Src[] | string | null | undefined;
   videoQuality: VideoQuality;
   screenWidth: number | null;
   aspectRatio: number;
+  lowLatency: InitialProps["lowLatency"];
 }) => {
   if (!src) {
     return null;
@@ -130,13 +134,24 @@ export const sortSources = ({
     return mediaSourceType ? [mediaSourceType] : null;
   }
 
-  const filteredVideoSources = src.filter(
-    (s) =>
-      s.type === "audio" ||
-      s.type === "hls" ||
-      s.type === "webrtc" ||
-      s.type === "video",
-  );
+  const filteredVideoSources = src
+    .filter(
+      (s) =>
+        s.type === "audio" ||
+        s.type === "hls" ||
+        s.type === "webrtc" ||
+        s.type === "video",
+    )
+    .filter((s) => {
+      if (s.type === "hls" && lowLatency === "force") {
+        return false;
+      }
+      if (s.type === "webrtc" && lowLatency === false) {
+        return false;
+      }
+
+      return true;
+    });
 
   const videoQualityDimensions = calculateVideoQualityDimensions(
     videoQuality,
@@ -200,7 +215,7 @@ export const sortSources = ({
 export const parseCurrentSourceAndPlaybackId = ({
   accessKey,
   aspectRatio,
-  constant,
+  playbackRate,
   isHlsSupported,
   jwt,
   sessionToken,
@@ -209,7 +224,7 @@ export const parseCurrentSourceAndPlaybackId = ({
 }: {
   accessKey: InitialProps["accessKey"];
   aspectRatio: InitialProps["aspectRatio"];
-  constant: boolean | undefined;
+  playbackRate: InitialProps["playbackRate"];
   isHlsSupported: boolean;
   jwt: InitialProps["jwt"];
   sessionToken: string;
@@ -243,7 +258,7 @@ export const parseCurrentSourceAndPlaybackId = ({
 
   // for webrtc, we append specific parameters to control the config
   if (source.type === "webrtc") {
-    if (constant) {
+    if (playbackRate === "constant") {
       url.searchParams.append("constant", "true");
     }
 
@@ -274,6 +289,55 @@ export const parseCurrentSourceAndPlaybackId = ({
   return {
     currentSource: videoSourceIfHlsUnsupported,
     playbackId,
+  } as const;
+};
+
+export const getNewSource = ({
+  accessKey,
+  aspectRatio,
+  isHlsSupported,
+  jwt,
+  lowLatency,
+  playbackRate,
+  screenWidth,
+  sessionToken,
+  src,
+  videoQuality,
+}: {
+  accessKey: InitialProps["accessKey"] | undefined;
+  aspectRatio: InitialProps["aspectRatio"] | undefined;
+  isHlsSupported: boolean;
+  jwt: InitialProps["jwt"] | undefined;
+  lowLatency: InitialProps["lowLatency"];
+  playbackRate: InitialProps["playbackRate"];
+  screenWidth: number | null;
+  sessionToken: string;
+  src: Src[] | string | null | undefined;
+  videoQuality: VideoQuality;
+}) => {
+  const sortedSources = sortSources({
+    src,
+    screenWidth,
+    videoQuality,
+    aspectRatio: aspectRatio ?? DEFAULT_ASPECT_RATIO,
+    lowLatency,
+  });
+
+  const parsedSource = parseCurrentSourceAndPlaybackId({
+    accessKey: accessKey ?? null,
+    aspectRatio: aspectRatio ?? null,
+    isHlsSupported: isHlsSupported,
+    jwt: jwt ?? null,
+    playbackRate,
+    sessionToken: sessionToken,
+    source: sortedSources?.[0] ?? null,
+    videoQuality,
+  });
+
+  return {
+    currentSource: parsedSource?.currentSource ?? null,
+    playbackId: parsedSource?.playbackId ?? null,
+    sortedSources,
   } as const;
 };
 
