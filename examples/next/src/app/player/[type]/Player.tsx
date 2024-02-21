@@ -13,47 +13,22 @@ import {
   UnmuteIcon,
 } from "@livepeer/react/assets";
 import { getSrc } from "@livepeer/react/external";
-import { unstable_cache } from "next/cache";
-import { cache } from "react";
-import { livepeer } from "../../livepeer";
+import { getPlaybackInfo, getPlaybackJWT } from "../../livepeer";
 import { Clip } from "./Clip";
 import { CurrentSource } from "./CurrentSource";
 import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
-
-const getPlaybackInfoUncached = cache(async (playbackId: string) => {
-  try {
-    const playbackInfo = await livepeer.playback.get(playbackId);
-
-    if (!playbackInfo.playbackInfo) {
-      console.error("Error fetching playback info", playbackInfo);
-
-      return null;
-    }
-
-    return playbackInfo.playbackInfo;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-});
-
-const getPlaybackInfo = unstable_cache(
-  async (id: string) => getPlaybackInfoUncached(id),
-  ["get-playback-info"],
-  {
-    revalidate: 120,
-  },
-);
 
 export async function PlayerWithControls({
   playbackId,
   type,
 }: {
   playbackId: string;
-  type: "asset-short" | "asset-long" | "livestream" | "unknown";
+  type: "asset-short" | "asset-long" | "livestream" | "jwt" | "unknown";
 }) {
   const inputSource = await getPlaybackInfo(playbackId);
+
+  const jwt = type === "jwt" ? await getPlaybackJWT(playbackId) : null;
 
   const src = getSrc(inputSource);
 
@@ -78,6 +53,7 @@ export async function PlayerWithControls({
         aspectRatio={16 / 9}
         clipLength={30}
         src={src}
+        jwt={jwt}
       >
         <Player.Container className="h-full w-full overflow-hidden rounded-md bg-gray-950 outline-white/50 outline outline-1 data-[playing=true]:outline-white/80 data-[playing=true]:outline-2 data-[fullscreen=true]:outline-none data-[fullscreen=true]:rounded-none transition-all">
           <Player.Video

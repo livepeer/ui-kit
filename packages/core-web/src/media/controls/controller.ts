@@ -482,7 +482,7 @@ const addEffectsToStore = (
       }
 
       if (source.type === "hls") {
-        const indexUrl = /^https?:\/\/[^/\s]+\/hls\/[^/\s]+\/index\.m3u8/g;
+        const indexUrl = /\/hls\/[^/\s]+\/index\.m3u8/;
 
         const onErrorCleaned = (error: HlsError) => {
           const cleanError = new Error(
@@ -519,7 +519,7 @@ const addEffectsToStore = (
             async xhrSetup(xhr, url) {
               await hlsConfigResolved?.xhrSetup?.(xhr, url);
 
-              if (url.match(indexUrl)) {
+              if (!live || url.match(indexUrl)) {
                 if (accessKey)
                   xhr.setRequestHeader("Livepeer-Access-Key", accessKey);
                 else if (jwt) xhr.setRequestHeader("Livepeer-Jwt", jwt);
