@@ -1,5 +1,16 @@
 # livepeer
 
+## 4.1.3
+
+### Patch Changes
+
+- [#489](https://github.com/livepeer/ui-kit/pull/489) [`d012808`](https://github.com/livepeer/ui-kit/commit/d012808035a2dcb7f9bc8aeb08ecc5faf73efee3) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with JWT not being included headers for static assets.
+
+- [#487](https://github.com/livepeer/ui-kit/pull/487) [`8c066f1`](https://github.com/livepeer/ui-kit/commit/8c066f18b9430993053d2ea7fb92ab275e8a608f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Types:** small fix for type usability for `useMediaContext` and `useBroadcastContext`.
+
+- Updated dependencies [[`d012808`](https://github.com/livepeer/ui-kit/commit/d012808035a2dcb7f9bc8aeb08ecc5faf73efee3), [`8c066f1`](https://github.com/livepeer/ui-kit/commit/8c066f18b9430993053d2ea7fb92ab275e8a608f)]:
+  - @livepeer/core@3.1.3
+
 ## 4.1.2
 
 ### Patch Changes
