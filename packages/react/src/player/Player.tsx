@@ -42,7 +42,14 @@ interface PlayerProps
 }
 
 const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
-  const { aspectRatio = 16 / 9, src, children, ...rest } = props;
+  const {
+    aspectRatio = 16 / 9,
+    src,
+    children,
+    jwt,
+    accessKey,
+    ...rest
+  } = props;
 
   const store = useRef(
     createControllerStore({
@@ -59,10 +66,34 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
       src,
       initialProps: {
         aspectRatio,
+        jwt,
+        accessKey,
         ...rest,
       },
     }),
   );
+
+  useEffect(() => {
+    if (jwt) {
+      store?.current?.store.setState((prev) => ({
+        __initialProps: {
+          ...prev.__initialProps,
+          jwt,
+        },
+      }));
+    }
+  }, [jwt]);
+
+  useEffect(() => {
+    if (accessKey) {
+      store?.current?.store.setState((prev) => ({
+        __initialProps: {
+          ...prev.__initialProps,
+          accessKey,
+        },
+      }));
+    }
+  }, [accessKey]);
 
   useEffect(() => {
     return () => {

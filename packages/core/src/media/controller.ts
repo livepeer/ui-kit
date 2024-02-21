@@ -22,9 +22,9 @@ import {
   getBoundedVolume,
   getClipParams,
   getFilteredNaN,
+  getNewSource,
   getProgressAria,
   parseCurrentSourceAndPlaybackId,
-  sortSources,
 } from "./utils";
 
 const DEFAULT_AUTOHIDE_TIME = 3000; // milliseconds to wait before hiding controls
@@ -435,21 +435,18 @@ export const createControllerStore = ({
       ? null
       : (src?.find?.((s) => s.type === "image") as ImageSrc | null | undefined);
 
-  const sortedSources = sortSources({
-    src,
-    screenWidth: device.screenWidth,
-    videoQuality: initialVideoQuality,
-    aspectRatio: initialProps.aspectRatio ?? 16 / 9,
-  });
+  const lowLatency = initialProps.lowLatency ?? true;
 
-  const parsedSource = parseCurrentSourceAndPlaybackId({
-    accessKey: initialProps?.accessKey ?? null,
-    aspectRatio: initialProps?.aspectRatio ?? null,
-    constant: initialPlaybackRate === "constant",
+  const parsedInputSource = getNewSource({
+    accessKey: initialProps?.accessKey,
+    aspectRatio: initialProps?.aspectRatio,
     isHlsSupported: device.isHlsSupported,
-    jwt: initialProps?.jwt ?? null,
+    jwt: initialProps?.jwt,
+    playbackRate: initialPlaybackRate,
+    lowLatency,
+    screenWidth: device.screenWidth,
     sessionToken,
-    source: sortedSources?.[0] ?? null,
+    src,
     videoQuality: initialVideoQuality,
   });
 
@@ -460,7 +457,7 @@ export const createControllerStore = ({
     lastInteraction: Date.now(),
     requestedMeasureLastTime: 0,
     muted: initialVolume === 0,
-    playbackId: parsedSource?.playbackId ?? null,
+    playbackId: parsedInputSource?.playbackId ?? null,
     playbackOffsetMs: null,
     playLastTime: 0,
     requestedClipParams: null,
@@ -484,7 +481,7 @@ export const createControllerStore = ({
     subscribeWithSelector(
       persist(
         (set, get) => ({
-          currentSource: parsedSource?.currentSource ?? null,
+          currentSource: parsedInputSource.currentSource,
 
           canPlay: false,
           hidden: false,
@@ -531,7 +528,7 @@ export const createControllerStore = ({
           hasPlayed: false,
 
           /** The sorted sources that were passed in to the Player */
-          sortedSources: sortedSources ?? null,
+          sortedSources: parsedInputSource.sortedSources,
 
           /** The final playback URL for the media that is playing, after redirects. */
           currentUrl: null,
@@ -556,7 +553,7 @@ export const createControllerStore = ({
             clipLength: initialProps.clipLength ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
             jwt: initialProps.jwt ?? null,
-            lowLatency: initialProps.lowLatency ?? true,
+            lowLatency,
             onError: initialProps?.onError ?? null,
             playbackRate: initialPlaybackRate,
             posterLiveUpdate: initialProps.posterLiveUpdate ?? 30000,
@@ -737,32 +734,27 @@ export const createControllerStore = ({
 
             setVideoQuality: (videoQuality) =>
               set(({ __initialProps, __controls, playbackRate, __device }) => {
-                const sortedSources = sortSources({
-                  src,
-                  screenWidth: device.screenWidth,
-                  videoQuality,
-                  aspectRatio: __initialProps.aspectRatio ?? 16 / 9,
-                });
-
-                const parsedSourceNew = parseCurrentSourceAndPlaybackId({
-                  accessKey: __initialProps?.accessKey ?? null,
-                  aspectRatio: __initialProps?.aspectRatio ?? null,
-                  constant: playbackRate === "constant",
+                const parsedSourceNew = getNewSource({
+                  accessKey: __initialProps?.accessKey,
+                  aspectRatio: __initialProps.aspectRatio,
                   isHlsSupported: __device.isHlsSupported,
-                  jwt: __initialProps?.jwt ?? null,
+                  jwt: __initialProps?.jwt,
+                  lowLatency: __initialProps.lowLatency,
+                  playbackRate,
+                  screenWidth: device.screenWidth,
                   sessionToken: __controls.sessionToken,
-                  source: sortedSources?.[0] ?? null,
+                  src,
                   videoQuality,
                 });
 
                 return {
-                  sortedSources,
+                  sortedSources: parsedSourceNew.sortedSources,
                   videoQuality,
 
-                  currentSource: parsedSourceNew?.currentSource ?? null,
+                  currentSource: parsedSourceNew.currentSource,
                   __controls: {
                     ...__controls,
-                    playbackId: parsedSourceNew?.playbackId ?? null,
+                    playbackId: parsedSourceNew.playbackId,
                   },
                 };
               }),
@@ -1059,9 +1051,9 @@ export const createControllerStore = ({
                   const parsedSourceNew = parseCurrentSourceAndPlaybackId({
                     accessKey: __initialProps?.accessKey ?? null,
                     aspectRatio: __initialProps?.aspectRatio ?? null,
-                    constant: playbackRate === "constant",
                     isHlsSupported: __device.isHlsSupported,
                     jwt: __initialProps?.jwt ?? null,
+                    playbackRate,
                     sessionToken: __controls.sessionToken,
                     source: nextSource,
                     videoQuality,

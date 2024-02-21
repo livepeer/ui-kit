@@ -5,7 +5,7 @@ import { PlayerLoading, PlayerWithControls } from "./Player";
 
 export default async function PlayerPage({
   params,
-}: { params: { type: "asset-short" | "asset-long" | "livestream" } }) {
+}: { params: { type: "asset-short" | "asset-long" | "livestream" | "jwt" } }) {
   const data =
     params.type === "asset-long"
       ? ({
@@ -19,31 +19,37 @@ export default async function PlayerPage({
             title: "The video below is a short-form static asset.",
             playbackId: "cbddoks280eyu0x7",
           } as const)
-        : params.type === "livestream"
+        : params.type === "jwt"
           ? ({
               type: params.type,
-              title: (
-                <>
-                  The video below is a live stream from{" "}
-                  <a
-                    className="font-medium hover:text-white/70 text-white/80"
-                    target="_blank"
-                    rel="noreferrer"
-                    href="https://www.thelotradio.com/"
-                  >
-                    The Lot Radio (check them out!)
-                  </a>
-                  .
-                </>
-              ),
-              playbackId: "85c28sa2o8wppm58",
+              title: "The video below is a JWT-protected static asset.",
+              playbackId: "c494mgnniubh601y",
             } as const)
-          : ({
-              type: "unknown",
-              title:
-                "The video below is from the playback ID passed in the URL.",
-              playbackId: params.type,
-            } as const);
+          : params.type === "livestream"
+            ? ({
+                type: params.type,
+                title: (
+                  <>
+                    The video below is a live stream from{" "}
+                    <a
+                      className="font-medium hover:text-white/70 text-white/80"
+                      target="_blank"
+                      rel="noreferrer"
+                      href="https://www.thelotradio.com/"
+                    >
+                      The Lot Radio (check them out!)
+                    </a>
+                    .
+                  </>
+                ),
+                playbackId: "85c28sa2o8wppm58",
+              } as const)
+            : ({
+                type: "unknown",
+                title:
+                  "The video below is from the playback ID passed in the URL.",
+                playbackId: params.type,
+              } as const);
 
   return (
     <main className="flex relative min-h-screen flex-col items-center bg-black gap-8 py-12 md:py-8 p-4">

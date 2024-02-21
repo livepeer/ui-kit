@@ -1,8 +1,8 @@
 "use server";
 
+import { createStreamClip } from "@/app/livepeer";
 import { ClipPayload } from "livepeer/dist/models/components";
 import z from "zod";
-import { livepeer } from "../../livepeer";
 
 const isValidUnixTimestamp = (timestamp: number) => {
   const now = Date.now();
@@ -43,9 +43,7 @@ export const createClip = async (opts: ClipPayload) => {
       return { success: false, error: "PARAMS_ERROR" } as const;
     }
 
-    const result = await livepeer.stream.createClip({
-      ...opts,
-    });
+    const result = await createStreamClip(opts);
 
     if (!result.object?.asset?.playbackId) {
       return { success: false, error: "PLAYBACK_ID_MISSING" } as const;

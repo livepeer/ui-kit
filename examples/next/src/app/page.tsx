@@ -29,6 +29,13 @@ export default async function Home() {
             <span>Play a long video</span>
             <ArrowUpRight className="w-5 h-5" />
           </Link>
+          <Link
+            className="items-center justify-center md:justify-end gap-2 flex-1 flex text-lg hover:text-white/80 text-white/90"
+            href="/player/jwt"
+          >
+            <span>Play a JWT-protected video</span>
+            <ArrowUpRight className="w-5 h-5" />
+          </Link>
         </div>
       </div>
       <span className="w-full h-px md:h-[600px] md:w-px -rotate-[30deg] md:rotate-[35deg] bg-gradient-to-r md:bg-gradient-to-b from-transparent via-white/80 to-transparent" />
