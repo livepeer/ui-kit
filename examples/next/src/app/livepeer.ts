@@ -1,5 +1,6 @@
 import { signAccessJwt } from "@livepeer/react/crypto";
 import { Livepeer } from "livepeer";
+import { ClipPayload } from "livepeer/dist/models/components";
 
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
@@ -78,3 +79,9 @@ export const getPlaybackJWT = unstable_cache(
     revalidate: 120,
   },
 );
+
+export const createStreamClip = async (opts: ClipPayload) => {
+  const result = await livepeer.stream.createClip(opts);
+
+  return result;
+};
