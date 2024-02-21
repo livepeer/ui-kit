@@ -517,12 +517,14 @@ const addEffectsToStore = (
           config: {
             ...(hlsConfigResolved ?? {}),
             async xhrSetup(xhr, url) {
-              await hlsConfigResolved?.xhrSetup?.(xhr, url);
-
-              if (!live || url.match(indexUrl)) {
-                if (accessKey)
-                  xhr.setRequestHeader("Livepeer-Access-Key", accessKey);
-                else if (jwt) xhr.setRequestHeader("Livepeer-Jwt", jwt);
+              if (hlsConfigResolved?.xhrSetup) {
+                await hlsConfigResolved?.xhrSetup?.(xhr, url);
+              } else {
+                if (!live || url.match(indexUrl)) {
+                  if (accessKey)
+                    xhr.setRequestHeader("Livepeer-Access-Key", accessKey);
+                  else if (jwt) xhr.setRequestHeader("Livepeer-Jwt", jwt);
+                }
               }
             },
             autoPlay,
