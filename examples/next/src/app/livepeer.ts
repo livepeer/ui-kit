@@ -40,31 +40,39 @@ export const getPlaybackInfo = unstable_cache(
   },
 );
 
-const getPlaybackJWTUncached = cache(async (playbackId: string) => {
-  try {
-    const token = await signAccessJwt({
-      privateKey: livepeerPrivateKey,
-      publicKey: livepeerPublicKey,
-      issuer: "https://docs.livepeer.org",
-      // playback ID to include in the JWT
-      playbackId,
-      // expire the JWT in 1 hour
-      expiration: 3600,
-      // custom metadata to include
-      custom: {
-        userId: "user-id-1",
-      },
-    });
+const getPlaybackJWTUncached = cache(
+  async (playbackId: string, userId: string) => {
+    try {
+      // add a more complex check here for actual permissions for the user ID
+      if (userId !== "example-value") {
+        return null;
+      }
 
-    return token;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-});
+      const token = await signAccessJwt({
+        privateKey: livepeerPrivateKey,
+        publicKey: livepeerPublicKey,
+        issuer: "https://docs.livepeer.org",
+        // playback ID to include in the JWT
+        playbackId,
+        // expire the JWT in 1 hour
+        expiration: 3600,
+        // custom metadata to include
+        custom: {
+          userId,
+        },
+      });
+
+      return token;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  },
+);
 
 export const getPlaybackJWT = unstable_cache(
-  async (playbackId: string) => getPlaybackJWTUncached(playbackId),
+  async (playbackId: string, userId: string) =>
+    getPlaybackJWTUncached(playbackId, userId),
   ["get-playback-jwt"],
   {
     revalidate: 120,

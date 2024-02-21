@@ -28,7 +28,13 @@ export async function PlayerWithControls({
 }) {
   const inputSource = await getPlaybackInfo(playbackId);
 
-  const jwt = type === "jwt" ? await getPlaybackJWT(playbackId) : null;
+  const userId = "example-value";
+
+  const jwt =
+    type === "jwt"
+      ? // do some auth check before issuing this JWT (e.g. getPlaybackJWT(playbackId, userId))
+        await getPlaybackJWT(playbackId, userId)
+      : null;
 
   const src = getSrc(inputSource);
 
