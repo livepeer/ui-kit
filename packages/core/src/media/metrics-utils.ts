@@ -79,6 +79,7 @@ export const getMetricsReportingUrl = async (
 };
 
 const ASSET_URL_PART_VALUE = "hls";
+const FLV_URL_PART_VALUE = "flv";
 const WEBRTC_URL_PART_VALUE = "webrtc";
 const RECORDING_URL_PART_VALUE = "recordings";
 
@@ -89,14 +90,16 @@ export const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
 
   const includesAssetUrl = parts.includes(ASSET_URL_PART_VALUE);
   const includesWebRtcUrl = parts.includes(WEBRTC_URL_PART_VALUE);
+  const includesFlvUrl = parts.includes(FLV_URL_PART_VALUE);
   const includesRecording = parts.includes(RECORDING_URL_PART_VALUE);
 
   // Check if the url is valid
-  const playbackId = includesWebRtcUrl
-    ? parts?.[(parts?.length ?? 0) - 1]
-    : includesRecording || includesAssetUrl
-      ? parts?.[(parts?.length ?? 0) - 2] ?? null
-      : null;
+  const playbackId =
+    includesWebRtcUrl || includesFlvUrl
+      ? parts?.[(parts?.length ?? 0) - 1]
+      : includesRecording || includesAssetUrl
+        ? parts?.[(parts?.length ?? 0) - 2] ?? null
+        : null;
 
   if (playbackId?.includes("+")) {
     const split = playbackId.split("+")?.[1];

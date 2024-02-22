@@ -106,6 +106,14 @@ describe("getPlaybackIdFromSourceUrl", () => {
     expect(playbackId).toEqual("172159gos7h0pq17");
   });
 
+  it("given a valid flv url then it should return a reporting url", async () => {
+    const sourceUrl = "https://livepeercdn.studio/flv/172159gos7h0pq17";
+
+    const playbackId = await getPlaybackIdFromSourceUrl(sourceUrl);
+
+    expect(playbackId).toEqual("172159gos7h0pq17");
+  });
+
   it("given a valid pinned playback url then it should return a reporting url", async () => {
     const sourceUrl =
       "https://sin-prod-catalyst-2.lp-playback.studio/webrtc/video+172159gos7h0pq17";
