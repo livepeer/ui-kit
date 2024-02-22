@@ -2,7 +2,7 @@
   "name": "@livepeer/core-react",
   "description": "Internal library used for livepeer react primitives.",
   "license": "MIT",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "type": "module",
   "repository": {
     "type": "git",

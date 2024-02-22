@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.1.5
+
+### Patch Changes
+
+- [#492](https://github.com/livepeer/ui-kit/pull/492) [`11bf3cc`](https://github.com/livepeer/ui-kit/commit/11bf3cc1614ac71eab2950f33179b467cdd65dd6) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `playbackId` prop to `addMediaMetrics`.
+
+- Updated dependencies [[`11bf3cc`](https://github.com/livepeer/ui-kit/commit/11bf3cc1614ac71eab2950f33179b467cdd65dd6)]:
+  - @livepeer/core@3.1.5
+
 ## 3.1.4
 
 ### Patch Changes
 
-- [`0b7d85b`](https://github.com/livepeer/ui-kit/commit/0b7d85b92e4d5c7dc788346462d31fab288a08bc) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes for `addMediaMetrics` to report metrics properly when `blob:...` or no `src` is set on custom media players. 
+- [`0b7d85b`](https://github.com/livepeer/ui-kit/commit/0b7d85b92e4d5c7dc788346462d31fab288a08bc) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes for `addMediaMetrics` to report metrics properly when `blob:...` or no `src` is set on custom media players.
 
 - Updated dependencies [[`0b7d85b`](https://github.com/livepeer/ui-kit/commit/0b7d85b92e4d5c7dc788346462d31fab288a08bc)]:
   - @livepeer/core@3.1.4
