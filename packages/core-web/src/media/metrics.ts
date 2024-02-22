@@ -15,6 +15,12 @@ export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
    * Note: For custom players that do not set the `src` attribute of the `video` element, opting instead for formats like `blob:<src>` or omitting `src` altogether, metrics collection may not function correctly.
    */
   src?: string;
+
+  /**
+   * Sets a custom playback ID for playback.
+   * If not specified, the function defaults to parsing the `src` attribute of the HTMLMediaElement to get the playback ID.
+   */
+  playbackId?: string;
 };
 
 /**
@@ -25,6 +31,7 @@ export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
  * @param {HTMLMediaElement | undefined | null} element The media element from which to capture playback metrics.
  * @param {Partial<MediaMetricsOptions>} opts Optional configuration options including:
  *   - `src`: Overrides the `src` URL for playback - defaults to the `src` attribute of the HTMLMediaElement. Use this with custom players that do not set the `src` attribute of the `video` element.
+ *   - `playbackId`: Overrides the `playbackId` - defaults to parsing from the `src` attribute of the HTMLMediaElement. Use this with custom players that do not have a valid src URL which contains a playback ID.
  *   - `onError`: A callback function that is called when an error occurs in the metrics collection process.
  *   - `viewerId`: An identifier for the viewer to associate metrics with a specific user or session.
  *
@@ -36,9 +43,10 @@ export function addMediaMetrics(
   opts: Partial<MediaMetricsOptions> = {},
 ): MediaMetrics {
   if (element) {
-    const source = opts.src ?? element?.src ?? null;
+    const source = opts?.src ?? element?.src ?? null;
     const { store, destroy } = createControllerStore({
       src: source,
+      playbackId: opts?.playbackId,
       device: getDeviceInfo(version.core),
       storage: createStorage({ storage: noopStorage }),
       initialProps: {
@@ -56,7 +64,11 @@ export function addMediaMetrics(
 
     const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
 
-    store.getState().__controlsFunctions.onFinalUrl(source);
+    store
+      .getState()
+      .__controlsFunctions.onFinalUrl(
+        source ?? "https://vod-cdn.lp-playback.studio",
+      );
 
     return {
       metrics,
