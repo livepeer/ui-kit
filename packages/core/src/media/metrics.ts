@@ -254,6 +254,7 @@ export class MetricsStatus {
     };
 
     this.destroy = store.subscribe((state, prevState) => {
+      console.log(state);
       if (
         this.requestedPlayTime === null &&
         state.__controls.playLastTime !== 0
@@ -456,6 +457,7 @@ export function addMediaMetricsToStore(
     numRetries = 0,
   ) => {
     try {
+      console.log({ playbackId, currentSource });
       if (!playbackId || !currentSource) {
         return null;
       }

@@ -251,6 +251,9 @@ importers:
 
   examples/next-pages:
     dependencies:
+      '@livepeer/core-web':
+        specifier: workspace:*
+        version: link:../../packages/core-web
       '@livepeer/react':
         specifier: workspace:*
         version: link:../../packages/react

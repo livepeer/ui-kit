@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@livepeer/core-web": "workspace:*",
     "@livepeer/react": "workspace:*",
     "@radix-ui/react-popover": "^1.0.7",
     "clsx": "^2.1.0",

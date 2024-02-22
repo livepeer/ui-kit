@@ -1,51 +1,62 @@
 import {
+  InitialProps,
   MediaMetrics,
   addMediaMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
-import { createStorage } from "@livepeer/core/storage";
+import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
 import { addEventListeners, getDeviceInfo } from "./controls";
 
+export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
+  /**
+   * Sets a custom source URL for playback, such as `https://livepeercdn.studio/hls/{playbackId}/index.m3u8`.
+   * If not specified, the function defaults to using the `src` attribute of the HTMLMediaElement.
+   * Note: For custom players that do not set the `src` attribute of the `video` element, opting instead for formats like `blob:<src>` or omitting `src` altogether, metrics collection may not function correctly.
+   */
+  src?: string;
+};
+
 /**
- * Gather playback metrics from a generic HTML5 video/audio element and
- * report them to a websocket. Automatically handles a redirect to get the
- * metrics endpoint.
+ * Initializes media playback metrics collection for a video or audio element.
+ * This adds event listeners to the media element with a store that updates on events and send them to a websocket.
+ * Returns a `destroy` function which must be called when the video element is removed from the DOM.
  *
- * @param element Element to capture playback metrics from.
- * @param sourceUrl Source URL for the player.
- * @param onError Callback when an error with metrics occurs.
- * @param opts Options for the metrics reporting.
- * @returns A callback for destroying the store and metrics.
+ * @param {HTMLMediaElement | undefined | null} element The media element from which to capture playback metrics.
+ * @param {Partial<MediaMetricsOptions>} opts Optional configuration options including:
+ *   - `src`: Overrides the `src` URL for playback - defaults to the `src` attribute of the HTMLMediaElement. Use this with custom players that do not set the `src` attribute of the `video` element.
+ *   - `onError`: A callback function that is called when an error occurs in the metrics collection process.
+ *   - `viewerId`: An identifier for the viewer to associate metrics with a specific user or session.
+ *
+ * @returns {MediaMetrics} An object containing a `destroy` function to clean up resources.
+ * The `destroy` function must be used to remove event listeners and perform other cleanup actions on unmount.
  */
 export function addMediaMetrics(
   element: HTMLMediaElement | undefined | null,
-  onError?: (error: unknown) => void,
+  opts: Partial<MediaMetricsOptions> = {},
 ): MediaMetrics {
   if (element) {
+    const source = opts.src ?? element?.src ?? null;
     const { store, destroy } = createControllerStore({
-      src: element?.src ?? null,
+      src: source,
       device: getDeviceInfo(version.core),
-      storage: createStorage(
-        typeof window !== "undefined"
-          ? {
-              storage: window.localStorage,
-            }
-          : {},
-      ),
+      storage: createStorage({ storage: noopStorage }),
       initialProps: {
         autoPlay: Boolean(element?.autoplay),
         volume: element?.muted ? 0 : element?.volume,
         preload: element?.preload === "" ? "auto" : element?.preload,
-        viewerId: null,
         playbackRate: element?.playbackRate,
-        onError,
+        hotkeys: false,
+        posterLiveUpdate: 0,
+        ...opts,
       },
     });
 
     const { destroy: destroyListeners } = addEventListeners(element, store);
 
     const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
+
+    store.getState().__controlsFunctions.onFinalUrl(source);
 
     return {
       metrics,
