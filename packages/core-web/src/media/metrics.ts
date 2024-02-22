@@ -64,7 +64,11 @@ export function addMediaMetrics(
 
     const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
 
-    store.getState().__controlsFunctions.onFinalUrl(source);
+    store
+      .getState()
+      .__controlsFunctions.onFinalUrl(
+        source ?? "https://vod-cdn.lp-playback.studio",
+      );
 
     return {
       metrics,
