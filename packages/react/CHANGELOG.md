@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.1.4
+
+### Patch Changes
+
+- [`0b7d85b`](https://github.com/livepeer/ui-kit/commit/0b7d85b92e4d5c7dc788346462d31fab288a08bc) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes for `addMediaMetrics` to report metrics properly when `blob:...` or no `src` is set on custom media players.
+
+- Updated dependencies [[`0b7d85b`](https://github.com/livepeer/ui-kit/commit/0b7d85b92e4d5c7dc788346462d31fab288a08bc)]:
+  - @livepeer/core-web@4.1.4
+  - @livepeer/core@3.1.4
+  - @livepeer/core-react@3.1.4
+
 ## 4.1.3
 
 ### Patch Changes
