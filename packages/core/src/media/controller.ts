@@ -409,11 +409,13 @@ export const createControllerStore = ({
   storage,
   src,
   initialProps,
+  playbackId,
 }: {
   device: DeviceInformation;
   storage: ClientStorage;
   src: Src[] | string | null;
   initialProps: Partial<InitialProps>;
+  playbackId?: string;
 }): { store: MediaControllerStore; destroy: () => void } => {
   const resolvedStorage =
     initialProps?.storage === null
@@ -457,7 +459,7 @@ export const createControllerStore = ({
     lastInteraction: Date.now(),
     requestedMeasureLastTime: 0,
     muted: initialVolume === 0,
-    playbackId: parsedInputSource?.playbackId ?? null,
+    playbackId: playbackId ?? parsedInputSource?.playbackId ?? null,
     playbackOffsetMs: null,
     playLastTime: 0,
     requestedClipParams: null,
@@ -754,7 +756,7 @@ export const createControllerStore = ({
                   currentSource: parsedSourceNew.currentSource,
                   __controls: {
                     ...__controls,
-                    playbackId: parsedSourceNew.playbackId,
+                    playbackId: playbackId ?? parsedSourceNew.playbackId,
                   },
                 };
               }),
@@ -1064,7 +1066,8 @@ export const createControllerStore = ({
                     currentSource: parsedSourceNew?.currentSource ?? null,
                     __controls: {
                       ...base.__controls,
-                      playbackId: parsedSourceNew?.playbackId ?? null,
+                      playbackId:
+                        playbackId ?? parsedSourceNew?.playbackId ?? null,
                     },
                   };
                 },
