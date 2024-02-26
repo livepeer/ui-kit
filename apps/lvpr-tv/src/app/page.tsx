@@ -36,12 +36,14 @@ export default async function PlayerPage({
 }: {
   searchParams: Partial<PlayerSearchParams>;
 }) {
+  const autoplay = coerceToBoolean(searchParams?.autoplay, true);
+
   const props: PlayerProps = {
     type: "iframe",
     url: searchParams?.url ?? null,
     playbackId: searchParams?.v ?? searchParams?.playbackId ?? null,
     autoplay: coerceToBoolean(searchParams?.autoplay, true),
-    muted: coerceToBoolean(searchParams?.muted, false),
+    muted: coerceToBoolean(searchParams?.muted, autoplay),
     constant: coerceToBoolean(searchParams?.constant, false),
     loop: coerceToBoolean(searchParams?.loop, false),
     lowLatency:
