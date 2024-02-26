@@ -5,7 +5,9 @@ export default async function BroadcastPage({
   params,
 }: { params: { key?: string } }) {
   const ingestUrl = getIngest(params.key, {
-    baseUrl: process.env.NEXT_PUBLIC_WEBRTC_INGEST_BASE_URL,
+    baseUrl:
+      process.env.NEXT_PUBLIC_WEBRTC_INGEST_BASE_URL ??
+      "https://playback.livepeer.studio/webrtc",
   });
 
   return (
