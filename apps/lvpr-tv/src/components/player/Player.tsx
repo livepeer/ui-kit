@@ -243,7 +243,7 @@ export const PlayerLoading = ({
   title,
   description,
 }: { title?: React.ReactNode; description?: React.ReactNode }) => (
-  <div className="relative w-full px-3 py-2 gap-3 flex-col-reverse flex aspect-video bg-white/10 overflow-hidden rounded-sm">
+  <div className="relative w-full px-3 py-2 gap-3 flex-col-reverse flex bg-white/10 overflow-hidden rounded-sm">
     <div className="flex justify-between">
       <div className="flex items-center gap-2">
         <div className="w-6 h-6 animate-pulse bg-white/5 overflow-hidden rounded-lg" />
