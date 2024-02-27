@@ -1,12 +1,23 @@
 # @livepeer/core-react
 
+## 3.1.6
+
+### Patch Changes
+
+- [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed `getUserMedia` to override to request video when both audio and video are disabled, so that the Broadcast doesn't get stuck in a pending state.
+
+- [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with `muted` Video prop and volume getting out of sync.
+
+- Updated dependencies [[`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be), [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be)]:
+  - @livepeer/core@3.1.6
+
 ## 3.1.5
 
 ### Patch Changes
 
 - [#492](https://github.com/livepeer/ui-kit/pull/492) [`11bf3cc`](https://github.com/livepeer/ui-kit/commit/11bf3cc1614ac71eab2950f33179b467cdd65dd6) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `playbackId` prop to `addMediaMetrics`.
 
-- Updated dependencies [[`11bf3cc`](https://github.com/livepeer/ui-kit/commit/11bf3cc1614ac71eab2950f33179b467cdd65dd6)]: 
+- Updated dependencies [[`11bf3cc`](https://github.com/livepeer/ui-kit/commit/11bf3cc1614ac71eab2950f33179b467cdd65dd6)]:
   - @livepeer/core@3.1.5
 
 ## 3.1.4
