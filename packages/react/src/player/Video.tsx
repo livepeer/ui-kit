@@ -50,6 +50,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       preload,
       thumbnailPoster,
       volume,
+      requestToggleMute,
     } = useStore(
       context.store,
       useShallow(
@@ -68,6 +69,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
           setMounted: __controlsFunctions.setMounted,
           thumbnailPoster: poster,
           volume,
+          requestToggleMute: __controlsFunctions.requestToggleMute,
         }),
       ),
     );
@@ -91,6 +93,12 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       // we run this on mount to initialize playback
       setMounted();
     }, [setMounted]);
+
+    useEffect(() => {
+      if (typeof videoProps.muted !== "undefined") {
+        requestToggleMute(videoProps.muted);
+      }
+    }, [videoProps.muted, requestToggleMute]);
 
     return (
       <Radix.Primitive.video

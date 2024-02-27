@@ -81,6 +81,7 @@ export function PlayerWithControls({
     <div className="w-full max-w-2xl mx-auto">
       <Player.Root
         autoPlay
+        volume={0}
         aspectRatio={16 / 9}
         clipLength={30}
         src={src}
