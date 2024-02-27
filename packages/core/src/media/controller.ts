@@ -349,7 +349,7 @@ export type MediaControllerState = {
     requestSeekDiff: (difference: number) => void;
     requestSeekForward: (difference?: number) => void;
     requestToggleFullscreen: () => void;
-    requestToggleMute: () => void;
+    requestToggleMute: (forceValue?: boolean) => void;
     requestTogglePictureInPicture: () => void;
     requestVolume: (volume: number) => void;
     setAutohide: (autohide: number) => void;
@@ -890,19 +890,20 @@ export const createControllerStore = ({
                 },
               })),
 
-            requestToggleMute: () =>
+            requestToggleMute: (forceValue?: boolean) =>
               set(({ __controls }) => {
                 const previousVolume = getBoundedVolume(__controls.volume) || 0;
+                const nonMutedVolume =
+                  previousVolume > 0.01 ? previousVolume : DEFAULT_VOLUME_LEVEL;
+                const mutedVolume = 0;
+
+                const newMutedValue = forceValue ?? !__controls.muted;
 
                 return {
-                  volume: !__controls.muted
-                    ? 0
-                    : previousVolume > 0.01
-                      ? previousVolume
-                      : DEFAULT_VOLUME_LEVEL,
+                  volume: newMutedValue ? mutedVolume : nonMutedVolume,
                   __controls: {
                     ...__controls,
-                    muted: !__controls.muted,
+                    muted: newMutedValue,
                   },
                 };
               }),
@@ -1094,7 +1095,7 @@ export const createControllerStore = ({
         store.getState().__controlsFunctions.setVideoQuality(videoQuality);
       }
       if (volume !== store.getState().volume) {
-        store.getState().__controlsFunctions.setVolume(volume);
+        store.getState().__controlsFunctions.requestVolume(volume);
       }
     },
   );
