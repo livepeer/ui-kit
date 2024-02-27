@@ -823,9 +823,13 @@ const addEffectsToStore = (
         }
 
         if (!audio && !video) {
-          warn("Audio and video are both not enabled.");
+          warn(
+            "At least one of audio and video must be requested. Overriding video to be enabled so that `getUserMedia` can be requested.",
+          );
 
-          return;
+          store.setState({ video: true });
+
+          video = true;
         }
 
         const stream = await (requestedVideoDeviceId === "screen"
