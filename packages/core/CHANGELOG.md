@@ -1,5 +1,13 @@
 # @livepeer/core
 
+## 3.1.6
+
+### Patch Changes
+
+- [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed `getUserMedia` to override to request video when both audio and video are disabled, so that the Broadcast doesn't get stuck in a pending state.
+
+- [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with `muted` Video prop and volume getting out of sync.
+
 ## 3.1.5
 
 ### Patch Changes
