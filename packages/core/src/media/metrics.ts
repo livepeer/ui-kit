@@ -1,5 +1,5 @@
 import { MediaControllerStore } from "./controller";
-import { getMetricsReportingUrl } from "./metrics-utils";
+import { getMetricsReportingWebsocketUrl } from "./metrics-utils";
 import { MimeType } from "./mime";
 
 type RawMetrics = {
@@ -464,11 +464,11 @@ export function addMediaMetricsToStore(
 
       prevWebsocket?.close?.(3077);
 
-      const reportingWebsocketUrl = await getMetricsReportingUrl(
-        playbackId,
-        currentSource,
-        store.getState().__controls.sessionToken,
-      );
+      const reportingWebsocketUrl = await getMetricsReportingWebsocketUrl({
+        playbackId: playbackId,
+        playbackUrl: currentSource,
+        sessionToken: store.getState().__controls.sessionToken,
+      });
 
       if (reportingWebsocketUrl) {
         const newWebSocket = new WebSocket(reportingWebsocketUrl);

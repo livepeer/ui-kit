@@ -1,22 +1,75 @@
+export const getMetricsReportingPOSTUrl = async (opts: {
+  playbackId: string | null;
+  playbackUrl: string;
+}): Promise<string | null> => {
+  if (!opts.playbackId) {
+    return null;
+  }
+
+  // And the POST URL should be:
+  // https://mdw-staging-staging-catalyst-0.livepeer.monster/metrics/{playbackId}
+  const resolvedReportingUrl = await getMetricsReportingUrl({
+    playbackUrl: opts.playbackUrl,
+    path: `/metrics/${opts.playbackId}`,
+  });
+
+  if (!resolvedReportingUrl) {
+    return null;
+  }
+
+  return resolvedReportingUrl?.toString?.() ?? null;
+};
+
+export const getMetricsReportingWebsocketUrl = async (opts: {
+  playbackId: string | null;
+  playbackUrl: string;
+  sessionToken: string | null;
+}): Promise<string | null> => {
+  if (!opts.playbackId) {
+    return null;
+  }
+
+  // The websocket URL should be:
+  // wss://mdw-staging-staging-catalyst-0.livepeer.monster/json_video+{playbackId}.js?tkn=adb42a8f47438
+  const resolvedReportingUrl = await getMetricsReportingUrl({
+    playbackUrl: opts.playbackUrl,
+    path: `/json_video+${opts.playbackId}.js`,
+  });
+
+  if (!resolvedReportingUrl) {
+    return null;
+  }
+
+  resolvedReportingUrl.protocol = "wss:";
+
+  if (resolvedReportingUrl && opts.sessionToken) {
+    resolvedReportingUrl.searchParams.set("tkn", opts.sessionToken);
+  }
+
+  return resolvedReportingUrl?.toString?.() ?? null;
+};
+
 const LP_DOMAINS = ["livepeer", "livepeercdn", "lp-playback"];
 
-// Finds the metrics reporting URL from a playback ID and a playback domain
-export const getMetricsReportingUrl = async (
-  playbackId: string | null,
-  playbackUrl: string,
-  sessionToken?: string | null,
-): Promise<string | null> => {
+// Gets the metrics reporting URL from a playback ID and a playback domain
+const getMetricsReportingUrl = async ({
+  playbackUrl,
+  path,
+}: {
+  playbackUrl: string;
+  path: `/${string}`;
+}) => {
   try {
     // This is either:
-    // https://mdw-staging-staging-catalyst-0.livepeer.monster/hls/video+{playbackId}/0_6/index.m3u8
-    // https://mdw-staging-staging-catalyst-0.livepeer.monster/webrtc/video+{playbackId}
-    // https://vod-cdn.lp-playback.monster/raw/{id}/catalyst-vod-monster/hls/{playbackId}/270p0.mp4
+    // HLS: https://mdw-staging-staging-catalyst-0.livepeer.monster/hls/video+{playbackId}/0_6/index.m3u8
+    // WebRTC: https://mdw-staging-staging-catalyst-0.livepeer.monster/webrtc/video+{playbackId}
+    // MP4: https://vod-cdn.lp-playback.monster/raw/{id}/catalyst-vod-monster/hls/{playbackId}/270p0.mp4
     //
-    // And the websocket URL should be:
-    // wss://mdw-staging-staging-catalyst-0.livepeer.monster/json_video+{playbackId}.js?tkn=adb42a8f47438
-    const parsedUrl = new URL(playbackUrl);
+    // And the URL should be:
+    // https://mdw-staging-staging-catalyst-0.livepeer.monster/{path}
+    const parsedPlaybackUrl = new URL(playbackUrl);
 
-    const splitHost = parsedUrl.host.split(".");
+    const splitHost = parsedPlaybackUrl.host.split(".");
     const includesDomain = LP_DOMAINS.includes(
       splitHost?.[splitHost.length - 2] ?? "",
     );
@@ -40,34 +93,27 @@ export const getMetricsReportingUrl = async (
               : null;
 
     // if not a known TLD, then do not return a URL
-    if (playbackId && includesDomain && tldMapped) {
-      const isCatalystPlayback = parsedUrl.host.includes("catalyst");
+    if (includesDomain && tldMapped) {
+      const isCatalystPlayback = parsedPlaybackUrl.host.includes("catalyst");
 
       try {
         const getRedirectedUrl = async (): Promise<string | null> => {
           const response = await fetch(
-            `https://playback.livepeer.${tldMapped}/json_video+${playbackId}.js`,
+            `https://playback.livepeer.${tldMapped}${path}`,
           );
 
           return response?.url ?? null;
         };
 
         const finalUrl = isCatalystPlayback
-          ? `https://${parsedUrl.host}/json_video+${playbackId}.js`
+          ? `https://${parsedPlaybackUrl.host}${path}`
           : await getRedirectedUrl();
 
-        // parse the url which we're redirected to
-        const redirectedUrl = finalUrl?.replace("https:", "wss:");
+        const url = finalUrl ? new URL(finalUrl) : null;
 
-        const url = redirectedUrl ? new URL(redirectedUrl) : null;
-
-        if (url && sessionToken) {
-          url.searchParams.set("tkn", sessionToken);
-        }
-
-        return url?.toString?.() ?? null;
+        return url ?? null;
       } catch (error) {
-        console.log("Could not fetch metrics reporting URL.", error);
+        console.log("Could not fetch reporting URL.", error);
       }
     }
   } catch (error) {
