@@ -57,9 +57,14 @@ export interface WebRTCSrc extends BaseSrc {
   type: "webrtc";
   src: `${string}${OptionalQueryParams}`;
 }
+export interface FlvSrc extends BaseSrc {
+  type: "video";
+  src: `${string}`;
+}
 export type Src =
   | AudioSrc
   | HlsSrc
+  | FlvSrc
   | VideoSrc
   | Base64Src
   | WebRTCSrc
@@ -186,6 +191,7 @@ const audioExtensions =
   /\.(m4a|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx)($|\?)/i;
 const base64String = /data:video/i;
 const hlsExtensions = /\.(m3u8)($|\?)/i;
+const flvExtensions = /\/(flv)\//i;
 const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp)($|\?)/i;
 const vttExtensions = /\.(vtt)($|\?)/i;
 const mimeFromBase64Pattern = /data:(.+?);base64/;
@@ -268,5 +274,13 @@ export const getMediaSourceType = (
                     width: null,
                     height: null,
                   }
-                : null;
+                : flvExtensions.test(sourceTest)
+                  ? {
+                      type: "video",
+                      src: src as FlvSrc["src"],
+                      mime: "video/x-flv",
+                      width: resolvedWidth,
+                      height: resolvedHeight,
+                    }
+                  : null;
 };
