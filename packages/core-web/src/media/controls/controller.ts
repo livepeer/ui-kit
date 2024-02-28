@@ -249,8 +249,6 @@ export const addEventListeners = (
     element.addEventListener("loadstart", onLoadStart);
     element.addEventListener("ended", onEnded);
 
-    parentElementOrElement?.addEventListener("mouseover", onMouseUpdate);
-    parentElementOrElement?.addEventListener("mouseenter", onMouseUpdate);
     parentElementOrElement?.addEventListener("mouseout", onMouseUpdate);
     parentElementOrElement?.addEventListener("mousemove", onMouseUpdate);
 
@@ -323,11 +321,6 @@ export const addEventListeners = (
         window?.removeEventListener?.("resize", onResize);
       }
 
-      parentElementOrElement?.removeEventListener?.("mouseover", onMouseUpdate);
-      parentElementOrElement?.removeEventListener?.(
-        "mouseenter",
-        onMouseUpdate,
-      );
       parentElementOrElement?.removeEventListener?.("mouseout", onMouseUpdate);
       parentElementOrElement?.removeEventListener?.("mousemove", onMouseUpdate);
 
@@ -705,7 +698,18 @@ const addEffectsToStore = (
 
         await delay(autohide);
 
+        const parentElementOrElement = element?.parentElement ?? element;
+
+        // we check if any children of the parent element are in an "open" state, which is the radix
+        // data attribute for popovers and other elements
+        // this is the only way to reliably hide the controls while a popover is shown, and possibly
+        // is missing some data attributes for other primitives
+        const openElement = parentElementOrElement?.querySelector?.(
+          '[data-state="open"]',
+        );
+
         if (
+          !openElement &&
           !store.getState().hidden &&
           lastInteraction === store.getState().__controls.lastInteraction
         ) {
