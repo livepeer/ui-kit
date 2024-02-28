@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.1.7
+
+### Patch Changes
+
+- [#496](https://github.com/livepeer/ui-kit/pull/496) [`faf536b`](https://github.com/livepeer/ui-kit/commit/faf536bad1998ade0a2f362066f64517afcab492) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added FLV mime typing to allow for FLV URLs to be passed into `getMediaMetrics`.
+
+- Updated dependencies [[`faf536b`](https://github.com/livepeer/ui-kit/commit/faf536bad1998ade0a2f362066f64517afcab492)]:
+  - @livepeer/core@3.1.7
+
 ## 4.1.6
 
 ### Patch Changes
