@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 3.1.8
+
+### Patch Changes
+
+- [#498](https://github.com/livepeer/ui-kit/pull/498) [`511ae87`](https://github.com/livepeer/ui-kit/commit/511ae87168416448b1e7035a3898add0c0a9c544) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the mouse interactions to not hide when a Radix Popover is open, and not flash when a user hovers over the video element.
+
 ## 3.1.7
 
 ### Patch Changes
