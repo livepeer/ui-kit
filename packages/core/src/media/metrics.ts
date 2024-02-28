@@ -54,7 +54,10 @@ type PlaybackRecord = {
   score: number;
 };
 
-export class PlaybackMonitor {
+/**
+ * @deprecated in favor of `addMetricsToStore`
+ */
+export class LegacyPlaybackMonitor {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
@@ -184,7 +187,10 @@ function isInIframe() {
   }
 }
 
-export class MetricsStatus {
+/**
+ * @deprecated in favor of `addMetricsToStore`
+ */
+export class LegacyMetricsStatus {
   requestedPlayTime: number | null = null;
   firstFrameTime: number | null = null;
 
@@ -372,8 +378,11 @@ export class MetricsStatus {
 
 const bootMs = Date.now(); // used for firstPlayback value
 
-export type MediaMetrics = {
-  metrics: MetricsStatus | null;
+/**
+ * @deprecated in favor of `addMetricsToStore`
+ */
+export type LegacyMediaMetrics = {
+  metrics: LegacyMetricsStatus | null;
   destroy: () => void;
 };
 
@@ -383,11 +392,12 @@ export type MediaMetrics = {
  * metrics endpoint.
  *
  * @param store Element to capture playback metrics from
+ * @deprecated in favor of `addMetricsToStore`
  */
-export function addMediaMetricsToStore(
+export function addLegacyMediaMetricsToStore(
   store: MediaControllerStore | undefined | null,
-): MediaMetrics {
-  const defaultResponse: MediaMetrics = {
+): LegacyMediaMetrics {
+  const defaultResponse: LegacyMediaMetrics = {
     metrics: null,
     destroy: () => {
       //
@@ -408,8 +418,8 @@ export function addMediaMetricsToStore(
   let timeOut: NodeJS.Timeout | null = null;
   let enabled = true;
 
-  const metricsStatus = new MetricsStatus(store);
-  const monitor = new PlaybackMonitor(store);
+  const metricsStatus = new LegacyMetricsStatus(store);
+  const monitor = new LegacyPlaybackMonitor(store);
 
   const report = async () => {
     const ws = await websocketPromise;
@@ -523,7 +533,6 @@ export function addMediaMetricsToStore(
       }
     } catch (e) {
       console.error(e);
-      store.getState().__controlsFunctions.onError?.(e as Error);
     }
 
     return null;
@@ -546,7 +555,7 @@ export function addMediaMetricsToStore(
         return (
           a.type === b.type &&
           a.playbackId === b.playbackId &&
-          Boolean(a.finalUrl)
+          Boolean(a.finalUrl) === Boolean(b.finalUrl)
         );
       },
     },

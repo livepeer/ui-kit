@@ -7,7 +7,10 @@ import { cache } from "react";
 
 const livepeer = new Livepeer({
   apiKey: process.env.STUDIO_API_KEY ?? "",
+  serverURL: process.env.STUDIO_BASE_URL,
 });
+
+console.log(process.env.STUDIO_BASE_URL);
 
 const livepeerPrivateKey = process.env.LIVEPEER_JWT_PRIVATE_KEY ?? "";
 const livepeerPublicKey = process.env.LIVEPEER_JWT_PUBLIC_KEY ?? "";

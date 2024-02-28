@@ -7,7 +7,8 @@ import React, { PropsWithChildren, useEffect, useRef } from "react";
 import {
   InitialProps,
   Src,
-  addMediaMetricsToStore,
+  addLegacyMediaMetricsToStore,
+  addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
@@ -102,7 +103,15 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
   }, []);
 
   useEffect(() => {
-    const metrics = addMediaMetricsToStore(store.current.store);
+    const metrics = addLegacyMediaMetricsToStore(store.current.store);
+
+    return () => {
+      metrics.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    const metrics = addMetricsToStore(store.current.store);
 
     return () => {
       metrics.destroy();

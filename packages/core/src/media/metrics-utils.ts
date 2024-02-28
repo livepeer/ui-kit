@@ -1,17 +1,14 @@
 export const getMetricsReportingPOSTUrl = async (opts: {
-  playbackId: string | null;
   playbackUrl: string;
 }): Promise<string | null> => {
-  if (!opts.playbackId) {
-    return null;
-  }
-
   // And the POST URL should be:
   // https://mdw-staging-staging-catalyst-0.livepeer.monster/metrics/{playbackId}
   const resolvedReportingUrl = await getMetricsReportingUrl({
     playbackUrl: opts.playbackUrl,
-    path: `/metrics/${opts.playbackId}`,
+    path: "/analytics/log",
   });
+
+  console.log({ resolvedReportingUrl });
 
   if (!resolvedReportingUrl) {
     return null;
@@ -101,6 +98,9 @@ const getMetricsReportingUrl = async ({
           const response = await fetch(
             `https://playback.livepeer.${tldMapped}${path}`,
           );
+
+          // consume response body
+          await response.text();
 
           return response?.url ?? null;
         };
