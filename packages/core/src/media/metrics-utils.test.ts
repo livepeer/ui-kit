@@ -85,7 +85,7 @@ describe("getMetricsReportingWebsocketUrl", () => {
       });
 
       expect(reportingUrl).toMatchInlineSnapshot(
-        `"wss://lax-prod-catalyst-0.lp-playback.studio/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js?tkn=session-token"`,
+        `"wss://lax-prod-catalyst-1.lp-playback.studio/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js?tkn=session-token"`,
       );
     });
 
@@ -124,12 +124,11 @@ describe("getMetricsReportingPOSTUrl", () => {
         "https://livepeercdn.com/hls/172159gos7h0pq17/index.m3u8";
 
       const reportingUrl = await getMetricsReportingPOSTUrl({
-        playbackId: "172159gos7h0pq17",
         playbackUrl: sourceUrl,
       });
 
       expect(reportingUrl).toMatchInlineSnapshot(
-        `"https://playback.livepeer.studio/metrics/172159gos7h0pq17"`,
+        `"https://playback.livepeer.studio/analytics/log"`,
       );
     });
 
@@ -138,12 +137,11 @@ describe("getMetricsReportingPOSTUrl", () => {
         "https://asset-cdn.lp-playback.studio/hls/172159gos7h0pq17/index.m3u8";
 
       const reportingUrl = await getMetricsReportingPOSTUrl({
-        playbackId: "172159gos7h0pq17",
         playbackUrl: sourceUrl,
       });
 
       expect(reportingUrl).toMatchInlineSnapshot(
-        `"https://playback.livepeer.studio/metrics/172159gos7h0pq17"`,
+        `"https://playback.livepeer.studio/analytics/log"`,
       );
     });
 
@@ -173,12 +171,11 @@ describe("getMetricsReportingPOSTUrl", () => {
         "https://livepeercdn.com/recordings/c34af47b-bbf2-40ed-ad2d-77abd43860c9/index.m3u8";
 
       const reportingUrl = await getMetricsReportingPOSTUrl({
-        playbackId: "c34af47b-bbf2-40ed-ad2d-77abd43860c9",
         playbackUrl: sourceUrl,
       });
 
       expect(reportingUrl).toMatchInlineSnapshot(
-        `"https://playback.livepeer.studio/metrics/c34af47b-bbf2-40ed-ad2d-77abd43860c9"`,
+        `"https://playback.livepeer.studio/analytics/log"`,
       );
     });
 
@@ -198,7 +195,6 @@ describe("getMetricsReportingPOSTUrl", () => {
         sourceUrls.map(
           async ({ playbackId, url }) =>
             await getMetricsReportingPOSTUrl({
-              playbackId,
               playbackUrl: url,
             }),
         ),

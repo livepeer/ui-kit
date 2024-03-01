@@ -1,10 +1,28 @@
 # @livepeer/core-react
 
+## 3.1.8
+
+### Patch Changes
+
+- [#498](https://github.com/livepeer/ui-kit/pull/498) [`511ae87`](https://github.com/livepeer/ui-kit/commit/511ae87168416448b1e7035a3898add0c0a9c544) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed the mouse interactions to not hide when a Radix Popover is open, and not flash when a user hovers over the video element. 
+
+- Updated dependencies [[`511ae87`](https://github.com/livepeer/ui-kit/commit/511ae87168416448b1e7035a3898add0c0a9c544)]:
+  - @livepeer/core@3.1.8
+
+## 3.1.7
+
+### Patch Changes
+
+- [#496](https://github.com/livepeer/ui-kit/pull/496) [`faf536b`](https://github.com/livepeer/ui-kit/commit/faf536bad1998ade0a2f362066f64517afcab492) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added FLV mime typing to allow for FLV URLs to be passed into `getMediaMetrics`.
+
+- Updated dependencies [[`faf536b`](https://github.com/livepeer/ui-kit/commit/faf536bad1998ade0a2f362066f64517afcab492)]:
+  - @livepeer/core@3.1.7
+
 ## 3.1.6
 
 ### Patch Changes
 
-- [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed `getUserMedia` to override to request video when both audio and video are disabled, so that the Broadcast doesn't get stuck in a pending state. 
+- [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed `getUserMedia` to override to request video when both audio and video are disabled, so that the Broadcast doesn't get stuck in a pending state.
 
 - [#494](https://github.com/livepeer/ui-kit/pull/494) [`b8220d9`](https://github.com/livepeer/ui-kit/commit/b8220d9b2e3e2d837b732a7d05370e17b45be5be) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed issue with `muted` Video prop and volume getting out of sync.
 

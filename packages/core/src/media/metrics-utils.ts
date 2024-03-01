@@ -8,8 +8,6 @@ export const getMetricsReportingPOSTUrl = async (opts: {
     path: "/analytics/log",
   });
 
-  console.log({ resolvedReportingUrl });
-
   if (!resolvedReportingUrl) {
     return null;
   }
