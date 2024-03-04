@@ -3,59 +3,80 @@ import { MediaControllerStore } from "./controller";
 import { getMetricsReportingPOSTUrl } from "./metrics-utils";
 import { MimeType } from "./mime";
 
-export type PlaybackEvent =
-  | {
-      /** The event type. */
-      type: "heartbeat";
-      /** The timestamp of the event, in milliseconds. */
-      timestamp: number;
-      /** The number of *total* errors that have occurred. */
-      errors: number;
-      /** The state of autoplay of the video. */
-      autoplay_status: "autoplay" | "none";
+export type HeartbeatEvent = {
+  // The properties below are sent on every heartbeat.
 
-      /** The time from the metrics were added to play, in milliseconds. */
-      mount_to_play_ms?: number;
-      /** The time from the metrics were added to the first frame, in milliseconds. */
-      mount_to_first_frame_ms?: number;
-      /** The time from the first play event to the first frame, in milliseconds. Also called TTFF. */
-      play_to_first_frame_ms?: number;
+  /** The event type. */
+  type: "heartbeat";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The number of errors that have occurred since last heartbeat. */
+  errors: number;
 
-      /** The duration of the video, in milliseconds. */
-      duration_ms?: number;
-      /** The offset of the live video head compared to the server time, in milliseconds. */
-      offset_ms?: number;
+  /** The number of times the current playback has stalled, since last heartbeat. */
+  stalled_count: number;
+  /** The *total* number of times the current playback has waited, since last heartbeat. */
+  waiting_count: number;
 
-      /** The *total* number of times the current playback has stalled. */
-      stalled_count: number;
-      /** The *total* number of times the current playback has waited. */
-      waiting_count: number;
+  /** The time the playback has spent in an errored state, in ms, since last heartbeat. */
+  time_errored_ms: number;
+  /** The time the playback has spent stalled, in ms, since last heartbeat. */
+  time_stalled_ms: number;
+  /** The time the playback has spent playing, in ms, since last heartbeat. */
+  time_playing_ms: number;
+  /** The time the playback has spent waiting, in ms, since last heartbeat. */
+  time_waiting_ms: number;
 
-      /** The *total* time the playback has spent stalled, in ms. */
-      time_stalled_ms: number;
-      /** The *total* time the playback has spent playing, in ms. */
-      time_playing_ms: number;
-      /** The *total* time the playback has spent waiting, in ms. */
-      time_waiting_ms: number;
+  // The properties below are only sent once.
 
-      /** The height of the player element, in px. */
-      player_height_px?: number;
-      /** The width of the player element, in px. */
-      player_width_px?: number;
-      /** The height of the source video, in px. */
-      video_height_px?: number;
-      /** The width of the source video, in px. */
-      video_width_px?: number;
-      /** The height of the window, in px. */
-      window_height_px?: number;
-      /** The width of the window, in px. */
-      window_width_px?: number;
-    }
-  | {
-      type: "error";
-      timestamp: number;
-      error_message: string;
-    };
+  /** The state of autoplay of the video. */
+  autoplay_status?: "autoplay" | "none";
+
+  /** The time from when the metrics were added to play, in milliseconds. */
+  mount_to_play_ms?: number;
+  /** The time from when the metrics were added to the first frame, in milliseconds. */
+  mount_to_first_frame_ms?: number;
+  /** The time from the first play event to the first frame, in milliseconds. Also called TTFF. */
+  play_to_first_frame_ms?: number;
+
+  /** The duration of the video, in milliseconds. */
+  duration_ms?: number;
+  /** The offset of the live video head compared to the server time, in milliseconds. */
+  offset_ms?: number;
+
+  // The properties below are only sent when they change.
+
+  /** The height of the player element, in px. */
+  player_height_px?: number;
+  /** The width of the player element, in px. */
+  player_width_px?: number;
+  /** The height of the source video, in px. */
+  video_height_px?: number;
+  /** The width of the source video, in px. */
+  video_width_px?: number;
+  /** The height of the window, in px. */
+  window_height_px?: number;
+  /** The width of the window, in px. */
+  window_width_px?: number;
+};
+
+export type ErrorEvent = {
+  /** The event type. */
+  type: "error";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The raw event error message. */
+  error_message: string;
+  /** The category of the error. */
+  category:
+    | "offline"
+    | "access-control"
+    | "fallback"
+    | "permissions"
+    | "unknown";
+};
+
+export type PlaybackEvent = HeartbeatEvent | ErrorEvent;
 
 export type SessionData = {
   session_id: string;
@@ -68,8 +89,6 @@ export type SessionData = {
   uid?: string;
   events: PlaybackEvent[];
 };
-
-const getCurrentTimestamp = () => Math.floor(Date.now() / 1000);
 
 const globalLoadTimestampMs = Date.now();
 
@@ -131,7 +150,44 @@ export function addMetricsToStore(
     },
   );
 
+  const destroyErrorListener = store.subscribe(
+    (state) => state.error,
+    async (error) => {
+      if (error) {
+        eventBuffer.addEvent({
+          type: "error",
+          timestamp: Date.now(),
+          category: error.type,
+          error_message: error.message,
+        });
+      }
+    },
+  );
+
   const monitor = new MetricsMonitor(store);
+  const ic = new IncrementalCounter([
+    "errors",
+    "stalled_count",
+    "waiting_count",
+    "time_errored_ms",
+    "time_stalled_ms",
+    "time_playing_ms",
+    "time_waiting_ms",
+  ]);
+  const vct = new ValueChangeTracker([
+    "autoplay_status",
+    "mount_to_first_frame_ms",
+    "mount_to_play_ms",
+    "play_to_first_frame_ms",
+    "duration_ms",
+    "offset_ms",
+    "video_height_px",
+    "video_width_px",
+    "player_width_px",
+    "player_height_px",
+    "window_height_px",
+    "window_width_px",
+  ]);
 
   const sendEvents =
     ({ isUnloading }: { isUnloading: boolean } = { isUnloading: false }) =>
@@ -156,33 +212,93 @@ export function addMetricsToStore(
           const metricsSnapshot = monitor.getMetrics();
 
           eventBuffer.addEvent({
-            timestamp: getCurrentTimestamp(),
+            // The properties below are sent on every heartbeat.
+
             type: "heartbeat",
-            errors: metricsSnapshot.errorCount,
-            autoplay_status: currentState.__initialProps.autoPlay
-              ? "autoplay"
-              : "none",
+            timestamp: Date.now(),
+            errors: ic.calculateIncrement("errors", metricsSnapshot.errorCount),
 
-            mount_to_play_ms: metricsSnapshot.mountToPlay ?? undefined,
-            mount_to_first_frame_ms:
+            stalled_count: ic.calculateIncrement(
+              "stalled_count",
+              metricsSnapshot.stalledCount,
+            ),
+            waiting_count: ic.calculateIncrement(
+              "waiting_count",
+              metricsSnapshot.waitingCount,
+            ),
+
+            time_errored_ms: ic.calculateIncrement(
+              "time_errored_ms",
+              metricsSnapshot.timeErrored,
+            ),
+            time_stalled_ms: ic.calculateIncrement(
+              "time_stalled_ms",
+              metricsSnapshot.timeStalled,
+            ),
+            time_playing_ms: ic.calculateIncrement(
+              "time_playing_ms",
+              metricsSnapshot.timePlaying,
+            ),
+            time_waiting_ms: ic.calculateIncrement(
+              "time_waiting_ms",
+              metricsSnapshot.timeWaiting,
+            ),
+
+            // The properties below are only sent once.
+
+            autoplay_status: vct.sendIfChanged(
+              "autoplay_status",
+              currentState.__initialProps.autoPlay ? "autoplay" : "none",
+            ),
+
+            mount_to_play_ms: vct.sendIfChanged(
+              "mount_to_play_ms",
+              metricsSnapshot.mountToPlay ?? undefined,
+            ),
+            mount_to_first_frame_ms: vct.sendIfChanged(
+              "mount_to_first_frame_ms",
               metricsSnapshot.mountToFirstFrame ?? undefined,
-            play_to_first_frame_ms:
+            ),
+            play_to_first_frame_ms: vct.sendIfChanged(
+              "play_to_first_frame_ms",
               metricsSnapshot.playToFirstFrame ?? undefined,
+            ),
 
-            duration_ms: metricsSnapshot.duration ?? undefined,
-            offset_ms: metricsSnapshot.offset ?? undefined,
-            stalled_count: metricsSnapshot.stalledCount,
-            time_stalled_ms: metricsSnapshot.timeStalled,
-            time_playing_ms: metricsSnapshot.timePlaying,
-            time_waiting_ms: metricsSnapshot.timeWaiting,
-            waiting_count: metricsSnapshot.waitingCount,
+            duration_ms: vct.sendIfChanged(
+              "duration_ms",
+              metricsSnapshot.duration ?? undefined,
+            ),
+            offset_ms: vct.sendIfChanged(
+              "offset_ms",
+              metricsSnapshot.offset ?? undefined,
+            ),
 
-            video_height_px: metricsSnapshot.videoHeight ?? undefined,
-            video_width_px: metricsSnapshot.videoWidth ?? undefined,
-            player_height_px: metricsSnapshot.playerHeight ?? undefined,
-            player_width_px: metricsSnapshot.playerWidth ?? undefined,
-            window_height_px: metricsSnapshot.windowHeight ?? undefined,
-            window_width_px: metricsSnapshot.windowWidth ?? undefined,
+            // The properties below are only sent when they change.
+
+            video_height_px: vct.sendIfChanged(
+              "video_height_px",
+              metricsSnapshot.videoHeight ?? undefined,
+            ),
+            video_width_px: vct.sendIfChanged(
+              "video_width_px",
+              metricsSnapshot.videoWidth ?? undefined,
+            ),
+            player_height_px: vct.sendIfChanged(
+              "player_height_px",
+              metricsSnapshot.playerHeight ?? undefined,
+            ),
+            player_width_px: vct.sendIfChanged(
+              "player_width_px",
+              metricsSnapshot.playerWidth ?? undefined,
+            ),
+            window_height_px: vct.sendIfChanged(
+              "window_height_px",
+              metricsSnapshot.windowHeight ?? undefined,
+            ),
+            window_width_px: vct.sendIfChanged(
+              "window_width_px",
+              metricsSnapshot.windowWidth ?? undefined,
+            ),
           });
         }
 
@@ -304,6 +420,7 @@ export function addMetricsToStore(
       }
 
       destroyFinalUrlListener?.();
+      destroyErrorListener?.();
 
       // we remove the visibility callback since this is called too frequently when component is not visible
       window?.removeEventListener?.("visibilitychange", onVisibilityChange);
@@ -358,6 +475,55 @@ export class PlaybackEventBuffer {
   }
 }
 
+export class IncrementalCounter<K extends keyof HeartbeatEvent> {
+  private counts: Record<K, number>;
+
+  constructor(keys: K[]) {
+    this.counts = keys.reduce(
+      (acc, key) => {
+        acc[key] = 0;
+        return acc;
+      },
+      {} as Record<K, number>,
+    );
+  }
+
+  public calculateIncrement(key: K, newCount: number): number {
+    if (newCount < this.counts[key]) {
+      return 0;
+    }
+
+    const increment = newCount - this.counts[key];
+
+    this.counts[key] = newCount;
+
+    return increment;
+  }
+}
+
+export class ValueChangeTracker<Keys extends keyof HeartbeatEvent> {
+  private lastValues: Record<Keys, string | number | undefined>;
+
+  constructor(keys: Keys[]) {
+    this.lastValues = keys.reduce(
+      (acc, key) => {
+        acc[key] = undefined;
+        return acc;
+      },
+      {} as Record<Keys, string | number | undefined>,
+    );
+  }
+
+  public sendIfChanged<T>(key: Keys, newValue: T): T | undefined {
+    if (this.lastValues[key] !== newValue) {
+      this.lastValues[key] = newValue as string | number | undefined;
+      return newValue;
+    }
+
+    return undefined;
+  }
+}
+
 class Timer {
   totalTime = 0;
 
@@ -390,11 +556,11 @@ type RawMetrics = {
 
   duration: number | null;
   errorCount: number;
-  errors: string[];
   offset: number | null;
   playerHeight: number | null;
   playerWidth: number | null;
   stalledCount: number;
+  timeErrored: number;
   timeStalled: number;
   timePlaying: number;
   timeWaiting: number;
@@ -415,6 +581,7 @@ class MetricsMonitor {
   currentMetrics: RawMetrics;
   previousMetrics: RawMetrics | null = null;
 
+  timerErrored = new Timer();
   timerWaiting = new Timer();
   timerStalled = new Timer();
 
@@ -430,11 +597,11 @@ class MetricsMonitor {
 
       duration: null,
       errorCount: 0,
-      errors: [],
       offset: null,
       playerHeight: null,
       playerWidth: null,
       stalledCount: 0,
+      timeErrored: 0,
       timeStalled: 0,
       timePlaying: 0,
       timeWaiting: 0,
@@ -464,6 +631,7 @@ class MetricsMonitor {
       (state) => state.playing,
       async (playing) => {
         if (playing) {
+          this.timerErrored.stop();
           this.timerStalled.stop();
           this.timerWaiting.stop();
 
@@ -478,6 +646,7 @@ class MetricsMonitor {
       (state) => state.progress,
       async () => {
         if (!this.timerPlaying.startTime) {
+          this.timerErrored.stop();
           this.timerStalled.stop();
           this.timerWaiting.stop();
           this.timerPlaying.start();
@@ -500,9 +669,21 @@ class MetricsMonitor {
           this.currentMetrics.mountToPlay !== null
         ) {
           this.currentMetrics.playToFirstFrame = Math.max(
-            now - this.currentMetrics.mountToPlay,
+            now - this.currentMetrics.mountToPlay - globalLoadTimestampMs,
             0,
           );
+        }
+      },
+    );
+
+    const destroyErroredListener = store.subscribe(
+      (state) => state.error,
+      async (error) => {
+        if (error?.type) {
+          this.timerErrored.start();
+          this.timerPlaying.stop();
+
+          this.addError();
         }
       },
     );
@@ -528,6 +709,7 @@ class MetricsMonitor {
     );
 
     this.destroy = () => {
+      destroyErroredListener?.();
       destroyFirstPlayListener?.();
       destroyPlayingListener?.();
       destroyProgressListener?.();
@@ -536,9 +718,8 @@ class MetricsMonitor {
     };
   }
 
-  addError(error: string) {
+  addError() {
     this.currentMetrics.errorCount = this.currentMetrics.errorCount + 1;
-    this.currentMetrics.errors = [error, ...this.currentMetrics.errors];
   }
 
   setConnected(isConnected: boolean) {
@@ -549,6 +730,7 @@ class MetricsMonitor {
     const duration = this.store.getState().duration;
     const currentMetrics: RawMetrics = {
       ...this.currentMetrics,
+
       playerHeight:
         this.store.getState().__controls.size?.container?.height || null,
       playerWidth:
@@ -566,6 +748,7 @@ class MetricsMonitor {
       waitingCount: this.timerWaiting.getCountStarts(),
       stalledCount: this.timerStalled.getCountStarts(),
 
+      timeErrored: this.timerErrored.getTotalTime(),
       timeWaiting: this.timerWaiting.getTotalTime(),
       timeStalled: this.timerStalled.getTotalTime(),
       timePlaying: this.timerPlaying.getTotalTime(),
