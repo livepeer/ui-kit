@@ -566,7 +566,7 @@ export const createControllerStore = ({
             accessKey: initialProps.accessKey ?? null,
             aspectRatio: initialProps?.aspectRatio ?? null,
             autoPlay: initialProps.autoPlay ?? false,
-            backoff: initialProps.backoff ?? 500,
+            backoff: Math.max(initialProps.backoff ?? 500, 100),
             backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
             clipLength: initialProps.clipLength ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
