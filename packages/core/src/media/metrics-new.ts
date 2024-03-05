@@ -209,99 +209,98 @@ export function addMetricsToStore(
         }
 
         // if we're not unloading, we add a heartbeat event to the queue
-        if (!isUnloading) {
-          const metricsSnapshot = monitor.getMetrics();
 
-          eventBuffer.addEvent({
-            // The properties below are sent on every heartbeat.
+        const metricsSnapshot = monitor.getMetrics();
 
-            type: "heartbeat",
-            timestamp: Date.now(),
-            errors: ic.calculateIncrement("errors", metricsSnapshot.errorCount),
+        eventBuffer.addEvent({
+          // The properties below are sent on every heartbeat.
 
-            stalled_count: ic.calculateIncrement(
-              "stalled_count",
-              metricsSnapshot.stalledCount,
-            ),
-            waiting_count: ic.calculateIncrement(
-              "waiting_count",
-              metricsSnapshot.waitingCount,
-            ),
+          type: "heartbeat",
+          timestamp: Date.now(),
+          errors: ic.calculateIncrement("errors", metricsSnapshot.errorCount),
 
-            time_errored_ms: ic.calculateIncrement(
-              "time_errored_ms",
-              metricsSnapshot.timeErrored,
-            ),
-            time_stalled_ms: ic.calculateIncrement(
-              "time_stalled_ms",
-              metricsSnapshot.timeStalled,
-            ),
-            time_playing_ms: ic.calculateIncrement(
-              "time_playing_ms",
-              metricsSnapshot.timePlaying,
-            ),
-            time_waiting_ms: ic.calculateIncrement(
-              "time_waiting_ms",
-              metricsSnapshot.timeWaiting,
-            ),
+          stalled_count: ic.calculateIncrement(
+            "stalled_count",
+            metricsSnapshot.stalledCount,
+          ),
+          waiting_count: ic.calculateIncrement(
+            "waiting_count",
+            metricsSnapshot.waitingCount,
+          ),
 
-            // The properties below are only sent once.
+          time_errored_ms: ic.calculateIncrement(
+            "time_errored_ms",
+            metricsSnapshot.timeErrored,
+          ),
+          time_stalled_ms: ic.calculateIncrement(
+            "time_stalled_ms",
+            metricsSnapshot.timeStalled,
+          ),
+          time_playing_ms: ic.calculateIncrement(
+            "time_playing_ms",
+            metricsSnapshot.timePlaying,
+          ),
+          time_waiting_ms: ic.calculateIncrement(
+            "time_waiting_ms",
+            metricsSnapshot.timeWaiting,
+          ),
 
-            autoplay_status: vct.sendIfChanged(
-              "autoplay_status",
-              currentState.__initialProps.autoPlay ? "autoplay" : "none",
-            ),
+          // The properties below are only sent once.
 
-            mount_to_play_ms: vct.sendIfChanged(
-              "mount_to_play_ms",
-              metricsSnapshot.mountToPlay ?? undefined,
-            ),
-            mount_to_first_frame_ms: vct.sendIfChanged(
-              "mount_to_first_frame_ms",
-              metricsSnapshot.mountToFirstFrame ?? undefined,
-            ),
-            play_to_first_frame_ms: vct.sendIfChanged(
-              "play_to_first_frame_ms",
-              metricsSnapshot.playToFirstFrame ?? undefined,
-            ),
+          autoplay_status: vct.sendIfChanged(
+            "autoplay_status",
+            currentState.__initialProps.autoPlay ? "autoplay" : "none",
+          ),
 
-            duration_ms: vct.sendIfChanged(
-              "duration_ms",
-              metricsSnapshot.duration ?? undefined,
-            ),
-            offset_ms: vct.sendIfChanged(
-              "offset_ms",
-              metricsSnapshot.offset ?? undefined,
-            ),
+          mount_to_play_ms: vct.sendIfChanged(
+            "mount_to_play_ms",
+            metricsSnapshot.mountToPlay ?? undefined,
+          ),
+          mount_to_first_frame_ms: vct.sendIfChanged(
+            "mount_to_first_frame_ms",
+            metricsSnapshot.mountToFirstFrame ?? undefined,
+          ),
+          play_to_first_frame_ms: vct.sendIfChanged(
+            "play_to_first_frame_ms",
+            metricsSnapshot.playToFirstFrame ?? undefined,
+          ),
 
-            // The properties below are only sent when they change.
+          duration_ms: vct.sendIfChanged(
+            "duration_ms",
+            metricsSnapshot.duration ?? undefined,
+          ),
+          offset_ms: vct.sendIfChanged(
+            "offset_ms",
+            metricsSnapshot.offset ?? undefined,
+          ),
 
-            video_height_px: vct.sendIfChanged(
-              "video_height_px",
-              metricsSnapshot.videoHeight ?? undefined,
-            ),
-            video_width_px: vct.sendIfChanged(
-              "video_width_px",
-              metricsSnapshot.videoWidth ?? undefined,
-            ),
-            player_height_px: vct.sendIfChanged(
-              "player_height_px",
-              metricsSnapshot.playerHeight ?? undefined,
-            ),
-            player_width_px: vct.sendIfChanged(
-              "player_width_px",
-              metricsSnapshot.playerWidth ?? undefined,
-            ),
-            window_height_px: vct.sendIfChanged(
-              "window_height_px",
-              metricsSnapshot.windowHeight ?? undefined,
-            ),
-            window_width_px: vct.sendIfChanged(
-              "window_width_px",
-              metricsSnapshot.windowWidth ?? undefined,
-            ),
-          });
-        }
+          // The properties below are only sent when they change.
+
+          video_height_px: vct.sendIfChanged(
+            "video_height_px",
+            metricsSnapshot.videoHeight ?? undefined,
+          ),
+          video_width_px: vct.sendIfChanged(
+            "video_width_px",
+            metricsSnapshot.videoWidth ?? undefined,
+          ),
+          player_height_px: vct.sendIfChanged(
+            "player_height_px",
+            metricsSnapshot.playerHeight ?? undefined,
+          ),
+          player_width_px: vct.sendIfChanged(
+            "player_width_px",
+            metricsSnapshot.playerWidth ?? undefined,
+          ),
+          window_height_px: vct.sendIfChanged(
+            "window_height_px",
+            metricsSnapshot.windowHeight ?? undefined,
+          ),
+          window_width_px: vct.sendIfChanged(
+            "window_width_px",
+            metricsSnapshot.windowWidth ?? undefined,
+          ),
+        });
 
         const abortController = new AbortController();
 
