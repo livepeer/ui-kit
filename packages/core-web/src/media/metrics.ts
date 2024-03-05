@@ -1,7 +1,7 @@
 import {
   InitialProps,
-  MediaMetrics,
-  addMediaMetricsToStore,
+  addLegacyMediaMetricsToStore,
+  addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
@@ -35,13 +35,13 @@ export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
  *   - `onError`: A callback function that is called when an error occurs in the metrics collection process.
  *   - `viewerId`: An identifier for the viewer to associate metrics with a specific user or session.
  *
- * @returns {MediaMetrics} An object containing a `destroy` function to clean up resources.
+ * @returns An object containing a `destroy` function to clean up resources.
  * The `destroy` function must be used to remove event listeners and perform other cleanup actions on unmount.
  */
 export function addMediaMetrics(
   element: HTMLMediaElement | undefined | null,
   opts: Partial<MediaMetricsOptions> = {},
-): MediaMetrics {
+) {
   if (element) {
     const source = opts?.src ?? element?.src ?? null;
     const { store, destroy } = createControllerStore({
@@ -62,7 +62,9 @@ export function addMediaMetrics(
 
     const { destroy: destroyListeners } = addEventListeners(element, store);
 
-    const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
+    const { destroy: destroyMetrics } = addMetricsToStore(store);
+    const { destroy: destroyLegacyMetrics, metrics: legacyMetrics } =
+      addLegacyMediaMetricsToStore(store);
 
     store
       .getState()
@@ -71,17 +73,18 @@ export function addMediaMetrics(
       );
 
     return {
-      metrics,
+      /** @deprecated */
+      legacyMetrics,
       destroy: () => {
         destroy?.();
         destroyListeners?.();
         destroyMetrics?.();
+        destroyLegacyMetrics?.();
       },
     };
   }
 
   return {
-    metrics: null,
     destroy: () => {},
   };
 }

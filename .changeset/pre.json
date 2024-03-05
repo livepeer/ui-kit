@@ -1,0 +1,15 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "app-docs-embed": "0.0.1",
+    "app-lvpr-tv": "0.0.1",
+    "example-next": "0.0.1",
+    "example-next-pages": "0.0.1",
+    "@livepeer/core": "3.1.8",
+    "@livepeer/core-react": "3.1.8",
+    "@livepeer/core-web": "4.1.8",
+    "@livepeer/react": "4.1.8"
+  },
+  "changesets": []
+}

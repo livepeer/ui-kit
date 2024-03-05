@@ -10,7 +10,8 @@ import {
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
   InitialProps,
-  addMediaMetricsToStore,
+  addLegacyMediaMetricsToStore,
+  addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
@@ -118,7 +119,15 @@ const Broadcast = (
   }, [ingestUrl]);
 
   useEffect(() => {
-    const metrics = addMediaMetricsToStore(mediaStore.current.store);
+    const metrics = addLegacyMediaMetricsToStore(mediaStore.current.store);
+
+    return () => {
+      metrics.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    const metrics = addMetricsToStore(mediaStore.current.store);
 
     return () => {
       metrics.destroy();
