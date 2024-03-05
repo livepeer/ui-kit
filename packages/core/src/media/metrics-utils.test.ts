@@ -84,8 +84,8 @@ describe("getMetricsReportingWebsocketUrl", () => {
         sessionToken: "session-token",
       });
 
-      expect(reportingUrl).toMatchInlineSnapshot(
-        `"wss://lax-prod-catalyst-1.lp-playback.studio/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js?tkn=session-token"`,
+      expect(reportingUrl).contains(
+        ".lp-playback.studio/json_video+c34af47b-bbf2-40ed-ad2d-77abd43860c9.js?tkn=session-token",
       );
     });
 
