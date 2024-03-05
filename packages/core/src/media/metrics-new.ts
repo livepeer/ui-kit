@@ -121,6 +121,8 @@ export function addMetricsToStore(
     return defaultResponse;
   }
 
+  const monitor = new MetricsMonitor(store);
+
   const isSendBeaconAvailable = "sendBeacon" in window.navigator;
 
   const interval = opts?.interval ?? 5000;
@@ -164,7 +166,6 @@ export function addMetricsToStore(
     },
   );
 
-  const monitor = new MetricsMonitor(store);
   const ic = new IncrementalCounter([
     "errors",
     "stalled_count",

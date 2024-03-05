@@ -1,5 +1,6 @@
 import {
   InitialProps,
+  addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
@@ -62,6 +63,8 @@ export function addMediaMetrics(
     const { destroy: destroyListeners } = addEventListeners(element, store);
 
     const { destroy: destroyMetrics } = addMetricsToStore(store);
+    const { destroy: destroyLegacyMetrics, metrics: legacyMetrics } =
+      addLegacyMediaMetricsToStore(store);
 
     store
       .getState()
@@ -70,10 +73,13 @@ export function addMediaMetrics(
       );
 
     return {
+      /** @deprecated */
+      legacyMetrics,
       destroy: () => {
         destroy?.();
         destroyListeners?.();
         destroyMetrics?.();
+        destroyLegacyMetrics?.();
       },
     };
   }
