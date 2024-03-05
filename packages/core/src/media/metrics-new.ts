@@ -1,7 +1,8 @@
 import { warn } from "../utils";
-import { MediaControllerStore } from "./controller";
+import { MediaControllerStore, PlaybackRate } from "./controller";
 import { getMetricsReportingPOSTUrl } from "./metrics-utils";
 import { MimeType } from "./mime";
+import { VideoQuality } from "./src";
 
 export type HeartbeatEvent = {
   // The properties below are sent on every heartbeat.
@@ -76,7 +77,56 @@ export type ErrorEvent = {
     | "unknown";
 };
 
-export type PlaybackEvent = HeartbeatEvent | ErrorEvent;
+export type HtmlEvent = {
+  /** The event type. */
+  type:
+    | "play"
+    | "pause"
+    | "enter-fullscreen"
+    | "exit-fullscreen"
+    | "enter-pip"
+    | "exit-pip"
+    | "can-play"
+    | "ended"
+    | "first-frame";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+};
+
+export type RateChangeEvent = {
+  /** The event type. */
+  type: "rate";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The playback rate. */
+  payload: PlaybackRate;
+};
+
+export type SeekEvent = {
+  /** The event type. */
+  type: "seek";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The seek timestamp. */
+  payload: number;
+};
+
+export type VideoQualityEvent = {
+  /** The event type. */
+  type: "video-quality";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The video playback quality enum. */
+  payload: VideoQuality;
+};
+
+export type PlaybackEvent =
+  | HeartbeatEvent
+  | ErrorEvent
+  | HtmlEvent
+  | RateChangeEvent
+  | SeekEvent
+  | VideoQualityEvent;
 
 export type SessionData = {
   session_id: string;
@@ -88,6 +138,7 @@ export type SessionData = {
   user_agent?: string;
   uid?: string;
   events: PlaybackEvent[];
+  live: boolean;
 };
 
 const globalLoadTimestampMs = Date.now();
@@ -98,6 +149,7 @@ const globalLoadTimestampMs = Date.now();
  * URL.
  *
  * @param store Store to capture playback metrics from.
+ * @param opts.interval The interval at which metrics are sent, in ms. Default 5000.
  */
 export function addMetricsToStore(
   store: MediaControllerStore | undefined | null,
@@ -166,6 +218,93 @@ export function addMetricsToStore(
     },
   );
 
+  const destroyPlayListener = store.subscribe(
+    (state) => state.playing,
+    async (playing) => {
+      eventBuffer.addEvent({
+        type: playing ? "play" : "pause",
+        timestamp: Date.now(),
+      });
+    },
+  );
+
+  const destroyPipListener = store.subscribe(
+    (state) => state.pictureInPicture,
+    async (pictureInPicture) => {
+      eventBuffer.addEvent({
+        type: pictureInPicture ? "enter-pip" : "exit-pip",
+        timestamp: Date.now(),
+      });
+    },
+  );
+
+  const destroyFullscreenListener = store.subscribe(
+    (state) => state.fullscreen,
+    async (fullscreen) => {
+      eventBuffer.addEvent({
+        type: fullscreen ? "enter-fullscreen" : "exit-fullscreen",
+        timestamp: Date.now(),
+      });
+    },
+  );
+
+  const destroyCanPlayListener = store.subscribe(
+    (state) => state.canPlay,
+    async (canPlay) => {
+      if (canPlay) {
+        eventBuffer.addEvent({
+          type: "can-play",
+          timestamp: Date.now(),
+        });
+      }
+    },
+  );
+
+  const destroyEndedListener = store.subscribe(
+    (state) => state.ended,
+    async (ended) => {
+      if (ended) {
+        eventBuffer.addEvent({
+          type: "ended",
+          timestamp: Date.now(),
+        });
+      }
+    },
+  );
+
+  const destroyRateChangeListener = store.subscribe(
+    (state) => state.playbackRate,
+    async (playbackRate) => {
+      eventBuffer.addEvent({
+        type: "rate",
+        timestamp: Date.now(),
+        payload: playbackRate,
+      });
+    },
+  );
+
+  const destroyVideoQualityListener = store.subscribe(
+    (state) => state.videoQuality,
+    async (videoQuality) => {
+      eventBuffer.addEvent({
+        type: "video-quality",
+        timestamp: Date.now(),
+        payload: videoQuality,
+      });
+    },
+  );
+
+  const destroySeekListener = store.subscribe(
+    (state) => state.__controls.requestedRangeToSeekTo,
+    async (rangeToSeekTo) => {
+      eventBuffer.addEvent({
+        type: "seek",
+        timestamp: Date.now(),
+        payload: rangeToSeekTo,
+      });
+    },
+  );
+
   const ic = new IncrementalCounter([
     "errors",
     "stalled_count",
@@ -190,6 +329,8 @@ export function addMetricsToStore(
     "window_width_px",
   ]);
 
+  let firstFrameSent = false;
+
   const sendEvents =
     ({ isUnloading }: { isUnloading: boolean } = { isUnloading: false }) =>
     async () => {
@@ -212,9 +353,17 @@ export function addMetricsToStore(
 
         const metricsSnapshot = monitor.getMetrics();
 
+        if (!firstFrameSent && monitor.firstFrameTimestamp) {
+          eventBuffer.addEvent({
+            type: "first-frame",
+            timestamp: monitor.firstFrameTimestamp,
+          });
+
+          firstFrameSent = true;
+        }
+
         eventBuffer.addEvent({
           // The properties below are sent on every heartbeat.
-
           type: "heartbeat",
           timestamp: Date.now(),
           errors: ic.calculateIncrement("errors", metricsSnapshot.errorCount),
@@ -246,7 +395,6 @@ export function addMetricsToStore(
           ),
 
           // The properties below are only sent once.
-
           autoplay_status: vct.sendIfChanged(
             "autoplay_status",
             currentState.__initialProps.autoPlay ? "autoplay" : "none",
@@ -275,7 +423,6 @@ export function addMetricsToStore(
           ),
 
           // The properties below are only sent when they change.
-
           video_height_px: vct.sendIfChanged(
             "video_height_px",
             metricsSnapshot.videoHeight ?? undefined,
@@ -331,6 +478,7 @@ export function addMetricsToStore(
           const version = currentState?.__device.version ?? "unknown";
 
           const sessionData: SessionData = {
+            live: currentState.live,
             session_id: currentControlsState.sessionToken,
             playback_id: currentControlsState.playbackId,
             protocol: currentState.currentSource.mime ?? undefined,
@@ -419,8 +567,16 @@ export function addMetricsToStore(
         clearInterval?.(eventsTimer);
       }
 
-      destroyFinalUrlListener?.();
+      destroyCanPlayListener?.();
+      destroyEndedListener?.();
       destroyErrorListener?.();
+      destroyFinalUrlListener?.();
+      destroyFullscreenListener?.();
+      destroyPipListener?.();
+      destroyPlayListener?.();
+      destroyRateChangeListener?.();
+      destroySeekListener?.();
+      destroyVideoQualityListener?.();
 
       // we remove the visibility callback since this is called too frequently when component is not visible
       window?.removeEventListener?.("visibilitychange", onVisibilityChange);
@@ -578,6 +734,7 @@ class MetricsMonitor {
 
   destroy: () => void;
 
+  firstFrameTimestamp: number | null = null;
   currentMetrics: RawMetrics;
   previousMetrics: RawMetrics | null = null;
 
@@ -672,6 +829,7 @@ class MetricsMonitor {
             now - this.currentMetrics.mountToPlay - globalLoadTimestampMs,
             0,
           );
+          this.firstFrameTimestamp = now;
         }
       },
     );
