@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#505](https://github.com/livepeer/ui-kit/pull/505) [`0875372`](https://github.com/livepeer/ui-kit/commit/08753720d424dde1e7f1c335f67838f6ecee8e25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `backoff` and `backoffMax` to the Player, which defines the time which the Player waits before attempting, as well as the cap for exponential backoff.
+- [#505](https://github.com/livepeer/ui-kit/pull/505) [`0875372`](https://github.com/livepeer/ui-kit/commit/08753720d424dde1e7f1c335f67838f6ecee8e25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `backoff` and `backoffMax` to the Player, which defines the time which the Player waits before attempting, as well as the cap for exponential backoff. 
 
   ```tsx
   /**
