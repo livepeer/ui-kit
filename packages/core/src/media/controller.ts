@@ -50,6 +50,20 @@ export type InitialProps = {
   autoPlay: boolean;
 
   /**
+   * Controls the initial value for exponential backoff, in ms. Defaults to 500ms, which is subsequently multiplied by 2^n power on each error.
+   *
+   * This is limited at a minimum of 100ms.
+   */
+  backoff: number;
+
+  /**
+   * Controls the maximum backoff when an error is encountered, in ms. Defaults to 30s.
+   *
+   * This is limited at a minimum of 10s, to prevent DDoS when a popular stream goes down.
+   */
+  backoffMax: number;
+
+  /**
    * The length of the clip. This is usually used alongside `ClipTrigger`. Specifies the duration of the media clip, in seconds.
    *
    * Set to `null` to disable the ClipTrigger.
@@ -552,6 +566,8 @@ export const createControllerStore = ({
             accessKey: initialProps.accessKey ?? null,
             aspectRatio: initialProps?.aspectRatio ?? null,
             autoPlay: initialProps.autoPlay ?? false,
+            backoff: Math.max(initialProps.backoff ?? 500, 100),
+            backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
             clipLength: initialProps.clipLength ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
             jwt: initialProps.jwt ?? null,
