@@ -394,7 +394,10 @@ const addEffectsToStore = (
       await cleanupSource?.();
 
       if (errorCount > 0) {
-        const delayTime = Math.min(backoff * 2 ** (errorCount - 1), backoffMax);
+        const delayTime = Math.max(
+          Math.min(backoff * 2 ** (errorCount - 1), backoffMax),
+          100,
+        );
         await delay(delayTime);
       }
 

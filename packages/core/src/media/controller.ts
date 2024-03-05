@@ -51,6 +51,8 @@ export type InitialProps = {
 
   /**
    * Controls the initial value for exponential backoff, in ms. Defaults to 500ms, which is subsequently multiplied by 2^n power on each error.
+   *
+   * This is limited at a minimum of 100ms.
    */
   backoff: number;
 
