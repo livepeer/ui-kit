@@ -58,6 +58,8 @@ export type InitialProps = {
 
   /**
    * Controls the maximum backoff when an error is encountered, in ms. Defaults to 30s.
+   *
+   * This is limited at a minimum of 10s, to prevent DDoS when a popular stream goes down.
    */
   backoffMax: number;
 
@@ -565,7 +567,7 @@ export const createControllerStore = ({
             aspectRatio: initialProps?.aspectRatio ?? null,
             autoPlay: initialProps.autoPlay ?? false,
             backoff: initialProps.backoff ?? 500,
-            backoffMax: initialProps.backoffMax ?? 30000,
+            backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
             clipLength: initialProps.clipLength ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
             jwt: initialProps.jwt ?? null,
