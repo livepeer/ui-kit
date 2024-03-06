@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#507](https://github.com/livepeer/ui-kit/pull/507) [`5802873`](https://github.com/livepeer/ui-kit/commit/58028734de512fff59e98b2c7bcd2058a7db420b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** broke `version` and `player` out into different fields, improved `play`/`pause` events to be triggered on HTML events, added `clip` event.
+- [#507](https://github.com/livepeer/ui-kit/pull/507) [`5802873`](https://github.com/livepeer/ui-kit/commit/58028734de512fff59e98b2c7bcd2058a7db420b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** broke `version` and `player` out into different fields, improved `play`/`pause` events to be triggered on HTML events, added `clip` event. 
 
 - Updated dependencies [[`5802873`](https://github.com/livepeer/ui-kit/commit/58028734de512fff59e98b2c7bcd2058a7db420b)]:
   - @livepeer/core@3.2.0-next.1
