@@ -358,13 +358,14 @@ const addEffectsToStore = (
       __controls,
       currentSource,
       errorCount,
-      live,
       progress,
       mounted,
       videoQuality,
     }) => ({
       aspectRatio: __initialProps.aspectRatio,
       autoPlay: __initialProps.autoPlay,
+      backoff: __initialProps.backoff,
+      backoffMax: __initialProps.backoffMax,
       errorCount,
       hlsConfig: __controls.hlsConfig,
       mounted,
@@ -376,6 +377,8 @@ const addEffectsToStore = (
     async ({
       aspectRatio,
       autoPlay,
+      backoff,
+      backoffMax,
       errorCount,
       hlsConfig,
       mounted,
@@ -391,7 +394,7 @@ const addEffectsToStore = (
       await cleanupSource?.();
 
       if (errorCount > 0) {
-        const delayTime = 500 * 2 ** (errorCount - 1);
+        const delayTime = Math.min(backoff * 2 ** (errorCount - 1), backoffMax);
         await delay(delayTime);
       }
 

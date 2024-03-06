@@ -152,6 +152,29 @@
   - @livepeer/core-web@4.2.0-next.0
   - @livepeer/core@3.2.0-next.0
 
+## 4.1.9
+
+### Patch Changes
+
+- [#505](https://github.com/livepeer/ui-kit/pull/505) [`0875372`](https://github.com/livepeer/ui-kit/commit/08753720d424dde1e7f1c335f67838f6ecee8e25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `backoff` and `backoffMax` to the Player, which defines the time which the Player waits before attempting, as well as the cap for exponential backoff.
+
+  ```tsx
+  /**
+   * Controls the initial value for exponential backoff, in ms. Defaults to 500ms, which is subsequently multiplied by 2^n power on each error.
+   */
+  backoff: number;
+
+  /**
+   * Controls the maximum backoff when an error is encountered, in ms. Defaults to 30s.
+   */
+  backoffMax: number;
+  ```
+
+- Updated dependencies [[`0875372`](https://github.com/livepeer/ui-kit/commit/08753720d424dde1e7f1c335f67838f6ecee8e25)]:
+  - @livepeer/core-web@4.1.9
+  - @livepeer/core@3.1.9
+  - @livepeer/core-react@3.1.9
+
 ## 4.1.8
 
 ### Patch Changes
