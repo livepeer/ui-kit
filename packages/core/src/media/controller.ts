@@ -180,6 +180,8 @@ export type ControlsState = {
 
   /** The last time that a play event was received */
   playLastTime: number;
+  /** The last time that a pause event was received */
+  pauseLastTime: number;
   /** The offset of the browser's livestream versus the server time (in ms). */
   playbackOffsetMs: number | null;
   /** The last time that the media was interacted with */
@@ -467,6 +469,7 @@ export const createControllerStore = ({
     playbackId: playbackId ?? parsedInputSource?.playbackId ?? null,
     playbackOffsetMs: null,
     playLastTime: 0,
+    pauseLastTime: 0,
     requestedClipParams: null,
     requestedFullscreenLastTime: 0,
     requestedPictureInPictureLastTime: 0,
@@ -659,7 +662,7 @@ export const createControllerStore = ({
                 };
               }),
             onPause: () =>
-              set(({ aria }) => {
+              set(({ aria, __controls }) => {
                 const title = "Play (k)";
 
                 return {
@@ -671,6 +674,10 @@ export const createControllerStore = ({
                   aria: {
                     ...aria,
                     playPause: title,
+                  },
+                  __controls: {
+                    ...__controls,
+                    pauseLastTime: Date.now(),
                   },
                 };
               }),
