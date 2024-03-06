@@ -1,8 +1,7 @@
 import { warn } from "../utils";
 import { MediaControllerStore, PlaybackRate } from "./controller";
 import { getMetricsReportingPOSTUrl } from "./metrics-utils";
-import { MimeType } from "./mime";
-import { VideoQuality } from "./src";
+import { Src, VideoQuality } from "./src";
 
 export type HeartbeatEvent = {
   // The properties below are sent on every heartbeat.
@@ -40,7 +39,7 @@ export type HeartbeatEvent = {
   /** The time from the first play event to the first frame, in milliseconds. Also called TTFF. */
   play_to_first_frame_ms?: number;
 
-  /** The duration of the video, in milliseconds. */
+  /** The duration of the video, in milliseconds. This is only sent for VOD. */
   duration_ms?: number;
   /** The offset of the live video head compared to the server time, in milliseconds. */
   offset_ms?: number;
@@ -93,6 +92,17 @@ export type HtmlEvent = {
   timestamp: number;
 };
 
+export type ClipEvent = {
+  /** The event type. */
+  type: "clip";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The start time of the clip, in Unix ms. */
+  startTime: number;
+  /** The end time of the clip, in Unix ms. */
+  endTime: number;
+};
+
 export type RateChangeEvent = {
   /** The event type. */
   type: "rate";
@@ -123,6 +133,7 @@ export type VideoQualityEvent = {
 export type PlaybackEvent =
   | HeartbeatEvent
   | ErrorEvent
+  | ClipEvent
   | HtmlEvent
   | RateChangeEvent
   | SeekEvent
@@ -131,10 +142,11 @@ export type PlaybackEvent =
 export type SessionData = {
   session_id: string;
   playback_id: string;
-  protocol?: MimeType;
+  protocol?: Src["mime"];
   page_url: string;
   source_url: string;
-  player: `${"audio" | "hls" | "video" | "webrtc" | "unknown"}-${string}`;
+  player: Src["type"];
+  version: string;
   user_agent?: string;
   uid?: string;
   events: PlaybackEvent[];
@@ -219,12 +231,36 @@ export function addMetricsToStore(
   );
 
   const destroyPlayListener = store.subscribe(
-    (state) => state.playing,
-    async (playing) => {
+    (state) => state.__controls.playLastTime,
+    async (timestamp) => {
       eventBuffer.addEvent({
-        type: playing ? "play" : "pause",
-        timestamp: Date.now(),
+        type: "play",
+        timestamp,
       });
+    },
+  );
+
+  const destroyPauseListener = store.subscribe(
+    (state) => state.__controls.pauseLastTime,
+    async (timestamp) => {
+      eventBuffer.addEvent({
+        type: "pause",
+        timestamp,
+      });
+    },
+  );
+
+  const destroyClipListener = store.subscribe(
+    (state) => state.__controls.requestedClipParams,
+    async (params) => {
+      if (params) {
+        eventBuffer.addEvent({
+          type: "clip",
+          timestamp: Date.now(),
+          startTime: params.startTime,
+          endTime: params.endTime,
+        });
+      }
     },
   );
 
@@ -413,10 +449,12 @@ export function addMetricsToStore(
             metricsSnapshot.playToFirstFrame ?? undefined,
           ),
 
-          duration_ms: vct.sendIfChanged(
-            "duration_ms",
-            metricsSnapshot.duration ?? undefined,
-          ),
+          duration_ms: currentState?.live
+            ? undefined
+            : vct.sendIfChanged(
+                "duration_ms",
+                metricsSnapshot.duration ?? undefined,
+              ),
           offset_ms: vct.sendIfChanged(
             "offset_ms",
             metricsSnapshot.offset ?? undefined,
@@ -484,17 +522,8 @@ export function addMetricsToStore(
             protocol: currentState.currentSource.mime ?? undefined,
             page_url: pageUrl,
             source_url: currentState.currentSource.src,
-            player: `${
-              playerPrefix === "audio"
-                ? "audio"
-                : playerPrefix === "hls"
-                  ? "hls"
-                  : playerPrefix === "video"
-                    ? "video"
-                    : playerPrefix === "webrtc"
-                      ? "webrtc"
-                      : "unknown"
-            }-${version}`,
+            player: playerPrefix,
+            version,
             user_agent: String(currentState?.__device?.userAgent ?? "").replace(
               /\\|"/gm,
               "",
@@ -568,12 +597,14 @@ export function addMetricsToStore(
       }
 
       destroyCanPlayListener?.();
+      destroyClipListener?.();
       destroyEndedListener?.();
       destroyErrorListener?.();
       destroyFinalUrlListener?.();
       destroyFullscreenListener?.();
       destroyPipListener?.();
       destroyPlayListener?.();
+      destroyPauseListener?.();
       destroyRateChangeListener?.();
       destroySeekListener?.();
       destroyVideoQualityListener?.();
