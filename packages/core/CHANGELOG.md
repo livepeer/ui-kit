@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 3.2.0-next.2
+
+### Patch Changes
+
+- [`9665a46`](https://github.com/livepeer/ui-kit/commit/9665a46e8ef6f511b1b393cb73eb7cbc0c127800) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed duration to integer ms.
+
 ## 3.2.0-next.1
 
 ### Patch Changes

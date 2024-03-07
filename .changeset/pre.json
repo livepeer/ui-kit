@@ -12,6 +12,7 @@
     "@livepeer/react": "4.1.8"
   },
   "changesets": [
+    "cold-fireants-deny",
     "good-mice-exist",
     "plenty-goats-heal"
   ]
