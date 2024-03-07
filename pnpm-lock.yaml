@@ -313,6 +313,67 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
+  examples/with-pubnub:
+    dependencies:
+      '@livepeer/react':
+        specifier: workspace:*
+        version: link:../../packages/react
+      '@radix-ui/react-popover':
+        specifier: ^1.0.7
+        version: 1.0.7(@types/react-dom@18.2.19)(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0)
+      clsx:
+        specifier: ^2.1.0
+        version: 2.1.0
+      livepeer:
+        specifier: ^3.0.2
+        version: 3.0.2
+      lucide-react:
+        specifier: ^0.330.0
+        version: 0.330.0(react@18.2.0)
+      next:
+        specifier: 14.1.0
+        version: 14.1.0(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18
+        version: 18.2.0
+      react-dom:
+        specifier: ^18
+        version: 18.2.0(react@18.2.0)
+      sonner:
+        specifier: ^1.3.1
+        version: 1.4.0(react-dom@18.2.0)(react@18.2.0)
+      tailwind-merge:
+        specifier: ^2.2.1
+        version: 2.2.1
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.1)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.11.17
+      '@types/react':
+        specifier: ^18.2.51
+        version: 18.2.55
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.2.19
+      autoprefixer:
+        specifier: ^10.0.1
+        version: 10.4.17(postcss@8.4.35)
+      postcss:
+        specifier: ^8
+        version: 8.4.35
+      tailwindcss:
+        specifier: ^3.3.0
+        version: 3.4.1
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
   packages/core:
     dependencies:
       multiformats:
