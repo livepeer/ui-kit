@@ -900,7 +900,7 @@ class MetricsMonitor {
         this.store.getState().__controls.size?.window?.height || null,
       duration:
         Number.isFinite(duration) && !Number.isNaN(duration)
-          ? duration * 1000
+          ? Math.floor(duration * 1000)
           : null,
 
       waitingCount: this.timerWaiting.getCountStarts(),
