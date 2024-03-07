@@ -11,5 +11,8 @@
     "@livepeer/core-web": "4.1.8",
     "@livepeer/react": "4.1.8"
   },
-  "changesets": ["good-mice-exist"]
+  "changesets": [
+    "good-mice-exist",
+    "plenty-goats-heal"
+  ]
 }
