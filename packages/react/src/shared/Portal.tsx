@@ -1,6 +1,7 @@
 "use client";
 
-import type React from "react";
+// biome-ignore lint/style/useImportType: necessary import
+import React from "react";
 
 import * as RadixPortal from "@radix-ui/react-portal";
 

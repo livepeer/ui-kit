@@ -2,8 +2,8 @@
 
 import * as SelectPrimitive from "../shared/Select";
 
-import type React from "react";
-import { useCallback } from "react";
+// biome-ignore lint/style/useImportType: necessary import
+import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
 import type { MediaScopedProps } from "../shared/context";
