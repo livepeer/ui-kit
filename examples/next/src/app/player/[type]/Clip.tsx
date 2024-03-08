@@ -13,9 +13,8 @@ export function Clip({ className }: { className?: string }) {
   const [isPending, startTransition] = useTransition();
 
   const createClipComposed = useCallback(async (opts: ClipPayload) => {
-    const result = await createClip(opts);
-
-    startTransition(() => {
+    startTransition(async () => {
+      const result = await createClip(opts);
       if (result.success) {
         toast.success(
           <span>

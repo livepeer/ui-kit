@@ -12,10 +12,10 @@ import { createClip } from "./actions";
 export function Clip({ className }: { className?: string }) {
   const [isPending, startTransition] = useTransition();
 
-  const createClipComposed = useCallback(async (opts: ClipPayload) => {
-    const result = await createClip(opts);
+  const createClipComposed = useCallback((opts: ClipPayload) => {
+    startTransition(async () => {
+      const result = await createClip(opts);
 
-    startTransition(() => {
       if (result.success) {
         toast.success(
           <span>

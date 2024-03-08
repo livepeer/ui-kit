@@ -21,7 +21,7 @@ export function CreateLivestreamButton({ className }: { className?: string }) {
     >
       <button
         type="submit"
-        className="items-center rounded-md px-3 py-1 outline outline-1 outline-white/30 hover:outline-white/40 justify-center md:justify-end gap-2 flex-1 flex text-lg text-white/90 transition-opacity"
+        className="items-center cursor-pointer rounded-md px-3 py-1 outline outline-1 outline-white/30 hover:outline-white/40 justify-center md:justify-end gap-2 flex-1 flex text-lg text-white/90 transition-opacity"
       >
         <span>Create a livestream</span>
         <Videotape strokeWidth={1} className="w-5 h-5" />
