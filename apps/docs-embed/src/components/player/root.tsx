@@ -12,7 +12,11 @@ import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
 import * as Popover from "@radix-ui/react-popover";
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
-import React, { CSSProperties, PropsWithChildren, forwardRef } from "react";
+import React, {
+  type CSSProperties,
+  type PropsWithChildren,
+  forwardRef,
+} from "react";
 import { vodSource } from "./source";
 
 const vodSourceWithThumbnail = {

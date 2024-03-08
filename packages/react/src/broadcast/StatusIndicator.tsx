@@ -2,10 +2,10 @@
 
 import React, { useMemo } from "react";
 
-import { BroadcastStatus } from "@livepeer/core-web/broadcast";
+import type { BroadcastStatus } from "@livepeer/core-web/broadcast";
 import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
-import { BroadcastScopedProps, useBroadcastContext } from "../broadcast";
+import { type BroadcastScopedProps, useBroadcastContext } from "../broadcast";
 import * as Radix from "../shared/primitive";
 
 const STATUS_INDICATOR_NAME = "StatusIndicator";

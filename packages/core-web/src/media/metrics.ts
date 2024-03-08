@@ -1,6 +1,6 @@
 import {
-  InitialProps,
-  MediaMetrics,
+  type InitialProps,
+  type MediaMetrics,
   addMediaMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";

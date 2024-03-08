@@ -1,4 +1,4 @@
-import { Src, getMediaSourceType } from "./src";
+import { type Src, getMediaSourceType } from "./src";
 
 type InternalParsedSrc = {
   url: string;

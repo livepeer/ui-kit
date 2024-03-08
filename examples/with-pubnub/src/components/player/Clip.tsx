@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import * as Player from "@livepeer/react/player";
 
 import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
-import { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/dist/models/components";
 import { useCallback, useTransition } from "react";
 import { createClip } from "./actions";
 
@@ -17,22 +17,7 @@ export function Clip({ className }: { className?: string }) {
       const result = await createClip(opts);
 
       if (result.success) {
-        toast.success(
-          <span>
-            {
-              "You have created a new clip - in a few minutes, you will be able to view it at "
-            }
-            <a
-              href={`/player/${result.playbackId}`}
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold"
-            >
-              this link
-            </a>
-            {"."}
-          </span>,
-        );
+        toast.success("Clip created!");
       } else {
         toast.error(
           "Failed to create a clip. Please try again in a few seconds.",

@@ -1,7 +1,7 @@
-import Hls, { ErrorData, HlsConfig } from "hls.js";
+import Hls, { type ErrorData, type HlsConfig } from "hls.js";
 
 import {
-  VideoQuality,
+  type VideoQuality,
   calculateVideoQualityDimensions,
 } from "@livepeer/core/media";
 import { isClient } from "../media/utils";

@@ -5,11 +5,11 @@ import { useStore } from "zustand";
 
 import { addEventListeners } from "@livepeer/core-web/browser";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { MediaScopedProps, useMediaContext } from "../shared/context";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 
 import { addBroadcastEventListeners } from "@livepeer/core-web/broadcast";
 import * as Radix from "../shared/primitive";
-import { BroadcastScopedProps, useBroadcastContext } from "./context";
+import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 
 const VIDEO_NAME = "Video";
 

@@ -1,5 +1,6 @@
 import * as Player from "@livepeer/react/player";
 
+import type { Src } from "@livepeer/react";
 import {
   EnterFullscreenIcon,
   ExitFullscreenIcon,
@@ -12,55 +13,17 @@ import {
   PrivateErrorIcon,
   UnmuteIcon,
 } from "@livepeer/react/assets";
-import { getSrc } from "@livepeer/react/external";
-import { getPlaybackInfo, getPlaybackJWT } from "../../livepeer";
 import { Clip } from "./Clip";
-import { CurrentSource } from "./CurrentSource";
-import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 
-export async function PlayerWithControls({
-  playbackId,
-  type,
+export function PlayerWithControls({
+  src,
 }: {
-  playbackId: string;
-  type: "asset-short" | "asset-long" | "livestream" | "jwt" | "unknown";
+  src: Src[];
 }) {
-  const inputSource = await getPlaybackInfo(playbackId);
-
-  const userId = "example-value";
-
-  const jwt =
-    type === "jwt"
-      ? // do some auth check before issuing this JWT (e.g. getPlaybackJWT(playbackId, userId))
-        await getPlaybackJWT(playbackId, userId)
-      : null;
-
-  const src = getSrc(inputSource);
-
-  if (!src) {
-    return (
-      <PlayerLoading>
-        <div className="absolute flex flex-col inset-0 justify-center items-center">
-          <span className="text-sm text-white/80">Video is not available.</span>
-          <span className="text-sm text-white/80">
-            Please try refreshing the page in a few seconds.
-          </span>
-        </div>
-      </PlayerLoading>
-    );
-  }
-
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <Player.Root
-        playbackRate={type === "livestream" ? "constant" : undefined}
-        autoPlay
-        aspectRatio={16 / 9}
-        clipLength={30}
-        src={src}
-        jwt={jwt}
-      >
+      <Player.Root autoPlay clipLength={30} src={src}>
         <Player.Container className="h-full w-full overflow-hidden rounded-md bg-gray-950 outline-white/50 outline outline-1 data-[playing=true]:outline-white/80 data-[playing=true]:outline-2 data-[fullscreen=true]:outline-none data-[fullscreen=true]:rounded-none transition-all">
           <Player.Video
             title="Live stream"
@@ -181,12 +144,6 @@ export async function PlayerWithControls({
             </Player.Seek>
           </Player.Controls>
         </Player.Container>
-
-        <CurrentSource className="mt-6" />
-
-        <div className="flex mt-4">
-          <ForceError className="mx-auto" />
-        </div>
       </Player.Root>
     </div>
   );

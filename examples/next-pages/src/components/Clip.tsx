@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import * as Player from "@livepeer/react/player";
 
 import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
-import { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/dist/models/components";
 import { useCallback, useState } from "react";
 
 export function Clip({ className }: { className?: string }) {

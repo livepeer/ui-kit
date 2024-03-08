@@ -21,7 +21,7 @@ export default function RootLayout({
       <body
         className={cn(
           inter.className,
-          "dark-theme text-white bg-black min-h-screen-safe pb-[env(safe-area-inset-bottom)]",
+          "dark-theme text-white bg-black h-screen",
         )}
       >
         {children}

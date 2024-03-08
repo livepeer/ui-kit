@@ -3,9 +3,9 @@ import {
   persist,
   subscribeWithSelector,
 } from "zustand/middleware";
-import { StoreApi, createStore } from "zustand/vanilla";
+import { type StoreApi, createStore } from "zustand/vanilla";
 
-import { ImageSrc, Src, VideoQuality } from "./src";
+import type { ImageSrc, Src, VideoQuality } from "./src";
 
 import {
   isAccessControlError,
@@ -14,7 +14,7 @@ import {
   isPermissionsError,
   isStreamOfflineError,
 } from "./errors";
-import { ClientStorage, createStorage, noopStorage } from "./storage";
+import { type ClientStorage, createStorage, noopStorage } from "./storage";
 import {
   generateRandomToken,
   getBoundedRate,
