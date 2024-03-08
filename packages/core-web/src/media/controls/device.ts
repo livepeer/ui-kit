@@ -1,4 +1,4 @@
-import { DeviceInformation } from "@livepeer/core/media";
+import type { DeviceInformation } from "@livepeer/core/media";
 
 import { isHlsSupported } from "../../hls/hls";
 import { getRTCPeerConnectionConstructor } from "../../webrtc/shared";

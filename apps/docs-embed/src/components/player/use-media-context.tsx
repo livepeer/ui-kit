@@ -3,11 +3,11 @@
 import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
 import {
-  MediaScopedProps,
+  type MediaScopedProps,
   useMediaContext,
   useStore,
 } from "@livepeer/react/player";
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { vodSource } from "./source";
 
 export default () => {

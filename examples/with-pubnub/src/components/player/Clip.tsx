@@ -1,0 +1,44 @@
+"use client";
+
+import { toast } from "sonner";
+
+import * as Player from "@livepeer/react/player";
+
+import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
+import type { ClipPayload } from "livepeer/dist/models/components";
+import { useCallback, useTransition } from "react";
+import { createClip } from "./actions";
+
+export function Clip({ className }: { className?: string }) {
+  const [isPending, startTransition] = useTransition();
+
+  const createClipComposed = useCallback(async (opts: ClipPayload) => {
+    const result = await createClip(opts);
+
+    startTransition(() => {
+      if (result.success) {
+        toast.success("Clip created!");
+      } else {
+        toast.error(
+          "Failed to create a clip. Please try again in a few seconds.",
+        );
+      }
+    });
+  }, []);
+
+  return (
+    <Player.LiveIndicator className={className} asChild>
+      <Player.ClipTrigger
+        onClip={createClipComposed}
+        disabled={isPending}
+        className="hover:scale-110 transition-all flex-shrink-0"
+      >
+        {isPending ? (
+          <LoadingIcon className="h-full w-full animate-spin" />
+        ) : (
+          <ClipIcon className="w-full h-full" />
+        )}
+      </Player.ClipTrigger>
+    </Player.LiveIndicator>
+  );
+}

@@ -5,17 +5,17 @@ import { toast } from "sonner";
 import * as Player from "@livepeer/react/player";
 
 import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
-import { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/dist/models/components";
 import { useCallback, useTransition } from "react";
 import { createClip } from "./actions";
 
 export function Clip({ className }: { className?: string }) {
   const [isPending, startTransition] = useTransition();
 
-  const createClipComposed = useCallback((opts: ClipPayload) => {
-    startTransition(async () => {
-      const result = await createClip(opts);
+  const createClipComposed = useCallback(async (opts: ClipPayload) => {
+    const result = await createClip(opts);
 
+    startTransition(() => {
       if (result.success) {
         toast.success(
           <span>

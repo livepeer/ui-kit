@@ -9,8 +9,8 @@ import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 
 import { Presence } from "@radix-ui/react-presence";
-import { MediaScopedProps, useMediaContext } from "../shared/context";
-import * as Radix from "../shared/primitive";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
+import type * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
 
 const SEEK_NAME = "Seek";

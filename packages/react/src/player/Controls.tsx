@@ -8,7 +8,7 @@ import { useStore } from "zustand";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { useShallow } from "zustand/react/shallow";
-import { MediaScopedProps, useMediaContext } from "../shared/context";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
 

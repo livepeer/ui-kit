@@ -1,6 +1,6 @@
 import {
   CodeWithExampleServer,
-  PlayerComponentKey,
+  type PlayerComponentKey,
   getPlayerKeys,
 } from "@/components/code/code-server";
 import Clip from "@/components/player/clip";
