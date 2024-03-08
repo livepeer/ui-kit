@@ -74,7 +74,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "jose": "^5.2.2"
+    "jose": "^5.2.3"
   },
   "keywords": ["livepeer", "video", "streaming", "livestream"]
 }
