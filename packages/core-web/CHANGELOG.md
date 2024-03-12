@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.1.10
+
+### Patch Changes
+
+- [#511](https://github.com/livepeer/ui-kit/pull/511) [`5da507e`](https://github.com/livepeer/ui-kit/commit/5da507e9db8ea823fbb49dcc62eb43ac11e9ccee) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed no-op localstorage when the `storage` prop is null.
+
+- Updated dependencies [[`5da507e`](https://github.com/livepeer/ui-kit/commit/5da507e9db8ea823fbb49dcc62eb43ac11e9ccee)]:
+  - @livepeer/core@3.1.10
+
 ## 4.1.9
 
 ### Patch Changes
