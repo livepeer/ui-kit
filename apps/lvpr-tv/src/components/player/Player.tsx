@@ -97,6 +97,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       jwt={props.jwt}
       src={src}
       aspectRatio={null}
+      storage={null}
     >
       <Player.Container className="flex-1 h-full w-full overflow-hidden bg-black outline-none transition-all">
         <Player.Video
