@@ -1092,7 +1092,7 @@ export const createControllerStore = ({
             volume,
             videoQuality,
           }),
-          storage: createJSONStorage(() => resolvedStorage),
+          storage: createJSONStorage(() => storage),
         },
       ),
     ),
