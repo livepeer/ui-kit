@@ -273,7 +273,8 @@ function isInIframe() {
   try {
     return typeof window !== "undefined" && window.self !== window.top;
   } catch (e) {
-    // if accessing window.top throws an exception due to cross-origin policy, the catch block will also return true,
+    // if accessing window.top throws an exception due to cross-origin policy,
+    // the catch block will also return true,
     // indicating the code is running inside an iframe
     return true;
   }
