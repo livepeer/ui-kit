@@ -61,7 +61,7 @@ const Broadcast = (
     createControllerStore({
       device: getDeviceInfo(version.react),
       storage: createStorage(
-        typeof window !== "undefined"
+        storage !== null && typeof window !== "undefined"
           ? {
               storage: window.localStorage,
             }
@@ -75,7 +75,6 @@ const Broadcast = (
         aspectRatio,
         volume: 0,
         onError,
-        storage,
         timeout,
         videoQuality,
       },
@@ -86,7 +85,7 @@ const Broadcast = (
     createBroadcastStore({
       device: getBroadcastDeviceInfo(version.react),
       storage: createStorage(
-        typeof window !== "undefined"
+        storage !== null && typeof window !== "undefined"
           ? {
               storage: window.localStorage,
             }

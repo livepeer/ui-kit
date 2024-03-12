@@ -294,7 +294,7 @@ export const source = `export const vodSource = {
       {
         hrn: "HLS (TS)",
         type: "html5/application/vnd.apple.mpegurl",
-        url: "https://lp-playback.com/hls/f5eese9wwl88k4g8/index.m3u8",
+        url: "https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/f5eese9wwl88k4g8/index.m3u8",
       },
     ],
   },
