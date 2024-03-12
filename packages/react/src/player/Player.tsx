@@ -48,6 +48,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     children,
     jwt,
     accessKey,
+    storage,
     ...rest
   } = props;
 
@@ -55,7 +56,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     createControllerStore({
       device: getDeviceInfo(version.react),
       storage: createStorage(
-        typeof window !== "undefined"
+        storage !== null && typeof window !== "undefined"
           ? {
               storage: window.localStorage,
             }

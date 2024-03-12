@@ -97,7 +97,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       jwt={props.jwt}
       src={src}
       aspectRatio={null}
-      storage={isInIframe() ? null : undefined}
+      storage={null}
     >
       <Player.Container className="flex-1 h-full w-full overflow-hidden bg-black outline-none transition-all">
         <Player.Video
@@ -268,14 +268,3 @@ export const PlayerLoading = ({
     )}
   </div>
 );
-
-function isInIframe() {
-  try {
-    return typeof window !== "undefined" && window.self !== window.top;
-  } catch (e) {
-    // if accessing window.top throws an exception due to cross-origin policy,
-    // the catch block will also return true,
-    // indicating the code is running inside an iframe
-    return true;
-  }
-}
