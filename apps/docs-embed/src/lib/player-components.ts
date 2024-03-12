@@ -208,11 +208,11 @@ const VideoQualitySelectItem = forwardRef<
 export const use_media_context = `import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
 import {
-  MediaScopedProps,
+  type MediaScopedProps,
   useMediaContext,
   useStore,
 } from "@livepeer/react/player";
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { vodSource } from "./source";
 
 export default () => {
@@ -381,7 +381,11 @@ import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
 import * as Popover from "@radix-ui/react-popover";
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
-import React, { CSSProperties, PropsWithChildren, forwardRef } from "react";
+import React, {
+  type CSSProperties,
+  type PropsWithChildren,
+  forwardRef,
+} from "react";
 import { vodSource } from "./source";
 
 const vodSourceWithThumbnail = {
@@ -1407,4 +1411,3 @@ export default () => {
     </Player.Root>
   );
 };`;
-

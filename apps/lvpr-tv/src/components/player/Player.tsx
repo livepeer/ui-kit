@@ -18,7 +18,7 @@ import { CurrentSource } from "./CurrentSource";
 
 import { livepeer } from "@/lib/livepeer";
 import { cn } from "@/lib/utils";
-import { ClipLength } from "@livepeer/react";
+import type { ClipLength } from "@livepeer/react";
 import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 

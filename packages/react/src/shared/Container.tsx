@@ -5,7 +5,7 @@ import React from "react";
 import * as RadixAspectRatio from "@radix-ui/react-aspect-ratio";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { MediaScopedProps, useMediaContext } from "./context";
+import { type MediaScopedProps, useMediaContext } from "./context";
 import * as Radix from "./primitive";
 
 const CONTAINER_NAME = "Container";

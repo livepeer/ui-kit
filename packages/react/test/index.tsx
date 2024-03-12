@@ -1,11 +1,11 @@
 import {
-  Queries,
-  RenderOptions,
-  queries,
+  type Queries,
+  type RenderOptions,
   render as defaultRender,
+  type queries,
 } from "@testing-library/react";
 
-import * as React from "react";
+import type * as React from "react";
 
 export const render = <
   Q extends Queries = typeof queries,

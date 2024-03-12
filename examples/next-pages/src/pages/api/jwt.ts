@@ -1,5 +1,5 @@
 import { signAccessJwt } from "@livepeer/react/crypto";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 export type CreateSignedPlaybackBody = {
   playbackId: string;

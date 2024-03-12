@@ -1,22 +1,22 @@
 "use client";
 
-import React, { PropsWithChildren, useEffect, useRef } from "react";
+import React, { type PropsWithChildren, useEffect, useRef } from "react";
 
 import {
-  InitialBroadcastProps,
+  type InitialBroadcastProps,
   createBroadcastStore,
   getBroadcastDeviceInfo,
 } from "@livepeer/core-web/broadcast";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
-  InitialProps,
+  type InitialProps,
   addMediaMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
-import { MediaProvider, MediaScopedProps } from "../shared/context";
-import { BroadcastProvider, BroadcastScopedProps } from "./context";
+import { MediaProvider, type MediaScopedProps } from "../shared/context";
+import { BroadcastProvider, type BroadcastScopedProps } from "./context";
 
 interface BroadcastProps
   extends PropsWithChildren<

@@ -52,7 +52,7 @@ describe("utils", () => {
     });
 
     it("formats a NaN value", () => {
-      const formatted = getFormattedHoursMinutesSeconds(NaN);
+      const formatted = getFormattedHoursMinutesSeconds(Number.NaN);
 
       expect(formatted).toMatchInlineSnapshot('"0:00"');
     });

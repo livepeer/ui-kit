@@ -2,17 +2,17 @@
 
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 
-import React, { PropsWithChildren, useEffect, useRef } from "react";
+import React, { type PropsWithChildren, useEffect, useRef } from "react";
 
 import {
-  InitialProps,
-  Src,
+  type InitialProps,
+  type Src,
   addMediaMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
-import { MediaProvider, MediaScopedProps } from "../shared/context";
+import { MediaProvider, type MediaScopedProps } from "../shared/context";
 
 interface PlayerProps
   extends PropsWithChildren<

@@ -3,9 +3,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "ESNext",
-    "typeRoots": [
-      "./global-browser"
-    ],
+    "typeRoots": ["./global-browser"],
     "strict": true,
     "strictNullChecks": true
   }

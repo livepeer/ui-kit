@@ -1,11 +1,11 @@
-import { MediaControllerStore } from "@livepeer/core/media";
-import { ClientStorage } from "@livepeer/core/storage";
+import type { MediaControllerStore } from "@livepeer/core/media";
+import type { ClientStorage } from "@livepeer/core/storage";
 import {
   createJSONStorage,
   persist,
   subscribeWithSelector,
 } from "zustand/middleware";
-import { StoreApi, createStore } from "zustand/vanilla";
+import { type StoreApi, createStore } from "zustand/vanilla";
 
 import { PERMISSIONS_ERROR_MESSAGE } from "@livepeer/core/errors";
 import { warn } from "@livepeer/core/utils";
