@@ -6,7 +6,7 @@ import { Presence } from "@radix-ui/react-presence";
 import React from "react";
 
 import { useStore } from "zustand";
-import { MediaScopedProps, useMediaContext } from "./context";
+import { type MediaScopedProps, useMediaContext } from "./context";
 
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "./primitive";

@@ -20,7 +20,7 @@ export const use_broadcast_context = `import { EnableVideoIcon, StopIcon } from 
 import * as Broadcast from "@livepeer/react/broadcast";
 import { useBroadcastContext, useStore } from "@livepeer/react/broadcast";
 import { getIngest } from "@livepeer/react/external";
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { streamKey } from "./stream-key";
 
 export default () => {
@@ -758,3 +758,4 @@ export default () => {
     </Broadcast.Root>
   );
 };`;
+

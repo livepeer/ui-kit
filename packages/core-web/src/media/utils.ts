@@ -1,4 +1,4 @@
-import { Src } from "@livepeer/core/media";
+import type { Src } from "@livepeer/core/media";
 import { noop } from "@livepeer/core/utils";
 
 export const isClient = () => typeof window !== "undefined";

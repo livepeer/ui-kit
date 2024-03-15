@@ -5,13 +5,13 @@ import * as SelectPrimitive from "../shared/Select";
 import React from "react";
 
 import { useStore } from "zustand";
-import { MediaScopedProps, useMediaContext } from "../shared/context";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { useShallow } from "zustand/react/shallow";
 
-import { PlaybackRate } from "@livepeer/core/media";
-import * as Radix from "../shared/primitive";
+import type { PlaybackRate } from "@livepeer/core/media";
+import type * as Radix from "../shared/primitive";
 
 /**
  * RateSelect

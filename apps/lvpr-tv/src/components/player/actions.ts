@@ -1,7 +1,7 @@
 "use server";
 
 import { livepeer } from "@/lib/livepeer";
-import { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/dist/models/components";
 
 export const createClip = async (opts: ClipPayload) => {
   try {

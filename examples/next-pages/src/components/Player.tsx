@@ -1,5 +1,5 @@
 import type { ApiError, CreateSignedPlaybackResponse } from "@/pages/api/jwt";
-import { Src } from "@livepeer/react";
+import type { Src } from "@livepeer/react";
 import {
   EnterFullscreenIcon,
   ExitFullscreenIcon,

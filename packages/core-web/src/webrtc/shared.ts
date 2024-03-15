@@ -1,5 +1,5 @@
 import { NOT_ACCEPTABLE_ERROR_MESSAGE } from "@livepeer/core/errors";
-import { AccessControlParams } from "@livepeer/core/media";
+import type { AccessControlParams } from "@livepeer/core/media";
 import { isClient } from "../media/utils";
 
 /**

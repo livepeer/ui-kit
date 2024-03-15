@@ -1,5 +1,5 @@
-import { ReadStream, createReadStream, statSync } from "fs";
-import { resolve } from "path";
+import { type ReadStream, createReadStream, statSync } from "node:fs";
+import { resolve } from "node:path";
 
 export function getSampleVideo(): { file: ReadStream; uploadSize: number } {
   const sampleFilePath = resolve(__dirname, "./sample.mp4");

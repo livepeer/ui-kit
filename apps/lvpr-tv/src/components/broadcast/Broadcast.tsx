@@ -39,6 +39,7 @@ export function BroadcastWithControls({
         }
         aspectRatio={null}
         ingestUrl={ingestUrl}
+        storage={null}
       >
         <Broadcast.Container className="flex-1 w-full h-full overflow-hidden rounded-sm bg-gray-950">
           <Broadcast.Video title="Live stream" className="w-full h-full" />
