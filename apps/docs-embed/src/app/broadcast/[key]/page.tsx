@@ -16,7 +16,7 @@ import Status from "@/components/broadcast/status";
 import UseBroadcastContext from "@/components/broadcast/use-broadcast-context";
 import Video from "@/components/broadcast/video";
 import {
-  BroadcastComponentKey,
+  type BroadcastComponentKey,
   CodeWithExampleServer,
   getBroadcastKeys,
 } from "@/components/code/code-server";

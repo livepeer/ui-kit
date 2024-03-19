@@ -1,4 +1,4 @@
-import { MediaControllerStore } from "@livepeer/core/media";
+import type { MediaControllerStore } from "@livepeer/core/media";
 
 import {
   ACCESS_CONTROL_ERROR_MESSAGE,
@@ -6,8 +6,8 @@ import {
   STREAM_OFFLINE_ERROR_MESSAGE,
 } from "@livepeer/core/errors";
 import { warn } from "@livepeer/core/utils";
-import { HlsConfig as HlsJsConfig } from "hls.js";
-import { HlsError, createNewHls } from "../../hls/hls";
+import type { HlsConfig as HlsJsConfig } from "hls.js";
+import { type HlsError, createNewHls } from "../../hls/hls";
 import { createNewWHEP } from "../../webrtc/whep";
 import {
   addFullscreenEventListener,

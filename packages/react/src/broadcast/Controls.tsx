@@ -7,9 +7,9 @@ import React, { useEffect, useMemo } from "react";
 import { useStore } from "zustand";
 
 import { useShallow } from "zustand/react/shallow";
-import { MediaScopedProps, useMediaContext } from "../shared/context";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
-import { BroadcastScopedProps, useBroadcastContext } from "./context";
+import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 
 const CONTROLS_NAME = "Controls";
 

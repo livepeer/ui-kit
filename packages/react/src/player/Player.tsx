@@ -2,18 +2,18 @@
 
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 
-import React, { PropsWithChildren, useEffect, useRef } from "react";
+import React, { useEffect, useRef, type PropsWithChildren } from "react";
 
 import {
-  InitialProps,
-  Src,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  type InitialProps,
+  type Src,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
-import { MediaProvider, MediaScopedProps } from "../shared/context";
+import { MediaProvider, type MediaScopedProps } from "../shared/context";
 
 interface PlayerProps
   extends PropsWithChildren<
@@ -49,6 +49,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     children,
     jwt,
     accessKey,
+    storage,
     ...rest
   } = props;
 
@@ -56,7 +57,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     createControllerStore({
       device: getDeviceInfo(version.react),
       storage: createStorage(
-        typeof window !== "undefined"
+        storage !== null && typeof window !== "undefined"
           ? {
               storage: window.localStorage,
             }

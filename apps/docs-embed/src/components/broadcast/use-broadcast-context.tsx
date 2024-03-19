@@ -4,7 +4,7 @@ import { EnableVideoIcon, StopIcon } from "@livepeer/react/assets";
 import * as Broadcast from "@livepeer/react/broadcast";
 import { useBroadcastContext, useStore } from "@livepeer/react/broadcast";
 import { getIngest } from "@livepeer/react/external";
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { streamKey } from "./stream-key";
 
 export default () => {

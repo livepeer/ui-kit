@@ -10,7 +10,7 @@ import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
 import * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
-import { BroadcastScopedProps, useBroadcastContext } from "./context";
+import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 
 /**
  * ScreenshareTrigger

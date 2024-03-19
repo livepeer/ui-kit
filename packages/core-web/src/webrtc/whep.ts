@@ -1,4 +1,4 @@
-import { AccessControlParams } from "@livepeer/core/media";
+import type { AccessControlParams } from "@livepeer/core/media";
 
 import {
   constructClientOffer,

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  MediaScopedProps,
+  type MediaScopedProps,
   useMediaContext,
   useStore,
 } from "@livepeer/react/player";

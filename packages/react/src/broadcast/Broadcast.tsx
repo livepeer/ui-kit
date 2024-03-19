@@ -1,23 +1,23 @@
 "use client";
 
-import React, { PropsWithChildren, useEffect, useRef } from "react";
+import React, { useEffect, useRef, type PropsWithChildren } from "react";
 
 import {
-  InitialBroadcastProps,
   createBroadcastStore,
   getBroadcastDeviceInfo,
+  type InitialBroadcastProps,
 } from "@livepeer/core-web/broadcast";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
-  InitialProps,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  type InitialProps,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
-import { MediaProvider, MediaScopedProps } from "../shared/context";
-import { BroadcastProvider, BroadcastScopedProps } from "./context";
+import { MediaProvider, type MediaScopedProps } from "../shared/context";
+import { BroadcastProvider, type BroadcastScopedProps } from "./context";
 
 interface BroadcastProps
   extends PropsWithChildren<
@@ -62,7 +62,7 @@ const Broadcast = (
     createControllerStore({
       device: getDeviceInfo(version.react),
       storage: createStorage(
-        typeof window !== "undefined"
+        storage !== null && typeof window !== "undefined"
           ? {
               storage: window.localStorage,
             }
@@ -76,7 +76,6 @@ const Broadcast = (
         aspectRatio,
         volume: 0,
         onError,
-        storage,
         timeout,
         videoQuality,
       },
@@ -87,7 +86,7 @@ const Broadcast = (
     createBroadcastStore({
       device: getBroadcastDeviceInfo(version.react),
       storage: createStorage(
-        typeof window !== "undefined"
+        storage !== null && typeof window !== "undefined"
           ? {
               storage: window.localStorage,
             }

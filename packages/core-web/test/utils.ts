@@ -1,5 +1,5 @@
-import fs, { ReadStream } from "fs";
-import path from "path";
+import fs, { type ReadStream } from "node:fs";
+import path from "node:path";
 
 export function getSampleVideo(): { file: ReadStream; uploadSize: number } {
   const sampleFilePath = path.resolve(__dirname, "./sample.mp4");

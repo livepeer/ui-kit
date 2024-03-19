@@ -2,20 +2,21 @@
 
 import * as SelectPrimitive from "../shared/Select";
 
+// biome-ignore lint/style/useImportType: necessary import
 import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
-import { MediaScopedProps } from "../shared/context";
+import type { MediaScopedProps } from "../shared/context";
 
-import {
+import type {
   AudioDeviceId,
   MediaDeviceInfoExtended,
 } from "@livepeer/core-web/broadcast";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
-import * as Radix from "../shared/primitive";
-import { BroadcastScopedProps, useBroadcastContext } from "./context";
+import type * as Radix from "../shared/primitive";
+import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 
 const SOURCE_SELECT_NAME = "SourceSelect";
 

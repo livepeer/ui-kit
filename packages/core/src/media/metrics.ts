@@ -1,6 +1,6 @@
-import { MediaControllerStore } from "./controller";
+import type { MediaControllerStore } from "./controller";
 import { getMetricsReportingWebsocketUrl } from "./metrics-utils";
-import { MimeType } from "./mime";
+import type { MimeType } from "./mime";
 
 type RawMetrics = {
   preloadTime: number | null;

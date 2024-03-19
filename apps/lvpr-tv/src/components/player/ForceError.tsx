@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import {
-  MediaScopedProps,
+  type MediaScopedProps,
   useMediaContext,
   useStore,
 } from "@livepeer/react/player";

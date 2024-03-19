@@ -1,4 +1,4 @@
-import { BroadcastStore } from "@livepeer/core-web/broadcast";
+import type { BroadcastStore } from "@livepeer/core-web/broadcast";
 import { createContextScope } from "@radix-ui/react-context";
 
 import type { Scope } from "@radix-ui/react-context";

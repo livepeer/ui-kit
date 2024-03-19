@@ -1,8 +1,8 @@
 import {
-  InitialProps,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  type InitialProps,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";

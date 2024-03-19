@@ -1,11 +1,11 @@
 import {
   PlayerLoading,
-  PlayerProps,
+  type PlayerProps,
   PlayerWithControls,
 } from "@/components/player/Player";
-import { Booleanish } from "@/lib/types";
+import type { Booleanish } from "@/lib/types";
 import { coerceToBoolean } from "@/lib/utils";
-import { ClipLength } from "@livepeer/react";
+import type { ClipLength } from "@livepeer/react";
 import { Suspense } from "react";
 
 type Autoplay = Booleanish;

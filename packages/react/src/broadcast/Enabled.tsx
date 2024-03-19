@@ -8,10 +8,10 @@ import { useStore } from "zustand";
 
 import { Presence } from "@radix-ui/react-presence";
 import { useShallow } from "zustand/react/shallow";
-import { MediaScopedProps, useMediaContext } from "../shared/context";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
-import { BroadcastScopedProps, useBroadcastContext } from "./context";
+import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 
 /**
  * EnabledTrigger

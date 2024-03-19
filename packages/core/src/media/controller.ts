@@ -3,9 +3,9 @@ import {
   persist,
   subscribeWithSelector,
 } from "zustand/middleware";
-import { StoreApi, createStore } from "zustand/vanilla";
+import { type StoreApi, createStore } from "zustand/vanilla";
 
-import { ImageSrc, Src, VideoQuality } from "./src";
+import type { ImageSrc, Src, VideoQuality } from "./src";
 
 import {
   isAccessControlError,
@@ -14,7 +14,7 @@ import {
   isPermissionsError,
   isStreamOfflineError,
 } from "./errors";
-import { ClientStorage, createStorage, noopStorage } from "./storage";
+import type { ClientStorage } from "./storage";
 import {
   generateRandomToken,
   getBoundedRate,
@@ -438,13 +438,6 @@ export const createControllerStore = ({
   initialProps: Partial<InitialProps>;
   playbackId?: string;
 }): { store: MediaControllerStore; destroy: () => void } => {
-  const resolvedStorage =
-    initialProps?.storage === null
-      ? createStorage({
-          storage: noopStorage,
-        })
-      : initialProps?.storage ?? storage;
-
   const initialPlaybackRate = initialProps?.playbackRate ?? 1;
   const initialVolume = getBoundedVolume(
     initialProps.volume ?? DEFAULT_VOLUME_LEVEL,
@@ -585,7 +578,7 @@ export const createControllerStore = ({
             playbackRate: initialPlaybackRate,
             posterLiveUpdate: initialProps.posterLiveUpdate ?? 30000,
             preload: initialProps.preload ?? "none",
-            storage: resolvedStorage,
+            storage,
             timeout: initialProps.timeout ?? 10000,
             videoQuality: initialVideoQuality,
             viewerId: initialProps.viewerId ?? null,
@@ -1117,7 +1110,7 @@ export const createControllerStore = ({
             volume,
             videoQuality,
           }),
-          storage: createJSONStorage(() => resolvedStorage),
+          storage: createJSONStorage(() => storage),
         },
       ),
     ),

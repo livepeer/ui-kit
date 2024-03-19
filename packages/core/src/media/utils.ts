@@ -1,9 +1,9 @@
-import { ClipParams, InitialProps } from "./controller";
+import type { ClipParams, InitialProps } from "./controller";
 import { getPlaybackIdFromSourceUrl } from "./metrics-utils";
 import {
-  Src,
-  VideoQuality,
-  VideoTrackSelector,
+  type Src,
+  type VideoQuality,
+  type VideoTrackSelector,
   getMediaSourceType,
 } from "./src";
 
@@ -25,7 +25,7 @@ export const getBoundedRate = (rate: string | number) => {
   }
   const match = String(rate).match(/(\d+(\.\d+)?)/);
   return match
-    ? Math.min(Math.max(0, getFilteredNaN(parseFloat(match[0]))), 20)
+    ? Math.min(Math.max(0, getFilteredNaN(Number.parseFloat(match[0]))), 20)
     : 1;
 };
 
