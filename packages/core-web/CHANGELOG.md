@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.2.0-next.3
+
+### Patch Changes
+
+- [#513](https://github.com/livepeer/ui-kit/pull/513) [`2dbac23`](https://github.com/livepeer/ui-kit/commit/2dbac2358b52520963c1e3f73ba4bed5014de1b2) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** split out the `page_url` to be: `domain`, `path`, `params`, and `hash`.
+
+- Updated dependencies [[`2dbac23`](https://github.com/livepeer/ui-kit/commit/2dbac2358b52520963c1e3f73ba4bed5014de1b2)]:
+  - @livepeer/core@3.2.0-next.3
+
 ## 4.2.0-next.2
 
 ### Patch Changes
