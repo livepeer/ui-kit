@@ -67,7 +67,9 @@ export function addMediaMetrics(
 
     const { destroy: destroyListeners } = addEventListeners(element, store);
 
-    const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store);
+    const { metrics, destroy: destroyMetrics } = addMediaMetricsToStore(store, {
+      disableProgressListener: opts.disableProgressListener,
+    });
 
     store
       .getState()

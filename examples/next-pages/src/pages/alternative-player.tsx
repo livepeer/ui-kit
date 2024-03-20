@@ -21,10 +21,28 @@ export default function Page({
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    const { destroy } = addMediaMetrics(ref.current);
+    const videoElement = ref.current;
 
-    return () => destroy();
-  });
+    const handlePause = () => {
+      // const event = new Event("timeupdate");
+      if (videoElement) {
+        videoElement.currentTime = 0;
+      }
+      // videoElement?.dispatchEvent(event);
+    };
+
+    videoElement?.addEventListener("pause", handlePause);
+
+    const { destroy } = addMediaMetrics(videoElement, {
+      disableProgressListener: true,
+    });
+
+    // Cleanup function to remove event listener and destroy metrics when component unmounts
+    return () => {
+      videoElement?.removeEventListener("pause", handlePause);
+      destroy();
+    };
+  }, []);
 
   return (
     <main className="flex flex-col md:flex-row min-h-screen justify-center items-center bg-black gap-12 p-10">
