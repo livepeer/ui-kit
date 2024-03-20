@@ -21,6 +21,11 @@ export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
    * If not specified, the function defaults to parsing the `src` attribute of the HTMLMediaElement to get the playback ID.
    */
   playbackId?: string;
+
+  /**
+   * Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
+   */
+  disableProgressListener?: boolean;
 };
 
 /**

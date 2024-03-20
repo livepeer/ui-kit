@@ -2,6 +2,13 @@ import type { MediaControllerStore } from "./controller";
 import { getMetricsReportingUrl } from "./metrics-utils";
 import type { MimeType } from "./mime";
 
+type MetricsOpts = {
+  /**
+   * Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
+   */
+  disableProgressListener?: boolean;
+};
+
 type RawMetrics = {
   preloadTime: number | null;
   ttff: number | null;
@@ -201,7 +208,7 @@ export class MetricsStatus {
   timeStalled = new Timer();
   timeUnpaused = new Timer();
 
-  constructor(store: MediaControllerStore) {
+  constructor(store: MediaControllerStore, opts: MetricsOpts | undefined) {
     const currentState = store.getState();
 
     this.store = store;
@@ -285,6 +292,7 @@ export class MetricsStatus {
       }
 
       if (
+        opts?.disableProgressListener !== true &&
         state.progress !== prevState.progress &&
         !this.timeUnpaused.startTime
       ) {
@@ -386,6 +394,7 @@ export type MediaMetrics = {
  */
 export function addMediaMetricsToStore(
   store: MediaControllerStore | undefined | null,
+  opts?: MetricsOpts,
 ): MediaMetrics {
   const defaultResponse: MediaMetrics = {
     metrics: null,
@@ -408,7 +417,7 @@ export function addMediaMetricsToStore(
   let timeOut: NodeJS.Timeout | null = null;
   let enabled = true;
 
-  const metricsStatus = new MetricsStatus(store);
+  const metricsStatus = new MetricsStatus(store, opts);
   const monitor = new PlaybackMonitor(store);
 
   const report = async () => {
