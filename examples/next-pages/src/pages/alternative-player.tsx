@@ -1,34 +1,17 @@
-import { livepeer } from "@/lib/livepeer";
 import { addMediaMetrics } from "@livepeer/core-web/browser";
-import { getSrc } from "@livepeer/react/external";
 
-import type { InferGetServerSidePropsType } from "next";
 import { useEffect, useRef } from "react";
 
-const playbackId = "b7f3rvvf5rnzzy29";
-
-export const getServerSideProps = async () => {
-  const playbackInfo = await livepeer.playback.get(playbackId);
-
-  const src = getSrc(playbackInfo.playbackInfo);
-
-  return { props: { src } };
-};
-
-export default function Page({
-  src,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Page() {
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     const videoElement = ref.current;
 
     const handlePause = () => {
-      // const event = new Event("timeupdate");
       if (videoElement) {
         videoElement.currentTime = 0;
       }
-      // videoElement?.dispatchEvent(event);
     };
 
     videoElement?.addEventListener("pause", handlePause);
