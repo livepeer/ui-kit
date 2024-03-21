@@ -1,10 +1,28 @@
 # @livepeer/core-react
 
+## 3.1.11
+
+### Patch Changes
+
+- [#515](https://github.com/livepeer/ui-kit/pull/515) [`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `disableProgressListener` to `addMediaMetrics` so progress events from an HTML5 video element can be ignored when monitoring for playing/paused. 
+
+- Updated dependencies [[`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80)]:
+  - @livepeer/core@3.1.11
+
+## 3.1.10
+
+### Patch Changes
+
+- [#511](https://github.com/livepeer/ui-kit/pull/511) [`5da507e`](https://github.com/livepeer/ui-kit/commit/5da507e9db8ea823fbb49dcc62eb43ac11e9ccee) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed no-op localstorage when the `storage` prop is null.
+
+- Updated dependencies [[`5da507e`](https://github.com/livepeer/ui-kit/commit/5da507e9db8ea823fbb49dcc62eb43ac11e9ccee)]:
+  - @livepeer/core@3.1.10
+
 ## 3.1.9
 
 ### Patch Changes
 
-- [#505](https://github.com/livepeer/ui-kit/pull/505) [`0875372`](https://github.com/livepeer/ui-kit/commit/08753720d424dde1e7f1c335f67838f6ecee8e25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `backoff` and `backoffMax` to the Player, which defines the time which the Player waits before attempting, as well as the cap for exponential backoff. 
+- [#505](https://github.com/livepeer/ui-kit/pull/505) [`0875372`](https://github.com/livepeer/ui-kit/commit/08753720d424dde1e7f1c335f67838f6ecee8e25) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `backoff` and `backoffMax` to the Player, which defines the time which the Player waits before attempting, as well as the cap for exponential backoff.
 
   ```tsx
   /**
