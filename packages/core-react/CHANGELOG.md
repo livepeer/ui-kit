@@ -6,7 +6,7 @@
 
 - [#518](https://github.com/livepeer/ui-kit/pull/518) [`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `element.load()` side effect from the `addEventListeners` function.
 
-- Updated dependencies [[`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7)]:
+- Updated dependencies [[`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7)]: 
   - @livepeer/core@3.1.12
 
 ## 3.1.11
