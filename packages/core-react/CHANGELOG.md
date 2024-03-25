@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.1.12
+
+### Patch Changes
+
+- [#518](https://github.com/livepeer/ui-kit/pull/518) [`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `element.load()` side effect from the `addEventListeners` function.
+
+- Updated dependencies [[`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7)]:
+  - @livepeer/core@3.1.12
+
 ## 3.1.11
 
 ### Patch Changes
 
-- [#515](https://github.com/livepeer/ui-kit/pull/515) [`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `disableProgressListener` to `addMediaMetrics` so progress events from an HTML5 video element can be ignored when monitoring for playing/paused. 
+- [#515](https://github.com/livepeer/ui-kit/pull/515) [`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `disableProgressListener` to `addMediaMetrics` so progress events from an HTML5 video element can be ignored when monitoring for playing/paused.
 
 - Updated dependencies [[`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80)]:
   - @livepeer/core@3.1.11
