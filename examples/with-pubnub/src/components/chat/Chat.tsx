@@ -1,12 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  type Channel,
-  type Message,
-  type Chat as PubNubChat,
-  User,
-} from "@pubnub/chat";
+import { type Channel, type Message, User } from "@pubnub/chat";
 import { SendHorizontal } from "lucide-react";
 import {
   type ChangeEvent,
@@ -34,9 +29,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [storedUsers, setStoredUsers] = useState<Map<string, User>>(new Map());
-  const [loading, setLoading] = useState(
-    window.location.pathname === "/" ? true : false,
-  );
+  const [loading, setLoading] = useState(false);
   const [disconnectMessageStream, setDisconnectMessageStream] = useState<
     (() => void) | undefined
   >();
@@ -67,6 +60,8 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
   useEffect(() => {
     if (!chatInstance) return;
+
+    setLoading(window.location.pathname === "/" ? true : false);
 
     // Determine if the user is the broadcaster based on the URL path
     if (typeof window !== "undefined") {
@@ -170,9 +165,9 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
       // Fetch details only for users not already in the cache
       const fetchUserDetailsPromises = userIdsToFetch.map(async (userId) => {
-        const userDetails = await chatInstance?.getUser(userId);
+        const userDetails = (await chatInstance?.getUser(userId)) ?? new User();
         // Update the cache as soon as user details are fetched
-        return userDetails ?? new User();
+        return userDetails;
       });
 
       // Wait for all the user details to be fetched and cached

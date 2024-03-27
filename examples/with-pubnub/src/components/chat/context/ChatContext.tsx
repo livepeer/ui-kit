@@ -1,7 +1,7 @@
 "use client";
 
 import { type Channel, Chat, type User } from "@pubnub/chat";
-import React, { type ReactNode, useContext, useEffect, useState } from "react";
+import React, { type ReactNode, useEffect, useState } from "react";
 
 export interface ChatType {
   chatInstance: Chat | undefined;
@@ -23,10 +23,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   /// ATTENTION: Muting / banning shoulbe be done entirely server-side it is done on the client in this case to simplify things
   const initChat = async () => {
     // Set the userId to admin if the URL path is "/" else you are a viewer and should have a random userId
-    const userId =
-      window.location.pathname === "/"
-        ? "admin"
-        : `user_${Math.floor(Math.random() * 1000)}_${Date.now()}`;
+    let userId: string | null;
+    if (window) {
+      userId =
+        window.location.pathname === "/"
+          ? "admin"
+          : `user_${Math.floor(Math.random() * 1000)}_${Date.now()}`;
+    } else {
+      userId = `user_${Math.floor(Math.random() * 1000)}_${Date.now()}`;
+    }
 
     try {
       // Intialize the PubNub instance
