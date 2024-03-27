@@ -1,12 +1,21 @@
 # @livepeer/core-react
 
+## 3.1.13
+
+### Patch Changes
+
+- [#521](https://github.com/livepeer/ui-kit/pull/521) [`6082120`](https://github.com/livepeer/ui-kit/commit/6082120c32e2f0417fb6473637840ccda18f1225) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added audio and video constraints to the Broadcast Root component.
+
+- Updated dependencies [[`6082120`](https://github.com/livepeer/ui-kit/commit/6082120c32e2f0417fb6473637840ccda18f1225)]:
+  - @livepeer/core@3.1.13
+
 ## 3.1.12
 
 ### Patch Changes
 
 - [#518](https://github.com/livepeer/ui-kit/pull/518) [`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `element.load()` side effect from the `addEventListeners` function.
 
-- Updated dependencies [[`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7)]: 
+- Updated dependencies [[`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7)]:
   - @livepeer/core@3.1.12
 
 ## 3.1.11

@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.1.13
+
+### Patch Changes
+
+- [#521](https://github.com/livepeer/ui-kit/pull/521) [`6082120`](https://github.com/livepeer/ui-kit/commit/6082120c32e2f0417fb6473637840ccda18f1225) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added audio and video constraints to the Broadcast Root component.
+
+- Updated dependencies [[`6082120`](https://github.com/livepeer/ui-kit/commit/6082120c32e2f0417fb6473637840ccda18f1225)]:
+  - @livepeer/core@3.1.13
+
 ## 4.1.12
 
 ### Patch Changes
