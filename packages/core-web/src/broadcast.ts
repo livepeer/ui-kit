@@ -110,7 +110,7 @@ export type InitialBroadcastProps = {
    *
    * Set to false to initialize the broadcast to not request an audio track.
    */
-  audio: boolean;
+  audio: boolean | MediaTrackConstraints;
 
   /**
    * The creatorId for the current broadcast.
@@ -138,7 +138,7 @@ export type InitialBroadcastProps = {
    *
    * Set to false to initialize the broadcast to not request a video track.
    */
-  video: boolean;
+  video: boolean | MediaTrackConstraints;
 };
 
 export type BroadcastAriaText = {
@@ -312,7 +312,7 @@ export const createBroadcastStore = ({
 
           __initialProps: {
             aspectRatio: initialProps?.aspectRatio ?? null,
-            audio: initialProps?.video ?? true,
+            audio: initialProps?.audio ?? true,
             creatorId: initialProps.creatorId ?? null,
             forceEnabled: initialProps?.forceEnabled ?? false,
             hotkeys: initialProps.hotkeys ?? true,
@@ -806,6 +806,8 @@ const addEffectsToStore = (
       audio: state.audio,
       requestedAudioDeviceId: state.__controls.requestedAudioInputDeviceId,
       requestedVideoDeviceId: state.__controls.requestedVideoInputDeviceId,
+      initialAudioConfig: state.__initialProps.audio,
+      initialVideoConfig: state.__initialProps.video,
       previousMediaStream: state.mediaStream,
     }),
     async ({
@@ -816,6 +818,8 @@ const addEffectsToStore = (
       requestedAudioDeviceId,
       requestedVideoDeviceId,
       previousMediaStream,
+      initialAudioConfig,
+      initialVideoConfig,
     }) => {
       try {
         if (!mounted || !hydrated) {
@@ -832,6 +836,11 @@ const addEffectsToStore = (
           video = true;
         }
 
+        const audioConstraints =
+          typeof initialAudioConfig !== "boolean" ? initialAudioConfig : null;
+        const videoConstraints =
+          typeof initialVideoConfig !== "boolean" ? initialVideoConfig : null;
+
         const stream = await (requestedVideoDeviceId === "screen"
           ? getDisplayMedia({
               // for now, only the microphone audio track is supported - we don't support multiple
@@ -840,7 +849,9 @@ const addEffectsToStore = (
 
               // we assume that if the user is requested to share screen, they want to enable video,
               // and we don't listen to the `video` enabled state
-              video: true,
+              //
+              // we apply the video constraints to the video track
+              video: videoConstraints ?? true,
             })
           : getUserMedia({
               audio:
@@ -848,23 +859,33 @@ const addEffectsToStore = (
                 requestedAudioDeviceId &&
                 requestedAudioDeviceId !== "default"
                   ? {
+                      ...(audioConstraints ? audioConstraints : {}),
                       deviceId: {
                         // we pass ideal here, so we don't get overconstrained errors
                         ideal: requestedAudioDeviceId,
                       },
                     }
-                  : Boolean(audio),
+                  : audio
+                    ? {
+                        ...(audioConstraints ? audioConstraints : {}),
+                      }
+                    : false,
               video:
                 video &&
                 requestedVideoDeviceId &&
                 requestedVideoDeviceId !== "default"
                   ? {
+                      ...(videoConstraints ? videoConstraints : {}),
                       deviceId: {
                         // we pass ideal here, so we don't get overconstrained errors
                         ideal: requestedVideoDeviceId,
                       },
                     }
-                  : Boolean(video),
+                  : video
+                    ? {
+                        ...(videoConstraints ? videoConstraints : {}),
+                      }
+                    : false,
             }));
 
         if (stream) {
