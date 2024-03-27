@@ -1,4 +1,5 @@
 import { Chat } from "@/components/chat/Chat";
+import { ChatContextProvider } from "@/components/chat/context/ChatContext";
 import type { ReactNode } from "react";
 
 export default function PlayerLayout({
@@ -22,7 +23,9 @@ export default function PlayerLayout({
         {children}
       </div>
       <div className="col-span-8 md:col-span-2 h-full">
-        <Chat playbackId={params.playbackId} />
+        <ChatContextProvider>
+          <Chat playbackId={params.playbackId} />
+        </ChatContextProvider>
       </div>
     </main>
   );

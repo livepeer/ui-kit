@@ -1,6 +1,5 @@
 "use client";
 
-import { initPubNub } from "@/lib/pubnub";
 import { cn } from "@/lib/utils";
 import {
   type Channel,
@@ -9,27 +8,41 @@ import {
   User,
 } from "@pubnub/chat";
 import { SendHorizontal } from "lucide-react";
-import { type ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Modal from "react-modal";
 import MessageComponent from "./components/message";
 import ChatSignIn from "./components/sign-in";
-
-const adminUserId = "admin"; // predefined admin user id
-const adminUserName = "Admin"; // replace with the actual admin name
+import { ChatContext, type ChatType } from "./context/ChatContext";
 
 export const Chat = ({ playbackId }: { playbackId: string }) => {
+  const {
+    chatInstance,
+    userInstance,
+    channelInstance,
+    createPubnubChannel,
+    createPubnubUser,
+  } = useContext(ChatContext) as ChatType;
+
   const [isBroadcaster, setIsBroadcaster] = useState(false);
-  const [username, setUsername] = useState("");
-  const [userSubmitted, setUserSubmitted] = useState(false);
+  const [username, setUsername] = useState<string | undefined>();
 
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [storedUsers, setStoredUsers] = useState<Map<string, User>>(new Map());
-  const [loading, setLoading] = useState(true);
-  const [disconnect, setDisconnect] = useState<(() => void) | undefined>();
-  const [presenceConnect, setPresenceConnect] = useState<
+  const [loading, setLoading] = useState(
+    window.location.pathname === "/" ? true : false,
+  );
+  const [disconnectMessageStream, setDisconnectMessageStream] = useState<
     (() => void) | undefined
   >();
-  const [isInitFinished, setInitFinished] = useState(false);
+  const [disconnectPresenseStream, setDisconnectPresenseStream] = useState<
+    (() => void) | undefined
+  >();
   const [endTimetoken, setEndTimetoken] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -50,130 +63,91 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
   // Store the input's value for chat message.
   const [inputMessage, setInputMessage] = useState<string>("");
-  const channelRef = useRef<Channel>();
-  const chatRef = useRef<PubNubChat>();
-  const userRef = useRef<User>();
   const initDoneRef = useRef(false);
 
   useEffect(() => {
-    if (initDoneRef.current) {
-      console.log("Initialization already done. Skipping...");
-      return;
-    }
+    if (!chatInstance) return;
 
     // Determine if the user is the broadcaster based on the URL path
     if (typeof window !== "undefined") {
       const path = window.location.pathname;
-      const broadcaster = path === "/"; // include your desired paths here
-
+      const broadcaster = path === "/";
       setIsBroadcaster(broadcaster);
       if (broadcaster) {
-        setUsername(adminUserName);
-        setUserSubmitted(true);
+        setUsername("Admin");
       }
     }
 
     initDoneRef.current = true;
-  }, []);
+  }, [chatInstance]);
 
   useEffect(() => {
+    // Create or retrieve and instance of a Pubnub user object
+    async function initUser() {
+      if (!chatInstance || !username) return;
+      await createPubnubUser(username);
+    }
+    initUser();
+  }, [chatInstance, username, createPubnubUser]);
+
+  useEffect(() => {
+    // Create and instance of a PubNub channel
+    async function initChannel() {
+      if (!userInstance) return;
+      await createPubnubChannel(playbackId);
+    }
+
+    initChannel();
+  }, [playbackId, userInstance, createPubnubChannel]);
+
+  useEffect(() => {
+    // This will connect the message and presense stream
     async function initChat() {
-      let chat: PubNubChat | undefined;
-      try {
-        chat = await initPubNub(
-          window.location.pathname === "/"
-            ? adminUserId
-            : `user_${Math.floor(Math.random() * 1000)}_${Date.now()}`,
-        );
-        chatRef.current = chat;
-      } catch (error) {
-        console.log(`Failed to create PubNub Instance: ${error}`);
-      }
+      if (!channelInstance || !chatInstance) return;
+      if (!loading) return;
 
-      if (chatRef.current !== null && chatRef.current !== undefined) {
-        // Create a user when Chat initializes, using the unique UUID
-        try {
-          const createdUser = await chatRef.current.currentUser.update({
-            name: window.location.pathname === "/" ? adminUserName : username,
-          });
-          userRef.current = createdUser;
-        } catch (error) {
-          console.error(`Failed to create user: ${error}`);
-        }
-      }
-      setInitFinished(true);
-    }
-    if (userSubmitted) {
-      initChat();
-    }
-  }, [userSubmitted, username]);
+      const messageStream = await channelInstance.join((message: Message) => {
+        // Callback function that adds incoming messages to the chatMessages state
+        setChatMessages((prevMessages) => [...prevMessages, message]);
+      });
 
-  useEffect(() => {
-    async function init() {
-      let channel: Channel | null | undefined;
-      if (isInitFinished) {
-        try {
-          channel = await chatRef.current?.getChannel(playbackId);
-        } catch (error) {
-          console.log(`Failed to GET channel: ${error}`);
-        }
-        if (channel !== null && channel !== undefined) {
-          channelRef.current = channel;
-          // channel can not be undefined here
-          const { disconnect: disconnectFunc } = await (
-            channel as Channel
-          ).join((message: Message) => {
-            // A simple callback function that adds incoming messages
-            // to the chatMessages state
-            (chatRef.current as PubNubChat)
-              .getUser(message.userId)
-              .then((user: User | null) => {
-                setChatMessages((prevMessages) => [...prevMessages, message]);
-              })
-              .catch((err) => console.error(`Failed to get user: ${err}`));
-          });
+      const presenceStream = await channelInstance.streamPresence(
+        (userIds: string[]) => {
+          console.log("Streaming");
+          setPresenceCount(userIds.length);
+        },
+      );
 
-          const streamPresence = await (channel as Channel).streamPresence(
-            (userIds: string[]) => {
-              setPresenceCount(userIds.length);
-            },
-          );
+      setDisconnectMessageStream(messageStream.disconnect);
+      setDisconnectPresenseStream(presenceStream);
 
-          setDisconnect(() => disconnectFunc);
-          setPresenceConnect(() => streamPresence);
-
-          moderationListeners();
-          await fetchHistory(channel);
-          await getRestrictedUsers();
-        } else {
-          const newChannel = await (
-            chatRef.current as PubNubChat
-          ).createPublicConversation({
-            channelId: playbackId,
-            channelData: {
-              name: `Group Chat - ${playbackId}`,
-              description: "Group chat for stream viewers.",
-            },
-          });
-          channelRef.current = newChannel;
-        }
-      } else {
-        if (chatRef.current === null) console.log("[CHAT IS UNDEFINED]");
-        if (userRef.current === null) console.log("[USER IS UNDEFINED]");
-      }
+      // Listen for reporting, banning and muting events
+      moderationListeners();
+      // Fetch the history from the PubNub channel
+      await fetchHistory(channelInstance);
+      // Get the current restricted users in the channel if they are either muted or banned
+      await getRestrictedUsers();
 
       setLoading(false);
     }
 
-    init();
+    initChat();
 
     return () => {
-      // runs when the component unmounts
-      disconnect?.(); // leave channel, if the function exists
-      presenceConnect?.();
+      // This function will run when the component unmounts
+      disconnectMessageStream?.(); // Disconnect the message stream on the channel
+      disconnectPresenseStream?.(); // Disconnect the presense stream on the channel
     };
-  }, [playbackId, disconnect, presenceConnect, isInitFinished]);
+  }, [
+    channelInstance,
+    chatInstance,
+    loading,
+    disconnectMessageStream,
+    disconnectPresenseStream,
+  ]);
 
+  /// Fetch history from the current channel
+  /// Stroe all the current users in the stored users
   const fetchHistory = async (channel: Channel) => {
     if (!hasMore) return;
     const histStart = endTimetoken;
@@ -196,7 +170,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
       // Fetch details only for users not already in the cache
       const fetchUserDetailsPromises = userIdsToFetch.map(async (userId) => {
-        const userDetails = await chatRef.current?.getUser(userId);
+        const userDetails = await chatInstance?.getUser(userId);
         // Update the cache as soon as user details are fetched
         return userDetails ?? new User();
       });
@@ -221,31 +195,38 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     }
   };
 
+  /// Get all the banned users in the current channel
   const getRestrictedUsers = async () => {
+    if (!channelInstance) return;
     try {
-      const { restrictions } = await (
-        channelRef.current as Channel
-      ).getUsersRestrictions();
-      // store the list of users who are banned
+      const { restrictions } = await channelInstance.getUsersRestrictions();
+      // Add the list of banned users to state
       setBannedUsers(restrictions);
     } catch (error) {
       console.error(`Failed to get restricted users: ${error}`);
     }
   };
 
+  /// Listen to moderation events such as:
+  /// Users to report misbehaving users to admin
+  /// Admins to mute misbehaving users on channels
+  /// Admins to ban misbehaving users from accessing the channel
   const moderationListeners = () => {
+    if (!chatInstance) return;
+
     // Start listening for report events
     if (isBroadcaster) {
-      (chatRef.current as PubNubChat)?.listenForEvents({
+      // Listen to moderation events reported by "users" to the admin
+      chatInstance.listenForEvents({
         channel: "PUBNUB_INTERNAL_ADMIN_CHANNEL",
         type: "report",
         callback: async (event) => {
-          const messageTimeToken: string | null = event.payload
-            ?.reportedMessageTimetoken
-            ? event.payload?.reportedMessageTimetoken
-            : null;
+          const messageTimeToken: string | null =
+            event.payload?.reportedMessageTimetoken ?? null;
           const userID: string = event.payload.reportedUserId;
 
+          // If there is a message timetoken in the payload then a message was reported
+          // If there was no message timetoken then we can assume a user is reported
           if (messageTimeToken) {
             setFlaggedMessages((prevFlaggedMessages) => [
               ...prevFlaggedMessages,
@@ -260,9 +241,10 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         },
       });
     } else {
-      // Start listening for moderation events
-      (chatRef.current as PubNubChat)?.listenForEvents({
-        channel: (chatRef.current as PubNubChat).currentUser.id,
+      // Start listening to any moderation events that might effect your the "user" access
+      // This only applies to the current user to check if you have been banned or muted
+      chatInstance.listenForEvents({
+        channel: chatInstance.currentUser.id,
         type: "moderation",
         callback: async (event) => {
           if (event.payload.restriction === "muted") {
@@ -278,6 +260,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     }
   };
 
+  /// As a user you can report a message and the admin will receive this event when listening to the "PUBNUB_INTERNAL_ADMIN_CHANNEL" for moderation events
   const flagMessage = async (message: Message) => {
     if (isBroadcaster) {
       console.log("Admin cannot flag messages");
@@ -286,10 +269,13 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
     setFlaggedMessages([...flaggedMessages, message.timetoken]);
 
+    // Report a message
     await message.report("Reported By User");
   };
 
+  /// As a user you can report another user and the admin will receive this event when listening to the "PUBNUB_INTERNAL_ADMIN_CHANNEL" for moderation events
   const flagUser = async (userId: string) => {
+    if (!chatInstance) return;
     if (isBroadcaster) {
       console.log("Admin cannot flag users");
       return;
@@ -298,15 +284,18 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     setFlaggedUsers([...flaggedUsers, userId]);
 
     // Get User
-    const user: User =
-      (await (chatRef.current as PubNubChat).getUser(userId)) ?? new User();
+    const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
+    // Report a user
     await user.report("Reported By User");
   };
 
-  const muteUser = async (userId: string) => {
+  /// As a admin you can mute another user. If you are the user that has been muted you will receive this event by listening to your userId as a channel
+  const muteUser = async (userId: string, mute: boolean) => {
+    if (!channelInstance || !chatInstance) return;
+
     if (!isBroadcaster) {
-      console.log("Only admin can handle flagged users");
+      console.log("Only an Admin can mute users");
       return;
     }
 
@@ -317,66 +306,38 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
       if (userExists)
         return prevUsers.map((user) =>
-          user.userId === userId ? { ...user, ban: false, mute: true } : user,
+          user.userId === userId ? { ...user, ban: false, mute: mute } : user,
         );
 
-      return [...prevUsers, { ban: false, mute: true, userId }];
+      return [...prevUsers, { ban: false, mute: mute, userId }];
     });
 
     // Get User
-    const user: User =
-      (await (chatRef.current as PubNubChat).getUser(userId)) ?? new User();
+    const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
-    // For mute
+    // Mute/un-mute a user
     try {
-      await (channelRef.current as Channel)?.setRestrictions(user, {
+      await channelInstance.setRestrictions(user, {
         ban: false,
-        mute: true,
-        reason: "Banned by Admin",
+        mute: mute,
+        reason: "Muted/Un-muted by Admin",
       });
-    } catch (e) {
-      console.log("Error Muting User", e);
+    } catch (error) {
+      console.log("Error Muting User: ", error);
     }
   };
 
-  const unMuteUser = async (userId: string) => {
+  /// As a admin you can ban another user. If you are the user that has been banned you will receive this event by listening to your userId as a channel
+  const banUser = async (userId: string, ban: boolean) => {
+    if (!chatInstance || !channelInstance) return;
     if (!isBroadcaster) {
-      console.log("Only admin can handle flagged users");
+      console.log("Only admin can ban users");
       return;
     }
 
-    // After successfully unmuting the user, update the bannedUsers state
-    setBannedUsers((prevUsers) => {
-      const updatedUsers = prevUsers.map((user) =>
-        user.userId === userId ? { ...user, mute: false } : user,
-      );
-      const filteredUsers = updatedUsers.filter(
-        (user) => user.userId !== userId || user.mute || user.ban,
-      );
-      return filteredUsers;
-    });
-
-    // Get User
-    const user: User =
-      (await (chatRef.current as PubNubChat).getUser(userId)) ?? new User();
-
-    try {
-      // For unmute
-      await (channelRef.current as Channel)?.setRestrictions(user, {
-        ban: false,
-        mute: false,
-        reason: "Unmuted by Admin",
-      });
-    } catch (e) {
-      console.log("Error Unmuting User", e);
-    }
-  };
-
-  const banUser = async (userId: string) => {
-    if (!isBroadcaster) {
-      console.log("Only admin can handle flagged users");
-      return;
-    }
+    // Get current user's mute status
+    const userRestrictions = bannedUsers.find((item) => item.userId === userId);
+    const muteStatus = userRestrictions ? userRestrictions.mute : false;
 
     // After successfully banning the user, add to the bannedUsers state
     setBannedUsers((prevUsers) => {
@@ -384,83 +345,53 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
       if (userExists)
         return prevUsers.map((user) =>
-          user.userId === userId ? { ...user, ban: true, mute: true } : user,
+          user.userId === userId
+            ? { ...user, ban: ban, mute: muteStatus }
+            : user,
         );
 
-      return [...prevUsers, { ban: true, mute: true, userId }];
+      return [...prevUsers, { ban: ban, mute: muteStatus, userId }];
     });
 
     // Get User
-    const user: User =
-      (await (chatRef.current as PubNubChat).getUser(userId)) ?? new User();
+    const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
-    // For ban
+    // Ban/un-ban a user
     try {
-      await (channelRef.current as Channel)?.setRestrictions(user, {
+      await channelInstance.setRestrictions(user, {
         ban: true,
         mute: true,
         reason: "Banned by Admin",
       });
-    } catch (e) {
-      console.log("Error Banning User", e);
+    } catch (error) {
+      console.log("Error Banning User: ", error);
     }
   };
 
-  const unBanUser = async (userId: string) => {
-    if (!isBroadcaster) {
-      console.log("Only admin can handle flagged users");
-      return;
-    }
-
-    // After successfully unbanning the user, update the bannedUsers state
-    setBannedUsers((prevUsers) => {
-      const updatedUsers = prevUsers.map((user) =>
-        user.userId === userId ? { ...user, ban: false } : user,
-      );
-      return updatedUsers;
-    });
-
-    // Get current user's mute status
-    const userRestrictions = bannedUsers.find((item) => item.userId === userId);
-    const muteStatus = userRestrictions ? userRestrictions.mute : false;
-
-    // Get User
-    const user: User =
-      (await (chatRef.current as PubNubChat).getUser(userId)) ?? new User();
-
-    try {
-      // For unban
-      await (channelRef.current as Channel)?.setRestrictions(user, {
-        ban: false,
-        mute: muteStatus,
-        reason: "Unbanned by Admin",
-      });
-    } catch (e) {
-      console.log("Error Unbanning User", e);
-    }
-  };
-
+  /// Handle changes to the chat input field
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputMessage(event.target.value);
   };
 
+  /// Handle the chat input field
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (channelRef.current && inputMessage) {
-      await channelRef.current.sendText(inputMessage, {
+    if (channelInstance && inputMessage) {
+      await channelInstance.sendText(inputMessage, {
         storeInHistory: true,
       });
       setInputMessage("");
     }
   };
 
+  /// Handle the scroll of the chat
   const handleScroll = async (e: React.UIEvent<HTMLElement>) => {
     const scrollTop = (e.target as HTMLElement).scrollTop;
     if (scrollTop === 0) {
       // Fetch more messages when scrolled to top
-      if (channelRef.current !== null && channelRef.current !== undefined) {
-        await fetchHistory(channelRef.current);
+      if (channelInstance) {
+        await fetchHistory(channelInstance);
       }
     }
   };
@@ -468,9 +399,8 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   // Function to handle name submission
   const handleNameSubmit = (name: string) => {
     if (name.length > 0) {
-      console.log("Ser username");
+      setLoading(true);
       setUsername(name);
-      setUserSubmitted(true);
     }
   };
 
@@ -482,7 +412,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         loading && "animate-pulse",
       )}
     >
-      {!isBroadcaster && !userSubmitted ? (
+      {!isBroadcaster && !username ? (
         <ChatSignIn submit={handleNameSubmit} />
       ) : (
         <>
@@ -516,13 +446,13 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
               >
                 {loading ? (
                   <div>
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg" />
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg" />
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg" />
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg" />
+                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
                   </div>
                 ) : (
-                  chatMessages.map((message) => {
+                  chatMessages.map((message, index) => {
                     // Check if the user is banned or muted
                     const bannedUser = bannedUsers.find(
                       (user) => user.userId === message.userId,
@@ -552,10 +482,10 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
                         isBroadcaster={isBroadcaster}
                         bannedUser={bannedUser}
                         flagCount={flagCount}
-                        banUser={banUser}
-                        muteUser={muteUser}
-                        unBanUser={unBanUser}
-                        unMuteUser={unMuteUser}
+                        banUser={(userId) => banUser(userId, true)}
+                        muteUser={(userId) => muteUser(userId, true)}
+                        unBanUser={(userId) => banUser(userId, false)}
+                        unMuteUser={(userId) => muteUser(userId, false)}
                         flagMessage={flagMessage}
                         flagUser={flagUser}
                       />
