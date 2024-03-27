@@ -110,7 +110,7 @@ export type InitialBroadcastProps = {
    *
    * Set to false to initialize the broadcast to not request an audio track.
    */
-  audio: boolean | MediaTrackConstraints;
+  audio: boolean | Omit<MediaTrackConstraints, "deviceId">;
 
   /**
    * The creatorId for the current broadcast.
@@ -138,7 +138,7 @@ export type InitialBroadcastProps = {
    *
    * Set to false to initialize the broadcast to not request a video track.
    */
-  video: boolean | MediaTrackConstraints;
+  video: boolean | Omit<MediaTrackConstraints, "deviceId">;
 };
 
 export type BroadcastAriaText = {
