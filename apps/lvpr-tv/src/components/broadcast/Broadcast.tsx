@@ -21,7 +21,8 @@ import { Settings } from "./Settings";
 
 export function BroadcastWithControls({
   ingestUrl,
-}: { ingestUrl: string | null }) {
+  ...rest
+}: { ingestUrl: string | null } & Partial<Broadcast.BroadcastProps>) {
   return !ingestUrl ? (
     <BroadcastLoading
       title="Invalid stream key"
@@ -30,6 +31,7 @@ export function BroadcastWithControls({
   ) : (
     <>
       <Broadcast.Root
+        {...rest}
         onError={(error) =>
           error?.type === "permissions"
             ? toast.error(
