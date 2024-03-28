@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.2.0-next.4
+
+### Patch Changes
+
+- [#523](https://github.com/livepeer/ui-kit/pull/523) [`f05608e`](https://github.com/livepeer/ui-kit/commit/f05608ed400c0e81c3e5bebc0f78aeeb5584fd95) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** merged fixes from `main`.
+
+- Updated dependencies [[`f05608e`](https://github.com/livepeer/ui-kit/commit/f05608ed400c0e81c3e5bebc0f78aeeb5584fd95)]:
+  - @livepeer/core-react@3.2.0-next.4
+  - @livepeer/core-web@4.2.0-next.4
+  - @livepeer/core@3.2.0-next.4
+
 ## 4.2.0-next.3
 
 ### Patch Changes
