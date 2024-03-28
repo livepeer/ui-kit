@@ -1,4 +1,5 @@
 import { Chat } from "@/components/chat/Chat";
+import { ChatContextProvider } from "@/components/chat/context/ChatContext";
 import { ArrowUpRight } from "lucide-react";
 import { cookies, headers } from "next/headers";
 import { BroadcastWithControls } from "../components/broadcast/Broadcast";
@@ -18,7 +19,7 @@ export default async function Home() {
       : null;
 
   return (
-    <main className="grid grid-cols-8 h-full relative min-h-screen bg-black">
+    <main className="grid grid-cols-8 h-full relative min-h-screen bg-black overflow-hidden">
       {!streamKey || !playbackId || !playbackUrl ? (
         <div className="flex flex-col flex-1 justify-center items-end gap-3 col-span-8">
           <h1 className="justify-center text-right flex text-3xl font-medium mr-3">
@@ -63,7 +64,9 @@ export default async function Home() {
           </div>
 
           <div className="col-span-8 md:col-span-2 h-full">
-            <Chat playbackId={playbackId} />
+            <ChatContextProvider>
+              <Chat playbackId={playbackId} />
+            </ChatContextProvider>
           </div>
         </>
       )}
