@@ -3,6 +3,13 @@ import type { MediaControllerStore, PlaybackRate } from "./controller";
 import { getMetricsReportingPOSTUrl } from "./metrics-utils";
 import type { Src, VideoQuality } from "./src";
 
+type MetricsOpts = {
+  /**
+   * Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
+   */
+  disableProgressListener?: boolean;
+};
+
 export type HeartbeatEvent = {
   // The properties below are sent on every heartbeat.
 
@@ -165,11 +172,13 @@ const globalLoadTimestampMs = Date.now();
  *
  * @param store Store to capture playback metrics from.
  * @param opts.interval The interval at which metrics are sent, in ms. Default 5000.
+ * @param opts.disableProgressListener Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
  */
 export function addMetricsToStore(
   store: MediaControllerStore | undefined | null,
   opts?: {
     interval?: number;
+    disableProgressListener?: boolean;
   },
 ): {
   destroy: () => void;
@@ -188,7 +197,9 @@ export function addMetricsToStore(
     return defaultResponse;
   }
 
-  const monitor = new MetricsMonitor(store);
+  const monitor = new MetricsMonitor(store, {
+    disableProgressListener: opts?.disableProgressListener,
+  });
 
   const isSendBeaconAvailable = "sendBeacon" in window.navigator;
 
@@ -786,7 +797,7 @@ class MetricsMonitor {
 
   timerPlaying = new Timer();
 
-  constructor(store: MediaControllerStore) {
+  constructor(store: MediaControllerStore, opts: MetricsOpts) {
     this.store = store;
 
     this.currentMetrics = {
@@ -844,11 +855,13 @@ class MetricsMonitor {
     const destroyProgressListener = store.subscribe(
       (state) => state.progress,
       async () => {
-        if (!this.timerPlaying.startTime) {
-          this.timerErrored.stop();
-          this.timerStalled.stop();
-          this.timerWaiting.stop();
-          this.timerPlaying.start();
+        if (opts.disableProgressListener) {
+          if (!this.timerPlaying.startTime) {
+            this.timerErrored.stop();
+            this.timerStalled.stop();
+            this.timerWaiting.stop();
+            this.timerPlaying.start();
+          }
         }
 
         const now = Date.now();

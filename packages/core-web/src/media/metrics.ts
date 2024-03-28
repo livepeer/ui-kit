@@ -26,6 +26,11 @@ export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
    * Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
    */
   disableProgressListener?: boolean;
+
+  /**
+   * The interval at which metrics are sent via HTTP, in ms. Default 5000.
+   */
+  interval?: number;
 };
 
 /**
@@ -69,6 +74,7 @@ export function addMediaMetrics(
 
     const { destroy: destroyMetrics } = addMetricsToStore(store, {
       disableProgressListener: opts.disableProgressListener,
+      interval: opts.interval,
     });
     const { destroy: destroyLegacyMetrics, metrics: legacyMetrics } =
       addLegacyMediaMetricsToStore(store, {
