@@ -2,6 +2,13 @@ import type { MediaControllerStore } from "./controller";
 import { getMetricsReportingWebsocketUrl } from "./metrics-utils";
 import type { MimeType } from "./mime";
 
+type MetricsOpts = {
+  /**
+   * Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
+   */
+  disableProgressListener?: boolean;
+};
+
 type RawMetrics = {
   preloadTime: number | null;
   ttff: number | null;
@@ -207,7 +214,7 @@ export class LegacyMetricsStatus {
   timeStalled = new Timer();
   timeUnpaused = new Timer();
 
-  constructor(store: MediaControllerStore) {
+  constructor(store: MediaControllerStore, opts: MetricsOpts | undefined) {
     const currentState = store.getState();
 
     this.store = store;
@@ -291,6 +298,7 @@ export class LegacyMetricsStatus {
       }
 
       if (
+        opts?.disableProgressListener !== true &&
         state.progress !== prevState.progress &&
         !this.timeUnpaused.startTime
       ) {
@@ -396,6 +404,7 @@ export type LegacyMediaMetrics = {
  */
 export function addLegacyMediaMetricsToStore(
   store: MediaControllerStore | undefined | null,
+  opts?: MetricsOpts,
 ): LegacyMediaMetrics {
   const defaultResponse: LegacyMediaMetrics = {
     metrics: null,
@@ -418,7 +427,7 @@ export function addLegacyMediaMetricsToStore(
   let timeOut: NodeJS.Timeout | null = null;
   let enabled = true;
 
-  const metricsStatus = new LegacyMetricsStatus(store);
+  const metricsStatus = new LegacyMetricsStatus(store, opts);
   const monitor = new LegacyPlaybackMonitor(store);
 
   const report = async () => {

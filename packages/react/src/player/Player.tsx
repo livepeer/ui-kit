@@ -5,11 +5,11 @@ import { getDeviceInfo } from "@livepeer/core-web/browser";
 import React, { useEffect, useRef, type PropsWithChildren } from "react";
 
 import {
+  type InitialProps,
+  type Src,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
-  type InitialProps,
-  type Src,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";

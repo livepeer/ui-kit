@@ -263,8 +263,6 @@ export const addEventListeners = (
     parentElementOrElement?.addEventListener("keyup", onKeyUp);
     parentElementOrElement?.setAttribute("tabindex", "0");
 
-    element.load();
-
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, "true");
   }
 
