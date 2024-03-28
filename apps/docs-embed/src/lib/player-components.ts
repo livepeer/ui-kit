@@ -1411,4 +1411,3 @@ export default () => {
     </Player.Root>
   );
 };`;
-

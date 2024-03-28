@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import {
-  HeartbeatEvent,
+  type HeartbeatEvent,
   IncrementalCounter,
-  PlaybackEvent,
+  type PlaybackEvent,
   PlaybackEventBuffer,
   ValueChangeTracker,
 } from "./metrics-new";

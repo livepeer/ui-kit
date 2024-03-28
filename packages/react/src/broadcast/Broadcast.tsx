@@ -3,16 +3,16 @@
 import React, { useEffect, useRef, type PropsWithChildren } from "react";
 
 import {
+  type InitialBroadcastProps,
   createBroadcastStore,
   getBroadcastDeviceInfo,
-  type InitialBroadcastProps,
 } from "@livepeer/core-web/broadcast";
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
+  type InitialProps,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
-  type InitialProps,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
