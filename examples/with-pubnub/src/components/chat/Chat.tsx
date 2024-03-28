@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { RotatingLines } from "react-loader-spinner";
 import Modal from "react-modal";
 import MessageComponent from "./components/message";
 import ChatSignIn from "./components/sign-in";
@@ -36,7 +37,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   const [disconnectPresenseStream, setDisconnectPresenseStream] = useState<
     (() => void) | undefined
   >();
-  const [endTimetoken, setEndTimetoken] = useState<string | null>(null);
+  const [endTimetoken, setEndTimetoken] = useState<string | undefined>();
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   // Add states for flagged messages and users
@@ -56,7 +57,12 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
   // Store the input's value for chat message.
   const [inputMessage, setInputMessage] = useState<string>("");
-  const initDoneRef = useRef(false);
+
+  // If we are currently fetching history
+  const [fetchingHistory, setFetchingHistory] = useState<boolean>(false);
+
+  // Inside your component function
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!chatInstance) return;
@@ -72,8 +78,6 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         setUsername("Admin");
       }
     }
-
-    initDoneRef.current = true;
   }, [chatInstance]);
 
   useEffect(() => {
@@ -90,10 +94,14 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     async function initChannel() {
       if (!userInstance) return;
       await createPubnubChannel(playbackId);
+
+      // Store the current user in the user cache
+      const newStoredUsers = new Map(storedUsers);
+      newStoredUsers.set(userInstance.id, userInstance);
     }
 
     initChannel();
-  }, [playbackId, userInstance, createPubnubChannel]);
+  }, [playbackId, userInstance, storedUsers, createPubnubChannel]);
 
   useEffect(() => {
     // This will connect the message and presense stream
@@ -101,20 +109,37 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
       if (!channelInstance || !chatInstance) return;
       if (!loading) return;
 
-      const messageStream = await channelInstance.join((message: Message) => {
-        // Callback function that adds incoming messages to the chatMessages state
-        setChatMessages((prevMessages) => [...prevMessages, message]);
-      });
+      setLoading(false);
 
+      // Join channel, able to listen to incoming messages
+      const { disconnect: messageStream } = await channelInstance.join(
+        (message: Message) => {
+          // Cache the stored user if a new user has sent a message
+          if (!storedUsers.has(message.userId)) {
+            chatInstance?.getUser(message.userId).then((user) => {
+              if (user != null) {
+                setStoredUsers((users) => {
+                  const updatedUsers = new Map(users);
+                  updatedUsers.set(user.id, user);
+                  return updatedUsers;
+                });
+              }
+            });
+          }
+          // Callback function that adds incoming messages to the chatMessages state
+          setChatMessages((prevMessages) => [...prevMessages, message]);
+        },
+      );
+
+      // Join presence stream to listen when people hav joined the channel
       const presenceStream = await channelInstance.streamPresence(
         (userIds: string[]) => {
-          console.log("Streaming");
           setPresenceCount(userIds.length);
         },
       );
 
-      setDisconnectMessageStream(messageStream.disconnect);
-      setDisconnectPresenseStream(presenceStream);
+      setDisconnectMessageStream(() => messageStream);
+      setDisconnectPresenseStream(() => presenceStream);
 
       // Listen for reporting, banning and muting events
       moderationListeners();
@@ -123,7 +148,10 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
       // Get the current restricted users in the channel if they are either muted or banned
       await getRestrictedUsers();
 
-      setLoading(false);
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
+      }
     }
 
     initChat();
@@ -137,6 +165,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     channelInstance,
     chatInstance,
     loading,
+    storedUsers,
     disconnectMessageStream,
     disconnectPresenseStream,
   ]);
@@ -144,11 +173,14 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   /// Fetch history from the current channel
   /// Stroe all the current users in the stored users
   const fetchHistory = async (channel: Channel) => {
-    if (!hasMore) return;
-    const histStart = endTimetoken;
+    if (!hasMore || fetchingHistory) return;
+    setFetchingHistory(true);
+
+    console.log("Fetching History");
+
     const history = await channel?.getHistory({
-      startTimetoken: histStart ?? "",
-      count: 30,
+      count: 20,
+      startTimetoken: endTimetoken,
     });
 
     setHasMore(history.isMore);
@@ -178,16 +210,26 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         }
         setStoredUsers(newStoredUsers);
 
+        const messages = history.messages;
+        const messages_length = messages.length;
+
+        // Offset the scroll position depending on how many messages are loaded in
+        const scroll_offset = messages_length * 40;
+
+        // Offset the scroll position
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = scroll_offset;
+        }
+
         // Update chat messages with enriched data
-        setChatMessages((prevMessages) => [
-          ...prevMessages,
-          ...history.messages,
-        ]);
+        setChatMessages((prevMessages) => [...messages, ...prevMessages]);
 
         // Set the timetoken for the next fetch
-        setEndTimetoken(history.messages[0].timetoken);
+        setEndTimetoken(messages[0].timetoken);
       });
     }
+
+    setFetchingHistory(false);
   };
 
   /// Get all the banned users in the current channel
@@ -373,9 +415,14 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     event.preventDefault();
 
     if (channelInstance && inputMessage) {
-      await channelInstance.sendText(inputMessage, {
-        storeInHistory: true,
-      });
+      console.log("Sending text message");
+      try {
+        await channelInstance.sendText(inputMessage, {
+          storeInHistory: true,
+        });
+      } catch (e) {
+        console.log("Failed to send message");
+      }
       setInputMessage("");
     }
   };
@@ -438,7 +485,15 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
               <div
                 className="min-h-[300px] max-h-[450px] md:max-h-full flex-grow overflow-scroll overflow-y-auto my-2 space-y-2"
                 onScroll={handleScroll}
+                ref={chatContainerRef}
               >
+                {fetchingHistory ? (
+                  <div className="w-full h-20 flex justify-center items-center">
+                    <RotatingLines width="40" strokeColor="grey" />
+                  </div>
+                ) : (
+                  <div />
+                )}
                 {loading ? (
                   <div>
                     <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
@@ -447,7 +502,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
                     <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
                   </div>
                 ) : (
-                  chatMessages.map((message, index) => {
+                  chatMessages.map((message) => {
                     // Check if the user is banned or muted
                     const bannedUser = bannedUsers.find(
                       (user) => user.userId === message.userId,
