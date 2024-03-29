@@ -242,7 +242,7 @@ export async function PlayerWithControls(props: PlayerProps) {
           )}
         </Player.Controls>
 
-        <Link href={props.ctaButtonLink as string} target={"_blank"}>
+        <Link href={`${props?.ctaButtonLink}`} target={"_blank"}>
           <button
             type="button"
             className="absolute bottom-20 left-1/2 -translate-x-1/2 px-5 py-2 text-lg text-white rounded-full"
