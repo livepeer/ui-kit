@@ -19,6 +19,7 @@ import { CurrentSource } from "./CurrentSource";
 import { livepeer } from "@/lib/livepeer";
 import { cn } from "@/lib/utils";
 import type { ClipLength } from "@livepeer/react";
+import Link from "next/link";
 import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 
@@ -35,6 +36,11 @@ export type PlayerProps = Partial<{
   clipLength: ClipLength | null;
   jwt: string | null;
   debug: boolean;
+
+  // custom CTA props
+  ctaButtonText: string;
+  ctaButtonColor: string;
+  ctaButtonLink: string;
 }>;
 
 const getPlaybackInfoUncached = cache(async (playbackId: string) => {
@@ -235,6 +241,16 @@ export async function PlayerWithControls(props: PlayerProps) {
             </div>
           )}
         </Player.Controls>
+
+        <Link href={props.ctaButtonLink as string} target={"_blank"}>
+          <button
+            type="button"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 px-5 py-2 text-lg text-white rounded-full"
+            style={{ backgroundColor: `#${props.ctaButtonColor}` }}
+          >
+            {props.ctaButtonText}
+          </button>
+        </Link>
       </Player.Container>
     </Player.Root>
   );
@@ -243,7 +259,10 @@ export async function PlayerWithControls(props: PlayerProps) {
 export const PlayerLoading = ({
   title,
   description,
-}: { title?: React.ReactNode; description?: React.ReactNode }) => (
+}: {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+}) => (
   <div className="relative h-full w-full px-3 py-2 gap-3 flex-col-reverse flex bg-white/10 overflow-hidden rounded-sm">
     <div className="flex justify-between">
       <div className="flex items-center gap-2">

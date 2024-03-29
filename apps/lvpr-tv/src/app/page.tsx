@@ -29,6 +29,9 @@ type PlayerSearchParams = {
   clipLength?: ClipLength;
   jwt?: string;
   debug?: Debug;
+  "cta-button-text"?: string;
+  "cta-button-color"?: string;
+  "cta-button-link"?: string;
 };
 
 export default async function PlayerPage({
@@ -37,6 +40,10 @@ export default async function PlayerPage({
   searchParams: Partial<PlayerSearchParams>;
 }) {
   const autoplay = coerceToBoolean(searchParams?.autoplay, true);
+
+  const ctaButtonText = searchParams?.["cta-button-text"];
+  const ctaButtonColor = searchParams?.["cta-button-color"];
+  const ctaButtonLink = searchParams?.["cta-button-link"];
 
   const props: PlayerProps = {
     type: "iframe",
@@ -56,8 +63,13 @@ export default async function PlayerPage({
       : null,
     jwt: searchParams?.jwt ?? null,
     debug: coerceToBoolean(searchParams?.debug, false),
+
+    ctaButtonText,
+    ctaButtonColor,
+    ctaButtonLink,
   };
 
+  console.log(ctaButtonColor);
   return (
     <main className="absolute flex flex-col justify-center items-center h-full w-full inset-0 bg-black">
       <Suspense fallback={<PlayerLoading />}>
