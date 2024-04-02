@@ -69,7 +69,6 @@ export default async function PlayerPage({
     ctaButtonLink,
   };
 
-  console.log(ctaButtonColor);
   return (
     <main className="absolute flex flex-col justify-center items-center h-full w-full inset-0 bg-black">
       <Suspense fallback={<PlayerLoading />}>
