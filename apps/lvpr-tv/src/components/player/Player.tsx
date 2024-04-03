@@ -38,29 +38,31 @@ export type PlayerProps = Partial<{
 }>;
 
 const getPlaybackInfoUncached = cache(async (playbackId: string) => {
+  const playbackInfo = await livepeer.playback.get(playbackId);
+
+  if (!playbackInfo.playbackInfo) {
+    console.error("Error fetching playback info", playbackInfo);
+
+    throw new Error("Error fetching playback info");
+  }
+
+  return playbackInfo.playbackInfo;
+});
+
+const getPlaybackInfo = (id: string) => {
   try {
-    const playbackInfo = await livepeer.playback.get(playbackId);
-
-    if (!playbackInfo.playbackInfo) {
-      console.error("Error fetching playback info", playbackInfo);
-
-      return null;
-    }
-
-    return playbackInfo.playbackInfo;
+    return unstable_cache(
+      async () => getPlaybackInfoUncached(id),
+      ["get-playback-info", id],
+      {
+        revalidate: 120,
+      },
+    )();
   } catch (e) {
     console.error(e);
     return null;
   }
-});
-
-const getPlaybackInfo = unstable_cache(
-  async (id: string) => getPlaybackInfoUncached(id),
-  ["get-playback-info"],
-  {
-    revalidate: 120,
-  },
-);
+};
 
 export async function PlayerWithControls(props: PlayerProps) {
   if (!props.playbackId && !props.url) {
