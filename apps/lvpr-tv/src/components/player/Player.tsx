@@ -49,15 +49,17 @@ const getPlaybackInfoUncached = cache(async (playbackId: string) => {
   return playbackInfo.playbackInfo;
 });
 
-const getPlaybackInfo = (id: string) => {
+const getPlaybackInfo = async (id: string) => {
   try {
-    return unstable_cache(
+    const result = await unstable_cache(
       async () => getPlaybackInfoUncached(id),
       ["get-playback-info", id],
       {
         revalidate: 120,
       },
     )();
+
+    return result;
   } catch (e) {
     console.error(e);
     return null;
