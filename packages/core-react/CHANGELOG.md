@@ -1,10 +1,37 @@
 # @livepeer/core-react
 
+## 3.1.14
+
+### Patch Changes
+
+- [#526](https://github.com/livepeer/ui-kit/pull/526) [`3f0c10a`](https://github.com/livepeer/ui-kit/commit/3f0c10ab285af7818d196299868432a7e566f590) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `playing` event listener to `addMediaMetrics`, in addition to the existing `play` event listener. 
+
+- Updated dependencies [[`3f0c10a`](https://github.com/livepeer/ui-kit/commit/3f0c10ab285af7818d196299868432a7e566f590)]:
+  - @livepeer/core@3.1.14
+
+## 3.1.13
+
+### Patch Changes
+
+- [#521](https://github.com/livepeer/ui-kit/pull/521) [`6082120`](https://github.com/livepeer/ui-kit/commit/6082120c32e2f0417fb6473637840ccda18f1225) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added audio and video constraints to the Broadcast Root component.
+
+- Updated dependencies [[`6082120`](https://github.com/livepeer/ui-kit/commit/6082120c32e2f0417fb6473637840ccda18f1225)]:
+  - @livepeer/core@3.1.13
+
+## 3.1.12
+
+### Patch Changes
+
+- [#518](https://github.com/livepeer/ui-kit/pull/518) [`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** removed `element.load()` side effect from the `addEventListeners` function.
+
+- Updated dependencies [[`95b9592`](https://github.com/livepeer/ui-kit/commit/95b959276dd5d23b1a26baa2ba881e149492c9f7)]:
+  - @livepeer/core@3.1.12
+
 ## 3.1.11
 
 ### Patch Changes
 
-- [#515](https://github.com/livepeer/ui-kit/pull/515) [`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `disableProgressListener` to `addMediaMetrics` so progress events from an HTML5 video element can be ignored when monitoring for playing/paused. 
+- [#515](https://github.com/livepeer/ui-kit/pull/515) [`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `disableProgressListener` to `addMediaMetrics` so progress events from an HTML5 video element can be ignored when monitoring for playing/paused.
 
 - Updated dependencies [[`922ff14`](https://github.com/livepeer/ui-kit/commit/922ff141ce496f78843b6fc211847725d2e57d80)]:
   - @livepeer/core@3.1.11

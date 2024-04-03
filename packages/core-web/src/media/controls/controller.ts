@@ -240,6 +240,7 @@ export const addEventListeners = (
     element.addEventListener("loadedmetadata", onLoadedMetadata);
     element.addEventListener("loadeddata", onLoadedData);
     element.addEventListener("play", onPlay);
+    element.addEventListener("playing", onPlay);
     element.addEventListener("pause", onPause);
     element.addEventListener("durationchange", onDurationChange);
     element.addEventListener("timeupdate", onTimeUpdate);
@@ -262,8 +263,6 @@ export const addEventListeners = (
 
     parentElementOrElement?.addEventListener("keyup", onKeyUp);
     parentElementOrElement?.setAttribute("tabindex", "0");
-
-    element.load();
 
     element.setAttribute(MEDIA_CONTROLLER_INITIALIZED_ATTRIBUTE, "true");
   }
@@ -308,6 +307,7 @@ export const addEventListeners = (
       element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
       element?.removeEventListener?.("loadeddata", onLoadedData);
       element?.removeEventListener?.("play", onPlay);
+      element?.removeEventListener?.("playing", onPlay);
       element?.removeEventListener?.("pause", onPause);
       element?.removeEventListener?.("durationchange", onDurationChange);
       element?.removeEventListener?.("timeupdate", onTimeUpdate);
