@@ -44,23 +44,30 @@ const getPlaybackInfoUncached = cache(async (playbackId: string) => {
     if (!playbackInfo.playbackInfo) {
       console.error("Error fetching playback info", playbackInfo);
 
-      return null;
+      throw new Error("Error fetching playback info");
     }
 
     return playbackInfo.playbackInfo;
   } catch (e) {
     console.error(e);
-    return null;
+    throw e;
   }
 });
 
-const getPlaybackInfo = unstable_cache(
-  async (id: string) => getPlaybackInfoUncached(id),
-  ["get-playback-info"],
-  {
-    revalidate: 120,
-  },
-);
+const getPlaybackInfo = (id: string) => {
+  try {
+    return unstable_cache(
+      async () => getPlaybackInfoUncached(id),
+      ["get-playback-info", id],
+      {
+        revalidate: 120,
+      },
+    )();
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
 
 export async function PlayerWithControls(props: PlayerProps) {
   if (!props.playbackId && !props.url) {
