@@ -1,3 +1,14 @@
+import { cn } from "@/lib/utils";
+import {
+  faBan,
+  faEllipsisH,
+  faExclamationTriangle,
+  faFlag,
+  faUserTimes,
+  faVolumeMute,
+  faVolumeOff,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Message } from "@pubnub/chat";
 import type React from "react";
 import { useState } from "react";
@@ -45,128 +56,126 @@ const MessageComponent: React.FC<MessageComponentProps> = ({
   flagMessage,
   flagUser,
 }) => {
-  const [onHover, setOnHover] = useState<boolean>(false);
   const [selected, setSelected] = useState<boolean>(false);
 
   return (
     <div className="flex flex-col">
       <div
         key={timetoken}
-        className="flex flex-col rounded-lg px-3 py-2 border border-white/20 text-white group/item hover:bg-neutral-900 cursor-pointer"
-        onMouseEnter={() => setOnHover(true)}
-        onMouseLeave={() => setOnHover(false)}
-        onClick={() => setSelected(!selected)}
-        onKeyPress={(event) => {
-          // Check if the Enter key or Space key was pressed
-          if (event.key === "Enter" || event.key === " ") {
-            setSelected(!selected);
-          }
-        }}
+        className="flex flex-col rounded-lg px-3 py-2 border border-pubnub-white text-white group/item"
       >
         <div className="flex justify-between">
           <span className="text-xs font-medium">{username}</span>
-          {!onHover && (
-            <div className="p-2">
-              <div className="w-4 h-4" />
-            </div>
-          )}
-          {onHover && (
-            <div>
-              <span className="block p-2">
-                <svg
-                  className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${
-                    selected ? "rotate-90" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <title>Message Arrow</title>
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5l7 7-7 7"
-                    aria-label="message-arrow"
+          {isBroadcaster ? (
+            <div className="flex flex-row">
+              {isBroadcaster && flagCount > 0 && (
+                <div className="flex flex-row items-center mr-2">
+                  <span className="text-sm text-pubnub-white">{flagCount}</span>
+                  <FontAwesomeIcon
+                    icon={faFlag}
+                    className="text-pubnub-yellow ml-1"
                   />
-                </svg>
-              </span>
-            </div>
-          )}
-        </div>
-        <span className="text-sm">{message.content.text}</span>
-        {isBroadcaster && flagCount > 0 && (
-          <span className="text-xs font-light">{`Flagged ${flagCount} time(s)`}</span>
-        )}
-      </div>
-      {selected && (
-        <div className="h-16 w-full border-l border-white/20 bg-neutral-900">
-          {isBroadcaster && (
-            <div className="flex flex-row items-center justify-start space-x-4 p-4">
-              {bannedUser?.ban ? (
+                </div>
+              )}
+              {!bannedUser?.ban && (
                 <button
                   type="button"
-                  onClick={() => unBanUser(userId)}
-                  className="h-8 pl-4 pr-4 border border-white/20 rounded-md text-white hover:bg-neutral-800 transition-colors duration-150 ease-in-out"
-                  title="Unban User"
+                  className="flex shadow items-center justify-center bg-pubnub-dark text-pubnub-white p-2 rounded-sm mr-[5px] cursor-pointer"
+                  onClick={() =>
+                    bannedUser?.mute ? unMuteUser(userId) : muteUser(userId)
+                  }
                 >
-                  Unban
-                </button>
-              ) : (
-                <>
                   {bannedUser?.mute ? (
-                    <button
-                      type="button"
-                      onClick={() => unMuteUser(userId)}
-                      className="h-8 pl-4 pr-4 border border-white/20 rounded-md text-white hover:bg-neutral-800 transition-colors duration-150 ease-in-out"
-                      title="Unmute User"
-                    >
-                      Unmute
-                    </button>
+                    <FontAwesomeIcon
+                      icon={faVolumeMute}
+                      className="h-4 w-4 text-pubnub-light-grey"
+                    />
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => muteUser(userId)}
-                      className="h-8 pl-4 pr-4 border border-white/20 rounded-md text-white hover:bg-neutral-800 transition-colors duration-150 ease-in-out"
-                      title="Mute User"
-                    >
-                      Mute
-                    </button>
+                    <FontAwesomeIcon
+                      icon={faVolumeOff}
+                      className="h-4 w-4 text-pubnub-white"
+                    />
                   )}
-                  <button
-                    type="button"
-                    onClick={() => banUser(userId)}
-                    className="h-8 pl-4 pr-4 border border-white/20 rounded-md text-white hover:bg-neutral-800 transition-colors duration-150 ease-in-out"
-                    title="Ban User"
-                  >
-                    Ban
-                  </button>
-                </>
+                </button>
+              )}
+              <button
+                type="button"
+                className="flex shadow items-center justify-center bg-pubnub-dark text-pubnub-white p-2 rounded-sm cursor-pointer"
+                onClick={() =>
+                  bannedUser?.ban ? unBanUser(userId) : banUser(userId)
+                }
+              >
+                <FontAwesomeIcon
+                  icon={faBan}
+                  className={cn(
+                    "h-4 w-4",
+                    bannedUser?.ban ? "text-pubnub-red" : "text-pubnub-white",
+                  )}
+                />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-row items-center">
+              {isMessageFlagged && (
+                <div className="p-2 justify-center">
+                  <FontAwesomeIcon
+                    icon={faExclamationTriangle}
+                    className={cn("h-4 w-4 text-pubnub-yellow")}
+                  />
+                </div>
+              )}
+              {isUserFlagged && (
+                <div className="p-2 justify-center">
+                  <FontAwesomeIcon
+                    icon={faUserTimes}
+                    className={cn("h-4 w-4 text-pubnub-red")}
+                  />
+                </div>
+              )}
+              {!isMessageFlagged && !isUserFlagged && (
+                <button
+                  type="button"
+                  className="flex shadow items-center justify-center bg-pubnub-dark text-pubnub-white p-2 rounded-sm cursor-pointer h-8"
+                  onClick={() => {
+                    setSelected(!selected);
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faEllipsisH}
+                    className="h-4 w-4 text-pubnub-white"
+                  />
+                </button>
               )}
             </div>
           )}
+        </div>
+        {message.deleted ? (
+          <div className="italic text-gray-500 text-sm">
+            This message has been deleted.
+          </div>
+        ) : (
+          <span className="text-sm">{message.content.text}</span>
+        )}
+      </div>
+      {selected && !(isMessageFlagged && isUserFlagged) && (
+        <div className="h-16 w-full border-l border-pubnub-white bg-pubnub-dark/20">
           {!isBroadcaster && (
             <div className="flex flex-row items-center justify-start space-x-4 p-4">
-              {isMessageFlagged ? (
-                <span>Message has been reported</span>
-              ) : (
+              {!isMessageFlagged && (
                 <button
                   type="button"
                   onClick={() => flagMessage(message)}
-                  className="h-8 pl-4 pr-4 border border-white/20 rounded-md text-white hover:bg-neutral-800 transition-colors duration-150 ease-in-out"
+                  className="h-8 pl-2 pr-2 border border-white/20 rounded-md text-white text-xs hover:bg-pubnub-dark transition-colors duration-150 ease-in-out"
                   title="Report Message"
                 >
                   Report Message
                 </button>
               )}
-              {isUserFlagged ? (
-                <span>User has been reported</span>
-              ) : (
+              {!isUserFlagged && (
                 <button
                   type="button"
                   onClick={() => flagUser(userId)}
-                  className="h-8 pl-4 pr-4 border border-white/20 rounded-md text-white hover:bg-neutral-800 transition-colors duration-150 ease-in-out"
+                  className="h-8 pl-2 pr-2 border border-white/20 rounded-md text-xs text-white hover:bg-pubnub-dark transition-colors duration-150 ease-in-out"
                   title="Report User"
                 >
                   Report User

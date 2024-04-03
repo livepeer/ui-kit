@@ -15,7 +15,7 @@ const ChatSignIn: React.FC<ChatSignInProps> = ({ submit }) => {
   return (
     <section>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-neutral-900 border-gray-700">
+        <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-pubnub-dark/20 border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-white">
               Join the Chat!
@@ -32,7 +32,7 @@ const ChatSignIn: React.FC<ChatSignInProps> = ({ submit }) => {
                   type="username"
                   name="username"
                   id="username"
-                  className="sm:text-sm rounded-lg block w-full p-2.5 bg-neutral-800 border-gray-600 placeholder-gray-400 text-white"
+                  className="sm:text-sm rounded-lg block w-full p-2.5 bg-pubnub-dark border-gray-600 placeholder-gray-400 text-white"
                   placeholder="username"
                   onChange={handleInputChange}
                 />
@@ -44,7 +44,7 @@ const ChatSignIn: React.FC<ChatSignInProps> = ({ submit }) => {
                       id="remember"
                       aria-describedby="remember"
                       type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                      className="w-4 h-4 border border-gray-300 rounded bg-pubnub-light-grey focus:ring-3 focus:ring-primary-300"
                     />
                   </div>
                   <div className="ml-3 text-sm">
@@ -59,7 +59,7 @@ const ChatSignIn: React.FC<ChatSignInProps> = ({ submit }) => {
               </div>
               <button
                 type="submit"
-                className="w-full h-10 bg-blue-600 hover:bg-primary-700 focus:ring-primary-80 rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full h-10 bg-pubnub-red hover:bg-pubnub-red/80 rounded-lg text-sm px-5 py-2.5 text-center"
                 onClick={() => submit(username)}
               >
                 Sign in

@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@livepeer/react": "workspace:*",
     "@pubnub/chat": "^0.6.0",
     "@radix-ui/react-popover": "^1.0.7",

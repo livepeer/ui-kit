@@ -1,7 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { type Channel, type Message, User } from "@pubnub/chat";
+import { faCog, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { type Channel, Membership, type Message, User } from "@pubnub/chat";
 import { SendHorizontal } from "lucide-react";
 import {
   type ChangeEvent,
@@ -12,6 +14,7 @@ import {
 } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import Modal from "react-modal";
+import Admin from "./components/admin";
 import MessageComponent from "./components/message";
 import ChatSignIn from "./components/sign-in";
 import { ChatContext, type ChatType } from "./context/ChatContext";
@@ -112,24 +115,31 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
       setLoading(false);
 
       // Join channel, able to listen to incoming messages
-      const { disconnect: messageStream } = await channelInstance.join(
-        (message: Message) => {
-          // Cache the stored user if a new user has sent a message
-          if (!storedUsers.has(message.userId)) {
-            chatInstance?.getUser(message.userId).then((user) => {
-              if (user != null) {
-                setStoredUsers((users) => {
-                  const updatedUsers = new Map(users);
-                  updatedUsers.set(user.id, user);
-                  return updatedUsers;
-                });
-              }
-            });
+      await channelInstance.join((message: Message) => {
+        // Cache the stored user if a new user has sent a message
+        if (!storedUsers.has(message.userId)) {
+          chatInstance?.getUser(message.userId).then((user) => {
+            if (user != null) {
+              setStoredUsers((users) => {
+                const updatedUsers = new Map(users);
+                updatedUsers.set(user.id, user);
+                return updatedUsers;
+              });
+            }
+          });
+        }
+
+        // Callback function that adds incoming messages to the chatMessages state
+        setChatMessages((prevMessages) => [...prevMessages, message]);
+
+        // Scroll the chat to the bottom if you receive a message
+        setTimeout(() => {
+          if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+              chatContainerRef.current.scrollHeight;
           }
-          // Callback function that adds incoming messages to the chatMessages state
-          setChatMessages((prevMessages) => [...prevMessages, message]);
-        },
-      );
+        }, 200);
+      });
 
       // Join presence stream to listen when people hav joined the channel
       const presenceStream = await channelInstance.streamPresence(
@@ -138,7 +148,6 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         },
       );
 
-      setDisconnectMessageStream(() => messageStream);
       setDisconnectPresenseStream(() => presenceStream);
 
       // Listen for reporting, banning and muting events
@@ -176,8 +185,6 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     if (!hasMore || fetchingHistory) return;
     setFetchingHistory(true);
 
-    console.log("Fetching History");
-
     const history = await channel?.getHistory({
       count: 20,
       startTimetoken: endTimetoken,
@@ -214,7 +221,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         const messages_length = messages.length;
 
         // Offset the scroll position depending on how many messages are loaded in
-        const scroll_offset = messages_length * 40;
+        const scroll_offset = messages_length * 10;
 
         // Offset the scroll position
         if (chatContainerRef.current) {
@@ -284,11 +291,16 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         channel: chatInstance.currentUser.id,
         type: "moderation",
         callback: async (event) => {
+          console.log("This is the restriction: ");
+          console.log(event.payload.restriction);
           if (event.payload.restriction === "muted") {
+            setBanStatus(false);
             setMuteStatus(true);
           } else if (event.payload.restriction === "banned") {
             setBanStatus(true);
-          } else if (event.payload.restricted === "lifted") {
+            setMuteStatus(true);
+          } else if (event.payload.restriction === "lifted") {
+            console.log("Lifting the ban");
             setBanStatus(false);
             setMuteStatus(false);
           }
@@ -396,8 +408,8 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     // Ban/un-ban a user
     try {
       await channelInstance.setRestrictions(user, {
-        ban: true,
-        mute: true,
+        ban: ban,
+        mute: muteStatus,
         reason: "Banned by Admin",
       });
     } catch (error) {
@@ -410,20 +422,51 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     setInputMessage(event.target.value);
   };
 
-  /// Handle the chat input field
+  /// Handle the chat input field (Send Message)
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (channelInstance && inputMessage) {
-      console.log("Sending text message");
       try {
+        console.log("Sending message");
         await channelInstance.sendText(inputMessage, {
           storeInHistory: true,
         });
       } catch (e) {
-        console.log("Failed to send message");
+        console.log("Failed to send message: ", e);
       }
       setInputMessage("");
+    }
+  };
+
+  /// Delete a Message
+  const deleteMessage = async (messageToDelete: Message) => {
+    // Soft delete a message so it is able to be restored
+    const newMessage: Message = (await messageToDelete.delete({
+      soft: true,
+    })) as Message;
+
+    // Update the local state for the deleted message
+    // Use message.timetoken to locate the message in the list
+    setChatMessages((prevMessages) =>
+      prevMessages.map((message) =>
+        message.timetoken === newMessage.timetoken ? newMessage : message,
+      ),
+    );
+  };
+
+  /// Restore a Message
+  const restoreMessage = async (messageToRestore: Message) => {
+    // Restore the deleted message
+    const newMessage = await messageToRestore.restore();
+
+    // Update local state for restored message
+    if (newMessage) {
+      setChatMessages((prevMessages) =>
+        prevMessages.map((message) =>
+          message.timetoken === newMessage.timetoken ? newMessage : message,
+        ),
+      );
     }
   };
 
@@ -450,7 +493,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   return (
     <div
       className={cn(
-        "relative h-screen w-full flex flex-col px-3 py-4 mx-auto justify-between bg-white/10 rounded-sm",
+        "relative w-full h-screen max-h-96 md:max-h-full flex flex-col px-3 py-4 mx-auto justify-center bg-pubnub-dark/20 rounded-sm",
         loading && "animate-pulse",
       )}
     >
@@ -458,32 +501,25 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         <ChatSignIn submit={handleNameSubmit} />
       ) : (
         <>
-          {isBroadcaster && (
-            <div className="flex flex-row">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-              >
-                Admin Dashboard
-              </button>
-            </div>
-          )}
-          <span>Users: {presenceCount}</span>
           {isUserBanned ? (
-            <div>You have been banned</div>
+            <div className="flex justify-center items-center flex-col">
+              <h2 className="text-2xl font-bold text-pubnub-white">
+                You have been banned!
+              </h2>
+              <img
+                src="/banned.png"
+                alt="Description"
+                width={200}
+                height={200}
+              />
+            </div>
           ) : (
             <div
-              className={cn(
-                "h-full",
-                isBroadcaster ? "pb-[115px]" : "pb-[90px]",
-              )}
+              className={cn("h-full", isUserMuted ? "pb-[15px]" : "pb-[100px]")}
             >
-              <span className="text-sm font-semibold">Stream chat</span>
-              <span className="my-2 h-px w-full bg-gradient-to-r from-white/20 via-white/40 to-white/20" />
+              <span className="my-2 h-px w-full" />
               <div
-                className="min-h-[300px] max-h-[450px] md:max-h-full flex-grow overflow-scroll overflow-y-auto my-2 space-y-2"
+                className="min-h-[250px] max-h-[250px] md:max-h-full flex-grow overflow-scroll overflow-y-auto my-2 space-y-2"
                 onScroll={handleScroll}
                 ref={chatContainerRef}
               >
@@ -496,10 +532,10 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
                 )}
                 {loading ? (
                   <div>
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
-                    <div className="w-full h-10 animate-pulse bg-white/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-pubnub-dark/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-pubnub-dark/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-pubnub-dark/5 rounded-lg mt-2" />
+                    <div className="w-full h-10 animate-pulse bg-pubnub-dark/5 rounded-lg mt-2" />
                   </div>
                 ) : (
                   chatMessages.map((message) => {
@@ -548,12 +584,12 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
           {isUserMuted || isUserBanned ? (
             <div />
           ) : (
-            <div className="absolute bottom-2 left-2 right-2">
+            <div className="absolute bottom-2 left-2 right-2 flex flex-col bg-black">
               <label className="sr-only" htmlFor="message" />
               <form onSubmit={handleFormSubmit} className="w-full relative">
                 <input
                   name="message"
-                  className="flex h-9 pr-8 w-full rounded-md border border-white/30 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 pr-8 w-full rounded-md border border-pubnub-white bg-pubnub-dark/20 px-3 py-1 text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
                   type="text"
                   value={inputMessage}
                   disabled={loading}
@@ -568,119 +604,60 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
                   </button>
                 </div>
               </form>
+              <div className="w-full h-[50px] pl-2 pr-2 bg-pubnub-dark/20">
+                <div className="flex flex-row items-center mt-[10px] justify-between">
+                  <div className="">
+                    <FontAwesomeIcon icon={faUser} size="sm" />
+                    <span className="ml-[10px]">{presenceCount}</span>
+                  </div>
+                  {isBroadcaster ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faCog} size="sm" />
+                    </button>
+                  ) : (
+                    <div />
+                  )}
+                </div>
+              </div>
             </div>
           )}
           <Modal
             isOpen={isModalOpen}
             onRequestClose={() => setIsModalOpen(false)}
             style={{
-              // Customizable styles
-              overlay: {},
-              content: {},
+              // Customizable styles for overlay and content
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.75)",
+              },
+              content: {
+                backgroundColor: "#161C2D",
+                width: "50%",
+                height: "auto",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                transform: "translate(-50%, -50%)",
+                padding: "0px",
+              },
             }}
             ariaHideApp={false}
           >
-            <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h2
-                id="restricted-users-title"
-                className="text-lg leading-6 font-medium text-gray-900"
-              >
-                Restricted Users
-              </h2>
-              <div className="border-b border-gray-300 my-2" />
-              {bannedUsers.map((user, index) => (
-                <div
-                  className="text-md font-medium text-gray-900"
-                  key={user.userId}
-                >
-                  <p>{storedUsers.get(user.userId)?.name ?? ""}</p>
-                  <p>Banned: {user.ban ? "Yes" : "No"}</p>
-                  <p>Muted: {user.mute ? "Yes" : "No"}</p>
-                  <div className="border-b border-gray-300 my-2" />
-                </div>
-              ))}
-              <h2
-                id="restricted-users-title"
-                className="text-lg leading-6 font-medium text-gray-900"
-              >
-                Flagged Users
-              </h2>
-              <div className="border-b border-gray-300 my-2" />
-              {Array.from(new Set(flaggedUsers))
-                .sort(
-                  (a, b) =>
-                    flaggedUsers.filter((v) => v === b).length -
-                    flaggedUsers.filter((v) => v === a).length,
-                )
-                .map((userId, index) => {
-                  const user = bannedUsers.find(
-                    (user) => user.userId === userId,
-                  );
-                  const flagCount = flaggedUsers.filter(
-                    (id) => id === userId,
-                  ).length;
-                  return (
-                    <div
-                      className="text-md font-medium text-gray-900"
-                      key={userId}
-                    >
-                      <p>
-                        {storedUsers.get(userId)?.name ?? ""} (Flagged{" "}
-                        {flagCount} times)
-                      </p>
-                      <p>Banned: {user?.ban ? "Yes" : "No"}</p>
-                      <p>Muted: {user?.mute ? "Yes" : "No"}</p>
-                      <div className="border-b border-gray-300 my-2" />
-                    </div>
-                  );
-                })}
-            </div>
-
-            <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h2
-                id="restricted-messages-title"
-                className="text-lg leading-6 font-medium text-gray-900"
-              >
-                Flagged Messages
-              </h2>
-              <div className="border-b border-gray-300 my-2" />
-              {Array.from(new Set(flaggedMessages))
-                .sort(
-                  (a, b) =>
-                    flaggedMessages.filter((v) => v === b).length -
-                    flaggedMessages.filter((v) => v === a).length,
-                )
-                .map((timetoken, index) => {
-                  const message = chatMessages.find(
-                    (message) => message.timetoken === timetoken,
-                  );
-                  const flagCount = flaggedMessages.filter(
-                    (id) => id === timetoken,
-                  ).length;
-                  return (
-                    message && (
-                      <div
-                        className="text-md font-medium text-gray-900"
-                        key={timetoken}
-                      >
-                        <p>
-                          {message.content.text} (Flagged {flagCount} times)
-                        </p>
-                        <div className="border-b border-gray-300 my-2" />
-                      </div>
-                    )
-                  );
-                })}
-            </div>
-            <div className="px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                type="button"
-                className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white ml-3 text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-0 sm:mr-3 sm:w-auto sm:text-sm"
-              >
-                Close
-              </button>
-            </div>
+            <Admin
+              bannedUsers={bannedUsers}
+              flaggedUsers={flaggedUsers}
+              flaggedMessages={flaggedMessages}
+              storedUsers={storedUsers}
+              chatMessages={chatMessages}
+              setIsModalOpen={setIsModalOpen}
+              deleteMessage={deleteMessage}
+              restoreMessage={restoreMessage}
+            />
           </Modal>
         </>
       )}
