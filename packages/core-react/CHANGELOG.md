@@ -1,5 +1,14 @@
 # @livepeer/core-react
 
+## 3.1.14
+
+### Patch Changes
+
+- [#526](https://github.com/livepeer/ui-kit/pull/526) [`3f0c10a`](https://github.com/livepeer/ui-kit/commit/3f0c10ab285af7818d196299868432a7e566f590) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `playing` event listener to `addMediaMetrics`, in addition to the existing `play` event listener.
+
+- Updated dependencies [[`3f0c10a`](https://github.com/livepeer/ui-kit/commit/3f0c10ab285af7818d196299868432a7e566f590)]:
+  - @livepeer/core@3.1.14
+
 ## 3.1.13
 
 ### Patch Changes
