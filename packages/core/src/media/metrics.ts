@@ -288,6 +288,8 @@ export class MetricsStatus {
           this.timeUnpaused.start();
         } else {
           this.timeUnpaused.stop();
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
         }
       }
 
@@ -301,13 +303,27 @@ export class MetricsStatus {
         this.timeUnpaused.start();
       }
 
-      if (state.stalled !== prevState.stalled && state.stalled) {
-        this.timeStalled.start();
-        this.timeUnpaused.stop();
+      if (state.stalled !== prevState.stalled) {
+        if (state.stalled) {
+          this.timeStalled.start();
+          this.timeUnpaused.stop();
+        } else if (state.playing) {
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
+
+          this.timeUnpaused.start();
+        }
       }
-      if (state.waiting !== prevState.waiting && state.waiting) {
-        this.timeWaiting.start();
-        this.timeUnpaused.stop();
+      if (state.waiting !== prevState.waiting) {
+        if (state.waiting) {
+          this.timeWaiting.start();
+          this.timeUnpaused.stop();
+        } else if (state.playing) {
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
+
+          this.timeUnpaused.start();
+        }
       }
     });
   }
