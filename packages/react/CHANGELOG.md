@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.1.15
+
+### Patch Changes
+
+- [#530](https://github.com/livepeer/ui-kit/pull/530) [`adbd11b`](https://github.com/livepeer/ui-kit/commit/adbd11b404888af813c7dcea04a76c9e9a450124) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for metrics using `disableProgressListener` where the metrics does not register a `playing` event.
+
+- Updated dependencies [[`adbd11b`](https://github.com/livepeer/ui-kit/commit/adbd11b404888af813c7dcea04a76c9e9a450124)]:
+  - @livepeer/core@3.1.15
+  - @livepeer/core-react@3.1.15
+  - @livepeer/core-web@4.1.15
+
 ## 4.1.14
 
 ### Patch Changes
