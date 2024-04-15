@@ -1,5 +1,5 @@
-const core = "@livepeer/core@3.1.14";
-const react = "@livepeer/react@4.1.14";
+const core = "@livepeer/core@3.1.15";
+const react = "@livepeer/react@4.1.15";
 
 export const version = {
   core,

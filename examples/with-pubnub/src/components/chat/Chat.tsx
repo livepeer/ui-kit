@@ -92,6 +92,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
           ) : (
             chatMessages.map((message) => (
               <div
+                key={message.id}
                 id={message.id}
                 className="flex flex-col rounded-lg px-3 py-2 border border-white/20"
               >
