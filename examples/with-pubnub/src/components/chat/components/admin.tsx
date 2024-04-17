@@ -35,20 +35,21 @@ const Admin: React.FC<AdminProps> = ({
     <div className="h-96 bg-pubnub-dark">
       <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <Dropdown title="Restricted Users">
-          {bannedUsers.map((user, index) => {
+          {bannedUsers.map((user) => {
             const userDetails = storedUsers.get(user.userId);
 
             return (
-              userDetails &&
-              (user.ban || user.mute) && (
-                <RestrictedUserCard
-                  key={user.userId}
-                  userId={user.userId}
-                  name={userDetails.name ?? ""}
-                  ban={user.ban}
-                  mute={user.mute}
-                />
-              )
+              <div key={user.userId}>
+                {userDetails && (user.ban || user.mute) && (
+                  <RestrictedUserCard
+                    key={user.userId}
+                    userId={user.userId}
+                    name={userDetails.name ?? ""}
+                    ban={user.ban}
+                    mute={user.mute}
+                  />
+                )}
+              </div>
             );
           })}
         </Dropdown>
@@ -68,21 +69,21 @@ const Admin: React.FC<AdminProps> = ({
               const userDetails = storedUsers.get(user?.userId ?? "");
 
               return (
-                user &&
-                userDetails && (
-                  <FlaggedUserCard
-                    key={user.userId}
-                    userId={user.userId}
-                    name={userDetails.name ?? ""}
-                    ban={user.ban}
-                    mute={user.mute}
-                    flagCount={flagCount}
-                  />
-                )
+                <div key={userId}>
+                  {user && userDetails && (
+                    <FlaggedUserCard
+                      userId={user.userId}
+                      name={userDetails.name ?? ""}
+                      ban={user.ban}
+                      mute={user.mute}
+                      flagCount={flagCount}
+                    />
+                  )}
+                </div>
               );
             })}
         </Dropdown>
-        <Dropdown title="Flagged Messages">
+        <Dropdown key="Flagged Messages" title="Flagged Messages">
           {Array.from(new Set(flaggedMessages))
             .sort(
               (a, b) =>
@@ -103,20 +104,20 @@ const Admin: React.FC<AdminProps> = ({
               const userDetails = storedUsers.get(message?.userId ?? "");
 
               return (
-                message &&
-                userDetails && (
-                  <FlaggedMessageCard
-                    key={userDetails.id}
-                    userId={userDetails.id}
-                    name={userDetails?.name ?? ""}
-                    ban={user?.ban ?? false}
-                    mute={user?.mute ?? false}
-                    flagCount={flagCount}
-                    message={message}
-                    deleteMessage={deleteMessage}
-                    restoreMessage={restoreMessage}
-                  />
-                )
+                <div key={timetoken}>
+                  {message && userDetails && (
+                    <FlaggedMessageCard
+                      userId={userDetails.id}
+                      name={userDetails.name ?? ""}
+                      ban={user?.ban ?? false}
+                      mute={user?.mute ?? false}
+                      flagCount={flagCount}
+                      message={message}
+                      deleteMessage={deleteMessage}
+                      restoreMessage={restoreMessage}
+                    />
+                  )}
+                </div>
               );
             })}
         </Dropdown>

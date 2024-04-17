@@ -5,6 +5,7 @@ import { faCog, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Channel, Membership, type Message, User } from "@pubnub/chat";
 import { SendHorizontal } from "lucide-react";
+import { usePathname } from "next/navigation";
 import {
   type ChangeEvent,
   useContext,
@@ -27,6 +28,8 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     createPubnubChannel,
     createPubnubUser,
   } = useContext(ChatContext) as ChatType;
+
+  const pathname = usePathname();
 
   const [isBroadcaster, setIsBroadcaster] = useState(false);
   const [username, setUsername] = useState<string | undefined>();
@@ -70,18 +73,17 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   useEffect(() => {
     if (!chatInstance) return;
 
-    setLoading(window.location.pathname === "/" ? true : false);
+    const isBroadcaster = pathname === "/";
+
+    setLoading(isBroadcaster);
 
     // Determine if the user is the broadcaster based on the URL path
-    if (typeof window !== "undefined") {
-      const path = window.location.pathname;
-      const broadcaster = path === "/";
-      setIsBroadcaster(broadcaster);
-      if (broadcaster) {
-        setUsername("Admin");
-      }
+    setIsBroadcaster(isBroadcaster);
+
+    if (isBroadcaster) {
+      setUsername("Admin");
     }
-  }, [chatInstance]);
+  }, [chatInstance, pathname]);
 
   useEffect(() => {
     // Create or retrieve and instance of a Pubnub user object
@@ -291,8 +293,6 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         channel: chatInstance.currentUser.id,
         type: "moderation",
         callback: async (event) => {
-          console.log("This is the restriction: ");
-          console.log(event.payload.restriction);
           if (event.payload.restriction === "muted") {
             setBanStatus(false);
             setMuteStatus(true);
@@ -300,7 +300,6 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
             setBanStatus(true);
             setMuteStatus(true);
           } else if (event.payload.restriction === "lifted") {
-            console.log("Lifting the ban");
             setBanStatus(false);
             setMuteStatus(false);
           }
@@ -428,7 +427,6 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
     if (channelInstance && inputMessage) {
       try {
-        console.log("Sending message");
         await channelInstance.sendText(inputMessage, {
           storeInHistory: true,
         });

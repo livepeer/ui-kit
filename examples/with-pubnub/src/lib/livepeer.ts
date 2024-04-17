@@ -39,8 +39,6 @@ export const getPlaybackInfo = unstable_cache(
 );
 
 export const createStreamClip = async (opts: ClipPayload) => {
-  console.log(process.env.STUDIO_API_KEY);
-  console.log(JSON.stringify(process.env));
   const result = await livepeer.stream.createClip(opts);
 
   return result;
