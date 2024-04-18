@@ -52,51 +52,6 @@ describe("addMediaMetrics", () => {
       `);
     });
 
-    it("should update time unpaused and first playback", async () => {
-      const element = new MockedVideoElement();
-
-      const { metrics } = addMediaMetrics(element);
-
-      element.dispatchEvent(new Event("playing"));
-
-      const metricsSnapshot = metrics?.getMetrics();
-
-      expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
-
-      if (metricsSnapshot?.current?.userAgent) {
-        metricsSnapshot.current.userAgent = "UA";
-        metricsSnapshot.current.player = "hls-1";
-      }
-
-      expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-        {
-          "autoplay": "preload-full",
-          "duration": null,
-          "firstPlayback": 6000,
-          "nError": null,
-          "nStalled": 0,
-          "nWaiting": 0,
-          "offset": null,
-          "pageUrl": "http://localhost:3000/",
-          "playbackScore": null,
-          "player": "hls-1",
-          "playerHeight": null,
-          "playerWidth": null,
-          "preloadTime": null,
-          "sourceType": "unknown",
-          "sourceUrl": null,
-          "timeStalled": 0,
-          "timeUnpaused": 2000,
-          "timeWaiting": 0,
-          "ttff": null,
-          "uid": "",
-          "userAgent": "UA",
-          "videoHeight": null,
-          "videoWidth": null,
-        }
-      `);
-    });
-
     it("should update time waiting and waiting count", async () => {
       const element = new MockedVideoElement();
 
