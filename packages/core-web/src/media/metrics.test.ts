@@ -23,6 +23,8 @@ describe("addMediaMetrics", () => {
         metricsSnapshot.current.player = "hls-1";
       }
 
+      metrics?.setFirstFrameTime();
+
       expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
         {
           "autoplay": "preload-full",
@@ -72,7 +74,7 @@ describe("addMediaMetrics", () => {
         {
           "autoplay": "preload-full",
           "duration": null,
-          "firstPlayback": 8000,
+          "firstPlayback": 11000,
           "nError": null,
           "nStalled": 0,
           "nWaiting": 0,
@@ -82,7 +84,7 @@ describe("addMediaMetrics", () => {
           "player": "hls-1",
           "playerHeight": null,
           "playerWidth": null,
-          "preloadTime": 6000,
+          "preloadTime": null,
           "sourceType": "unknown",
           "sourceUrl": null,
           "timeStalled": 0,
