@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { MockedVideoElement, resetDateNow } from "../../test";
 import { addMediaMetrics } from "./metrics";
 
 describe("addMediaMetrics", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     resetDateNow();
   });
 
@@ -72,7 +72,7 @@ describe("addMediaMetrics", () => {
         {
           "autoplay": "preload-full",
           "duration": null,
-          "firstPlayback": 8000,
+          "firstPlayback": 6000,
           "nError": null,
           "nStalled": 0,
           "nWaiting": 0,
