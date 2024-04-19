@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.1.16
+
+### Patch Changes
+
+- [#533](https://github.com/livepeer/ui-kit/pull/533) [`c0aa640`](https://github.com/livepeer/ui-kit/commit/c0aa640ceba06187d964e66c1be174f4bae801ed) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed metrics to report `preloadTime` as the time between connecting `addMediaMetrics` and the first `play` event.
+
+- Updated dependencies [[`c0aa640`](https://github.com/livepeer/ui-kit/commit/c0aa640ceba06187d964e66c1be174f4bae801ed)]:
+  - @livepeer/core@3.1.16
+
 ## 4.1.15
 
 ### Patch Changes
