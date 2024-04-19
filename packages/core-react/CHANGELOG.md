@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.1.17
+
+### Patch Changes
+
+- [#535](https://github.com/livepeer/ui-kit/pull/535) [`8684ce1`](https://github.com/livepeer/ui-kit/commit/8684ce1ad8ba8afeaadaa394e71306f697c13311) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed an issue where `onError` gets called with `null` in the `addMediaMetrics` plugin, when there is no error.
+
+- Updated dependencies [[`8684ce1`](https://github.com/livepeer/ui-kit/commit/8684ce1ad8ba8afeaadaa394e71306f697c13311)]:
+  - @livepeer/core@3.1.17
+
 ## 3.1.16
 
 ### Patch Changes
 
-- [#533](https://github.com/livepeer/ui-kit/pull/533) [`c0aa640`](https://github.com/livepeer/ui-kit/commit/c0aa640ceba06187d964e66c1be174f4bae801ed) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed metrics to report `preloadTime` as the time between connecting `addMediaMetrics` and the first `play` event. 
+- [#533](https://github.com/livepeer/ui-kit/pull/533) [`c0aa640`](https://github.com/livepeer/ui-kit/commit/c0aa640ceba06187d964e66c1be174f4bae801ed) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed metrics to report `preloadTime` as the time between connecting `addMediaMetrics` and the first `play` event.
 
 - Updated dependencies [[`c0aa640`](https://github.com/livepeer/ui-kit/commit/c0aa640ceba06187d964e66c1be174f4bae801ed)]:
   - @livepeer/core@3.1.16
