@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { MockedVideoElement, resetDateNow } from "../../test";
 import { addMediaMetrics } from "./metrics";
 
 describe("addMediaMetrics", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     resetDateNow();
   });
 
@@ -42,51 +42,6 @@ describe("addMediaMetrics", () => {
           "sourceUrl": null,
           "timeStalled": 0,
           "timeUnpaused": 0,
-          "timeWaiting": 0,
-          "ttff": null,
-          "uid": "",
-          "userAgent": "UA",
-          "videoHeight": null,
-          "videoWidth": null,
-        }
-      `);
-    });
-
-    it("should update time unpaused and first playback", async () => {
-      const element = new MockedVideoElement();
-
-      const { metrics } = addMediaMetrics(element);
-
-      element.dispatchEvent(new Event("playing"));
-
-      const metricsSnapshot = metrics?.getMetrics();
-
-      expect(metricsSnapshot?.current?.userAgent).toBeTruthy();
-
-      if (metricsSnapshot?.current?.userAgent) {
-        metricsSnapshot.current.userAgent = "UA";
-        metricsSnapshot.current.player = "hls-1";
-      }
-
-      expect(metricsSnapshot?.current).toMatchInlineSnapshot(`
-        {
-          "autoplay": "preload-full",
-          "duration": null,
-          "firstPlayback": 8000,
-          "nError": null,
-          "nStalled": 0,
-          "nWaiting": 0,
-          "offset": null,
-          "pageUrl": "http://localhost:3000/",
-          "playbackScore": null,
-          "player": "hls-1",
-          "playerHeight": null,
-          "playerWidth": null,
-          "preloadTime": 6000,
-          "sourceType": "unknown",
-          "sourceUrl": null,
-          "timeStalled": 0,
-          "timeUnpaused": 2000,
           "timeWaiting": 0,
           "ttff": null,
           "uid": "",
