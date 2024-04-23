@@ -21,8 +21,12 @@ import { Settings } from "./Settings";
 
 export function BroadcastWithControls({
   ingestUrl,
+  hideEnabled,
   ...rest
-}: { ingestUrl: string | null } & Partial<Broadcast.BroadcastProps>) {
+}: {
+  ingestUrl: string | null;
+  hideEnabled: boolean;
+} & Partial<Broadcast.BroadcastProps>) {
   return !ingestUrl ? (
     <BroadcastLoading
       title="Invalid stream key"
@@ -117,7 +121,7 @@ export function BroadcastWithControls({
                 </Broadcast.FullscreenTrigger>
               </div>
             </div>
-            {!forceEnabled && (
+            {!hideEnabled && (
               <>
                 <Broadcast.EnabledIndicator
                   matcher={false}
