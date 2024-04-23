@@ -23,7 +23,7 @@ export default async function BroadcastPage({
     <main className="absolute inset-0 gap-2 flex flex-col justify-center items-center bg-black">
       <BroadcastWithControls
         ingestUrl={ingestUrl}
-        forceEnabled={coerceToBoolean(searchParams?.forceEnabled, true)}
+        forceEnabled={coerceToBoolean(searchParams?.forceEnabled, false)}
         video={
           searchParams.idealHeight || searchParams.idealWidth
             ? {
