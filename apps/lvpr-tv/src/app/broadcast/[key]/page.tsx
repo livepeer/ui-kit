@@ -5,6 +5,7 @@ import { getIngest } from "@livepeer/react/external";
 
 type BroadcastSearchParams = {
   forceEnabled?: Booleanish;
+  hideEnabled?: Booleanish;
   idealWidth?: string | number;
   idealHeight?: string | number;
 };
@@ -24,6 +25,7 @@ export default async function BroadcastPage({
       <BroadcastWithControls
         ingestUrl={ingestUrl}
         forceEnabled={coerceToBoolean(searchParams?.forceEnabled, true)}
+        hideEnabled={coerceToBoolean(searchParams?.hideEnabled, false)}
         video={
           searchParams.idealHeight || searchParams.idealWidth
             ? {
