@@ -194,6 +194,7 @@ function isInIframe() {
 export class MetricsStatus {
   requestedPlayTime: number | null = null;
   firstFrameTime: number | null = null;
+  bootMs: number;
 
   retryCount = 0;
   connected = false;
@@ -208,10 +209,15 @@ export class MetricsStatus {
   timeStalled = new Timer();
   timeUnpaused = new Timer();
 
-  constructor(store: MediaControllerStore, opts: MetricsOpts | undefined) {
+  constructor(
+    store: MediaControllerStore,
+    bootMs: number,
+    opts: MetricsOpts | undefined,
+  ) {
     const currentState = store.getState();
 
     this.store = store;
+    this.bootMs = bootMs;
 
     const windowHref =
       typeof window !== "undefined" ? window?.location?.href ?? "" : "";
@@ -288,6 +294,8 @@ export class MetricsStatus {
           this.timeUnpaused.start();
         } else {
           this.timeUnpaused.stop();
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
         }
       }
 
@@ -301,13 +309,27 @@ export class MetricsStatus {
         this.timeUnpaused.start();
       }
 
-      if (state.stalled !== prevState.stalled && state.stalled) {
-        this.timeStalled.start();
-        this.timeUnpaused.stop();
+      if (state.stalled !== prevState.stalled) {
+        if (state.stalled) {
+          this.timeStalled.start();
+          this.timeUnpaused.stop();
+        } else if (state.playing) {
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
+
+          this.timeUnpaused.start();
+        }
       }
-      if (state.waiting !== prevState.waiting && state.waiting) {
-        this.timeWaiting.start();
-        this.timeUnpaused.stop();
+      if (state.waiting !== prevState.waiting) {
+        if (state.waiting) {
+          this.timeWaiting.start();
+          this.timeUnpaused.stop();
+        } else if (state.playing) {
+          this.timeStalled.stop();
+          this.timeWaiting.stop();
+
+          this.timeUnpaused.start();
+        }
       }
     });
   }
@@ -321,13 +343,13 @@ export class MetricsStatus {
     return this.currentMetrics.firstPlayback;
   }
   setFirstPlayback() {
-    this.currentMetrics.firstPlayback = Date.now() - bootMs;
+    this.currentMetrics.firstPlayback = Date.now() - this.bootMs;
   }
   getFirstFrameTime() {
     return this.firstFrameTime;
   }
   setFirstFrameTime() {
-    this.firstFrameTime = Date.now() - bootMs;
+    this.firstFrameTime = Date.now() - this.bootMs;
   }
   setPlaybackScore(playbackScore: number) {
     this.currentMetrics.playbackScore = playbackScore;
@@ -378,8 +400,6 @@ export class MetricsStatus {
   }
 }
 
-const bootMs = Date.now(); // used for firstPlayback value
-
 export type MediaMetrics = {
   metrics: MetricsStatus | null;
   destroy: () => void;
@@ -396,6 +416,8 @@ export function addMediaMetricsToStore(
   store: MediaControllerStore | undefined | null,
   opts?: MetricsOpts,
 ): MediaMetrics {
+  const bootMs = Date.now(); // used for firstPlayback value
+
   const defaultResponse: MediaMetrics = {
     metrics: null,
     destroy: () => {
@@ -417,7 +439,7 @@ export function addMediaMetricsToStore(
   let timeOut: NodeJS.Timeout | null = null;
   let enabled = true;
 
-  const metricsStatus = new MetricsStatus(store, opts);
+  const metricsStatus = new MetricsStatus(store, bootMs, opts);
   const monitor = new PlaybackMonitor(store);
 
   const report = async () => {
