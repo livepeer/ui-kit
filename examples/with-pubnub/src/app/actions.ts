@@ -5,19 +5,15 @@ import { cookies } from "next/headers";
 
 export const createLivestream = async () => {
   try {
-    // const newStream = await createStream({
-    //   name: "PubNub <> Livepeer Stream",
-    // });
-
-    // if (!newStream?.classes?.[0].streamKey) {
-    //   return {
-    //     success: false,
-    //     error: "No stream key created.",
-    //   } as const;
-    // }
-
-    cookies().set("stream-key", "26d5-g6vc-dnmq-umz6");
-    cookies().set("playback-id", "26d5m3zw80ejzby6");
+    if (process.env.STREAM_KEY && process.env.PLAYBACK_ID) {
+      cookies().set("stream-key", process.env.STREAM_KEY);
+      cookies().set("playback-id", "26d5m3zw80ejzby6");
+    } else {
+      return {
+        success: false,
+        error: "No stream key created.",
+      } as const;
+    }
 
     revalidatePath("/");
 
