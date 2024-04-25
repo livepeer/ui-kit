@@ -1,13 +1,25 @@
 "use server";
 
+import type { Stream } from "livepeer/dist/models/components";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const createLivestream = async () => {
   try {
-    if (process.env.STREAM_KEY && process.env.PLAYBACK_ID) {
-      cookies().set("stream-key", process.env.STREAM_KEY);
-      cookies().set("playback-id", "26d5m3zw80ejzby6");
+    const response: Stream = await fetch("https://livepeer.studio/api/stream", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.STUDIO_API_KEY ?? "none"}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Pubnub <> Livepeer",
+      }),
+    }).then((response) => response.json());
+
+    if (response.streamKey && response.playbackId) {
+      cookies().set("stream-key", response.streamKey);
+      cookies().set("playback-id", response.playbackId);
     } else {
       return {
         success: false,
