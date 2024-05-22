@@ -71,8 +71,8 @@
   },
   "dependencies": {
     "@livepeer/core": "workspace:*",
-    "hls.js": "^1.5.2",
-    "zustand": "^4.5.0"
+    "hls.js": "^1.5.8",
+    "zustand": "^4.5.2"
   },
   "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

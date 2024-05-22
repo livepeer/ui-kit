@@ -58,7 +58,7 @@ export default async function handler(
 
     const result = await livepeer.stream.createClip(clipPayloadParsed.data);
 
-    if (!result.object?.asset?.playbackId) {
+    if (!result.data?.asset?.playbackId) {
       return res
         .status(400)
         .json({ success: false, error: "PLAYBACK_ID_MISSING" } as const);
@@ -66,7 +66,7 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      playbackId: result.object?.asset?.playbackId,
+      playbackId: result.data?.asset?.playbackId,
     });
   } catch (e) {
     console.error(e);

@@ -1,6 +1,6 @@
 "use server";
 
-import type { Stream } from "livepeer/dist/models/components";
+import type { Stream } from "livepeer/models/components";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 

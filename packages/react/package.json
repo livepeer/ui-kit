@@ -90,15 +90,15 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-use-controllable-state": "^1.0.1",
     "@radix-ui/react-use-layout-effect": "^1.0.1",
-    "zustand": "^4.5.0"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.2.0",
+    "@testing-library/react": "^15.0.7",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
 }

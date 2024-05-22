@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import * as Player from "@livepeer/react/player";
 
 import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
-import type { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/models/components";
 import { useCallback, useTransition } from "react";
 import { createClip } from "./actions";
 

@@ -463,11 +463,11 @@ const addEffectsToStore = (
         }, timeout);
 
         cleanupSource = () => {
-          clearTimeout(id);
-
           unmounted = true;
-          unsubscribeBframes?.();
+
+          clearTimeout(id);
           destroy?.();
+          unsubscribeBframes?.();
         };
 
         return;
@@ -563,10 +563,18 @@ const addEffectsToStore = (
       }
     },
     {
-      equalityFn: (a, b) =>
-        a.errorCount === b.errorCount &&
-        a.source?.src === b.source?.src &&
-        a.mounted === b.mounted,
+      equalityFn: (a, b) => {
+        const errorCountChanged =
+          a.errorCount !== b.errorCount && b.errorCount !== 0;
+
+        const sourceChanged = a.source?.src !== b.source?.src;
+        const mountedChanged = a.mounted !== b.mounted;
+
+        const shouldReRender =
+          errorCountChanged || sourceChanged || mountedChanged;
+
+        return !shouldReRender;
+      },
     },
   );
 

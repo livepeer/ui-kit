@@ -93,7 +93,11 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
          *
          * https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/track_event
          */
-        peerConnection.ontrack = async (event) => {
+        peerConnection.ontrack = (event) => {
+          if (destroyed) {
+            return;
+          }
+
           try {
             if (stream) {
               const track = event.track;
@@ -126,32 +130,42 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
           }
         };
 
-        peerConnection.addEventListener(
-          "connectionstatechange",
-          async (_ev) => {
-            try {
-              if (peerConnection?.connectionState === "failed") {
-                throw new Error("Failed to connect to peer.");
-              }
-              if (
-                peerConnection?.connectionState === "connected" &&
-                !element.srcObject
-              ) {
-                element.srcObject = stream;
-                callbacks?.onConnected?.();
-              }
-            } catch (e) {
-              errorComposed(e as Error);
+        peerConnection.addEventListener("connectionstatechange", (_ev) => {
+          if (destroyed) {
+            return;
+          }
+
+          try {
+            if (peerConnection?.connectionState === "failed") {
+              throw new Error("Failed to connect to peer.");
             }
-          },
-        );
+
+            if (
+              peerConnection?.connectionState === "connected" &&
+              !element.srcObject
+            ) {
+              element.srcObject = stream;
+              callbacks?.onConnected?.();
+            }
+          } catch (e) {
+            errorComposed(e as Error);
+          }
+        });
 
         peerConnection.addEventListener("negotiationneeded", async (_ev) => {
+          if (destroyed) {
+            return;
+          }
+
           try {
             const ofr = await constructClientOffer(
               peerConnection,
               redirectUrlString,
             );
+
+            if (destroyed) {
+              return;
+            }
 
             const response = await negotiateConnectionWithClientOffer(
               peerConnection,
@@ -161,6 +175,10 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
               accessControl,
               sdpTimeout,
             );
+
+            if (destroyed) {
+              return;
+            }
 
             const currentDate = Date.now();
 
@@ -182,11 +200,12 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
       destroyed = true;
       abortController?.abort?.();
 
+      peerConnection?.close?.();
+
       // Remove the WebRTC source
       if (element) {
         element.srcObject = null;
       }
-      peerConnection?.close?.();
 
       element?.removeAttribute?.(VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE);
     },
