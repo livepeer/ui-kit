@@ -36,7 +36,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         publishKey: process.env.NEXT_PUBLIC_PUBLISH_KEY,
         subscribeKey: process.env.NEXT_PUBLIC_SUBSCRIBE_KEY,
         userId: userId, // Ensure this is correctly obtained or set
-        secretKey: process.env.NEXT_PUBLIC_SECRET_KEY,
       });
       setChatInstance(pubNub);
     } catch (error) {
