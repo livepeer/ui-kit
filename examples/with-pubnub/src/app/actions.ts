@@ -1,23 +1,31 @@
 "use server";
 
+import type { Stream } from "livepeer/models/components";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const createLivestream = async () => {
   try {
-    // const newStream = await createStream({
-    //   name: "PubNub <> Livepeer Stream",
-    // });
+    const response: Stream = await fetch("https://livepeer.studio/api/stream", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.STUDIO_API_KEY ?? "none"}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Pubnub <> Livepeer",
+      }),
+    }).then((response) => response.json());
 
-    // if (!newStream?.classes?.[0].streamKey) {
-    //   return {
-    //     success: false,
-    //     error: "No stream key created.",
-    //   } as const;
-    // }
-
-    cookies().set("stream-key", "26d5-g6vc-dnmq-umz6");
-    cookies().set("playback-id", "26d5m3zw80ejzby6");
+    if (response.streamKey && response.playbackId) {
+      cookies().set("stream-key", response.streamKey);
+      cookies().set("playback-id", response.playbackId);
+    } else {
+      return {
+        success: false,
+        error: "No stream key created.",
+      } as const;
+    }
 
     revalidatePath("/");
 

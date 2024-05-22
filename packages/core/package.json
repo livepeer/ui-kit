@@ -3,7 +3,7 @@
   "description": "Livepeer UI Kit's core vanilla JS library.",
   "license": "MIT",
   "type": "module",
-  "version": "3.1.17",
+  "version": "3.1.18",
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/ui-kit.git",
@@ -70,11 +70,11 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "multiformats": "^13.0.1",
-    "zustand": "^4.5.0"
+    "multiformats": "^13.1.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "jose": "^5.2.3"
+    "jose": "^5.3.0"
   },
   "keywords": ["livepeer", "video", "streaming", "livestream"]
 }
