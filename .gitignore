@@ -5,6 +5,7 @@ logs
 *.log
 .DS_Store
 *.pem
+*.cookie
 
 # Dependencies
 node_modules/
