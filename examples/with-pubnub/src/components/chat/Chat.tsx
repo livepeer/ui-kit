@@ -281,7 +281,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
           if (messageTimeToken) {
             setFlaggedMessages((prevFlaggedMessages) => [
               ...prevFlaggedMessages,
-              messageTimeToken ?? "",
+              messageTimeToken,
             ]);
           } else {
             setFlaggedUsers((prevFlaggedUsers) => [

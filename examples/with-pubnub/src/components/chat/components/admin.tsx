@@ -66,16 +66,16 @@ const Admin: React.FC<AdminProps> = ({
                 (id) => id === userId,
               ).length;
 
-              const userDetails = storedUsers.get(user?.userId ?? "");
+              const userDetails = storedUsers.get(userId);
 
               return (
                 <div key={userId}>
-                  {user && userDetails && (
+                  {userDetails && (
                     <FlaggedUserCard
-                      userId={user.userId}
+                      userId={userDetails.id}
                       name={userDetails.name ?? ""}
-                      ban={user.ban}
-                      mute={user.mute}
+                      ban={user?.ban ?? false}
+                      mute={user?.mute ?? false}
                       flagCount={flagCount}
                     />
                   )}

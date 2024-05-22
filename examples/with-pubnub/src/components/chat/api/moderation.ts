@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:8080/.netlify/functions/api"; // Adjust this base URL to your backend server's URL
+const baseUrl =
+  "https://devrel-demos-access-manager.netlify.app/.netlify/functions/api"; // Adjust this base URL to your backend server's URL
 
 export const deleteMessageAPI = async (
   messageID: string,
