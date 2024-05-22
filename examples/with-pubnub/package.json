@@ -17,6 +17,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@types/react-modal": "^3.16.3",
     "clsx": "^2.1.1",
+    "hexoid": "^1.0.0",
     "livepeer": "^3.2.4",
     "lucide-react": "^0.379.0",
     "next": "14.2.3",
