@@ -28,6 +28,7 @@ type PlayerSearchParams = {
   constant?: Constant;
   clipLength?: ClipLength;
   jwt?: string;
+  accessKey?: string;
   debug?: Debug;
 };
 
@@ -55,6 +56,7 @@ export default async function PlayerPage({
       ? (Number(searchParams.clipLength) as ClipLength)
       : null,
     jwt: searchParams?.jwt ?? null,
+    accessKey: searchParams?.accessKey ?? null,
     debug: coerceToBoolean(searchParams?.debug, false),
   };
 
