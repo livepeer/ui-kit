@@ -16,6 +16,7 @@
     "@pubnub/chat": "^0.7.0",
     "@radix-ui/react-popover": "^1.0.7",
     "@types/react-modal": "^3.16.3",
+    "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "hexoid": "^1.0.0",
     "livepeer": "^3.2.4",
