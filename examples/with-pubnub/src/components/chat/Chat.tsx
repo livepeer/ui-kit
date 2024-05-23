@@ -15,6 +15,11 @@ import {
 } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import Modal from "react-modal";
+import {
+  deleteMessageAPI,
+  restoreMessageAPI,
+  setRestrictionsAPI,
+} from "./api/moderation";
 import Admin from "./components/admin";
 import MessageComponent from "./components/message";
 import ChatSignIn from "./components/sign-in";
@@ -276,7 +281,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
           if (messageTimeToken) {
             setFlaggedMessages((prevFlaggedMessages) => [
               ...prevFlaggedMessages,
-              messageTimeToken ?? "",
+              messageTimeToken,
             ]);
           } else {
             setFlaggedUsers((prevFlaggedUsers) => [
@@ -365,11 +370,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
     // Mute/un-mute a user
     try {
-      await channelInstance.setRestrictions(user, {
-        ban: false,
-        mute: mute,
-        reason: "Muted/Un-muted by Admin",
-      });
+      await setRestrictionsAPI(channelInstance.id, userId, false, mute);
     } catch (error) {
       console.log("Error Muting User: ", error);
     }
@@ -406,11 +407,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
 
     // Ban/un-ban a user
     try {
-      await channelInstance.setRestrictions(user, {
-        ban: ban,
-        mute: muteStatus,
-        reason: "Banned by Admin",
-      });
+      await setRestrictionsAPI(channelInstance.id, userId, ban, muteStatus);
     } catch (error) {
       console.log("Error Banning User: ", error);
     }
@@ -438,12 +435,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   };
 
   /// Delete a Message
-  const deleteMessage = async (messageToDelete: Message) => {
-    // Soft delete a message so it is able to be restored
-    const newMessage: Message = (await messageToDelete.delete({
-      soft: true,
-    })) as Message;
-
+  const deleteMessage = async (newMessage: Message) => {
     // Update the local state for the deleted message
     // Use message.timetoken to locate the message in the list
     setChatMessages((prevMessages) =>
@@ -451,21 +443,22 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
         message.timetoken === newMessage.timetoken ? newMessage : message,
       ),
     );
+
+    // Soft delete the message
+    await deleteMessageAPI(newMessage.timetoken, newMessage.channelId);
   };
 
   /// Restore a Message
-  const restoreMessage = async (messageToRestore: Message) => {
-    // Restore the deleted message
-    const newMessage = await messageToRestore.restore();
-
+  const restoreMessage = async (newMessage: Message) => {
     // Update local state for restored message
-    if (newMessage) {
-      setChatMessages((prevMessages) =>
-        prevMessages.map((message) =>
-          message.timetoken === newMessage.timetoken ? newMessage : message,
-        ),
-      );
-    }
+    setChatMessages((prevMessages) =>
+      prevMessages.map((message) =>
+        message.timetoken === newMessage.timetoken ? newMessage : message,
+      ),
+    );
+
+    // Restore the deleted message
+    await restoreMessageAPI(newMessage.timetoken, newMessage.channelId);
   };
 
   /// Handle the scroll of the chat
