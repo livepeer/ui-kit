@@ -34,6 +34,7 @@ export type PlayerProps = Partial<{
   constant: boolean;
   clipLength: ClipLength | null;
   jwt: string | null;
+  accessKey: string | null;
   debug: boolean;
 }>;
 
@@ -99,6 +100,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       clipLength={props.clipLength ?? null}
       playbackRate={props.constant ? "constant" : undefined}
       jwt={props.jwt}
+      accessKey={props.accessKey}
       src={src}
       aspectRatio={null}
       storage={null}
