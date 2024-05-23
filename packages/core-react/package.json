@@ -2,7 +2,7 @@
   "name": "@livepeer/core-react",
   "description": "Internal library used for livepeer react primitives.",
   "license": "MIT",
-  "version": "3.1.17",
+  "version": "3.1.18",
   "type": "module",
   "repository": {
     "type": "git",
@@ -45,15 +45,15 @@
   "peerDependenciesMeta": {},
   "dependencies": {
     "@livepeer/core": "workspace:*",
-    "zustand": "^4.5.0"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.2.0",
+    "@testing-library/react": "^15.0.7",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

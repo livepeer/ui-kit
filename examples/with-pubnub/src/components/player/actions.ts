@@ -1,7 +1,7 @@
 "use server";
 
 import { createStreamClip } from "@/lib/livepeer";
-import type { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/models/components";
 import z from "zod";
 
 const isValidUnixTimestamp = (timestamp: number) => {
@@ -45,13 +45,13 @@ export const createClip = async (opts: ClipPayload) => {
 
     const result = await createStreamClip(opts);
 
-    if (!result.object?.asset?.playbackId) {
+    if (!result.data?.asset?.playbackId) {
       return { success: false, error: "PLAYBACK_ID_MISSING" } as const;
     }
 
     return {
       success: true,
-      playbackId: result.object?.asset?.playbackId,
+      playbackId: result.data?.asset?.playbackId,
     } as const;
   } catch (e) {
     console.error(e);

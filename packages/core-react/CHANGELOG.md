@@ -1,10 +1,21 @@
 # @livepeer/core-react
 
+## 3.1.18
+
+### Patch Changes
+
+- [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issue with WebRTC cleanup interfering with HLS.js playback when peer connection offer takes a long time to resolve. 
+
+- [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated dependencies to latest versions.
+
+- Updated dependencies [[`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f), [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f)]:
+  - @livepeer/core@3.1.18
+
 ## 3.1.17
 
 ### Patch Changes
 
-- [#535](https://github.com/livepeer/ui-kit/pull/535) [`8684ce1`](https://github.com/livepeer/ui-kit/commit/8684ce1ad8ba8afeaadaa394e71306f697c13311) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed an issue where `onError` gets called with `null` in the `addMediaMetrics` plugin, when there is no error. 
+- [#535](https://github.com/livepeer/ui-kit/pull/535) [`8684ce1`](https://github.com/livepeer/ui-kit/commit/8684ce1ad8ba8afeaadaa394e71306f697c13311) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed an issue where `onError` gets called with `null` in the `addMediaMetrics` plugin, when there is no error.
 
 - Updated dependencies [[`8684ce1`](https://github.com/livepeer/ui-kit/commit/8684ce1ad8ba8afeaadaa394e71306f697c13311)]:
   - @livepeer/core@3.1.17
