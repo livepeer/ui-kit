@@ -34,33 +34,38 @@ export type PlayerProps = Partial<{
   constant: boolean;
   clipLength: ClipLength | null;
   jwt: string | null;
+  accessKey: string | null;
   debug: boolean;
 }>;
 
 const getPlaybackInfoUncached = cache(async (playbackId: string) => {
+  const playbackInfo = await livepeer.playback.get(playbackId);
+
+  if (!playbackInfo.playbackInfo) {
+    console.error("Error fetching playback info", playbackInfo);
+
+    throw new Error("Error fetching playback info");
+  }
+
+  return playbackInfo.playbackInfo;
+});
+
+const getPlaybackInfo = async (id: string) => {
   try {
-    const playbackInfo = await livepeer.playback.get(playbackId);
+    const result = await unstable_cache(
+      async () => getPlaybackInfoUncached(id),
+      ["get-playback-info", id],
+      {
+        revalidate: 120,
+      },
+    )();
 
-    if (!playbackInfo.playbackInfo) {
-      console.error("Error fetching playback info", playbackInfo);
-
-      return null;
-    }
-
-    return playbackInfo.playbackInfo;
+    return result;
   } catch (e) {
     console.error(e);
     return null;
   }
-});
-
-const getPlaybackInfo = unstable_cache(
-  async (id: string) => getPlaybackInfoUncached(id),
-  ["get-playback-info"],
-  {
-    revalidate: 120,
-  },
-);
+};
 
 export async function PlayerWithControls(props: PlayerProps) {
   if (!props.playbackId && !props.url) {
@@ -95,6 +100,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       clipLength={props.clipLength ?? null}
       playbackRate={props.constant ? "constant" : undefined}
       jwt={props.jwt}
+      accessKey={props.accessKey}
       src={src}
       aspectRatio={null}
       storage={null}

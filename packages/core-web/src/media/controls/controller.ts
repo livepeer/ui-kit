@@ -240,6 +240,7 @@ export const addEventListeners = (
     element.addEventListener("loadedmetadata", onLoadedMetadata);
     element.addEventListener("loadeddata", onLoadedData);
     element.addEventListener("play", onPlay);
+    element.addEventListener("playing", onPlay);
     element.addEventListener("pause", onPause);
     element.addEventListener("durationchange", onDurationChange);
     element.addEventListener("timeupdate", onTimeUpdate);
@@ -306,6 +307,7 @@ export const addEventListeners = (
       element?.removeEventListener?.("loadedmetadata", onLoadedMetadata);
       element?.removeEventListener?.("loadeddata", onLoadedData);
       element?.removeEventListener?.("play", onPlay);
+      element?.removeEventListener?.("playing", onPlay);
       element?.removeEventListener?.("pause", onPause);
       element?.removeEventListener?.("durationchange", onDurationChange);
       element?.removeEventListener?.("timeupdate", onTimeUpdate);
@@ -461,11 +463,11 @@ const addEffectsToStore = (
         }, timeout);
 
         cleanupSource = () => {
-          clearTimeout(id);
-
           unmounted = true;
-          unsubscribeBframes?.();
+
+          clearTimeout(id);
           destroy?.();
+          unsubscribeBframes?.();
         };
 
         return;
@@ -561,10 +563,18 @@ const addEffectsToStore = (
       }
     },
     {
-      equalityFn: (a, b) =>
-        a.errorCount === b.errorCount &&
-        a.source?.src === b.source?.src &&
-        a.mounted === b.mounted,
+      equalityFn: (a, b) => {
+        const errorCountChanged =
+          a.errorCount !== b.errorCount && b.errorCount !== 0;
+
+        const sourceChanged = a.source?.src !== b.source?.src;
+        const mountedChanged = a.mounted !== b.mounted;
+
+        const shouldReRender =
+          errorCountChanged || sourceChanged || mountedChanged;
+
+        return !shouldReRender;
+      },
     },
   );
 

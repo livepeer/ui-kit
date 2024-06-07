@@ -29,7 +29,6 @@ export default function Page() {
 
   return (
     <main className="flex flex-col md:flex-row min-h-screen justify-center items-center bg-black gap-12 p-10">
-      {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
       <video
         controls
         muted

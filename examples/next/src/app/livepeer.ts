@@ -1,6 +1,6 @@
 import { signAccessJwt } from "@livepeer/react/crypto";
 import { Livepeer } from "livepeer";
-import type { ClipPayload } from "livepeer/dist/models/components";
+import type { ClipPayload } from "livepeer/models/components";
 
 import { unstable_cache } from "next/cache";
 import { cache } from "react";

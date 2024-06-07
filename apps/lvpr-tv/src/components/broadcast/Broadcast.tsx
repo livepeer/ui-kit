@@ -21,8 +21,12 @@ import { Settings } from "./Settings";
 
 export function BroadcastWithControls({
   ingestUrl,
+  hideEnabled,
   ...rest
-}: { ingestUrl: string | null } & Partial<Broadcast.BroadcastProps>) {
+}: {
+  ingestUrl: string | null;
+  hideEnabled: boolean;
+} & Partial<Broadcast.BroadcastProps>) {
   return !ingestUrl ? (
     <BroadcastLoading
       title="Invalid stream key"
@@ -117,21 +121,25 @@ export function BroadcastWithControls({
                 </Broadcast.FullscreenTrigger>
               </div>
             </div>
-            <Broadcast.EnabledIndicator
-              matcher={false}
-              className="flex flex-1 items-center justify-center"
-            >
-              <Broadcast.EnabledTrigger className="rounded-md px-4 py-2 bg-black/60 hover:bg-black/70 gap-1 flex items-center justify-center">
-                <EnableVideoIcon className="w-7 h-7" />
-                <span className="text-sm">Start broadcast</span>
-              </Broadcast.EnabledTrigger>
-            </Broadcast.EnabledIndicator>
-            <Broadcast.EnabledIndicator asChild>
-              <Broadcast.EnabledTrigger className="top-1 right-2 absolute flex items-center justify-center gap-1 rounded-md px-4 py-2 bg-white/5 hover:bg-white/10">
-                <StopIcon className="w-7 h-7" />
-                <span className="text-sm">Stop broadcast</span>
-              </Broadcast.EnabledTrigger>
-            </Broadcast.EnabledIndicator>
+            {!hideEnabled && (
+              <>
+                <Broadcast.EnabledIndicator
+                  matcher={false}
+                  className="flex flex-1 items-center justify-center"
+                >
+                  <Broadcast.EnabledTrigger className="rounded-md px-4 py-2 bg-black/60 hover:bg-black/70 gap-1 flex items-center justify-center">
+                    <EnableVideoIcon className="w-7 h-7" />
+                    <span className="text-sm">Start broadcast</span>
+                  </Broadcast.EnabledTrigger>
+                </Broadcast.EnabledIndicator>
+                <Broadcast.EnabledIndicator asChild>
+                  <Broadcast.EnabledTrigger className="top-1 right-2 absolute flex items-center justify-center gap-1 rounded-md px-4 py-2 bg-white/5 hover:bg-white/10">
+                    <StopIcon className="w-7 h-7" />
+                    <span className="text-sm">Stop broadcast</span>
+                  </Broadcast.EnabledTrigger>
+                </Broadcast.EnabledIndicator>
+              </>
+            )}
           </Broadcast.Controls>
 
           <Broadcast.LoadingIndicator asChild matcher={false}>
