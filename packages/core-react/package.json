@@ -13,9 +13,7 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -31,12 +29,8 @@
   },
   "typesVersions": {
     "*": {
-      "crypto": [
-        "./dist/crypto/index.d.ts"
-      ],
-      "*": [
-        "./dist/index.d.ts"
-      ]
+      "crypto": ["./dist/crypto/index.d.ts"],
+      "*": ["./dist/index.d.ts"]
     }
   },
   "scripts": {
@@ -51,20 +45,15 @@
   "peerDependenciesMeta": {},
   "dependencies": {
     "@livepeer/core": "workspace:*",
-    "zustand": "^4.5.0"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.2.0",
+    "@testing-library/react": "^15.0.7",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
-  "keywords": [
-    "livepeer",
-    "video",
-    "streaming",
-    "livestream"
-  ]
+  "keywords": ["livepeer", "video", "streaming", "livestream"]
 }

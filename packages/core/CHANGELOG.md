@@ -169,6 +169,38 @@
   };
   ```
 
+## 3.1.18
+
+### Patch Changes
+
+- [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issue with WebRTC cleanup interfering with HLS.js playback when peer connection offer takes a long time to resolve.
+
+- [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated dependencies to latest versions.
+
+## 3.1.17
+
+### Patch Changes
+
+- [#535](https://github.com/livepeer/ui-kit/pull/535) [`8684ce1`](https://github.com/livepeer/ui-kit/commit/8684ce1ad8ba8afeaadaa394e71306f697c13311) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed an issue where `onError` gets called with `null` in the `addMediaMetrics` plugin, when there is no error.
+
+## 3.1.16
+
+### Patch Changes
+
+- [#533](https://github.com/livepeer/ui-kit/pull/533) [`c0aa640`](https://github.com/livepeer/ui-kit/commit/c0aa640ceba06187d964e66c1be174f4bae801ed) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed metrics to report `preloadTime` as the time between connecting `addMediaMetrics` and the first `play` event.
+
+## 3.1.15
+
+### Patch Changes
+
+- [#530](https://github.com/livepeer/ui-kit/pull/530) [`adbd11b`](https://github.com/livepeer/ui-kit/commit/adbd11b404888af813c7dcea04a76c9e9a450124) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fix for metrics using `disableProgressListener` where the metrics does not register a `playing` event.
+
+## 3.1.14
+
+### Patch Changes
+
+- [#526](https://github.com/livepeer/ui-kit/pull/526) [`3f0c10a`](https://github.com/livepeer/ui-kit/commit/3f0c10ab285af7818d196299868432a7e566f590) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `playing` event listener to `addMediaMetrics`, in addition to the existing `play` event listener.
+
 ## 3.1.13
 
 ### Patch Changes

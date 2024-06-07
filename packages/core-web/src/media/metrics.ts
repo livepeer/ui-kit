@@ -1,5 +1,6 @@
 import {
   type InitialProps,
+  type PlaybackError,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
@@ -8,7 +9,7 @@ import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
 import { addEventListeners, getDeviceInfo } from "./controls";
 
-export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
+export type MediaMetricsOptions = Pick<InitialProps, "viewerId"> & {
   /**
    * Sets a custom source URL for playback, such as `https://livepeercdn.studio/hls/{playbackId}/index.m3u8`.
    * If not specified, the function defaults to using the `src` attribute of the HTMLMediaElement.
@@ -28,9 +29,16 @@ export type MediaMetricsOptions = Pick<InitialProps, "onError" | "viewerId"> & {
   disableProgressListener?: boolean;
 
   /**
+<<<<<<< HEAD
    * The interval at which metrics are sent via HTTP, in ms. Default 5000.
    */
   interval?: number;
+
+  /**
+   * Callback called when there is an error.
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  onError?: ((error: PlaybackError) => any) | null | undefined;
 };
 
 /**
@@ -67,6 +75,11 @@ export function addMediaMetrics(
         hotkeys: false,
         posterLiveUpdate: 0,
         ...opts,
+        onError(error) {
+          if (error) {
+            opts?.onError?.(error);
+          }
+        },
       },
     });
 
