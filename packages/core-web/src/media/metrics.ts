@@ -29,7 +29,6 @@ export type MediaMetricsOptions = Pick<InitialProps, "viewerId"> & {
   disableProgressListener?: boolean;
 
   /**
-<<<<<<< HEAD
    * The interval at which metrics are sent via HTTP, in ms. Default 5000.
    */
   interval?: number;
