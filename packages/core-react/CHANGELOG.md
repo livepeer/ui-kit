@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#553](https://github.com/livepeer/ui-kit/pull/553) [`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes a bug where the metrics listener would not send logs in some situations after the player fell back to HLS playback.
+- [#553](https://github.com/livepeer/ui-kit/pull/553) [`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes a bug where the metrics listener would not send logs in some situations after the player fell back to HLS playback. 
 
 - Updated dependencies [[`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d)]:
   - @livepeer/core@3.1.19
