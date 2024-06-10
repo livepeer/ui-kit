@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.1.19
+
+### Patch Changes
+
+- [#553](https://github.com/livepeer/ui-kit/pull/553) [`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes a bug where the metrics listener would not send logs in some situations after the player fell back to HLS playback. 
+
+- Updated dependencies [[`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d)]:
+  - @livepeer/core@3.1.19
+
 ## 3.1.18
 
 ### Patch Changes
 
-- [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issue with WebRTC cleanup interfering with HLS.js playback when peer connection offer takes a long time to resolve. 
+- [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved issue with WebRTC cleanup interfering with HLS.js playback when peer connection offer takes a long time to resolve.
 
 - [#540](https://github.com/livepeer/ui-kit/pull/540) [`17fed82`](https://github.com/livepeer/ui-kit/commit/17fed8284b61ad94cc7eab34b4310ef2536f237f) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated dependencies to latest versions.
 
