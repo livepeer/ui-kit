@@ -446,8 +446,8 @@ export function addLegacyMediaMetricsToStore(
 
   let websocketPromise: Promise<WebSocket | null> | null = null;
 
-  let timeOut: NodeJS.Timeout | null = null;
-  let enabled = true;
+  let timer: NodeJS.Timeout | null = null;
+  let reportingActive = true;
 
   const metricsStatus = new LegacyMetricsStatus(store, bootMs, opts);
   const monitor = new LegacyPlaybackMonitor(store);
@@ -455,7 +455,7 @@ export function addLegacyMediaMetricsToStore(
   const report = async () => {
     const ws = await websocketPromise;
 
-    if (!enabled || !ws) {
+    if (!reportingActive || !ws) {
       return;
     }
 
@@ -486,7 +486,11 @@ export function addLegacyMediaMetricsToStore(
       send(ws, d);
     }
 
-    timeOut = setTimeout(() => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(() => {
       report();
     }, 1e3);
   };
@@ -518,6 +522,7 @@ export function addLegacyMediaMetricsToStore(
           // enable active statistics reporting
           report();
         });
+
         newWebSocket.addEventListener("message", (event) => {
           try {
             if (event?.data) {
@@ -538,18 +543,17 @@ export function addLegacyMediaMetricsToStore(
             console.warn("Failed to parse metadata from websocket.");
           }
         });
+
         newWebSocket.addEventListener("close", () => {
           // disable active statistics gathering
-          if (timeOut) {
-            clearTimeout(timeOut);
-            timeOut = null;
-            enabled = false;
+          if (timer) {
+            clearTimeout(timer);
           }
 
           // auto-reconnect with exponential backoff
           setTimeout(
             () => {
-              if (enabled) {
+              if (reportingActive) {
                 websocketPromise = createNewWebSocket(
                   playbackId,
                   currentSource,
@@ -583,11 +587,7 @@ export function addLegacyMediaMetricsToStore(
     {
       fireImmediately: true,
       equalityFn: (a, b) => {
-        return (
-          a.type === b.type &&
-          a.playbackId === b.playbackId &&
-          Boolean(a.finalUrl) === Boolean(b.finalUrl)
-        );
+        return a.playbackId === b.playbackId && Boolean(a.finalUrl);
       },
     },
   );
@@ -638,7 +638,7 @@ export function addLegacyMediaMetricsToStore(
     });
 
     const destroy = () => {
-      enabled = false;
+      reportingActive = false;
 
       destroyMetricsListener?.();
       destroyMonitorListener?.();
@@ -647,8 +647,8 @@ export function addLegacyMediaMetricsToStore(
       monitor?.destroy?.();
       metricsStatus?.destroy?.();
 
-      if (timeOut) {
-        clearTimeout(timeOut);
+      if (timer) {
+        clearTimeout(timer);
       }
 
       if (websocketPromise) {
