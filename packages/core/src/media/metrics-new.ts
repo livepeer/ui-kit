@@ -855,7 +855,7 @@ class MetricsMonitor {
     const destroyProgressListener = store.subscribe(
       (state) => state.progress,
       async () => {
-        if (opts.disableProgressListener) {
+        if (opts.disableProgressListener !== true) {
           if (!this.timerPlaying.startTime) {
             this.timerErrored.stop();
             this.timerStalled.stop();
