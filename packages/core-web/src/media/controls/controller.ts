@@ -373,7 +373,6 @@ const addEffectsToStore = (
       source: currentSource,
       timeout: __initialProps.timeout,
       videoQuality,
-      cacheWebRTCFailureMs: __initialProps.cacheWebRTCFailureMs,
     }),
     async ({
       aspectRatio,
@@ -387,7 +386,6 @@ const addEffectsToStore = (
       source,
       timeout,
       videoQuality,
-      cacheWebRTCFailureMs,
     }) => {
       if (!mounted) {
         return;
@@ -427,6 +425,15 @@ const addEffectsToStore = (
       };
 
       if (source.type === "webrtc") {
+        const unsubscribeBframes = store.subscribe(
+          (state) => Boolean(state?.__metadata?.bframes),
+          (bframes) => {
+            if (bframes && !unmounted) {
+              onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
+            }
+          },
+        );
+
         const { destroy } = createNewWHEP({
           source: source.src,
           element,
@@ -458,15 +465,6 @@ const addEffectsToStore = (
             );
           }
         }, timeout);
-
-        const unsubscribeBframes = store.subscribe(
-          (state) => Boolean(state?.__metadata?.bframes),
-          (bframes) => {
-            if (bframes && !unmounted) {
-              onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
-            }
-          },
-        );
 
         cleanupSource = () => {
           unmounted = true;
