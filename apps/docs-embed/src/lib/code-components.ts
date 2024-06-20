@@ -67,4 +67,3 @@ export const CodeWithExampleServer = async ({
     </div>
   );
 };`;
-
