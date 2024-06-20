@@ -373,6 +373,7 @@ const addEffectsToStore = (
       source: currentSource,
       timeout: __initialProps.timeout,
       videoQuality,
+      cacheWebRTCFailureMs: __initialProps.cacheWebRTCFailureMs,
     }),
     async ({
       aspectRatio,
@@ -386,6 +387,7 @@ const addEffectsToStore = (
       source,
       timeout,
       videoQuality,
+      cacheWebRTCFailureMs,
     }) => {
       if (!mounted) {
         return;
@@ -418,20 +420,13 @@ const addEffectsToStore = (
 
       const onErrorComposed = (err: Error) => {
         if (!unmounted) {
+          cleanupSource?.();
+
           store.getState().__controlsFunctions?.onError?.(err);
         }
       };
 
       if (source.type === "webrtc") {
-        const unsubscribeBframes = store.subscribe(
-          (state) => Boolean(state?.__metadata?.bframes),
-          (bframes) => {
-            if (bframes) {
-              onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
-            }
-          },
-        );
-
         const { destroy } = createNewWHEP({
           source: source.src,
           element,
@@ -453,7 +448,9 @@ const addEffectsToStore = (
         });
 
         const id = setTimeout(() => {
-          if (!store.getState().canPlay) {
+          if (!store.getState().canPlay && !unmounted) {
+            store.getState().__controlsFunctions.onWebRTCTimeout?.();
+
             onErrorComposed(
               new Error(
                 "Timeout reached for canPlay - triggering playback error.",
@@ -461,6 +458,15 @@ const addEffectsToStore = (
             );
           }
         }, timeout);
+
+        const unsubscribeBframes = store.subscribe(
+          (state) => Boolean(state?.__metadata?.bframes),
+          (bframes) => {
+            if (bframes && !unmounted) {
+              onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
+            }
+          },
+        );
 
         cleanupSource = () => {
           unmounted = true;
