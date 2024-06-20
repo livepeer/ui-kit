@@ -418,6 +418,8 @@ const addEffectsToStore = (
 
       const onErrorComposed = (err: Error) => {
         if (!unmounted) {
+          cleanupSource?.();
+
           store.getState().__controlsFunctions?.onError?.(err);
         }
       };
@@ -426,7 +428,7 @@ const addEffectsToStore = (
         const unsubscribeBframes = store.subscribe(
           (state) => Boolean(state?.__metadata?.bframes),
           (bframes) => {
-            if (bframes) {
+            if (bframes && !unmounted) {
               onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
             }
           },
@@ -453,7 +455,9 @@ const addEffectsToStore = (
         });
 
         const id = setTimeout(() => {
-          if (!store.getState().canPlay) {
+          if (!store.getState().canPlay && !unmounted) {
+            store.getState().__controlsFunctions.onWebRTCTimeout?.();
+
             onErrorComposed(
               new Error(
                 "Timeout reached for canPlay - triggering playback error.",
