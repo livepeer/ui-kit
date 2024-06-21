@@ -2,7 +2,7 @@
   "name": "@livepeer/core-web",
   "description": "Livepeer UI Kit's core web library, for adding reactive stores to video elements.",
   "license": "MIT",
-  "version": "4.2.0-next.4",
+  "version": "4.2.0-next.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -13,7 +13,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -54,13 +56,27 @@
   },
   "typesVersions": {
     "*": {
-      "broadcast": ["./dist/broadcast/index.d.ts"],
-      "browser": ["./dist/browser/index.d.ts"],
-      "external": ["./dist/external/index.d.ts"],
-      "hls": ["./dist/hls/index.d.ts"],
-      "media": ["./dist/media/index.d.ts"],
-      "webrtc": ["./dist/webrtc/index.d.ts"],
-      "*": ["./dist/index.d.ts"]
+      "broadcast": [
+        "./dist/broadcast/index.d.ts"
+      ],
+      "browser": [
+        "./dist/browser/index.d.ts"
+      ],
+      "external": [
+        "./dist/external/index.d.ts"
+      ],
+      "hls": [
+        "./dist/hls/index.d.ts"
+      ],
+      "media": [
+        "./dist/media/index.d.ts"
+      ],
+      "webrtc": [
+        "./dist/webrtc/index.d.ts"
+      ],
+      "*": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "scripts": {
@@ -74,5 +90,10 @@
     "hls.js": "^1.5.8",
     "zustand": "^4.5.2"
   },
-  "keywords": ["livepeer", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }

@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.2.0-next.5
+
+### Patch Changes
+
+- [#559](https://github.com/livepeer/ui-kit/pull/559) [`dff0c23`](https://github.com/livepeer/ui-kit/commit/dff0c2353d4267e70a4f58ef560d8f429f3f2685) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved `warning` events to `warning` event type and counter.
+
+- Updated dependencies [[`dff0c23`](https://github.com/livepeer/ui-kit/commit/dff0c2353d4267e70a4f58ef560d8f429f3f2685)]:
+  - @livepeer/core-react@3.2.0-next.5
+  - @livepeer/core-web@4.2.0-next.5
+  - @livepeer/core@3.2.0-next.5
+
 ## 4.2.0-next.4
 
 ### Patch Changes
