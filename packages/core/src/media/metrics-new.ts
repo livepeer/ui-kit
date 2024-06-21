@@ -19,6 +19,8 @@ export type HeartbeatEvent = {
   timestamp: number;
   /** The number of errors that have occurred since last heartbeat. */
   errors: number;
+  /** The number of warnings that have occurred since last heartbeat. */
+  warnings: number;
 
   /** The number of times the current playback has stalled, since last heartbeat. */
   stalled_count: number;
@@ -73,14 +75,20 @@ export type ErrorEvent = {
   /** The timestamp of the event, in milliseconds. */
   timestamp: number;
   /** The raw event error message. */
-  error_message: string;
+  message: string;
   /** The category of the error. */
-  category:
-    | "offline"
-    | "access-control"
-    | "fallback"
-    | "permissions"
-    | "unknown";
+  category: "access-control" | "permissions" | "unknown";
+};
+
+export type WarningEvent = {
+  /** The event type. */
+  type: "warning";
+  /** The timestamp of the event, in milliseconds. */
+  timestamp: number;
+  /** The raw event warning message. */
+  message: string;
+  /** The category of the warning. */
+  category: "offline" | "fallback";
 };
 
 export type HtmlEvent = {
@@ -140,6 +148,7 @@ export type VideoQualityEvent = {
 export type PlaybackEvent =
   | HeartbeatEvent
   | ErrorEvent
+  | WarningEvent
   | ClipEvent
   | HtmlEvent
   | RateChangeEvent
@@ -234,12 +243,21 @@ export function addMetricsToStore(
     (state) => state.error,
     async (error) => {
       if (error) {
-        eventBuffer.addEvent({
-          type: "error",
-          timestamp: Date.now(),
-          category: error.type,
-          error_message: error.message,
-        });
+        eventBuffer.addEvent(
+          error.type === "offline" || error.type === "fallback"
+            ? {
+                type: "warning",
+                timestamp: Date.now(),
+                category: error.type,
+                message: error.message,
+              }
+            : {
+                type: "error",
+                timestamp: Date.now(),
+                category: error.type,
+                message: error.message,
+              },
+        );
       }
     },
   );
@@ -357,6 +375,7 @@ export function addMetricsToStore(
 
   const ic = new IncrementalCounter([
     "errors",
+    "warnings",
     "stalled_count",
     "waiting_count",
     "time_errored_ms",
@@ -415,6 +434,10 @@ export function addMetricsToStore(
         type: "heartbeat",
         timestamp: Date.now(),
         errors: ic.calculateIncrement("errors", metricsSnapshot.errorCount),
+        warnings: ic.calculateIncrement(
+          "warnings",
+          metricsSnapshot.warningCount,
+        ),
 
         stalled_count: ic.calculateIncrement(
           "stalled_count",
@@ -765,6 +788,7 @@ type RawMetrics = {
 
   duration: number | null;
   errorCount: number;
+  warningCount: number;
   offset: number | null;
   playerHeight: number | null;
   playerWidth: number | null;
@@ -807,6 +831,7 @@ class MetricsMonitor {
 
       duration: null,
       errorCount: 0,
+      warningCount: 0,
       offset: null,
       playerHeight: null,
       playerWidth: null,
@@ -896,7 +921,11 @@ class MetricsMonitor {
           this.timerErrored.start();
           this.timerPlaying.stop();
 
-          this.addError();
+          if (error.type === "offline" || error.type === "fallback") {
+            this.addWarning();
+          } else {
+            this.addError();
+          }
         }
       },
     );
@@ -933,6 +962,10 @@ class MetricsMonitor {
 
   addError() {
     this.currentMetrics.errorCount = this.currentMetrics.errorCount + 1;
+  }
+
+  addWarning() {
+    this.currentMetrics.warningCount = this.currentMetrics.warningCount + 1;
   }
 
   setConnected(isConnected: boolean) {
