@@ -16,6 +16,7 @@ const getDummyPlaybackEvent = (
         timestamp: Date.now(),
         type,
         errors: 0,
+        warnings: 0,
         autoplay_status: "autoplay",
         stalled_count: 1,
         waiting_count: 0,
@@ -27,8 +28,8 @@ const getDummyPlaybackEvent = (
     : {
         timestamp: Date.now(),
         type,
-        error_message: "Error",
-        category: "fallback",
+        message: "Error",
+        category: "access-control",
       };
 
 describe("PlaybackEventBuffer", () => {
@@ -53,6 +54,7 @@ describe("PlaybackEventBuffer", () => {
             "timestamp": 1643673600000,
             "type": "heartbeat",
             "waiting_count": 0,
+            "warnings": 0,
           },
         ]
       `);
@@ -83,6 +85,7 @@ describe("PlaybackEventBuffer", () => {
             "timestamp": 1643673600000,
             "type": "heartbeat",
             "waiting_count": 0,
+            "warnings": 0,
           },
         ]
       `);
@@ -119,6 +122,7 @@ describe("PlaybackEventBuffer", () => {
           "timestamp": 1643673600000,
           "type": "heartbeat",
           "waiting_count": 0,
+          "warnings": 0,
         }
       `);
     });
@@ -138,8 +142,8 @@ describe("PlaybackEventBuffer", () => {
 
       expect(events[events.length - 1]).toMatchInlineSnapshot(`
         {
-          "category": "fallback",
-          "error_message": "Error",
+          "category": "access-control",
+          "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
         }
@@ -156,6 +160,7 @@ describe("PlaybackEventBuffer", () => {
           "timestamp": 1643673600000,
           "type": "heartbeat",
           "waiting_count": 0,
+          "warnings": 0,
         }
       `);
     });
@@ -175,8 +180,8 @@ describe("PlaybackEventBuffer", () => {
 
       expect(events[events.length - 1]).toMatchInlineSnapshot(`
         {
-          "category": "fallback",
-          "error_message": "Error",
+          "category": "access-control",
+          "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
         }
@@ -193,6 +198,7 @@ describe("PlaybackEventBuffer", () => {
           "timestamp": 1643673600000,
           "type": "heartbeat",
           "waiting_count": 0,
+          "warnings": 0,
         }
       `);
     });
