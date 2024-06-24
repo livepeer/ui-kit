@@ -71,6 +71,13 @@ export type InitialProps = {
   clipLength: ClipLength | null;
 
   /**
+   * How long to cache WebRTC timeouts for faster subsequent playbacks after a timeout.
+   *
+   * Set to a number, in ms, to enable caching.
+   */
+  cacheWebRTCFailureMs: number | null;
+
+  /**
    * Whether hotkeys are enabled. Defaults to `true`. Allows users to use keyboard shortcuts for player control.
    *
    * This is highly recommended to adhere to ARIA guidelines.
@@ -362,6 +369,7 @@ export type MediaControllerState = {
     onProgress: (time: number) => void;
     onStalled: () => void;
     onWaiting: () => void;
+    onWebRTCTimeout: () => void;
     requestClip: () => void;
     requestMeasure: () => void;
     requestSeek: (time: number) => void;
@@ -425,6 +433,15 @@ export type MediaControllerStore = StoreApi<MediaControllerState> & {
   };
 };
 
+let webrtcTimeoutLastTime: number | null = null;
+
+const getHasRecentWebRTCTimeout = (
+  cacheWebRTCFailureMs: number | null | undefined,
+) => {
+  if (!webrtcTimeoutLastTime || !cacheWebRTCFailureMs) return false;
+  return Date.now() - webrtcTimeoutLastTime < cacheWebRTCFailureMs;
+};
+
 export const createControllerStore = ({
   device,
   storage,
@@ -464,6 +481,9 @@ export const createControllerStore = ({
     sessionToken,
     src,
     videoQuality: initialVideoQuality,
+    hasRecentWebRTCTimeout: getHasRecentWebRTCTimeout(
+      initialProps.cacheWebRTCFailureMs,
+    ),
   });
 
   const initialControls: ControlsState = {
@@ -571,6 +591,7 @@ export const createControllerStore = ({
             backoff: Math.max(initialProps.backoff ?? 500, 100),
             backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
             clipLength: initialProps.clipLength ?? null,
+            cacheWebRTCFailureMs: initialProps.cacheWebRTCFailureMs ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
             jwt: initialProps.jwt ?? null,
             lowLatency,
@@ -605,6 +626,10 @@ export const createControllerStore = ({
               set(() => ({
                 metricsReportingUrl,
               })),
+
+            onWebRTCTimeout: () => {
+              webrtcTimeoutLastTime = Date.now();
+            },
 
             setAutohide: (autohide) =>
               set(({ __controls }) => ({
@@ -774,6 +799,9 @@ export const createControllerStore = ({
                   sessionToken: __controls.sessionToken,
                   src,
                   videoQuality,
+                  hasRecentWebRTCTimeout: getHasRecentWebRTCTimeout(
+                    __initialProps.cacheWebRTCFailureMs,
+                  ),
                 });
 
                 return {
@@ -1034,6 +1062,10 @@ export const createControllerStore = ({
                     ...sortedSources.slice(0, currentSourceIndex + 1),
                   ];
 
+                  const hasRecentWebRTCTimeout = getHasRecentWebRTCTimeout(
+                    __initialProps.cacheWebRTCFailureMs,
+                  );
+
                   // Function to determine if a source type can be played
                   const canPlaySourceType = (src: Src) => {
                     const hasOneWebRTCSource = sortedSources.some(
@@ -1051,6 +1083,11 @@ export const createControllerStore = ({
 
                     // if low latency is turned off, do not play webrtc
                     if (__initialProps.lowLatency === false) {
+                      return src.type !== "webrtc";
+                    }
+
+                    // if there was a recent timeout for webrtc, do not play webrtc
+                    if (hasRecentWebRTCTimeout) {
                       return src.type !== "webrtc";
                     }
 
@@ -1105,7 +1142,7 @@ export const createControllerStore = ({
         {
           name: "livepeer-media-controller",
           version: 2,
-          // since these values are persisted across media, only persist volume, playbackRate, videoQuality
+          // since these values are persisted across media, only persist volume & videoQuality
           partialize: ({ volume, videoQuality }) => ({
             volume,
             videoQuality,

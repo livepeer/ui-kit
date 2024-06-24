@@ -207,6 +207,17 @@
   - @livepeer/core-web@4.2.0-next.0
   - @livepeer/core@3.2.0-next.0
 
+## 4.1.20
+
+### Patch Changes
+
+- [#557](https://github.com/livepeer/ui-kit/pull/557) [`2045585`](https://github.com/livepeer/ui-kit/commit/2045585b2a5ca6cd9972bd297793ad173895d67d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `cacheWebRTCFailureMs` to the player. This allows the player to remember to fall back to HLS if a WebRTC connection times out.
+
+- Updated dependencies [[`2045585`](https://github.com/livepeer/ui-kit/commit/2045585b2a5ca6cd9972bd297793ad173895d67d)]:
+  - @livepeer/core-react@3.1.20
+  - @livepeer/core-web@4.1.20
+  - @livepeer/core@3.1.20
+
 ## 4.1.19
 
 ### Patch Changes

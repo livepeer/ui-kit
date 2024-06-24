@@ -121,12 +121,14 @@ const sortSources = ({
   screenWidth,
   aspectRatio,
   lowLatency,
+  hasRecentWebRTCTimeout,
 }: {
   src: Src[] | string | null | undefined;
   videoQuality: VideoQuality;
   screenWidth: number | null;
   aspectRatio: number;
   lowLatency: InitialProps["lowLatency"];
+  hasRecentWebRTCTimeout: boolean;
 }) => {
   if (!src) {
     return null;
@@ -149,7 +151,10 @@ const sortSources = ({
       if (s.type === "hls" && lowLatency === "force") {
         return false;
       }
-      if (s.type === "webrtc" && lowLatency === false) {
+      if (
+        s.type === "webrtc" &&
+        (lowLatency === false || hasRecentWebRTCTimeout)
+      ) {
         return false;
       }
 
@@ -306,6 +311,7 @@ export const getNewSource = ({
   sessionToken,
   src,
   videoQuality,
+  hasRecentWebRTCTimeout,
 }: {
   accessKey: InitialProps["accessKey"] | undefined;
   aspectRatio: InitialProps["aspectRatio"] | undefined;
@@ -317,6 +323,7 @@ export const getNewSource = ({
   sessionToken: string;
   src: Src[] | string | null | undefined;
   videoQuality: VideoQuality;
+  hasRecentWebRTCTimeout: boolean;
 }) => {
   const sortedSources = sortSources({
     src,
@@ -324,6 +331,7 @@ export const getNewSource = ({
     videoQuality,
     aspectRatio: aspectRatio ?? DEFAULT_ASPECT_RATIO,
     lowLatency,
+    hasRecentWebRTCTimeout,
   });
 
   const parsedSource = parseCurrentSourceAndPlaybackId({

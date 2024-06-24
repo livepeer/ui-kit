@@ -129,7 +129,10 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
 export const attachMediaStreamToPeerConnection = async ({
   mediaStream,
   peerConnection,
-}: { mediaStream: MediaStream; peerConnection: RTCPeerConnection }) => {
+}: {
+  mediaStream: MediaStream;
+  peerConnection: RTCPeerConnection;
+}) => {
   const newVideoTrack = mediaStream?.getVideoTracks?.()?.[0] ?? null;
   const newAudioTrack = mediaStream?.getAudioTracks?.()?.[0] ?? null;
 
@@ -258,20 +261,4 @@ export const getDisplayMedia = (options?: DisplayMediaStreamOptions) => {
   }
 
   return navigator.mediaDevices.getDisplayMedia(options);
-};
-
-const getConstraints = (aspectRatio: number | null) => {
-  const constraints: MediaTrackConstraints = {
-    width: {
-      ideal: 1280,
-    },
-    height: {
-      ideal: 720,
-    },
-    aspectRatio: {
-      ideal: aspectRatio ?? 16 / 9,
-    },
-  };
-
-  return constraints;
 };
