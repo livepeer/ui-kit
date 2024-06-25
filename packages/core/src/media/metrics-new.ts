@@ -27,6 +27,8 @@ export type HeartbeatEvent = {
   /** The *total* number of times the current playback has waited, since last heartbeat. */
   waiting_count: number;
 
+  /** The time the playback has spent in a warning state, in ms, since last heartbeat. */
+  time_warning_ms: number;
   /** The time the playback has spent in an errored state, in ms, since last heartbeat. */
   time_errored_ms: number;
   /** The time the playback has spent stalled, in ms, since last heartbeat. */
@@ -378,6 +380,7 @@ export function addMetricsToStore(
     "warnings",
     "stalled_count",
     "waiting_count",
+    "time_warning_ms",
     "time_errored_ms",
     "time_stalled_ms",
     "time_playing_ms",
@@ -451,6 +454,10 @@ export function addMetricsToStore(
         time_errored_ms: ic.calculateIncrement(
           "time_errored_ms",
           metricsSnapshot.timeErrored,
+        ),
+        time_warning_ms: ic.calculateIncrement(
+          "time_warning_ms",
+          metricsSnapshot.timeWarning,
         ),
         time_stalled_ms: ic.calculateIncrement(
           "time_stalled_ms",
@@ -794,6 +801,7 @@ type RawMetrics = {
   playerWidth: number | null;
   stalledCount: number;
   timeErrored: number;
+  timeWarning: number;
   timeStalled: number;
   timePlaying: number;
   timeWaiting: number;
@@ -818,6 +826,7 @@ class MetricsMonitor {
   timerErrored = new Timer();
   timerWaiting = new Timer();
   timerStalled = new Timer();
+  timerWarning = new Timer();
 
   timerPlaying = new Timer();
 
@@ -837,6 +846,7 @@ class MetricsMonitor {
       playerWidth: null,
       stalledCount: 0,
       timeErrored: 0,
+      timeWarning: 0,
       timeStalled: 0,
       timePlaying: 0,
       timeWaiting: 0,
@@ -866,6 +876,7 @@ class MetricsMonitor {
       (state) => state.playing,
       async (playing) => {
         if (playing) {
+          this.timerWarning.stop();
           this.timerErrored.stop();
           this.timerStalled.stop();
           this.timerWaiting.stop();
@@ -882,6 +893,7 @@ class MetricsMonitor {
       async () => {
         if (opts.disableProgressListener !== true) {
           if (!this.timerPlaying.startTime) {
+            this.timerWarning.stop();
             this.timerErrored.stop();
             this.timerStalled.stop();
             this.timerWaiting.stop();
@@ -918,10 +930,17 @@ class MetricsMonitor {
       (state) => state.error,
       async (error) => {
         if (error?.type) {
-          this.timerErrored.start();
+          const isWarning =
+            error.type === "offline" || error.type === "fallback";
+
+          if (isWarning) {
+            this.timerWarning.start();
+          } else {
+            this.timerErrored.start();
+          }
           this.timerPlaying.stop();
 
-          if (error.type === "offline" || error.type === "fallback") {
+          if (isWarning) {
             this.addWarning();
           } else {
             this.addError();
@@ -994,6 +1013,7 @@ class MetricsMonitor {
       waitingCount: this.timerWaiting.getCountStarts(),
       stalledCount: this.timerStalled.getCountStarts(),
 
+      timeWarning: this.timerWarning.getTotalTime(),
       timeErrored: this.timerErrored.getTotalTime(),
       timeWaiting: this.timerWaiting.getTotalTime(),
       timeStalled: this.timerStalled.getTotalTime(),
