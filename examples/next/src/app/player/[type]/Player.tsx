@@ -60,6 +60,7 @@ export async function PlayerWithControls({
         clipLength={30}
         src={src}
         jwt={jwt}
+        backoffMax={10000}
         cacheWebRTCFailureMs={120000}
         timeout={5000}
       >

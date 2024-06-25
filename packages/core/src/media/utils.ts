@@ -34,7 +34,10 @@ export const getBoundedVolume = (volume: number) =>
 
 export const generateRandomToken = () => {
   try {
-    return Math.random().toString(16).substring(2);
+    return (
+      Math.random().toString(16).substring(2) +
+      Math.random().toString(16).substring(2)
+    );
   } catch (e) {
     //
   }

@@ -758,4 +758,3 @@ export default () => {
     </Broadcast.Root>
   );
 };`;
-

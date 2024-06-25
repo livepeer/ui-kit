@@ -1,5 +1,5 @@
 import type { MediaControllerStore } from "./controller";
-import { getMetricsReportingUrl } from "./metrics-utils";
+import { getMetricsReportingWebsocketUrl } from "./metrics-utils";
 import type { MimeType } from "./mime";
 
 type MetricsOpts = {
@@ -61,7 +61,10 @@ type PlaybackRecord = {
   score: number;
 };
 
-export class PlaybackMonitor {
+/**
+ * @deprecated in favor of `addMetricsToStore`
+ */
+export class LegacyPlaybackMonitor {
   active = false;
   values: PlaybackRecord[] = [];
   score: number | null = null;
@@ -191,7 +194,10 @@ function isInIframe() {
   }
 }
 
-export class MetricsStatus {
+/**
+ * @deprecated in favor of `addMetricsToStore`
+ */
+export class LegacyMetricsStatus {
   requestedPlayTime: number | null = null;
   firstFrameTime: number | null = null;
   bootMs: number;
@@ -400,8 +406,11 @@ export class MetricsStatus {
   }
 }
 
-export type MediaMetrics = {
-  metrics: MetricsStatus | null;
+/**
+ * @deprecated in favor of `addMetricsToStore`
+ */
+export type LegacyMediaMetrics = {
+  metrics: LegacyMetricsStatus | null;
   destroy: () => void;
 };
 
@@ -411,14 +420,15 @@ export type MediaMetrics = {
  * metrics endpoint.
  *
  * @param store Element to capture playback metrics from
+ * @deprecated in favor of `addMetricsToStore`
  */
-export function addMediaMetricsToStore(
+export function addLegacyMediaMetricsToStore(
   store: MediaControllerStore | undefined | null,
   opts?: MetricsOpts,
-): MediaMetrics {
+): LegacyMediaMetrics {
   const bootMs = Date.now(); // used for firstPlayback value
 
-  const defaultResponse: MediaMetrics = {
+  const defaultResponse: LegacyMediaMetrics = {
     metrics: null,
     destroy: () => {
       //
@@ -439,8 +449,8 @@ export function addMediaMetricsToStore(
   let timer: NodeJS.Timeout | null = null;
   let reportingActive = true;
 
-  const metricsStatus = new MetricsStatus(store, bootMs, opts);
-  const monitor = new PlaybackMonitor(store);
+  const metricsStatus = new LegacyMetricsStatus(store, bootMs, opts);
+  const monitor = new LegacyPlaybackMonitor(store);
 
   const report = async () => {
     const ws = await websocketPromise;
@@ -499,11 +509,11 @@ export function addMediaMetricsToStore(
 
       prevWebsocket?.close?.(3077);
 
-      const reportingWebsocketUrl = await getMetricsReportingUrl(
-        playbackId,
-        currentSource,
-        store.getState().__controls.sessionToken,
-      );
+      const reportingWebsocketUrl = await getMetricsReportingWebsocketUrl({
+        playbackId: playbackId,
+        playbackUrl: currentSource,
+        sessionToken: store.getState().__controls.sessionToken,
+      });
 
       if (reportingWebsocketUrl) {
         const newWebSocket = new WebSocket(reportingWebsocketUrl);
@@ -558,7 +568,6 @@ export function addMediaMetricsToStore(
       }
     } catch (e) {
       console.error(e);
-      store.getState().__controlsFunctions.onError?.(e as Error);
     }
 
     return null;

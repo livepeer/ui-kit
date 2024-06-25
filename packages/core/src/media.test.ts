@@ -5,7 +5,8 @@ import * as Exports from "./media";
 it("should expose correct exports", () => {
   expect(Object.keys(Exports).sort()).toMatchInlineSnapshot(`
     [
-      "addMediaMetricsToStore",
+      "addLegacyMediaMetricsToStore",
+      "addMetricsToStore",
       "calculateVideoQualityDimensions",
       "createControllerStore",
       "getBoundedVolume",

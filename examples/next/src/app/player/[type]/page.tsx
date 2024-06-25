@@ -83,7 +83,13 @@ export default async function PlayerPage({
 export async function generateStaticParams() {
   return [
     {
-      type: "asset",
+      type: "asset-short",
+    },
+    {
+      type: "asset-long",
+    },
+    {
+      type: "jwt",
     },
     {
       type: "livestream",

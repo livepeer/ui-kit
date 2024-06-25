@@ -217,6 +217,9 @@ export async function getRedirectUrl(
       signal: abortController.signal,
     });
 
+    // consume response body
+    await response.text();
+
     clearTimeout(id);
 
     const parsedUrl = new URL(response.url);
