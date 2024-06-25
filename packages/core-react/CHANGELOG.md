@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#561](https://github.com/livepeer/ui-kit/pull/561) [`822b94d`](https://github.com/livepeer/ui-kit/commit/822b94d506a3a4b5607c814f506d5c1a9d2a41c9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `time_warning_ms` to metrics snapshot with a timer when a warning is encountered.
+- [#561](https://github.com/livepeer/ui-kit/pull/561) [`822b94d`](https://github.com/livepeer/ui-kit/commit/822b94d506a3a4b5607c814f506d5c1a9d2a41c9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `time_warning_ms` to metrics snapshot with a timer when a warning is encountered. 
 
 - Updated dependencies [[`822b94d`](https://github.com/livepeer/ui-kit/commit/822b94d506a3a4b5607c814f506d5c1a9d2a41c9)]:
   - @livepeer/core@3.2.0-next.6
