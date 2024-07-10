@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added metrics event reporting with POST requests, using `sendBeacon` for end-of-session metrics.
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added metrics event reporting with POST requests, using `sendBeacon` for end-of-session metrics. 
 
   ```tsx
   export type HeartbeatEvent = {
