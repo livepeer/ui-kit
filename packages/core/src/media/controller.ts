@@ -71,6 +71,13 @@ export type InitialProps = {
   clipLength: ClipLength | null;
 
   /**
+   * How long to cache WebRTC timeouts for faster subsequent playbacks after a timeout.
+   *
+   * Set to a number, in ms, to enable caching.
+   */
+  cacheWebRTCFailureMs: number | null;
+
+  /**
    * Whether hotkeys are enabled. Defaults to `true`. Allows users to use keyboard shortcuts for player control.
    *
    * This is highly recommended to adhere to ARIA guidelines.
@@ -194,6 +201,8 @@ export type ControlsState = {
 
   /** The last time that a play event was received */
   playLastTime: number;
+  /** The last time that a pause event was received */
+  pauseLastTime: number;
   /** The offset of the browser's livestream versus the server time (in ms). */
   playbackOffsetMs: number | null;
   /** The last time that the media was interacted with */
@@ -281,6 +290,7 @@ export type MediaControllerState = {
 
   /** The current source that is playing. */
   currentSource: Src | null;
+
   /** The final playback URL for the media that is playing, after redirects. */
   currentUrl: string | null;
 
@@ -308,6 +318,9 @@ export type MediaControllerState = {
 
   /** If the media is currently loading */
   loading: boolean;
+
+  /** The metrics reporting URL to POST to. */
+  metricsReportingUrl: string | null;
 
   /** If the video element is mounted on the DOM - this is used for initialization logic */
   mounted: boolean;
@@ -356,6 +369,7 @@ export type MediaControllerState = {
     onProgress: (time: number) => void;
     onStalled: () => void;
     onWaiting: () => void;
+    onWebRTCTimeout: () => void;
     requestClip: () => void;
     requestMeasure: () => void;
     requestSeek: (time: number) => void;
@@ -371,6 +385,7 @@ export type MediaControllerState = {
     // biome-ignore lint/suspicious/noExplicitAny: no hls.js
     setHlsConfig: (hlsConfig: any) => void;
     setLive: (live: boolean) => void;
+    setMetricsReportingUrl: (url: string) => void;
     setMounted: () => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
     setPlaybackRate: (rate: number | string) => void;
@@ -418,6 +433,15 @@ export type MediaControllerStore = StoreApi<MediaControllerState> & {
   };
 };
 
+let webrtcTimeoutLastTime: number | null = null;
+
+const getHasRecentWebRTCTimeout = (
+  cacheWebRTCFailureMs: number | null | undefined,
+) => {
+  if (!webrtcTimeoutLastTime || !cacheWebRTCFailureMs) return false;
+  return Date.now() - webrtcTimeoutLastTime < cacheWebRTCFailureMs;
+};
+
 export const createControllerStore = ({
   device,
   storage,
@@ -457,6 +481,9 @@ export const createControllerStore = ({
     sessionToken,
     src,
     videoQuality: initialVideoQuality,
+    hasRecentWebRTCTimeout: getHasRecentWebRTCTimeout(
+      initialProps.cacheWebRTCFailureMs,
+    ),
   });
 
   const initialControls: ControlsState = {
@@ -469,6 +496,7 @@ export const createControllerStore = ({
     playbackId: playbackId ?? parsedInputSource?.playbackId ?? null,
     playbackOffsetMs: null,
     playLastTime: 0,
+    pauseLastTime: 0,
     requestedClipParams: null,
     requestedFullscreenLastTime: 0,
     requestedPictureInPictureLastTime: 0,
@@ -541,6 +569,7 @@ export const createControllerStore = ({
 
           /** The final playback URL for the media that is playing, after redirects. */
           currentUrl: null,
+          metricsReportingUrl: null,
 
           aria: {
             progress: "No progress, content is loading",
@@ -562,6 +591,7 @@ export const createControllerStore = ({
             backoff: Math.max(initialProps.backoff ?? 500, 100),
             backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
             clipLength: initialProps.clipLength ?? null,
+            cacheWebRTCFailureMs: initialProps.cacheWebRTCFailureMs ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
             jwt: initialProps.jwt ?? null,
             lowLatency,
@@ -591,6 +621,15 @@ export const createControllerStore = ({
               set(() => ({
                 poster,
               })),
+
+            setMetricsReportingUrl: (metricsReportingUrl) =>
+              set(() => ({
+                metricsReportingUrl,
+              })),
+
+            onWebRTCTimeout: () => {
+              webrtcTimeoutLastTime = Date.now();
+            },
 
             setAutohide: (autohide) =>
               set(({ __controls }) => ({
@@ -657,7 +696,7 @@ export const createControllerStore = ({
                 };
               }),
             onPause: () =>
-              set(({ aria }) => {
+              set(({ aria, __controls }) => {
                 const title = "Play (k)";
 
                 return {
@@ -669,6 +708,10 @@ export const createControllerStore = ({
                   aria: {
                     ...aria,
                     playPause: title,
+                  },
+                  __controls: {
+                    ...__controls,
+                    pauseLastTime: Date.now(),
                   },
                 };
               }),
@@ -756,6 +799,9 @@ export const createControllerStore = ({
                   sessionToken: __controls.sessionToken,
                   src,
                   videoQuality,
+                  hasRecentWebRTCTimeout: getHasRecentWebRTCTimeout(
+                    __initialProps.cacheWebRTCFailureMs,
+                  ),
                 });
 
                 return {
@@ -1016,6 +1062,10 @@ export const createControllerStore = ({
                     ...sortedSources.slice(0, currentSourceIndex + 1),
                   ];
 
+                  const hasRecentWebRTCTimeout = getHasRecentWebRTCTimeout(
+                    __initialProps.cacheWebRTCFailureMs,
+                  );
+
                   // Function to determine if a source type can be played
                   const canPlaySourceType = (src: Src) => {
                     const hasOneWebRTCSource = sortedSources.some(
@@ -1033,6 +1083,11 @@ export const createControllerStore = ({
 
                     // if low latency is turned off, do not play webrtc
                     if (__initialProps.lowLatency === false) {
+                      return src.type !== "webrtc";
+                    }
+
+                    // if there was a recent timeout for webrtc, do not play webrtc
+                    if (hasRecentWebRTCTimeout) {
                       return src.type !== "webrtc";
                     }
 
@@ -1087,7 +1142,7 @@ export const createControllerStore = ({
         {
           name: "livepeer-media-controller",
           version: 2,
-          // since these values are persisted across media, only persist volume, playbackRate, videoQuality
+          // since these values are persisted across media, only persist volume & videoQuality
           partialize: ({ volume, videoQuality }) => ({
             volume,
             videoQuality,

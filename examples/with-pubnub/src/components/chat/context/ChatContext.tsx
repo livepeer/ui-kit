@@ -2,7 +2,7 @@
 
 import { type Channel, Chat, type User } from "@pubnub/chat";
 import { usePathname } from "next/navigation";
-import React, { type ReactNode, useEffect, useState } from "react";
+import React, { type ReactNode, useEffect, useState, useCallback } from "react";
 
 export interface ChatType {
   chatInstance: Chat | undefined;
@@ -23,7 +23,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   /// Initializes the PubNub Chat Component
   /// The secret key is used to add admin functionality such as muting and banning a user from a channel
   /// ATTENTION: Muting / banning shoulbe be done entirely server-side it is done on the client in this case to simplify things
-  const initChat = async () => {
+  const initChat = useCallback(async () => {
     // Set the userId to admin if the URL path is "/" else you are a viewer and should have a random userId
     const userId =
       pathname === "/"
@@ -36,13 +36,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         publishKey: process.env.NEXT_PUBLIC_PUBLISH_KEY,
         subscribeKey: process.env.NEXT_PUBLIC_SUBSCRIBE_KEY,
         userId: userId, // Ensure this is correctly obtained or set
-        secretKey: process.env.NEXT_PUBLIC_SECRET_KEY,
       });
       setChatInstance(pubNub);
     } catch (error) {
       console.error("Failed to initialize PubNub:", error);
     }
-  };
+  }, [pathname]);
 
   // Initialize the PubNub instance
   useEffect(() => {

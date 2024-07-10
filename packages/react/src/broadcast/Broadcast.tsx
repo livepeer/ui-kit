@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type PropsWithChildren, useEffect, useRef } from "react";
+import React, { useEffect, useRef, type PropsWithChildren } from "react";
 
 import {
   type InitialBroadcastProps,
@@ -10,7 +10,8 @@ import {
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
   type InitialProps,
-  addMediaMetricsToStore,
+  addLegacyMediaMetricsToStore,
+  addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
@@ -117,7 +118,15 @@ const Broadcast = (
   }, [ingestUrl]);
 
   useEffect(() => {
-    const metrics = addMediaMetricsToStore(mediaStore.current.store);
+    const metrics = addLegacyMediaMetricsToStore(mediaStore.current.store);
+
+    return () => {
+      metrics.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    const metrics = addMetricsToStore(mediaStore.current.store);
 
     return () => {
       metrics.destroy();

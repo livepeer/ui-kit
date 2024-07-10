@@ -1,5 +1,409 @@
 # @livepeer/react
 
+## 4.2.0
+
+### Minor Changes
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added metrics event reporting with POST requests, using `sendBeacon` for end-of-session metrics.
+
+  ```tsx
+  export type HeartbeatEvent = {
+    // The properties below are sent on every heartbeat.
+
+    /** The event type. */
+    type: "heartbeat";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The number of errors that have occurred since last heartbeat. */
+    errors: number;
+
+    /** The number of times the current playback has stalled, since last heartbeat. */
+    stalled_count: number;
+    /** The *total* number of times the current playback has waited, since last heartbeat. */
+    waiting_count: number;
+
+    /** The time the playback has spent in an errored state, in ms, since last heartbeat. */
+    time_errored_ms: number;
+    /** The time the playback has spent stalled, in ms, since last heartbeat. */
+    time_stalled_ms: number;
+    /** The time the playback has spent playing, in ms, since last heartbeat. */
+    time_playing_ms: number;
+    /** The time the playback has spent waiting, in ms, since last heartbeat. */
+    time_waiting_ms: number;
+
+    // The properties below are only sent once.
+
+    /** The state of autoplay of the video. */
+    autoplay_status?: "autoplay" | "none";
+
+    /** The time from when the metrics were added to play, in milliseconds. */
+    mount_to_play_ms?: number;
+    /** The time from when the metrics were added to the first frame, in milliseconds. */
+    mount_to_first_frame_ms?: number;
+    /** The time from the first play event to the first frame, in milliseconds. Also called TTFF. */
+    play_to_first_frame_ms?: number;
+
+    /** The duration of the video, in milliseconds. */
+    duration_ms?: number;
+    /** The offset of the live video head compared to the server time, in milliseconds. */
+    offset_ms?: number;
+
+    // The properties below are only sent when they change.
+
+    /** The height of the player element, in px. */
+    player_height_px?: number;
+    /** The width of the player element, in px. */
+    player_width_px?: number;
+    /** The height of the source video, in px. */
+    video_height_px?: number;
+    /** The width of the source video, in px. */
+    video_width_px?: number;
+    /** The height of the window, in px. */
+    window_height_px?: number;
+    /** The width of the window, in px. */
+    window_width_px?: number;
+  };
+
+  export type ErrorEvent = {
+    /** The event type. */
+    type: "error";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The raw event error message. */
+    error_message: string;
+    /** The category of the error. */
+    category:
+      | "offline"
+      | "access-control"
+      | "fallback"
+      | "permissions"
+      | "unknown";
+  };
+
+  export type HtmlEvent = {
+    /** The event type. */
+    type:
+      | "play"
+      | "pause"
+      | "enter-fullscreen"
+      | "exit-fullscreen"
+      | "enter-pip"
+      | "exit-pip"
+      | "can-play"
+      | "ended"
+      | "first-frame";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+  };
+
+  export type RateChangeEvent = {
+    /** The event type. */
+    type: "rate";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The playback rate. */
+    payload: PlaybackRate;
+  };
+
+  export type SeekEvent = {
+    /** The event type. */
+    type: "seek";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The seek timestamp. */
+    payload: number;
+  };
+
+  export type VideoQualityEvent = {
+    /** The event type. */
+    type: "video-quality";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The video playback quality enum. */
+    payload: VideoQuality;
+  };
+
+  export type PlaybackEvent =
+    | HeartbeatEvent
+    | ErrorEvent
+    | HtmlEvent
+    | RateChangeEvent
+    | SeekEvent
+    | VideoQualityEvent;
+
+  export type SessionData = {
+    session_id: string;
+    playback_id: string;
+    protocol?: MimeType;
+    page_url: string;
+    source_url: string;
+    player: `${"audio" | "hls" | "video" | "webrtc" | "unknown"}-${string}`;
+    user_agent?: string;
+    uid?: string;
+    events: PlaybackEvent[];
+    live: boolean;
+  };
+  ```
+
+### Patch Changes
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed duration to integer ms.
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `time_warning_ms` to metrics snapshot with a timer when a warning is encountered.
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** merged fixes from `main`.
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved `warning` events to `warning` event type and counter.
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** broke `version` and `player` out into different fields, improved `play`/`pause` events to be triggered on HTML events, added `clip` event.
+
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** split out the `page_url` to be: `domain`, `path`, `params`, and `hash`.
+
+- Updated dependencies [[`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb), [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb), [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb), [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb), [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb), [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb), [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb)]:
+  - @livepeer/core-react@3.2.0
+  - @livepeer/core-web@4.2.0
+  - @livepeer/core@3.2.0
+
+## 4.2.0-next.6
+
+### Patch Changes
+
+- [#561](https://github.com/livepeer/ui-kit/pull/561) [`822b94d`](https://github.com/livepeer/ui-kit/commit/822b94d506a3a4b5607c814f506d5c1a9d2a41c9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `time_warning_ms` to metrics snapshot with a timer when a warning is encountered.
+
+- Updated dependencies [[`822b94d`](https://github.com/livepeer/ui-kit/commit/822b94d506a3a4b5607c814f506d5c1a9d2a41c9)]:
+  - @livepeer/core-react@3.2.0-next.6
+  - @livepeer/core-web@4.2.0-next.6
+  - @livepeer/core@3.2.0-next.6
+
+## 4.2.0-next.5
+
+### Patch Changes
+
+- [#559](https://github.com/livepeer/ui-kit/pull/559) [`dff0c23`](https://github.com/livepeer/ui-kit/commit/dff0c2353d4267e70a4f58ef560d8f429f3f2685) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved `warning` events to `warning` event type and counter.
+
+- Updated dependencies [[`dff0c23`](https://github.com/livepeer/ui-kit/commit/dff0c2353d4267e70a4f58ef560d8f429f3f2685)]:
+  - @livepeer/core-react@3.2.0-next.5
+  - @livepeer/core-web@4.2.0-next.5
+  - @livepeer/core@3.2.0-next.5
+
+## 4.2.0-next.4
+
+### Patch Changes
+
+- [#523](https://github.com/livepeer/ui-kit/pull/523) [`f05608e`](https://github.com/livepeer/ui-kit/commit/f05608ed400c0e81c3e5bebc0f78aeeb5584fd95) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** merged fixes from `main`.
+
+- Updated dependencies [[`f05608e`](https://github.com/livepeer/ui-kit/commit/f05608ed400c0e81c3e5bebc0f78aeeb5584fd95)]:
+  - @livepeer/core-react@3.2.0-next.4
+  - @livepeer/core-web@4.2.0-next.4
+  - @livepeer/core@3.2.0-next.4
+
+## 4.2.0-next.3
+
+### Patch Changes
+
+- [#513](https://github.com/livepeer/ui-kit/pull/513) [`2dbac23`](https://github.com/livepeer/ui-kit/commit/2dbac2358b52520963c1e3f73ba4bed5014de1b2) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** split out the `page_url` to be: `domain`, `path`, `params`, and `hash`.
+
+- Updated dependencies [[`2dbac23`](https://github.com/livepeer/ui-kit/commit/2dbac2358b52520963c1e3f73ba4bed5014de1b2)]:
+  - @livepeer/core-react@3.2.0-next.3
+  - @livepeer/core-web@4.2.0-next.3
+  - @livepeer/core@3.2.0-next.3
+
+## 4.2.0-next.2
+
+### Patch Changes
+
+- [`9665a46`](https://github.com/livepeer/ui-kit/commit/9665a46e8ef6f511b1b393cb73eb7cbc0c127800) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** changed duration to integer ms.
+
+- Updated dependencies [[`9665a46`](https://github.com/livepeer/ui-kit/commit/9665a46e8ef6f511b1b393cb73eb7cbc0c127800)]:
+  - @livepeer/core-react@3.2.0-next.2
+  - @livepeer/core-web@4.2.0-next.2
+  - @livepeer/core@3.2.0-next.2
+
+## 4.2.0-next.1
+
+### Patch Changes
+
+- [#507](https://github.com/livepeer/ui-kit/pull/507) [`5802873`](https://github.com/livepeer/ui-kit/commit/58028734de512fff59e98b2c7bcd2058a7db420b) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** broke `version` and `player` out into different fields, improved `play`/`pause` events to be triggered on HTML events, added `clip` event.
+
+- Updated dependencies [[`5802873`](https://github.com/livepeer/ui-kit/commit/58028734de512fff59e98b2c7bcd2058a7db420b)]:
+  - @livepeer/core-react@3.2.0-next.1
+  - @livepeer/core-web@4.2.0-next.1
+  - @livepeer/core@3.2.0-next.1
+
+## 4.2.0-next.0
+
+### Minor Changes
+
+- [#500](https://github.com/livepeer/ui-kit/pull/500) [`92d67e1`](https://github.com/livepeer/ui-kit/commit/92d67e1d0e89c52ea8bde16b735f2400e8897bde) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added metrics event reporting with POST requests, using `sendBeacon` for end-of-session metrics.
+
+  ```tsx
+  export type HeartbeatEvent = {
+    // The properties below are sent on every heartbeat.
+
+    /** The event type. */
+    type: "heartbeat";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The number of errors that have occurred since last heartbeat. */
+    errors: number;
+
+    /** The number of times the current playback has stalled, since last heartbeat. */
+    stalled_count: number;
+    /** The *total* number of times the current playback has waited, since last heartbeat. */
+    waiting_count: number;
+
+    /** The time the playback has spent in an errored state, in ms, since last heartbeat. */
+    time_errored_ms: number;
+    /** The time the playback has spent stalled, in ms, since last heartbeat. */
+    time_stalled_ms: number;
+    /** The time the playback has spent playing, in ms, since last heartbeat. */
+    time_playing_ms: number;
+    /** The time the playback has spent waiting, in ms, since last heartbeat. */
+    time_waiting_ms: number;
+
+    // The properties below are only sent once.
+
+    /** The state of autoplay of the video. */
+    autoplay_status?: "autoplay" | "none";
+
+    /** The time from when the metrics were added to play, in milliseconds. */
+    mount_to_play_ms?: number;
+    /** The time from when the metrics were added to the first frame, in milliseconds. */
+    mount_to_first_frame_ms?: number;
+    /** The time from the first play event to the first frame, in milliseconds. Also called TTFF. */
+    play_to_first_frame_ms?: number;
+
+    /** The duration of the video, in milliseconds. */
+    duration_ms?: number;
+    /** The offset of the live video head compared to the server time, in milliseconds. */
+    offset_ms?: number;
+
+    // The properties below are only sent when they change.
+
+    /** The height of the player element, in px. */
+    player_height_px?: number;
+    /** The width of the player element, in px. */
+    player_width_px?: number;
+    /** The height of the source video, in px. */
+    video_height_px?: number;
+    /** The width of the source video, in px. */
+    video_width_px?: number;
+    /** The height of the window, in px. */
+    window_height_px?: number;
+    /** The width of the window, in px. */
+    window_width_px?: number;
+  };
+
+  export type ErrorEvent = {
+    /** The event type. */
+    type: "error";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The raw event error message. */
+    error_message: string;
+    /** The category of the error. */
+    category:
+      | "offline"
+      | "access-control"
+      | "fallback"
+      | "permissions"
+      | "unknown";
+  };
+
+  export type HtmlEvent = {
+    /** The event type. */
+    type:
+      | "play"
+      | "pause"
+      | "enter-fullscreen"
+      | "exit-fullscreen"
+      | "enter-pip"
+      | "exit-pip"
+      | "can-play"
+      | "ended"
+      | "first-frame";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+  };
+
+  export type RateChangeEvent = {
+    /** The event type. */
+    type: "rate";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The playback rate. */
+    payload: PlaybackRate;
+  };
+
+  export type SeekEvent = {
+    /** The event type. */
+    type: "seek";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The seek timestamp. */
+    payload: number;
+  };
+
+  export type VideoQualityEvent = {
+    /** The event type. */
+    type: "video-quality";
+    /** The timestamp of the event, in milliseconds. */
+    timestamp: number;
+    /** The video playback quality enum. */
+    payload: VideoQuality;
+  };
+
+  export type PlaybackEvent =
+    | HeartbeatEvent
+    | ErrorEvent
+    | HtmlEvent
+    | RateChangeEvent
+    | SeekEvent
+    | VideoQualityEvent;
+
+  export type SessionData = {
+    session_id: string;
+    playback_id: string;
+    protocol?: MimeType;
+    page_url: string;
+    source_url: string;
+    player: `${"audio" | "hls" | "video" | "webrtc" | "unknown"}-${string}`;
+    user_agent?: string;
+    uid?: string;
+    events: PlaybackEvent[];
+    live: boolean;
+  };
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`92d67e1`](https://github.com/livepeer/ui-kit/commit/92d67e1d0e89c52ea8bde16b735f2400e8897bde)]:
+  - @livepeer/core-react@3.2.0-next.0
+  - @livepeer/core-web@4.2.0-next.0
+  - @livepeer/core@3.2.0-next.0
+
+## 4.1.20
+
+### Patch Changes
+
+- [#557](https://github.com/livepeer/ui-kit/pull/557) [`2045585`](https://github.com/livepeer/ui-kit/commit/2045585b2a5ca6cd9972bd297793ad173895d67d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** added `cacheWebRTCFailureMs` to the player. This allows the player to remember to fall back to HLS if a WebRTC connection times out.
+
+- Updated dependencies [[`2045585`](https://github.com/livepeer/ui-kit/commit/2045585b2a5ca6cd9972bd297793ad173895d67d)]:
+  - @livepeer/core-react@3.1.20
+  - @livepeer/core-web@4.1.20
+  - @livepeer/core@3.1.20
+
+## 4.1.19
+
+### Patch Changes
+
+- [#553](https://github.com/livepeer/ui-kit/pull/553) [`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixes a bug where the metrics listener would not send logs in some situations after the player fell back to HLS playback.
+
+- Updated dependencies [[`2018b09`](https://github.com/livepeer/ui-kit/commit/2018b0900f6f8eadd069ee0697ba166357ccd77d)]:
+  - @livepeer/core@3.1.19
+  - @livepeer/core-react@3.1.19
+  - @livepeer/core-web@4.1.19
+
 ## 4.1.18
 
 ### Patch Changes

@@ -60,6 +60,9 @@ export async function PlayerWithControls({
         clipLength={30}
         src={src}
         jwt={jwt}
+        backoffMax={10000}
+        cacheWebRTCFailureMs={120000}
+        timeout={5000}
       >
         <Player.Container className="h-full w-full overflow-hidden rounded-md bg-gray-950 outline-white/50 outline outline-1 data-[playing=true]:outline-white/80 data-[playing=true]:outline-2 data-[fullscreen=true]:outline-none data-[fullscreen=true]:rounded-none transition-all">
           <Player.Video
