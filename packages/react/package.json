@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React primitives for video apps.",
   "license": "MIT",
-  "version": "4.2.0-next.6",
+  "version": "4.2.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -13,7 +13,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -49,12 +51,24 @@
   },
   "typesVersions": {
     "*": {
-      "assets": ["./dist/assets/index.d.ts"],
-      "broadcast": ["./dist/broadcast/index.d.ts"],
-      "crypto": ["./dist/crypto/index.d.ts"],
-      "external": ["./dist/external/index.d.ts"],
-      "player": ["./dist/player/index.d.ts"],
-      "*": ["./dist/index.d.ts"]
+      "assets": [
+        "./dist/assets/index.d.ts"
+      ],
+      "broadcast": [
+        "./dist/broadcast/index.d.ts"
+      ],
+      "crypto": [
+        "./dist/crypto/index.d.ts"
+      ],
+      "external": [
+        "./dist/external/index.d.ts"
+      ],
+      "player": [
+        "./dist/player/index.d.ts"
+      ],
+      "*": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "scripts": {
@@ -100,5 +114,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
-  "keywords": ["livepeer", "react", "video", "streaming", "livestream"]
+  "keywords": [
+    "livepeer",
+    "react",
+    "video",
+    "streaming",
+    "livestream"
+  ]
 }
