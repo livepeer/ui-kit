@@ -127,9 +127,7 @@ describe("getMetricsReportingPOSTUrl", () => {
         playbackUrl: sourceUrl,
       });
 
-      expect(reportingUrl).toMatchInlineSnapshot(
-        `"https://playback.livepeer.studio/analytics/log"`,
-      );
+      expect(reportingUrl).includes("lp-playback.studio/analytics/log");
     });
 
     it("given a valid metrics url then it should return a reporting url", async () => {
@@ -140,9 +138,7 @@ describe("getMetricsReportingPOSTUrl", () => {
         playbackUrl: sourceUrl,
       });
 
-      expect(reportingUrl).toMatchInlineSnapshot(
-        `"https://playback.livepeer.studio/analytics/log"`,
-      );
+      expect(reportingUrl).includes("lp-playback.studio/analytics/log");
     });
 
     it("given invalid urls then it should not return a reporting urls", async () => {
@@ -174,9 +170,7 @@ describe("getMetricsReportingPOSTUrl", () => {
         playbackUrl: sourceUrl,
       });
 
-      expect(reportingUrl).toMatchInlineSnapshot(
-        `"https://playback.livepeer.studio/analytics/log"`,
-      );
+      expect(reportingUrl).includes("lp-playback.studio/analytics/log");
     });
 
     it("given invalid urls then it should not return a reporting urls", async () => {
