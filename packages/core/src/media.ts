@@ -15,12 +15,14 @@ export type {
   PlaybackError,
   PlaybackRate,
 } from "./media/controller";
-export { addMediaMetricsToStore } from "./media/metrics";
+export { addLegacyMediaMetricsToStore } from "./media/metrics";
 export type {
-  MediaMetrics,
-  MetricsStatus,
-  PlaybackMonitor,
+  LegacyMediaMetrics,
+  LegacyMetricsStatus,
+  LegacyPlaybackMonitor,
 } from "./media/metrics";
+export { addMetricsToStore } from "./media/metrics-new";
+export type { PlaybackEvent, SessionData } from "./media/metrics-new";
 export { getMediaSourceType } from "./media/src";
 export type {
   AccessControlParams,

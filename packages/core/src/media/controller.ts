@@ -201,6 +201,8 @@ export type ControlsState = {
 
   /** The last time that a play event was received */
   playLastTime: number;
+  /** The last time that a pause event was received */
+  pauseLastTime: number;
   /** The offset of the browser's livestream versus the server time (in ms). */
   playbackOffsetMs: number | null;
   /** The last time that the media was interacted with */
@@ -288,6 +290,7 @@ export type MediaControllerState = {
 
   /** The current source that is playing. */
   currentSource: Src | null;
+
   /** The final playback URL for the media that is playing, after redirects. */
   currentUrl: string | null;
 
@@ -315,6 +318,9 @@ export type MediaControllerState = {
 
   /** If the media is currently loading */
   loading: boolean;
+
+  /** The metrics reporting URL to POST to. */
+  metricsReportingUrl: string | null;
 
   /** If the video element is mounted on the DOM - this is used for initialization logic */
   mounted: boolean;
@@ -379,6 +385,7 @@ export type MediaControllerState = {
     // biome-ignore lint/suspicious/noExplicitAny: no hls.js
     setHlsConfig: (hlsConfig: any) => void;
     setLive: (live: boolean) => void;
+    setMetricsReportingUrl: (url: string) => void;
     setMounted: () => void;
     setPictureInPicture: (pictureInPicture: boolean) => void;
     setPlaybackRate: (rate: number | string) => void;
@@ -489,6 +496,7 @@ export const createControllerStore = ({
     playbackId: playbackId ?? parsedInputSource?.playbackId ?? null,
     playbackOffsetMs: null,
     playLastTime: 0,
+    pauseLastTime: 0,
     requestedClipParams: null,
     requestedFullscreenLastTime: 0,
     requestedPictureInPictureLastTime: 0,
@@ -561,6 +569,7 @@ export const createControllerStore = ({
 
           /** The final playback URL for the media that is playing, after redirects. */
           currentUrl: null,
+          metricsReportingUrl: null,
 
           aria: {
             progress: "No progress, content is loading",
@@ -611,6 +620,11 @@ export const createControllerStore = ({
             setPoster: (poster: string | null) =>
               set(() => ({
                 poster,
+              })),
+
+            setMetricsReportingUrl: (metricsReportingUrl) =>
+              set(() => ({
+                metricsReportingUrl,
               })),
 
             onWebRTCTimeout: () => {
@@ -682,7 +696,7 @@ export const createControllerStore = ({
                 };
               }),
             onPause: () =>
-              set(({ aria }) => {
+              set(({ aria, __controls }) => {
                 const title = "Play (k)";
 
                 return {
@@ -694,6 +708,10 @@ export const createControllerStore = ({
                   aria: {
                     ...aria,
                     playPause: title,
+                  },
+                  __controls: {
+                    ...__controls,
+                    pauseLastTime: Date.now(),
                   },
                 };
               }),
