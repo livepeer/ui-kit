@@ -1,5 +1,4 @@
 {
-  "editor.formatOnSave": true,
   "cSpell.words": ["Arweave", "multistream"],
   "json.format.enable": false
 }
