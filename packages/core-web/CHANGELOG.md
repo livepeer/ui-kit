@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.2.1
+
+### Patch Changes
+
+- [#564](https://github.com/livepeer/ui-kit/pull/564) [`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved an issue where a `storage` override was not being respected.
+
+- Updated dependencies [[`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21)]:
+  - @livepeer/core@3.2.1
+
 ## 4.2.0
 
 ### Minor Changes

@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.2.1
+
+### Patch Changes
+
+- [#564](https://github.com/livepeer/ui-kit/pull/564) [`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved an issue where a `storage` override was not being respected. 
+
+- Updated dependencies [[`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21)]:
+  - @livepeer/core@3.2.1
+
 ## 3.2.0
 
 ### Minor Changes
 
-- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added metrics event reporting with POST requests, using `sendBeacon` for end-of-session metrics. 
+- [#552](https://github.com/livepeer/ui-kit/pull/552) [`187d26c`](https://github.com/livepeer/ui-kit/commit/187d26cb6f7e355440e5a8d1819f9cc060a28ccb) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:**: added metrics event reporting with POST requests, using `sendBeacon` for end-of-session metrics.
 
   ```tsx
   export type HeartbeatEvent = {
