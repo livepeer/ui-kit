@@ -61,15 +61,17 @@ const Broadcast = (
   const mediaStore = useRef(
     createControllerStore({
       device: getDeviceInfo(version.react),
-      storage: createStorage(
-        storage !== null && typeof window !== "undefined"
-          ? {
-              storage: window.localStorage,
-            }
-          : {
-              storage: noopStorage,
-            },
-      ),
+      storage:
+        storage ??
+        createStorage(
+          storage !== null && typeof window !== "undefined"
+            ? {
+                storage: window.localStorage,
+              }
+            : {
+                storage: noopStorage,
+              },
+        ),
       src: null,
       initialProps: {
         hotkeys: "broadcast",
@@ -85,15 +87,17 @@ const Broadcast = (
   const broadcastStore = useRef(
     createBroadcastStore({
       device: getBroadcastDeviceInfo(version.react),
-      storage: createStorage(
-        storage !== null && typeof window !== "undefined"
-          ? {
-              storage: window.localStorage,
-            }
-          : {
-              storage: noopStorage,
-            },
-      ),
+      storage:
+        storage ??
+        createStorage(
+          storage !== null && typeof window !== "undefined"
+            ? {
+                storage: window.localStorage,
+              }
+            : {
+                storage: noopStorage,
+              },
+        ),
       ingestUrl,
       initialProps: {
         aspectRatio,
