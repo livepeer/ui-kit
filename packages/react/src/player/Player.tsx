@@ -11,10 +11,10 @@ import {
   addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
+import type { PlaybackEvent } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
 import { MediaProvider, type MediaScopedProps } from "../shared/context";
-import type { PlaybackEvent } from "@livepeer/core/media";
 
 interface PlayerProps
   extends PropsWithChildren<

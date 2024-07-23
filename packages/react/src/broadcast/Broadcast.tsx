@@ -10,10 +10,10 @@ import {
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
   type InitialProps,
+  type PlaybackEvent,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
-  type PlaybackEvent,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
