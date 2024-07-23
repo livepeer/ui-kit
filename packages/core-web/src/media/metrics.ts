@@ -4,6 +4,7 @@ import {
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  PlaybackEvent,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
@@ -38,6 +39,13 @@ export type MediaMetricsOptions = Pick<InitialProps, "viewerId"> & {
    */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   onError?: ((error: PlaybackError) => any) | null | undefined;
+
+  /**
+   * A callback that is called when the player's metrics events are emitted.
+   * This can be used to integrate with other analytics providers.
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: allow any for incoming callback
+  onPlaybackEvents?: (events: PlaybackEvent[]) => Promise<any> | any;
 };
 
 /**
@@ -87,6 +95,7 @@ export function addMediaMetrics(
     const { destroy: destroyMetrics } = addMetricsToStore(store, {
       disableProgressListener: opts.disableProgressListener,
       interval: opts.interval,
+      onPlaybackEvents: opts.onPlaybackEvents,
     });
     const { destroy: destroyLegacyMetrics, metrics: legacyMetrics } =
       addLegacyMediaMetricsToStore(store, {
