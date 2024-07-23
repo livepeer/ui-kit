@@ -184,12 +184,15 @@ const globalLoadTimestampMs = Date.now();
  * @param store Store to capture playback metrics from.
  * @param opts.interval The interval at which metrics are sent, in ms. Default 5000.
  * @param opts.disableProgressListener Disables the `progress` event listener, which is used to monitor when media is in a "playing" state.
+ * @param opts.onPlaybackEvents A callback that is called when the player's metrics events are emitted. This can be used to integrate with other analytics providers.
  */
 export function addMetricsToStore(
   store: MediaControllerStore | undefined | null,
   opts?: {
     interval?: number;
     disableProgressListener?: boolean;
+    // biome-ignore lint/suspicious/noExplicitAny: allow any for incoming callback
+    onPlaybackEvents?: (events: PlaybackEvent[]) => Promise<any> | any;
   },
 ): {
   destroy: () => void;
@@ -529,6 +532,16 @@ export function addMetricsToStore(
         ),
       });
 
+      const internalEvents = eventBuffer.getInternalEvents();
+
+      try {
+        await opts?.onPlaybackEvents?.(internalEvents);
+      } catch (e) {
+        console.error(e);
+
+        eventBuffer.onInternalFailure(internalEvents);
+      }
+
       const metricsUrl = currentState.metricsReportingUrl;
 
       if (metricsUrl) {
@@ -539,11 +552,11 @@ export function addMetricsToStore(
           interval - 500, // we abort 500ms before the next request is scheduled
         );
 
-        const events = eventBuffer.getEvents();
+        const externalEvents = eventBuffer.getExternalEvents();
 
         // if we're unloading and there's no events to send, we return early
         // since there's nothing to do here
-        if (isUnloading && events.length === 0) {
+        if (isUnloading && externalEvents.length === 0) {
           return;
         }
 
@@ -581,7 +594,7 @@ export function addMetricsToStore(
               "",
             ),
             uid: currentState.__initialProps.viewerId ?? undefined,
-            events,
+            events: externalEvents,
           };
 
           const data = JSON.stringify(sessionData);
@@ -615,7 +628,7 @@ export function addMetricsToStore(
             ),
           );
 
-          eventBuffer.onFailure(events);
+          eventBuffer.onExternalFailure(externalEvents);
         } finally {
           clearTimeout(id);
         }
@@ -678,38 +691,59 @@ function isInIframe() {
 }
 
 export class PlaybackEventBuffer {
-  private buffer: PlaybackEvent[] = [];
-  // we cap at 450 events, which assumed that each event could be max 600 bytes
+  private internalBuffer: PlaybackEvent[] = [];
+  private externalBuffer: PlaybackEvent[] = [];
+
+  // we cap at 25k events, which assumed that each event could be max 200 bytes
   // this should be revised when event structure changes
-  public readonly maxBufferSize = 450;
+  public readonly maxBufferSize = 25_000;
 
   public addEvent(event: PlaybackEvent) {
     this.addEvents([event]);
   }
 
   public addEvents(events: PlaybackEvent[]) {
-    this.buffer = [...events, ...this.buffer];
+    this.internalBuffer = [...events, ...this.internalBuffer];
+    this.externalBuffer = [...events, ...this.externalBuffer];
 
     this.trimBuffer();
   }
 
-  public getEvents() {
-    const eventsToSend = [...this.buffer];
-    this.buffer = [];
+  public getInternalEvents() {
+    const eventsToSend = [...this.internalBuffer];
+    this.internalBuffer = [];
 
     return eventsToSend;
   }
 
-  public onFailure(pendingEvents: PlaybackEvent[]) {
-    this.buffer = [...this.buffer, ...pendingEvents];
+  public getExternalEvents() {
+    const eventsToSend = [...this.externalBuffer];
+    this.externalBuffer = [];
+
+    return eventsToSend;
+  }
+
+  public onInternalFailure(pendingEvents: PlaybackEvent[]) {
+    this.internalBuffer = [...this.internalBuffer, ...pendingEvents];
+
+    this.trimBuffer();
+  }
+
+  public onExternalFailure(pendingEvents: PlaybackEvent[]) {
+    this.externalBuffer = [...this.externalBuffer, ...pendingEvents];
 
     this.trimBuffer();
   }
 
   private trimBuffer() {
-    if (this.buffer.length > this.maxBufferSize) {
-      const excess = this.buffer.length - this.maxBufferSize;
-      this.buffer = this.buffer.slice(excess);
+    if (this.internalBuffer.length > this.maxBufferSize) {
+      const excess = this.internalBuffer.length - this.maxBufferSize;
+      this.internalBuffer = this.internalBuffer.slice(excess);
+    }
+
+    if (this.externalBuffer.length > this.maxBufferSize) {
+      const excess = this.externalBuffer.length - this.maxBufferSize;
+      this.externalBuffer = this.externalBuffer.slice(excess);
     }
   }
 }

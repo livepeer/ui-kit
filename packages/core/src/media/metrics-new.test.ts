@@ -40,7 +40,7 @@ describe("PlaybackEventBuffer", () => {
 
       buffer.addEvent(getDummyPlaybackEvent());
 
-      const events = buffer.getEvents();
+      const events = buffer.getExternalEvents();
 
       expect(events).toMatchInlineSnapshot(`
         [
@@ -67,14 +67,14 @@ describe("PlaybackEventBuffer", () => {
 
       buffer.addEvent(getDummyPlaybackEvent());
 
-      const events = buffer.getEvents();
+      const events = buffer.getExternalEvents();
 
-      expect(buffer.getEvents()).length(0);
-      expect(buffer.getEvents()).length(0);
+      expect(buffer.getExternalEvents()).length(0);
+      expect(buffer.getExternalEvents()).length(0);
 
-      buffer.onFailure(events);
+      buffer.onExternalFailure(events);
 
-      expect(buffer.getEvents()).toMatchInlineSnapshot(`
+      expect(buffer.getExternalEvents()).toMatchInlineSnapshot(`
         [
           {
             "autoplay_status": "autoplay",
@@ -97,11 +97,11 @@ describe("PlaybackEventBuffer", () => {
     it("adds a lot of events and caps at max", async () => {
       const buffer = new PlaybackEventBuffer();
 
-      for (let i = 0; i < 1000; i++) {
+      for (let i = 0; i < buffer.maxBufferSize + 1000; i++) {
         buffer.addEvent(getDummyPlaybackEvent());
       }
 
-      expect(buffer.getEvents()).length(buffer.maxBufferSize);
+      expect(buffer.getExternalEvents()).length(buffer.maxBufferSize);
     });
 
     it("adds a lot of events and enqueues new ones to front", async () => {
@@ -113,20 +113,12 @@ describe("PlaybackEventBuffer", () => {
 
       buffer.addEvent(getDummyPlaybackEvent("error"));
 
-      expect(buffer.getEvents()[0]).toMatchInlineSnapshot(`
+      expect(buffer.getExternalEvents()[0]).toMatchInlineSnapshot(`
         {
-          "autoplay_status": "autoplay",
-          "errors": 0,
-          "stalled_count": 1,
-          "time_errored_ms": 0,
-          "time_playing_ms": 5000,
-          "time_stalled_ms": 0,
-          "time_waiting_ms": 0,
-          "time_warning_ms": 0,
+          "category": "access-control",
+          "message": "Error",
           "timestamp": 1643673600000,
-          "type": "heartbeat",
-          "waiting_count": 0,
-          "warnings": 0,
+          "type": "error",
         }
       `);
     });
@@ -138,9 +130,9 @@ describe("PlaybackEventBuffer", () => {
         buffer.addEvent(getDummyPlaybackEvent());
       }
 
-      buffer.onFailure([getDummyPlaybackEvent("error")]);
+      buffer.onExternalFailure([getDummyPlaybackEvent("error")]);
 
-      const events = buffer.getEvents();
+      const events = buffer.getExternalEvents();
 
       expect(events).length(11);
 
@@ -173,17 +165,19 @@ describe("PlaybackEventBuffer", () => {
     it("adds a lot of events and errored get trimmed", async () => {
       const buffer = new PlaybackEventBuffer();
 
-      for (let i = 0; i < 1000; i++) {
+      for (let i = 0; i < buffer.maxBufferSize + 1000; i++) {
         buffer.addEvent(getDummyPlaybackEvent());
       }
 
-      buffer.onFailure([getDummyPlaybackEvent("error")]);
+      buffer.onExternalFailure([getDummyPlaybackEvent("error")]);
 
-      const events = buffer.getEvents();
+      const externalEvents = buffer.getExternalEvents();
+      const internalEvents = buffer.getInternalEvents();
 
-      expect(events).length(buffer.maxBufferSize);
+      expect(externalEvents).length(buffer.maxBufferSize);
+      expect(internalEvents).length(buffer.maxBufferSize);
 
-      expect(events[events.length - 1]).toMatchInlineSnapshot(`
+      expect(externalEvents[externalEvents.length - 1]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
           "message": "Error",
@@ -191,7 +185,7 @@ describe("PlaybackEventBuffer", () => {
           "type": "error",
         }
       `);
-      expect(events[0]).toMatchInlineSnapshot(`
+      expect(externalEvents[0]).toMatchInlineSnapshot(`
         {
           "autoplay_status": "autoplay",
           "errors": 0,

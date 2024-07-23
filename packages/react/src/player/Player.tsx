@@ -11,6 +11,7 @@ import {
   addMetricsToStore,
   createControllerStore,
 } from "@livepeer/core/media";
+import type { PlaybackEvent } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
 import { MediaProvider, type MediaScopedProps } from "../shared/context";
@@ -40,6 +41,18 @@ interface PlayerProps
    * This is highly recommended to adhere to ARIA guidelines.
    */
   hotkeys?: boolean;
+
+  /**
+   * A callback that is called when the player's metrics events are emitted.
+   * This can be used to integrate with other analytics providers.
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: allow any for incoming callback
+  onPlaybackEvents?: (events: PlaybackEvent[]) => Promise<any> | any;
+
+  /**
+   * The interval at which metrics are sent, in ms. Defaults to 5000.
+   */
+  metricsInterval?: number;
 }
 
 const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
@@ -50,6 +63,8 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     jwt,
     accessKey,
     storage,
+    onPlaybackEvents,
+    metricsInterval,
     ...rest
   } = props;
 
@@ -113,8 +128,12 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     };
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: no deps
   useEffect(() => {
-    const metrics = addMetricsToStore(store.current.store);
+    const metrics = addMetricsToStore(store.current.store, {
+      onPlaybackEvents,
+      interval: metricsInterval,
+    });
 
     return () => {
       metrics.destroy();

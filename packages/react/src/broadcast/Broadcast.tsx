@@ -10,6 +10,7 @@ import {
 import { getDeviceInfo } from "@livepeer/core-web/browser";
 import {
   type InitialProps,
+  type PlaybackEvent,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
@@ -42,6 +43,18 @@ interface BroadcastProps
    * @see {@link https://web.dev/cls/}
    */
   aspectRatio?: number | null;
+
+  /**
+   * A callback that is called when the broadcast's metrics events are emitted.
+   * This can be used to integrate with other analytics providers.
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: allow any for incoming callback
+  onPlaybackEvents?: (events: PlaybackEvent[]) => Promise<any> | any;
+
+  /**
+   * The interval at which metrics are sent, in ms. Defaults to 5000.
+   */
+  metricsInterval?: number;
 }
 
 const Broadcast = (
@@ -55,6 +68,8 @@ const Broadcast = (
     storage,
     timeout,
     videoQuality,
+    onPlaybackEvents,
+    metricsInterval,
     ...rest
   } = props;
 
@@ -129,8 +144,12 @@ const Broadcast = (
     };
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: no deps
   useEffect(() => {
-    const metrics = addMetricsToStore(mediaStore.current.store);
+    const metrics = addMetricsToStore(mediaStore.current.store, {
+      onPlaybackEvents,
+      interval: metricsInterval,
+    });
 
     return () => {
       metrics.destroy();
