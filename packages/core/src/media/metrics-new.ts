@@ -888,17 +888,32 @@ class MetricsMonitor {
       },
     );
 
+    const destroyPlayLastTimeListener = store.subscribe(
+      (state) => state.__controls.playLastTime,
+      async (playLastTime) => {
+        if (playLastTime >= 0) {
+          this.timerWarning.stop();
+          this.timerErrored.stop();
+          this.timerStalled.stop();
+          this.timerWaiting.stop();
+
+          this.timerPlaying.start();
+        }
+      },
+    );
+
     const destroyProgressListener = store.subscribe(
       (state) => state.progress,
       async () => {
-        if (opts.disableProgressListener !== true) {
-          if (!this.timerPlaying.startTime) {
-            this.timerWarning.stop();
-            this.timerErrored.stop();
-            this.timerStalled.stop();
-            this.timerWaiting.stop();
-            this.timerPlaying.start();
-          }
+        if (
+          opts.disableProgressListener !== true &&
+          !this.timerPlaying.startTime
+        ) {
+          this.timerWarning.stop();
+          this.timerErrored.stop();
+          this.timerStalled.stop();
+          this.timerWaiting.stop();
+          this.timerPlaying.start();
         }
 
         const now = Date.now();
@@ -973,6 +988,7 @@ class MetricsMonitor {
       destroyErroredListener?.();
       destroyFirstPlayListener?.();
       destroyPlayingListener?.();
+      destroyPlayLastTimeListener?.();
       destroyProgressListener?.();
       destroyStalledListener?.();
       destroyWaitingListener?.();
