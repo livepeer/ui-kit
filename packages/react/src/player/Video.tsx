@@ -36,7 +36,8 @@ interface VideoProps
 
 const Video = React.forwardRef<VideoElement, VideoProps>(
   (props: MediaScopedProps<VideoProps>, forwardedRef) => {
-    const { __scopeMedia, style, poster, hlsConfig, ...videoProps } = props;
+    const { __scopeMedia, style, poster, hlsConfig, title, ...videoProps } =
+      props;
 
     const context = useMediaContext(VIDEO_NAME, __scopeMedia);
 
@@ -108,6 +109,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
         }
         muted={volume === 0}
         {...videoProps}
+        aria-label={title ?? videoProps["aria-label"]}
         autoPlay={autoPlay}
         preload={preload}
         ref={composedRefs}
