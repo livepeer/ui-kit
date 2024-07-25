@@ -1,10 +1,21 @@
 # livepeer
 
+## 4.2.2
+
+### Patch Changes
+
+- [`abf18d6`](https://github.com/livepeer/ui-kit/commit/abf18d6f07529fe37440ddde2f718611350c51f5) Thanks [@0xcadams](https://github.com/0xcadams)! - **Feature:** Add a new `onPlaybackEvents` callback to the `Player` and `Broadcast`. This allows you to integrate with other analytics providers.
+
+- [#566](https://github.com/livepeer/ui-kit/pull/566) [`7a3d1f3`](https://github.com/livepeer/ui-kit/commit/7a3d1f316ae146f889758387bcfc5997dccec5c3) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved an issue where using `disableProgressListener` would cause the player to continue to increment waittime when the player was playing.
+
+- Updated dependencies [[`abf18d6`](https://github.com/livepeer/ui-kit/commit/abf18d6f07529fe37440ddde2f718611350c51f5), [`7a3d1f3`](https://github.com/livepeer/ui-kit/commit/7a3d1f316ae146f889758387bcfc5997dccec5c3)]:
+  - @livepeer/core@3.2.2
+
 ## 4.2.1
 
 ### Patch Changes
 
-- [#564](https://github.com/livepeer/ui-kit/pull/564) [`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21) Thanks [@0xcadams](https://github.com/0xcadams)! -  **Fix:** resolved an issue where a `storage` override was not being respected.
+- [#564](https://github.com/livepeer/ui-kit/pull/564) [`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** resolved an issue where a `storage` override was not being respected.
 
 - Updated dependencies [[`2811223`](https://github.com/livepeer/ui-kit/commit/2811223502a3c751f2264840e02429d17e758e21)]:
   - @livepeer/core@3.2.1
