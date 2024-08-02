@@ -426,9 +426,27 @@ const addEffectsToStore = (
 
       if (source.type === "webrtc") {
         const unsubscribeBframes = store.subscribe(
-          (state) => Boolean(state?.__metadata?.bframes),
-          (bframes) => {
-            if (bframes && !unmounted) {
+          (state) => state?.__metadata,
+          (metadata) => {
+            let webrtcIsPossibleForOneTrack = false;
+
+            // Check if metadata and meta tracks are available
+            if (metadata?.meta?.tracks) {
+              // Iterate over each track in the metadata
+              for (const trackId of Object.keys(metadata.meta.tracks)) {
+                // Check if the track does not have bframes equal to 1
+                if (metadata?.meta?.tracks[trackId]?.bframes !== 1) {
+                  webrtcIsPossibleForOneTrack = true;
+                }
+              }
+            }
+
+            // Determine if fallback to HLS is necessary
+            const shouldFallBackToHLS =
+              !webrtcIsPossibleForOneTrack || metadata?.meta?.bframes !== 0;
+
+            // If fallback to HLS is needed and component is not unmounted, handle the error
+            if (shouldFallBackToHLS && !unmounted) {
               onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
             }
           },
