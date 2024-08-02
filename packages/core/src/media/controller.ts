@@ -254,10 +254,64 @@ export type ElementSize = {
   width: number;
   height: number;
 };
+type MetaTrack = {
+  bps?: number;
+  channels?: number;
+  codec?: string;
+  codecstring?: string;
+  firstms?: number;
+  idx?: number;
+  init?: string;
+  jitter?: number;
+  lastms?: number;
+  maxbps?: number;
+  rate?: number;
+  size?: number;
+  trackid?: number;
+  type?: string;
+  height?: number;
+  width?: number;
+  fpks?: number;
+  bframes?: number;
+};
+
+type Meta = {
+  bframes?: number;
+  buffer_window?: number;
+  jitter?: number;
+  live?: number;
+  maxkeepaway?: number;
+  tracks?: {
+    [key: string]: MetaTrack;
+  };
+  uuid?: string;
+  version?: number;
+};
+
+type Source = {
+  priority?: number;
+  relurl?: string;
+  simul_tracks?: number;
+  total_matches?: number;
+  type?: string;
+  url?: string;
+  hrn?: string;
+  player_url?: string;
+  RTCIceServers?: {
+    urls?: string;
+    credential?: string;
+    username?: string;
+  }[];
+};
 
 export type Metadata = {
-  bframes?: number;
-  bufferWindow?: number;
+  height?: number;
+  meta?: Meta;
+  selver?: number;
+  source?: Source[];
+  type?: string;
+  unixoffset?: number;
+  width?: number;
 };
 
 export type ClipLength = 90 | 60 | 45 | 30 | 15 | 10;
