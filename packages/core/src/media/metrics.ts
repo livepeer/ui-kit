@@ -1,4 +1,4 @@
-import type { MediaControllerStore } from "./controller";
+import type { MediaControllerStore, Metadata } from "./controller";
 import { getMetricsReportingWebsocketUrl } from "./metrics-utils";
 import type { MimeType } from "./mime";
 
@@ -526,18 +526,9 @@ export function addLegacyMediaMetricsToStore(
         newWebSocket.addEventListener("message", (event) => {
           try {
             if (event?.data) {
-              const json = JSON.parse(event.data);
+              const json = JSON.parse(event.data) as Metadata;
 
-              if (json?.meta?.bframes || json?.meta?.buffer_window) {
-                store.getState().__controlsFunctions.setWebsocketMetadata({
-                  bframes: json?.meta?.bframes
-                    ? Number(json?.meta?.bframes)
-                    : undefined,
-                  bufferWindow: json?.meta?.buffer_window
-                    ? Number(json?.meta?.buffer_window)
-                    : undefined,
-                });
-              }
+              store.getState().__controlsFunctions.setWebsocketMetadata(json);
             }
           } catch (e) {
             console.warn("Failed to parse metadata from websocket.");
