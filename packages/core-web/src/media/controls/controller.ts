@@ -442,11 +442,11 @@ const addEffectsToStore = (
             }
 
             // Determine if fallback to HLS is necessary
-            const shouldFallBackToHLS =
-              !webrtcIsPossibleForOneTrack || metadata?.meta?.bframes !== 0;
+            const shouldNotFallBackToHLS =
+              webrtcIsPossibleForOneTrack || metadata?.meta?.bframes === 0;
 
             // If fallback to HLS is needed and component is not unmounted, handle the error
-            if (shouldFallBackToHLS && !unmounted) {
+            if (!shouldNotFallBackToHLS && !unmounted) {
               onErrorComposed(new Error(BFRAMES_ERROR_MESSAGE));
             }
           },
