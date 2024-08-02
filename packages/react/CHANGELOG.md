@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.2.4
+
+### Patch Changes
+
+- [#571](https://github.com/livepeer/ui-kit/pull/571) [`96ab02b`](https://github.com/livepeer/ui-kit/commit/96ab02b18b4cd68aa25b2c589e78a42dfa8c8ff1) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed logic for falling back to HLS.
+
+- Updated dependencies [[`96ab02b`](https://github.com/livepeer/ui-kit/commit/96ab02b18b4cd68aa25b2c589e78a42dfa8c8ff1)]:
+  - @livepeer/core-react@3.2.4
+  - @livepeer/core-web@4.2.4
+  - @livepeer/core@3.2.4
+
 ## 4.2.3
 
 ### Patch Changes

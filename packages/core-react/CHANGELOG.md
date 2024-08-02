@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.2.4
+
+### Patch Changes
+
+- [#571](https://github.com/livepeer/ui-kit/pull/571) [`96ab02b`](https://github.com/livepeer/ui-kit/commit/96ab02b18b4cd68aa25b2c589e78a42dfa8c8ff1) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** fixed logic for falling back to HLS.
+
+- Updated dependencies [[`96ab02b`](https://github.com/livepeer/ui-kit/commit/96ab02b18b4cd68aa25b2c589e78a42dfa8c8ff1)]:
+  - @livepeer/core@3.2.4
+
 ## 3.2.3
 
 ### Patch Changes
 
-- [#569](https://github.com/livepeer/ui-kit/pull/569) [`cd68707`](https://github.com/livepeer/ui-kit/commit/cd687070233cce45580a2f5394ed74f5d7d497e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added fallback to HLS if webrtc is not possible for one track, or if bframes is 0. 
+- [#569](https://github.com/livepeer/ui-kit/pull/569) [`cd68707`](https://github.com/livepeer/ui-kit/commit/cd687070233cce45580a2f5394ed74f5d7d497e9) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added fallback to HLS if webrtc is not possible for one track, or if bframes is 0.
 
 - Updated dependencies [[`cd68707`](https://github.com/livepeer/ui-kit/commit/cd687070233cce45580a2f5394ed74f5d7d497e9)]:
   - @livepeer/core@3.2.3
