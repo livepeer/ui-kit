@@ -49,6 +49,7 @@ describe("PlaybackEventBuffer", () => {
           {
             "autoplay_status": "autoplay",
             "errors": 0,
+            "id": "abcd1234",
             "stalled_count": 1,
             "time_errored_ms": 0,
             "time_playing_ms": 5000,
@@ -81,6 +82,7 @@ describe("PlaybackEventBuffer", () => {
           {
             "autoplay_status": "autoplay",
             "errors": 0,
+            "id": "abcd1234",
             "stalled_count": 1,
             "time_errored_ms": 0,
             "time_playing_ms": 5000,
@@ -118,6 +120,7 @@ describe("PlaybackEventBuffer", () => {
       expect(buffer.getExternalEvents()[0]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
+          "id": "abcd1234",
           "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
@@ -141,6 +144,7 @@ describe("PlaybackEventBuffer", () => {
       expect(events[events.length - 1]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
+          "id": "abcd1234",
           "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
@@ -150,6 +154,7 @@ describe("PlaybackEventBuffer", () => {
         {
           "autoplay_status": "autoplay",
           "errors": 0,
+          "id": "abcd1234",
           "stalled_count": 1,
           "time_errored_ms": 0,
           "time_playing_ms": 5000,
@@ -182,6 +187,7 @@ describe("PlaybackEventBuffer", () => {
       expect(externalEvents[externalEvents.length - 1]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
+          "id": "abcd1234",
           "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
@@ -191,6 +197,7 @@ describe("PlaybackEventBuffer", () => {
         {
           "autoplay_status": "autoplay",
           "errors": 0,
+          "id": "abcd1234",
           "stalled_count": 1,
           "time_errored_ms": 0,
           "time_playing_ms": 5000,
