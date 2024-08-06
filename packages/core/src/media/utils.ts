@@ -1,3 +1,4 @@
+import { customAlphabet } from "nanoid";
 import type { ClipParams, InitialProps } from "./controller";
 import { getPlaybackIdFromSourceUrl } from "./metrics-utils";
 import {
@@ -32,17 +33,13 @@ export const getBoundedRate = (rate: string | number) => {
 export const getBoundedVolume = (volume: number) =>
   Math.min(Math.max(0, getFilteredNaN(volume)), 1);
 
-export const generateRandomToken = () => {
-  try {
-    return (
-      Math.random().toString(16).substring(2) +
-      Math.random().toString(16).substring(2)
-    );
-  } catch (e) {
-    //
-  }
+const nanoid = customAlphabet(
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  22,
+);
 
-  return "none" as const;
+export const generateRandomToken = () => {
+  return nanoid();
 };
 
 export const getClipParams = ({
