@@ -13,6 +13,7 @@ const getDummyPlaybackEvent = (
 ): PlaybackEvent =>
   type === "heartbeat"
     ? {
+        id: "abcd1234",
         timestamp: Date.now(),
         type,
         errors: 0,
@@ -27,6 +28,7 @@ const getDummyPlaybackEvent = (
         time_waiting_ms: 0,
       }
     : {
+        id: "abcd1234",
         timestamp: Date.now(),
         type,
         message: "Error",
