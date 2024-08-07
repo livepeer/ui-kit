@@ -1,5 +1,14 @@
 # livepeer
 
+## 4.2.5
+
+### Patch Changes
+
+- [#573](https://github.com/livepeer/ui-kit/pull/573) [`2a1b4e4`](https://github.com/livepeer/ui-kit/commit/2a1b4e499fe829face2606d2ae2a23443db2ff1e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved to using `nanoid` for generating secure IDs and added IDs to all metrics.
+
+- Updated dependencies [[`2a1b4e4`](https://github.com/livepeer/ui-kit/commit/2a1b4e499fe829face2606d2ae2a23443db2ff1e)]:
+  - @livepeer/core@3.2.5
+
 ## 4.2.4
 
 ### Patch Changes
