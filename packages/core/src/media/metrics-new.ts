@@ -1,4 +1,3 @@
-import { calculateJwkThumbprint } from "jose";
 import { warn } from "../utils";
 import type { MediaControllerStore, PlaybackRate } from "./controller";
 import { getMetricsReportingPOSTUrl } from "./metrics-utils";
