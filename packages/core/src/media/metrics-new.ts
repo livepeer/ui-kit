@@ -753,10 +753,7 @@ export class PlaybackEventBuffer {
 
         const mergedEvent: HeartbeatEvent = {
           ...existingEvent,
-          id:
-            existingEvent.timestamp < newEvent.timestamp
-              ? existingEvent.id
-              : newEvent.id,
+          id: existingEvent.id,
           timestamp: Math.max(existingEvent.timestamp, newEvent.timestamp),
           errors: existingEvent.errors + newEvent.errors,
           warnings: existingEvent.warnings + newEvent.warnings,
