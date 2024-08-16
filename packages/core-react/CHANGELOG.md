@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.2.6
+
+### Patch Changes
+
+- [#575](https://github.com/livepeer/ui-kit/pull/575) [`a3a5034`](https://github.com/livepeer/ui-kit/commit/a3a503497803f54fddef0fd0dffee96872944ffa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated all dependencies and changed to have a single heartbeat event when multiple heartbeats are attempted to be sent. 
+
+- Updated dependencies [[`a3a5034`](https://github.com/livepeer/ui-kit/commit/a3a503497803f54fddef0fd0dffee96872944ffa)]:
+  - @livepeer/core@3.2.6
+
 ## 3.2.5
 
 ### Patch Changes
 
-- [#573](https://github.com/livepeer/ui-kit/pull/573) [`2a1b4e4`](https://github.com/livepeer/ui-kit/commit/2a1b4e499fe829face2606d2ae2a23443db2ff1e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved to using `nanoid` for generating secure IDs and added IDs to all metrics. 
+- [#573](https://github.com/livepeer/ui-kit/pull/573) [`2a1b4e4`](https://github.com/livepeer/ui-kit/commit/2a1b4e499fe829face2606d2ae2a23443db2ff1e) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** moved to using `nanoid` for generating secure IDs and added IDs to all metrics.
 
 - Updated dependencies [[`2a1b4e4`](https://github.com/livepeer/ui-kit/commit/2a1b4e499fe829face2606d2ae2a23443db2ff1e)]:
   - @livepeer/core@3.2.5

@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 3.2.6
+
+### Patch Changes
+
+- [#575](https://github.com/livepeer/ui-kit/pull/575) [`a3a5034`](https://github.com/livepeer/ui-kit/commit/a3a503497803f54fddef0fd0dffee96872944ffa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated all dependencies and changed to have a single heartbeat event when multiple heartbeats are attempted to be sent.
+
 ## 3.2.5
 
 ### Patch Changes
