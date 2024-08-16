@@ -733,8 +733,73 @@ export class PlaybackEventBuffer {
   }
 
   public addEvents(events: PlaybackEvent[]) {
+    for (const newEvent of [...events]) {
+      if (newEvent.type !== "heartbeat") {
+        this.externalBuffer.push(newEvent);
+        continue;
+      }
+
+      const existingEventIndex = this.externalBuffer.findIndex(
+        (event) => event.type === "heartbeat",
+      );
+
+      if (existingEventIndex === -1) {
+        this.externalBuffer.push(newEvent);
+      } else {
+        const existingEvent = this.externalBuffer[
+          existingEventIndex
+        ] as HeartbeatEvent;
+
+        const mergedEvent: HeartbeatEvent = {
+          ...existingEvent,
+          id: existingEvent.id,
+          timestamp: Math.max(existingEvent.timestamp, newEvent.timestamp),
+          errors: existingEvent.errors + newEvent.errors,
+          warnings: existingEvent.warnings + newEvent.warnings,
+          stalled_count: existingEvent.stalled_count + newEvent.stalled_count,
+          waiting_count: existingEvent.waiting_count + newEvent.waiting_count,
+          time_warning_ms:
+            existingEvent.time_warning_ms + newEvent.time_warning_ms,
+          time_errored_ms:
+            existingEvent.time_errored_ms + newEvent.time_errored_ms,
+          time_stalled_ms:
+            existingEvent.time_stalled_ms + newEvent.time_stalled_ms,
+          time_playing_ms:
+            existingEvent.time_playing_ms + newEvent.time_playing_ms,
+          time_waiting_ms:
+            existingEvent.time_waiting_ms + newEvent.time_waiting_ms,
+
+          ...(existingEvent.mount_to_first_frame_ms ||
+          newEvent.mount_to_first_frame_ms
+            ? {
+                mount_to_first_frame_ms:
+                  (existingEvent.mount_to_first_frame_ms ?? 0) +
+                  (newEvent.mount_to_first_frame_ms ?? 0),
+              }
+            : {}),
+          ...(existingEvent.mount_to_play_ms || newEvent.mount_to_play_ms
+            ? {
+                mount_to_play_ms:
+                  (existingEvent.mount_to_play_ms ?? 0) +
+                  (newEvent.mount_to_play_ms ?? 0),
+              }
+            : {}),
+          ...(existingEvent.play_to_first_frame_ms ||
+          newEvent.play_to_first_frame_ms
+            ? {
+                play_to_first_frame_ms:
+                  (existingEvent.play_to_first_frame_ms ?? 0) +
+                  (newEvent.play_to_first_frame_ms ?? 0),
+              }
+            : {}),
+        };
+
+        // Replace the old event with the merged one
+        this.externalBuffer[existingEventIndex] = mergedEvent;
+      }
+    }
+
     this.internalBuffer = [...events, ...this.internalBuffer];
-    this.externalBuffer = [...events, ...this.externalBuffer];
 
     this.trimBuffer();
   }
