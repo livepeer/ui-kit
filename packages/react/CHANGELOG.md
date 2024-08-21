@@ -1,5 +1,16 @@
 # @livepeer/react
 
+## 4.2.7
+
+### Patch Changes
+
+- [#577](https://github.com/livepeer/ui-kit/pull/577) [`3b41b4d`](https://github.com/livepeer/ui-kit/commit/3b41b4d30c9ce7dfade6e6360bcc464421e17af0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `oldest_buffer_timestamp` to heartbeat events.
+
+- Updated dependencies [[`3b41b4d`](https://github.com/livepeer/ui-kit/commit/3b41b4d30c9ce7dfade6e6360bcc464421e17af0)]:
+  - @livepeer/core-react@3.2.7
+  - @livepeer/core-web@4.2.7
+  - @livepeer/core@3.2.7
+
 ## 4.2.6
 
 ### Patch Changes
