@@ -58,6 +58,9 @@ export type HeartbeatEvent = {
   /** The offset of the live video head compared to the server time, in milliseconds. */
   offset_ms?: number;
 
+  /** The timestamp of the oldest buffer event, in milliseconds. Only sent when this differs from the heartbeat timestamp. */
+  oldest_buffer_timestamp?: number;
+
   // The properties below are only sent when they change.
 
   /** The height of the player element, in px. */
@@ -754,6 +757,13 @@ export class PlaybackEventBuffer {
           ...existingEvent,
           id: existingEvent.id,
           timestamp: Math.max(existingEvent.timestamp, newEvent.timestamp),
+          oldest_buffer_timestamp: Math.min(
+            Math.min(
+              existingEvent.oldest_buffer_timestamp ?? Number.MAX_SAFE_INTEGER,
+              newEvent.timestamp ?? Number.MAX_SAFE_INTEGER,
+            ),
+            existingEvent.timestamp,
+          ),
           errors: existingEvent.errors + newEvent.errors,
           warnings: existingEvent.warnings + newEvent.warnings,
           stalled_count: existingEvent.stalled_count + newEvent.stalled_count,

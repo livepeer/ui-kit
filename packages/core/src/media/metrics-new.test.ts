@@ -200,6 +200,7 @@ describe("PlaybackEventBuffer", () => {
           "mount_to_first_frame_ms": 1000,
           "mount_to_play_ms": 2000,
           "offset_ms": 500,
+          "oldest_buffer_timestamp": 1643673600002,
           "play_to_first_frame_ms": 3000,
           "player_height_px": 720,
           "player_width_px": 1280,
@@ -223,6 +224,9 @@ describe("PlaybackEventBuffer", () => {
 
       const heartbeat = events.find((event) => event.type === "heartbeat");
 
+      expect(heartbeat?.oldest_buffer_timestamp).toBeLessThan(
+        heartbeat?.timestamp ?? 0,
+      );
       expect(heartbeat?.time_playing_ms).toBe(loopCount * heartbeatPlayingMs);
       expect(heartbeat?.time_stalled_ms).toBe(loopCount * heartbeatStalledMs);
       expect(heartbeat?.time_waiting_ms).toBe(loopCount * heartbeatWaitingMs);
@@ -242,10 +246,14 @@ describe("PlaybackEventBuffer", () => {
       // clear the buffer
       buffer.getExternalEvents();
 
+      const oldestHeartbeat = getDummyPlaybackEvent("heartbeat");
+
+      buffer.addEvent(oldestHeartbeat);
+
       const loopCount = 1234;
 
       for (let i = 0; i < loopCount; i++) {
-        buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
+        if (i !== 0) buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
         buffer.addEvent(getDummyPlaybackEvent("error"));
       }
 
@@ -257,6 +265,7 @@ describe("PlaybackEventBuffer", () => {
         {
           "errors": 2468,
           "id": "2",
+          "oldest_buffer_timestamp": 1643673600003,
           "stalled_count": 1234,
           "time_errored_ms": 18510,
           "time_playing_ms": 5553000,
@@ -271,6 +280,10 @@ describe("PlaybackEventBuffer", () => {
       `);
 
       const heartbeat = events.find((event) => event.type === "heartbeat");
+
+      expect(heartbeat?.oldest_buffer_timestamp).toBe(
+        oldestHeartbeat.timestamp,
+      );
 
       expect(heartbeat?.time_playing_ms).toBe(loopCount * heartbeatPlayingMs);
       expect(heartbeat?.time_stalled_ms).toBe(loopCount * heartbeatStalledMs);
