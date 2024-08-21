@@ -8,37 +8,79 @@ import {
   ValueChangeTracker,
 } from "./metrics-new";
 
+let idCounter = 1;
+
+const heartbeatErrors = 2;
+const heartbeatWarnings = 3;
+const heartbeatStalledCount = 1;
+const heartbeatWaitingCount = 4;
+
+const heartbeatWarningMs = 10;
+const heartbeatErroredMs = 15;
+const heartbeatPlayingMs = 4500;
+const heartbeatStalledMs = 20;
+const heartbeatWaitingMs = 25;
+
 const getDummyPlaybackEvent = (
-  type: "heartbeat" | "error" = "heartbeat",
-): PlaybackEvent =>
-  type === "heartbeat"
+  type: "heartbeat" | "error" | "play",
+): PlaybackEvent => {
+  const id = (idCounter++).toFixed(0);
+  return type === "heartbeat"
     ? {
-        timestamp: Date.now(),
+        id,
+        timestamp: Date.now() + idCounter,
         type,
-        errors: 0,
-        warnings: 0,
-        autoplay_status: "autoplay",
-        stalled_count: 1,
-        waiting_count: 0,
-        time_warning_ms: 0,
-        time_errored_ms: 0,
-        time_playing_ms: 5000,
-        time_stalled_ms: 0,
-        time_waiting_ms: 0,
+        errors: heartbeatErrors,
+        warnings: heartbeatWarnings,
+        stalled_count: heartbeatStalledCount,
+        waiting_count: heartbeatWaitingCount,
+        time_warning_ms: heartbeatWarningMs,
+        time_errored_ms: heartbeatErroredMs,
+        time_playing_ms: heartbeatPlayingMs,
+        time_stalled_ms: heartbeatStalledMs,
+        time_waiting_ms: heartbeatWaitingMs,
+        ...(id === "1"
+          ? {
+              autoplay_status: "autoplay",
+              mount_to_first_frame_ms: 1000,
+              mount_to_play_ms: 2000,
+              play_to_first_frame_ms: 3000,
+              duration_ms: 60000,
+              offset_ms: 500,
+              player_height_px: 720,
+              player_width_px: 1280,
+              video_height_px: 1080,
+              video_width_px: 1920,
+              window_height_px: 900,
+              window_width_px: 1440,
+            }
+          : {}),
       }
-    : {
-        timestamp: Date.now(),
-        type,
-        message: "Error",
-        category: "access-control",
-      };
+    : type === "play"
+      ? {
+          id: (idCounter++).toFixed(0),
+          timestamp: Date.now(),
+          type,
+        }
+      : {
+          id: (idCounter++).toFixed(0),
+          timestamp: Date.now(),
+          type,
+          message: "Error",
+          category: "access-control",
+        };
+};
 
 describe("PlaybackEventBuffer", () => {
+  beforeEach(() => {
+    idCounter = 1;
+  });
+
   describe("max length", () => {
-    it("adds and retrieves single event", async () => {
+    it("adds and retrieves single heartbeat event", async () => {
       const buffer = new PlaybackEventBuffer();
 
-      buffer.addEvent(getDummyPlaybackEvent());
+      buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
 
       const events = buffer.getExternalEvents();
 
@@ -46,17 +88,29 @@ describe("PlaybackEventBuffer", () => {
         [
           {
             "autoplay_status": "autoplay",
-            "errors": 0,
+            "duration_ms": 60000,
+            "errors": 2,
+            "id": "1",
+            "mount_to_first_frame_ms": 1000,
+            "mount_to_play_ms": 2000,
+            "offset_ms": 500,
+            "play_to_first_frame_ms": 3000,
+            "player_height_px": 720,
+            "player_width_px": 1280,
             "stalled_count": 1,
-            "time_errored_ms": 0,
-            "time_playing_ms": 5000,
-            "time_stalled_ms": 0,
-            "time_waiting_ms": 0,
-            "time_warning_ms": 0,
-            "timestamp": 1643673600000,
+            "time_errored_ms": 15,
+            "time_playing_ms": 4500,
+            "time_stalled_ms": 20,
+            "time_waiting_ms": 25,
+            "time_warning_ms": 10,
+            "timestamp": 1643673600002,
             "type": "heartbeat",
-            "waiting_count": 0,
-            "warnings": 0,
+            "video_height_px": 1080,
+            "video_width_px": 1920,
+            "waiting_count": 4,
+            "warnings": 3,
+            "window_height_px": 900,
+            "window_width_px": 1440,
           },
         ]
       `);
@@ -65,11 +119,10 @@ describe("PlaybackEventBuffer", () => {
     it("adds and enqueues on failure", async () => {
       const buffer = new PlaybackEventBuffer();
 
-      buffer.addEvent(getDummyPlaybackEvent());
+      buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
 
       const events = buffer.getExternalEvents();
 
-      expect(buffer.getExternalEvents()).length(0);
       expect(buffer.getExternalEvents()).length(0);
 
       buffer.onExternalFailure(events);
@@ -78,17 +131,29 @@ describe("PlaybackEventBuffer", () => {
         [
           {
             "autoplay_status": "autoplay",
-            "errors": 0,
+            "duration_ms": 60000,
+            "errors": 2,
+            "id": "1",
+            "mount_to_first_frame_ms": 1000,
+            "mount_to_play_ms": 2000,
+            "offset_ms": 500,
+            "play_to_first_frame_ms": 3000,
+            "player_height_px": 720,
+            "player_width_px": 1280,
             "stalled_count": 1,
-            "time_errored_ms": 0,
-            "time_playing_ms": 5000,
-            "time_stalled_ms": 0,
-            "time_waiting_ms": 0,
-            "time_warning_ms": 0,
-            "timestamp": 1643673600000,
+            "time_errored_ms": 15,
+            "time_playing_ms": 4500,
+            "time_stalled_ms": 20,
+            "time_waiting_ms": 25,
+            "time_warning_ms": 10,
+            "timestamp": 1643673600002,
             "type": "heartbeat",
-            "waiting_count": 0,
-            "warnings": 0,
+            "video_height_px": 1080,
+            "video_width_px": 1920,
+            "waiting_count": 4,
+            "warnings": 3,
+            "window_height_px": 900,
+            "window_width_px": 1440,
           },
         ]
       `);
@@ -98,24 +163,176 @@ describe("PlaybackEventBuffer", () => {
       const buffer = new PlaybackEventBuffer();
 
       for (let i = 0; i < buffer.maxBufferSize + 1000; i++) {
-        buffer.addEvent(getDummyPlaybackEvent());
+        buffer.addEvent(getDummyPlaybackEvent("error"));
       }
 
       expect(buffer.getExternalEvents()).length(buffer.maxBufferSize);
+    });
+
+    it("adds a lot of heartbeats and caps at 1", async () => {
+      const buffer = new PlaybackEventBuffer();
+
+      for (let i = 0; i < 500; i++) {
+        buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
+      }
+
+      expect(buffer.getExternalEvents()).length(1);
+    });
+
+    it("combines multiple heartbeat events into one", async () => {
+      const buffer = new PlaybackEventBuffer();
+
+      const loopCount = 5566;
+
+      for (let i = 0; i < loopCount; i++) {
+        buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
+        buffer.addEvent(getDummyPlaybackEvent("error"));
+      }
+
+      const events = buffer.getExternalEvents();
+
+      expect(events[0]).toMatchInlineSnapshot(`
+        {
+          "autoplay_status": "autoplay",
+          "duration_ms": 60000,
+          "errors": 11132,
+          "id": "1",
+          "mount_to_first_frame_ms": 1000,
+          "mount_to_play_ms": 2000,
+          "offset_ms": 500,
+          "oldest_buffer_timestamp": 1643673600002,
+          "play_to_first_frame_ms": 3000,
+          "player_height_px": 720,
+          "player_width_px": 1280,
+          "stalled_count": 5566,
+          "time_errored_ms": 83490,
+          "time_playing_ms": 25047000,
+          "time_stalled_ms": 111320,
+          "time_waiting_ms": 139150,
+          "time_warning_ms": 55660,
+          "timestamp": 1643673616697,
+          "type": "heartbeat",
+          "video_height_px": 1080,
+          "video_width_px": 1920,
+          "waiting_count": 22264,
+          "warnings": 16698,
+          "window_height_px": 900,
+          "window_width_px": 1440,
+        }
+      `);
+      expect(events).length(loopCount + 1);
+
+      const heartbeat = events.find((event) => event.type === "heartbeat");
+
+      expect(heartbeat?.oldest_buffer_timestamp).toBeLessThan(
+        heartbeat?.timestamp ?? 0,
+      );
+      expect(heartbeat?.time_playing_ms).toBe(loopCount * heartbeatPlayingMs);
+      expect(heartbeat?.time_stalled_ms).toBe(loopCount * heartbeatStalledMs);
+      expect(heartbeat?.time_waiting_ms).toBe(loopCount * heartbeatWaitingMs);
+      expect(heartbeat?.time_warning_ms).toBe(loopCount * heartbeatWarningMs);
+      expect(heartbeat?.time_errored_ms).toBe(loopCount * heartbeatErroredMs);
+      expect(heartbeat?.errors).toBe(loopCount * heartbeatErrors);
+      expect(heartbeat?.warnings).toBe(loopCount * heartbeatWarnings);
+      expect(heartbeat?.stalled_count).toBe(loopCount * heartbeatStalledCount);
+      expect(heartbeat?.waiting_count).toBe(loopCount * heartbeatWaitingCount);
+    });
+
+    it("combines many heartbeat events into one and leaves out missing fields", async () => {
+      const buffer = new PlaybackEventBuffer();
+
+      buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
+
+      // clear the buffer
+      buffer.getExternalEvents();
+
+      const oldestHeartbeat = getDummyPlaybackEvent("heartbeat");
+
+      buffer.addEvent(oldestHeartbeat);
+
+      const loopCount = 1234;
+
+      for (let i = 0; i < loopCount; i++) {
+        if (i !== 0) buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
+        buffer.addEvent(getDummyPlaybackEvent("error"));
+      }
+
+      const events = buffer.getExternalEvents();
+
+      expect(events).length(loopCount + 1);
+
+      expect(events[0]).toMatchInlineSnapshot(`
+        {
+          "errors": 2468,
+          "id": "2",
+          "oldest_buffer_timestamp": 1643673600003,
+          "stalled_count": 1234,
+          "time_errored_ms": 18510,
+          "time_playing_ms": 5553000,
+          "time_stalled_ms": 24680,
+          "time_waiting_ms": 30850,
+          "time_warning_ms": 12340,
+          "timestamp": 1643673603702,
+          "type": "heartbeat",
+          "waiting_count": 4936,
+          "warnings": 3702,
+        }
+      `);
+
+      const heartbeat = events.find((event) => event.type === "heartbeat");
+
+      expect(heartbeat?.oldest_buffer_timestamp).toBe(
+        oldestHeartbeat.timestamp,
+      );
+
+      expect(heartbeat?.time_playing_ms).toBe(loopCount * heartbeatPlayingMs);
+      expect(heartbeat?.time_stalled_ms).toBe(loopCount * heartbeatStalledMs);
+      expect(heartbeat?.time_waiting_ms).toBe(loopCount * heartbeatWaitingMs);
+      expect(heartbeat?.time_warning_ms).toBe(loopCount * heartbeatWarningMs);
+      expect(heartbeat?.time_errored_ms).toBe(loopCount * heartbeatErroredMs);
+
+      expect(heartbeat?.errors).toBe(loopCount * heartbeatErrors);
+      expect(heartbeat?.warnings).toBe(loopCount * heartbeatWarnings);
+      expect(heartbeat?.stalled_count).toBe(loopCount * heartbeatStalledCount);
+      expect(heartbeat?.waiting_count).toBe(loopCount * heartbeatWaitingCount);
+
+      expect(heartbeat?.offset_ms).toBeUndefined();
+
+      buffer.addEvent(getDummyPlaybackEvent("heartbeat"));
+
+      expect(buffer.getExternalEvents()).toMatchInlineSnapshot(`
+        [
+          {
+            "errors": 2,
+            "id": "3704",
+            "stalled_count": 1,
+            "time_errored_ms": 15,
+            "time_playing_ms": 4500,
+            "time_stalled_ms": 20,
+            "time_waiting_ms": 25,
+            "time_warning_ms": 10,
+            "timestamp": 1643673603705,
+            "type": "heartbeat",
+            "waiting_count": 4,
+            "warnings": 3,
+          },
+        ]
+      `);
     });
 
     it("adds a lot of events and enqueues new ones to front", async () => {
       const buffer = new PlaybackEventBuffer();
 
       for (let i = 0; i < 1000; i++) {
-        buffer.addEvent(getDummyPlaybackEvent());
+        buffer.addEvent(getDummyPlaybackEvent("error"));
       }
 
-      buffer.addEvent(getDummyPlaybackEvent("error"));
+      buffer.addEvent(getDummyPlaybackEvent("play"));
 
       expect(buffer.getExternalEvents()[0]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
+          "id": "2",
           "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
@@ -127,7 +344,7 @@ describe("PlaybackEventBuffer", () => {
       const buffer = new PlaybackEventBuffer();
 
       for (let i = 0; i < 10; i++) {
-        buffer.addEvent(getDummyPlaybackEvent());
+        buffer.addEvent(getDummyPlaybackEvent("play"));
       }
 
       buffer.onExternalFailure([getDummyPlaybackEvent("error")]);
@@ -139,6 +356,7 @@ describe("PlaybackEventBuffer", () => {
       expect(events[events.length - 1]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
+          "id": "22",
           "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
@@ -146,18 +364,9 @@ describe("PlaybackEventBuffer", () => {
       `);
       expect(events[0]).toMatchInlineSnapshot(`
         {
-          "autoplay_status": "autoplay",
-          "errors": 0,
-          "stalled_count": 1,
-          "time_errored_ms": 0,
-          "time_playing_ms": 5000,
-          "time_stalled_ms": 0,
-          "time_waiting_ms": 0,
-          "time_warning_ms": 0,
+          "id": "2",
           "timestamp": 1643673600000,
-          "type": "heartbeat",
-          "waiting_count": 0,
-          "warnings": 0,
+          "type": "play",
         }
       `);
     });
@@ -166,7 +375,7 @@ describe("PlaybackEventBuffer", () => {
       const buffer = new PlaybackEventBuffer();
 
       for (let i = 0; i < buffer.maxBufferSize + 1000; i++) {
-        buffer.addEvent(getDummyPlaybackEvent());
+        buffer.addEvent(getDummyPlaybackEvent("play"));
       }
 
       buffer.onExternalFailure([getDummyPlaybackEvent("error")]);
@@ -180,6 +389,7 @@ describe("PlaybackEventBuffer", () => {
       expect(externalEvents[externalEvents.length - 1]).toMatchInlineSnapshot(`
         {
           "category": "access-control",
+          "id": "52002",
           "message": "Error",
           "timestamp": 1643673600000,
           "type": "error",
@@ -187,18 +397,9 @@ describe("PlaybackEventBuffer", () => {
       `);
       expect(externalEvents[0]).toMatchInlineSnapshot(`
         {
-          "autoplay_status": "autoplay",
-          "errors": 0,
-          "stalled_count": 1,
-          "time_errored_ms": 0,
-          "time_playing_ms": 5000,
-          "time_stalled_ms": 0,
-          "time_waiting_ms": 0,
-          "time_warning_ms": 0,
+          "id": "2004",
           "timestamp": 1643673600000,
-          "type": "heartbeat",
-          "waiting_count": 0,
-          "warnings": 0,
+          "type": "play",
         }
       `);
     });

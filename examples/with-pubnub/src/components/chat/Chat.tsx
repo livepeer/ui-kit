@@ -340,7 +340,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
     // Report a user
-    await user.report("Reported By User");
+    // await user.report("Reported By User");
   };
 
   /// As a admin you can mute another user. If you are the user that has been muted you will receive this event by listening to your userId as a channel

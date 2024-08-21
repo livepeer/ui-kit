@@ -2,6 +2,7 @@ import { warn } from "../utils";
 import type { MediaControllerStore, PlaybackRate } from "./controller";
 import { getMetricsReportingPOSTUrl } from "./metrics-utils";
 import type { Src, VideoQuality } from "./src";
+import { generateRandomToken } from "./utils";
 
 type MetricsOpts = {
   /**
@@ -13,6 +14,8 @@ type MetricsOpts = {
 export type HeartbeatEvent = {
   // The properties below are sent on every heartbeat.
 
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "heartbeat";
   /** The timestamp of the event, in milliseconds. */
@@ -55,6 +58,9 @@ export type HeartbeatEvent = {
   /** The offset of the live video head compared to the server time, in milliseconds. */
   offset_ms?: number;
 
+  /** The timestamp of the oldest buffer event, in milliseconds. Only sent when this differs from the heartbeat timestamp. */
+  oldest_buffer_timestamp?: number;
+
   // The properties below are only sent when they change.
 
   /** The height of the player element, in px. */
@@ -72,6 +78,8 @@ export type HeartbeatEvent = {
 };
 
 export type ErrorEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "error";
   /** The timestamp of the event, in milliseconds. */
@@ -83,6 +91,8 @@ export type ErrorEvent = {
 };
 
 export type WarningEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "warning";
   /** The timestamp of the event, in milliseconds. */
@@ -94,6 +104,8 @@ export type WarningEvent = {
 };
 
 export type HtmlEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type:
     | "play"
@@ -110,6 +122,8 @@ export type HtmlEvent = {
 };
 
 export type ClipEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "clip";
   /** The timestamp of the event, in milliseconds. */
@@ -121,6 +135,8 @@ export type ClipEvent = {
 };
 
 export type RateChangeEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "rate";
   /** The timestamp of the event, in milliseconds. */
@@ -130,6 +146,8 @@ export type RateChangeEvent = {
 };
 
 export type SeekEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "seek";
   /** The timestamp of the event, in milliseconds. */
@@ -139,6 +157,8 @@ export type SeekEvent = {
 };
 
 export type VideoQualityEvent = {
+  /** The event ID. */
+  id: string;
   /** The event type. */
   type: "video-quality";
   /** The timestamp of the event, in milliseconds. */
@@ -251,12 +271,14 @@ export function addMetricsToStore(
         eventBuffer.addEvent(
           error.type === "offline" || error.type === "fallback"
             ? {
+                id: generateRandomToken(),
                 type: "warning",
                 timestamp: Date.now(),
                 category: error.type,
                 message: error.message,
               }
             : {
+                id: generateRandomToken(),
                 type: "error",
                 timestamp: Date.now(),
                 category: error.type,
@@ -271,6 +293,7 @@ export function addMetricsToStore(
     (state) => state.__controls.playLastTime,
     async (timestamp) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: "play",
         timestamp,
       });
@@ -281,6 +304,7 @@ export function addMetricsToStore(
     (state) => state.__controls.pauseLastTime,
     async (timestamp) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: "pause",
         timestamp,
       });
@@ -292,6 +316,7 @@ export function addMetricsToStore(
     async (params) => {
       if (params) {
         eventBuffer.addEvent({
+          id: generateRandomToken(),
           type: "clip",
           timestamp: Date.now(),
           startTime: params.startTime,
@@ -305,6 +330,7 @@ export function addMetricsToStore(
     (state) => state.pictureInPicture,
     async (pictureInPicture) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: pictureInPicture ? "enter-pip" : "exit-pip",
         timestamp: Date.now(),
       });
@@ -315,6 +341,7 @@ export function addMetricsToStore(
     (state) => state.fullscreen,
     async (fullscreen) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: fullscreen ? "enter-fullscreen" : "exit-fullscreen",
         timestamp: Date.now(),
       });
@@ -326,6 +353,7 @@ export function addMetricsToStore(
     async (canPlay) => {
       if (canPlay) {
         eventBuffer.addEvent({
+          id: generateRandomToken(),
           type: "can-play",
           timestamp: Date.now(),
         });
@@ -338,6 +366,7 @@ export function addMetricsToStore(
     async (ended) => {
       if (ended) {
         eventBuffer.addEvent({
+          id: generateRandomToken(),
           type: "ended",
           timestamp: Date.now(),
         });
@@ -349,6 +378,7 @@ export function addMetricsToStore(
     (state) => state.playbackRate,
     async (playbackRate) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: "rate",
         timestamp: Date.now(),
         payload: playbackRate,
@@ -360,6 +390,7 @@ export function addMetricsToStore(
     (state) => state.videoQuality,
     async (videoQuality) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: "video-quality",
         timestamp: Date.now(),
         payload: videoQuality,
@@ -371,6 +402,7 @@ export function addMetricsToStore(
     (state) => state.__controls.requestedRangeToSeekTo,
     async (rangeToSeekTo) => {
       eventBuffer.addEvent({
+        id: generateRandomToken(),
         type: "seek",
         timestamp: Date.now(),
         payload: rangeToSeekTo,
@@ -428,6 +460,7 @@ export function addMetricsToStore(
 
       if (!firstFrameSent && monitor.firstFrameTimestamp) {
         eventBuffer.addEvent({
+          id: generateRandomToken(),
           type: "first-frame",
           timestamp: monitor.firstFrameTimestamp,
         });
@@ -436,7 +469,7 @@ export function addMetricsToStore(
       }
 
       eventBuffer.addEvent({
-        // The properties below are sent on every heartbeat.
+        id: generateRandomToken(),
         type: "heartbeat",
         timestamp: Date.now(),
         errors: ic.calculateIncrement("errors", metricsSnapshot.errorCount),
@@ -703,8 +736,80 @@ export class PlaybackEventBuffer {
   }
 
   public addEvents(events: PlaybackEvent[]) {
+    for (const newEvent of [...events]) {
+      if (newEvent.type !== "heartbeat") {
+        this.externalBuffer.push(newEvent);
+        continue;
+      }
+
+      const existingEventIndex = this.externalBuffer.findIndex(
+        (event) => event.type === "heartbeat",
+      );
+
+      if (existingEventIndex === -1) {
+        this.externalBuffer.push(newEvent);
+      } else {
+        const existingEvent = this.externalBuffer[
+          existingEventIndex
+        ] as HeartbeatEvent;
+
+        const mergedEvent: HeartbeatEvent = {
+          ...existingEvent,
+          id: existingEvent.id,
+          timestamp: Math.max(existingEvent.timestamp, newEvent.timestamp),
+          oldest_buffer_timestamp: Math.min(
+            Math.min(
+              existingEvent.oldest_buffer_timestamp ?? Number.MAX_SAFE_INTEGER,
+              newEvent.timestamp ?? Number.MAX_SAFE_INTEGER,
+            ),
+            existingEvent.timestamp,
+          ),
+          errors: existingEvent.errors + newEvent.errors,
+          warnings: existingEvent.warnings + newEvent.warnings,
+          stalled_count: existingEvent.stalled_count + newEvent.stalled_count,
+          waiting_count: existingEvent.waiting_count + newEvent.waiting_count,
+          time_warning_ms:
+            existingEvent.time_warning_ms + newEvent.time_warning_ms,
+          time_errored_ms:
+            existingEvent.time_errored_ms + newEvent.time_errored_ms,
+          time_stalled_ms:
+            existingEvent.time_stalled_ms + newEvent.time_stalled_ms,
+          time_playing_ms:
+            existingEvent.time_playing_ms + newEvent.time_playing_ms,
+          time_waiting_ms:
+            existingEvent.time_waiting_ms + newEvent.time_waiting_ms,
+
+          ...(existingEvent.mount_to_first_frame_ms ||
+          newEvent.mount_to_first_frame_ms
+            ? {
+                mount_to_first_frame_ms:
+                  (existingEvent.mount_to_first_frame_ms ?? 0) +
+                  (newEvent.mount_to_first_frame_ms ?? 0),
+              }
+            : {}),
+          ...(existingEvent.mount_to_play_ms || newEvent.mount_to_play_ms
+            ? {
+                mount_to_play_ms:
+                  (existingEvent.mount_to_play_ms ?? 0) +
+                  (newEvent.mount_to_play_ms ?? 0),
+              }
+            : {}),
+          ...(existingEvent.play_to_first_frame_ms ||
+          newEvent.play_to_first_frame_ms
+            ? {
+                play_to_first_frame_ms:
+                  (existingEvent.play_to_first_frame_ms ?? 0) +
+                  (newEvent.play_to_first_frame_ms ?? 0),
+              }
+            : {}),
+        };
+
+        // Replace the old event with the merged one
+        this.externalBuffer[existingEventIndex] = mergedEvent;
+      }
+    }
+
     this.internalBuffer = [...events, ...this.internalBuffer];
-    this.externalBuffer = [...events, ...this.externalBuffer];
 
     this.trimBuffer();
   }

@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React primitives for video apps.",
   "license": "MIT",
-  "version": "4.2.4",
+  "version": "4.2.7",
   "type": "module",
   "repository": {
     "type": "git",
@@ -98,16 +98,16 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-portal": "^1.0.4",
     "@radix-ui/react-presence": "^1.0.1",
-    "@radix-ui/react-primitive": "^1.0.3",
+    "@radix-ui/react-primitive": "^2.0.0",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slider": "^1.1.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-use-controllable-state": "^1.0.1",
     "@radix-ui/react-use-layout-effect": "^1.0.1",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "@testing-library/react": "^15.0.7",
+    "@testing-library/react": "^16.0.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
