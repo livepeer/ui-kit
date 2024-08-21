@@ -1,10 +1,19 @@
 # @livepeer/core-react
 
+## 3.2.7
+
+### Patch Changes
+
+- [#577](https://github.com/livepeer/ui-kit/pull/577) [`3b41b4d`](https://github.com/livepeer/ui-kit/commit/3b41b4d30c9ce7dfade6e6360bcc464421e17af0) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** added `oldest_buffer_timestamp` to heartbeat events.
+
+- Updated dependencies [[`3b41b4d`](https://github.com/livepeer/ui-kit/commit/3b41b4d30c9ce7dfade6e6360bcc464421e17af0)]: 
+  - @livepeer/core@3.2.7
+
 ## 3.2.6
 
 ### Patch Changes
 
-- [#575](https://github.com/livepeer/ui-kit/pull/575) [`a3a5034`](https://github.com/livepeer/ui-kit/commit/a3a503497803f54fddef0fd0dffee96872944ffa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated all dependencies and changed to have a single heartbeat event when multiple heartbeats are attempted to be sent. 
+- [#575](https://github.com/livepeer/ui-kit/pull/575) [`a3a5034`](https://github.com/livepeer/ui-kit/commit/a3a503497803f54fddef0fd0dffee96872944ffa) Thanks [@0xcadams](https://github.com/0xcadams)! - **Fix:** updated all dependencies and changed to have a single heartbeat event when multiple heartbeats are attempted to be sent.
 
 - Updated dependencies [[`a3a5034`](https://github.com/livepeer/ui-kit/commit/a3a503497803f54fddef0fd0dffee96872944ffa)]:
   - @livepeer/core@3.2.6
