@@ -104,7 +104,35 @@ export async function negotiateConnectionWithClientOffer(
 }
 
 /**
- * Constructs the client's SDP offer
+ * Helper function to prefer H264 codec in SDP
+ */
+function preferCodec(sdp: string, codec: string): string {
+  const lines = sdp.split("\r\n");
+  const mLineIndex = lines.findIndex((line) => line.startsWith("m=video"));
+
+  if (mLineIndex === -1) return sdp;
+
+  const codecRegex = new RegExp(`a=rtpmap:(\\d+) ${codec}(/\\d+)+`);
+  const codecLine = lines.find((line) => codecRegex.test(line));
+
+  if (!codecLine) return sdp;
+
+  // biome-ignore lint/style/noNonNullAssertion: todo: fix this
+  const codecPayload = codecRegex.exec(codecLine)![1];
+  const mLineElements = lines[mLineIndex].split(" ");
+
+  const reorderedMLine = [
+    ...mLineElements.slice(0, 3),
+    codecPayload,
+    ...mLineElements.slice(3).filter((payload) => payload !== codecPayload),
+  ];
+
+  lines[mLineIndex] = reorderedMLine.join(" ");
+  return lines.join("\r\n");
+}
+
+/**
+ * Constructs the client's SDP offer with H264 codec preference
  *
  * SDP describes what kind of media we can send and how the server and client communicate.
  *
@@ -116,8 +144,23 @@ export async function constructClientOffer(
   endpoint: string | null | undefined,
 ) {
   if (peerConnection && endpoint) {
+    // Override createOffer to include H264 codec preference
+    const originalCreateOffer = peerConnection.createOffer.bind(peerConnection);
+    // @ts-ignore (TODO: fix this)
+    peerConnection.createOffer = async function (...args) {
+      // @ts-ignore (TODO: fix this)
+      const originalOffer = await originalCreateOffer.apply(this, args);
+      return new RTCSessionDescription({
+        // @ts-ignore (TODO: fix this)
+        type: originalOffer.type,
+        // @ts-ignore (TODO: fix this)
+        sdp: preferCodec(originalOffer.sdp, "H264"),
+      });
+    };
+
     /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createOffer */
     const offer = await peerConnection.createOffer();
+
     /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setLocalDescription */
     await peerConnection.setLocalDescription(offer);
 

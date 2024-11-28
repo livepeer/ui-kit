@@ -576,7 +576,9 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
             <div />
           ) : (
             <div className="absolute bottom-2 left-2 right-2 flex flex-col bg-black">
-              <label className="sr-only" htmlFor="message" />
+              <label className="sr-only" htmlFor="message">
+                Send a message
+              </label>
               <form onSubmit={handleFormSubmit} className="w-full relative">
                 <input
                   name="message"
