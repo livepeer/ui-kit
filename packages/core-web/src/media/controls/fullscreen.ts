@@ -103,7 +103,7 @@ export const enterFullscreen = (inputElement: HTMLMediaElement | null) => {
           ? element?.parentElement?.[
               fullscreenMethod as "requestFullscreen"
             ]?.()
-          : element?.[fullscreenMethod]?.() ?? null;
+          : (element?.[fullscreenMethod]?.() ?? null);
 
       if (returnPromise === null) {
         return resolve();
@@ -138,7 +138,7 @@ export const exitFullscreen = (inputElement: HTMLMediaElement | null) => {
       const returnPromise: Promise<void> | void | null =
         methods.fullscreenElement
           ? document?.[methods.exitFullscreen]?.()
-          : element?.[methods.exitFullscreen]?.() ?? null;
+          : (element?.[methods.exitFullscreen]?.() ?? null);
 
       if (returnPromise instanceof Promise) {
         returnPromise.then(onFullScreenExit).catch(reject);

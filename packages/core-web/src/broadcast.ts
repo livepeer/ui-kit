@@ -457,7 +457,7 @@ export const createBroadcastStore = ({
                   requestedVideoInputDeviceId:
                     deviceIds?.videoinput === "screen"
                       ? "default"
-                      : deviceIds?.videoinput ?? "default",
+                      : (deviceIds?.videoinput ?? "default"),
                 },
               })),
 
