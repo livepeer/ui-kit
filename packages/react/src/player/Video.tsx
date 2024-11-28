@@ -105,7 +105,7 @@ const Video = React.forwardRef<VideoElement, VideoProps>(
       <Radix.Primitive.video
         playsInline
         poster={
-          poster === null ? undefined : poster ?? thumbnailPoster ?? undefined
+          poster === null ? undefined : (poster ?? thumbnailPoster ?? undefined)
         }
         muted={volume === 0}
         {...videoProps}

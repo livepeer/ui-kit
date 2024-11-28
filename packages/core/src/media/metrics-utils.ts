@@ -142,7 +142,7 @@ export const getPlaybackIdFromSourceUrl = (sourceUrl: string) => {
     includesWebRtcUrl || includesFlvUrl
       ? parts?.[(parts?.length ?? 0) - 1]
       : includesRecording || includesAssetUrl
-        ? parts?.[(parts?.length ?? 0) - 2] ?? null
+        ? (parts?.[(parts?.length ?? 0) - 2] ?? null)
         : null;
 
   if (playbackId?.includes("+")) {

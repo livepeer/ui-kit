@@ -226,7 +226,7 @@ export class LegacyMetricsStatus {
     this.bootMs = bootMs;
 
     const windowHref =
-      typeof window !== "undefined" ? window?.location?.href ?? "" : "";
+      typeof window !== "undefined" ? (window?.location?.href ?? "") : "";
 
     const pageUrl = isInIframe()
       ? typeof document !== "undefined"

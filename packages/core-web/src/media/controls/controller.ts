@@ -128,7 +128,7 @@ export const addEventListeners = (
   const onVolumeChange = () => {
     store
       .getState()
-      .__controlsFunctions.setVolume(element.muted ? 0 : element.volume ?? 0);
+      .__controlsFunctions.setVolume(element.muted ? 0 : (element.volume ?? 0));
   };
 
   const onRateChange = () => {
