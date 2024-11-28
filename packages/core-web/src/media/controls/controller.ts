@@ -611,7 +611,7 @@ const addEffectsToStore = (
     async ({ thumbnail, live, setPoster, posterLiveUpdate }) => {
       cleanupPosterImage?.();
 
-      if (thumbnail && live) {
+      if (thumbnail && live && posterLiveUpdate > 0) {
         const interval = setInterval(() => {
           const thumbnailUrl = new URL(thumbnail);
 
