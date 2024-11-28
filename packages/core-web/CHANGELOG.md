@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.0.0
+
+### Major Changes
+
+- [#583](https://github.com/livepeer/ui-kit/pull/583) [`8669337`](https://github.com/livepeer/ui-kit/commit/86693379c1072338bd5bec0350c8548ef4062d1b) Thanks [@suhailkakar](https://github.com/suhailkakar)! - updated the broadcast component to prefer H264 codec in SDP
+
 ## 4.2.8
 
 ### Patch Changes
