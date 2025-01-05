@@ -128,7 +128,7 @@ export const addEventListeners = (
   const onVolumeChange = () => {
     store
       .getState()
-      .__controlsFunctions.setVolume(element.muted ? 0 : element.volume ?? 0);
+      .__controlsFunctions.setVolume(element.muted ? 0 : (element.volume ?? 0));
   };
 
   const onRateChange = () => {
@@ -611,7 +611,7 @@ const addEffectsToStore = (
     async ({ thumbnail, live, setPoster, posterLiveUpdate }) => {
       cleanupPosterImage?.();
 
-      if (thumbnail && live) {
+      if (thumbnail && live && posterLiveUpdate > 0) {
         const interval = setInterval(() => {
           const thumbnailUrl = new URL(thumbnail);
 

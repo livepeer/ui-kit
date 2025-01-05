@@ -596,7 +596,7 @@ export function addMetricsToStore(
         try {
           const windowHref =
             typeof window !== "undefined"
-              ? window?.location?.href ?? null
+              ? (window?.location?.href ?? null)
               : null;
 
           const pageUrlString = isInIframe()

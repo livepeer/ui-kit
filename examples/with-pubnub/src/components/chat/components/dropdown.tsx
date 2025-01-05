@@ -25,6 +25,7 @@ const Dropdown: React.FC<DropdownProps> = ({ title, children }) => {
           }
         }}
         tabIndex={0}
+        // biome-ignore lint/a11y/useSemanticElements: todo: fix this
         role="button"
         aria-pressed="false"
       >

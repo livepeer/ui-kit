@@ -1,5 +1,17 @@
 # livepeer
 
+## 5.0.0
+
+### Major Changes
+
+- [#583](https://github.com/livepeer/ui-kit/pull/583) [`8669337`](https://github.com/livepeer/ui-kit/commit/86693379c1072338bd5bec0350c8548ef4062d1b) Thanks [@suhailkakar](https://github.com/suhailkakar)! - updated the broadcast component to prefer H264 codec in SDP
+
+## 4.2.8
+
+### Patch Changes
+
+- [#580](https://github.com/livepeer/ui-kit/pull/580) [`d47769d`](https://github.com/livepeer/ui-kit/commit/d47769d53cfa49bce73ddab535ab5261714eec23) Thanks [@wes337](https://github.com/wes337)! - only set poster live update interval when greater than 0
+
 ## 4.2.7
 
 ### Patch Changes
