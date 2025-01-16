@@ -98,7 +98,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       autoPlay={props.autoplay}
       volume={props.muted ? 0 : undefined}
       lowLatency={props.lowLatency}
-      backoffMax={props.backoffMax ?? null}
+      backoffMax={props.backoffMax ?? undefined}
       clipLength={props.clipLength ?? null}
       playbackRate={props.constant ? "constant" : undefined}
       jwt={props.jwt}
