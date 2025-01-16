@@ -24,6 +24,7 @@ type PlayerSearchParams = {
   muted?: Muted;
   loop?: Loop;
   lowLatency?: LowLatency;
+  backoffMax?: number;
   objectFit?: ObjectFit;
   constant?: Constant;
   clipLength?: ClipLength;
@@ -51,6 +52,7 @@ export default async function PlayerPage({
       searchParams?.lowLatency === "force"
         ? "force"
         : coerceToBoolean(searchParams?.lowLatency, true),
+    backoffMax: searchParams?.backoffMax ?? null,
     objectFit: searchParams?.objectFit ?? "contain",
     clipLength: searchParams?.clipLength
       ? (Number(searchParams.clipLength) as ClipLength)
