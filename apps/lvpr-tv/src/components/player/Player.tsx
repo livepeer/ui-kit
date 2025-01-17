@@ -30,6 +30,7 @@ export type PlayerProps = Partial<{
   muted: boolean;
   loop: boolean;
   lowLatency: boolean | "force";
+  backoffMax: number | null;
   objectFit: "cover" | "contain";
   constant: boolean;
   clipLength: ClipLength | null;
@@ -97,6 +98,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       autoPlay={props.autoplay}
       volume={props.muted ? 0 : undefined}
       lowLatency={props.lowLatency}
+      backoffMax={props.backoffMax ?? undefined}
       clipLength={props.clipLength ?? null}
       playbackRate={props.constant ? "constant" : undefined}
       jwt={props.jwt}

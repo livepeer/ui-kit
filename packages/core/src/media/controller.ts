@@ -643,7 +643,7 @@ export const createControllerStore = ({
             aspectRatio: initialProps?.aspectRatio ?? null,
             autoPlay: initialProps.autoPlay ?? false,
             backoff: Math.max(initialProps.backoff ?? 500, 100),
-            backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
+            backoffMax: Math.max(initialProps.backoffMax ?? 30000, 1000),
             clipLength: initialProps.clipLength ?? null,
             cacheWebRTCFailureMs: initialProps.cacheWebRTCFailureMs ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
