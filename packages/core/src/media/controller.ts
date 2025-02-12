@@ -154,6 +154,8 @@ export type InitialProps = {
    * The viewerId for the viewer. A unique identifier for the user or session watching the media.
    */
   viewerId: string | null;
+
+  ingestPlayback: boolean;
 };
 
 export type DeviceInformation = {
@@ -538,6 +540,7 @@ export const createControllerStore = ({
     hasRecentWebRTCTimeout: getHasRecentWebRTCTimeout(
       initialProps.cacheWebRTCFailureMs,
     ),
+    ingestPlayback: initialProps.ingestPlayback ?? false,
   });
 
   const initialControls: ControlsState = {
@@ -658,6 +661,7 @@ export const createControllerStore = ({
             videoQuality: initialVideoQuality,
             viewerId: initialProps.viewerId ?? null,
             volume: initialVolume ?? null,
+            ingestPlayback: initialProps.ingestPlayback ?? false,
           },
 
           __device: device,
@@ -856,6 +860,7 @@ export const createControllerStore = ({
                   hasRecentWebRTCTimeout: getHasRecentWebRTCTimeout(
                     __initialProps.cacheWebRTCFailureMs,
                   ),
+                  ingestPlayback: __initialProps.ingestPlayback,
                 });
 
                 return {
@@ -1178,6 +1183,7 @@ export const createControllerStore = ({
                     sessionToken: __controls.sessionToken,
                     source: nextSource,
                     videoQuality,
+                    ingestPlayback: __initialProps.ingestPlayback,
                   });
 
                   return {
