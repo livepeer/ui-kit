@@ -226,6 +226,7 @@ export const parseCurrentSourceAndPlaybackId = ({
   sessionToken,
   source,
   videoQuality,
+  ingestPlayback,
 }: {
   accessKey: InitialProps["accessKey"];
   aspectRatio: InitialProps["aspectRatio"];
@@ -235,6 +236,7 @@ export const parseCurrentSourceAndPlaybackId = ({
   sessionToken: string;
   source: Src | null;
   videoQuality: VideoQuality;
+  ingestPlayback: InitialProps["ingestPlayback"];
 }) => {
   if (!source) {
     return null;
@@ -277,6 +279,10 @@ export const parseCurrentSourceAndPlaybackId = ({
     }
   }
 
+  if (ingestPlayback) {
+    url.searchParams.append("ingestpb", String(ingestPlayback));
+  }
+
   // override the url with the new URL
   const newSrc = {
     ...source,
@@ -309,6 +315,7 @@ export const getNewSource = ({
   src,
   videoQuality,
   hasRecentWebRTCTimeout,
+  ingestPlayback,
 }: {
   accessKey: InitialProps["accessKey"] | undefined;
   aspectRatio: InitialProps["aspectRatio"] | undefined;
@@ -321,6 +328,7 @@ export const getNewSource = ({
   src: Src[] | string | null | undefined;
   videoQuality: VideoQuality;
   hasRecentWebRTCTimeout: boolean;
+  ingestPlayback: InitialProps["ingestPlayback"];
 }) => {
   const sortedSources = sortSources({
     src,
@@ -340,6 +348,7 @@ export const getNewSource = ({
     sessionToken: sessionToken,
     source: sortedSources?.[0] ?? null,
     videoQuality,
+    ingestPlayback,
   });
 
   return {
