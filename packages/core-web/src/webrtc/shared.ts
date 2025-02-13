@@ -273,7 +273,9 @@ export async function getRedirectUrl(
         playbackIdPattern,
         `$1${REPLACE_PLACEHOLDER}`,
       );
-      cachedRedirectUrl = cachedUrl;
+      if (!cachedUrl.searchParams.has("ingestpb", "true")) {
+        cachedRedirectUrl = cachedUrl;
+      }
     }
 
     return parsedUrl;
