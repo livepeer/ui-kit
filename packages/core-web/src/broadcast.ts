@@ -140,6 +140,13 @@ export type InitialBroadcastProps = {
    * Set to false to initialize the broadcast to not request a video track.
    */
   video: boolean | Omit<MediaTrackConstraints, "deviceId">;
+
+  /**
+   * Whether to disable ICE gathering.
+   *
+   * Set to true to disable ICE gathering. This is useful for testing purposes.
+   */
+  noIceGathering?: boolean;
 };
 
 export type BroadcastAriaText = {
@@ -190,9 +197,6 @@ export type BroadcastState = {
 
   /** The currently selected media devices. */
   mediaDeviceIds: MediaDeviceIds;
-
-  /** TODO */
-  noIceGathering: boolean;
 
   /** The initial props passed into the component. */
   __initialProps: InitialBroadcastProps;
@@ -314,8 +318,6 @@ export const createBroadcastStore = ({
                 : "Turn video off (v)",
           },
 
-          noIceGathering: false,
-
           __initialProps: {
             aspectRatio: initialProps?.aspectRatio ?? null,
             audio: initialProps?.audio ?? true,
@@ -324,6 +326,7 @@ export const createBroadcastStore = ({
             hotkeys: initialProps.hotkeys ?? true,
             ingestUrl: ingestUrl ?? null,
             video: initialProps?.video ?? true,
+            noIceGathering: initialProps?.noIceGathering ?? false,
           },
 
           __device: device,
@@ -737,13 +740,13 @@ const addEffectsToStore = (
 
   // Subscribe to request user media
   const destroyWhip = store.subscribe(
-    ({ enabled, ingestUrl, __controls, mounted, noIceGathering }) => ({
+    ({ enabled, ingestUrl, __controls, mounted, __initialProps }) => ({
       enabled,
       ingestUrl,
       requestedForceRenegotiateLastTime:
         __controls.requestedForceRenegotiateLastTime,
       mounted,
-      noIceGathering,
+      noIceGathering: __initialProps.noIceGathering,
     }),
     async ({ enabled, ingestUrl, noIceGathering }) => {
       await cleanupWhip?.();
