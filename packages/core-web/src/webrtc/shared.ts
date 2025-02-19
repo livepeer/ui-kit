@@ -245,7 +245,6 @@ export async function getRedirectUrl(
   abortController: AbortController,
   timeout: number | null,
 ) {
-  // return new URL(endpoint);
   try {
     if (cachedRedirectUrl) {
       const inputUrl = new URL(endpoint);
@@ -259,8 +258,6 @@ export async function getRedirectUrl(
       () => abortController.abort(),
       timeout ?? DEFAULT_TIMEOUT,
     );
-
-    console.log(`getting redirect URL ${endpoint}`);
 
     const response = await fetch(endpoint, {
       method: "HEAD",
@@ -302,15 +299,14 @@ export async function getRedirectUrl(
 async function waitToCompleteICEGathering(peerConnection: RTCPeerConnection) {
   return new Promise<RTCSessionDescription | null>((resolve) => {
     /** Wait at most five seconds for ICE gathering. */
-    // setTimeout(() => {
-    // console.log("timed out ice gathering")
-    resolve(peerConnection.localDescription);
-    // }, 5000);
-    // peerConnection.onicegatheringstatechange = (_ev) => {
-    //   if (peerConnection.iceGatheringState === "complete") {
-    //     resolve(peerConnection.localDescription);
-    //   }
-    // };
+    setTimeout(() => {
+      resolve(peerConnection.localDescription);
+    }, 5000);
+    peerConnection.onicegatheringstatechange = (_ev) => {
+      if (peerConnection.iceGatheringState === "complete") {
+        resolve(peerConnection.localDescription);
+      }
+    };
   });
 }
 

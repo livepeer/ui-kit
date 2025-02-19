@@ -116,7 +116,6 @@ const Broadcast = (
               },
         ),
       ingestUrl,
-
       initialProps: {
         aspectRatio,
         ...rest,
@@ -149,7 +148,6 @@ const Broadcast = (
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: no deps
   useEffect(() => {
-    console.log("HELLO 3");
     const metrics = addMetricsToStore(mediaStore.current.store, {
       onPlaybackEvents,
       interval: metricsInterval,

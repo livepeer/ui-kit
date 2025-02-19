@@ -22,7 +22,6 @@ import {
 } from "./webrtc/whip";
 
 const delay = (ms: number) => {
-  console.log("delay function");
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
