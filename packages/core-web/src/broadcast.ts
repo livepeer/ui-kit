@@ -22,6 +22,7 @@ import {
 } from "./webrtc/whip";
 
 const delay = (ms: number) => {
+  console.log("delay function");
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
@@ -190,6 +191,9 @@ export type BroadcastState = {
   /** The currently selected media devices. */
   mediaDeviceIds: MediaDeviceIds;
 
+  /** TODO */
+  noIceGathering: boolean;
+
   /** The initial props passed into the component. */
   __initialProps: InitialBroadcastProps;
   /** The broadcast device information and support. */
@@ -309,6 +313,8 @@ export const createBroadcastStore = ({
                 ? "Turn video on (v)"
                 : "Turn video off (v)",
           },
+
+          noIceGathering: false,
 
           __initialProps: {
             aspectRatio: initialProps?.aspectRatio ?? null,
@@ -731,14 +737,15 @@ const addEffectsToStore = (
 
   // Subscribe to request user media
   const destroyWhip = store.subscribe(
-    ({ enabled, ingestUrl, __controls, mounted }) => ({
+    ({ enabled, ingestUrl, __controls, mounted, noIceGathering }) => ({
       enabled,
       ingestUrl,
       requestedForceRenegotiateLastTime:
         __controls.requestedForceRenegotiateLastTime,
       mounted,
+      noIceGathering,
     }),
-    async ({ enabled, ingestUrl }) => {
+    async ({ enabled, ingestUrl, noIceGathering }) => {
       await cleanupWhip?.();
 
       if (!enabled) {
@@ -779,6 +786,7 @@ const addEffectsToStore = (
           onError: onErrorComposed,
         },
         sdpTimeout: null,
+        noIceGathering,
       });
 
       cleanupWhip = () => {

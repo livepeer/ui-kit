@@ -25,6 +25,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   element,
   callbacks,
   sdpTimeout,
+  noIceGathering,
 }: {
   ingestUrl: string;
   element: TElement;
@@ -34,6 +35,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
     onError?: (data: Error) => void;
   };
   sdpTimeout: number | null;
+  noIceGathering?: boolean;
 }): {
   destroy: () => void;
 } => {
@@ -74,6 +76,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
             const ofr = await constructClientOffer(
               peerConnection,
               redirectUrlString,
+              noIceGathering,
             );
 
             await negotiateConnectionWithClientOffer(

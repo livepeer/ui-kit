@@ -142,6 +142,7 @@ function preferCodec(sdp: string, codec: string): string {
 export async function constructClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
+  noIceGathering?: boolean,
 ) {
   if (peerConnection && endpoint) {
     // Override createOffer to include H264 codec preference
@@ -165,6 +166,9 @@ export async function constructClientOffer(
     await peerConnection.setLocalDescription(offer);
 
     /** Wait for ICE gathering to complete */
+    if (noIceGathering) {
+      return peerConnection.localDescription;
+    }
     const ofr = await waitToCompleteICEGathering(peerConnection);
     if (!ofr) {
       throw Error("failed to gather ICE candidates for offer");
@@ -241,6 +245,7 @@ export async function getRedirectUrl(
   abortController: AbortController,
   timeout: number | null,
 ) {
+  // return new URL(endpoint);
   try {
     if (cachedRedirectUrl) {
       const inputUrl = new URL(endpoint);
@@ -254,6 +259,8 @@ export async function getRedirectUrl(
       () => abortController.abort(),
       timeout ?? DEFAULT_TIMEOUT,
     );
+
+    console.log(`getting redirect URL ${endpoint}`);
 
     const response = await fetch(endpoint, {
       method: "HEAD",
@@ -295,14 +302,15 @@ export async function getRedirectUrl(
 async function waitToCompleteICEGathering(peerConnection: RTCPeerConnection) {
   return new Promise<RTCSessionDescription | null>((resolve) => {
     /** Wait at most five seconds for ICE gathering. */
-    setTimeout(() => {
-      resolve(peerConnection.localDescription);
-    }, 5000);
-    peerConnection.onicegatheringstatechange = (_ev) => {
-      if (peerConnection.iceGatheringState === "complete") {
-        resolve(peerConnection.localDescription);
-      }
-    };
+    // setTimeout(() => {
+    // console.log("timed out ice gathering")
+    resolve(peerConnection.localDescription);
+    // }, 5000);
+    // peerConnection.onicegatheringstatechange = (_ev) => {
+    //   if (peerConnection.iceGatheringState === "complete") {
+    //     resolve(peerConnection.localDescription);
+    //   }
+    // };
   });
 }
 
