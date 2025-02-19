@@ -55,6 +55,8 @@ interface BroadcastProps
    * The interval at which metrics are sent, in ms. Defaults to 5000.
    */
   metricsInterval?: number;
+
+  noIceGathering?: boolean;
 }
 
 const Broadcast = (

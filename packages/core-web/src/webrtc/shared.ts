@@ -142,6 +142,7 @@ function preferCodec(sdp: string, codec: string): string {
 export async function constructClientOffer(
   peerConnection: RTCPeerConnection | null | undefined,
   endpoint: string | null | undefined,
+  noIceGathering?: boolean,
 ) {
   if (peerConnection && endpoint) {
     // Override createOffer to include H264 codec preference
@@ -165,6 +166,9 @@ export async function constructClientOffer(
     await peerConnection.setLocalDescription(offer);
 
     /** Wait for ICE gathering to complete */
+    if (noIceGathering) {
+      return peerConnection.localDescription;
+    }
     const ofr = await waitToCompleteICEGathering(peerConnection);
     if (!ofr) {
       throw Error("failed to gather ICE candidates for offer");
