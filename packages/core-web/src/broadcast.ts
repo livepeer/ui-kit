@@ -93,6 +93,9 @@ export type BroadcastControlsState = {
   /** The previous video input device ID, used when screenshare ends */
   previousVideoInputDeviceId: VideoDeviceId | null;
 
+  /** The original microphone track, stored for swapping with silent track */
+  microphoneTrack: MediaStreamTrack | null;
+
   /**
    * The internal list of the current media devices from the browser.
    */
@@ -146,6 +149,13 @@ export type InitialBroadcastProps = {
    * Set to true to disable ICE gathering. This is useful for testing purposes.
    */
   noIceGathering?: boolean;
+
+  /**
+   * Whether to send a silent audio track if the audio is disabled.
+   *
+   * Set to true to send a silent audio track if the audio is disabled.
+   */
+  silentAudioTrack?: boolean;
 };
 
 export type BroadcastAriaText = {
@@ -271,6 +281,7 @@ export const createBroadcastStore = ({
     requestedVideoInputDeviceId: null,
     previousVideoInputDeviceId: null,
     mediaDevices: null,
+    microphoneTrack: null,
   };
 
   const store = createStore<
@@ -326,6 +337,7 @@ export const createBroadcastStore = ({
             ingestUrl: ingestUrl ?? null,
             video: initialProps?.video ?? true,
             noIceGathering: initialProps?.noIceGathering ?? false,
+            silentAudioTrack: initialProps?.silentAudioTrack ?? false,
           },
 
           __device: device,
@@ -746,6 +758,7 @@ const addEffectsToStore = (
         __controls.requestedForceRenegotiateLastTime,
       mounted,
       noIceGathering: __initialProps.noIceGathering,
+      silentAudioTrack: __initialProps.silentAudioTrack,
     }),
     async ({ enabled, ingestUrl, noIceGathering }) => {
       await cleanupWhip?.();
@@ -819,6 +832,7 @@ const addEffectsToStore = (
       initialAudioConfig: state.__initialProps.audio,
       initialVideoConfig: state.__initialProps.video,
       previousMediaStream: state.mediaStream,
+      silentAudioTrack: state.__initialProps.silentAudioTrack,
     }),
     async ({
       hydrated,
@@ -830,19 +844,25 @@ const addEffectsToStore = (
       previousMediaStream,
       initialAudioConfig,
       initialVideoConfig,
+      silentAudioTrack,
     }) => {
       try {
         if (!mounted || !hydrated) {
           return;
         }
 
-        if (!audio && !video) {
+        // Force audio to true if silentAudioTrack is enabled so we get a microphone track
+        const shouldRequestAudio = audio || silentAudioTrack;
+
+        if (!shouldRequestAudio && !video) {
+          console.log(
+            "|||| FORCING VIDEO ENABLED to request getUserMedia ||||",
+          );
           warn(
             "At least one of audio and video must be requested. Overriding video to be enabled so that `getUserMedia` can be requested.",
           );
 
           store.setState({ video: true });
-
           video = true;
         }
 
@@ -851,6 +871,13 @@ const addEffectsToStore = (
         const videoConstraints =
           typeof initialVideoConfig !== "boolean" ? initialVideoConfig : null;
 
+        console.log(
+          "|||| Requesting media with audio:",
+          shouldRequestAudio,
+          "and video:",
+          video,
+          "||||",
+        );
         const stream = await (requestedVideoDeviceId === "screen"
           ? getDisplayMedia({
               // for now, only the microphone audio track is supported - we don't support multiple
@@ -864,8 +891,9 @@ const addEffectsToStore = (
               video: videoConstraints ?? true,
             })
           : getUserMedia({
+              // Always request audio if silentAudioTrack is enabled
               audio:
-                audio &&
+                shouldRequestAudio &&
                 requestedAudioDeviceId &&
                 requestedAudioDeviceId !== "default"
                   ? {
@@ -875,7 +903,7 @@ const addEffectsToStore = (
                         ideal: requestedAudioDeviceId,
                       },
                     }
-                  : audio
+                  : shouldRequestAudio
                     ? {
                         ...(audioConstraints ? audioConstraints : {}),
                       }
@@ -899,6 +927,16 @@ const addEffectsToStore = (
             }));
 
         if (stream) {
+          const microphoneTrack = stream?.getAudioTracks()?.[0] ?? null;
+          if (microphoneTrack) {
+            store.setState((state) => ({
+              __controls: {
+                ...state.__controls,
+                microphoneTrack: microphoneTrack,
+              },
+            }));
+          }
+
           // we get the device ID from the MediaStream and update those
           const allAudioTracks = stream?.getAudioTracks() ?? [];
           const allVideoTracks = stream?.getVideoTracks() ?? [];
@@ -971,14 +1009,77 @@ const addEffectsToStore = (
       audio: state.audio,
       video: state.video,
       mediaStream: state.mediaStream,
+      silentAudioTrack: state.__initialProps.silentAudioTrack,
+      peerConnection: state.peerConnection,
+      microphoneTrack: state.__controls.microphoneTrack,
     }),
-    async ({ audio, video, mediaStream }) => {
-      if (mediaStream) {
-        await setMediaStreamTracksStatus({
-          mediaStream,
-          enableAudio: Boolean(audio),
-          enableVideo: Boolean(video),
-        });
+    async ({
+      audio,
+      video,
+      mediaStream,
+      silentAudioTrack,
+      peerConnection,
+      microphoneTrack,
+    }) => {
+      if (!mediaStream) return;
+
+      for (const videoTrack of mediaStream.getVideoTracks()) {
+        videoTrack.enabled = video;
+      }
+
+      if (silentAudioTrack) {
+        if (peerConnection) {
+          const currentAudioTrack = mediaStream.getAudioTracks()[0];
+
+          if (!audio && microphoneTrack) {
+            // use silent track
+            if (currentAudioTrack && currentAudioTrack !== microphoneTrack) {
+              currentAudioTrack.enabled = true;
+            } else {
+              // swap in a silent track
+              const silentTrack = createSilentAudioTrack();
+
+              if (currentAudioTrack) {
+                mediaStream.removeTrack(currentAudioTrack);
+              }
+              mediaStream.addTrack(silentTrack);
+
+              // Replace in peer connection
+              const audioSender = peerConnection
+                .getSenders()
+                .find((s) => s.track && s.track.kind === "audio");
+              if (audioSender) {
+                await audioSender.replaceTrack(silentTrack);
+              }
+            }
+          } else if (audio && microphoneTrack) {
+            if (currentAudioTrack === microphoneTrack) {
+              microphoneTrack.enabled = true;
+            } else {
+              // swap back to microphone track
+              if (currentAudioTrack) {
+                mediaStream.removeTrack(currentAudioTrack);
+              }
+              mediaStream.addTrack(microphoneTrack);
+
+              const audioSender = peerConnection
+                .getSenders()
+                .find((s) => s.track && s.track.kind === "audio");
+              if (audioSender) {
+                await audioSender.replaceTrack(microphoneTrack);
+                microphoneTrack.enabled = true;
+              }
+            }
+          }
+        } else {
+          for (const audioTrack of mediaStream.getAudioTracks()) {
+            audioTrack.enabled = audio;
+          }
+        }
+      } else {
+        for (const audioTrack of mediaStream.getAudioTracks()) {
+          audioTrack.enabled = audio;
+        }
       }
     },
     {
@@ -1123,6 +1224,56 @@ const addEffectsToStore = (
     },
   );
 
+  const destroyPeerConnectionAudioHandler = store.subscribe(
+    (state) => ({
+      peerConnection: state.peerConnection,
+      audio: state.audio,
+      mediaStream: state.mediaStream,
+      silentAudioTrack: state.__initialProps.silentAudioTrack,
+      microphoneTrack: state.__controls.microphoneTrack,
+    }),
+    async ({
+      peerConnection,
+      audio,
+      mediaStream,
+      silentAudioTrack,
+      microphoneTrack,
+    }) => {
+      // Only run when the peer connection becomes available
+      if (!peerConnection || !mediaStream || !silentAudioTrack) return;
+
+      // swap in the silent track
+      if (!audio && microphoneTrack) {
+        const currentAudioTracks = mediaStream.getAudioTracks();
+        const currentAudioTrack = currentAudioTracks[0];
+
+        if (currentAudioTrack && currentAudioTrack !== microphoneTrack) {
+          return;
+        }
+
+        const silentTrack = createSilentAudioTrack();
+
+        for (const track of currentAudioTracks) {
+          mediaStream.removeTrack(track);
+        }
+
+        mediaStream.addTrack(silentTrack);
+
+        const audioSender = peerConnection
+          .getSenders()
+          .find((s) => s.track && s.track.kind === "audio");
+
+        if (audioSender) {
+          await audioSender.replaceTrack(silentTrack);
+        }
+      }
+    },
+    {
+      equalityFn: (a, b) =>
+        a.peerConnection === b.peerConnection && a.audio === b.audio,
+    },
+  );
+
   return () => {
     destroyAudioVideoEnabled?.();
     destroyErrorCount?.();
@@ -1131,6 +1282,7 @@ const addEffectsToStore = (
     destroyMediaSyncError?.();
     destroyMediaSyncMounted?.();
     destroyPeerConnectionAndMediaStream?.();
+    destroyPeerConnectionAudioHandler?.();
     destroyPictureInPictureSupportedMonitor?.();
     destroyRequestUserMedia?.();
     destroyUpdateDeviceList?.();
@@ -1139,4 +1291,29 @@ const addEffectsToStore = (
     cleanupWhip?.();
     cleanupMediaStream?.();
   };
+};
+
+/**
+ * Creates a silent audio track to use when audio is muted but we still want
+ * to send an audio track. This helps maintain connection stability while muted.
+ * @returns MediaStreamTrack A silent audio track
+ */
+export const createSilentAudioTrack = (): MediaStreamTrack => {
+  const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  const oscillator = ctx.createOscillator();
+  const dst = ctx.createMediaStreamDestination();
+
+  const gainNode = ctx.createGain();
+  gainNode.gain.value = 0;
+
+  oscillator.type = "sine";
+  oscillator.frequency.value = 0;
+
+  oscillator.connect(gainNode);
+  gainNode.connect(dst);
+
+  oscillator.start();
+  const track = dst.stream.getAudioTracks()[0];
+  track.enabled = true;
+  return track;
 };

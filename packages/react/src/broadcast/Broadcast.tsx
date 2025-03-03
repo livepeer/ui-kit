@@ -57,6 +57,8 @@ interface BroadcastProps
   metricsInterval?: number;
 
   noIceGathering?: boolean;
+
+  silentAudioTrack?: boolean;
 }
 
 const Broadcast = (
