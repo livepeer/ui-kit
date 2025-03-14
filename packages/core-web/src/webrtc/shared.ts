@@ -26,21 +26,17 @@ export function createPeerConnection(
   const RTCPeerConnectionConstructor = getRTCPeerConnectionConstructor();
 
   if (RTCPeerConnectionConstructor) {
-    // strip non-standard port number if present
-    const hostNoPort = host?.split(":")[0];
-
-    const iceServers = host
-      ? [
-          {
-            urls: `stun:${hostNoPort}`,
-          },
-          {
-            urls: `turn:${hostNoPort}`,
-            username: "livepeer",
-            credential: "livepeer",
-          },
-        ]
-      : [];
+    const iceServers = [
+      {
+        urls: [
+          "stun:stun.l.google.com:19302",
+          "stun:stun1.l.google.com:19302",
+          "stun:stun2.l.google.com:19302",
+          "stun:stun3.l.google.com:19302",
+          "stun:stun4.l.google.com:19302",
+        ],
+      },
+    ];
 
     return new RTCPeerConnectionConstructor({ iceServers });
   }
