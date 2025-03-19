@@ -1,5 +1,4 @@
 import { warn } from "@livepeer/core/utils";
-import { isPictureInPictureSupported } from "../media/controls";
 import {
   constructClientOffer,
   createPeerConnection,
