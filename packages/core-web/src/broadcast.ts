@@ -832,6 +832,7 @@ const addEffectsToStore = (
       requestedVideoDeviceId: state.__controls.requestedVideoInputDeviceId,
       initialAudioConfig: state.__initialProps.audio,
       initialVideoConfig: state.__initialProps.video,
+      mirrored: state.__initialProps.mirrored,
       previousMediaStream: state.mediaStream,
     }),
     async ({
@@ -844,6 +845,7 @@ const addEffectsToStore = (
       previousMediaStream,
       initialAudioConfig,
       initialVideoConfig,
+      mirrored,
     }) => {
       try {
         if (!mounted || !hydrated) {
@@ -902,16 +904,12 @@ const addEffectsToStore = (
                       deviceId: {
                         ideal: requestedVideoDeviceId,
                       },
-                      ...(store.getState().__initialProps.mirrored
-                        ? { facingMode: "user" }
-                        : {}),
+                      ...(mirrored ? { facingMode: "user" } : {}),
                     }
                   : video
                     ? {
                         ...(videoConstraints ? videoConstraints : {}),
-                        ...(store.getState().__initialProps.mirrored
-                          ? { facingMode: "user" }
-                          : {}),
+                        ...(mirrored ? { facingMode: "user" } : {}),
                       }
                     : false,
             }));
@@ -960,13 +958,21 @@ const addEffectsToStore = (
 
           if (
             mergedVideoTrack &&
-            store.getState().__initialProps.mirrored &&
+            mirrored &&
             requestedVideoDeviceId !== "screen"
           ) {
             try {
-              element.classList.add("livepeer-mirrored-video");
+              const videoSettings = mergedVideoTrack.getSettings();
+              const isFrontFacing =
+                videoSettings.facingMode === "user" ||
+                !videoSettings.facingMode;
 
-              mergedVideoTrack = createMirroredVideoTrack(mergedVideoTrack);
+              if (isFrontFacing) {
+                element.classList.add("livepeer-mirrored-video");
+                mergedVideoTrack = createMirroredVideoTrack(mergedVideoTrack);
+              } else {
+                element.classList.remove("livepeer-mirrored-video");
+              }
             } catch (err) {
               warn(
                 `Failed to apply video mirroring: ${(err as Error).message}`,

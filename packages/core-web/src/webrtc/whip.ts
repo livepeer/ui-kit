@@ -1,10 +1,13 @@
 import { warn } from "@livepeer/core/utils";
+import { isPictureInPictureSupported } from "../media/controls";
 import {
   constructClientOffer,
   createPeerConnection,
   getRedirectUrl,
   negotiateConnectionWithClientOffer,
 } from "./shared";
+
+const STANDARD_FPS = 30;
 
 export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
   "data-livepeer-video-whip-initialized";
@@ -321,7 +324,7 @@ export const createMirroredVideoTrack = (
 
     drawFrame();
 
-    const mirroredStream = canvas.captureStream(30); // 30fps
+    const mirroredStream = canvas.captureStream(STANDARD_FPS);
 
     const mirroredTrack = mirroredStream.getVideoTracks()[0];
 
