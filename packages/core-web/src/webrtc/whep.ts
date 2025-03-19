@@ -137,7 +137,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
 
           try {
             if (peerConnection?.connectionState === "failed") {
-              throw new Error("Failed to connect to peer.");
+              callbacks?.onError?.(new Error("Failed to connect to peer."));
             }
 
             if (
