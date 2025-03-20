@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.1.0
+
+### Minor Changes
+
+- [#596](https://github.com/livepeer/ui-kit/pull/596) [`3708b73`](https://github.com/livepeer/ui-kit/commit/3708b73eaa72566c531eba07ecc264fc37adb8ac) Thanks [@gioelecerati](https://github.com/gioelecerati)! - Added mirrored broadcast and peer connection error callback
+
 ## 5.0.1
 
 ### Patch Changes
