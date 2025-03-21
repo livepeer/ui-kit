@@ -142,11 +142,27 @@ export type InitialBroadcastProps = {
   video: boolean | Omit<MediaTrackConstraints, "deviceId">;
 
   /**
+   * @deprecated in favor of `stunServers` and `turnServers`
+   *
    * Whether to disable ICE gathering.
    *
    * Set to true to disable ICE gathering. This is useful for testing purposes.
    */
   noIceGathering?: boolean;
+
+  /**
+   * The STUN servers to use.
+   *
+   * If not provided, the default STUN servers will be used.
+   */
+  stunServers?: RTCIceServer | RTCIceServer[];
+
+  /**
+   * The TURN servers to use.
+   *
+   * If not provided, the default TURN servers will be used.
+   */
+  turnServers?: RTCIceServer | RTCIceServer[];
 
   /**
    * Whether the video stream should be mirrored (horizontally flipped).
@@ -475,7 +491,7 @@ export const createBroadcastStore = ({
                   requestedVideoInputDeviceId:
                     deviceIds?.videoinput === "screen"
                       ? "default"
-                      : (deviceIds?.videoinput ?? "default"),
+                      : deviceIds?.videoinput ?? "default",
                 },
               })),
 
@@ -488,10 +504,10 @@ export const createBroadcastStore = ({
                         requestedVideoInputDeviceId: deviceId,
                       }
                     : type === "audioinput"
-                      ? {
-                          requestedAudioInputDeviceId: deviceId,
-                        }
-                      : {}),
+                    ? {
+                        requestedAudioInputDeviceId: deviceId,
+                      }
+                    : {}),
                 },
               })),
 
@@ -760,8 +776,16 @@ const addEffectsToStore = (
         __controls.requestedForceRenegotiateLastTime,
       mounted,
       noIceGathering: __initialProps.noIceGathering,
+      stunServers: __initialProps.stunServers,
+      turnServers: __initialProps.turnServers,
     }),
-    async ({ enabled, ingestUrl, noIceGathering }) => {
+    async ({
+      enabled,
+      ingestUrl,
+      noIceGathering,
+      stunServers,
+      turnServers,
+    }) => {
       await cleanupWhip?.();
 
       if (!enabled) {
@@ -803,6 +827,8 @@ const addEffectsToStore = (
         },
         sdpTimeout: null,
         noIceGathering,
+        stunServers,
+        turnServers,
       });
 
       cleanupWhip = () => {
@@ -891,10 +917,10 @@ const addEffectsToStore = (
                       },
                     }
                   : audio
-                    ? {
-                        ...(audioConstraints ? audioConstraints : {}),
-                      }
-                    : false,
+                  ? {
+                      ...(audioConstraints ? audioConstraints : {}),
+                    }
+                  : false,
               video:
                 video &&
                 requestedVideoDeviceId &&
@@ -907,11 +933,11 @@ const addEffectsToStore = (
                       ...(mirrored ? { facingMode: "user" } : {}),
                     }
                   : video
-                    ? {
-                        ...(videoConstraints ? videoConstraints : {}),
-                        ...(mirrored ? { facingMode: "user" } : {}),
-                      }
-                    : false,
+                  ? {
+                      ...(videoConstraints ? videoConstraints : {}),
+                      ...(mirrored ? { facingMode: "user" } : {}),
+                    }
+                  : false,
             }));
 
         if (stream) {
@@ -1133,8 +1159,8 @@ const addEffectsToStore = (
                 device.kind === "audioinput"
                   ? "Audio Source"
                   : device.kind === "audiooutput"
-                    ? "Audio Output"
-                    : "Video Source"
+                  ? "Audio Output"
+                  : "Video Source"
               } ${i + 1} (${
                 device.deviceId === "default"
                   ? "default"
