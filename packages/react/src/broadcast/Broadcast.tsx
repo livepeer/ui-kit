@@ -56,7 +56,28 @@ interface BroadcastProps
    */
   metricsInterval?: number;
 
+  /**
+   * @deprecated in favor of `stunServers` and `turnServers`
+   *
+   * Whether to disable ICE gathering.
+   *
+   * Set to true to disable ICE gathering. This is useful for testing purposes.
+   */
   noIceGathering?: boolean;
+
+  /**
+   * The STUN servers to use.
+   *
+   * If not provided, the default STUN servers will be used.
+   */
+  stunServers?: RTCIceServer | RTCIceServer[];
+
+  /**
+   * The TURN servers to use.
+   *
+   * If not provided, the default TURN servers will be used.
+   */
+  turnServers?: RTCIceServer | RTCIceServer[];
 }
 
 const Broadcast = (

@@ -141,11 +141,27 @@ export type InitialBroadcastProps = {
   video: boolean | Omit<MediaTrackConstraints, "deviceId">;
 
   /**
+   * @deprecated in favor of `stunServers` and `turnServers`
+   *
    * Whether to disable ICE gathering.
    *
    * Set to true to disable ICE gathering. This is useful for testing purposes.
    */
   noIceGathering?: boolean;
+
+  /**
+   * The STUN servers to use.
+   *
+   * If not provided, the default STUN servers will be used.
+   */
+  stunServers?: RTCIceServer | RTCIceServer[];
+
+  /**
+   * The TURN servers to use.
+   *
+   * If not provided, the default TURN servers will be used.
+   */
+  turnServers?: RTCIceServer | RTCIceServer[];
 };
 
 export type BroadcastAriaText = {
@@ -746,8 +762,16 @@ const addEffectsToStore = (
         __controls.requestedForceRenegotiateLastTime,
       mounted,
       noIceGathering: __initialProps.noIceGathering,
+      stunServers: __initialProps.stunServers,
+      turnServers: __initialProps.turnServers,
     }),
-    async ({ enabled, ingestUrl, noIceGathering }) => {
+    async ({
+      enabled,
+      ingestUrl,
+      noIceGathering,
+      stunServers,
+      turnServers,
+    }) => {
       await cleanupWhip?.();
 
       if (!enabled) {
@@ -789,6 +813,8 @@ const addEffectsToStore = (
         },
         sdpTimeout: null,
         noIceGathering,
+        stunServers,
+        turnServers,
       });
 
       cleanupWhip = () => {

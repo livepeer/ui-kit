@@ -20,10 +20,13 @@ export const getRTCPeerConnectionConstructor = () => {
   );
 };
 
+/**
+ * Creates a new RTCPeerConnection instance with the given STUN and TURN servers.
+ */
 export function createPeerConnection(
   host: string | null,
-  stunServers: RTCIceServer | null,
-  turnServers: RTCIceServer | null,
+  stunServers?: RTCIceServer | RTCIceServer[],
+  turnServers?: RTCIceServer | RTCIceServer[],
 ): RTCPeerConnection | null {
   const RTCPeerConnectionConstructor = getRTCPeerConnectionConstructor();
 
@@ -31,30 +34,36 @@ export function createPeerConnection(
     throw new Error("No RTCPeerConnection constructor found in this browser.");
   }
 
-  const hostNoPort = host?.split(":")[0];
-
   // Defaults to Mist behavior
+  const hostNoPort = host?.split(":")[0];
+  const defaultStunServer = host
+    ? [
+        {
+          urls: `stun:${hostNoPort}`,
+        },
+      ]
+    : [];
+  const defaultTurnServer = host
+    ? [
+        {
+          urls: `turn:${hostNoPort}`,
+          username: "livepeer",
+          credential: "livepeer",
+        },
+      ]
+    : [];
+
   const iceServers = [
     ...(stunServers
-      ? [stunServers]
-      : host
-        ? [
-            {
-              urls: `stun:${hostNoPort}`,
-            },
-          ]
-        : []),
+      ? Array.isArray(stunServers)
+        ? stunServers
+        : [stunServers]
+      : defaultStunServer),
     ...(turnServers
-      ? [turnServers]
-      : host
-        ? [
-            {
-              urls: `turn:${hostNoPort}`,
-              username: "livepeer",
-              credential: "livepeer",
-            },
-          ]
-        : []),
+      ? Array.isArray(turnServers)
+        ? turnServers
+        : [turnServers]
+      : defaultTurnServer),
   ];
 
   return new RTCPeerConnectionConstructor({ iceServers });
