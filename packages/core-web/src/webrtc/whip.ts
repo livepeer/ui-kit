@@ -6,6 +6,8 @@ import {
   negotiateConnectionWithClientOffer,
 } from "./shared";
 
+const STANDARD_FPS = 30;
+
 export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
   "data-livepeer-video-whip-initialized";
 
@@ -25,6 +27,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   element,
   callbacks,
   sdpTimeout,
+  noIceGathering,
 }: {
   ingestUrl: string;
   element: TElement;
@@ -34,6 +37,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
     onError?: (data: Error) => void;
   };
   sdpTimeout: number | null;
+  noIceGathering?: boolean;
 }): {
   destroy: () => void;
 } => {
@@ -74,6 +78,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
             const ofr = await constructClientOffer(
               peerConnection,
               redirectUrlString,
+              noIceGathering,
             );
 
             await negotiateConnectionWithClientOffer(
@@ -261,4 +266,76 @@ export const getDisplayMedia = (options?: DisplayMediaStreamOptions) => {
   }
 
   return navigator.mediaDevices.getDisplayMedia(options);
+};
+
+/**
+ * Creates a mirrored version of a video track using a canvas element.
+ * This function ensures the stream sent to the server is mirrored horizontally.
+ */
+export const createMirroredVideoTrack = (
+  originalTrack: MediaStreamTrack,
+): MediaStreamTrack => {
+  if (originalTrack.kind !== "video") {
+    warn("Cannot mirror non-video track");
+    return originalTrack;
+  }
+
+  try {
+    const settings = originalTrack.getSettings();
+    const width = settings.width || 640;
+    const height = settings.height || 480;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      warn("Could not get canvas context for mirroring video");
+      return originalTrack;
+    }
+
+    const video = document.createElement("video");
+    video.srcObject = new MediaStream([originalTrack]);
+    video.autoplay = true;
+    video.muted = true;
+
+    video.onloadedmetadata = () => {
+      video
+        .play()
+        .catch((e) =>
+          warn(`Failed to play video in mirroring process: ${e.message}`),
+        );
+    };
+
+    const drawFrame = () => {
+      if (video.readyState >= 2) {
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, -width, 0, width, height);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(drawFrame);
+    };
+
+    drawFrame();
+
+    const mirroredStream = canvas.captureStream(STANDARD_FPS);
+
+    const mirroredTrack = mirroredStream.getVideoTracks()[0];
+
+    originalTrack.addEventListener("ended", () => {
+      mirroredTrack.stop();
+      video.pause();
+      video.srcObject = null;
+    });
+
+    return mirroredTrack;
+  } catch (err) {
+    warn(`Error creating mirrored track: ${(err as Error).message}`);
+    return originalTrack;
+  }
 };

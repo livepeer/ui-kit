@@ -1,5 +1,21 @@
 # @livepeer/react
 
+## 4.2.11
+
+### Patch Changes
+
+- Updated dependencies [[`3708b73`](https://github.com/livepeer/ui-kit/commit/3708b73eaa72566c531eba07ecc264fc37adb8ac)]:
+  - @livepeer/core-web@5.1.0
+
+## 4.2.10
+
+### Patch Changes
+
+- Updated dependencies [[`0e5a036`](https://github.com/livepeer/ui-kit/commit/0e5a0365fe9d685271bc96ff5d750ee19fe6406b)]:
+  - @livepeer/core@3.2.8
+  - @livepeer/core-react@3.2.8
+  - @livepeer/core-web@5.0.1
+
 ## 4.2.9
 
 ### Patch Changes

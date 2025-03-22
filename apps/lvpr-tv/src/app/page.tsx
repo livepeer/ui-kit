@@ -15,6 +15,7 @@ type LowLatency = Booleanish | "force";
 type ObjectFit = "contain" | "cover";
 type Constant = Booleanish;
 type Debug = Booleanish;
+type IngestPlayback = Booleanish;
 
 type PlayerSearchParams = {
   v?: string;
@@ -31,6 +32,7 @@ type PlayerSearchParams = {
   jwt?: string;
   accessKey?: string;
   debug?: Debug;
+  ingestPlayback?: IngestPlayback;
 };
 
 export default async function PlayerPage({
@@ -60,6 +62,7 @@ export default async function PlayerPage({
     jwt: searchParams?.jwt ?? null,
     accessKey: searchParams?.accessKey ?? null,
     debug: coerceToBoolean(searchParams?.debug, false),
+    ingestPlayback: coerceToBoolean(searchParams?.ingestPlayback, false),
   };
 
   return (

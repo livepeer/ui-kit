@@ -37,6 +37,7 @@ export type PlayerProps = Partial<{
   jwt: string | null;
   accessKey: string | null;
   debug: boolean;
+  ingestPlayback: boolean;
 }>;
 
 const getPlaybackInfoUncached = cache(async (playbackId: string) => {
@@ -106,6 +107,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       src={src}
       aspectRatio={null}
       storage={null}
+      ingestPlayback={props.ingestPlayback}
     >
       <Player.Container className="flex-1 h-full w-full overflow-hidden bg-black outline-none transition-all">
         <Player.Video
