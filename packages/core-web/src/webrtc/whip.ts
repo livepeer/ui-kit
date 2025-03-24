@@ -28,8 +28,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   callbacks,
   sdpTimeout,
   noIceGathering,
-  stunServers,
-  turnServers,
+  iceServers,
 }: {
   ingestUrl: string;
   element: TElement;
@@ -40,8 +39,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   };
   sdpTimeout: number | null;
   noIceGathering?: boolean;
-  stunServers?: RTCIceServer | RTCIceServer[];
-  turnServers?: RTCIceServer | RTCIceServer[];
+  iceServers?: RTCIceServer | RTCIceServer[];
 }): {
   destroy: () => void;
 } => {
@@ -74,11 +72,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
        * allowing the client to discover its own IP address.
        * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
        */
-      peerConnection = createPeerConnection(
-        redirectUrl.host,
-        stunServers,
-        turnServers,
-      );
+      peerConnection = createPeerConnection(redirectUrl.host, iceServers);
 
       if (peerConnection) {
         peerConnection.addEventListener("negotiationneeded", async (_ev) => {

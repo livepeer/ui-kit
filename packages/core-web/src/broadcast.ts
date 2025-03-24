@@ -142,7 +142,7 @@ export type InitialBroadcastProps = {
   video: boolean | Omit<MediaTrackConstraints, "deviceId">;
 
   /**
-   * @deprecated in favor of `stunServers` and `turnServers`
+   * @deprecated in favor of `iceServers`
    *
    * Whether to disable ICE gathering.
    *
@@ -151,18 +151,11 @@ export type InitialBroadcastProps = {
   noIceGathering?: boolean;
 
   /**
-   * The STUN servers to use.
+   * The ICE servers to use.
    *
-   * If not provided, the default STUN servers will be used.
+   * If not provided, the default ICE servers will be used.
    */
-  stunServers?: RTCIceServer | RTCIceServer[];
-
-  /**
-   * The TURN servers to use.
-   *
-   * If not provided, the default TURN servers will be used.
-   */
-  turnServers?: RTCIceServer | RTCIceServer[];
+  iceServers?: RTCIceServer | RTCIceServer[];
 
   /**
    * Whether the video stream should be mirrored (horizontally flipped).
@@ -351,8 +344,7 @@ export const createBroadcastStore = ({
             ingestUrl: ingestUrl ?? null,
             video: initialProps?.video ?? true,
             noIceGathering: initialProps?.noIceGathering ?? false,
-            stunServers: initialProps?.stunServers,
-            turnServers: initialProps?.turnServers,
+            iceServers: initialProps?.iceServers,
             mirrored: initialProps?.mirrored ?? false,
           },
 
@@ -778,16 +770,9 @@ const addEffectsToStore = (
         __controls.requestedForceRenegotiateLastTime,
       mounted,
       noIceGathering: __initialProps.noIceGathering,
-      stunServers: __initialProps.stunServers,
-      turnServers: __initialProps.turnServers,
+      iceServers: __initialProps.iceServers,
     }),
-    async ({
-      enabled,
-      ingestUrl,
-      noIceGathering,
-      stunServers,
-      turnServers,
-    }) => {
+    async ({ enabled, ingestUrl, noIceGathering, iceServers }) => {
       await cleanupWhip?.();
 
       if (!enabled) {
@@ -829,8 +814,7 @@ const addEffectsToStore = (
         },
         sdpTimeout: null,
         noIceGathering,
-        stunServers,
-        turnServers,
+        iceServers,
       });
 
       cleanupWhip = () => {
