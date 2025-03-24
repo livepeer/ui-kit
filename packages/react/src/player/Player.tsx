@@ -53,6 +53,20 @@ interface PlayerProps
    * The interval at which metrics are sent, in ms. Defaults to 5000.
    */
   metricsInterval?: number;
+
+  /**
+   * The STUN servers to use.
+   *
+   * If not provided, the default STUN servers will be used.
+   */
+  stunServers?: RTCIceServer | RTCIceServer[];
+
+  /**
+   * The TURN servers to use.
+   *
+   * If not provided, the default TURN servers will be used.
+   */
+  turnServers?: RTCIceServer | RTCIceServer[];
 }
 
 const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {

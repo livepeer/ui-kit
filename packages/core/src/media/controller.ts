@@ -156,6 +156,20 @@ export type InitialProps = {
   viewerId: string | null;
 
   ingestPlayback: boolean;
+
+  /**
+   * The STUN servers to use.
+   *
+   * If not provided, the default STUN servers will be used.
+   */
+  stunServers?: RTCIceServer | RTCIceServer[];
+
+  /**
+   * The TURN servers to use.
+   *
+   * If not provided, the default TURN servers will be used.
+   */
+  turnServers?: RTCIceServer | RTCIceServer[];
 };
 
 export type DeviceInformation = {
@@ -662,6 +676,8 @@ export const createControllerStore = ({
             viewerId: initialProps.viewerId ?? null,
             volume: initialVolume ?? null,
             ingestPlayback: initialProps.ingestPlayback ?? false,
+            stunServers: initialProps.stunServers,
+            turnServers: initialProps.turnServers,
           },
 
           __device: device,
