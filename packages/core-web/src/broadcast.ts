@@ -351,6 +351,8 @@ export const createBroadcastStore = ({
             ingestUrl: ingestUrl ?? null,
             video: initialProps?.video ?? true,
             noIceGathering: initialProps?.noIceGathering ?? false,
+            stunServers: initialProps?.stunServers,
+            turnServers: initialProps?.turnServers,
             mirrored: initialProps?.mirrored ?? false,
           },
 
