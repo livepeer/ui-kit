@@ -156,6 +156,13 @@ export type InitialProps = {
   viewerId: string | null;
 
   ingestPlayback: boolean;
+
+  /**
+   * The ICE servers to use.
+   *
+   * If not provided, the default ICE servers will be used.
+   */
+  iceServers?: RTCIceServer | RTCIceServer[];
 };
 
 export type DeviceInformation = {
@@ -662,6 +669,7 @@ export const createControllerStore = ({
             viewerId: initialProps.viewerId ?? null,
             volume: initialVolume ?? null,
             ingestPlayback: initialProps.ingestPlayback ?? false,
+            iceServers: initialProps.iceServers,
           },
 
           __device: device,

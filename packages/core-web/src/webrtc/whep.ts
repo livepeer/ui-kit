@@ -21,6 +21,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
   callbacks,
   accessControl,
   sdpTimeout,
+  iceServers,
 }: {
   source: string;
   element: TElement;
@@ -32,6 +33,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
   };
   accessControl: AccessControlParams;
   sdpTimeout: number | null;
+  iceServers?: RTCIceServer | RTCIceServer[];
 }): {
   destroy: () => void;
 } => {
@@ -76,7 +78,7 @@ export const createNewWHEP = <TElement extends HTMLMediaElement>({
        * allowing the client to discover its own IP address.
        * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
        */
-      peerConnection = createPeerConnection(redirectUrl.host);
+      peerConnection = createPeerConnection(redirectUrl.host, iceServers);
 
       if (peerConnection) {
         /** https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTransceiver */

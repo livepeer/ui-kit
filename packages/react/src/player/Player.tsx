@@ -53,6 +53,13 @@ interface PlayerProps
    * The interval at which metrics are sent, in ms. Defaults to 5000.
    */
   metricsInterval?: number;
+
+  /**
+   * The ICE servers to use.
+   *
+   * If not provided, the default ICE servers will be used.
+   */
+  iceServers?: RTCIceServer | RTCIceServer[];
 }
 
 const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
