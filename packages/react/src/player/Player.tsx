@@ -27,6 +27,12 @@ interface PlayerProps
   src: Src[] | null;
 
   /**
+   * Sets a custom playback ID for playback.
+   * If not specified, the function defaults to parsing the `src` attribute of the HTMLMediaElement to get the playback ID.
+   */
+  playbackId?: string;
+
+  /**
    * The aspect ratio of the media. Defaults to 16 / 9.
    * This significantly improves cumulative layout shift.
    * Set to `null` to render a plain div primitive.
@@ -72,6 +78,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
     storage,
     onPlaybackEvents,
     metricsInterval,
+    playbackId,
     ...rest
   } = props;
 
@@ -90,6 +97,7 @@ const Player = React.memo((props: MediaScopedProps<PlayerProps>) => {
               },
         ),
       src,
+      playbackId,
       initialProps: {
         aspectRatio,
         jwt,
