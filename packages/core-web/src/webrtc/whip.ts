@@ -296,17 +296,6 @@ export const createMirroredVideoTrack = (
     video.autoplay = true;
     video.muted = true;
 
-    video.onloadedmetadata = () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      video
-        .play()
-        .catch((e) =>
-          warn(`Failed to play video in mirroring process: ${e.message}`),
-        );
-    };
-
     const drawFrame = () => {
       if (video.readyState >= 2) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -320,7 +309,18 @@ export const createMirroredVideoTrack = (
       requestAnimationFrame(drawFrame);
     };
 
-    drawFrame();
+    video.onloadedmetadata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      video
+        .play()
+        .catch((e) =>
+          warn(`Failed to play video in mirroring process: ${e.message}`),
+        );
+
+      drawFrame();
+    };
 
     const mirroredStream = canvas.captureStream(STANDARD_FPS);
 
