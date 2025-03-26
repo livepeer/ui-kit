@@ -296,6 +296,8 @@ export const createMirroredVideoTrack = (
     video.autoplay = true;
     video.muted = true;
 
+    let animationFrameId: number;
+
     const drawFrame = () => {
       if (video.readyState >= 2) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -306,7 +308,7 @@ export const createMirroredVideoTrack = (
         ctx.restore();
       }
 
-      requestAnimationFrame(drawFrame);
+      animationFrameId = requestAnimationFrame(drawFrame);
     };
 
     video.onloadedmetadata = () => {
@@ -323,10 +325,10 @@ export const createMirroredVideoTrack = (
     };
 
     const mirroredStream = canvas.captureStream(STANDARD_FPS);
-
     const mirroredTrack = mirroredStream.getVideoTracks()[0];
 
     originalTrack.addEventListener("ended", () => {
+      cancelAnimationFrame(animationFrameId);
       mirroredTrack.stop();
       video.pause();
       video.srcObject = null;
