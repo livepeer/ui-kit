@@ -284,12 +284,8 @@ export const createMirroredVideoTrack = (
 
   try {
     const settings = originalTrack.getSettings();
-    const width = settings.width || 640;
-    const height = settings.height || 480;
 
     const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) {
@@ -303,6 +299,9 @@ export const createMirroredVideoTrack = (
     video.muted = true;
 
     video.onloadedmetadata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
       video
         .play()
         .catch((e) =>
@@ -312,11 +311,11 @@ export const createMirroredVideoTrack = (
 
     const drawFrame = () => {
       if (video.readyState >= 2) {
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.save();
         ctx.scale(-1, 1);
-        ctx.drawImage(video, -width, 0, width, height);
+        ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
         ctx.restore();
       }
 
