@@ -283,8 +283,6 @@ export const createMirroredVideoTrack = (
   }
 
   try {
-    const settings = originalTrack.getSettings();
-
     const canvas = document.createElement("canvas");
 
     const ctx = canvas.getContext("2d");
