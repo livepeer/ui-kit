@@ -1,5 +1,12 @@
 # @livepeer/core-react
 
+## 3.2.9
+
+### Patch Changes
+
+- Updated dependencies [[`b548b95`](https://github.com/livepeer/ui-kit/commit/b548b9561e553b8947c37b1066c5a392132ca7d8)]:
+  - @livepeer/core@3.3.0
+
 ## 3.2.8
 
 ### Patch Changes
