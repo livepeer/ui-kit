@@ -283,13 +283,7 @@ export const createMirroredVideoTrack = (
   }
 
   try {
-    const settings = originalTrack.getSettings();
-    const width = settings.width || 640;
-    const height = settings.height || 480;
-
     const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) {
@@ -302,34 +296,39 @@ export const createMirroredVideoTrack = (
     video.autoplay = true;
     video.muted = true;
 
+    let animationFrameId: number;
+
+    const drawFrame = () => {
+      if (video.readyState >= 2) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      animationFrameId = requestAnimationFrame(drawFrame);
+    };
+
     video.onloadedmetadata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
       video
         .play()
         .catch((e) =>
           warn(`Failed to play video in mirroring process: ${e.message}`),
         );
+
+      drawFrame();
     };
-
-    const drawFrame = () => {
-      if (video.readyState >= 2) {
-        ctx.clearRect(0, 0, width, height);
-
-        ctx.save();
-        ctx.scale(-1, 1);
-        ctx.drawImage(video, -width, 0, width, height);
-        ctx.restore();
-      }
-
-      requestAnimationFrame(drawFrame);
-    };
-
-    drawFrame();
 
     const mirroredStream = canvas.captureStream(STANDARD_FPS);
-
     const mirroredTrack = mirroredStream.getVideoTracks()[0];
 
     originalTrack.addEventListener("ended", () => {
+      cancelAnimationFrame(animationFrameId);
       mirroredTrack.stop();
       video.pause();
       video.srcObject = null;
