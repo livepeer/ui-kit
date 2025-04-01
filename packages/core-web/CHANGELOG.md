@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.2.1
+
+### Patch Changes
+
+- [#602](https://github.com/livepeer/ui-kit/pull/602) [`0c8279e`](https://github.com/livepeer/ui-kit/commit/0c8279efe0f9fd8484efeb72f8e55537c790a752) Thanks [@junhyoung-ryu](https://github.com/junhyoung-ryu)! - Fix aspect ratio for mirrored video tracks on mobile view
+
 ## 5.2.0
 
 ### Minor Changes
