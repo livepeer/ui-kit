@@ -284,6 +284,9 @@ export const createMirroredVideoTrack = (
 
   try {
     const canvas = document.createElement("canvas");
+    canvas.style.position = "absolute";
+    canvas.style.top = "-9999px";
+    document.body.appendChild(canvas);
 
     const ctx = canvas.getContext("2d");
     if (!ctx) {
@@ -295,11 +298,29 @@ export const createMirroredVideoTrack = (
     video.srcObject = new MediaStream([originalTrack]);
     video.autoplay = true;
     video.muted = true;
+    video.playsInline = true;
+
+    const settings = originalTrack.getSettings();
+    if (settings.width && settings.height) {
+      canvas.width = settings.width;
+      canvas.height = settings.height;
+    }
+
+    const mirroredStream = canvas.captureStream(STANDARD_FPS);
+    const mirroredTrack = mirroredStream.getVideoTracks()[0];
 
     let animationFrameId: number;
 
     const drawFrame = () => {
       if (video.readyState >= 2) {
+        if (
+          canvas.width !== video.videoWidth ||
+          canvas.height !== video.videoHeight
+        ) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.save();
@@ -312,26 +333,26 @@ export const createMirroredVideoTrack = (
     };
 
     video.onloadedmetadata = () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      if (!canvas.width || !canvas.height) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      }
 
-      video
-        .play()
-        .catch((e) =>
-          warn(`Failed to play video in mirroring process: ${e.message}`),
-        );
+      video.play().catch((e) => {
+        warn(`Failed to play video in mirroring process: ${e.message}`);
+      });
 
       drawFrame();
     };
-
-    const mirroredStream = canvas.captureStream(STANDARD_FPS);
-    const mirroredTrack = mirroredStream.getVideoTracks()[0];
 
     originalTrack.addEventListener("ended", () => {
       cancelAnimationFrame(animationFrameId);
       mirroredTrack.stop();
       video.pause();
       video.srcObject = null;
+      if (canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
+      }
     });
 
     return mirroredTrack;
