@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.2.2
+
+### Patch Changes
+
+- [#605](https://github.com/livepeer/ui-kit/pull/605) [`5a8f2d5`](https://github.com/livepeer/ui-kit/commit/5a8f2d50aba063a877ae891a6d198a07b13a2e51) Thanks [@junhyoung-ryu](https://github.com/junhyoung-ryu)! - Attach canvas to the DOM for mirrored streams
+
 ## 5.2.1
 
 ### Patch Changes
