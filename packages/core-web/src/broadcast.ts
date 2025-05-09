@@ -1358,7 +1358,7 @@ export const createSilentAudioTrack = (): MediaStreamTrack => {
   const dst = ctx.createMediaStreamDestination();
 
   const gainNode = ctx.createGain();
-  gainNode.gain.value = 0.1;
+  gainNode.gain.value = 10;
 
   oscillator.type = "sine";
   oscillator.frequency.value = 440;

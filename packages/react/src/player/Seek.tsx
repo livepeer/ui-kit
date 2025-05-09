@@ -3,7 +3,7 @@
 import { composeEventHandlers } from "@radix-ui/primitive";
 import * as SliderPrimitive from "../shared/Slider";
 
-import React from "react";
+import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
@@ -72,6 +72,26 @@ const Seek = React.forwardRef<SeekElement, SeekProps>(
       [seek],
     );
 
+    const onValueChangeComposed = useCallback(
+      (value: number[]) => {
+        if (props.onValueChange) {
+          props.onValueChange(value);
+        }
+        onValueChange(value);
+      },
+      [props.onValueChange, onValueChange],
+    );
+
+    const onValueCommitComposed = useCallback(
+      (value: number[]) => {
+        if (props.onValueCommit) {
+          props.onValueCommit(value);
+        }
+        onValueCommit(value);
+      },
+      [props.onValueCommit, onValueCommit],
+    );
+
     return (
       <Presence present={forceMount || !live}>
         <SliderPrimitive.Root
@@ -82,14 +102,8 @@ const Seek = React.forwardRef<SeekElement, SeekProps>(
           value={[progress]}
           role="slider"
           {...seekProps}
-          onValueChange={composeEventHandlers(
-            props.onValueChange,
-            onValueChange,
-          )}
-          onValueCommit={composeEventHandlers(
-            props.onValueCommit,
-            onValueCommit,
-          )}
+          onValueChange={onValueChangeComposed}
+          onValueCommit={onValueCommitComposed}
           onClick={noPropagate(() => {})}
           ref={forwardedRef}
           data-livepeer-controls-seek=""

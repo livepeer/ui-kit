@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import { useStore } from "zustand";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
@@ -56,6 +56,26 @@ const Volume = React.forwardRef<VolumeElement, VolumeProps>(
       [requestVolume],
     );
 
+    const onValueChangeComposed = useCallback(
+      (value: number[]) => {
+        if (props.onValueChange) {
+          props.onValueChange(value);
+        }
+        onValueChange(value);
+      },
+      [props.onValueChange, onValueChange],
+    );
+
+    const onValueCommitComposed = useCallback(
+      (value: number[]) => {
+        if (props.onValueCommit) {
+          props.onValueCommit(value);
+        }
+        onValueCommit(value);
+      },
+      [props.onValueCommit, onValueCommit],
+    );
+
     return (
       <Presence present={forceMount || isVolumeChangeSupported}>
         <SliderPrimitive.Root
@@ -65,14 +85,8 @@ const Volume = React.forwardRef<VolumeElement, VolumeProps>(
           value={[volume]}
           {...volumeProps}
           onClick={noPropagate(() => {})}
-          onValueChange={composeEventHandlers(
-            props.onValueChange,
-            onValueChange,
-          )}
-          onValueCommit={composeEventHandlers(
-            props.onValueCommit,
-            onValueCommit,
-          )}
+          onValueChange={onValueChangeComposed}
+          onValueCommit={onValueCommitComposed}
           ref={forwardedRef}
           data-livepeer-controls-volume=""
           data-livepeer-muted={String(volume === 0)}

@@ -2,7 +2,7 @@
 
 import * as SelectPrimitive from "../shared/Select";
 
-import React from "react";
+import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
@@ -35,11 +35,19 @@ const RateSelect = (props: MediaScopedProps<RateSelectProps>) => {
     })),
   );
 
+  const onValueChangeComposed = useCallback(
+    (value: string) => {
+      setPlaybackRate(value as PlaybackRate);
+      props.onValueChange?.(value);
+    },
+    [props.onValueChange, setPlaybackRate],
+  );
+
   return (
     <SelectPrimitive.SelectRoot
       {...rateSelectProps}
       value={playbackRate === "constant" ? "constant" : playbackRate.toFixed(2)}
-      onValueChange={composeEventHandlers(props.onValueChange, setPlaybackRate)}
+      onValueChange={onValueChangeComposed}
       data-livepeer-rate-select=""
       data-rate={String(playbackRate)}
     />

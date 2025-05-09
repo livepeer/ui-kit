@@ -2,7 +2,7 @@
 
 import * as SelectPrimitive from "../shared/Select";
 
-import React from "react";
+import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
@@ -36,11 +36,21 @@ const VideoQualitySelect = (
     })),
   );
 
+  const onValueChangeComposed = useCallback(
+    (value: string) => {
+      if (props.onValueChange) {
+        props.onValueChange(value);
+      }
+      setVideoQuality(value as VideoQuality);
+    },
+    [props.onValueChange, setVideoQuality],
+  );
+
   return (
     <SelectPrimitive.SelectRoot
       {...videoQualitySelectProps}
       value={videoQuality}
-      onValueChange={composeEventHandlers(props.onValueChange, setVideoQuality)}
+      onValueChange={onValueChangeComposed}
       data-livepeer-quality-select=""
       data-video-quality={String(videoQuality)}
     />
