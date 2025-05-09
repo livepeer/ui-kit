@@ -883,9 +883,6 @@ const addEffectsToStore = (
         const shouldRequestAudio = audio || silentAudioTrack;
 
         if (!shouldRequestAudio && !video) {
-          console.log(
-            "|||| FORCING VIDEO ENABLED to request getUserMedia ||||",
-          );
           warn(
             "At least one of audio and video must be requested. Overriding video to be enabled so that `getUserMedia` can be requested.",
           );
@@ -899,13 +896,6 @@ const addEffectsToStore = (
         const videoConstraints =
           typeof initialVideoConfig !== "boolean" ? initialVideoConfig : null;
 
-        console.log(
-          "|||| Requesting media with audio:",
-          shouldRequestAudio,
-          "and video:",
-          video,
-          "||||",
-        );
         const stream = await (requestedVideoDeviceId === "screen"
           ? getDisplayMedia({
               // for now, only the microphone audio track is supported - we don't support multiple
