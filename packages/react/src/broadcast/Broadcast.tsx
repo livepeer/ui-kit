@@ -65,6 +65,7 @@ interface BroadcastProps
    */
   noIceGathering?: boolean;
 
+  silentAudioTrack?: boolean;
   /**
    * The ICE servers to use.
    *

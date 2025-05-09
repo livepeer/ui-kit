@@ -39,10 +39,7 @@ export type {
   BroadcastContextValue,
   BroadcastScopedProps,
 } from "./broadcast/context";
-export {
-  Container,
-  type ContainerProps,
-} from "./shared/Container";
+export { Container, type ContainerProps } from "./shared/Container";
 export {
   ErrorIndicator,
   type ErrorIndicatorProps,
@@ -61,10 +58,7 @@ export {
   PictureInPictureTrigger,
   type PictureInPictureTriggerProps,
 } from "./shared/PictureInPictureTrigger";
-export {
-  Portal,
-  type PortalProps,
-} from "./shared/Portal";
+export { Portal, type PortalProps } from "./shared/Portal";
 export {
   SelectArrow,
   SelectContent,

@@ -97,16 +97,23 @@ const SourceSelect = (
     [requestMediaDeviceId, type],
   );
 
+  const handleValueChange = useCallback(
+    (value: AudioDeviceId) => {
+      if (props.onValueChange) {
+        props.onValueChange(value);
+      }
+      setMediaDeviceIdComposed(value);
+    },
+    [props.onValueChange, setMediaDeviceIdComposed],
+  );
+
   return (
     <Presence present={forceMount || isSupported}>
       <SelectPrimitive.SelectRoot
         disabled={type === "audioinput" ? !audio : !video}
         {...controlsProps}
         value={mediaDeviceIds[type] ?? undefined}
-        onValueChange={composeEventHandlers(
-          props.onValueChange,
-          setMediaDeviceIdComposed,
-        )}
+        onValueChange={handleValueChange}
         data-livepeer-source-select=""
         data-type={type}
         data-visible={String(isSupported)}
