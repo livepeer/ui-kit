@@ -470,6 +470,7 @@ const addEffectsToStore = (
             accessKey: store.getState().__initialProps.accessKey,
           },
           sdpTimeout: timeout,
+          iceServers: store.getState().__initialProps.iceServers,
         });
 
         const id = setTimeout(() => {

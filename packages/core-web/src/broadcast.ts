@@ -13,6 +13,7 @@ import { isPictureInPictureSupported } from "./media/controls";
 import { getRTCPeerConnectionConstructor } from "./webrtc/shared";
 import {
   attachMediaStreamToPeerConnection,
+  createMirroredVideoTrack,
   createNewWHIP,
   getDisplayMedia,
   getDisplayMediaExists,
@@ -144,6 +145,8 @@ export type InitialBroadcastProps = {
   video: boolean | Omit<MediaTrackConstraints, "deviceId">;
 
   /**
+   * @deprecated in favor of `iceServers`
+   *
    * Whether to disable ICE gathering.
    *
    * Set to true to disable ICE gathering. This is useful for testing purposes.
@@ -156,6 +159,21 @@ export type InitialBroadcastProps = {
    * Set to true to send a silent audio track if the audio is disabled.
    */
   silentAudioTrack?: boolean;
+
+  /**
+   * The ICE servers to use.
+   *
+   * If not provided, the default ICE servers will be used.
+   */
+  iceServers?: RTCIceServer | RTCIceServer[];
+
+  /**
+   * Whether the video stream should be mirrored (horizontally flipped).
+   *
+   * Set to true to broadcast a mirrored view.
+   * Defaults to `false`.
+   */
+  mirrored?: boolean;
 };
 
 export type BroadcastAriaText = {
@@ -338,6 +356,8 @@ export const createBroadcastStore = ({
             video: initialProps?.video ?? true,
             noIceGathering: initialProps?.noIceGathering ?? false,
             silentAudioTrack: initialProps?.silentAudioTrack ?? false,
+            iceServers: initialProps?.iceServers,
+            mirrored: initialProps?.mirrored ?? false,
           },
 
           __device: device,
@@ -650,7 +670,11 @@ export const addBroadcastEventListeners = (
   }
 
   // add effects
-  const removeEffectsFromStore = addEffectsToStore(element, store, mediaStore);
+  const { destroy: destroyEffects } = addEffectsToStore(
+    element,
+    store,
+    mediaStore,
+  );
 
   const removeHydrationListener = store.persist.onFinishHydration(
     ({ mediaDeviceIds, audio, video }) => {
@@ -668,7 +692,7 @@ export const addBroadcastEventListeners = (
 
       mediaDevices?.removeEventListener?.("devicechange", onDeviceChange);
 
-      removeEffectsFromStore?.();
+      destroyEffects?.();
 
       element?.removeAttribute?.(MEDIA_BROADCAST_INITIALIZED_ATTRIBUTE);
     },
@@ -759,8 +783,9 @@ const addEffectsToStore = (
       mounted,
       noIceGathering: __initialProps.noIceGathering,
       silentAudioTrack: __initialProps.silentAudioTrack,
+      iceServers: __initialProps.iceServers,
     }),
-    async ({ enabled, ingestUrl, noIceGathering }) => {
+    async ({ enabled, ingestUrl, noIceGathering, iceServers }) => {
       await cleanupWhip?.();
 
       if (!enabled) {
@@ -802,6 +827,7 @@ const addEffectsToStore = (
         },
         sdpTimeout: null,
         noIceGathering,
+        iceServers,
       });
 
       cleanupWhip = () => {
@@ -831,6 +857,7 @@ const addEffectsToStore = (
       requestedVideoDeviceId: state.__controls.requestedVideoInputDeviceId,
       initialAudioConfig: state.__initialProps.audio,
       initialVideoConfig: state.__initialProps.video,
+      mirrored: state.__initialProps.mirrored,
       previousMediaStream: state.mediaStream,
       silentAudioTrack: state.__initialProps.silentAudioTrack,
     }),
@@ -845,6 +872,7 @@ const addEffectsToStore = (
       initialAudioConfig,
       initialVideoConfig,
       silentAudioTrack,
+      mirrored,
     }) => {
       try {
         if (!mounted || !hydrated) {
@@ -899,7 +927,6 @@ const addEffectsToStore = (
                   ? {
                       ...(audioConstraints ? audioConstraints : {}),
                       deviceId: {
-                        // we pass ideal here, so we don't get overconstrained errors
                         ideal: requestedAudioDeviceId,
                       },
                     }
@@ -915,13 +942,14 @@ const addEffectsToStore = (
                   ? {
                       ...(videoConstraints ? videoConstraints : {}),
                       deviceId: {
-                        // we pass ideal here, so we don't get overconstrained errors
                         ideal: requestedVideoDeviceId,
                       },
+                      ...(mirrored ? { facingMode: "user" } : {}),
                     }
                   : video
                     ? {
                         ...(videoConstraints ? videoConstraints : {}),
+                        ...(mirrored ? { facingMode: "user" } : {}),
                       }
                     : false,
             }));
@@ -972,10 +1000,37 @@ const addEffectsToStore = (
             allAudioTracks?.[0] ??
             previousMediaStream?.getAudioTracks?.()?.[0] ??
             null;
-          const mergedVideoTrack =
+
+          let mergedVideoTrack =
             allVideoTracks?.[0] ??
             previousMediaStream?.getVideoTracks?.()?.[0] ??
             null;
+
+          if (
+            mergedVideoTrack &&
+            mirrored &&
+            requestedVideoDeviceId !== "screen"
+          ) {
+            try {
+              const videoSettings = mergedVideoTrack.getSettings();
+              const isFrontFacing =
+                videoSettings.facingMode === "user" ||
+                !videoSettings.facingMode;
+
+              if (isFrontFacing) {
+                element.classList.add("livepeer-mirrored-video");
+                mergedVideoTrack = createMirroredVideoTrack(mergedVideoTrack);
+              } else {
+                element.classList.remove("livepeer-mirrored-video");
+              }
+            } catch (err) {
+              warn(
+                `Failed to apply video mirroring: ${(err as Error).message}`,
+              );
+            }
+          } else {
+            element.classList.remove("livepeer-mirrored-video");
+          }
 
           if (mergedAudioTrack) mergedMediaStream.addTrack(mergedAudioTrack);
           if (mergedVideoTrack) mergedMediaStream.addTrack(mergedVideoTrack);
@@ -1274,22 +1329,21 @@ const addEffectsToStore = (
     },
   );
 
-  return () => {
-    destroyAudioVideoEnabled?.();
-    destroyErrorCount?.();
-    destroyMapDeviceListToFriendly?.();
-    destroyMediaStream?.();
-    destroyMediaSyncError?.();
-    destroyMediaSyncMounted?.();
-    destroyPeerConnectionAndMediaStream?.();
-    destroyPeerConnectionAudioHandler?.();
-    destroyPictureInPictureSupportedMonitor?.();
-    destroyRequestUserMedia?.();
-    destroyUpdateDeviceList?.();
-    destroyWhip?.();
-
-    cleanupWhip?.();
-    cleanupMediaStream?.();
+  return {
+    destroy: () => {
+      destroyAudioVideoEnabled?.();
+      destroyErrorCount?.();
+      destroyMapDeviceListToFriendly?.();
+      destroyMediaStream?.();
+      destroyMediaSyncError?.();
+      destroyMediaSyncMounted?.();
+      destroyPeerConnectionAndMediaStream?.();
+      destroyPeerConnectionAudioHandler?.();
+      destroyPictureInPictureSupportedMonitor?.();
+      destroyRequestUserMedia?.();
+      destroyUpdateDeviceList?.();
+      destroyWhip?.();
+    },
   };
 };
 

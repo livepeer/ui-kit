@@ -6,6 +6,8 @@ import {
   negotiateConnectionWithClientOffer,
 } from "./shared";
 
+const STANDARD_FPS = 30;
+
 export const VIDEO_WEBRTC_INITIALIZED_ATTRIBUTE =
   "data-livepeer-video-whip-initialized";
 
@@ -26,6 +28,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   callbacks,
   sdpTimeout,
   noIceGathering,
+  iceServers,
 }: {
   ingestUrl: string;
   element: TElement;
@@ -36,6 +39,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
   };
   sdpTimeout: number | null;
   noIceGathering?: boolean;
+  iceServers?: RTCIceServer | RTCIceServer[];
 }): {
   destroy: () => void;
 } => {
@@ -68,7 +72,7 @@ export const createNewWHIP = <TElement extends HTMLMediaElement>({
        * allowing the client to discover its own IP address.
        * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols#ice
        */
-      peerConnection = createPeerConnection(redirectUrl.host);
+      peerConnection = createPeerConnection(redirectUrl.host, iceServers);
 
       if (peerConnection) {
         peerConnection.addEventListener("negotiationneeded", async (_ev) => {
@@ -264,4 +268,96 @@ export const getDisplayMedia = (options?: DisplayMediaStreamOptions) => {
   }
 
   return navigator.mediaDevices.getDisplayMedia(options);
+};
+
+/**
+ * Creates a mirrored version of a video track using a canvas element.
+ * This function ensures the stream sent to the server is mirrored horizontally.
+ */
+export const createMirroredVideoTrack = (
+  originalTrack: MediaStreamTrack,
+): MediaStreamTrack => {
+  if (originalTrack.kind !== "video") {
+    warn("Cannot mirror non-video track");
+    return originalTrack;
+  }
+
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.style.position = "absolute";
+    canvas.style.top = "-9999px";
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      warn("Could not get canvas context for mirroring video");
+      return originalTrack;
+    }
+
+    const video = document.createElement("video");
+    video.srcObject = new MediaStream([originalTrack]);
+    video.autoplay = true;
+    video.muted = true;
+    video.playsInline = true;
+
+    const settings = originalTrack.getSettings();
+    if (settings.width && settings.height) {
+      canvas.width = settings.width;
+      canvas.height = settings.height;
+    }
+
+    const mirroredStream = canvas.captureStream(STANDARD_FPS);
+    const mirroredTrack = mirroredStream.getVideoTracks()[0];
+
+    let animationFrameId: number;
+
+    const drawFrame = () => {
+      if (video.readyState >= 2) {
+        if (
+          canvas.width !== video.videoWidth ||
+          canvas.height !== video.videoHeight
+        ) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      animationFrameId = requestAnimationFrame(drawFrame);
+    };
+
+    video.onloadedmetadata = () => {
+      if (!canvas.width || !canvas.height) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      }
+
+      video.play().catch((e) => {
+        warn(`Failed to play video in mirroring process: ${e.message}`);
+      });
+
+      drawFrame();
+    };
+
+    originalTrack.addEventListener("ended", () => {
+      cancelAnimationFrame(animationFrameId);
+      mirroredTrack.stop();
+      video.pause();
+      video.srcObject = null;
+      if (canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
+      }
+    });
+
+    return mirroredTrack;
+  } catch (err) {
+    warn(`Error creating mirrored track: ${(err as Error).message}`);
+    return originalTrack;
+  }
 };

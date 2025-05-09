@@ -20,32 +20,41 @@ export const getRTCPeerConnectionConstructor = () => {
   );
 };
 
+/**
+ * Creates a new RTCPeerConnection instance with the given STUN and TURN servers.
+ */
 export function createPeerConnection(
   host: string | null,
+  iceServers?: RTCIceServer | RTCIceServer[],
 ): RTCPeerConnection | null {
   const RTCPeerConnectionConstructor = getRTCPeerConnectionConstructor();
 
-  if (RTCPeerConnectionConstructor) {
-    // strip non-standard port number if present
-    const hostNoPort = host?.split(":")[0];
-
-    const iceServers = host
-      ? [
-          {
-            urls: `stun:${hostNoPort}`,
-          },
-          {
-            urls: `turn:${hostNoPort}`,
-            username: "livepeer",
-            credential: "livepeer",
-          },
-        ]
-      : [];
-
-    return new RTCPeerConnectionConstructor({ iceServers });
+  if (!RTCPeerConnectionConstructor) {
+    throw new Error("No RTCPeerConnection constructor found in this browser.");
   }
 
-  throw new Error("No RTCPeerConnection constructor found in this browser.");
+  // Defaults to Mist behavior
+  const hostNoPort = host?.split(":")[0];
+  const defaultIceServers = host
+    ? [
+        {
+          urls: `stun:${hostNoPort}`,
+        },
+        {
+          urls: `turn:${hostNoPort}`,
+          username: "livepeer",
+          credential: "livepeer",
+        },
+      ]
+    : [];
+
+  return new RTCPeerConnectionConstructor({
+    iceServers: iceServers
+      ? Array.isArray(iceServers)
+        ? iceServers
+        : [iceServers]
+      : defaultIceServers,
+  });
 }
 
 const DEFAULT_TIMEOUT = 10000;

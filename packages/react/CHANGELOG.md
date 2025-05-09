@@ -1,5 +1,40 @@
 # @livepeer/react
 
+## 4.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`5a8f2d5`](https://github.com/livepeer/ui-kit/commit/5a8f2d50aba063a877ae891a6d198a07b13a2e51)]:
+  - @livepeer/core-web@5.2.2
+
+## 4.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`0c8279e`](https://github.com/livepeer/ui-kit/commit/0c8279efe0f9fd8484efeb72f8e55537c790a752)]:
+  - @livepeer/core-web@5.2.1
+
+## 4.3.0
+
+### Minor Changes
+
+- [#599](https://github.com/livepeer/ui-kit/pull/599) [`b548b95`](https://github.com/livepeer/ui-kit/commit/b548b9561e553b8947c37b1066c5a392132ca7d8) Thanks [@junhyoung-ryu](https://github.com/junhyoung-ryu)! - Add support for custom ICE servers.
+  Accept `playbackId` from `<Player>`
+
+### Patch Changes
+
+- Updated dependencies [[`b548b95`](https://github.com/livepeer/ui-kit/commit/b548b9561e553b8947c37b1066c5a392132ca7d8)]:
+  - @livepeer/core@3.3.0
+  - @livepeer/core-web@5.2.0
+  - @livepeer/core-react@3.2.9
+
+## 4.2.11
+
+### Patch Changes
+
+- Updated dependencies [[`3708b73`](https://github.com/livepeer/ui-kit/commit/3708b73eaa72566c531eba07ecc264fc37adb8ac)]:
+  - @livepeer/core-web@5.1.0
+
 ## 4.2.10
 
 ### Patch Changes

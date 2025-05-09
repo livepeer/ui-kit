@@ -56,9 +56,22 @@ interface BroadcastProps
    */
   metricsInterval?: number;
 
+  /**
+   * @deprecated in favor of `iceServers`
+   *
+   * Whether to disable ICE gathering.
+   *
+   * Set to true to disable ICE gathering. This is useful for testing purposes.
+   */
   noIceGathering?: boolean;
 
   silentAudioTrack?: boolean;
+  /**
+   * The ICE servers to use.
+   *
+   * If not provided, the default ICE servers will be used.
+   */
+  iceServers?: RTCIceServer | RTCIceServer[];
 }
 
 const Broadcast = (
