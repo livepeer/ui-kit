@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.2.3
+
+### Patch Changes
+
+- [#607](https://github.com/livepeer/ui-kit/pull/607) [`25aa1e7`](https://github.com/livepeer/ui-kit/commit/25aa1e7d5b1c2b600ce0f3ebf0d8faa6f1588f78) Thanks [@junhyoung-ryu](https://github.com/junhyoung-ryu)! - Sent silent audio track when the audio track is disabled
+
 ## 5.2.2
 
 ### Patch Changes
