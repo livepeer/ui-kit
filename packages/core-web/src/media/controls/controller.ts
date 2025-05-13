@@ -366,6 +366,7 @@ const addEffectsToStore = (
       autoPlay: __initialProps.autoPlay,
       backoff: __initialProps.backoff,
       backoffMax: __initialProps.backoffMax,
+      calculateDelay: __initialProps.calculateDelay,
       errorCount,
       hlsConfig: __controls.hlsConfig,
       mounted,
@@ -379,6 +380,7 @@ const addEffectsToStore = (
       autoPlay,
       backoff,
       backoffMax,
+      calculateDelay,
       errorCount,
       hlsConfig,
       mounted,
@@ -393,10 +395,9 @@ const addEffectsToStore = (
 
       await cleanupSource?.();
 
-      if (errorCount > 0) {
-        const delayTime = Math.min(backoff * 2 ** (errorCount - 1), backoffMax);
-        await delay(delayTime);
-      }
+      await delay(
+        Math.max(calculateDelay(errorCount), errorCount === 0 ? 0 : 100),
+      );
 
       let unmounted = false;
 
