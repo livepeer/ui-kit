@@ -7,6 +7,7 @@ it("should expose correct exports", () => {
     [
       "addBroadcastEventListeners",
       "createBroadcastStore",
+      "createSilentAudioTrack",
       "getBroadcastDeviceInfo",
     ]
   `);

@@ -64,6 +64,13 @@ export type InitialProps = {
   backoffMax: number;
 
   /**
+   * A function that calculates the delay for the backoff.
+   *
+   * This is used to calculate the delay for the backoff.
+   */
+  calculateDelay: (attempt: number) => number;
+
+  /**
    * The length of the clip. This is usually used alongside `ClipTrigger`. Specifies the duration of the media clip, in seconds.
    *
    * Set to `null` to disable the ClipTrigger.
@@ -653,7 +660,20 @@ export const createControllerStore = ({
             aspectRatio: initialProps?.aspectRatio ?? null,
             autoPlay: initialProps.autoPlay ?? false,
             backoff: Math.max(initialProps.backoff ?? 500, 100),
-            backoffMax: Math.max(initialProps.backoffMax ?? 30000, 1000),
+            backoffMax: Math.max(initialProps.backoffMax ?? 30000, 10000),
+            calculateDelay:
+              initialProps.calculateDelay ??
+              ((count) => {
+                if (count === 0) {
+                  return 0;
+                }
+
+                const delayTime = Math.min(
+                  Math.max(initialProps.backoff ?? 500, 100) * 2 ** (count - 1),
+                  Math.max(initialProps.backoffMax ?? 30000, 10000),
+                );
+                return delayTime;
+              }),
             clipLength: initialProps.clipLength ?? null,
             cacheWebRTCFailureMs: initialProps.cacheWebRTCFailureMs ?? null,
             hotkeys: initialProps?.hotkeys ?? true,
