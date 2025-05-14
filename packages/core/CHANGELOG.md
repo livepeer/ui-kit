@@ -1,5 +1,11 @@
 # @livepeer/core
 
+## 3.3.1
+
+### Patch Changes
+
+- [#610](https://github.com/livepeer/ui-kit/pull/610) [`819c0ba`](https://github.com/livepeer/ui-kit/commit/819c0ba671c4c97e2982bfaaeb7b21f32f18f64b) Thanks [@junhyoung-ryu](https://github.com/junhyoung-ryu)! - add calculateDelay function to media controller
+
 ## 3.3.0
 
 ### Minor Changes
