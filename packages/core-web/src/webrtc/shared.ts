@@ -194,7 +194,32 @@ export async function constructClientOffer(
 const playbackIdPattern = /([/+])([^/+?]+)$/;
 const REPLACE_PLACEHOLDER = "PLAYBACK_ID";
 
-let cachedRedirectUrl: URL | null = null;
+const MAX_REDIRECT_CACHE_SIZE = 10;
+const redirectUrlCache = new Map<string, URL>();
+
+function getCachedTemplate(key: string): URL | undefined {
+  const cachedItem = redirectUrlCache.get(key);
+
+  if (cachedItem) {
+    redirectUrlCache.delete(key);
+    redirectUrlCache.set(key, cachedItem);
+  }
+
+  return cachedItem;
+}
+
+function setCachedTemplate(key: string, value: URL): void {
+  if (redirectUrlCache.has(key)) {
+    redirectUrlCache.delete(key);
+  } else if (redirectUrlCache.size >= MAX_REDIRECT_CACHE_SIZE) {
+    const oldestKey = redirectUrlCache.keys().next().value;
+    if (oldestKey) {
+      redirectUrlCache.delete(oldestKey);
+    }
+  }
+
+  redirectUrlCache.set(key, value);
+}
 
 async function postSDPOffer(
   endpoint: string,
@@ -208,23 +233,24 @@ async function postSDPOffer(
     sdpTimeout ?? DEFAULT_TIMEOUT,
   );
 
-  const url = new URL(endpoint);
+  const urlForPost = new URL(endpoint);
+  const parsedMatches = urlForPost.pathname.match(playbackIdPattern);
+  const currentPlaybackId = parsedMatches?.[2];
 
-  const parsedMatches = url.pathname.match(playbackIdPattern);
+  const cachedTemplateUrl = getCachedTemplate(endpoint);
 
   // if we both have a cached redirect URL and a match for the playback ID,
   // use these to shortcut the typical webrtc redirect flow
-  if (cachedRedirectUrl && parsedMatches?.[2]) {
-    const clonedCachedUrl = new URL(cachedRedirectUrl);
-
-    url.host = clonedCachedUrl.host;
-    url.pathname = clonedCachedUrl.pathname.replace(
+  if (cachedTemplateUrl && currentPlaybackId) {
+    urlForPost.host = cachedTemplateUrl.host;
+    urlForPost.pathname = cachedTemplateUrl.pathname.replace(
       REPLACE_PLACEHOLDER,
-      parsedMatches[2],
+      currentPlaybackId,
     );
+    urlForPost.search = cachedTemplateUrl.search;
   }
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(urlForPost.toString(), {
     method: "POST",
     mode: "cors",
     headers: {
@@ -255,12 +281,21 @@ export async function getRedirectUrl(
   timeout: number | null,
 ) {
   try {
-    if (cachedRedirectUrl) {
-      const inputUrl = new URL(endpoint);
+    const cachedTemplateUrl = getCachedTemplate(endpoint);
 
-      inputUrl.host = cachedRedirectUrl.host;
+    if (cachedTemplateUrl) {
+      const currentIngestUrl = new URL(endpoint);
+      const matches = currentIngestUrl.pathname.match(playbackIdPattern);
+      const currentPlaybackId = matches?.[2];
 
-      return inputUrl;
+      if (currentPlaybackId) {
+        const finalRedirectUrl = new URL(cachedTemplateUrl);
+        finalRedirectUrl.pathname = cachedTemplateUrl.pathname.replace(
+          REPLACE_PLACEHOLDER,
+          currentPlaybackId,
+        );
+        return finalRedirectUrl;
+      }
     }
 
     const id = setTimeout(
@@ -278,20 +313,23 @@ export async function getRedirectUrl(
 
     clearTimeout(id);
 
-    const parsedUrl = new URL(response.url);
+    const actualRedirectedUrl = new URL(response.url);
 
-    if (parsedUrl) {
-      const cachedUrl = new URL(parsedUrl);
-      cachedUrl.pathname = cachedUrl.pathname.replace(
+    if (actualRedirectedUrl) {
+      const templateForCache = new URL(actualRedirectedUrl);
+      templateForCache.pathname = templateForCache.pathname.replace(
         playbackIdPattern,
         `$1${REPLACE_PLACEHOLDER}`,
       );
-      if (!cachedUrl.searchParams.has("ingestpb", "true")) {
-        cachedRedirectUrl = cachedUrl;
+
+      if (
+        !templateForCache.searchParams.has("ingestpb") ||
+        templateForCache.searchParams.get("ingestpb") !== "true"
+      ) {
+        setCachedTemplate(endpoint, templateForCache);
       }
     }
-
-    return parsedUrl;
+    return actualRedirectedUrl;
   } catch (e) {
     return null;
   }
