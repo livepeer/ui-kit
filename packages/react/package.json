@@ -2,7 +2,7 @@
   "name": "@livepeer/react",
   "description": "React primitives for video apps.",
   "license": "MIT",
-  "version": "4.3.4",
+  "version": "4.3.5",
   "type": "module",
   "repository": {
     "type": "git",

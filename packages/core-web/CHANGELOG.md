@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.2.5
+
+### Patch Changes
+
+- [#613](https://github.com/livepeer/ui-kit/pull/613) [`9a76097`](https://github.com/livepeer/ui-kit/commit/9a76097fba3e8856586dee0b676a3ecdca62e2f2) Thanks [@junhyoung-ryu](https://github.com/junhyoung-ryu)! - improve redirect URL caching for WebRTC offers
+
 ## 5.2.4
 
 ### Patch Changes
