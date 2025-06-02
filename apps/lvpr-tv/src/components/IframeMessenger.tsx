@@ -63,7 +63,7 @@ export function IframeMessenger() {
         return;
       }
 
-      console.log("Received message from parent:", event.data);
+      //console.log("Received message from parent:", event.data);
     };
 
     const sendReady = () => {
