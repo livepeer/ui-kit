@@ -71,19 +71,6 @@ const getPlaybackInfo = async (id: string) => {
   }
 };
 
-interface PlayerEventDetail {
-  type: string;
-  message: string;
-  error?: unknown;
-}
-
-// Utility function to dispatch custom events for iframe communication
-function dispatchPlayerEvent(type: string, detail?: PlayerEventDetail) {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(type, { detail }));
-  }
-}
-
 export async function PlayerWithControls(props: PlayerProps) {
   if (!props.playbackId && !props.url) {
     return (

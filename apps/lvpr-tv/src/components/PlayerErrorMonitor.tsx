@@ -30,11 +30,9 @@ export function PlayerErrorMonitor({
   }));
 
   useEffect(() => {
-    // Check for new errors
     if (error && error !== previousError.current) {
       previousError.current = error;
 
-      // Determine error type based on error details
       let errorType = "general";
       let message = "Player error occurred";
 

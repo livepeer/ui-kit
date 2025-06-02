@@ -1,15 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-
-const ALLOWED_DOMAINS = [
-  "daydream.live",
-  "localhost:3000",
-  "livepeer.monster",
-  "livepeer.org",
-  "vercel.app",
-];
-
 interface PlayerError {
   message: string;
   code?: string;
