@@ -19,6 +19,7 @@ import { CurrentSource } from "./CurrentSource";
 import { livepeer } from "@/lib/livepeer";
 import { cn } from "@/lib/utils";
 import type { ClipLength } from "@livepeer/react";
+import { PlayerErrorMonitor } from "../PlayerErrorMonitor";
 import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 
@@ -38,6 +39,7 @@ export type PlayerProps = Partial<{
   accessKey: string | null;
   debug: boolean;
   ingestPlayback: boolean;
+  controls: boolean;
 }>;
 
 const getPlaybackInfoUncached = cache(async (playbackId: string) => {
@@ -109,6 +111,7 @@ export async function PlayerWithControls(props: PlayerProps) {
       storage={null}
       ingestPlayback={props.ingestPlayback}
     >
+      <PlayerErrorMonitor />
       <Player.Container className="flex-1 h-full w-full overflow-hidden bg-black outline-none transition-all">
         <Player.Video
           title="Live stream"
@@ -245,6 +248,111 @@ export async function PlayerWithControls(props: PlayerProps) {
             </div>
           )}
         </Player.Controls>
+      </Player.Container>
+    </Player.Root>
+  );
+}
+
+export async function PlayerWithoutControls(props: PlayerProps) {
+  if (!props.playbackId && !props.url) {
+    return (
+      <PlayerLoading
+        title="Invalid parameters"
+        description="We could not find valid playback information for the URL you provided. Please check and try again."
+      />
+    );
+  }
+
+  const inputSource = props.playbackId
+    ? await getPlaybackInfo(props.playbackId)
+    : props.url;
+
+  const src = getSrc(inputSource);
+
+  if (!src) {
+    return (
+      <PlayerLoading
+        title="Invalid source"
+        description="We could not fetch valid playback information for the playback ID you provided. Please check and try again."
+      />
+    );
+  }
+
+  return (
+    <Player.Root
+      autoPlay={props.autoplay}
+      volume={props.muted ? 0 : undefined}
+      lowLatency={props.lowLatency}
+      backoffMax={props.backoffMax ?? undefined}
+      clipLength={props.clipLength ?? null}
+      playbackRate={props.constant ? "constant" : undefined}
+      jwt={props.jwt}
+      accessKey={props.accessKey}
+      src={src}
+      aspectRatio={null}
+      storage={null}
+      ingestPlayback={props.ingestPlayback}
+    >
+      <PlayerErrorMonitor />
+      <Player.Container className="flex-1 h-full w-full overflow-hidden bg-black outline-none transition-all">
+        <Player.Video
+          title="Live stream"
+          className={cn(
+            "h-full w-full transition-all",
+            props.objectFit === "contain" ? "object-contain" : "object-cover",
+          )}
+        />
+
+        <Player.LoadingIndicator className="w-full relative h-full bg-black/50 backdrop-blur data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <LoadingIcon className="w-8 h-8 animate-spin" />
+          </div>
+          <PlayerLoading />
+        </Player.LoadingIndicator>
+
+        <Player.ErrorIndicator
+          matcher="all"
+          className="absolute select-none inset-0 text-center bg-black/40 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
+        >
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <LoadingIcon className="w-8 h-8 animate-spin" />
+          </div>
+          <PlayerLoading />
+        </Player.ErrorIndicator>
+
+        <Player.ErrorIndicator
+          matcher="offline"
+          className="absolute select-none animate-in fade-in-0 inset-0 text-center bg-black/40 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
+        >
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1">
+              <div className="text-lg sm:text-2xl font-bold">
+                Stream is offline
+              </div>
+              <div className="text-xs sm:text-sm text-gray-100">
+                Playback will start automatically once the stream has started
+              </div>
+            </div>
+            <LoadingIcon className="w-6 h-6 md:w-8 md:h-8 mx-auto animate-spin" />
+          </div>
+        </Player.ErrorIndicator>
+
+        <Player.ErrorIndicator
+          matcher="access-control"
+          className="absolute select-none inset-0 text-center bg-black/40 backdrop-blur-lg flex flex-col items-center justify-center gap-4 duration-1000 data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
+        >
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1">
+              <div className="text-lg sm:text-2xl font-bold">
+                Stream is private
+              </div>
+              <div className="text-xs sm:text-sm text-gray-100">
+                It looks like you don't have permission to view this content
+              </div>
+            </div>
+            <LoadingIcon className="w-6 h-6 md:w-8 md:h-8 mx-auto animate-spin" />
+          </div>
+        </Player.ErrorIndicator>
       </Player.Container>
     </Player.Root>
   );
