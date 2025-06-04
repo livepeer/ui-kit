@@ -16,6 +16,8 @@ function isAllowedOrigin(origin: string): boolean {
 
     if (
       hostname === "daydream.live" ||
+      hostname === "vtuber.fun" ||
+      hostname === "dev.vtuber.fun" ||
       (hostname === "localhost" && port === "3000")
     ) {
       return true;
