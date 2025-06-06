@@ -8,18 +8,11 @@ const nextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value:
-              "frame-ancestors 'self' https://vtuber.fun https://dev.vtuber.fun https://daydream.live https://*.livepeer.monster https://*.livepeer.org https://*.vercel.app http://localhost:3000",
-          },
-          {
-            key: "X-Frame-Options",
-            value:
-              "ALLOW-FROM https://vtuber.fun https://dev.vtuber.fun https://daydream.live https://*.livepeer.monster https://*.livepeer.org https://*.vercel.app http://localhost:3000",
+            value: "frame-ancestors *",
           },
           {
             key: "Access-Control-Allow-Origin",
-            value:
-              "https://vtuber.fun https://dev.vtuber.fun https://daydream.live https://*.livepeer.monster https://*.livepeer.org https://*.vercel.app http://localhost:3000",
+            value: "*",
           },
           {
             key: "Access-Control-Allow-Methods",
