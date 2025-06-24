@@ -368,6 +368,7 @@ const addEffectsToStore = (
       backoffMax: __initialProps.backoffMax,
       calculateDelay: __initialProps.calculateDelay,
       errorCount,
+      lastError: __controls.lastError,
       hlsConfig: __controls.hlsConfig,
       mounted,
       progress,
@@ -382,6 +383,7 @@ const addEffectsToStore = (
       backoffMax,
       calculateDelay,
       errorCount,
+      lastError,
       hlsConfig,
       mounted,
       progress,
@@ -590,12 +592,13 @@ const addEffectsToStore = (
       equalityFn: (a, b) => {
         const errorCountChanged =
           a.errorCount !== b.errorCount && b.errorCount !== 0;
+        const lastErrorChanged = a.lastError !== b.lastError;
 
         const sourceChanged = a.source?.src !== b.source?.src;
         const mountedChanged = a.mounted !== b.mounted;
 
         const shouldReRender =
-          errorCountChanged || sourceChanged || mountedChanged;
+          errorCountChanged || lastErrorChanged || sourceChanged || mountedChanged;
 
         return !shouldReRender;
       },
