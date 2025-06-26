@@ -1,6 +1,6 @@
-import { livepeer } from "@/lib/livepeer";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
+import { livepeer } from "@/lib/livepeer";
 
 type ResponseData =
   | {

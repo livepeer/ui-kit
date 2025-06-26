@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo } from "react";
-
-import { useStore } from "zustand";
-import { type MediaScopedProps, useMediaContext } from "../shared/context";
-
-import { Presence } from "@radix-ui/react-presence";
-import { useShallow } from "zustand/react/shallow";
-import * as Radix from "../shared/primitive";
-
-import { composeEventHandlers } from "@radix-ui/primitive";
-import * as SliderPrimitive from "../shared/Slider";
-
 import { warn } from "@livepeer/core/utils";
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
+import { composeEventHandlers } from "@radix-ui/primitive";
+import { Presence } from "@radix-ui/react-presence";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { useStore } from "zustand";
+import { useShallow } from "zustand/react/shallow";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
+import * as Radix from "../shared/primitive";
+import * as SliderPrimitive from "../shared/Slider";
 import { noPropagate } from "../shared/utils";
 
 /**

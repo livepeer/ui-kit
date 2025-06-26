@@ -2,10 +2,10 @@ import { customAlphabet } from "nanoid";
 import type { ClipParams, InitialProps } from "./controller";
 import { getPlaybackIdFromSourceUrl } from "./metrics-utils";
 import {
+  getMediaSourceType,
   type Src,
   type VideoQuality,
   type VideoTrackSelector,
-  getMediaSourceType,
 } from "./src";
 
 export const DEFAULT_ASPECT_RATIO = 16 / 9;

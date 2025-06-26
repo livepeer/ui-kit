@@ -1,10 +1,10 @@
 import {
-  type InitialProps,
-  type PlaybackError,
-  type PlaybackEvent,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  type InitialProps,
+  type PlaybackError,
+  type PlaybackEvent,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";

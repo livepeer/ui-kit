@@ -5,20 +5,16 @@ export type {
 export {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
-  NOT_ACCEPTABLE_ERROR_MESSAGE,
-  PERMISSIONS_ERROR_MESSAGE,
-  STREAM_OFFLINE_ERROR_MESSAGE,
-  STREAM_OPEN_ERROR_MESSAGE,
   isAccessControlError,
   isBframesError,
   isNotAcceptableError,
   isPermissionsError,
   isStreamOfflineError,
+  NOT_ACCEPTABLE_ERROR_MESSAGE,
+  PERMISSIONS_ERROR_MESSAGE,
+  STREAM_OFFLINE_ERROR_MESSAGE,
+  STREAM_OPEN_ERROR_MESSAGE,
 } from "@livepeer/core/errors";
-export {
-  createControllerStore,
-  getMediaSourceType,
-} from "@livepeer/core/media";
 export type {
   AccessControlParams,
   AriaText,
@@ -54,10 +50,14 @@ export type {
   WebRTCSrc,
 } from "@livepeer/core/media";
 export {
+  createControllerStore,
+  getMediaSourceType,
+} from "@livepeer/core/media";
+export type { ClientStorage } from "@livepeer/core/storage";
+export {
   createStorage,
   noopStorage,
 } from "@livepeer/core/storage";
-export type { ClientStorage } from "@livepeer/core/storage";
 export {
   b64Decode,
   b64Encode,

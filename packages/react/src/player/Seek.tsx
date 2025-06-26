@@ -1,16 +1,16 @@
 "use client";
 
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
 import { composeEventHandlers } from "@radix-ui/primitive";
-import * as SliderPrimitive from "../shared/Slider";
+import { Presence } from "@radix-ui/react-presence";
 
 import React, { useCallback } from "react";
 
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-
-import { Presence } from "@radix-ui/react-presence";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import type * as Radix from "../shared/primitive";
+import * as SliderPrimitive from "../shared/Slider";
 import { noPropagate } from "../shared/utils";
 
 const SEEK_NAME = "Seek";

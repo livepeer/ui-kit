@@ -1,8 +1,7 @@
+import { getSrc } from "@livepeer/react/external";
+import type { InferGetServerSidePropsType } from "next";
 import { PlayerWithControls } from "@/components/Player";
 import { livepeer } from "@/lib/livepeer";
-import { getSrc } from "@livepeer/react/external";
-
-import type { InferGetServerSidePropsType } from "next";
 
 const playbackId = "9491n0th73i8hlpi";
 

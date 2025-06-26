@@ -1,4 +1,3 @@
-export { createControllerStore } from "./media/controller";
 export type {
   AriaText,
   ClipLength,
@@ -15,15 +14,15 @@ export type {
   PlaybackError,
   PlaybackRate,
 } from "./media/controller";
-export { addLegacyMediaMetricsToStore } from "./media/metrics";
+export { createControllerStore } from "./media/controller";
 export type {
   LegacyMediaMetrics,
   LegacyMetricsStatus,
   LegacyPlaybackMonitor,
 } from "./media/metrics";
-export { addMetricsToStore } from "./media/metrics-new";
+export { addLegacyMediaMetricsToStore } from "./media/metrics";
 export type { PlaybackEvent, SessionData } from "./media/metrics-new";
-export { getMediaSourceType } from "./media/src";
+export { addMetricsToStore } from "./media/metrics-new";
 export type {
   AccessControlParams,
   AudioSrc,
@@ -39,6 +38,7 @@ export type {
   VideoTrackSelector,
   WebRTCSrc,
 } from "./media/src";
+export { getMediaSourceType } from "./media/src";
 export {
   calculateVideoQualityDimensions,
   getBoundedVolume,

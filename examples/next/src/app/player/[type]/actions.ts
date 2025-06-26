@@ -1,8 +1,8 @@
 "use server";
 
-import { createStreamClip } from "@/app/livepeer";
 import type { ClipPayload } from "livepeer/models/components";
 import z from "zod";
+import { createStreamClip } from "@/app/livepeer";
 
 const isValidUnixTimestamp = (timestamp: number) => {
   const now = Date.now();

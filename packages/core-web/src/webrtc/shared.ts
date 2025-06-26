@@ -330,6 +330,7 @@ export async function getRedirectUrl(
       }
     }
     return actualRedirectedUrl;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     return null;
   }

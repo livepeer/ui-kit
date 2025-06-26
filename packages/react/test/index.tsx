@@ -1,8 +1,8 @@
 import {
-  type Queries,
-  type RenderOptions,
   render as defaultRender,
+  type Queries,
   type queries,
+  type RenderOptions,
 } from "@testing-library/react";
 
 import type * as React from "react";

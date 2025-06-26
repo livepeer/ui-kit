@@ -1,4 +1,3 @@
-import type { ApiError, CreateSignedPlaybackResponse } from "@/pages/api/jwt";
 import type { Src } from "@livepeer/react";
 import {
   EnterFullscreenIcon,
@@ -14,6 +13,7 @@ import {
 } from "@livepeer/react/assets";
 import * as Player from "@livepeer/react/player";
 import { useEffect, useState } from "react";
+import type { ApiError, CreateSignedPlaybackResponse } from "@/pages/api/jwt";
 import { Clip } from "./Clip";
 import { Settings } from "./Settings";
 

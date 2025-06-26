@@ -1,12 +1,11 @@
 "use client";
 
-import * as Broadcast from "@livepeer/react/broadcast";
-import { getIngest } from "@livepeer/react/external";
-
 import {
   EnterFullscreenIcon,
   ExitFullscreenIcon,
 } from "@livepeer/react/assets";
+import * as Broadcast from "@livepeer/react/broadcast";
+import { getIngest } from "@livepeer/react/external";
 import { streamKey } from "./stream-key";
 
 export default () => {

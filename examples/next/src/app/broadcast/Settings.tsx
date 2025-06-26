@@ -3,10 +3,9 @@
 import { SettingsIcon } from "@livepeer/react/assets";
 import * as Broadcast from "@livepeer/react/broadcast";
 import * as Popover from "@radix-ui/react-popover";
-
-import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export const Settings = React.forwardRef(
   (

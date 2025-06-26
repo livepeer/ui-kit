@@ -1,11 +1,14 @@
+import type { ReactNode } from "react";
 import { Chat } from "@/components/chat/Chat";
 import { ChatContextProvider } from "@/components/chat/context/ChatContext";
-import type { ReactNode } from "react";
 
 export default function PlayerLayout({
   children,
   params,
-}: { children: ReactNode; params: { playbackId: string } }) {
+}: {
+  children: ReactNode;
+  params: { playbackId: string };
+}) {
   return (
     <main className="grid grid-cols-8 relative min-h-screen bg-black h-full">
       <div className="col-span-6 flex flex-col items-center gap-8 py-12 md:py-8 p-4">

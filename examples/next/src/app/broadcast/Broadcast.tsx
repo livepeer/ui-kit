@@ -40,6 +40,7 @@ export function BroadcastWithControls() {
         />
       </div>
       {streamKey ? (
+        // biome-ignore lint/complexity/noUselessFragments: ignored using `--suppress`
         <>
           <Broadcast.Root
             onError={(error) =>

@@ -1,3 +1,5 @@
+import type { ClipLength } from "@livepeer/react";
+import { Suspense } from "react";
 import {
   PlayerLoading,
   type PlayerProps,
@@ -6,8 +8,6 @@ import {
 } from "@/components/player/Player";
 import type { Booleanish } from "@/lib/types";
 import { coerceToBoolean } from "@/lib/utils";
-import type { ClipLength } from "@livepeer/react";
-import { Suspense } from "react";
 import { IframeMessenger } from "../components/IframeMessenger";
 
 type Autoplay = Booleanish;

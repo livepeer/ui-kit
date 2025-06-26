@@ -1,3 +1,4 @@
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
 import { faBan, faUser, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type React from "react";

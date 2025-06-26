@@ -3,10 +3,7 @@ import {
   persist,
   subscribeWithSelector,
 } from "zustand/middleware";
-import { type StoreApi, createStore } from "zustand/vanilla";
-
-import type { ImageSrc, Src, VideoQuality } from "./src";
-
+import { createStore, type StoreApi } from "zustand/vanilla";
 import {
   isAccessControlError,
   isBframesError,
@@ -14,6 +11,7 @@ import {
   isPermissionsError,
   isStreamOfflineError,
 } from "./errors";
+import type { ImageSrc, Src, VideoQuality } from "./src";
 import type { ClientStorage } from "./storage";
 import {
   generateRandomToken,

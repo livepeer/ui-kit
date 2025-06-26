@@ -1,5 +1,3 @@
-import * as Player from "@livepeer/react/player";
-
 import {
   EnterFullscreenIcon,
   ExitFullscreenIcon,
@@ -13,6 +11,7 @@ import {
   UnmuteIcon,
 } from "@livepeer/react/assets";
 import { getSrc } from "@livepeer/react/external";
+import * as Player from "@livepeer/react/player";
 import { getPlaybackInfo, getPlaybackJWT } from "../../livepeer";
 import { Clip } from "./Clip";
 import { CurrentSource } from "./CurrentSource";

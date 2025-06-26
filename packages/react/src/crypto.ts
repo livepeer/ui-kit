@@ -1,5 +1,5 @@
 export {
   importPKCS8,
-  signAccessJwt,
   type SignAccessJwtOptions,
+  signAccessJwt,
 } from "@livepeer/core/crypto";

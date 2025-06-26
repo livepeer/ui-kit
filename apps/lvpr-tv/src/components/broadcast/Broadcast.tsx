@@ -33,6 +33,7 @@ export function BroadcastWithControls({
       description="The stream key provided was invalid. Please check and try again."
     />
   ) : (
+    // biome-ignore lint/complexity/noUselessFragments: ignored using `--suppress`
     <>
       <Broadcast.Root
         {...rest}
@@ -178,7 +179,10 @@ export function BroadcastWithControls({
 export const BroadcastLoading = ({
   title,
   description,
-}: { title?: React.ReactNode; description?: React.ReactNode }) => (
+}: {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+}) => (
   <div className="h-full relative w-full px-3 md:px-3 py-3 gap-3 flex-col-reverse flex bg-white/10 overflow-hidden rounded-sm">
     <div className="flex justify-between">
       <div className="flex items-center gap-2">

@@ -2,7 +2,7 @@
 
 import { type Channel, Chat, type User } from "@pubnub/chat";
 import { usePathname } from "next/navigation";
-import React, { type ReactNode, useEffect, useState, useCallback } from "react";
+import React, { type ReactNode, useCallback, useEffect, useState } from "react";
 
 export interface ChatType {
   chatInstance: Chat | undefined;

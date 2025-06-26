@@ -1,7 +1,3 @@
-export {
-  createControllerStore,
-  getMediaSourceType,
-} from "@livepeer/core/media";
 export type {
   AccessControlParams,
   AriaText,
@@ -35,4 +31,8 @@ export type {
   VideoSrc,
   VideoTrackSelector,
   WebRTCSrc,
+} from "@livepeer/core/media";
+export {
+  createControllerStore,
+  getMediaSourceType,
 } from "@livepeer/core/media";

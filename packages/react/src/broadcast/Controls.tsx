@@ -39,6 +39,7 @@ const Controls = React.forwardRef<ControlsElement, ControlsProps>(
       forceMount,
       __scopeMedia,
       __scopeBroadcast,
+      // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
       onClick,
       style,
       autoHide,

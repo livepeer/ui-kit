@@ -1,12 +1,11 @@
 "use client";
 
-import { toast } from "sonner";
+import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
 
 import * as Player from "@livepeer/react/player";
-
-import { ClipIcon, LoadingIcon } from "@livepeer/react/assets";
 import type { ClipPayload } from "livepeer/models/components";
 import { useCallback, useTransition } from "react";
+import { toast } from "sonner";
 import { createClip } from "./actions";
 
 export function Clip({ className }: { className?: string }) {

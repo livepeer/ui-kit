@@ -1,21 +1,4 @@
 export type {
-  AudioDeviceId,
-  BroadcastAriaText,
-  BroadcastControlsState,
-  BroadcastDeviceInformation,
-  BroadcastState,
-  BroadcastStatus,
-  BroadcastStore,
-  InitialBroadcastProps,
-  MediaDeviceIds,
-  MediaDeviceInfoExtended,
-  VideoDeviceId,
-} from "@livepeer/core-web/broadcast";
-export {
-  createControllerStore,
-  getMediaSourceType,
-} from "@livepeer/core/media";
-export type {
   AccessControlParams,
   AriaText,
   AudioSrc,
@@ -50,8 +33,25 @@ export type {
   WebRTCSrc,
 } from "@livepeer/core/media";
 export {
+  createControllerStore,
+  getMediaSourceType,
+} from "@livepeer/core/media";
+export type { ClientStorage } from "@livepeer/core/storage";
+export {
   createStorage,
   noopStorage,
 } from "@livepeer/core/storage";
-export type { ClientStorage } from "@livepeer/core/storage";
 export { version } from "@livepeer/core/version";
+export type {
+  AudioDeviceId,
+  BroadcastAriaText,
+  BroadcastControlsState,
+  BroadcastDeviceInformation,
+  BroadcastState,
+  BroadcastStatus,
+  BroadcastStore,
+  InitialBroadcastProps,
+  MediaDeviceIds,
+  MediaDeviceInfoExtended,
+  VideoDeviceId,
+} from "@livepeer/core-web/broadcast";

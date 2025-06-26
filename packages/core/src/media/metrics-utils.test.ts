@@ -187,6 +187,7 @@ describe("getMetricsReportingPOSTUrl", () => {
 
       const reportingUrls = await Promise.all(
         sourceUrls.map(
+          // biome-ignore lint/correctness/noUnusedFunctionParameters: ignored using `--suppress`
           async ({ playbackId, url }) =>
             await getMetricsReportingPOSTUrl({
               playbackUrl: url,

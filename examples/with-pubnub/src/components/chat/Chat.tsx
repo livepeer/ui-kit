@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { faCog, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
 import { type Channel, Membership, type Message, User } from "@pubnub/chat";
 import { SendHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -15,6 +15,7 @@ import {
 } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import Modal from "react-modal";
+import { cn } from "@/lib/utils";
 import {
   deleteMessageAPI,
   restoreMessageAPI,
@@ -42,6 +43,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [storedUsers, setStoredUsers] = useState<Map<string, User>>(new Map());
   const [loading, setLoading] = useState(false);
+  // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   const [disconnectMessageStream, setDisconnectMessageStream] = useState<
     (() => void) | undefined
   >();
@@ -113,6 +115,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     initChannel();
   }, [playbackId, userInstance, storedUsers, createPubnubChannel]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ignored using `--suppress`
   useEffect(() => {
     // This will connect the message and presense stream
     async function initChat() {
@@ -337,6 +340,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     setFlaggedUsers([...flaggedUsers, userId]);
 
     // Get User
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
     const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
     // Report a user
@@ -366,6 +370,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     });
 
     // Get User
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
     const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
     // Mute/un-mute a user
@@ -403,6 +408,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
     });
 
     // Get User
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
     const user: User = (await chatInstance.getUser(userId)) ?? new User();
 
     // Ban/un-ban a user
@@ -497,6 +503,7 @@ export const Chat = ({ playbackId }: { playbackId: string }) => {
               <h2 className="text-2xl font-bold text-pubnub-white">
                 You have been banned!
               </h2>
+              {/** biome-ignore lint/performance/noImgElement: ignored using `--suppress` */}
               <img
                 src="/banned.png"
                 alt="Description"

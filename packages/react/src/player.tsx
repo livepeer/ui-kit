@@ -12,12 +12,12 @@ export {
   type MuteTriggerProps,
 } from "./player/MuteTrigger";
 export {
-  PlayPauseTrigger,
   PlayingIndicator,
-  type PlayPauseTriggerProps,
   type PlayingIndicatorProps,
+  PlayPauseTrigger,
+  type PlayPauseTriggerProps,
 } from "./player/Play";
-export { Root, type PlayerProps } from "./player/Player";
+export { type PlayerProps, Root } from "./player/Player";
 export {
   Poster,
   type PosterProps,
@@ -51,14 +51,21 @@ export {
   Container,
   type ContainerProps,
 } from "./shared/Container";
+export type { MediaContextValue, MediaScopedProps } from "./shared/context";
+export {
+  createMediaScope,
+  MediaProvider,
+  useMediaContext,
+  useStore,
+} from "./shared/context";
 export {
   ErrorIndicator,
   type ErrorIndicatorProps,
 } from "./shared/ErrorIndicator";
 export {
   FullscreenIndicator,
-  FullscreenTrigger,
   type FullscreenIndicatorProps,
+  FullscreenTrigger,
   type FullscreenTriggerProps,
 } from "./shared/Fullscreen";
 export {
@@ -75,48 +82,41 @@ export {
 } from "./shared/Portal";
 export {
   SelectArrow,
-  SelectContent,
-  SelectGroup,
-  SelectIcon,
-  SelectItemIndicator,
-  SelectItemText,
-  SelectLabel,
-  SelectPortal,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-  SelectViewport,
   type SelectArrowProps,
+  SelectContent,
   type SelectContentProps,
+  SelectGroup,
   type SelectGroupProps,
+  SelectIcon,
   type SelectIconProps,
+  SelectItemIndicator,
   type SelectItemIndicatorProps,
+  SelectItemText,
   type SelectItemTextProps,
+  SelectLabel,
   type SelectLabelProps,
+  SelectPortal,
   type SelectPortalProps,
+  SelectScrollDownButton,
   type SelectScrollDownButtonProps,
+  SelectScrollUpButton,
   type SelectScrollUpButtonProps,
+  SelectSeparator,
   type SelectSeparatorProps,
+  SelectTrigger,
   type SelectTriggerProps,
+  SelectValue,
   type SelectValueProps,
+  SelectViewport,
   type SelectViewportProps,
 } from "./shared/Select";
 export {
   Range,
-  Thumb,
-  Track,
   type RangeProps,
   type SliderProps,
+  Thumb,
   type ThumbProps,
+  Track,
   type TrackProps,
 } from "./shared/Slider";
 export { Time, type TimeProps } from "./shared/Time";
-export {
-  MediaProvider,
-  createMediaScope,
-  useMediaContext,
-  useStore,
-} from "./shared/context";
-export type { MediaContextValue, MediaScopedProps } from "./shared/context";

@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useEffect, useRef, type PropsWithChildren } from "react";
-
 import {
-  type InitialBroadcastProps,
-  createBroadcastStore,
-  getBroadcastDeviceInfo,
-} from "@livepeer/core-web/broadcast";
-import { getDeviceInfo } from "@livepeer/core-web/browser";
-import {
-  type InitialProps,
-  type PlaybackEvent,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  type InitialProps,
+  type PlaybackEvent,
 } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
+import {
+  createBroadcastStore,
+  getBroadcastDeviceInfo,
+  type InitialBroadcastProps,
+} from "@livepeer/core-web/broadcast";
+import { getDeviceInfo } from "@livepeer/core-web/browser";
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
+import React, { type PropsWithChildren, useEffect, useRef } from "react";
 import { MediaProvider, type MediaScopedProps } from "../shared/context";
 import { BroadcastProvider, type BroadcastScopedProps } from "./context";
 

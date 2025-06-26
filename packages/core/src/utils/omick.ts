@@ -18,6 +18,7 @@ export const pick = <T extends object, K extends keyof T>(
         }),
         {},
       ) as Pick<T, K>;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     throw new Error("Could not pick keys for object.");
   }
@@ -43,6 +44,7 @@ export function omit<T extends object, K extends keyof T>(
         }),
         {},
       ) as Omit<T, K>;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     throw new Error("Could not omit keys for object.");
   }

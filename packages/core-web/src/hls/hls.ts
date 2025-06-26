@@ -1,9 +1,8 @@
-import Hls, { type ErrorData, type HlsConfig } from "hls.js";
-
 import {
-  type VideoQuality,
   calculateVideoQualityDimensions,
+  type VideoQuality,
 } from "@livepeer/core/media";
+import Hls, { type ErrorData, type HlsConfig } from "hls.js";
 import { isClient } from "../media/utils";
 
 export const VIDEO_HLS_INITIALIZED_ATTRIBUTE =
@@ -174,7 +173,11 @@ const setQuality = ({
   hls,
   quality,
   aspectRatio,
-}: { hls: Hls | null; quality: VideoQuality; aspectRatio: number }) => {
+}: {
+  hls: Hls | null;
+  quality: VideoQuality;
+  aspectRatio: number;
+}) => {
   if (hls) {
     const { width } = calculateVideoQualityDimensions(quality, aspectRatio);
 
