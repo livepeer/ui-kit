@@ -1,5 +1,11 @@
 # livepeer
 
+## 5.2.6
+
+### Patch Changes
+
+- [`6206942`](https://github.com/livepeer/ui-kit/commit/6206942668f5b7ae061733a2217aa60c69e4a263) Thanks [@junhyr](https://github.com/junhyr)! - Re-render controls when lastError changes
+
 ## 5.2.5
 
 ### Patch Changes
