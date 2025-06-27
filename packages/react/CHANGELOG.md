@@ -1,5 +1,14 @@
 # @livepeer/react
 
+## 4.3.6
+
+### Patch Changes
+
+- [`6206942`](https://github.com/livepeer/ui-kit/commit/6206942668f5b7ae061733a2217aa60c69e4a263) Thanks [@junhyr](https://github.com/junhyr)! - Re-render controls when lastError changes
+
+- Updated dependencies [[`6206942`](https://github.com/livepeer/ui-kit/commit/6206942668f5b7ae061733a2217aa60c69e4a263)]:
+  - @livepeer/core-web@5.2.6
+
 ## 4.3.5
 
 ### Patch Changes
