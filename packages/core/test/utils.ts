@@ -1,4 +1,4 @@
-import { type ReadStream, createReadStream, statSync } from "node:fs";
+import { createReadStream, type ReadStream, statSync } from "node:fs";
 import { resolve } from "node:path";
 
 export function getSampleVideo(): { file: ReadStream; uploadSize: number } {

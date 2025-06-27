@@ -1,9 +1,8 @@
 "use client";
 
+import { PauseIcon, PlayIcon } from "@livepeer/react/assets";
 import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
-
-import { PauseIcon, PlayIcon } from "@livepeer/react/assets";
 import { vodSource } from "./source";
 
 export default () => {

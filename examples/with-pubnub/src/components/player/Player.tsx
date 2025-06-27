@@ -1,5 +1,3 @@
-import * as Player from "@livepeer/react/player";
-
 import type { Src } from "@livepeer/react";
 import {
   EnterFullscreenIcon,
@@ -13,14 +11,11 @@ import {
   PrivateErrorIcon,
   UnmuteIcon,
 } from "@livepeer/react/assets";
+import * as Player from "@livepeer/react/player";
 import { Clip } from "./Clip";
 import { Settings } from "./Settings";
 
-export function PlayerWithControls({
-  src,
-}: {
-  src: Src[];
-}) {
+export function PlayerWithControls({ src }: { src: Src[] }) {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Player.Root autoPlay clipLength={30} src={src}>

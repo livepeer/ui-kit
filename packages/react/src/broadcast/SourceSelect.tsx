@@ -1,21 +1,19 @@
 "use client";
 
-import * as SelectPrimitive from "../shared/Select";
-
-// biome-ignore lint/style/useImportType: necessary import
-import React, { useCallback } from "react";
-
-import { useStore } from "zustand";
-import type { MediaScopedProps } from "../shared/context";
-
 import type {
   AudioDeviceId,
   MediaDeviceInfoExtended,
 } from "@livepeer/core-web/broadcast";
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { Presence } from "@radix-ui/react-presence";
+// biome-ignore lint/style/useImportType: necessary import
+import React, { useCallback } from "react";
+import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
+import type { MediaScopedProps } from "../shared/context";
 import type * as Radix from "../shared/primitive";
+import * as SelectPrimitive from "../shared/Select";
 import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 
 const SOURCE_SELECT_NAME = "SourceSelect";

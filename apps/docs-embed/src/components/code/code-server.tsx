@@ -1,7 +1,7 @@
+import { notFound } from "next/navigation";
 import * as broadcastComponents from "@/lib/broadcast-components";
 import * as playerComponents from "@/lib/player-components";
 import { codeToHtml } from "@/lib/shiki";
-import { notFound } from "next/navigation";
 import { ExpandableCode } from "./code";
 
 export type PlayerComponentKey = keyof typeof playerComponents;
@@ -32,8 +32,10 @@ export const CodeWithExampleServer = async ({
 }) => {
   const stringComponent =
     type === "player"
-      ? playerComponents[component as PlayerComponentKey]
-      : broadcastComponents[component as BroadcastComponentKey];
+      ? // biome-ignore lint/performance/noDynamicNamespaceImportAccess: ignored using `--suppress`
+        playerComponents[component as PlayerComponentKey]
+      : // biome-ignore lint/performance/noDynamicNamespaceImportAccess: ignored using `--suppress`
+        broadcastComponents[component as BroadcastComponentKey];
 
   if (!stringComponent) {
     notFound();

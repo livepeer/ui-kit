@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 interface PlayerError {
   message: string;
   code?: string;
@@ -40,6 +41,7 @@ function isAllowedOrigin(origin: string): boolean {
 function isInIframe(): boolean {
   try {
     return typeof window !== "undefined" && window.self !== window.top;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     return true;
   }

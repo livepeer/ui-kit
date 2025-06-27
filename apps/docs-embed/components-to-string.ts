@@ -3,12 +3,15 @@ import * as path from "node:path";
 import { glob } from "glob";
 
 function escapeComponentContent(content: string): string {
-  return content
-    .replace(/\\/g, "\\\\")
-    .replace(/`/g, "\\`")
-    .replace(/\$\{/g, "\\${")
-    .replace(/\"use client\";/g, "")
-    .trim();
+  return (
+    content
+      .replace(/\\/g, "\\\\")
+      .replace(/`/g, "\\`")
+      .replace(/\$\{/g, "\\${")
+      // biome-ignore lint/complexity/noUselessEscapeInRegex: ignored using `--suppress`
+      .replace(/\"use client\";/g, "")
+      .trim()
+  );
 }
 
 function fileNameToExportName(fileName: string): string {

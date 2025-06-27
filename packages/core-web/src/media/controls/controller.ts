@@ -1,13 +1,12 @@
-import type { MediaControllerStore } from "@livepeer/core/media";
-
 import {
   ACCESS_CONTROL_ERROR_MESSAGE,
   BFRAMES_ERROR_MESSAGE,
   STREAM_OFFLINE_ERROR_MESSAGE,
 } from "@livepeer/core/errors";
+import type { MediaControllerStore } from "@livepeer/core/media";
 import { warn } from "@livepeer/core/utils";
 import type { HlsConfig as HlsJsConfig } from "hls.js";
-import { type HlsError, createNewHls } from "../../hls/hls";
+import { createNewHls, type HlsError } from "../../hls/hls";
 import { createNewWHEP } from "../../webrtc/whep";
 import {
   addFullscreenEventListener,
@@ -379,10 +378,13 @@ const addEffectsToStore = (
     async ({
       aspectRatio,
       autoPlay,
+      // biome-ignore lint/correctness/noUnusedFunctionParameters: ignored using `--suppress`
       backoff,
+      // biome-ignore lint/correctness/noUnusedFunctionParameters: ignored using `--suppress`
       backoffMax,
       calculateDelay,
       errorCount,
+      // biome-ignore lint/correctness/noUnusedFunctionParameters: ignored using `--suppress`
       lastError,
       hlsConfig,
       mounted,
@@ -598,7 +600,10 @@ const addEffectsToStore = (
         const mountedChanged = a.mounted !== b.mounted;
 
         const shouldReRender =
-          errorCountChanged || lastErrorChanged || sourceChanged || mountedChanged;
+          errorCountChanged ||
+          lastErrorChanged ||
+          sourceChanged ||
+          mountedChanged;
 
         return !shouldReRender;
       },

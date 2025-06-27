@@ -1,6 +1,5 @@
-import { vi } from "vitest";
-
 import crypto from "node:crypto";
+import { vi } from "vitest";
 
 vi.stubGlobal("crypto", { subtle: crypto.webcrypto.subtle });
 

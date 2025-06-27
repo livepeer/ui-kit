@@ -1,11 +1,13 @@
-import { getPlaybackInfo } from "@/lib/livepeer";
 import { getSrc } from "@livepeer/react/external";
+import { getPlaybackInfo } from "@/lib/livepeer";
 import { PlayerLoading } from "../../../components/player/Player";
 import PlayerWithChat from "./PlayerWithChat";
 
 export default async function PlayerPage({
   params,
-}: { params: { playbackId: string } }) {
+}: {
+  params: { playbackId: string };
+}) {
   const inputSource = await getPlaybackInfo(params.playbackId);
 
   const src = getSrc(inputSource);

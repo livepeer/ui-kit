@@ -1,7 +1,6 @@
 export type Address = `0x${string}`;
 export type Hash = `0x${string}`;
 
-export { getIngest, getSrc } from "./media/external";
 export type {
   CloudflareStreamData,
   CloudflareUrlData,
@@ -26,3 +25,4 @@ export type {
   LivepeerTypeT,
   LivepeerVersion,
 } from "./media/external";
+export { getIngest, getSrc } from "./media/external";

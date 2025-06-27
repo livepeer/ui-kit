@@ -1,14 +1,13 @@
 "use client";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
-import * as Radix from "../shared/primitive";
+import { Presence } from "@radix-ui/react-presence";
 
 import React, { useEffect } from "react";
-
-import { Presence } from "@radix-ui/react-presence";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
+import * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
 
 const CLIP_TRIGGER_NAME = "ClipTrigger";

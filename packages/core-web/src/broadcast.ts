@@ -1,14 +1,13 @@
+import { PERMISSIONS_ERROR_MESSAGE } from "@livepeer/core/errors";
 import type { MediaControllerStore } from "@livepeer/core/media";
 import type { ClientStorage } from "@livepeer/core/storage";
+import { warn } from "@livepeer/core/utils";
 import {
   createJSONStorage,
   persist,
   subscribeWithSelector,
 } from "zustand/middleware";
-import { type StoreApi, createStore } from "zustand/vanilla";
-
-import { PERMISSIONS_ERROR_MESSAGE } from "@livepeer/core/errors";
-import { warn } from "@livepeer/core/utils";
+import { createStore, type StoreApi } from "zustand/vanilla";
 import { isPictureInPictureSupported } from "./media/controls";
 import { getRTCPeerConnectionConstructor } from "./webrtc/shared";
 import {
@@ -19,6 +18,7 @@ import {
   getDisplayMediaExists,
   getMediaDevices,
   getUserMedia,
+  // biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
   setMediaStreamTracksStatus,
 } from "./webrtc/whip";
 
@@ -311,6 +311,7 @@ export const createBroadcastStore = ({
   >(
     subscribeWithSelector(
       persist(
+        // biome-ignore lint/correctness/noUnusedFunctionParameters: ignored using `--suppress`
         (set, get) => ({
           audio: initialProps?.audio !== false,
           video: initialProps?.video !== false,
@@ -1353,6 +1354,7 @@ const addEffectsToStore = (
  * @returns MediaStreamTrack A silent audio track
  */
 export const createSilentAudioTrack = (): MediaStreamTrack => {
+  // biome-ignore lint/suspicious/noExplicitAny: ignored using `--suppress`
   const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
   const oscillator = ctx.createOscillator();
   const dst = ctx.createMediaStreamDestination();

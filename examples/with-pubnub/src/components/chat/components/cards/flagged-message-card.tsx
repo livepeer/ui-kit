@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
 import { faBan, faFlag, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Message } from "@pubnub/chat";
 import type React from "react";
+import { cn } from "@/lib/utils";
 
 interface FlaggedMessageCardProps {
   userId: string;

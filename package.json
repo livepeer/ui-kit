@@ -14,7 +14,7 @@
     "dev:packages": "dotenv -- turbo dev --filter \"@livepeer/*\"",
     "generate": "tsm generate-version.ts && turbo run generate",
     "lint": "pnpm dlx @biomejs/biome lint ./ && turbo run lint --filter \"@livepeer/*\"",
-    "lint:fix": "pnpm dlx @biomejs/biome check --apply ./",
+    "lint:fix": "pnpm dlx @biomejs/biome check --fix ./",
     "list-browsers": "pnpx browserslist && pnpx browserslist --coverage",
     "postinstall": "pnpm run generate",
     "preinstall": "npx only-allow pnpm",
@@ -51,8 +51,12 @@
     "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": ["pnpm lint:fix"],
-    "*.{json,md,mdx,yml}": ["pnpm lint:fix"]
+    "*.{js,ts,tsx}": [
+      "pnpm lint:fix"
+    ],
+    "*.{json,md,mdx,yml}": [
+      "pnpm lint:fix"
+    ]
   },
   "engines": {
     "node": ">=16"

@@ -1,16 +1,14 @@
 "use client";
 
-import * as SelectPrimitive from "../shared/Select";
-
-import React, { useCallback } from "react";
-
-import { useStore } from "zustand";
-import { type MediaScopedProps, useMediaContext } from "../shared/context";
-
 import type { VideoQuality } from "@livepeer/core/media";
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
 import { composeEventHandlers } from "@radix-ui/primitive";
+import React, { useCallback } from "react";
+import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import type * as Radix from "../shared/primitive";
+import * as SelectPrimitive from "../shared/Select";
 
 /**
  * VideoQualitySelect
@@ -24,6 +22,7 @@ interface VideoQualitySelectProps
 const VideoQualitySelect = (
   props: MediaScopedProps<VideoQualitySelectProps>,
 ) => {
+  // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   const { __scopeMedia, defaultValue, ...videoQualitySelectProps } = props;
 
   const context = useMediaContext(VIDEO_QUALITY_SELECT_NAME, __scopeMedia);

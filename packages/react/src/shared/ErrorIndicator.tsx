@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useMemo } from "react";
-
 import type { PlaybackError } from "@livepeer/core/media";
 import { Presence } from "@radix-ui/react-presence";
+import React, { useMemo } from "react";
 import { useStore } from "zustand";
 import { type MediaScopedProps, useMediaContext } from "./context";
 import * as Radix from "./primitive";

@@ -1,14 +1,11 @@
 "use client";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
-
-import React, { useMemo } from "react";
-
 import { Presence } from "@radix-ui/react-presence";
+import React, { useMemo } from "react";
 import { useStore } from "zustand";
-import { type MediaScopedProps, useMediaContext } from "../shared/context";
-
 import { useShallow } from "zustand/react/shallow";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
 import { noPropagate } from "../shared/utils";
 

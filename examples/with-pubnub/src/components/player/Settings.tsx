@@ -1,12 +1,11 @@
 "use client";
 
+import { SettingsIcon } from "@livepeer/react/assets";
 import * as Player from "@livepeer/react/player";
 import * as Popover from "@radix-ui/react-popover";
-
-import { cn } from "@/lib/utils";
-import { SettingsIcon } from "@livepeer/react/assets";
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export const Settings = React.forwardRef(
   (

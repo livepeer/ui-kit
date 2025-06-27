@@ -1,11 +1,11 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import {
   type MediaScopedProps,
   useMediaContext,
   useStore,
 } from "@livepeer/react/player";
+import { cn } from "@/lib/utils";
 
 const FORCE_ERROR_NAME = "ForceError";
 

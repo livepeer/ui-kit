@@ -1,8 +1,7 @@
 import type { MediaControllerStore } from "@livepeer/core/media";
+import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
 import { useStore as useStoreZustand } from "zustand";
-
-import type { Scope } from "@radix-ui/react-context";
 
 const MEDIA_NAME = "Media";
 

@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-
 import * as RadixAspectRatio from "@radix-ui/react-aspect-ratio";
+import React from "react";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { type MediaScopedProps, useMediaContext } from "./context";

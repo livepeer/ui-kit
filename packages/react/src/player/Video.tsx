@@ -1,13 +1,11 @@
 "use client";
 
+import { addEventListeners, type HlsConfig } from "@livepeer/core-web/browser";
+import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import React, { useEffect } from "react";
 import { useStore } from "zustand";
-
-import { type HlsConfig, addEventListeners } from "@livepeer/core-web/browser";
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { type MediaScopedProps, useMediaContext } from "../shared/context";
-
 import { useShallow } from "zustand/react/shallow";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";
 
 const VIDEO_NAME = "Video";

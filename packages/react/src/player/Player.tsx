@@ -1,19 +1,17 @@
 "use client";
 
-import { getDeviceInfo } from "@livepeer/core-web/browser";
-
-import React, { useEffect, useRef, type PropsWithChildren } from "react";
-
+import type { PlaybackEvent } from "@livepeer/core/media";
 import {
-  type InitialProps,
-  type Src,
   addLegacyMediaMetricsToStore,
   addMetricsToStore,
   createControllerStore,
+  type InitialProps,
+  type Src,
 } from "@livepeer/core/media";
-import type { PlaybackEvent } from "@livepeer/core/media";
 import { createStorage, noopStorage } from "@livepeer/core/storage";
 import { version } from "@livepeer/core/version";
+import { getDeviceInfo } from "@livepeer/core-web/browser";
+import React, { type PropsWithChildren, useEffect, useRef } from "react";
 import { MediaProvider, type MediaScopedProps } from "../shared/context";
 
 interface PlayerProps

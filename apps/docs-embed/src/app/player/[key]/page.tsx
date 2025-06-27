@@ -1,7 +1,8 @@
+import { notFound } from "next/navigation";
 import {
   CodeWithExampleServer,
-  type PlayerComponentKey,
   getPlayerKeys,
+  type PlayerComponentKey,
 } from "@/components/code/code-server";
 import Clip from "@/components/player/clip";
 import Container from "@/components/player/container";
@@ -23,7 +24,6 @@ import UseMediaContext from "@/components/player/use-media-context";
 import Video from "@/components/player/video";
 import VideoQuality from "@/components/player/video-quality";
 import Volume from "@/components/player/volume";
-import { notFound } from "next/navigation";
 
 export const dynamic = "force-static";
 
@@ -35,7 +35,9 @@ export async function generateStaticParams() {
 
 export default ({
   params,
-}: { params: { key: PlayerComponentKey | undefined } }) => {
+}: {
+  params: { key: PlayerComponentKey | undefined };
+}) => {
   if (!params.key) {
     notFound();
   }
@@ -85,6 +87,7 @@ export default ({
         ) : params.key === "volume" ? (
           <Volume />
         ) : (
+          // biome-ignore lint/complexity/noUselessFragments: ignored using `--suppress`
           <></>
         )
       }

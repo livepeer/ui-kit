@@ -1,17 +1,14 @@
 "use client";
 
-import * as SelectPrimitive from "../shared/Select";
-
-import React, { useCallback } from "react";
-
-import { useStore } from "zustand";
-import { type MediaScopedProps, useMediaContext } from "../shared/context";
-
-import { composeEventHandlers } from "@radix-ui/primitive";
-import { useShallow } from "zustand/react/shallow";
-
 import type { PlaybackRate } from "@livepeer/core/media";
+// biome-ignore lint/correctness/noUnusedImports: ignored using `--suppress`
+import { composeEventHandlers } from "@radix-ui/primitive";
+import React, { useCallback } from "react";
+import { useStore } from "zustand";
+import { useShallow } from "zustand/react/shallow";
+import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import type * as Radix from "../shared/primitive";
+import * as SelectPrimitive from "../shared/Select";
 
 /**
  * RateSelect
@@ -23,6 +20,7 @@ interface RateSelectProps
   extends Radix.ComponentPropsWithoutRef<typeof SelectPrimitive.SelectRoot> {}
 
 const RateSelect = (props: MediaScopedProps<RateSelectProps>) => {
+  // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   const { __scopeMedia, defaultValue, ...rateSelectProps } = props;
 
   const context = useMediaContext(RATE_SELECT_NAME, __scopeMedia);

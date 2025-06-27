@@ -4,6 +4,7 @@ export const b64Encode = (input: string): string | null => {
       return window?.btoa?.(input) ?? null;
     }
     return Buffer?.from(input, "binary")?.toString("base64") ?? null;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     return null;
   }
@@ -15,6 +16,7 @@ export const b64Decode = (input: string): string | null => {
       return window?.atob?.(input) ?? null;
     }
     return Buffer?.from(input, "base64")?.toString("binary") ?? null;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     return null;
   }

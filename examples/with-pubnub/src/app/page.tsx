@@ -1,7 +1,7 @@
-import { Chat } from "@/components/chat/Chat";
-import { ChatContextProvider } from "@/components/chat/context/ChatContext";
 import { ArrowUpRight } from "lucide-react";
 import { cookies, headers } from "next/headers";
+import { Chat } from "@/components/chat/Chat";
+import { ChatContextProvider } from "@/components/chat/context/ChatContext";
 import { BroadcastWithControls } from "../components/broadcast/Broadcast";
 import { CreateLivestreamButton } from "./create-livestream-button";
 

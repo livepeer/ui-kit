@@ -1,9 +1,8 @@
 "use client";
 
+import { PictureInPictureIcon } from "@livepeer/react/assets";
 import * as Broadcast from "@livepeer/react/broadcast";
 import { getIngest } from "@livepeer/react/external";
-
-import { PictureInPictureIcon } from "@livepeer/react/assets";
 import { streamKey } from "./stream-key";
 
 export default () => {

@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useStore } from "zustand";
-
+import { addBroadcastEventListeners } from "@livepeer/core-web/broadcast";
 import { addEventListeners } from "@livepeer/core-web/browser";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
+import React, { useEffect } from "react";
+import { useStore } from "zustand";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
-
-import { addBroadcastEventListeners } from "@livepeer/core-web/broadcast";
 import * as Radix from "../shared/primitive";
 import { type BroadcastScopedProps, useBroadcastContext } from "./context";
 

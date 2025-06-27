@@ -1,4 +1,4 @@
-import * as Player from "@livepeer/react/player";
+import type { ClipLength } from "@livepeer/react";
 
 import {
   EnterFullscreenIcon,
@@ -11,15 +11,14 @@ import {
   UnmuteIcon,
 } from "@livepeer/react/assets";
 import { getSrc } from "@livepeer/react/external";
+import * as Player from "@livepeer/react/player";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
-import { Clip } from "./Clip";
-import { CurrentSource } from "./CurrentSource";
-
 import { livepeer } from "@/lib/livepeer";
 import { cn } from "@/lib/utils";
-import type { ClipLength } from "@livepeer/react";
 import { PlayerErrorMonitor } from "../PlayerErrorMonitor";
+import { Clip } from "./Clip";
+import { CurrentSource } from "./CurrentSource";
 import { ForceError } from "./ForceError";
 import { Settings } from "./Settings";
 
@@ -361,7 +360,10 @@ export async function PlayerWithoutControls(props: PlayerProps) {
 export const PlayerLoading = ({
   title,
   description,
-}: { title?: React.ReactNode; description?: React.ReactNode }) => (
+}: {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+}) => (
   <div className="relative h-full w-full px-3 py-2 gap-3 flex-col-reverse flex bg-white/10 overflow-hidden rounded-sm">
     <div className="flex justify-between">
       <div className="flex items-center gap-2">
@@ -387,9 +389,11 @@ export const PlayerLoading = ({
   </div>
 );
 
+// biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
 function isInIframe() {
   try {
     return typeof window !== "undefined" && window.self !== window.top;
+    // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
   } catch (e) {
     // if accessing window.top throws an exception due to cross-origin policy,
     // the catch block will also return true,

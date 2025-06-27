@@ -1,12 +1,11 @@
 "use client";
 
-import { getSrc } from "@livepeer/react/external";
-import * as Player from "@livepeer/react/player";
-
 import {
   EnterFullscreenIcon,
   ExitFullscreenIcon,
 } from "@livepeer/react/assets";
+import { getSrc } from "@livepeer/react/external";
+import * as Player from "@livepeer/react/player";
 import { vodSource } from "./source";
 
 export default () => {

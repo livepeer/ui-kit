@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import Audio from "@/components/broadcast/audio";
 import Camera from "@/components/broadcast/camera";
 import Container from "@/components/broadcast/container";
@@ -20,7 +21,6 @@ import {
   CodeWithExampleServer,
   getBroadcastKeys,
 } from "@/components/code/code-server";
-import { notFound } from "next/navigation";
 
 export const dynamic = "force-static";
 
@@ -32,7 +32,9 @@ export async function generateStaticParams() {
 
 export default ({
   params,
-}: { params: { key: BroadcastComponentKey | undefined } }) => {
+}: {
+  params: { key: BroadcastComponentKey | undefined };
+}) => {
   if (!params.key) {
     notFound();
   }
@@ -76,6 +78,7 @@ export default ({
         ) : params.key === "video" ? (
           <Video />
         ) : (
+          // biome-ignore lint/complexity/noUselessFragments: ignored using `--suppress`
           <></>
         )
       }

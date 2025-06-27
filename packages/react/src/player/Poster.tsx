@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-
 import { Presence } from "@radix-ui/react-presence";
+import React from "react";
 import { useStore } from "zustand";
 import { type MediaScopedProps, useMediaContext } from "../shared/context";
 import * as Radix from "../shared/primitive";

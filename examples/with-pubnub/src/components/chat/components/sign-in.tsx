@@ -28,6 +28,7 @@ const ChatSignIn: React.FC<ChatSignInProps> = ({ submit }) => {
                 >
                   Your username
                 </label>
+                {/** biome-ignore lint/nursery/useUniqueElementIds: ignored using `--suppress` */}
                 <input
                   type="username"
                   name="username"
@@ -40,6 +41,7 @@ const ChatSignIn: React.FC<ChatSignInProps> = ({ submit }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
+                    {/** biome-ignore lint/nursery/useUniqueElementIds: ignored using `--suppress` */}
                     <input
                       id="remember"
                       aria-describedby="remember"
