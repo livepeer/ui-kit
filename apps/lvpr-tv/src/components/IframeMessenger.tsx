@@ -58,7 +58,37 @@ export function IframeMessenger() {
         return;
       }
 
-      //console.log("Received message from parent:", event.data);
+      console.log("Received message from parent:", event.data);
+
+      if (event.data.type === "lvpr-player-control") {
+        const { action, value } = event.data;
+        
+        if (action === "setMuted") {
+          const videoElement = document.querySelector('video[data-livepeer-video]') as HTMLVideoElement;
+          if (videoElement) {
+            if (value) {
+              videoElement.volume = 0;
+              videoElement.muted = true;
+            } else {
+              videoElement.volume = 1;
+              videoElement.muted = false;
+            }
+            
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage(
+                {
+                  type: "lvpr-player-mute-changed",
+                  muted: value,
+                  timestamp: Date.now(),
+                },
+                "*",
+              );
+            }
+          } else {
+            console.error("Could not find video element to control");
+          }
+        }
+      }
     };
 
     const sendReady = () => {
